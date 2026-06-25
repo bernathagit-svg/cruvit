@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cruvit — My Garden Status</title>
+<style>
+:root{
+  --forest:#153d29;
+  --forest2:#0f2f20;
+  --leaf:#6b9e5e;
+  --leaf2:#8fbd7d;
+  --sage:#eef6ea;
+  --cream:#fbfaf4;
+  --card:rgba(255,255,255,.62);
+  --card2:rgba(255,255,255,.45);
+  --ink:#1d3325;
+  --muted:#6d7c68;
+  --line:rgba(28,61,42,.10);
+  --shadow:0 18px 55px rgba(31,53,35,.07);
+  --soft:0 6px 18px rgba(31,53,35,.05);
+  --r:30px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#edf4e8;color:var(--ink)}
+button,input{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;padding:18px;background:linear-gradient(90deg,rgba(251,250,244,.94),rgba(251,250,244,.56)),url('assets/garden-bg.jpg') center/cover fixed no-repeat}
+.shell{max-width:1180px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:14px;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.80);border-radius:30px;padding:10px 14px;box-shadow:var(--soft);backdrop-filter:blur(22px)}
+.brand{display:flex;align-items:center;gap:11px}.brand img{width:44px;height:44px;object-fit:contain;background:rgba(255,255,255,.78);border-radius:16px;padding:5px}.brand h1{margin:0;font-family:Georgia,serif;font-size:29px;color:var(--forest);line-height:.94}.brand span{display:block;margin-top:3px;font-size:10.5px;font-weight:820;color:#6e7f68}.nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.pill{border:1px solid rgba(31,63,43,.09);background:rgba(255,255,255,.64);border-radius:999px;padding:9px 14px;font-weight:840;color:var(--forest);box-shadow:none;font-size:13.5px}.pill.dark{background:var(--forest);color:white}.badge{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;border-radius:999px;background:var(--leaf);color:white;font-size:10.5px;margin-inline-start:6px}
+.hero{margin-top:16px;display:grid;grid-template-columns:1fr 1.05fr .68fr;gap:14px;align-items:stretch}.panel{background:var(--card);border:1px solid rgba(255,255,255,.76);border-radius:var(--r);box-shadow:var(--shadow);backdrop-filter:blur(22px)}
+.intro{padding:28px 30px;display:flex;flex-direction:column;justify-content:center;min-height:274px}.greeting{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}.intro h2{font-family:Georgia,serif;margin:12px 0 11px;color:var(--forest);font-size:44px;line-height:.98;letter-spacing:-.035em;max-width:380px}.intro p{margin:0;max-width:420px;color:var(--muted);font-size:15px;line-height:1.48;font-weight:600}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{border:0;border-radius:999px;font-weight:850;padding:11px 15px;font-size:13.5px}.btn.main{background:var(--forest);color:white;box-shadow:0 10px 22px rgba(21,61,41,.13)}.btn.light{background:rgba(255,255,255,.62);color:var(--forest);border:1px solid var(--line)}
+.status-panel{padding:26px;display:grid;grid-template-columns:170px 1fr;gap:24px;align-items:center;min-height:274px}.ring{width:168px;height:168px;border-radius:50%;background:conic-gradient(var(--leaf) 0 313deg, rgba(23,64,43,.09) 313deg 360deg);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}.ring:before{content:"";position:absolute;inset:14px;border-radius:50%;background:rgba(255,255,255,.72);box-shadow:inset 0 0 0 1px rgba(31,63,43,.06)}.ring-inner{position:relative;text-align:center}.ring-inner strong{font-family:Georgia,serif;font-size:52px;color:var(--forest);line-height:.85}.ring-inner span{display:block;margin-top:8px;color:var(--muted);font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.05em}.status-text h3{margin:0 0 6px;color:var(--forest);font-family:Georgia,serif;font-size:31px;letter-spacing:-.02em}.status-text .label{color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.09em;font-size:11px;margin-bottom:10px}.status-text p{margin:0 0 18px;color:var(--muted);font-weight:650;font-size:14px;line-height:1.45}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:15px 0;margin-bottom:15px}.metric b{display:block;color:var(--forest);font-family:Georgia,serif;font-size:25px;line-height:1}.metric span{display:block;color:var(--muted);font-size:11.5px;font-weight:750;line-height:1.25;margin-top:4px}.scan{display:flex;gap:7px;align-items:center;color:var(--muted);font-weight:720;font-size:12px}
+.photo-card{position:relative;min-height:274px;border-radius:var(--r);overflow:hidden;background:url('assets/garden-bg.jpg') center/cover;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.74)}.photo-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(7,35,22,.48))}.camera{position:absolute;right:15px;top:15px;z-index:1;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.86);box-shadow:var(--soft);font-size:18px}.photo-label{position:absolute;left:18px;right:18px;bottom:17px;z-index:1;color:white}.photo-label b{display:block;font-size:17px;text-shadow:0 2px 12px rgba(0,0,0,.25)}.photo-label span{display:block;margin-top:6px;line-height:1.4;font-weight:700;color:rgba(255,255,255,.88);font-size:13px}
+.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 13px}.tab{border:1px solid var(--line);background:rgba(255,255,255,.58);border-radius:999px;padding:10px 14px;font-weight:840;color:var(--forest);font-size:13px}.tab.active{background:var(--forest);color:white}.content{display:grid;grid-template-columns:.92fr 1.08fr;gap:14px}.section{padding:20px 22px;background:rgba(255,255,255,.58)}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:16px}.section h3{margin:0;color:var(--forest);font-family:Georgia,serif;font-size:25px;letter-spacing:-.015em}.section small{display:block;color:var(--muted);font-weight:650;margin-top:4px;font-size:13px}.text-link{border:0;background:transparent;color:var(--forest);font-weight:850;padding:7px 0}.tasks{display:grid;gap:10px}.task{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;background:rgba(255,255,255,.62);border:1px solid rgba(28,61,42,.08);border-radius:20px;padding:11px 12px;box-shadow:0 7px 18px rgba(31,53,35,.035)}.task.done{opacity:.48;text-decoration:line-through}.taskIcon{width:44px;height:44px;border-radius:17px;background:rgba(238,246,234,.92);display:flex;align-items:center;justify-content:center;font-size:21px}.task b{display:block;color:var(--forest);font-size:15px}.task span{display:block;margin-top:3px;color:var(--muted);font-size:12.5px;font-weight:650}.priority{border:0;border-radius:999px;padding:8px 13px;font-weight:830;font-size:12px;background:#edf7e7;color:var(--forest)}.tasks-footer{display:flex;justify-content:center;margin-top:2px}.show-all-tasks{border:1px solid rgba(31,63,43,.10);background:rgba(255,255,255,.62);color:var(--forest);border-radius:999px;padding:10px 15px;font-weight:850;cursor:pointer}.garden-rest-note{border:1px solid rgba(31,63,43,.07);background:rgba(255,255,255,.45);border-radius:18px;padding:13px 14px;color:var(--muted);font-weight:750;line-height:1.45}
+.plant-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.plant{background:rgba(255,255,255,.66);border:1px solid rgba(28,61,42,.08);border-radius:20px;overflow:hidden;box-shadow:0 8px 19px rgba(31,53,35,.04)}.plant-img{height:92px;background:url('assets/garden-bg.jpg') center/cover;position:relative}.plant:nth-child(1) .plant-img{background:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('assets/garden-bg.jpg') left center/cover}.plant:nth-child(2) .plant-img{background:linear-gradient(180deg,rgba(255,241,154,.15),rgba(20,59,40,.04)),url('assets/garden-bg.jpg') center/cover}.plant:nth-child(3) .plant-img{background:linear-gradient(180deg,rgba(156,199,121,.12),rgba(20,59,40,.04)),url('assets/garden-bg.jpg') right center/cover}.plant:nth-child(4) .plant-img{background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(20,59,40,.04)),url('assets/garden-bg.jpg') center/cover}.plant-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.plant-img.has-photo{background-image:none!important}.plant-status{position:absolute;right:9px;top:9px;width:29px;height:29px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#dff3d4;color:var(--forest);font-weight:900}.plant.warn .plant-status{background:#fff1a8;color:#6b4e00}.plant-body{padding:11px 12px 12px}.plant b{display:block;color:var(--forest);font-size:15px}.plant span{display:block;margin-top:5px;color:var(--muted);font-size:12px;font-weight:650}.hidden{display:none}.shopping,.timeline{display:grid;gap:10px}.soft-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:rgba(255,255,255,.62);border:1px solid rgba(28,61,42,.08);border-radius:20px;padding:13px 14px}.soft-row b{color:var(--forest)}.soft-row span{color:var(--muted);font-weight:650;font-size:12px}.calendar-wrap{display:grid;gap:12px}.calendar-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:3px 0 5px}.month-title{font-family:Georgia,serif;color:var(--forest);font-size:24px;font-weight:800;letter-spacing:-.02em}.month-note{color:var(--muted);font-weight:720;font-size:12.5px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.weekday{text-align:center;color:var(--muted);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:3px 0}.day{min-height:74px;border:1px solid rgba(31,63,43,.08);border-radius:18px;background:rgba(255,255,255,.42);padding:8px;position:relative;overflow:hidden;cursor:pointer;transition:.18s ease}.day.empty{background:rgba(255,255,255,.16);border-color:rgba(31,63,43,.04);cursor:default}.day:not(.empty):hover{transform:translateY(-1px);background:rgba(255,255,255,.58)}.day.selected{border-color:rgba(86,143,97,.38);box-shadow:0 0 0 3px rgba(86,143,97,.10);background:rgba(255,255,255,.68)}.date{font-size:12px;font-weight:900;color:var(--forest);display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;border-radius:999px;background:rgba(255,255,255,.48)}.day.today .date{background:var(--forest);color:white}.cal-event{margin-top:7px;border-radius:12px;padding:6px 7px;background:rgba(238,247,233,.76);color:var(--forest);font-size:10.5px;line-height:1.25;font-weight:830;white-space:normal}.cal-event.scan{background:rgba(233,244,227,.86)}.cal-event.shop{background:rgba(250,246,225,.82)}.cal-event.task{background:rgba(232,244,239,.86)}.event-detail{border:1px solid rgba(31,63,43,.08);border-radius:22px;background:rgba(255,255,255,.50);padding:14px;display:grid;gap:10px}.event-detail-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.event-detail h4{margin:0;color:var(--forest);font-size:16px}.event-detail small{margin:0;color:var(--muted);font-size:12px;font-weight:700}.event-card{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;border:1px solid rgba(31,63,43,.08);border-radius:18px;background:rgba(255,255,255,.58);padding:11px}.event-icon{width:42px;height:42px;border-radius:16px;background:rgba(238,247,233,.82);display:flex;align-items:center;justify-content:center;font-size:18px}.event-card b{display:block;color:var(--forest);font-size:14px}.event-card span{display:block;color:var(--muted);font-weight:680;font-size:12px;margin-top:2px}.card-actions{position:relative;justify-self:end}.kebab{width:34px;height:34px;border-radius:999px;border:1px solid rgba(31,63,43,.08);background:rgba(255,255,255,.70);color:var(--forest);font-weight:900;font-size:18px;line-height:1;cursor:pointer}.action-menu{position:absolute;right:0;top:38px;min-width:168px;background:rgba(255,255,255,.96);border:1px solid rgba(31,63,43,.10);border-radius:16px;box-shadow:0 18px 45px rgba(31,53,35,.12);padding:6px;z-index:9;display:none}.action-menu.open{display:block}.action-menu button{width:100%;text-align:left;border:0;background:transparent;color:var(--forest);font-weight:800;border-radius:11px;padding:9px 10px;cursor:pointer}.action-menu button:hover{background:rgba(238,247,233,.9)}.event-card.done{opacity:.72}.event-card.done b{text-decoration:line-through}.task{position:relative}.task .card-actions{margin-left:auto}.empty-day-note{color:var(--muted);font-weight:700;font-size:12.5px;padding:10px}.drawer{position:fixed;right:18px;top:100px;width:360px;max-width:calc(100vw - 28px);display:none;background:rgba(255,255,255,.92);border:1px solid white;border-radius:24px;box-shadow:0 22px 70px rgba(0,0,0,.10);padding:18px;z-index:10;backdrop-filter:blur(18px)}.drawer.open{display:block}.drawer h3{font-family:Georgia,serif;color:var(--forest);font-size:27px;margin:0 0 10px}.cartrow{display:flex;justify-content:space-between;gap:8px;background:#f4f8ef;border-radius:16px;padding:9px;margin-bottom:7px;font-weight:800;color:var(--forest);font-size:13px}.login{position:fixed;inset:0;background:linear-gradient(90deg,rgba(242,248,235,.96),rgba(242,248,235,.76)),url('assets/garden-bg.jpg') center/cover;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.login.open{display:flex}.loginbox{max-width:430px;width:100%;background:rgba(255,255,255,.78);border:1px solid white;border-radius:30px;padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(18px)}.loginbox h2{font-family:Georgia,serif;color:var(--forest);font-size:35px;margin:10px 0 6px}.loginbox p{color:var(--muted);font-weight:700;line-height:1.5}.field{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.78);border-radius:16px;padding:13px;margin-top:9px;color:var(--ink)}
+
+.plant{position:relative;overflow:visible}.plant-img{border-radius:20px 20px 0 0;overflow:hidden}.plant-body{border-radius:0 0 20px 20px;background:rgba(255,255,255,.72)}.plant-manage{position:absolute;left:9px;top:9px;z-index:12;width:32px;height:32px;border-radius:999px;border:1px solid rgba(31,63,43,.08);background:rgba(255,255,255,.90);color:var(--forest);font-weight:850;line-height:1;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 8px 20px rgba(31,53,35,.08)}.plant .action-menu{left:9px;right:auto;top:45px;min-width:232px;background:rgba(255,255,255,.97);border:1px solid rgba(31,63,43,.09);border-radius:18px;box-shadow:0 18px 46px rgba(31,53,35,.16);padding:8px;z-index:30;backdrop-filter:blur(16px)}.plant .action-menu button{display:flex;align-items:center;gap:11px;font-size:14px;font-weight:650;letter-spacing:0;color:var(--ink);padding:11px 12px;border-radius:13px;border-bottom:1px solid rgba(31,63,43,.06)}.plant .action-menu button:last-child{border-bottom:0}.plant .action-menu button:hover{background:rgba(238,247,233,.72);color:var(--forest)}.menu-ico{width:20px;display:inline-flex;justify-content:center;opacity:.9}.plant-status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#65b35e;margin-right:7px;vertical-align:middle}.plant.warn .plant-status-dot{background:#f0b82c}.plant-actions{display:flex;gap:6px;margin-top:11px;align-items:center;flex-wrap:nowrap}.plant-action{border:1px solid rgba(31,63,43,.10);background:rgba(255,255,255,.56);color:var(--forest);border-radius:999px;padding:6px 8px;font-size:11px;font-weight:760;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;line-height:1.1}.plant-action.warn{background:rgba(255,241,168,.50);border-color:rgba(176,140,20,.13)}.plant-action:hover{background:rgba(238,247,233,.90)}
+.plant-result .thumb{width:38px;height:38px;border-radius:14px;background:rgba(238,247,233,.95) center/cover;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden}
+.plant-img.has-photo{background-size:cover!important;background-position:center!important}
+.plant-setup-card{display:grid;gap:10px;padding:3px}.plant-setup-hero{height:130px;border-radius:18px;background:rgba(238,247,233,.8) center/cover;border:1px solid rgba(31,63,43,.08);position:relative;overflow:hidden}.plant-setup-hero .plant-setup-badge{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.9);border-radius:14px;padding:8px 10px;color:var(--forest);font-weight:850;backdrop-filter:blur(12px)}.plant-setup-title{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.plant-setup-title b{color:var(--forest);font-size:17px}.plant-setup-title small{display:block;color:var(--muted);font-weight:650;margin-top:3px}.pref-box{display:grid;gap:8px;margin-top:4px}.pref-row{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.62);border:1px solid rgba(31,63,43,.08);border-radius:16px;padding:10px;color:var(--forest);font-weight:800}.pref-row span{display:block;color:var(--muted);font-weight:650;font-size:11.5px;margin-top:2px}.pref-row input{margin-top:3px;accent-color:#568f61}.plant-setup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.plant-pref-note{font-size:11.5px;color:var(--muted);font-weight:650;line-height:1.35}.quick-add{width:100%;justify-content:center;margin:2px 0 0}
+
+.plant-modal{position:fixed;inset:0;background:rgba(17,45,29,.18);display:none;align-items:center;justify-content:center;padding:20px;z-index:35;backdrop-filter:blur(6px)}.plant-modal.open{display:flex}.plant-modalbox{width:560px;max-width:calc(100vw - 28px);background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.90);border-radius:28px;box-shadow:0 24px 70px rgba(22,53,34,.16);padding:20px;backdrop-filter:blur(20px)}.plant-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}.plant-modal-head h3{font-family:Georgia,serif;color:var(--forest);font-size:30px;margin:0;letter-spacing:-.02em}.plant-modal-head p{margin:4px 0 0;color:var(--muted);font-weight:700;font-size:13px}.modal-x{width:36px;height:36px;border:0;border-radius:999px;background:rgba(238,247,233,.9);color:var(--forest);font-weight:900}.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.info-tile{background:rgba(238,247,233,.55);border:1px solid rgba(31,63,43,.07);border-radius:18px;padding:13px;display:flex;gap:10px;align-items:flex-start}.info-tile .big{font-size:22px;line-height:1}.info-tile b{display:block;color:var(--forest);font-size:13px}.info-tile span{display:block;margin-top:2px;color:var(--muted);font-weight:650;font-size:12px}.guide-block{background:rgba(255,255,255,.54);border:1px solid rgba(31,63,43,.08);border-radius:18px;padding:13px;margin-top:9px}.guide-block b{display:block;color:var(--forest);margin-bottom:4px}.guide-block span{color:var(--muted);font-weight:650;font-size:13px;line-height:1.45}.plant-modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}@media(max-width:560px){.info-grid{grid-template-columns:1fr}.plant-action{font-size:10.5px;padding:6px 3px}.plant-modalbox{border-radius:24px;padding:16px}.plant-modal-head h3{font-size:26px}}
+
+@media(max-width:1120px){.hero{grid-template-columns:1fr 1fr}.photo-card{grid-column:1/-1;min-height:220px}.content{grid-template-columns:1fr}.plant-strip{grid-template-columns:repeat(2,1fr)}}
+
+/* Premium Add Plant popover - restored from v16 flow */
+.modal{position:fixed;inset:0;display:none;z-index:30;background:transparent;pointer-events:auto}
+.modal.open{display:block}
+.modalbox{position:absolute;top:250px;left:50%;transform:translateX(-42%);width:340px;max-width:calc(100vw - 32px);background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.92);border-radius:20px;box-shadow:0 24px 70px rgba(22,53,34,.16);backdrop-filter:blur(22px);padding:10px;pointer-events:auto}
+.modalbox:before{content:"";position:absolute;top:-8px;left:46%;width:16px;height:16px;background:rgba(255,255,255,.92);border-left:1px solid rgba(255,255,255,.92);border-top:1px solid rgba(255,255,255,.92);transform:rotate(45deg)}
+.modal-head{display:none}
+.add-grid{display:grid;gap:6px}
+.add-card{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:10px;width:100%;border:0;background:transparent;text-align:left;border-radius:16px;padding:10px 11px;color:var(--forest);transition:.16s ease}
+.add-card:hover{background:rgba(238,247,233,.88);transform:translateY(-1px)}
+.add-card .ico{width:38px;height:38px;border-radius:14px;background:rgba(238,247,233,.95);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:inset 0 0 0 1px rgba(21,61,41,.04)}
+.add-card b{display:block;color:var(--forest);font-size:14px;font-weight:900;margin-bottom:2px}.add-card span span{display:block;color:var(--muted);font-size:12px;font-weight:650;line-height:1.28}.modal-close{display:block;position:absolute;top:10px;right:10px;width:34px;height:34px;border:0;border-radius:999px;background:rgba(238,247,233,.92);color:var(--forest);font-weight:900;cursor:pointer;z-index:2}
+
+.plant-search{display:grid;gap:10px;padding:4px}.plant-search .field{margin-top:0;padding:11px 13px;border-radius:15px}.plant-source-note{font-size:11.5px;color:var(--muted);font-weight:650;line-height:1.35;padding:0 4px 4px}.plant-results{display:grid;gap:7px;max-height:330px;overflow:auto;padding-right:2px}.plant-result{display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:10px;width:100%;border:0;background:rgba(255,255,255,.62);border-radius:16px;padding:9px;color:var(--forest);text-align:left}.plant-result:hover{background:rgba(238,247,233,.90)}.plant-result .ico{width:38px;height:38px;border-radius:14px;background:rgba(238,247,233,.95);display:flex;align-items:center;justify-content:center;font-size:18px}.plant-result b{display:block;font-size:13.5px}.plant-result small{display:block;color:var(--muted);font-weight:650;font-size:11px;margin-top:2px}.plant-result .add-mini{border:0;border-radius:999px;background:var(--forest);color:white;font-weight:850;padding:7px 10px;font-size:11px}.modal-back{border:0;background:rgba(238,247,233,.85);color:var(--forest);border-radius:999px;font-weight:850;padding:7px 10px;margin:0 0 7px 4px}.real-data-badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:rgba(238,247,233,.8);border:1px solid rgba(31,63,43,.08);padding:5px 8px;font-size:10.5px;font-weight:800;color:var(--forest);margin-top:8px}.source-ready{color:var(--muted);font-size:11px;font-weight:650;line-height:1.35;padding:6px 4px 0}
+
+.reward-mini{margin-top:10px;display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(31,63,43,.08);background:rgba(255,255,255,.54);border-radius:999px;padding:8px 12px;color:var(--forest);font-weight:860;font-size:12px}
+.reward-mini span{color:var(--muted);font-weight:760}
+.reward-toast{position:fixed;right:26px;bottom:26px;background:rgba(255,255,255,.94);border:1px solid rgba(31,63,43,.10);border-radius:999px;box-shadow:0 18px 45px rgba(31,53,35,.14);padding:12px 16px;color:var(--forest);font-weight:900;z-index:60;transform:translateY(14px);opacity:0;pointer-events:none;transition:.25s ease}.reward-toast.show{opacity:1;transform:translateY(0)}
+.rewards-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:12px}.reward-card{background:rgba(255,255,255,.62);border:1px solid rgba(31,63,43,.08);border-radius:20px;padding:15px;box-shadow:0 8px 19px rgba(31,53,35,.035)}.reward-card h4{margin:0 0 8px;color:var(--forest);font-size:16px}.reward-balance{font-family:Georgia,serif;color:var(--forest);font-size:42px;font-weight:800;letter-spacing:-.04em}.reward-progress{height:10px;background:rgba(31,63,43,.08);border-radius:999px;overflow:hidden;margin:10px 0}.reward-progress i{display:block;height:100%;background:var(--forest);border-radius:999px}.achievement{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid rgba(31,63,43,.07);background:rgba(255,255,255,.50);border-radius:16px;padding:10px 11px;margin-top:8px}.achievement b{color:var(--forest);font-size:13px}.achievement span{color:var(--muted);font-weight:750;font-size:12px}.achievement .state{font-weight:900;color:var(--forest)}
+@media(max-width:760px){.rewards-grid{grid-template-columns:1fr}.reward-toast{right:12px;bottom:12px}}
+
+@media(max-width:760px){.modal{background:rgba(17,45,29,.10);pointer-events:auto}.modalbox{top:auto;left:14px;right:14px;bottom:18px;transform:none;width:auto;border-radius:24px;padding:12px}.modalbox:before{display:none}.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:6px 6px 10px}.modal-head h3{font-family:Georgia,serif;font-size:24px;line-height:1;margin:0;color:var(--forest)}.modal-head p{font-size:12.5px;line-height:1.35;color:var(--muted);font-weight:650;margin:5px 0 0}.modal-close{display:block;width:36px;height:36px;border:0;border-radius:999px;background:rgba(238,247,233,.9);color:var(--forest);font-weight:900}}
+
+@media(max-width:760px){.app{padding:10px}.top{border-radius:23px;align-items:flex-start}.brand img{width:40px;height:40px}.brand h1{font-size:26px}.nav .pill:not(.dark){display:none}.hero{grid-template-columns:1fr}.intro,.status-panel,.section{padding:17px}.intro{min-height:0}.intro h2{font-size:38px}.status-panel{grid-template-columns:1fr;text-align:center}.ring{margin:0 auto;width:150px;height:150px}.metrics{grid-template-columns:repeat(3,1fr)}.photo-card{min-height:210px}.tabs{position:sticky;top:8px;z-index:5;background:rgba(237,244,232,.65);backdrop-filter:blur(12px);padding:7px;border-radius:999px}.task{grid-template-columns:40px 1fr}.priority{grid-column:2;justify-self:start}.plant-strip{grid-template-columns:1fr 1fr}.drawer{right:10px;top:86px}}
+@media(max-width:620px){.calendar{grid-template-columns:repeat(2,1fr)}.weekday{display:none}.day{min-height:62px}}
+@media(max-width:460px){.intro h2{font-size:33px}.metrics{grid-template-columns:1fr}.plant-strip{grid-template-columns:1fr}.tab{font-size:12px;padding:9px 11px}.actions .btn{width:100%}}
+
+/* v20 calendar restored exactly from v14: month controls, selected day details, reminders */
+.month-nav{display:flex;align-items:center;gap:8px}
+.month-btn{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.62);color:var(--forest);font-weight:900;cursor:pointer}
+.calendar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.notify-box{margin-top:12px;border:1px solid rgba(31,63,43,.08);border-radius:22px;background:rgba(255,255,255,.44);padding:14px;display:grid;gap:10px}
+.notify-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.notify-top b{color:var(--forest);font-size:15px}
+.notify-top span,.notify-option span{color:var(--muted);font-size:12px;font-weight:680}
+.switch{position:relative;width:48px;height:28px;border-radius:999px;border:1px solid var(--line);background:rgba(31,63,43,.12);padding:3px;cursor:pointer}
+.switch.on{background:rgba(107,158,94,.35)}
+.switch:after{content:'';display:block;width:20px;height:20px;border-radius:50%;background:white;box-shadow:0 3px 8px rgba(0,0,0,.10);transition:.18s}
+.switch.on:after{transform:translateX(19px)}
+.notify-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.notify-option{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.48);padding:10px;display:flex;align-items:flex-start;gap:8px;color:var(--forest);font-weight:800;font-size:12.5px}
+.notify-option input{accent-color:#568f61;margin-top:2px}
+@media(max-width:620px){.notify-grid{grid-template-columns:1fr}}
+/* v30: calendar layout fix - timeline spans full dashboard width, no overlap */
+#view-timeline{grid-column:1 / -1;}
+#timeline{overflow:visible;}
+.calendar-split{display:grid;grid-template-columns:minmax(520px,1fr) minmax(360px,.82fr);gap:16px;align-items:start;}
+.calendar-left,.calendar-side{min-width:0;}
+.calendar-side{display:grid;gap:12px;}
+.calendar-side .event-detail,.calendar-side .notify-box{margin:0;}
+@media(max-width:1100px){.calendar-split{grid-template-columns:1fr}.calendar-side{gap:10px}}
+@media(max-width:620px){.calendar{gap:6px}.day{min-height:62px;border-radius:15px;padding:6px}.cal-event{font-size:9.5px;padding:5px 6px}.calendar-top{align-items:flex-start;flex-direction:column}.month-nav{width:100%;justify-content:space-between}.calendar-actions{width:100%;display:flex;justify-content:flex-end}}
+
+
+
+/* v53: keep Add Plant setup action visible without changing the approved design */
+.modalbox{max-height:calc(100vh - 44px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-bottom:14px}
+.plant-setup-actions{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.98));padding:12px 0 6px;z-index:20;backdrop-filter:blur(12px);box-shadow:0 -10px 22px rgba(255,255,255,.70)}
+.plant-setup-actions .btn.main{min-height:42px}
+@media(max-width:760px){.modalbox{max-height:calc(100vh - 42px);overflow-y:auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}.plant-setup-hero{height:112px}.plant-setup-actions{bottom:0;padding-bottom:calc(8px + env(safe-area-inset-bottom))}.plant-setup-actions .btn{flex:1;justify-content:center}}
+
+/* v66: scrollable plant detail panels without changing the approved design */
+.plant-modalbox{max-height:calc(100vh - 42px);display:flex;flex-direction:column;overflow:hidden}
+.plant-modal-head{flex:0 0 auto}
+#plantPanelBody{overflow-y:auto;overscroll-behavior:contain;padding-right:4px;max-height:calc(100vh - 145px);scrollbar-width:thin;scrollbar-color:rgba(23,82,47,.45) rgba(238,247,233,.55)}
+#plantPanelBody::-webkit-scrollbar{width:8px}
+#plantPanelBody::-webkit-scrollbar-track{background:rgba(238,247,233,.55);border-radius:999px}
+#plantPanelBody::-webkit-scrollbar-thumb{background:rgba(23,82,47,.38);border-radius:999px}
+#plantPanelBody .plant-setup-hero:first-child{position:sticky;top:0;z-index:2}
+#plantPanelBody .plant-modal-actions{position:sticky;bottom:0;z-index:3;margin-left:-2px;margin-right:-2px;padding:12px 2px 2px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.94) 28%,rgba(255,255,255,.96));backdrop-filter:blur(10px)}
+@media(max-width:560px){.plant-modalbox{max-height:calc(100vh - 24px)}#plantPanelBody{max-height:calc(100vh - 125px)}}
+
+
+.scan-uploader{display:grid;gap:12px;margin-bottom:12px}.scan-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modalbox.scan-mode{width:430px;max-width:calc(100vw - 28px);top:150px;max-height:calc(100vh - 34px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(23,82,47,.38) rgba(238,247,233,.55)}
+.modalbox.scan-mode::-webkit-scrollbar{width:7px}.modalbox.scan-mode::-webkit-scrollbar-track{background:rgba(238,247,233,.55);border-radius:999px}.modalbox.scan-mode::-webkit-scrollbar-thumb{background:rgba(23,82,47,.32);border-radius:999px}
+.scan-drop{border:1px dashed rgba(13,61,39,.22);background:rgba(246,252,241,.66);border-radius:20px;padding:15px 14px;display:grid;grid-template-columns:44px 1fr;gap:4px 12px;align-items:center;cursor:pointer;color:#103d2b;font-weight:900;min-height:92px;transition:.16s ease}
+.scan-drop:hover{background:rgba(238,247,233,.88);transform:translateY(-1px);box-shadow:0 12px 26px rgba(31,53,35,.06)}
+.scan-drop .scan-icon{font-size:28px;grid-row:1/3;width:44px;height:44px;border-radius:16px;background:rgba(255,255,255,.72);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(31,63,43,.05)}
+.scan-drop small{display:block;color:#6f7e6b;font-size:12.5px;font-weight:800;line-height:1.35;margin-top:2px}
+.scan-preview{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.74);border:1px solid rgba(13,61,39,.12);border-radius:20px;padding:10px;color:#103d2b;font-weight:900;min-height:86px}
+.scan-preview img{width:76px;height:76px;object-fit:cover;border-radius:16px;box-shadow:0 10px 25px rgba(13,61,39,.12);flex:0 0 auto}.scan-preview span{min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
+.scan-identify{width:fit-content;padding-inline:22px;min-height:42px}.scan-identify:not(.hidden){display:inline-flex}.scan-identify.loading{opacity:.72;cursor:wait}
+@media(max-width:760px){.modalbox.scan-mode{top:auto;left:10px;right:10px;bottom:10px;width:auto;max-height:calc(100vh - 22px);padding-bottom:calc(14px + env(safe-area-inset-bottom))}.scan-actions{grid-template-columns:1fr 1fr;gap:10px}.scan-drop{min-height:88px;padding:13px 12px;grid-template-columns:38px 1fr}.scan-drop .scan-icon{width:38px;height:38px;font-size:24px}.scan-preview{min-height:78px}.scan-preview img{width:64px;height:64px}.scan-identify:not(.hidden){width:100%;justify-content:center}}
+
+</style>
+</head>
+<body>
+<div class="app"><div class="shell">
+<header class="top">
+  <div class="brand"><img src="assets/cruvit-logo.png" alt="Cruvit"><div><h1>Cruvit</h1><span>My Garden OS</span></div></div>
+  <div class="nav">
+    <button class="pill" id="signInBtn" onclick="showLogin()">Sign in</button>
+    <button class="pill" onclick="setTab('plants')">Plants</button>
+    <button class="pill" onclick="setTab('timeline')">History</button>
+    <button class="pill" onclick="setTab('rewards')">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
+    <button class="pill dark" onclick="toggleCart()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="panel intro">
+    <div class="greeting">🌿 Good morning, Hagit</div>
+    <h2>Your garden is looking great</h2>
+    <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
+    <div class="actions">
+      <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
+      <button class="btn light" onclick="scanGarden()">Scan garden 📷</button>
+      <button class="btn light" onclick="addPlant()">Add plant +</button>
+    </div>
+  </div>
+
+  <div class="panel status-panel">
+    <div class="ring" onclick="showHealthBreakdown()" title="View health score details" style="cursor:pointer"><div class="ring-inner"><strong id="score">87</strong><span>/100<br>Garden health</span></div></div>
+    <div class="status-text">
+      <div class="label">Garden status</div>
+      <h3>Looking good ·</h3>
+      <p>Your garden is healthy and thriving. Start with today’s care tasks.</p>
+      <div class="metrics">
+        <div class="metric"><b id="taskCount">3</b><span>Tasks<br>this week</span></div>
+        <div class="metric"><b id="attentionCount">1</b><span>Plant needs<br>attention</span></div>
+        <div class="metric"><b id="plantCount">4</b><span>Plants in<br>your garden</span></div>
+      </div>
+      <div class="scan">◷ Last scan: Today, 08:24</div><div class="reward-mini">🏆 <b id="userLevelMini">Seedling</b><span>·</span><b id="creditsMini">0 Credits</b></div>
+    </div>
+  </div>
+
+  <aside class="photo-card">
+    <button class="camera" onclick="scanGarden()">📷</button>
+    <div class="photo-label"><b>Hagit’s garden</b><span>Western Galilee climate<br>Last scan: Today, 08:24</span></div>
+  </aside>
+</section>
+
+<div class="tabs">
+  <button class="tab active" id="tab-tasks" onclick="setTab('tasks')">This week</button>
+  <button class="tab" id="tab-plants" onclick="setTab('plants')">My plants</button>
+  <button class="tab" id="tab-shopping" onclick="setTab('shopping')">Shopping</button>
+  <button class="tab" id="tab-timeline" onclick="setTab('timeline')">Timeline</button>
+  <button class="tab" id="tab-rewards" onclick="setTab('rewards')">Rewards</button>
+</div>
+
+<main class="content">
+  <section class="panel section" id="view-tasks">
+    <div class="section-head"><div><h3 id="tasksTitle">Today’s focus</h3><small id="tasksSubtitle">Cruvit shows only the care that really matters now.</small></div><button class="text-link" id="completeFocusBtn" onclick="completeAll()">Complete focus</button></div>
+    <div class="tasks" id="tasks"></div>
+  </section>
+  <section class="panel section" id="view-plants">
+    <div class="section-head"><div><h3>My plants</h3><small>Your garden at a glance.</small></div><button class="text-link" onclick="addPlant()">+ Add plant</button></div>
+    <div class="plant-strip" id="plants"></div>
+  </section>
+  <section class="panel section hidden" id="view-shopping">
+    <div class="section-head"><div><h3>Suggested shopping</h3><small>Only products that support your current tasks.</small></div></div>
+    <div class="shopping">
+      <div class="soft-row"><div><b>Available rewards</b><br><span id="shoppingRewardText">Credits can unlock store discounts.</span></div><button class="btn light" onclick="setTab('rewards')">View</button></div>
+      <div class="soft-row"><div><b>Organic fertilizer</b><br><span>Recommended for Lemon Tree this week.</span></div><button class="btn main" onclick="addOne('Organic fertilizer')">Add</button></div>
+      <div class="soft-row"><div><b>Neem oil</b><br><span>Useful if Jasmine leaves show pests.</span></div><button class="btn light" onclick="addOne('Neem oil')">Add</button></div>
+      <div class="soft-row"><div><b>Pruning gloves</b><br><span>For lavender and rosemary maintenance.</span></div><button class="btn light" onclick="addOne('Pruning gloves')">Add</button></div>
+    </div>
+  </section>
+  <section class="panel section hidden" id="view-timeline">
+    <div class="section-head"><div><h3>Garden calendar</h3><small>Tap a day to see the saved garden activity.</small></div></div>
+    <div class="timeline calendar-wrap" id="timeline"></div>
+  </section>
+
+  <section class="panel section hidden" id="view-rewards">
+    <div class="section-head"><div><h3>Cruvit rewards</h3><small>Earn credits by caring for your real garden.</small></div></div>
+    <div class="rewards-grid">
+      <div class="reward-card">
+        <h4>Current balance</h4>
+        <div class="reward-balance"><span id="creditsBalance">0</span></div>
+        <small>Cruvit Credits</small>
+        <div class="reward-progress"><i id="creditsProgress" style="width:0%"></i></div>
+        <small id="nextRewardText">Earn more credits to unlock store credit.</small>
+      </div>
+      <div class="reward-card">
+        <h4>Level</h4>
+        <div class="soft-row"><div><b id="rewardLevel">Seedling</b><br><span id="rewardLevelText">Keep caring for your garden to level up.</span></div><span>🌱</span></div>
+        <div id="achievements"></div>
+      </div>
+    </div>
+  </section>
+</main>
+</div></div>
+
+
+<div class="reward-toast" id="rewardToast">+10 Credits 🌱</div>
+
+<div class="modal" id="addPlantModal" onclick="if(event.target===this)closeAddPlantModal()">
+  <div class="modalbox" onclick="event.stopPropagation()">
+    <button class="modal-close" aria-label="Close add plant" onclick="closeAddPlantModal()">×</button>
+    <div class="modal-head">
+      <div><h3 id="addPlantTitle">Add plant</h3><p id="addPlantSubtitle">Choose where this plant comes from. Every option connects back to tasks, calendar and shopping.</p></div>
+    </div>
+    <div id="addPlantContent"></div>
+  </div>
+</div>
+
+
+<div class="plant-modal" id="plantDetailModal" onclick="if(event.target===this)closePlantPanel()">
+  <div class="plant-modalbox" onclick="event.stopPropagation()">
+    <div class="plant-modal-head">
+      <div><h3 id="plantPanelTitle">Plant</h3><p id="plantPanelSubtitle">Garden details</p></div>
+      <button class="modal-x" onclick="closePlantPanel()">×</button>
+    </div>
+    <div id="plantPanelBody"></div>
+  </div>
+</div>
+
+<div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
+<aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
+<script>
+
+const PLANT_LIBRARY=[
+ {slug:'lavender',name:'Lavender',he:'לבנדר',aliases:['lavender','lavandula','lavandula angustifolia','לבנדר','אזוביון'],scientific:'Lavandula angustifolia',icon:'🌿',status:'Healthy',mark:'✓',tags:['mediterranean','sun','low water','fragrant','לבנדר','אזוביון'],sun:'Full sun',water:'Low after established; avoid wet roots',growth:'Evergreen aromatic shrub',size:'40–70 cm',climate:'Excellent Mediterranean match',season:'Light prune after flowering',warnings:['Avoid overwatering and poorly drained soil','Can decline in humid, heavy soil','Needs strong sun for best flowering'],guide:'Lavender prefers full sun, excellent drainage and lean soil. Water young plants until established, then reduce irrigation. Prune lightly after flowering to keep it compact and prevent woody growth.',products:['Mediterranean soil mix','Pruning gloves','Drip irrigation emitter']},
+ {slug:'lemon',name:'Lemon Tree',he:'עץ לימון',aliases:['lemon','lemon tree','citrus limon','לימון','עץ לימון'],scientific:'Citrus × limon',icon:'🍋',status:'Needs fertilizer',mark:'!',tags:['citrus','fruit','sun','fertilizer','לימון','עץ לימון'],sun:'Full sun',water:'Medium–high; deep watering, then allow drainage',growth:'Evergreen citrus tree',size:'2–4 m in home gardens',climate:'Warm climate match; protect young trees from frost',season:'Feed in active growth; reduce stress in heat waves',warnings:['Yellow leaves may indicate nutrient deficiency, pests or watering imbalance','Protect young trees from frost and strong wind','Avoid waterlogged soil'],guide:'Lemon trees need full sun, regular deep watering and citrus fertilizer during the growing season. Keep soil well drained. Check leaves for yellowing, scale, leaf miner and other stress signs.',products:['Citrus fertilizer','Organic compost','Neem oil']},
+ {slug:'rosemary',name:'Rosemary',he:'רוזמרין',aliases:['rosemary','salvia rosmarinus','rosmarinus officinalis','רוזמרין'],scientific:'Salvia rosmarinus',icon:'🌱',status:'Water today',mark:'✓',tags:['herb','mediterranean','low water','sun','רוזמרין'],sun:'Full sun',water:'Low to medium; let soil dry between watering',growth:'Hardy aromatic evergreen shrub',size:'60–120 cm',climate:'Excellent Mediterranean match',season:'Light pruning after growth flushes',warnings:['Avoid heavy watering and wet roots','Do not cut hard into old bare wood','Needs bright light and airflow'],guide:'Rosemary thrives in sun, drainage and relatively dry conditions. Water deeply but not too often. Light pruning keeps it dense and productive.',products:['Herb soil mix','Pruning gloves','Drip irrigation emitter']},
+ {slug:'jasmine',name:'Jasmine',he:'יסמין',aliases:['jasmine','jasminum','יסמין'],scientific:'Jasminum spp.',icon:'🌸',status:'Check leaves',mark:'!',tags:['flowering','climber','fragrant','part shade','יסמין'],sun:'Full sun to partial shade',water:'Medium; consistent moisture in warm periods',growth:'Climber or shrub depending on species',size:'1–3 m or more with support',climate:'Good warm-climate match',season:'Prune after flowering if needed',warnings:['Check leaves for aphids, scale or mites','May need support if grown as a climber','Avoid severe drought during flowering'],guide:'Jasmine is grown for fragrant flowers and can be trained as a climber or shrub. Give it sun or light shade, regular water in warm weather and support if it climbs.',products:['Neem oil','Plant support','Organic flowering fertilizer']},
+ {slug:'pomegranate',name:'Pomegranate Tree',he:'עץ רימון',aliases:['pomegranate','pomegranate tree','punica granatum','רימון','עץ רימון','רימונים'],scientific:'Punica granatum',icon:'🍎',status:'Healthy · drought tolerant once established',mark:'✓',tags:['tree','fruit','mediterranean','sun','drought tolerant','רימון','עץ רימון'],sun:'Full sun',water:'Medium while young; low to medium after established; deep watering improves fruit',growth:'Deciduous fruit tree or large shrub',size:'2–5 m depending on pruning and variety',climate:'Excellent Mediterranean and warm dry-climate match',season:'Prune lightly in winter while dormant; fruit ripens late summer to autumn',warnings:['Needs full sun for good flowering and fruit','Fruit can split after irregular watering or sudden rain','Watch for aphids, scale, fruit fly and fungal issues in humid conditions','Can sucker from the base if not managed'],guide:'Pomegranate is a tough Mediterranean fruit tree that likes full sun, heat and well-drained soil. Water regularly during establishment and fruit development, but avoid constantly wet soil. Prune in winter to open the center, remove suckers and maintain a clear shape. It is generally drought tolerant once established, but consistent deep watering improves fruit size and reduces stress.',products:['Fruit tree fertilizer','Organic compost','Pruning shears','Fruit fly trap']},
+ {slug:'olive',name:'Olive Tree',he:'עץ זית',aliases:['olive','olive tree','olea europaea','זית','עץ זית'],scientific:'Olea europaea',icon:'🫒',status:'New · Mediterranean',mark:'✓',tags:['tree','mediterranean','drought tolerant','sun','זית','עץ זית'],sun:'Full sun',water:'Low to medium once established',growth:'Evergreen Mediterranean tree',size:'3–8 m depending on pruning',climate:'Excellent Mediterranean match',season:'Prune lightly in late winter or early spring',warnings:['Needs well-drained soil','Avoid frequent shallow watering','Fruit drop can occur under stress'],guide:'Olive trees thrive in sunny Mediterranean climates and well-drained soil. Water young trees regularly until established, then reduce irrigation. Prune to shape and improve airflow.',products:['Tree stakes','Organic compost','Pruning shears']},
+ {slug:'hydrangea',name:'Hydrangea',he:'הידרנגאה',aliases:['hydrangea','hydrangea macrophylla','הידרנגאה','הורטנזיה'],scientific:'Hydrangea macrophylla',icon:'🌺',status:'Needs shade and water',mark:'!',tags:['flowering','shade','water','hydrangea','הידרנגאה'],sun:'Morning sun / afternoon shade',water:'Medium–high; keep soil evenly moist',growth:'Deciduous flowering shrub',size:'1–2 m',climate:'Best in mild climates or protected shade',season:'Pruning depends on variety; avoid harsh summer sun',warnings:['Wilts quickly in heat and direct afternoon sun','Soil pH may affect flower color in some varieties','Do not let roots dry out'],guide:'Hydrangeas prefer rich, moist soil and protection from hot afternoon sun. They are sensitive to drought and heat, so mulch and regular watering are important.',products:['Mulch','Flowering shrub fertilizer','Moisture meter']},
+ {slug:'bougainvillea',name:'Bougainvillea',he:'בוגנוויליה',aliases:['bougainvillea','בוגנוויליה'],scientific:'Bougainvillea spp.',icon:'🌺',status:'Sun lover',mark:'✓',tags:['climber','color','sun','low water','בוגנוויליה'],sun:'Full sun',water:'Low to medium once established',growth:'Vigorous climber / shrub',size:'2–6 m',climate:'Warm climate match; frost sensitive',season:'Prune after flowering flushes',warnings:['Thorns can scratch skin','Too much water or fertilizer can reduce flowering','Protect from frost'],guide:'Bougainvillea needs strong sun and good drainage. It flowers best when not overwatered. Train it on a support and prune after flowering to control size.',products:['Plant support','Pruning gloves','Slow-release fertilizer']},
+ {slug:'mint',name:'Mint',he:'נענע',aliases:['mint','mentha','נענע','מנטה'],scientific:'Mentha spp.',icon:'🌿',status:'Vigorous grower',mark:'✓',tags:['herb','water','container','נענע'],sun:'Partial sun to light shade',water:'Medium–high; likes moisture',growth:'Fast spreading herb',size:'20–60 cm',climate:'Adaptable; prefers cooler moisture',season:'Cut often to keep fresh growth',warnings:['Can spread aggressively in garden beds','Best grown in a pot or contained area','May wilt in extreme heat'],guide:'Mint is easy and useful but spreads fast. Keep it in a pot or contained area, water regularly and harvest often to encourage fresh leaves.',products:['Herb pot','Potting soil','Organic herb fertilizer']},
+ {slug:'basil',name:'Basil',he:'בזיליקום',aliases:['basil','ocimum basilicum','בזיליקום','ריחן'],scientific:'Ocimum basilicum',icon:'🌱',status:'Seasonal herb',mark:'✓',tags:['herb','sun','annual','water','בזיליקום'],sun:'Full sun to partial sun',water:'Medium; keep evenly moist',growth:'Annual herb',size:'30–60 cm',climate:'Warm-season plant',season:'Pinch flowers to keep leaves tender',warnings:['Sensitive to cold','Needs regular harvesting','Watch for downy mildew in humid conditions'],guide:'Basil grows best in warm weather, good light and moist but drained soil. Pinch tips and flower buds to keep the plant bushy and productive.',products:['Herb pot','Organic herb fertilizer','Drip tray']},
+ {slug:'succulent',name:'Succulent',he:'סוקולנט',aliases:['succulent','cactus','סוקולנט','קקטוס'],scientific:'Various succulent species',icon:'🌵',status:'Low water',mark:'✓',tags:['low water','container','sun','סוקולנט'],sun:'Bright light; some direct sun',water:'Low; water only when soil dries',growth:'Slow to moderate',size:'Varies by species',climate:'Dry, warm conditions preferred',season:'Reduce watering in cool seasons',warnings:['Overwatering is the main risk','Needs drainage holes in pots','Some species can sunburn if moved suddenly'],guide:'Succulents store water and need excellent drainage. Water thoroughly, then let soil dry. Use a gritty mix and avoid leaving pots standing in water.',products:['Cactus/succulent mix','Clay pot','Moisture meter']},
+
+ {slug:'mango',name:'Mango Tree',he:'עץ מנגו',aliases:['mango','mango tree','mangifera indica','מנגו','עץ מנגו','mangoes'],scientific:'Mangifera indica',icon:'🥭',status:'Needs warm protected spot',mark:'!',tags:['tree','fruit','tropical','sun','מנגו','עץ מנגו'],sun:'Full sun; protected from strong cold winds',water:'Medium; deep regular watering while young and during fruit set',growth:'Evergreen tropical/subtropical fruit tree',size:'3–10 m depending on variety and pruning',climate:'Possible in warm frost-free Mediterranean microclimates; young trees need winter protection',season:'Feed in spring and summer; prune lightly after harvest to shape',warnings:['Sensitive to frost, especially when young','Needs good drainage; avoid waterlogged soil','Flowering and fruiting can be affected by cold, wind and humidity','Some people are sensitive to mango sap'],guide:'Mango is a warm-climate evergreen fruit tree that needs full sun, excellent drainage and protection from frost and cold winds. In Mediterranean gardens it performs best in a warm, sheltered microclimate such as a south-facing wall or protected courtyard. Water young trees deeply and regularly, then reduce frequency once established while avoiding drought during flowering and fruit development. Use balanced fruit-tree feeding during active growth and avoid heavy pruning except for shaping after harvest. Mulch helps stabilize soil moisture but keep mulch away from the trunk. Check for scale insects, fungal problems after humid weather and stress after cold nights.',products:['Fruit tree fertilizer','Organic compost','Mulch','Tree stakes']},
+ {slug:'lychee',name:'Lychee Tree',he:'עץ ליצ׳י',aliases:['lychee','lychee tree','litchi','lichi','litchi chinensis','ליצי','ליצ׳י','עץ ליצי','עץ ליצ׳י'],scientific:'Litchi chinensis',icon:'🍒',status:'Needs humidity and protection',mark:'!',tags:['tree','fruit','subtropical','sun','ליצי','ליצ׳י'],sun:'Full sun after establishment; young trees prefer protection',water:'Medium–high; consistent moisture, especially in heat and fruiting',growth:'Evergreen subtropical fruit tree',size:'4–10 m, usually smaller in home gardens',climate:'Can grow in warm frost-free areas; sensitive to dry winds and frost',season:'Avoid heavy pruning; feed lightly in active growth and protect young flushes',warnings:['Very sensitive to frost when young','Dry winds and heat stress can burn new growth','Needs consistent moisture but not waterlogged soil','Fruit set can be inconsistent outside ideal subtropical conditions'],guide:'Lychee is a subtropical evergreen fruit tree that prefers warmth, humidity, full sun and protection from frost and hot dry winds. Young trees need careful watering and shelter while roots establish. Keep soil evenly moist but well drained, and mulch the root zone to reduce heat stress. Avoid heavy pruning because lychee fruits on mature shoots. In drier Mediterranean climates it needs a protected microclimate and attentive summer watering. Watch for leaf burn, scale insects and stress during dry heat waves.',products:['Mulch','Moisture meter','Fruit tree fertilizer','Wind protection net']},
+ {slug:'avocado',name:'Avocado Tree',he:'עץ אבוקדו',aliases:['avocado','avocado tree','persea americana','אבוקדו','עץ אבוקדו'],scientific:'Persea americana',icon:'🥑',status:'Needs drainage and wind protection',mark:'!',tags:['tree','fruit','subtropical','sun','אבוקדו'],sun:'Full sun; young trees benefit from protection',water:'Medium; deep irrigation, avoid both drought and waterlogging',growth:'Evergreen subtropical fruit tree',size:'4–10 m depending on variety and pruning',climate:'Good in mild frost-free Mediterranean areas with shelter from wind',season:'Feed during active growth; prune lightly to shape',warnings:['Very sensitive to poor drainage and root rot','Young trees are sensitive to frost and sunburn','Needs wind protection; brittle branches can break','Fruit set may require compatible flowering types for some varieties'],guide:'Avocado needs full sun, excellent drainage and protection from wind and frost. Water deeply but let the soil breathe between irrigations; constant wet soil can lead to root problems. Mulch is useful, but keep it away from the trunk. Young trees may need shade on the trunk and protection in winter. Fertilize gradually during active growth and avoid heavy pruning. Check leaf tips and canopy vigor to detect salt, drought or root stress.',products:['Avocado/citrus fertilizer','Mulch','Tree guard','Moisture meter']},
+ {slug:'fig',name:'Fig Tree',he:'עץ תאנה',aliases:['fig','fig tree','ficus carica','תאנה','עץ תאנה'],scientific:'Ficus carica',icon:'🟣',status:'Mediterranean fruit tree',mark:'✓',tags:['tree','fruit','mediterranean','sun','תאנה'],sun:'Full sun',water:'Low to medium once established; deep water improves fruit',growth:'Deciduous fruit tree',size:'3–6 m depending on pruning',climate:'Excellent Mediterranean match',season:'Prune in winter; harvest summer to autumn depending on variety',warnings:['Roots can be strong; avoid planting too close to pipes or foundations','Fruit attracts birds and insects','Overwatering can reduce fruit quality','Sap may irritate skin'],guide:'Fig is a resilient Mediterranean fruit tree for full sun and well-drained soil. Water young trees regularly; mature trees tolerate dry periods but fruit better with deep irrigation. Prune in winter to control size and remove crowded branches. Give enough space because figs can become broad. Harvest ripe fruit promptly to reduce pests and mess. Avoid excessive fertilizer that creates leaves at the expense of fruit.',products:['Pruning shears','Mulch','Fruit protection net','Compost']},
+ {slug:'grapevine',name:'Grapevine',he:'גפן',aliases:['grape','grapevine','vitis vinifera','גפן','ענבים'],scientific:'Vitis vinifera',icon:'🍇',status:'Needs pruning',mark:'!',tags:['climber','fruit','mediterranean','sun','גפן'],sun:'Full sun',water:'Low to medium once established; deep watering during fruit development',growth:'Deciduous climbing vine',size:'Variable; trained on trellis/pergola',climate:'Excellent Mediterranean match',season:'Winter pruning is essential; monitor in spring and summer',warnings:['Requires correct annual pruning for fruiting','Susceptible to powdery mildew and downy mildew','Needs trellis or pergola support','Birds may eat fruit'],guide:'Grapevine thrives in sunny Mediterranean climates and must be trained on a support. Winter pruning is important because fruit develops on new growth from selected buds. Water deeply during establishment and fruit development, but avoid constant wet foliage. Good airflow reduces mildew risk. Monitor leaves for powdery mildew and pests. Fertilize moderately; too much nitrogen creates excessive leafy growth.',products:['Trellis wire','Pruning shears','Sulfur/fungus prevention product','Fruit net']},
+ {slug:'guava',name:'Guava Tree',he:'עץ גויאבה',aliases:['guava','guava tree','psidium guajava','גויאבה','עץ גויאבה'],scientific:'Psidium guajava',icon:'🍈',status:'Warm fruit tree',mark:'✓',tags:['tree','fruit','sun','גויאבה'],sun:'Full sun',water:'Medium; regular water improves fruit',growth:'Evergreen or semi-evergreen fruit tree',size:'2–6 m',climate:'Good in warm Mediterranean areas; protect from frost when young',season:'Prune after fruiting to shape and control size',warnings:['Can be sensitive to frost when young','Fruit may attract flies and birds','Needs good drainage','May become dense without pruning'],guide:'Guava grows best in warm sunny conditions with regular watering and well-drained soil. It can tolerate some dryness once established but fruits better with steady moisture. Prune after fruiting to keep an open shape and manageable size. Protect young trees from frost. Monitor fruit for fruit fly in areas where it is common. Mulch and compost help maintain steady growth.',products:['Fruit fly trap','Organic compost','Pruning shears','Mulch']},
+ {slug:'strawberry-guava',name:'Strawberry Guava',he:'גויאבה תותית',aliases:['strawberry guava','psidium cattleianum','cherry guava','גויאבה תותית'],scientific:'Psidium cattleianum',icon:'🍓',status:'Hardy fruit shrub/tree',mark:'✓',tags:['tree','fruit','sun','גויאבה תותית'],sun:'Full sun to partial shade',water:'Medium; tolerates short dry periods once established',growth:'Evergreen shrub or small tree',size:'2–5 m',climate:'Good warm-climate match; more tolerant than many tropical fruits',season:'Prune after fruiting to shape',warnings:['Can self-seed in some climates','Fruit drop can be messy','Watch for fruit fly where relevant','Needs pruning to prevent dense growth'],guide:'Strawberry guava is an evergreen fruiting shrub or small tree with good tolerance for warm climates. It grows in sun or light shade and benefits from regular watering during fruiting. Prune after harvest to keep it compact and airy. It can become dense and may self-seed in suitable climates. Harvest fruit when fully colored and soft. Use mulch and compost to support steady growth.',products:['Pruning shears','Fruit fly trap','Compost','Mulch']},
+ {slug:'mulberry',name:'Mulberry Tree',he:'עץ תות',aliases:['mulberry','mulberry tree','morus','morus alba','morus nigra','תות עץ','עץ תות'],scientific:'Morus spp.',icon:'🫐',status:'Fast growing shade tree',mark:'✓',tags:['tree','fruit','sun','תות'],sun:'Full sun',water:'Medium while young; low to medium once established',growth:'Deciduous fast-growing tree',size:'5–12 m depending on species and pruning',climate:'Good Mediterranean match; many types are hardy',season:'Prune in winter to control size',warnings:['Fruit can stain paving and attract birds','Roots and canopy need space','Fast growth requires size management','Avoid planting too close to hardscape'],guide:'Mulberry is a vigorous deciduous tree grown for shade and fruit. It needs full sun and space. Water young trees regularly until established, then deep water during dry periods. Prune in winter to control height and shape. Keep fruiting varieties away from paving and cars because fruit can stain. Choose the right species or cultivar for your garden size.',products:['Pruning saw','Mulch','Fruit net','Tree stakes']},
+ {slug:'passionfruit',name:'Passionfruit Vine',he:'פסיפלורה',aliases:['passionfruit','passion fruit','passiflora edulis','פסיפלורה'],scientific:'Passiflora edulis',icon:'🟣',status:'Vigorous climber',mark:'✓',tags:['climber','fruit','sun','פסיפלורה'],sun:'Full sun to partial shade',water:'Medium; consistent moisture in heat',growth:'Evergreen or semi-evergreen climbing vine',size:'3–8 m on support',climate:'Warm-climate match; protect from frost',season:'Prune to control growth after fruiting',warnings:['Needs strong support','Can grow aggressively','Sensitive to frost','Fruit set may vary with pollination'],guide:'Passionfruit is a fast climbing vine that needs a strong fence, trellis or pergola. It prefers sun, warmth and consistent moisture. Mulch helps keep roots cool. Prune after fruiting to control size and remove tangled growth. Protect from frost and strong dry winds. Watch for pests on new growth and support heavy vines well.',products:['Trellis support','Mulch','Organic flowering fertilizer','Tie tape']},
+ {slug:'apple',name:'Apple Tree',he:'עץ תפוח',aliases:['apple','apple tree','malus domestica','תפוח','עץ תפוח'],scientific:'Malus domestica',icon:'🍎',status:'Needs suitable chill variety',mark:'!',tags:['tree','fruit','sun','תפוח'],sun:'Full sun',water:'Medium; deep regular watering in season',growth:'Deciduous fruit tree',size:'2–5 m depending on rootstock',climate:'Needs variety matched to winter chill; low-chill cultivars suit warmer areas',season:'Winter pruning; thinning fruit may improve quality',warnings:['Requires suitable chill hours for fruiting','May need pollination partner','Susceptible to aphids, codling moth and fungal diseases','Not every variety suits warm climates'],guide:'Apple trees need full sun, winter dormancy and a variety matched to local chill hours. In warmer Mediterranean areas choose low-chill cultivars and check pollination needs. Water deeply during the growing season and avoid water stress while fruit develops. Prune in winter to shape the tree and maintain productive branches. Monitor for pests and disease. Mulch and balanced feeding support healthy growth.',products:['Fruit tree fertilizer','Pest monitoring trap','Pruning shears','Mulch']},
+ {slug:'pear',name:'Pear Tree',he:'עץ אגס',aliases:['pear','pear tree','pyrus communis','אגס','עץ אגס'],scientific:'Pyrus communis',icon:'🍐',status:'Needs suitable variety',mark:'!',tags:['tree','fruit','sun','אגס'],sun:'Full sun',water:'Medium; deep watering in season',growth:'Deciduous fruit tree',size:'3–6 m depending on rootstock',climate:'Needs chill and compatible variety; some low-chill pears suit warm areas',season:'Winter pruning; thin fruit if needed',warnings:['May need a pollination partner','Variety must match local chill conditions','Can suffer fire blight in some regions','Needs structured pruning when young'],guide:'Pear trees require full sun, winter dormancy and the right variety for local climate. Some cultivars need a compatible pollinator. Water consistently during fruit development and prune in winter to establish strong structure. Avoid excessive nitrogen. Monitor for fire blight symptoms and pests where common. Choose rootstock and variety by garden size and climate.',products:['Fruit tree fertilizer','Pruning shears','Mulch','Pest monitoring trap']},
+ {slug:'peach',name:'Peach Tree',he:'עץ אפרסק',aliases:['peach','peach tree','prunus persica','אפרסק','עץ אפרסק'],scientific:'Prunus persica',icon:'🍑',status:'Needs pruning and pest checks',mark:'!',tags:['tree','fruit','sun','אפרסק'],sun:'Full sun',water:'Medium; regular deep watering during fruit development',growth:'Deciduous stone-fruit tree',size:'2–5 m depending on pruning',climate:'Choose chill requirement suitable to the region',season:'Winter pruning; fruit thinning in spring',warnings:['Requires annual pruning for fruit quality','Susceptible to leaf curl and fruit pests','Needs variety matched to chill hours','Fruit thinning may be needed'],guide:'Peach trees need full sun, a suitable chill-hours variety and disciplined pruning. Water deeply during fruit development and mulch to reduce stress. Prune in winter to keep an open productive shape. Thin fruit when needed to improve size and reduce branch breakage. Watch for peach leaf curl and other pests. Avoid wet foliage and keep airflow through the canopy.',products:['Pruning shears','Copper/fungus prevention product','Fruit thinning scissors','Mulch']},
+ {slug:'plum',name:'Plum Tree',he:'עץ שזיף',aliases:['plum','plum tree','prunus domestica','prunus salicina','שזיף','עץ שזיף'],scientific:'Prunus spp.',icon:'🟣',status:'Fruit tree · check variety',mark:'✓',tags:['tree','fruit','sun','שזיף'],sun:'Full sun',water:'Medium; deep watering in dry periods',growth:'Deciduous fruit tree',size:'3–6 m depending on rootstock and pruning',climate:'Good if variety matches winter chill and pollination needs',season:'Winter pruning; fruit thinning if heavy crop',warnings:['Some varieties need a pollination partner','Fruit pests may be an issue','Can overcrop without thinning','Needs good drainage'],guide:'Plums need full sun, good drainage and a variety suited to local chill conditions. Many plums benefit from cross-pollination. Water deeply during dry periods and fruit development. Prune to create an open structure and remove crossing branches. Thin very heavy crops to reduce branch breakage. Watch for fruit fly and fungal problems where common.',products:['Fruit fly trap','Pruning shears','Compost','Mulch']},
+ {slug:'apricot',name:'Apricot Tree',he:'עץ משמש',aliases:['apricot','apricot tree','prunus armeniaca','משמש','עץ משמש'],scientific:'Prunus armeniaca',icon:'🍑',status:'Early flowering fruit tree',mark:'!',tags:['tree','fruit','sun','משמש'],sun:'Full sun',water:'Medium; avoid excess moisture',growth:'Deciduous stone-fruit tree',size:'3–6 m',climate:'Suitable where late frost is rare; early bloom can be vulnerable',season:'Prune after harvest or during dormancy depending local practice',warnings:['Early blossoms can be damaged by late frost','Needs good drainage','Susceptible to fungal disease in wet conditions','Fruit pests may need monitoring'],guide:'Apricot is a sun-loving stone fruit that flowers early, so it needs a site with low late-frost risk. Provide well-drained soil and moderate deep watering. Avoid excessive moisture around roots. Prune to maintain an open canopy and remove dead or diseased wood. Monitor fruit pests and fungal issues after wet weather. Choose a cultivar suited to your local climate.',products:['Pruning shears','Compost','Fungal prevention product','Mulch']},
+ {slug:'orange',name:'Orange Tree',he:'עץ תפוז',aliases:['orange','orange tree','citrus sinensis','תפוז','עץ תפוז'],scientific:'Citrus sinensis',icon:'🍊',status:'Citrus care',mark:'✓',tags:['citrus','tree','fruit','sun','תפוז'],sun:'Full sun',water:'Medium–high; deep watering',growth:'Evergreen citrus tree',size:'3–6 m depending on variety',climate:'Good warm Mediterranean match; protect young trees from frost',season:'Feed citrus in spring and summer; harvest depends on variety',warnings:['Yellow leaves may indicate nutrient or watering issues','Protect from frost when young','Watch for scale, leaf miner and aphids','Avoid waterlogged soil'],guide:'Orange trees need full sun, regular deep watering and citrus fertilizer during active growth. Soil must drain well. Mulch helps maintain moisture, but keep it away from the trunk. Protect young trees from frost and strong winds. Monitor leaf color and pest activity. Prune lightly to remove dead wood and improve airflow.',products:['Citrus fertilizer','Neem oil','Organic compost','Mulch']},
+ {slug:'mandarin',name:'Mandarin / Clementine Tree',he:'עץ קלמנטינה',aliases:['mandarin','clementine','clementine tree','citrus reticulata','קלמנטינה','מנדרינה','עץ קלמנטינה'],scientific:'Citrus reticulata',icon:'🍊',status:'Citrus care',mark:'✓',tags:['citrus','tree','fruit','sun','קלמנטינה'],sun:'Full sun',water:'Medium–high; deep watering',growth:'Evergreen citrus tree',size:'2–4 m',climate:'Good warm Mediterranean match; young trees need frost protection',season:'Feed in active growth; fruit ripens by variety',warnings:['Watch for citrus leaf miner on new flushes','Yellowing leaves can indicate nutrient deficiency','Avoid waterlogged soil','Protect young trees from frost'],guide:'Mandarin and clementine trees are manageable citrus for sunny gardens. They need deep irrigation, drainage and citrus fertilizer during active growth. Young trees benefit from wind and frost protection. Watch new leaves for citrus leaf miner and pests. Prune lightly and avoid removing too much canopy. Mulch helps reduce summer stress.',products:['Citrus fertilizer','Neem oil','Mulch','Drip irrigation emitter']},
+ {slug:'date-palm',name:'Date Palm',he:'דקל תמר',aliases:['date palm','phoenix dactylifera','תמר','דקל תמר'],scientific:'Phoenix dactylifera',icon:'🌴',status:'Large palm · full sun',mark:'✓',tags:['palm','tree','sun','dry','תמר'],sun:'Full sun',water:'Medium; deep irrigation improves growth',growth:'Large palm',size:'10–20 m+',climate:'Excellent hot dry-climate match; needs space',season:'Maintenance depends on fruiting and frond management',warnings:['Needs significant space and height clearance','Old fronds and fruit clusters can be heavy','Professional pruning may be needed','Not suited to small gardens'],guide:'Date palm is a large sun-loving palm for warm dry climates. It needs room for height, trunk and fronds. Water deeply during establishment and in hot periods. Mature palms tolerate heat well but still benefit from irrigation. Frond removal and fruit cluster management can require professional help. Do not plant under wires or close to structures.',products:['Palm fertilizer','Deep watering system','Professional pruning service','Mulch']},
+ {slug:'queen-palm',name:'Queen Palm',he:'דקל קוקוס ננסי / סיאגרוס',aliases:['queen palm','syagrus romanzoffiana','דקל סיאגרוס','סיאגרוס'],scientific:'Syagrus romanzoffiana',icon:'🌴',status:'Ornamental palm',mark:'✓',tags:['palm','sun','ornamental','דקל'],sun:'Full sun',water:'Medium; regular water improves appearance',growth:'Tall ornamental palm',size:'8–15 m',climate:'Warm-climate ornamental palm; avoid severe frost',season:'Remove dead fronds safely',warnings:['Falling fruit can be messy','Nutrient deficiencies can yellow fronds','Needs space above','Professional pruning may be needed'],guide:'Queen palm is a fast-growing ornamental palm for full sun and warm climates. It looks best with regular water and balanced palm fertilizer. Avoid severe frost and provide space for the crown. Remove dead fronds safely, and consider fruit mess near paths. Yellowing can indicate nutrient deficiency. It is decorative but not ideal for very small spaces.',products:['Palm fertilizer','Mulch','Professional pruning service','Deep watering system']},
+ {slug:'cycas',name:'Sago Palm / Cycas',he:'ציקס',aliases:['sago palm','cycas','cycas revoluta','ציקס'],scientific:'Cycas revoluta',icon:'🌴',status:'Toxic ornamental',mark:'!',tags:['ornamental','low water','sun','ציקס'],sun:'Full sun to partial shade',water:'Low to medium; avoid overwatering',growth:'Slow-growing cycad',size:'1–2 m over time',climate:'Good warm-climate ornamental; protect from hard frost',season:'Remove old leaves carefully',warnings:['Highly toxic to pets and people if eaten, especially seeds','Sharp leaflets can scratch','Slow growing; avoid frequent transplanting','Needs excellent drainage'],guide:'Cycas is a slow-growing ornamental cycad often called sago palm. It needs bright light, drainage and moderate to low watering. Overwatering can damage roots. It is highly toxic if ingested, especially to dogs and children, so placement matters. Remove old fronds carefully and avoid cutting healthy new flushes. Use a well-drained soil mix.',products:['Well-draining soil mix','Gloves','Slow-release fertilizer','Pet-safe plant barrier']},
+ {slug:'hibiscus',name:'Hibiscus',he:'היביסקוס',aliases:['hibiscus','hibiscus rosa-sinensis','היביסקוס'],scientific:'Hibiscus rosa-sinensis',icon:'🌺',status:'Flowering shrub',mark:'✓',tags:['flowering','shrub','sun','היביסקוס'],sun:'Full sun to partial sun',water:'Medium; regular water in heat',growth:'Evergreen flowering shrub in warm climates',size:'1–3 m',climate:'Good warm-climate match; protect from frost',season:'Prune lightly to shape; feed during flowering season',warnings:['Aphids and whiteflies can appear on new growth','Needs protection from frost','Flowering drops under water stress','Can become leggy without pruning'],guide:'Hibiscus is a colorful flowering shrub for warm sunny gardens. It needs regular watering during heat and feeding during active flowering. Prune lightly to shape and encourage branching. Protect from frost and cold winds. Watch for aphids, whiteflies and yellow leaves. Place where flowers can be enjoyed up close.',products:['Flowering shrub fertilizer','Neem oil','Pruning shears','Mulch']},
+ {slug:'agapanthus',name:'Agapanthus',he:'אגפנתוס',aliases:['agapanthus','lily of the nile','אגפנתוס'],scientific:'Agapanthus spp.',icon:'💠',status:'Hardy flowering perennial',mark:'✓',tags:['flowering','perennial','sun','אגפנתוס'],sun:'Full sun to partial shade',water:'Low to medium once established',growth:'Clumping perennial',size:'40–100 cm flower stems',climate:'Good Mediterranean match',season:'Remove spent flower stalks; divide crowded clumps',warnings:['Can spread by seed in some regions','Flowering is weaker in deep shade','Needs drainage','May need division after several years'],guide:'Agapanthus is a tough clumping perennial with blue or white summer flowers. It grows in sun or light shade and tolerates dry periods once established. Water during establishment and flowering for best results. Remove spent flower stalks and divide overcrowded clumps. It works well along paths and borders. Avoid heavy wet soil.',products:['Compost','Drip irrigation emitter','Garden gloves','Pruning snips']},
+ {slug:'strelitzia',name:'Bird of Paradise',he:'סטרליציה',aliases:['bird of paradise','strelitzia','strelitzia reginae','סטרליציה'],scientific:'Strelitzia reginae',icon:'🧡',status:'Architectural flowering plant',mark:'✓',tags:['ornamental','flowering','sun','סטרליציה'],sun:'Full sun to partial sun',water:'Medium; let upper soil dry slightly',growth:'Clumping evergreen perennial',size:'1–2 m',climate:'Good warm-climate ornamental; protect from frost',season:'Remove old leaves and spent flowers',warnings:['Needs space for wide leaves','Flowering improves with light and maturity','Avoid waterlogged soil','Leaves can tear in wind'],guide:'Strelitzia gives a tropical architectural look with bold leaves and orange flowers. It needs bright light, warmth and well-drained soil. Water regularly but avoid soggy roots. It may take time to flower, especially when young. Remove old leaves and dead flower stalks. Protect from frost and strong winds if possible.',products:['Slow-release fertilizer','Compost','Pruning snips','Mulch']},
+ {slug:'monstera',name:'Monstera',he:'מונסטרה',aliases:['monstera','monstera deliciosa','מונסטרה'],scientific:'Monstera deliciosa',icon:'🌿',status:'Indoor / shade plant',mark:'✓',tags:['houseplant','shade','indoor','מונסטרה'],sun:'Bright indirect light; avoid harsh direct sun',water:'Medium; water when top soil dries',growth:'Climbing tropical houseplant',size:'1–3 m indoors with support',climate:'Houseplant or shaded warm protected garden',season:'Feed lightly in spring and summer',warnings:['Toxic to pets if chewed','Needs support as it grows','Overwatering causes root problems','Leaves can burn in direct sun'],guide:'Monstera is a tropical foliage plant for bright indirect light. Water when the top layer of soil dries and use a pot with drainage. Provide a moss pole or support as it grows. Wipe leaves and avoid harsh direct sun. It is toxic to pets if chewed. Feed lightly during active growth.',products:['Moss pole','Indoor potting mix','Moisture meter','Houseplant fertilizer']},
+ {slug:'ficus-benjamina',name:'Weeping Fig',he:'פיקוס בנימינה',aliases:['ficus benjamina','weeping fig','פיקוס בנימינה'],scientific:'Ficus benjamina',icon:'🌳',status:'Foliage tree',mark:'✓',tags:['tree','houseplant','shade','פיקוס'],sun:'Bright indirect light to partial sun',water:'Medium; allow slight drying between watering',growth:'Evergreen foliage tree',size:'2–8 m depending on location',climate:'Indoor or warm protected outdoor site',season:'Prune lightly to shape',warnings:['Can drop leaves after moving or stress','Roots can be aggressive outdoors','Sensitive to overwatering','Sap may irritate skin'],guide:'Ficus benjamina is a popular indoor or protected outdoor foliage tree. It prefers stable conditions, bright light and moderate watering. Sudden changes in light, temperature or watering often cause leaf drop. Outdoors, give it space because roots can be strong. Prune lightly to maintain shape. Avoid waterlogged soil.',products:['Indoor plant fertilizer','Moisture meter','Pruning shears','Potting mix']},
+ {slug:'aloe-vera',name:'Aloe Vera',he:'אלוורה',aliases:['aloe','aloe vera','אלוורה'],scientific:'Aloe vera',icon:'🌵',status:'Low water succulent',mark:'✓',tags:['succulent','low water','sun','אלוורה'],sun:'Bright light; morning sun or filtered sun',water:'Low; let soil dry before watering',growth:'Clumping succulent',size:'30–70 cm',climate:'Warm dry conditions; protect from frost and heavy rain',season:'Reduce watering in winter',warnings:['Overwatering is the main risk','Can sunburn if moved suddenly to harsh sun','Needs drainage','Gel use should be cautious; not all parts are edible'],guide:'Aloe vera is a low-water succulent that needs bright light and excellent drainage. Water deeply only when soil is dry. Use a gritty potting mix and never leave the pot sitting in water. Protect from frost and prolonged rain. Move gradually into stronger sun to prevent sunburn. Remove offsets if the clump becomes crowded.',products:['Cactus/succulent mix','Clay pot','Moisture meter','Drainage gravel']},
+ {slug:'geranium',name:'Geranium / Pelargonium',he:'גרניום',aliases:['geranium','pelargonium','גרניום'],scientific:'Pelargonium spp.',icon:'🌸',status:'Flowering patio plant',mark:'✓',tags:['flowering','sun','container','גרניום'],sun:'Full sun to partial sun',water:'Medium; let soil dry slightly between watering',growth:'Flowering perennial/subshrub in warm climates',size:'20–80 cm',climate:'Excellent Mediterranean patio plant',season:'Deadhead flowers; trim leggy growth',warnings:['Overwatering can cause rot','Flowering reduces in deep shade','Watch for caterpillars and fungal issues','Some types are sensitive to frost'],guide:'Pelargoniums, commonly called geraniums, are reliable flowering plants for sunny balconies and gardens. They need good light, drainage and moderate watering. Remove spent flowers to encourage more blooms. Trim leggy stems to keep plants compact. Avoid overwatering and protect from frost where relevant. They work very well in containers.',products:['Flowering plant fertilizer','Potting mix','Pruning snips','Balcony planter']},
+ {slug:'cyclamen',name:'Cyclamen',he:'רקפת',aliases:['cyclamen','cyclamen persicum','רקפת'],scientific:'Cyclamen persicum',icon:'🌸',status:'Cool-season flower',mark:'✓',tags:['flowering','shade','winter','רקפת'],sun:'Bright shade or morning sun in cool weather',water:'Medium; keep soil lightly moist but not soggy',growth:'Cool-season tuberous flowering plant',size:'15–30 cm',climate:'Best in cool season; dislikes heat',season:'Flowers in cool months; dormancy in heat is normal',warnings:['Heat can cause decline or dormancy','Avoid watering the crown directly','Needs drainage','Toxic if eaten by pets'],guide:'Cyclamen is a cool-season flowering plant for bright shade and mild winter conditions. Keep soil lightly moist but never waterlogged. Avoid pouring water into the crown. In warm weather it may go dormant, which is natural. Remove faded flowers by twisting stems from the base. Protect from hot sun and heavy rain.',products:['Shade planter','Potting mix','Small watering can','Mulch']},
+ {slug:'camellia',name:'Camellia',he:'קמליה',aliases:['camellia','camellia japonica','קמליה'],scientific:'Camellia spp.',icon:'🌺',status:'Acid-loving shrub',mark:'!',tags:['flowering','shade','acid soil','קמליה'],sun:'Partial shade; morning sun is best',water:'Medium; keep evenly moist',growth:'Evergreen flowering shrub',size:'1–4 m depending on species',climate:'Best in mild protected areas with acidic soil',season:'Mulch roots; prune lightly after flowering',warnings:['Needs acidic soil; may yellow in alkaline soil','Sensitive to hot dry wind','Avoid root disturbance','Bud drop can occur from stress'],guide:'Camellias are elegant evergreen shrubs that prefer partial shade, acidic soil and steady moisture. They do best in protected mild gardens rather than hot exposed sites. Mulch shallow roots and avoid digging around them. Prune lightly after flowering if needed. Yellow leaves may indicate alkaline soil or nutrient issues. Water consistently during bud formation.',products:['Acid-loving plant fertilizer','Mulch','Moisture meter','Compost']},
+ {slug:'azalea',name:'Azalea',he:'אזליאה',aliases:['azalea','rhododendron','אזליאה'],scientific:'Rhododendron spp.',icon:'🌺',status:'Acid-loving flowering shrub',mark:'!',tags:['flowering','shade','acid soil','אזליאה'],sun:'Partial shade; avoid hot afternoon sun',water:'Medium; keep moist but drained',growth:'Evergreen or deciduous flowering shrub',size:'0.5–2 m',climate:'Best in mild protected acidic soil conditions',season:'Prune lightly after flowering; mulch roots',warnings:['Needs acidic soil','Sensitive to heat and dry wind','Toxic if eaten by pets or people','Shallow roots dry quickly'],guide:'Azaleas need acidic soil, partial shade and consistent moisture. They are sensitive to alkaline soil, hot afternoon sun and dry winds. Mulch around the roots and avoid deep cultivation. Prune only lightly after flowering. Use fertilizer made for acid-loving plants. Keep away from pets and children if ingestion is a concern.',products:['Acid-loving plant fertilizer','Mulch','Shade cloth','Moisture meter']},
+ {slug:'melaleuca',name:'Melaleuca',he:'מללויקה',aliases:['melaleuca','paperbark','מללויקה','melaleuca incana'],scientific:'Melaleuca spp.',icon:'🌿',status:'Hardy Australian shrub/tree',mark:'✓',tags:['tree','shrub','sun','drought tolerant','מללויקה'],sun:'Full sun',water:'Low to medium once established',growth:'Evergreen shrub or small tree',size:'2–8 m depending on species',climate:'Good for warm dry gardens; species selection matters',season:'Prune lightly after flowering if needed',warnings:['Size varies greatly by species','Needs drainage','Some species dislike heavy pruning into old wood','Check mature width before planting'],guide:'Melaleuca species are hardy evergreen shrubs or trees, often suited to dry sunny gardens. Choose the species carefully because mature size varies. Water until established, then reduce frequency. Provide good drainage and avoid heavy pruning into old woody growth. Light pruning after flowering helps shape the plant. Good for informal, naturalistic planting.',products:['Mulch','Pruning shears','Drip irrigation emitter','Native plant fertilizer']},
+ {slug:'black-eyed-susan-vine',name:'Black-eyed Susan Vine',he:'סוזן שחורת העין',aliases:['black eyed susan vine','thunbergia alata','black-eyed susan','סוזן שחורת העין'],scientific:'Thunbergia alata',icon:'🌼',status:'Flowering climber',mark:'✓',tags:['climber','flowering','sun','סוזן'],sun:'Full sun to partial sun',water:'Medium; regular water in containers',growth:'Fast flowering climber',size:'1–3 m on support',climate:'Warm-season climber; may decline in cold weather',season:'Grow strongest in warm months; trim to refresh',warnings:['Needs support','Can slow down in cold weather','Container plants dry quickly','Watch for aphids and whiteflies'],guide:'Black-eyed Susan vine is a cheerful fast-growing climber for warm weather. It needs sun or partial sun, support and regular watering, especially in pots. Trim long stems to keep it tidy and encourage fresh growth. It may slow or decline in cold weather. Feed lightly during flowering. Watch for aphids and whiteflies on new shoots.',products:['Climbing support','Flowering plant fertilizer','Neem oil','Planter']}
+,{slug:'raspberry',name:'Raspberry',he:'פטל',aliases:['raspberry','raspberries','rubus idaeus','פטל','שיח פטל','פטל אדום','red raspberry'],scientific:'Rubus idaeus',icon:'🫐',status:'Fruit cane · needs support',mark:'!',tags:['fruit','berry','cane','sun','פטל','raspberry'],sun:'Full sun to partial sun',water:'Medium; keep soil evenly moist in fruiting season',growth:'Perennial berry cane with new shoots',size:'1–2 m canes',climate:'Can grow in mild Mediterranean gardens with summer water and some heat protection',season:'Prune according to variety: summer-bearing and everbearing types differ',warnings:['Needs support or trellis','Can spread by suckers','Heat and drought reduce fruit quality','Pruning method depends on variety'],guide:'Raspberry is a fruiting cane plant that needs sun, regular moisture and support. In warm Mediterranean areas it performs best with morning sun, good mulch and steady irrigation during heat. Pruning is variety-dependent: summer-bearing canes and everbearing canes are managed differently, so confirm the cultivar when buying. Keep soil moist but not waterlogged. Remove weak or dead canes and tie healthy canes to support. Watch for mites, aphids and fungal issues in humid or crowded growth.',products:['Berry fertilizer','Trellis/support','Mulch','Drip irrigation emitter']},
+{slug:'blueberry',name:'Blueberry',he:'אוכמנית',aliases:['blueberry','blueberries','vaccinium','אוכמנית','שיח אוכמניות'],scientific:'Vaccinium spp.',icon:'🫐',status:'Acid-loving berry shrub',mark:'!',tags:['fruit','berry','acid soil','sun','אוכמנית'],sun:'Full sun to partial sun',water:'Medium; keep evenly moist',growth:'Acid-loving berry shrub',size:'0.6–2 m',climate:'Needs acidic soil and careful watering; choose low-chill varieties for warm climates',season:'Feed with acid-loving fertilizer; mulch roots',warnings:['Requires acidic soil','Sensitive to alkaline water/soil','Roots dry out easily','Variety selection is critical in warm climates'],guide:'Blueberries need acidic soil, consistent moisture and suitable low-chill varieties in warm regions. Use an acidic potting mix or amended bed and avoid alkaline water if possible. Mulch shallow roots and never let them dry completely. Full sun gives best fruit, but afternoon shade can help in hot areas. Feed with fertilizer for acid-loving plants. Poor growth or yellow leaves often indicate pH problems.',products:['Acidic potting mix','Acid-loving fertilizer','Mulch','Moisture meter']},
+{slug:'grape-vine',name:'Grape Vine',he:'גפן',aliases:['grape','grapes','grape vine','vitis vinifera','גפן','ענבים'],scientific:'Vitis vinifera',icon:'🍇',status:'Climbing fruit vine',mark:'✓',tags:['fruit','vine','sun','Mediterranean','גפן'],sun:'Full sun',water:'Medium; deep watering during establishment and fruiting',growth:'Deciduous climbing vine',size:'2–10 m depending on support/pruning',climate:'Excellent Mediterranean match with pruning and support',season:'Winter pruning is important; summer canopy management may help',warnings:['Needs strong support','Pruning method affects fruiting','Powdery mildew can occur','Birds may eat fruit'],guide:'Grape vines are well suited to Mediterranean gardens when planted in full sun with strong support. Water deeply while establishing and during dry fruiting periods. Winter pruning is essential and should match the training system. Good airflow helps reduce mildew. Avoid excessive nitrogen if fruit is the goal. Tie shoots and manage canopy so fruit receives light without sunburn.',products:['Trellis/wire support','Pruning shears','Organic compost','Mildew treatment']},
+{slug:'fig-tree',name:'Fig Tree',he:'תאנה',aliases:['fig','fig tree','ficus carica','תאנה','עץ תאנה'],scientific:'Ficus carica',icon:'🌳',status:'Mediterranean fruit tree',mark:'✓',tags:['fruit','tree','sun','Mediterranean','תאנה'],sun:'Full sun',water:'Low to medium once established; more water improves fruit',growth:'Deciduous fruit tree',size:'3–6 m, can be pruned smaller',climate:'Excellent Mediterranean match',season:'Prune in winter; fruiting depends on variety',warnings:['Roots can be strong near structures','Fruit attracts birds/insects','Can grow large if not pruned','Late frost can damage young growth'],guide:'Fig is a hardy Mediterranean fruit tree for full sun and well-drained soil. Water regularly when young and during fruit development, then reduce once established. Prune in winter to control size and remove crossing branches. Give space from walls and pipes because roots can be strong. Mulch helps in hot summers. Choose a variety suited to your climate and fruit preference.',products:['Mulch','Pruning shears','Fruit tree fertilizer','Bird netting']},
+{slug:'passion-fruit',name:'Passion Fruit Vine',he:'פסיפלורה',aliases:['passion fruit','passionfruit','passiflora','פסיפלורה'],scientific:'Passiflora edulis',icon:'💜',status:'Fast fruiting climber',mark:'!',tags:['fruit','vine','climber','sun','פסיפלורה'],sun:'Full sun to partial sun',water:'Medium; regular water in heat',growth:'Fast evergreen/semi-evergreen climber',size:'3–8 m on support',climate:'Good warm-climate vine; protect from frost and wind',season:'Prune lightly after fruiting or to control size',warnings:['Needs strong support','Can grow very fast','Frost can damage growth','Poor pollination may reduce fruit'],guide:'Passion fruit is a vigorous climber that needs sun, warmth, support and regular watering. It can cover fences quickly, so plan space and pruning. Protect from frost and strong dry wind. Feed during active growth but avoid overfeeding with nitrogen. Fruit set may depend on variety and pollination. Prune to keep it manageable and remove dead growth.',products:['Climbing support','Fruit vine fertilizer','Mulch','Drip irrigation emitter']},
+{slug:'avocado',name:'Avocado Tree',he:'אבוקדו',aliases:['avocado','avocado tree','persea americana','אבוקדו','עץ אבוקדו'],scientific:'Persea americana',icon:'🥑',status:'Sensitive fruit tree',mark:'!',tags:['fruit','tree','sun','אבוקדו'],sun:'Full sun, young trees prefer protection',water:'Medium; consistent deep watering, excellent drainage',growth:'Evergreen fruit tree',size:'4–10 m depending on variety/pruning',climate:'Can suit warm frost-free Mediterranean areas; sensitive when young',season:'Mulch and protect from heat/wind/frost; feed lightly',warnings:['Very sensitive to poor drainage and root rot','Young trees burn in harsh sun/wind','Frost can damage trees','Variety/pollination affects fruiting'],guide:'Avocado needs warmth, drainage and careful watering. Young trees are sensitive to sunburn, wind and frost, so protection is important. Soil must drain well because root rot is a major risk. Mulch generously but keep mulch away from the trunk. Water deeply and consistently without waterlogging. Variety choice and pollination type can affect fruit set.',products:['Mulch','Avocado/citrus fertilizer','Tree guard','Drip irrigation']},
+{slug:'banana',name:'Banana',he:'בננה',aliases:['banana','banana plant','musa','בננה','עץ בננה'],scientific:'Musa spp.',icon:'🍌',status:'Tropical-looking heavy feeder',mark:'!',tags:['fruit','tropical','sun','water','בננה'],sun:'Full sun to partial sun',water:'High; regular deep watering',growth:'Fast herbaceous plant with pups',size:'2–5 m depending on variety',climate:'Warm protected sites; wind protection helps leaves',season:'Feed during active growth; remove old stems after fruiting',warnings:['Needs lots of water and nutrients','Leaves tear in wind','Cold can damage foliage','Spreads by pups'],guide:'Banana creates a lush tropical look and needs warmth, water and feeding. Plant in a sheltered sunny spot with rich soil and mulch. Water regularly in hot weather. Feed during active growth for good leaf and fruit production. Remove old stems after fruiting and manage pups so the clump does not become crowded. Protect from frost and strong winds.',products:['Compost','High-potassium fertilizer','Mulch','Drip irrigation']},
+{slug:'strawberry-guava',name:'Strawberry Guava',he:'גויאבה תותית',aliases:['strawberry guava','psidium cattleyanum','גויאבה תותית'],scientific:'Psidium cattleyanum',icon:'🍓',status:'Evergreen fruit shrub/tree',mark:'✓',tags:['fruit','tree','shrub','sun','גויאבה'],sun:'Full sun to partial sun',water:'Medium once established',growth:'Evergreen shrub or small tree',size:'2–6 m',climate:'Warm-climate fruit shrub; protect young plants from frost',season:'Prune to shape after fruiting',warnings:['Can self-seed in some regions','Fruit drop can be messy','Needs space if allowed to grow','Watch for fruit fly in some areas'],guide:'Strawberry guava is an evergreen fruiting shrub or small tree for warm gardens. It grows best in sun with moderate watering and good drainage. Prune to shape and keep size manageable. Fruit can drop and attract pests, so place thoughtfully. Young plants benefit from frost protection. It can be a useful edible hedge where climate allows.',products:['Fruit tree fertilizer','Mulch','Pruning shears','Fruit fly trap']},
+{slug:'mulberry',name:'Mulberry Tree',he:'תות עץ',aliases:['mulberry','mulberry tree','morus','תות עץ','עץ תות'],scientific:'Morus spp.',icon:'🌳',status:'Large fruit tree',mark:'!',tags:['fruit','tree','sun','תות'],sun:'Full sun',water:'Medium when young; drought tolerant once established',growth:'Deciduous fruit tree',size:'5–12 m depending on species/pruning',climate:'Good warm-climate tree with enough space',season:'Prune in dormancy to control size',warnings:['Can become large','Fruit stains paving and attracts birds','Roots can be strong','Needs careful placement'],guide:'Mulberry is a productive deciduous fruit tree that needs full sun and room. Water while establishing; mature trees tolerate dry periods but fruit better with some irrigation. Plant away from paving and parking areas because fruit can stain. Prune in dormancy to control size. Choose fruitless or compact varieties when mess or size is a concern. Give roots space.',products:['Pruning saw','Mulch','Fruit tree fertilizer','Bird netting']},
+{slug:'apple-tree',name:'Apple Tree',he:'עץ תפוח',aliases:['apple','apple tree','malus domestica','תפוח','עץ תפוח'],scientific:'Malus domestica',icon:'🍎',status:'Fruit tree · variety matters',mark:'!',tags:['fruit','tree','sun','תפוח'],sun:'Full sun',water:'Medium; regular water during fruiting',growth:'Deciduous fruit tree',size:'2–5 m depending on rootstock',climate:'Needs suitable chill hours; low-chill varieties for warm areas',season:'Winter pruning; thinning may improve fruit',warnings:['Requires suitable variety for local chill hours','Many apples need cross-pollination','Watch for pests and fungal disease','Needs pruning knowledge'],guide:'Apple trees need full sun, winter chill and regular care. In warm areas, choose low-chill varieties and check pollination needs. Water consistently during fruit development. Winter pruning shapes the tree and improves production. Thin crowded fruit if needed. Monitor for pests and fungal disease.',products:['Fruit tree fertilizer','Pruning shears','Dormant spray','Fruit thinning snips']},
+{slug:'pear-tree',name:'Pear Tree',he:'עץ אגס',aliases:['pear','pear tree','pyrus communis','אגס','עץ אגס'],scientific:'Pyrus communis',icon:'🍐',status:'Fruit tree · chill/pollination matter',mark:'!',tags:['fruit','tree','sun','אגס'],sun:'Full sun',water:'Medium; regular water during fruiting',growth:'Deciduous fruit tree',size:'3–6 m depending on rootstock',climate:'Needs suitable chill hours; variety selection matters',season:'Winter pruning; fruit thinning when needed',warnings:['Needs suitable variety and often pollination partner','Fire blight can be serious in some regions','Requires pruning','Not all varieties suit warm climates'],guide:'Pear trees need full sun, drainage and suitable winter chill. Choose varieties adapted to your climate and check whether a pollination partner is needed. Water during establishment and fruiting. Prune in winter to develop structure and airflow. Watch for fire blight and other diseases. Thin fruit if branches are overloaded.',products:['Fruit tree fertilizer','Pruning shears','Copper spray','Mulch']},
+{slug:'peach-tree',name:'Peach Tree',he:'עץ אפרסק',aliases:['peach','peach tree','prunus persica','אפרסק','עץ אפרסק'],scientific:'Prunus persica',icon:'🍑',status:'Stone fruit tree',mark:'!',tags:['fruit','tree','sun','אפרסק'],sun:'Full sun',water:'Medium; regular water in fruiting season',growth:'Deciduous stone fruit tree',size:'3–5 m',climate:'Choose variety by chill hours; dry airflow helps',season:'Winter pruning and fruit thinning',warnings:['Peach leaf curl can be a problem','Needs annual pruning','Fruit thinning often needed','Variety must match chill hours'],guide:'Peach trees need full sun, winter chill and annual pruning. Choose a variety suited to local chill hours. Water during fruit development and mulch the root zone. Prune in winter to keep an open shape and thin fruit when crowded. Watch for peach leaf curl and pests. Good airflow helps reduce disease.',products:['Stone fruit fertilizer','Pruning shears','Copper spray','Mulch']},
+{slug:'plum-tree',name:'Plum Tree',he:'עץ שזיף',aliases:['plum','plum tree','prunus domestica','שזיף','עץ שזיף'],scientific:'Prunus spp.',icon:'🟣',status:'Stone fruit tree',mark:'!',tags:['fruit','tree','sun','שזיף'],sun:'Full sun',water:'Medium; regular water during fruiting',growth:'Deciduous stone fruit tree',size:'3–6 m',climate:'Variety and chill hours matter',season:'Prune carefully; thin fruit if needed',warnings:['Some varieties need pollination partner','Needs chill hours','Can suffer from pests and fungal disease','Avoid heavy summer pruning in heat'],guide:'Plum trees need sun, drainage and a variety matched to local chill. Some plums need another compatible variety for pollination. Water regularly during fruit growth. Prune to maintain structure and airflow, avoiding excessive pruning in hot periods. Thin heavy fruit loads. Monitor pests and fungal diseases.',products:['Fruit tree fertilizer','Pruning shears','Mulch','Disease control spray']}
+
+];
+const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
+
+// Accurate care profiles used as a deterministic fallback and quality layer.
+// The live Netlify/OpenAI plant service remains the primary source for any plant,
+// but these profiles prevent vague placeholder text for common garden plants.
+const CARE_QUALITY_PROFILES={
+  'papaya':{slug:'papaya',name:'Papaya',he:'פפאיה',aliases:['papaya','papaya tree','carica papaya','פפאיה','עץ פפאיה'],scientific:'Carica papaya',icon:'🟠',status:'Warm-climate fruit tree',mark:'!',tags:['fruit','tropical','sun','fast growth','פפאיה'],sun:'Full sun, ideally 6–8+ hours daily',water:'Keep evenly moist in warm weather; deep water and never leave roots waterlogged',growth:'Very fast-growing, short-lived tropical fruit plant',size:'3–8 m depending on climate and variety',climate:'Tropical/subtropical; very frost-sensitive and needs wind protection',season:'Feed lightly in active growth; fruiting can continue through warm seasons',warnings:['Very sensitive to frost and cold wind','Roots dislike standing water and heavy clay','Male/female/hermaphrodite flowers vary by seedling','Fruit quality depends on heat, sun and drainage'],guide:'Papaya grows best in full sun, warmth and free-draining soil. Keep soil consistently moist during hot weather, but avoid waterlogging because roots rot easily. In Mediterranean areas, plant only in the warmest protected microclimate or grow in a container that can be protected in winter. Feed during active growth with a balanced fruit-tree fertilizer. Remove damaged leaves and watch for mites, mealybugs and root stress. Papaya is fast growing but sensitive, so shelter from wind and frost is essential.',products:['Fruit tree fertilizer','Compost','Mulch','Frost protection cloth']},
+  'mango-tree':{slug:'mango-tree',name:'Mango Tree',he:'עץ מנגו',aliases:['mango','mango tree','mangifera indica','מנגו','עץ מנגו'],scientific:'Mangifera indica',icon:'🥭',status:'Warm-climate fruit tree',mark:'!',tags:['fruit','tree','tropical','sun','מנגו'],sun:'Full sun, at least 6–8 hours daily',water:'Deep watering while establishing; reduce frequency once mature but avoid drought during flowering/fruiting',growth:'Evergreen subtropical/tropical fruit tree with strong seasonal flushes',size:'4–10+ m in gardens, smaller with pruning or dwarf varieties',climate:'Best in warm frost-free sites; young trees need cold and wind protection',season:'Feed in spring and summer; prune lightly after harvest or growth flushes',warnings:['Young mango trees are sensitive to frost','Wet, humid conditions can increase anthracnose and powdery mildew risk','Needs excellent drainage and space','Fruit set depends on variety, weather and pollination'],guide:'Mango needs full sun, warmth and deep well-drained soil. Water young trees deeply and regularly until established, then water less often but more deeply. Protect young trees from frost and cold winds. Feed during active growth with a fruit-tree fertilizer, avoiding excess nitrogen when flowering is desired. Prune lightly to shape and keep the canopy manageable. Watch for fungal issues on flowers and new growth in humid weather.',products:['Fruit tree fertilizer','Mulch','Compost','Copper/fungal prevention spray']},
+  'lychee-tree':{slug:'lychee-tree',name:'Lychee Tree',he:'ליצ׳י',aliases:['lychee','lychee tree','litchi','litchi chinensis','ליצ׳י','ליצי'],scientific:'Litchi chinensis',icon:'🔴',status:'Subtropical fruit tree',mark:'!',tags:['fruit','tree','subtropical','sun','ליצי'],sun:'Full sun with protection from harsh wind when young',water:'Regular deep watering; keep evenly moist during flowering and fruit development',growth:'Slow to moderate evergreen subtropical tree',size:'4–10 m depending on climate and pruning',climate:'Subtropical; prefers humidity and does not tolerate hard frost',season:'Flowering often follows cooler dry winter conditions; avoid water stress during fruiting',warnings:['Sensitive to dry wind and salinity','Young trees need protection from cold and sun scorch','Fruit production can be irregular in unsuitable climates','Needs consistent moisture but good drainage'],guide:'Lychee is a subtropical evergreen fruit tree that prefers warm humid conditions, full sun and protection from wind. Water regularly and deeply, especially during flowering and fruit development, but keep soil well drained. Mulch helps maintain even soil moisture. Young trees are sensitive and should be protected from frost, heat stress and strong winds. Fertilize gently during active growth. Prune lightly after harvest to shape the tree and avoid heavy pruning.',products:['Mulch','Fruit tree fertilizer','Wind protection net','Compost']},
+  'raspberry':{slug:'raspberry',name:'Raspberry',he:'פטל',aliases:['raspberry','rubus idaeus','rubus','פטל'],scientific:'Rubus idaeus / Rubus spp.',icon:'🍓',status:'Fruit cane · needs support',mark:'!',tags:['fruit','cane','berry','sun','פטל'],sun:'Full sun to light afternoon shade in hot climates',water:'Medium; keep soil evenly moist but well drained',growth:'Perennial cane fruit with new canes each season',size:'1–2 m canes, depending on variety',climate:'Best in cooler or protected sites; hot dry climates require care',season:'Prune canes according to summer-bearing or everbearing type',warnings:['Needs support or trellis','Can spread by suckers','Heat stress reduces fruit quality','Pruning depends on variety type'],guide:'Raspberry grows on canes and needs sun, moisture and support. In hot Mediterranean areas, give morning sun and some afternoon protection. Keep soil evenly moist and mulch well, but avoid soggy soil. Train canes on wires or a trellis. Prune according to the variety: summer-bearing and everbearing raspberries are managed differently. Remove weak or dead canes and monitor for mites, fungal disease and heat stress.',products:['Berry fertilizer','Trellis/support wire','Mulch','Pruning shears']},
+  'lemon':{slug:'lemon',name:'Lemon Tree',he:'עץ לימון',aliases:['lemon','lemon tree','citrus limon','citrus × limon','לימון','עץ לימון'],scientific:'Citrus × limon',icon:'🍋',status:'Needs fertilizer',mark:'!',tags:['citrus','fruit','sun','fertilizer','לימון'],sun:'Full sun, 6+ hours daily',water:'Medium–high; deep watering, then allow the soil to drain before watering again',growth:'Evergreen citrus tree',size:'2–4 m in most home gardens, larger if unpruned',climate:'Warm Mediterranean match; protect young trees from frost and strong wind',season:'Feed citrus during active growth; reduce stress in heat waves',warnings:['Yellow leaves may indicate nutrient deficiency, pests or watering imbalance','Avoid waterlogged soil','Watch for scale, leaf miner and aphids','Young trees need cold protection'],guide:'Lemon trees need full sun, good drainage and regular deep watering. Feed with citrus fertilizer during active growth and avoid overwatering. Mulch around the root zone without touching the trunk. Check leaves for yellowing, scale, leaf miner and aphids. Light pruning is usually enough to shape the tree and remove dead or crossing branches.',products:['Citrus fertilizer','Organic compost','Neem oil','Mulch']},
+  'pomegranate':{slug:'pomegranate',name:'Pomegranate Tree',he:'עץ רימון',aliases:['pomegranate','pomegranate tree','punica granatum','רימון','עץ רימון'],scientific:'Punica granatum',icon:'🍎',status:'Healthy · drought tolerant once established',mark:'✓',tags:['fruit','tree','mediterranean','sun','רימון'],sun:'Full sun for best flowering and fruit',water:'Medium while young; deep watering during fruit development; drought tolerant once established',growth:'Deciduous fruit tree or large shrub',size:'2–5 m depending on pruning and variety',climate:'Excellent Mediterranean and warm dry-climate match',season:'Prune lightly in winter while dormant; fruit ripens late summer to autumn',warnings:['Fruit can split after irregular watering or sudden rain','Can sucker from the base','Watch for aphids, scale and fruit fly','Needs full sun for good fruiting'],guide:'Pomegranate is a tough Mediterranean fruit tree that likes heat, full sun and well-drained soil. Water regularly during establishment and fruit development, then reduce watering once mature. Prune in winter to remove suckers, open the center and maintain size. Avoid irregular watering near harvest because fruit may split. It is generally drought tolerant after establishment but gives better fruit with deep seasonal irrigation.',products:['Fruit tree fertilizer','Compost','Pruning shears','Fruit fly trap']}
+};
+function careProfileForPlant(input){
+  const q=normalizeQuery(input||'');
+  const keys=Object.keys(CARE_QUALITY_PROFILES);
+  for(const k of keys){const p=CARE_QUALITY_PROFILES[k];const aliases=[p.slug,p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery);if(aliases.some(a=>a===q||a.replace(/^עץ\s+/,'')===q||q===a.replace(/^עץ\s+/,'')))return p;}
+  for(const k of keys){const p=CARE_QUALITY_PROFILES[k];const aliases=[p.slug,p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).join(' ');if(q&&aliases.includes(q))return p;}
+  return null;
+}
+function isVagueCareText(v){return !String(v||'').trim() || /verify|depends|varies by|check local|according to season|see detailed|unknown|needs verification/i.test(String(v));}
+function enrichProfileWithQuality(profile,requested){
+  const q=profile?.slug||profile?.name||profile?.commonName||profile?.scientific||requested;
+  const o=careProfileForPlant(q)||careProfileForPlant(requested)||careProfileForPlant(profile?.scientific);
+  if(!o)return profile;
+  const merged=Object.assign({},profile);
+  ['sun','water','growth','size','climate','season','guide','scientific','icon','he','imageSearchQuery'].forEach(k=>{if(isVagueCareText(merged[k])) merged[k]=o[k]||merged[k];});
+  if(!merged.name||isVagueCareText(merged.name)) merged.name=o.name;
+  if(!merged.status||isVagueCareText(merged.status)) merged.status=o.status;
+  if(!merged.mark) merged.mark=o.mark;
+  if(!merged.warnings||!merged.warnings.length||merged.warnings.some(isVagueCareText)) merged.warnings=o.warnings||merged.warnings||[];
+  if(!merged.products||!merged.products.length) merged.products=o.products||[];
+  if(!merged.aliases||!merged.aliases.length) merged.aliases=o.aliases||[];
+  if(!merged.tasks||!merged.tasks.length) merged.tasks=o.tasks||[];
+  return merged;
+}
+
+const OPENAI_READY={enabled:true,endpoint:'/.netlify/functions/plant-knowledge',note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
+
+const service={key:'cruvit_mg_v23_real_plant_profiles',load(){let saved=null;try{saved=JSON.parse(localStorage.getItem(this.key)||'null')}catch(e){console.warn('Saved garden data could not be parsed',e)}const base={plants:[['Lavender','Healthy','✓'],['Lemon Tree','Needs fertilizer','!'],['Rosemary','Water today','✓'],['Jasmine','Check leaves','!']],tasks:[['💧','Water Rosemary','Today · 5 minutes','High'],['🌿','Fertilize Lemon Tree','Tomorrow · recommended','Medium'],['🔎','Check Jasmine Leaves','This week · possible pests','Low']],events:[['Today','Garden status checked','Your garden is looking good'],['June 20','Lemon task added','Fertilizer suggested'],['June 18','Lavender scan','Plant looks healthy'],['June 14','Shopping list created','Three items were added']],cart:[],score:87,signedIn:false,notifications:{enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false},rewards:{credits:120,history:[],achievements:{firstPlant:true}}};return Object.assign(base,saved||{})},save(data){try{localStorage.setItem(this.key,JSON.stringify(data));return true}catch(e){console.warn('Garden data was not saved to localStorage, but the screen will continue to work',e);return false}}};
+function normalizeGardenDataShape(){
+  if(!Array.isArray(data.plants)) data.plants=[];
+  data.plants=data.plants.map(p=>Array.isArray(p)?{name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓'}:(p&&typeof p==='object'?p:{name:String(p||'Plant'),status:'Healthy',mark:'✓'}));
+  if(!Array.isArray(data.tasks)) data.tasks=[];
+  data.tasks=data.tasks.map(t=>Array.isArray(t)?t:[t.icon||'🌿',t.title||t.name||'Garden care',t.when||t.date||'This week',t.priority||'Low']).filter(Boolean);
+  if(!Array.isArray(data.events)) data.events=[];
+  if(!Array.isArray(data.cart)) data.cart=[];
+  if(!data.notifications||typeof data.notifications!=='object')data.notifications={enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false};
+  if(!data.rewards||typeof data.rewards!=='object')data.rewards={credits:0,history:[],achievements:{}};
+}
+let data=service.load();
+normalizeGardenDataShape();
+function ensureRewardsState(){
+  if(!data.rewards || typeof data.rewards!=='object') data.rewards={};
+  if(typeof data.rewards.credits!=='number') data.rewards.credits=Number(data.rewards.credits)||0;
+  if(!Array.isArray(data.rewards.history)) data.rewards.history=[];
+  if(!data.rewards.achievements || typeof data.rewards.achievements!=='object') data.rewards.achievements={firstPlant:false,firstScan:false,fivePlants:false,taskStreak:false};
+  return data.rewards;
+}
+ensureRewardsState();
+// Image migration: old saved plants sometimes carried the generic garden background as imageUrl.
+// Remove it so the live plant image URL can be used.
+(data.plants||[]).forEach(p=>{if(/garden-bg\.jpg/i.test(String(p.imageUrl||p.photoUrl||''))){delete p.imageUrl; delete p.photoUrl;} if(p.meta && /garden-bg\.jpg/i.test(String(p.meta.imageUrl||p.meta.photoUrl||''))){delete p.meta.imageUrl; delete p.meta.photoUrl;}});
+function normalizePlant(p){
+  if(Array.isArray(p)) return {name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓',source:p[3]||'My Garden',archived:false};
+  return Object.assign({name:'Plant',status:'Healthy',mark:'✓',source:'My Garden',archived:false},p||{});
+}
+data.plants=(data.plants||[]).map(normalizePlant);
+if(typeof data.score!=='number')data.score=87;
+if(typeof data.signedIn!=='boolean')data.signedIn=false;
+if(!data.notifications)data.notifications={enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false};
+ensureRewardsState();
+if(!data.rewards.history)data.rewards.history=[];
+if(!data.rewards.achievements)data.rewards.achievements={};
+let currentMonthIndex=5; // June, zero based
+let selectedDay=22;
+let openMenu=null;
+let showAllTasks=false;
+let currentPlantSetup={slug:null,source:'My Garden'};
+let addPlantSearchState={source:null,query:'',results:[],liveProfile:null,loading:false};
+const calendarYear=2026;
+const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function isoParts(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?{year:+m[1],month:+m[2]-1,day:+m[3]}:null}
+function eventToDay(e,i){
+  const iso=isoParts(e[0]); if(iso)return iso.day;
+  if(e[0]==='Today'||e[0]==='Now')return 22;
+  const m=String(e[0]).match(/([A-Za-z]+)\s+(\d+)/);
+  return m?parseInt(m[2],10):Math.max(1,22-i)
+}
+function eventToMonth(e){
+  const iso=isoParts(e[0]); if(iso)return iso.month;
+  if(e[0]==='Today'||e[0]==='Now')return 5;
+  const m=String(e[0]).match(/([A-Za-z]+)\s+(\d+)/);
+  if(!m)return 5;
+  const idx=monthNames.findIndex(x=>x.toLowerCase()===m[1].toLowerCase());
+  return idx>=0?idx:5;
+}
+function eventType(e){const txt=(e[1]+' '+e[2]).toLowerCase(); if(txt.includes('shop'))return 'shop'; if(txt.includes('scan'))return 'scan'; if(txt.includes('task')||txt.includes('fertiliz')||txt.includes('water'))return 'task'; return ''}
+function eventIcon(e){const txt=(e[1]+' '+e[2]).toLowerCase(); if(txt.includes('shop'))return '🛒'; if(txt.includes('scan'))return '📷'; if(txt.includes('water'))return '💧'; if(txt.includes('fertiliz')||txt.includes('task'))return '🌿'; if(txt.includes('note'))return '📝'; return '✓'}
+function changeMonth(delta){
+  currentMonthIndex=(currentMonthIndex+delta+12)%12;
+  selectedDay=1;
+  renderCalendar();
+}
+function addCalendarNote(){
+  const title=prompt('Add a garden note for '+monthNames[currentMonthIndex]+' '+selectedDay+':','Garden note');
+  if(!title)return;
+  const details=prompt('Short details:', 'Saved by user');
+  data.events.unshift([monthNames[currentMonthIndex]+' '+selectedDay,title,details||'Saved by user']);
+  awardCredits(1,'Garden note');
+  syncHealthScore();
+  service.save(data);
+  renderCalendar();
+}
+function toggleNotifications(){
+  data.notifications.enabled=!data.notifications.enabled;
+  if(data.notifications.enabled && 'Notification' in window && Notification.permission==='default'){
+    Notification.requestPermission().catch(()=>{});
+  }
+  service.save(data);renderCalendar();
+}
+function updateNotifyPref(name,checked){
+  data.notifications[name]=checked;
+  service.save(data);renderCalendar();
+}
+
+function taskIsoValue(t){return (t&&typeof t[4]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(t[4]))?t[4]:''}
+function taskUrgencyScore(t){
+  if(t?.done)return -999;
+  const title=String(t?.[1]||'').toLowerCase();
+  const priority=String(t?.[3]||'').toLowerCase();
+  let score=0;
+  if(priority.includes('high'))score+=60; else if(priority.includes('medium'))score+=35; else score+=15;
+  if(title.includes('disease')||title.includes('pest')||title.includes('check')||title.includes('wilting')||title.includes('yellow'))score+=18;
+  if(title.includes('water'))score+=10;
+  const iso=taskIsoValue(t);
+  if(iso){
+    if(iso<todayIso())score+=40;
+    if(iso===todayIso())score+=25;
+  }else if(String(t?.[2]||'').toLowerCase().includes('today'))score+=22;
+  return score;
+}
+function datePlusDaysIso(days){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
+function isCompanionActionableTask(t){
+  if(!t||t.done)return false;
+  const title=String(t[1]||'').toLowerCase();
+  const when=String(t[2]||'').toLowerCase();
+  const priority=String(t[3]||'').toLowerCase();
+  const iso=taskIsoValue(t);
+
+  // Cruvit should reduce pressure: generic review/checkup tasks stay in the background.
+  if(title.includes('review ')||title.includes('review care')||title.includes('status checked'))return false;
+  if(title.includes('check ') && !/pest|disease|yellow|wilting|leaves|urgent|attention/.test(title))return false;
+
+  const careAction=/water|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat/.test(title);
+  if(!careAction)return false;
+
+  // Future tasks should not feel like today's burden. Surface only due/near-term care.
+  if(iso && iso>datePlusDaysIso(7))return false;
+  if(priority.includes('low') && !(when.includes('today')||when.includes('tomorrow')||(iso && iso<=datePlusDaysIso(2))))return false;
+
+  return true;
+}
+function companionOpenTaskEntries(){
+  const open=(data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>isCompanionActionableTask(x.t));
+  open.sort((a,b)=>b.score-a.score);
+  return open;
+}
+function visibleCareTaskCount(){
+  // Keep dashboard numbers consistent with the calm companion view:
+  // one focus task + up to two near-term actions. Do not count every background reminder.
+  return Math.min(3, companionOpenTaskEntries().length);
+}
+function focusedTaskIndexes(){
+  const open=companionOpenTaskEntries();
+  return (showAllTasks?open.slice(0,3):open.slice(0,1)).map(x=>x.i);
+}
+function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
+function renderCalendar(){
+  const week=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const firstDay=new Date(calendarYear,currentMonthIndex,1).getDay();
+  const daysInMonth=new Date(calendarYear,currentMonthIndex+1,0).getDate();
+  const eventsByDay={};
+  data.events.forEach((e,i)=>{if(eventToMonth(e)===currentMonthIndex){const day=eventToDay(e,i);(eventsByDay[day]=eventsByDay[day]||[]).push(e)}});
+  let cells=week.map(w=>`<div class="weekday">${w}</div>`).join('');
+  for(let i=0;i<firstDay;i++)cells+=`<div class="day empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const events=eventsByDay[d]||[];const ev=events[0];const type=ev?eventType(ev):'';
+    const isToday=(currentMonthIndex===5 && d===22);
+    cells+=`<div class="day ${isToday?'today':''} ${d===selectedDay?'selected':''}" onclick="selectCalendarDay(${d})"><span class="date">${d}</span>${ev?`<div class="cal-event ${type}">${ev[1]}</div>`:''}</div>`
+  }
+  const dayEvents=eventsByDay[selectedDay]||[];
+  const details=dayEvents.length?dayEvents.map(e=>`<div class="event-card"><div class="event-icon">${eventIcon(e)}</div><div><b>${e[1]}</b><span>${e[2]}</span></div></div>`).join(''):`<div class="empty-day-note">No garden activity saved for this day. Use “Add note” to save something here.</div>`;
+  const n=data.notifications||{enabled:false,tasks:true,watering:true,shopping:false};
+  document.getElementById('timeline').innerHTML=`
+    <div class="calendar-top">
+      <div class="month-nav">
+        <button class="month-btn" onclick="changeMonth(-1)" aria-label="Previous month">‹</button>
+        <div><div class="month-title">${monthNames[currentMonthIndex]} ${calendarYear}</div><div class="month-note">Tap a day to view or add garden activity.</div></div>
+        <button class="month-btn" onclick="changeMonth(1)" aria-label="Next month">›</button>
+      </div>
+      <div class="calendar-actions">
+        <button class="priority" onclick="addCalendarNote()">+ Add note</button>
+      </div>
+    </div>
+    <div class="calendar-split">
+      <div class="calendar-left"><div class="calendar">${cells}</div></div>
+      <div class="calendar-side">
+        <div class="event-detail"><div class="event-detail-head"><div><h4>${monthNames[currentMonthIndex]} ${selectedDay}</h4><small>${dayEvents.length?dayEvents.length+' saved event'+(dayEvents.length>1?'s':''):'No saved events yet'}</small></div></div>${details}</div>
+        <div class="notify-box">
+          <div class="notify-top"><div><b>Garden reminders</b><br><span>Choose whether Cruvit should remind this user about garden care. This preference is saved now and will later sync to Supabase.</span></div><button class="switch ${n.enabled?'on':''}" onclick="toggleNotifications()" aria-label="Toggle notifications"></button></div>
+          <div class="notify-grid">
+            <label class="notify-option"><input type="checkbox" ${n.tasks?'checked':''} onchange="updateNotifyPref('tasks',this.checked)"><span><b>Tasks</b><br>Weekly care reminders</span></label>
+            <label class="notify-option"><input type="checkbox" ${n.watering?'checked':''} onchange="updateNotifyPref('watering',this.checked)"><span><b>Watering</b><br>Weather-aware alerts</span></label>
+            <label class="notify-option"><input type="checkbox" ${n.shopping?'checked':''} onchange="updateNotifyPref('shopping',this.checked)"><span><b>Shopping</b><br>Only useful product suggestions</span></label>
+          </div>
+        </div>
+      </div>
+    </div>`
+}
+function selectCalendarDay(day){selectedDay=day;renderCalendar()}
+
+function plantMeta(p){
+  if(p&&p.meta)return enrichProfileWithQuality(p.meta,p.name||p.scientific||'');
+  const match=findPlantByName(p?.name||'');
+  if(match)return enrichProfileWithQuality(match,p?.name||'');
+  const quality=careProfileForPlant(p?.name||p?.scientific||'');
+  if(quality)return quality;
+  return {sun:'Full sun to partial shade depending on species',water:'Water when the top soil begins to dry; adjust by heat, season and drainage',growth:'Growth habit depends on the exact species and cultivar',size:'Varies by species and pruning',climate:'Check local hardiness, heat and frost exposure before planting',season:'Create seasonal watering, feeding and pruning reminders after the plant is confirmed',warnings:['Exact care depends on species, variety and local conditions. Confirm the final ID before treatment or purchase.'],guide:'Cruvit could not verify a full species profile yet. Use the exact botanical name when possible, then confirm sun, watering, soil, pruning and climate suitability before planting.',products:['Compost','Mulch','Balanced fertilizer']};
+}
+function imageQueryForPlant(p){
+  const m=plantMeta(p);
+  const raw=[p?.scientific,m?.scientific,m?.imageSearchQuery,p?.name,m?.name].filter(Boolean).join(' ');
+  return String(raw||p?.name||'plant').replace(/\b(garden|generic|placeholder)\b/gi,'').trim()||'plant';
+}
+function searchPlantPhotoUrl(p){
+  // No generic photo service fallback here. Plant cards should show either a real
+  // plant image saved on the plant profile, or the existing default card background
+  // while the image lookup runs. This prevents broken source.unsplash/loremflickr URLs.
+  return '';
+}
+function flickrFallbackPhotoUrl(p){ return ''; }
+function fallbackPlantImageUrl(p){ return ''; }
+function plantImage(p){
+  const m=plantMeta(p);
+  const img=p?.imageUrl||p?.photoUrl||m?.imageUrl||m?.image||m?.photoUrl||'';
+  if(img && (/^https?:\/\//i.test(img)||/^data:image\//i.test(img)) && !/garden-bg\.jpg/i.test(img) && !/source\.unsplash\.com/i.test(img) && !/loremflickr\.com/i.test(img)) return img;
+  return '';
+}
+function plantPhotoQuery(p){
+  const m=plantMeta(p);
+  return [p?.scientific,m?.scientific,p?.imageSearchQuery,m?.imageSearchQuery,p?.name,m?.name].filter(Boolean).join(' ').replace(/\b(garden|generic|placeholder)\b/gi,'').trim()||'plant';
+}
+function instantPlantImageUrl(p){
+  // Browser-renderable plant thumbnail fallback. This keeps the card visual even
+  // before the verified image is stored on the plant profile.
+  const q=plantPhotoQuery(p);
+  if(!q || normalizeQuery(q)==='plant') return '';
+  return 'https://tse1.mm.bing.net/th?q='+encodeURIComponent(q+' plant photo')+'&w=900&h=600&c=7&rs=1&p=0';
+}
+function plantImageProxyUrl(p){
+  const q=plantPhotoQuery(p);
+  if(!q || normalizeQuery(q)==='plant') return '';
+  return '/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q);
+}
+function plantImageFallbacks(p){
+  const q=plantPhotoQuery(p);
+  const tags=q.split(/\s+/).filter(Boolean).slice(0,4).join(',');
+  return [
+    plantImageProxyUrl(p),
+    instantPlantImageUrl(p),
+    q ? 'https://loremflickr.com/900/600/'+encodeURIComponent(tags||q)+',plant' : '',
+    q ? 'https://source.unsplash.com/900x600/?'+encodeURIComponent(q+',plant') : ''
+  ].filter(Boolean);
+}
+function displayPlantImage(p){
+  return plantImage(p)||plantImageProxyUrl(p)||instantPlantImageUrl(p)||'';
+}
+function swapToInstantPlantImage(imgEl){
+  let list=[];
+  try{list=JSON.parse(imgEl.getAttribute('data-fallback-list')||'[]')}catch(e){list=[]}
+  const current=imgEl.getAttribute('src')||'';
+  const failed=(imgEl.dataset.failed||'').split('|');
+  imgEl.dataset.failed=(imgEl.dataset.failed?imgEl.dataset.failed+'|':'')+current;
+  const next=list.find(x=>x && x!==current && !failed.includes(x));
+  if(next){imgEl.src=next; return;}
+  const parent=imgEl.parentElement;
+  const name=imgEl.getAttribute('alt')||'Plant';
+  const safe=String(name).replace(/[<>&]/g,'').slice(0,38);
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#eaf4df"/><stop offset="1" stop-color="#fff2cd"/></linearGradient></defs><rect width="900" height="520" fill="url(#g)"/><text x="450" y="245" text-anchor="middle" font-size="86">🌿</text><text x="450" y="340" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#0d3d27">'+safe+'</text></svg>';
+  imgEl.onerror=null;
+  imgEl.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  if(parent)parent.classList.add('has-photo');
+}
+const imageHydrationQueue=new Set();
+async function fetchPlantImageFromWikipedia(query){
+  const q=String(query||'').trim();
+  if(!q) return '';
+  // First try the Netlify image proxy. This avoids browser/CORS issues and uses the same
+  // server-side image lookup for every plant card.
+  try{
+    const res=await fetch('/.netlify/functions/plant-image?query='+encodeURIComponent(q));
+    if(res.ok){
+      const json=await res.json();
+      if(json?.imageUrl && /^https?:\/\//i.test(json.imageUrl) && !/\.svg($|\?)/i.test(json.imageUrl)) return json.imageUrl;
+    }
+  }catch(e){}
+  // Browser fallback, used only if the Function is unavailable.
+  try{
+    const searchUrl='https://en.wikipedia.org/w/api.php?'+new URLSearchParams({
+      action:'query',format:'json',origin:'*',generator:'search',gsrsearch:q+' plant',gsrlimit:'8',
+      prop:'pageimages|description',piprop:'thumbnail|original',pithumbsize:'900'
+    });
+    const res=await fetch(searchUrl);
+    if(res.ok){
+      const json=await res.json();
+      const pages=Object.values(json?.query?.pages||{});
+      const plantPages=pages.filter(pg=>/plant|tree|flower|fruit|species|shrub|vine|herb|berry/i.test(String(pg.description||'')+' '+String(pg.title||'')));
+      const best=[...plantPages,...pages].find(pg=>pg?.original?.source||pg?.thumbnail?.source);
+      const img=best?.original?.source||best?.thumbnail?.source||'';
+      if(img && !/\.svg($|\?)/i.test(img)) return img;
+    }
+  }catch(e){}
+  try{
+    const commonsUrl='https://commons.wikimedia.org/w/api.php?'+new URLSearchParams({
+      action:'query',format:'json',origin:'*',generator:'search',gsrnamespace:'6',gsrsearch:q+' plant flower leaves fruit',gsrlimit:'12',
+      prop:'imageinfo',iiprop:'url|mime',iiurlwidth:'900'
+    });
+    const res=await fetch(commonsUrl);
+    if(res.ok){
+      const json=await res.json();
+      const pages=Object.values(json?.query?.pages||{});
+      const best=pages.find(pg=>{const info=pg?.imageinfo?.[0]||{};return (!info.mime||/^image\//.test(info.mime))&&(info.thumburl||info.url)});
+      const img=best?.imageinfo?.[0]?.thumburl||best?.imageinfo?.[0]?.url||'';
+      if(img && !/\.svg($|\?)/i.test(img)) return img;
+    }
+  }catch(e){}
+  return '';
+}
+async function hydratePlantCardImages(){
+  for(const p of data.plants||[]){
+    if(!p || plantImage(p) || p.imageLoading) continue;
+    const meta=plantMeta(p);
+    const query=[p.scientific,meta.scientific,meta.imageSearchQuery,p.name,meta.name].filter(Boolean).join(' ');
+    if(!query || imageHydrationQueue.has(query)) continue;
+    imageHydrationQueue.add(query); p.imageLoading=true;
+    fetchPlantImageFromWikipedia(query).then(img=>{
+      p.imageLoading=false;
+      if(img){
+        p.imageUrl=img;
+        if(p.meta)p.meta.imageUrl=img;
+        const slug=slugify(p.name);
+        if(PLANT_INDEX[slug]) PLANT_INDEX[slug].imageUrl=img;
+        service.save(data);
+        render();
+      }
+    }).catch(()=>{p.imageLoading=false});
+  }
+}
+function mergeLiveProfileIntoLibrary(slug,profile){
+  if(!profile)return PLANT_INDEX[slug];
+  const current=PLANT_INDEX[slug]||{};
+  const merged=enrichProfileWithQuality(Object.assign({},current,profile,{slug:profile.slug||slug||current.slug}), profile.name||slug||current.name);
+  PLANT_INDEX[merged.slug]=merged;
+  const idx=PLANT_LIBRARY.findIndex(x=>x.slug===merged.slug||x.slug===slug);
+  if(idx>=0)PLANT_LIBRARY[idx]=merged; else PLANT_LIBRARY.unshift(merged);
+  return merged;
+}
+function applyProfileToPlant(plant,profile){
+  if(!profile||!plant)return plant;
+  plant.name=profile.name||plant.name;
+  plant.status=profile.status||plant.status||'Healthy';
+  plant.mark=profile.mark||plant.mark||'✓';
+  plant.scientific=profile.scientific||plant.scientific||'';
+  plant.imageUrl=profile.imageUrl||profile.image||plant.imageUrl||'';
+  const cleanProfile=enrichProfileWithQuality(profile, plant.name||profile.name||'');
+  plant.meta=JSON.parse(JSON.stringify(cleanProfile));
+  return plant;
+}
+function escapeAttr(v){return String(v??'').replace(/[\'"]/g,'').replace(/[<>]/g,'')}
+function cleanWarningText(v){
+  return String(v||'').trim().replace(/^[-•\s]+/,'');
+}
+function isUsefulWarning(v){
+  const t=cleanWarningText(v).toLowerCase();
+  if(!t)return false;
+  if(/water .*june|fertiliz.*june|prune .*july|regular care|seasonal feeding|seasonal pruning|create seasonal|profile matched from public|saved to|task added|manual entry/i.test(t))return false;
+  if(/verify by species|depends on cultivar|confirm exact variety before buying/i.test(t))return false;
+  return true;
+}
+function knownPlantRiskNotes(p){
+  const m=plantMeta(p);
+  const text=normalizeQuery([p?.name,p?.scientific,m?.name,m?.scientific,m?.he].filter(Boolean).join(' '));
+  const has=(...words)=>words.some(w=>text.includes(normalizeQuery(w)));
+  if(has('papaya','carica papaya','פפאיה'))return [
+    '❄️ Cold/frost: very sensitive to frost and cold wind; protect in winter or grow in a warm microclimate.',
+    '💧 Root risk: dislikes standing water; heavy clay or poor drainage can cause root rot.',
+    '🐾 Pets/children: milky latex and unripe fruit can irritate sensitive skin or stomachs if handled/eaten.',
+    '🐛 Pests: watch for mites, mealybugs, aphids and fruit fly in warm weather.',
+    '🌬️ Structure: shallow roots and soft trunk can suffer in strong wind; avoid exposed sites.'
+  ];
+  if(has('mango','mangifera indica','מנגו'))return [
+    '❄️ Cold/frost: young mango trees are very frost-sensitive and need winter protection.',
+    '🧴 Skin irritation: mango sap/peel can irritate people sensitive to poison ivy-type compounds.',
+    '🐛 Pests/disease: monitor flowers and new growth for anthracnose, powdery mildew, scale and mealybugs.',
+    '🏠 Space/roots: becomes a large tree; plant away from walls, paving, pipes and narrow beds.',
+    '🍈 Fruit drop: fallen fruit can attract wasps, flies and ants if not collected.'
+  ];
+  if(has('lychee','litchi chinensis','ליצ'))return [
+    '❄️ Cold/wind: young lychee trees are sensitive to frost, dry wind and heat stress.',
+    '💧 Water stress: inconsistent moisture during flowering/fruiting can reduce fruit set.',
+    '🐛 Pests: watch for mites, scale insects and fruit pests.',
+    '🐾 Pets/children: seeds are not edible; keep fallen fruit/seeds away from small children and pets.',
+    '🏠 Space: grows into a medium-large tree and needs room for canopy and roots.'
+  ];
+  if(has('raspberry','rubus','פטל'))return [
+    '🌿 Spread: can sucker and spread beyond its bed; best managed with barriers or a contained row.',
+    '🪝 Thorns: many varieties have prickly canes; use gloves and avoid high-traffic paths.',
+    '☀️ Heat stress: fruit quality drops in hot dry exposure; afternoon shade may be needed in warm climates.',
+    '🐛 Pests/disease: monitor for mites, cane borers and fungal disease on crowded canes.',
+    '🧱 Support: canes usually need a trellis or wires to stay upright.'
+  ];
+  if(has('lemon','citrus limon','לימון'))return [
+    '🐾 Pets/children: citrus oils and leaves can upset pets if chewed; avoid letting pets eat foliage or peel.',
+    '🪝 Thorns: many lemon trees have sharp thorns; place away from walkways and children’s play areas.',
+    '🐛 Pests: check for scale, aphids, leaf miner and mealybugs on new growth.',
+    '💧 Root risk: avoid waterlogged soil; citrus roots need oxygen and drainage.',
+    '❄️ Cold: young trees can be damaged by frost and cold wind.'
+  ];
+  if(has('pomegranate','punica granatum','רימון'))return [
+    '🌱 Suckers: can send shoots from the base; remove suckers to keep a tree form.',
+    '🍎 Fruit split: irregular watering or sudden rain near harvest can split fruit.',
+    '🐛 Pests: watch for aphids, scale insects and fruit fly.',
+    '🐝 Insects: ripe or split fruit may attract ants, flies and wasps.',
+    '☀️ Fruiting: needs strong sun; shade reduces flowering and fruit set.'
+  ];
+  if(has('lavender','lavandula','לבנדר','אזוביון'))return [
+    '🐝 Pollinators: strongly attracts bees; avoid placing right next to seating or narrow paths if this bothers users.',
+    '💧 Root risk: wet roots and heavy soil can quickly kill lavender.',
+    '🐾 Pets: lavender can cause stomach upset in cats/dogs if eaten in quantity.',
+    '🌫️ Humidity: poor airflow and humidity can cause fungal decline.',
+    '✂️ Pruning: avoid cutting hard into old bare wood; it may not regrow well.'
+  ];
+  if(has('rosemary','salvia rosmarinus','רוזמרין'))return [
+    '🐝 Pollinators: flowers attract bees and beneficial insects.',
+    '💧 Root risk: frequent watering or heavy soil can cause root rot.',
+    '✂️ Pruning: avoid severe cutting into old woody stems.',
+    '🐾 Pets: generally considered low-risk, but large amounts may upset pets or people.',
+    '🔥 Dry stems: keep dry woody growth away from open flame or very hot barbecue areas.'
+  ];
+  if(has('jasmine','jasminum','יסמין'))return [
+    '🪪 ID warning: confirm the exact species — some plants sold as “jasmine” are not true Jasminum and can be toxic.',
+    '🐛 Pests: check for aphids, scale insects, mites and whitefly.',
+    '🌿 Support/spread: climbing forms need support and can tangle into nearby plants.',
+    '💧 Stress: drought during flowering can cause bud drop and leaf stress.',
+    '🐝 Fragrance/pollinators: strong fragrance may bother sensitive users and flowers may attract insects.'
+  ];
+  if(has('bougainvillea','בוגנוויליה'))return [
+    '🪝 Thorns: sharp thorns can injure people and pets; avoid narrow paths and play areas.',
+    '🌿 Vigorous growth: can become large and heavy; needs pruning and strong support.',
+    '❄️ Cold: frost-sensitive in exposed sites.',
+    '🐾 Pets/children: bracts/leaves may irritate mouth or stomach if chewed.',
+    '💧 Flowering: too much water or fertilizer can reduce blooming.'
+  ];
+  if(has('mint','mentha','נענע'))return [
+    '🌿 Invasive spread: mint spreads aggressively by runners; grow in a pot or contained bed.',
+    '💧 Moisture: wilts quickly if allowed to dry in hot weather.',
+    '🐛 Pests: can get aphids, spider mites or rust in crowded growth.',
+    '🐾 Pets: large amounts may upset pets; avoid uncontrolled grazing.',
+    '✂️ Maintenance: cut back often to prevent legginess and flowering.'
+  ];
+  if(has('basil','ocimum basilicum','בזיליקום','ריחן'))return [
+    '❄️ Cold: very sensitive to cold nights and frost.',
+    '🌫️ Disease: downy mildew and fungal leaf spots can appear in humid/crowded conditions.',
+    '🐛 Pests: monitor for aphids, whitefly and caterpillars.',
+    '🌸 Bolting: flowering reduces leaf quality; pinch flower buds regularly.',
+    '💧 Water stress: irregular watering causes wilting and bitter leaves.'
+  ];
+  if(has('hydrangea','הידרנגאה','הורטנזיה'))return [
+    '🐾 Pets/children: hydrangea is toxic if eaten; keep away from pets and small children.',
+    '☀️ Heat/sun: hot afternoon sun can scorch leaves and cause severe wilting.',
+    '💧 Water stress: needs consistent moisture; drying out can damage flowers.',
+    '✂️ Pruning: wrong pruning time can remove next season’s flower buds.',
+    '🌱 Soil: flower color and nutrient availability can be affected by soil pH.'
+  ];
+  return [];
+}
+function plantAlerts(p){
+  const meta=plantMeta(p);
+  const alerts=[];
+  knownPlantRiskNotes(p).forEach(a=>alerts.push(a));
+  (meta.warnings||[]).map(cleanWarningText).filter(isUsefulWarning).forEach(w=>alerts.push(w));
+  const status=(p.status||'').toLowerCase();
+  if((p.mark||'')==='!' && status && !/water|fertiliz|prune|task|regular care/i.test(status)) alerts.unshift('⚠️ Current status: '+p.status);
+  const unique=[...new Set(alerts.map(cleanWarningText).filter(Boolean))];
+  if(!unique.length) unique.push('✓ No specific safety, pest or placement alerts are known for this plant right now. Keep monitoring leaves, soil moisture and local conditions.');
+  return unique;
+}
+
+function isPlantAttention(p){
+  const status=String(p?.status||'').toLowerCase();
+  return (p?.mark==='!') || status.includes('needs') || status.includes('check leaves') || status.includes('disease') || status.includes('review');
+}
+function hasRecentGardenActivity(){
+  return (data.events||[]).some(e=>{
+    const date=String(e?.[0]||'').toLowerCase();
+    const txt=String((e?.[1]||'')+' '+(e?.[2]||'')).toLowerCase();
+    return (date==='today'||date==='now') && (txt.includes('scan')||txt.includes('status checked')||txt.includes('plant added')||txt.includes('photo')||txt.includes('care focus'));
+  });
+}
+function healthRelevantTaskEntries(){
+  return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>isCompanionActionableTask(x.t));
+}
+function isHealthUrgentTask(t){
+  if(!t||t.done)return false;
+  if(!isCompanionActionableTask(t))return false;
+  const iso=taskIsoValue(t);
+  const when=String(t?.[2]||'').toLowerCase();
+  const priority=String(t?.[3]||'').toLowerCase();
+  if(iso && iso<todayIso())return true;
+  if(iso && iso===todayIso())return true;
+  if(when.includes('today'))return true;
+  if(priority.includes('high') && (when.includes('tomorrow')||when.includes('this week')))return true;
+  return false;
+}
+function taskHealthPenalty(t){
+  const priority=String(t?.[3]||'').toLowerCase();
+  const iso=taskIsoValue(t);
+  const when=String(t?.[2]||'').toLowerCase();
+  const overdue=iso && iso<todayIso();
+  const dueToday=(iso && iso===todayIso()) || when.includes('today');
+  if(overdue){
+    if(priority.includes('high'))return 4;
+    if(priority.includes('medium'))return 2;
+    return 1;
+  }
+  if(dueToday){
+    if(priority.includes('high'))return 2;
+    if(priority.includes('medium'))return 1;
+    return 0.5;
+  }
+  if(priority.includes('high'))return 1;
+  return 0;
+}
+function calculateHealthScore(){
+  // Garden Health should feel like a calm companion, not a punishment system.
+  // It measures real garden condition: plant attention + urgent care only.
+  // Future/background reminders do not reduce the score.
+  const visible=(data.plants||[]).filter(p=>!p.archived);
+  const totalPlants=visible.length;
+  const attentionPlants=visible.filter(isPlantAttention).length;
+  const healthyPlants=Math.max(0,totalPlants-attentionPlants);
+  const tasks=(data.tasks||[]);
+  const healthTasks=healthRelevantTaskEntries();
+  const urgentTasks=healthTasks.filter(x=>isHealthUrgentTask(x.t));
+  const urgentPenalty=Math.min(16,urgentTasks.reduce((sum,x)=>sum+taskHealthPenalty(x.t),0));
+  const doneTasks=tasks.filter(t=>t.done).length;
+  const recentActivity=hasRecentGardenActivity();
+  const noPlantsPenalty=totalPlants?0:8;
+  const plantPenalty=Math.min(30,attentionPlants*4);
+  const activityPenalty=recentActivity?0:2;
+  const completedBonus=Math.min(4,doneTasks>=3?3:doneTasks);
+  let score=100-noPlantsPenalty-plantPenalty-urgentPenalty-activityPenalty+completedBonus;
+  score=Math.max(0,Math.min(100,Math.round(score)));
+  const statusTitle=score>=90?'Looking great ·':score>=80?'Looking good ·':score>=70?'Needs a little care ·':'Needs attention ·';
+  const statusText=score>=90?'Your garden is in good shape. Cruvit is only showing what truly matters today.':score>=80?'Your garden is mostly healthy. Start with today’s useful care focus.':score>=70?'A few plants or urgent tasks need light care, but there is no need to do everything now.':'Several plants or urgent tasks need attention. Start with one focus action.';
+  const rows=[
+    {label:'Plant condition',value:`${healthyPlants}/${totalPlants || 0} healthy`,impact:plantPenalty?`-${plantPenalty}`:'0',note:totalPlants?`${attentionPlants} plant${attentionPlants===1?'':'s'} need attention`:'Add plants to build a real garden score'},
+    {label:'Urgent care only',value:`${urgentTasks.length}`,impact:urgentPenalty?`-${Math.round(urgentPenalty)}`:'0',note:'Only overdue or due-today tasks affect health. Future reminders do not lower the score.'},
+    {label:'Recent activity',value:recentActivity?'Updated today':'No recent update',impact:recentActivity?'0':'-2',note:recentActivity?'Recent scan/status/plant activity found':'Scan or update your garden to refresh confidence'},
+    {label:'Completed-care bonus',value:`+${completedBonus}`,impact:`+${completedBonus}`,note:'Small bonus for completed care actions'}
+  ];
+  return {score,statusTitle,statusText,totalPlants,attentionPlants,healthyPlants,openTasks:visibleCareTaskCount(),urgentTasks:urgentTasks.length,doneTasks,recentActivity,rows};
+}
+
+// Keep calculateHealthScore globally available after code merges. Some handlers call it directly.
+try{window.calculateHealthScore=calculateHealthScore}catch(e){}
+function todayIso(){return '2026-06-22'}
+function isoFromOffset(offset){const d=new Date(2026,5,22+offset);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function labelFromIso(iso){const p=isoParts(iso); if(!p)return 'This week'; if(iso===todayIso())return 'Today'; return `${monthNames[p.month]} ${p.day}`}
+function taskDueText(iso,note){return `${labelFromIso(iso)} · ${note}`}
+function taskMatchesPlant(t,plantName){return normalizeQuery(t?.[1]||'').includes(normalizeQuery(plantName||''))}
+function taskTitleExists(title,plantName){const tNorm=normalizeQuery(title); const pNorm=normalizeQuery(plantName||''); return (data.tasks||[]).some(t=>normalizeQuery(t?.[1]||'')===tNorm || (pNorm && normalizeQuery(t?.[1]||'').includes(pNorm) && normalizeQuery(t?.[1]||'').includes(tNorm.slice(0,12))))}
+function isTaskOverdue(t){if(t?.done)return false; const iso=t?.[4]; if(!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso))return false; return iso<todayIso()}
+function autoTaskPriority(title,ref){const txt=(title+' '+(ref.status||'')+' '+(ref.warnings||[]).join(' ')).toLowerCase(); if(txt.includes('disease')||txt.includes('pest')||txt.includes('check')||txt.includes('yellow')||txt.includes('wilting'))return 'High'; if(txt.includes('fertiliz')||txt.includes('prun')||txt.includes('feed'))return 'Medium'; return 'Low'}
+function addAutoCareTask(ref,title,offset,note,icon){
+  const plantName=ref.name||'Plant';
+  if(taskTitleExists(title,plantName))return false;
+  const iso=isoFromOffset(offset);
+  const priority=autoTaskPriority(title,ref);
+  data.tasks.push([icon||ref.icon||'🌿',title,taskDueText(iso,note||'auto-generated care task'),priority,iso,true,plantName]);
+  data.events.unshift([labelFromIso(iso),'Care task created',`${title} · ${plantName}`]);
+  return true;
+}
+function inferWaterTask(ref){
+  const w=String(ref.water||'').toLowerCase();
+  if(w.includes('low'))return {title:`Check soil moisture for ${ref.name}`,offset:5,note:'low-water plant'};
+  if(w.includes('high')||w.includes('moist'))return {title:`Water ${ref.name}`,offset:1,note:'moisture-loving plant'};
+  return {title:`Water ${ref.name}`,offset:3,note:'regular care'};
+}
+function generateCareTasksForPlant(ref,source='My Garden'){
+  // Cruvit is a garden companion, not a task manager: create only the most useful care action now.
+  const openCount=(data.tasks||[]).filter(t=>!t.done).length;
+  const created=[];
+  const plantName=ref.name||'Plant';
+  const profileTasks=(ref.tasks||[]).map(t=>typeof t==='string'?{title:t}:t).filter(t=>t&&t.title);
+
+  function createOne(task){
+    if(!task||!task.title)return false;
+    const title=task.title||task.name;
+    if(taskTitleExists(title,plantName))return false;
+    const offset=Number.isFinite(+task.offsetDays)?+task.offsetDays:(task.offset||3);
+    if(addAutoCareTask(ref,title,offset,task.note||'recommended care',task.icon||ref.icon||'🌿')){created.push(title);return true}
+    return false;
+  }
+
+  // If the user already has many open tasks, avoid adding more unless the plant clearly needs attention.
+  const attention=ref.mark==='!' || String(ref.status||'').toLowerCase().includes('need') || (ref.warnings||[]).some(w=>/toxic|frost|pest|disease|invasive|thorn|root|attention|review/i.test(w));
+  if(openCount>=3 && !attention){
+    data.events.unshift(['Today','Plant added without extra task',`${plantName} · no urgent care needed now`]);
+    return created;
+  }
+
+  // Prefer one explicit task from the plant profile if it exists.
+  if(profileTasks.length){
+    const urgent=profileTasks.find(t=>/water|check|inspect|pest|disease|fertiliz|feed|prun/i.test(t.title||''))||profileTasks[0];
+    createOne(urgent);
+  }
+
+  // Otherwise infer only one action, and keep it gentle.
+  if(!created.length){
+    if(attention){
+      const title=`Check ${plantName} condition`;
+      createOne({title,offsetDays:2,note:'plant needs attention',icon:'🔎'});
+    }else{
+      const w=String(ref.water||'').toLowerCase();
+      if(w.includes('high')||w.includes('moist')){
+        createOne({title:`Check soil moisture for ${plantName}`,offsetDays:2,note:'quick moisture check',icon:'💧'});
+      }else{
+        data.events.unshift(['Today','No urgent task needed',`${plantName} · Cruvit will remind you only when care is useful`]);
+      }
+    }
+  }
+
+  if(created.length)data.events.unshift(['Today','Care focus created',`${created[0]} · ${plantName}`]);
+  return created;
+}
+
+function syncHealthScore(){
+  // Single source of truth for Garden Health.
+  const h=calculateHealthScore();
+  data.score=h.score;
+  return h;
+}
+function showHealthBreakdown(){
+  const h=syncHealthScore();
+  const title=document.getElementById('plantPanelTitle');
+  const sub=document.getElementById('plantPanelSubtitle');
+  const body=document.getElementById('plantPanelBody');
+  title.textContent='Garden Health Score';
+  sub.textContent='How Cruvit calculated your current score';
+  body.innerHTML=`<div class="guide-block"><b>${h.score} / 100 · ${h.statusTitle.replace(' ·','')}</b><span>${h.statusText}</span></div><div class="info-grid">${h.rows.map(r=>`<div class="info-tile"><span class="big">${r.impact.startsWith('+')?'＋':'−'}</span><span><b>${r.label}: ${r.value}</b><span>${r.impact} points · ${r.note}</span></span></div>`).join('')}</div><div class="guide-block"><b>How to improve it</b><span>Complete open tasks, resolve plant alerts, and scan or update your garden regularly. The score recalculates after every plant, task, calendar note, scan and status update.</span></div>`;
+  document.getElementById('plantDetailModal').classList.add('open');
+}
+function rewardLevelName(){const c=data.rewards?.credits||0; if(c>=2500)return 'Garden Master'; if(c>=1000)return 'Expert Gardener'; if(c>=500)return 'Gardener'; return 'Seedling'}
+function nextRewardInfo(){const c=data.rewards?.credits||0; if(c<500)return {target:500,text:`${500-c} Credits until ₪10 Store Credit`,pct:c/500*100}; if(c<1000)return {target:1000,text:`${1000-c} Credits until ₪25 Store Credit`,pct:(c-500)/500*100}; if(c<2500)return {target:2500,text:`${2500-c} Credits until ₪75 Store Credit`,pct:(c-1000)/1500*100}; return {target:2500,text:'₪75 Store Credit unlocked',pct:100}}
+function awardCredits(amount,reason){
+  ensureRewardsState();
+  data.rewards.credits=(Number(data.rewards.credits)||0)+amount;
+  data.rewards.history.unshift({amount,reason,date:'Today'});
+  checkAchievements();
+  service.save(data);
+  showRewardToast(amount,reason);
+}
+function showRewardToast(amount,reason){const el=document.getElementById('rewardToast'); if(!el)return; el.textContent=`+${amount} Credits · ${reason}`; el.classList.add('show'); clearTimeout(window.rewardToastTimer); window.rewardToastTimer=setTimeout(()=>el.classList.remove('show'),1800)}
+function checkAchievements(){ensureRewardsState(); const a=data.rewards.achievements; const visible=(data.plants||[]).filter(p=>!p.archived).length; if(visible>=1)a.firstPlant=true; if(visible>=5)a.fivePlants=true; if((data.rewards.history||[]).some(h=>String(h.reason).toLowerCase().includes('scan')))a.firstScan=true; if((data.tasks||[]).filter(t=>t.done).length>=3)a.taskStreak=true}
+function renderRewards(){
+  const c=data.rewards?.credits||0; const info=nextRewardInfo(); const level=rewardLevelName();
+  const miniC=document.getElementById('creditsMini'); if(miniC)miniC.textContent=c+' Credits';
+  const navC=document.getElementById('creditsNav'); if(navC)navC.textContent=c;
+  const miniL=document.getElementById('userLevelMini'); if(miniL)miniL.textContent=level;
+  const shop=document.getElementById('shoppingRewardText'); if(shop)shop.textContent=(c>=500?'You have store credit available.':'Earn '+(500-c)+' more credits for ₪10 store credit.');
+  const bal=document.getElementById('creditsBalance'); if(!bal)return;
+  bal.textContent=c; document.getElementById('rewardLevel').textContent=level; document.getElementById('rewardLevelText').textContent='Credits convert to store discounts, not cash.'; document.getElementById('nextRewardText').textContent=info.text; document.getElementById('creditsProgress').style.width=Math.max(0,Math.min(100,info.pct))+'%';
+  const a=data.rewards.achievements||{};
+  const rows=[['🌱 First plant','Add your first plant',a.firstPlant],['📷 First scan','Scan or identify a plant',a.firstScan],['🌿 Five plants','Track 5 plants in your garden',a.fivePlants],['✓ Care streak','Complete 3 care tasks',a.taskStreak]];
+  document.getElementById('achievements').innerHTML=rows.map(r=>`<div class="achievement"><div><b>${r[0]}</b><br><span>${r[1]}</span></div><span class="state">${r[2]?'Unlocked':'Locked'}</span></div>`).join('');
+}
+
+let enrichTimer=null;
+
+function plantNeedsLiveProfile(p){
+  if(!p) return false;
+  const meta=p.meta||{};
+  const hasProfile=(p.scientific||meta.scientific||meta.guide||meta.sun||meta.water||meta.warnings||meta.products||meta.tasks);
+  const hasRealImage=!!plantImage(p);
+  const isPlaceholder=(p.imageUrl||meta.imageUrl||'').includes('garden-bg.jpg');
+  return !hasProfile || !hasRealImage || isPlaceholder;
+}
+
+function maybeEnrichVisiblePlants(plants){
+  const candidates=(plants||[]).filter(p=>plantNeedsLiveProfile(p)&&!p.enriching&&!p.enrichTried).slice(0,2);
+  if(!candidates.length)return;
+  clearTimeout(enrichTimer);
+  enrichTimer=setTimeout(async()=>{
+    let changed=false;
+    for(const p of candidates){
+      p.enriching=true;
+      try{
+        const live=await fetchPlantProfile(p.name,p.source||'My Garden');
+        if(live&&live.isPlant!==false){applyProfileToPlant(p,live);changed=true;}
+      }catch(_){}
+      p.enriching=false;p.enrichTried=true;
+    }
+    if(changed){service.save(data);render();}
+  },350);
+}
+
+function render(){syncHealthScore();
+  const health=syncHealthScore();
+  document.getElementById('score').textContent=health.score;
+  const statusH=document.querySelector('.status-text h3'); if(statusH)statusH.textContent=health.statusTitle;
+  const statusP=document.querySelector('.status-text p'); if(statusP)statusP.textContent=health.statusText;
+  const visiblePlants=data.plants.filter(p=>!p.archived);
+  maybeEnrichVisiblePlants(visiblePlants);
+  document.getElementById('plantCount').textContent=visiblePlants.length;
+  document.getElementById('taskCount').textContent=visibleCareTaskCount();
+  document.getElementById('attentionCount').textContent=visiblePlants.filter(isPlantAttention).length;
+  document.getElementById('signInBtn').textContent=data.signedIn?'Signed in':'Sign in';
+  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
+  setTimeout(hydratePlantCardImages,0);
+  
+  const focusIndexes=focusedTaskIndexes();
+  const actionableTasks=companionOpenTaskEntries();
+  const openTotal=actionableTasks.length;
+  const hiddenCount=Math.max(0,Math.min(openTotal,3)-focusIndexes.length);
+  const tasksTitle=document.getElementById('tasksTitle'); if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
+  const tasksSubtitle=document.getElementById('tasksSubtitle'); if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Everything else waits until it matters.':'Everything looks good. Enjoy your garden today.';
+  const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
+  const taskHtml=focusIndexes.map(i=>{const t=data.tasks[i];return `<div class="task ${t.done?'done':''}"><div class="taskIcon">${t[0]}</div><div><b>${t[1]}</b><span>${t[2]}</span></div><button class="priority" onclick="completeTask(${i})">${t.done?'Done':t[3]}</button><div class="card-actions"><button class="kebab" onclick="toggleTaskMenu(event,${i})">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div>`}).join('');
+  const footer= openTotal===0 ? `<div class="garden-rest-note">🌿 No urgent care is needed right now. Cruvit will only surface tasks when they are actually useful.</div>` : hiddenCount>0 && !showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Upcoming this week (${hiddenCount})</button></div>` : showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Show only today’s focus</button></div>` : '';
+  document.getElementById('tasks').innerHTML=taskHtml+footer;
+
+  renderCalendar();renderCart();renderRewards();
+}
+function setTab(name){['tasks','plants','shopping','timeline','rewards'].forEach(x=>{document.getElementById('view-'+x).classList.toggle('hidden',x!==name);document.getElementById('tab-'+x).classList.toggle('active',x===name)});window.scrollTo({top:document.querySelector('.tabs').offsetTop-10,behavior:'smooth'})}
+function toggleTaskMenu(ev,i){ev.stopPropagation();openMenu=openMenu==='task-'+i?null:'task-'+i;render()}
+function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render()}}
+function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,'23'),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render()}
+function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
+function completeTask(i){if(data.tasks[i].done)return;data.tasks[i].done=true;data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render()}
+function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i].done=true});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render()}
+
+function resetAddPlantSearchState(){
+  currentPlantSetup={slug:null,source:'My Garden'};
+  addPlantSearchState={source:null,query:'',results:[],liveProfile:null,loading:false};
+  window.lastPlantSearchError='';
+}
+function openAddPlantModal(){
+  openMenu=null;
+  resetAddPlantSearchState();
+  document.getElementById('addPlantModal').classList.add('open');
+  renderAddOptions();
+}
+function closeAddPlantModal(){
+  resetAddPlantSearchState();
+  const modal=document.getElementById('addPlantModal');
+  if(modal)modal.classList.remove('open');
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAddPlantModal()});
+function addPlant(){openAddPlantModal()}
+function renderAddOptions(){
+  const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.remove('scan-mode');
+  resetAddPlantSearchState();
+  document.getElementById('addPlantTitle').textContent='Add plant';
+  document.getElementById('addPlantSubtitle').textContent='Choose where this plant comes from. Every option uses Cruvit plant knowledge and connects back to tasks, calendar and shopping.';
+  document.getElementById('addPlantContent').innerHTML=`<div class="add-grid">
+    <button class="add-card" onclick="openPlantChooser('Scan & Identify')"><span class="ico">📷</span><span><b>Scan & identify</b><span>Upload or photograph a plant, then choose the matching real plant.</span></span></button>
+    <button class="add-card" onclick="openPlantChooser('Manual entry')"><span class="ico">✍️</span><span><b>Add manually</b><span>Search a real plant name and save verified care data.</span></span></button>
+    <button class="add-card" onclick="openPlantChooser('Smart Recommendations')"><span class="ico">🌿</span><span><b>From recommendations</b><span>Climate-matched plants based on your garden profile.</span></span></button>
+    <button class="add-card" onclick="openPlantChooser('Garden Design')"><span class="ico">🎨</span><span><b>From garden design</b><span>Plants typically used in your design concept.</span></span></button>
+  </div><div class="source-ready">Knowledge layer is structured for a real OpenAI/Supabase connection later, without exposing your API key in the browser.</div>`;
+}
+function openPlantChooser(source){
+  const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.toggle('scan-mode', source==='Scan & Identify');
+  document.getElementById('addPlantTitle').textContent=source==='Scan & Identify'?'Identify and add plant':source;
+  document.getElementById('addPlantSubtitle').textContent=source==='Scan & Identify'?'Take or upload a plant photo. Cruvit will identify it, then you can add the verified plant profile to My Garden.':'Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
+  let helper=source==='Scan & Identify'?`
+    <div class="scan-uploader">
+      <div class="scan-actions">
+        <label class="scan-drop" for="plantCameraInput">
+          <span class="scan-icon">📷</span>
+          <b>Take photo</b>
+          <small>Use the camera on mobile.</small>
+        </label>
+        <label class="scan-drop" for="plantGalleryInput">
+          <span class="scan-icon">🖼️</span>
+          <b>Choose image</b>
+          <small>Upload from your device.</small>
+        </label>
+      </div>
+      <input id="plantCameraInput" type="file" accept="image/*" capture="environment" onchange="handlePlantPhotoSelected(this)" style="display:none">
+      <input id="plantGalleryInput" type="file" accept="image/*" onchange="handlePlantPhotoSelected(this)" style="display:none">
+      <div id="plantPhotoPreview" class="scan-preview hidden"></div>
+      <button id="identifyPlantBtn" class="btn main scan-identify hidden" type="button" onclick="identifySelectedPlantPhoto()">Identify plant</button>
+      <div class="plant-source-note" id="scanNote">Take or choose a plant photo, then tap Identify plant.</div>
+    </div>`:'';
+  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search plant, e.g. olive, lavender, lemon…" oninput="renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
+  resetAddPlantSearchState();
+  addPlantSearchState.source=source;
+  window.selectedPlantPhoto=null;
+  const input=document.getElementById('plantSearchInput');
+  if(input) input.value='';
+  const results=document.getElementById('plantResults');
+  if(results){
+    if(source==='Smart Recommendations' || source==='Garden Design'){
+      const seed=source==='Smart Recommendations'?'mediterranean':'tree sun';
+      renderPlantResults(source,seed,{seeded:true});
+    }else{
+      results.innerHTML=source==='Scan & Identify'?'<div class="plant-source-note">Upload a plant photo above, or type a plant name manually.</div>':'<div class="plant-source-note">Type a plant name to search. Each new add starts clean, so previous searches will not stay here.</div>';
+    }
+  }
+}
+function handlePlantPhotoSelected(input){
+  const note=document.getElementById('scanNote');
+  const preview=document.getElementById('plantPhotoPreview');
+  const btn=document.getElementById('identifyPlantBtn');
+  const file=input.files&&input.files[0];
+  window.selectedPlantPhoto=null;
+  if(!file){
+    if(note)note.textContent='Choose or photograph a plant to start AI identification.';
+    if(preview){preview.classList.add('hidden');preview.innerHTML=''}
+    if(btn)btn.classList.add('hidden');
+    return;
+  }
+  if(!file.type || !file.type.startsWith('image/')){
+    if(note)note.textContent='Please choose an image file.';
+    if(btn)btn.classList.add('hidden');
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=function(){
+    window.selectedPlantPhoto={name:file.name,type:file.type,size:file.size,dataUrl:String(reader.result||'')};
+    if(preview){preview.classList.remove('hidden');preview.innerHTML=`<img src="${escapeAttr(window.selectedPlantPhoto.dataUrl)}" alt="Plant preview"><span>${escapeHtml(file.name)}</span>`}
+    if(btn){btn.classList.remove('hidden');btn.disabled=false;btn.textContent='Identify plant'}
+    const results=document.getElementById('plantResults');
+    if(results)results.innerHTML='<div class="plant-source-note">Photo selected. Tap Identify plant to analyze it, or type the plant name manually below.</div>';
+    if(note)note.textContent='Photo ready. Tap Identify plant to analyze it.';
+  };
+  reader.onerror=function(){if(note)note.textContent='Could not read this photo. Please try another image.'};
+  reader.readAsDataURL(file);
+}
+async function identifySelectedPlantPhoto(){
+  const note=document.getElementById('scanNote');
+  const results=document.getElementById('plantResults');
+  const btn=document.getElementById('identifyPlantBtn');
+  const photo=window.selectedPlantPhoto;
+  if(!photo||!photo.dataUrl){if(note)note.textContent='Please choose or take a plant photo first.';return}
+  if(btn){btn.disabled=true;btn.textContent='Identifying…';btn.classList.add('loading')}
+  if(note)note.textContent='Cruvit is identifying the plant…';
+  if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo and preparing matching plant profiles…</div>';
+  try{
+    const res=await fetchWithTimeout('/api/plant-identify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl:photo.dataUrl,location:data.location||'Western Galilee, Israel',climate:data.climate||'Mediterranean'})},20000);
+    if(!res.ok)throw new Error('Identification service is not reachable');
+    const out=await res.json();
+    const names=(out.candidates||out.plants||[]).map(x=>typeof x==='string'?x:(x.name||x.commonName||x.scientificName)).filter(Boolean);
+    const best=out.commonName||out.name||names[0]||out.scientificName||'';
+    if(!best)throw new Error(out.error||'No plant match found');
+    const candidateNames=[best,...names].filter(Boolean).slice(0,4);
+    const profiles=[];
+    for(const name of candidateNames){
+      const p=await fetchPlantProfile(name,'Scan & Identify').catch(()=>null);
+      if(p&&p.isPlant!==false){
+        p.scanPhotoUrl=photo.dataUrl;
+        p.imageUrl=photo.dataUrl;
+        p.photoUrl=photo.dataUrl;
+        p.aliases=[...(p.aliases||[]),name,'photo identification'].filter(Boolean);
+        const existing=PLANT_INDEX[p.slug];
+        if(!existing){PLANT_LIBRARY.unshift(p);PLANT_INDEX[p.slug]=p}else{PLANT_INDEX[p.slug]={...existing,...p,scanPhotoUrl:photo.dataUrl,photoUrl:photo.dataUrl,imageUrl:photo.dataUrl};}
+        profiles.push(PLANT_INDEX[p.slug]);
+      }
+    }
+    if(!profiles.length){
+      const fallback=normalizeApiPlant({commonName:best, scientificName:out.scientificName||'', imageUrl:photo.dataUrl, icon:'🌿', sun:'Check exact species and exposure', water:'Confirm watering after identification', warnings:['AI identification should be confirmed before treatment or purchase.'], guide:'This plant was identified from an uploaded photo. Confirm the exact species and variety before applying care actions.'},best);
+      fallback.scanPhotoUrl=photo.dataUrl; fallback.imageUrl=photo.dataUrl;
+      PLANT_LIBRARY.unshift(fallback); PLANT_INDEX[fallback.slug]=fallback; profiles.push(fallback);
+    }
+    if(results)results.innerHTML=profiles.map(p=>plantResultButton(p,'Scan & Identify')).join('')+'<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
+    if(note)note.textContent='Identification complete. Choose the matching plant below.';
+  }catch(err){
+    console.error('Plant photo identification failed',err);
+    if(note)note.textContent='Could not identify from the photo. You can still type the plant name manually below.';
+    if(results)results.innerHTML='<div class="plant-source-note">Identification failed. Try another photo or type the plant name manually.</div>';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Identify plant';btn.classList.remove('loading')}
+  }
+}
+function scorePlantForSource(p,source){const t=(p.tags||[]).join(' ').toLowerCase(); if(source==='Smart Recommendations')return t.includes('mediterranean')||t.includes('low water')||t.includes('sun'); if(source==='Garden Design')return t.includes('tree')||t.includes('climber')||t.includes('flowering')||t.includes('mediterranean'); return true}
+function textForSearch(p){return [p.name,p.he,p.scientific,(p.aliases||[]).join(' '),(p.tags||[]).join(' '),p.sun,p.water,p.climate,p.guide].join(' ').toLowerCase()}
+function normalizeQuery(q){return String(q||'').trim().toLowerCase().replace(/[״"׳’`]/g,'').replace(/^עץ\s+/,'').replace(/\s+/g,' ')}
+function searchLocalPlants(query,source){
+  const q=normalizeQuery(query);
+  let base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source));
+  if(!q)return base;
+  const exact=[]; const contains=[];
+  PLANT_LIBRARY.forEach(p=>{
+    const aliases=[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery);
+    if(aliases.some(a=>a===q || a.replace(/^עץ\s+/,'')===q || q===a.replace(/^עץ\s+/,''))) exact.push(p);
+    else if(textForSearch(p).includes(q) || q.split(' ').some(part=>part.length>1 && textForSearch(p).includes(part))) contains.push(p);
+  });
+  return [...exact,...contains].filter((p,i,a)=>a.findIndex(x=>x.slug===p.slug)===i);
+}
+let plantSearchSeq=0;
+function isCredibleLivePlantProfile(profile,query){
+  if(!profile || profile.isPlant===false) return false;
+  const q=normalizeQuery(query);
+  const n=normalizeQuery(profile.name||'');
+  const sci=normalizeQuery(profile.scientific||'');
+  const he=normalizeQuery(profile.he||'');
+  const aliases=(profile.aliases||[]).map(normalizeQuery);
+  const hasScientific=!!sci && sci!=='various plant species' && sci!=='plant';
+  const hasImage=!!(profile.imageUrl||profile.image||profile.photoUrl);
+  const hasRealCare=!!(profile.sun&&profile.water&&profile.guide) && !/verify by species|water according to season|growth habit depends/i.test(String(profile.sun+' '+profile.water+' '+profile.growth));
+  const directMatch=[n,sci,he,...aliases].filter(Boolean).some(a=>a===q || a.includes(q) || q.includes(a));
+  // Reject AI echo results like "bla" or arbitrary Hebrew text with generic placeholder care.
+  if(!directMatch && !hasScientific && !hasImage) return false;
+  if((n===q || aliases.includes(q)) && !hasScientific && !hasImage && !hasRealCare) return false;
+  return true;
+}
+function renderPlantResults(source,query=''){
+  const results=document.getElementById('plantResults');
+  if(!results)return;
+  const q=(query||'').trim();
+  const seq=++plantSearchSeq;
+  const localMatches=getLocalPlantMatches(q,source);
+  const renderList=(plants,note='')=>{
+    const seen=new Set();
+    const html=(plants||[]).filter(Boolean).filter(p=>{const key=p.slug||slugify(p.name); if(seen.has(key))return false; seen.add(key); return true;}).slice(0,8).map(p=>plantResultButton(p,source)).join('');
+    results.innerHTML=html+(note?`<div class="plant-source-note">${note}</div>`:'');
+  };
+  if(!q){
+    renderList(PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source)).slice(0,8));
+    return;
+  }
+  if(q.length<2){
+    renderList(localMatches, localMatches.length?'':'Type a plant name in Hebrew, English, transliteration, or scientific name.');
+    return;
+  }
+  // Keep useful local matches visible while the live search runs. Never replace them
+  // with a generic echo result like the exact typed text.
+  renderList(localMatches, `Searching Cruvit plant knowledge for “${escapeHtml(q)}”…`);
+  fetchPlantProfile(q,source).then(profile=>{
+    if(seq!==plantSearchSeq)return;
+    if(isCredibleLivePlantProfile(profile,q)){
+      const existing=PLANT_INDEX[profile.slug];
+      if(!existing){PLANT_LIBRARY.unshift(profile);PLANT_INDEX[profile.slug]=profile;}
+      renderList([PLANT_INDEX[profile.slug],...localMatches], localMatches.length?'Local suggestions remain available below the live match.':'');
+    }else{
+      const err=window.lastPlantSearchError?`<br><small>${escapeHtml(window.lastPlantSearchError)}</small>`:'';
+      renderList(localMatches, localMatches.length?'Live search did not improve the local matches.':'No verified plant match found yet. Try a common name, scientific name, Hebrew name or transliteration.'+err);
+    }
+  }).catch((err)=>{
+    if(seq!==plantSearchSeq)return;
+    renderList(localMatches, localMatches.length?'Live search is temporarily unavailable. Showing local matches.':`Could not reach the plant knowledge service.<br><small>${escapeHtml(err.message||'')}</small>`);
+  });
+}
+function getLocalPlantMatches(query,source){
+  const q=normalizeQuery(query);
+  let base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source));
+  if(!q)return base;
+  const scored=[];
+  PLANT_LIBRARY.forEach(p=>{
+    const text=textForSearch(p);
+    let score=0;
+    if([p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q))score+=100;
+    if(text.includes(q))score+=40;
+    q.split(' ').filter(Boolean).forEach(part=>{if(text.includes(part))score+=8});
+    if(scorePlantForSource(p,source))score+=3;
+    if(score>0)scored.push([score,p]);
+  });
+  return scored.sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+}
+function plantResultButton(p,source){const img=displayPlantImage(p)||p.imageUrl||p.image||'';const thumb=img?`<span class="thumb" style="background-image:url('${escapeAttr(img)}')"></span>`:`<span class="ico">${p.icon||'🌿'}</span>`;return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${thumb}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(p.sun||'')} · ${escapeHtml(p.water||'')}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`}
+function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function slugify(v){return String(v||'plant').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'plant'}
+function fetchWithTimeout(url,options={},ms=9000){
+  const ctrl=new AbortController();
+  const id=setTimeout(()=>ctrl.abort(),ms);
+  return fetch(url,{...options,signal:ctrl.signal}).finally(()=>clearTimeout(id));
+}
+async function fetchPlantProfile(plantName,source){
+  const payload={plantName,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
+  const endpoints=[OPENAI_READY.endpoint,'/api/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  let lastError='';
+  for(const endpoint of endpoints){
+    try{
+      const res=await fetchWithTimeout(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},9000);
+      if(!res.ok){lastError='Plant knowledge service is not reachable';continue}
+      const d=await res.json();
+      if(d.error){lastError=d.error;continue}
+      return normalizeApiPlant(d,plantName);
+    }catch(err){lastError=err.message||'Plant knowledge request failed'}
+  }
+  window.lastPlantSearchError=lastError;
+  return null;
+}
+function normalizeApiPlant(d,requested){
+  const common=d.commonName||d.common_name||d.name||requested;
+  const sci=d.scientificName||d.scientific_name||d.scientific||'';
+  const warnings=Array.isArray(d.warnings)?d.warnings.filter(Boolean):[];
+  const products=Array.isArray(d.shoppingProducts)?d.shoppingProducts:Array.isArray(d.products)?d.products:[];
+  const tasks=Array.isArray(d.tasks)?d.tasks:[];
+  const status=warnings.length?'Needs review':'Healthy';
+  const mark=warnings.length?'!':'✓';
+  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl:d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'',imageSearchQuery:d.imageSearchQuery||d.image_search_query||'',icon:d.icon||'🌿',status,mark,tags:['ai-profile','verified-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
+  profile=enrichProfileWithQuality(profile,requested);
+  return profile;
+}
+function showPlantSetup(slug,source='My Garden'){
+  const ref=PLANT_INDEX[slug]; if(!ref)return;
+  currentPlantSetup={slug,source};
+  const img=displayPlantImage(ref)||ref.imageUrl||ref.image||'';
+  const heroStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"`:'';
+  document.getElementById('addPlantTitle').textContent='Add '+ref.name;
+  document.getElementById('addPlantSubtitle').textContent='Choose how Cruvit should manage this plant in My Garden.';
+  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="openPlantChooser('${source}')">← Back</button><div class="plant-setup-card"><div class="plant-setup-hero"${heroStyle}><div class="plant-setup-badge">${escapeHtml(ref.name)}</div></div><div class="plant-setup-title"><div><b>${escapeHtml(ref.name)}</b><small>${escapeHtml(ref.scientific||'')} · ${escapeHtml(ref.sun||'')} · ${escapeHtml(ref.water||'')}</small></div><span>${ref.icon||'🌿'}</span></div><button class="btn main quick-add" onclick="commitPlantFromSetup()">Add to My Garden</button><div class="pref-box"><label class="pref-row"><input id="prefAutoTasks" type="checkbox" checked><span><b>Create automatic care tasks</b><span>Watering, checking, fertilizing or pruning tasks will be added to your calendar when relevant.</span></span></label><label class="pref-row"><input id="prefReminders" type="checkbox" checked><span><b>Receive reminders for this plant</b><span>Cruvit will include this plant in future task and notification preferences.</span></span></label></div><div class="plant-pref-note">You can change these preferences later from the ⋯ menu on the plant card.</div><div class="plant-setup-actions"><button class="btn main" onclick="commitPlantFromSetup()">Add to My Garden</button><button class="btn light" onclick="showPlantSetupGuide('${slug}')">Preview guide</button></div></div>`;
+}
+function commitPlantFromSetup(){
+  if(!currentPlantSetup||!currentPlantSetup.slug)return;
+  const auto=document.getElementById('prefAutoTasks')?document.getElementById('prefAutoTasks').checked:true;
+  const rem=document.getElementById('prefReminders')?document.getElementById('prefReminders').checked:true;
+  savePlantFromLibrary(currentPlantSetup.slug,currentPlantSetup.source,{autoTasks:auto,reminders:rem});
+}
+function showPlantSetupGuide(slug){const ref=PLANT_INDEX[slug];if(!ref)return;const body=document.getElementById('addPlantContent');body.innerHTML+=`<div class="guide-block"><b>${escapeHtml(ref.scientific||ref.name)}</b><span>${escapeHtml(ref.guide||'Verified care information will appear here.')}</span></div>`}
+
+function safeUiAfterPlantAdd(){
+  try{syncHealthScore()}catch(e){console.warn('Health sync failed after add',e)}
+  try{service.save(data)}catch(e){console.warn('Safe save failed',e)}
+  try{closeAddPlantModal()}catch(e){console.warn('Close add modal failed',e)}
+  try{render()}catch(e){console.error('Render failed after plant add',e)}
+  try{setTab('plants')}catch(e){console.warn('Could not switch to plants tab',e)}
+}
+function buildPlantFromReference(ref,source,options){
+  const safeRef=ref||{};
+  const prefs={autoTasks:options?.autoTasks!==false,reminders:options?.reminders!==false,alerts:true};
+  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||safeRef.photoUrl||instantPlantImageUrl(safeRef)||'';
+  const plant=applyProfileToPlant({name:safeRef.name||'Plant',status:safeRef.status||'Healthy',mark:safeRef.mark||'✓',source,archived:false,prefs},safeRef);
+  plant.id='plant_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  plant.name=safeRef.name||plant.name||'Plant';
+  plant.status=plant.status||safeRef.status||'Healthy';
+  plant.mark=plant.mark||safeRef.mark||'✓';
+  plant.source=source||'My Garden';
+  plant.archived=false;
+  plant.prefs=prefs;
+  plant.imageUrl=existingImage||plant.imageUrl||'';
+  plant.meta=plant.meta||{};
+  if(plant.imageUrl)plant.meta.imageUrl=plant.imageUrl;
+  return plant;
+}
+function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,reminders:true}){
+  let ref=PLANT_INDEX[slug] || PLANT_LIBRARY.find(p=>p.slug===slug);
+  if(!ref){
+    const fallbackName=String(slug||'Plant').replace(/-/g,' ');
+    ref={slug:slugify(fallbackName),name:fallbackName,status:'Needs review',mark:'!',icon:'🌿',sun:'See guide',water:'See guide',warnings:['Confirm exact species before treatment or purchase.'],guide:'Plant profile could not be found locally. Search again or use the live plant knowledge service.',products:[],tasks:[]};
+    PLANT_INDEX[ref.slug]=ref; PLANT_LIBRARY.unshift(ref);
+  }
+  try{
+    normalizeGardenDataShape();
+    const plant=buildPlantFromReference(ref,source,options||{});
+    data.plants.push(plant);
+    data.events.unshift(['Today','Plant added',`${plant.name} · ${source}`]);
+
+    // Show the plant immediately. No reward/task/API failure is allowed to block this.
+    safeUiAfterPlantAdd();
+
+    setTimeout(()=>{
+      try{awardCredits(source==='Scan & Identify'?15:10,source==='Scan & Identify'?'Plant scan + add':'Plant added')}catch(e){console.warn('Rewards failed after plant save',e)}
+      try{
+        if(plant.prefs?.autoTasks!==false){generateCareTasksForPlant(ref,source)}else{data.events.unshift(['Today','Auto tasks skipped',`${plant.name} · user preference`])}
+        if(source==='Smart Recommendations'||source==='Garden Design'){
+          (ref.products||[]).slice(0,1).forEach(x=>data.cart.push(x));
+          data.events.unshift(['Today','Shopping suggestion created',`${plant.name} · ${ref.products?.[0]||'Care product'}`]);
+        }
+        data.events.unshift(['Today',plant.prefs?.reminders!==false?'Plant reminders enabled':'Plant reminders off',plant.name]);
+        syncHealthScore(); service.save(data); render(); setTab('plants');
+      }catch(e){console.warn('Post-add automation failed',e); try{service.save(data);render();setTab('plants')}catch(_){} }
+    },20);
+
+    setTimeout(async()=>{
+      try{
+        const needsLive=!(ref.tags||[]).includes('ai-profile') || !(ref.imageUrl||ref.image||ref.photoUrl);
+        if(needsLive){
+          const live=await fetchPlantProfile(ref.name||slug,source);
+          if(live&&live.isPlant!==false){
+            const merged=mergeLiveProfileIntoLibrary(ref.slug||slug,live);
+            applyProfileToPlant(plant,merged);
+            const liveImg=displayPlantImage(merged)||merged.imageUrl||merged.image||merged.photoUrl||plant.imageUrl||'';
+            if(liveImg){plant.imageUrl=liveImg; plant.meta=plant.meta||{}; plant.meta.imageUrl=liveImg;}
+            service.save(data);render();setTab('plants');
+          }
+        }
+      }catch(e){console.warn('Background plant enrichment failed',e)}
+    },250);
+  }catch(err){
+    console.error('Add plant failed before save',err);
+    // Last-resort save so the user is not blocked by a secondary feature.
+    try{
+      normalizeGardenDataShape();
+      const plant={id:'plant_'+Date.now(),name:ref.name||String(slug||'Plant'),status:ref.status||'Needs review',mark:ref.mark||'!',source,archived:false,prefs:{autoTasks:true,reminders:true,alerts:true},imageUrl:displayPlantImage(ref)||instantPlantImageUrl(ref)||'',meta:ref};
+      data.plants.push(plant);
+      data.events.unshift(['Today','Plant added',`${plant.name} · ${source}`]);
+      safeUiAfterPlantAdd();
+    }catch(finalErr){
+      console.error('Emergency add plant failed',finalErr);
+      alert('Could not add this plant. Please try again.');
+    }
+  }
+}
+function savePlant(name,status='New',mark='✓',source='My Garden'){
+  const match=findPlantByName(name);
+  if(match){savePlantFromLibrary(match.slug,source);return}
+  openPlantChooser(source||'Manual entry');setTimeout(()=>{const input=document.getElementById('plantSearchInput');if(input){input.value=name;renderPlantResults(source||'Manual entry',name)}},30);
+}
+function findPlantByName(name){const q=normalizeQuery(name);return PLANT_LIBRARY.find(p=>[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q||a.replace(/^עץ\s+/,'')===q))||PLANT_LIBRARY.find(p=>textForSearch(p).includes(q)||q.includes(normalizeQuery(p.name)))}
+function addPlantFromScan(){openPlantChooser('Scan & Identify')}
+function addPlantManual(){openPlantChooser('Manual entry')}
+function addPlantFromRecommendations(){openPlantChooser('Smart Recommendations')}
+function addPlantFromDesign(){openPlantChooser('Garden Design')}
+function togglePlantMenu(ev,i){ev.stopPropagation();openMenu=openMenu==='plant-'+i?null:'plant-'+i;render()}
+function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p.name);if(!name)return;p.name=name;data.events.unshift(['Today','Plant renamed',name]);syncHealthScore();service.save(data);openMenu=null;render()}
+function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);syncHealthScore();service.save(data);openMenu=null;render()}
+function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); service.save(data); openMenu=null; render()}
+function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');syncHealthScore();service.save(data);openMenu=null;render()}
+function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);syncHealthScore();service.save(data);openMenu=null;render()}}
+function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);syncHealthScore();service.save(data);openMenu=null;render()}}
+function closePlantPanel(){document.getElementById('plantDetailModal').classList.remove('open')}
+function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);const alerts=plantAlerts(p);const title=document.getElementById('plantPanelTitle');const sub=document.getElementById('plantPanelSubtitle');const body=document.getElementById('plantPanelBody');title.textContent=p.name;sub.textContent=type==='info'?'Quick care icons':type==='alerts'?'Alerts and tasks':'Detailed plant guide';
+  if(type==='info')body.innerHTML=`<div class="info-grid"><div class="info-tile"><span class="big">☀️</span><span><b>Light</b><span>${escapeHtml(meta.sun)}</span></span></div><div class="info-tile"><span class="big">💧</span><span><b>Water</b><span>${escapeHtml(meta.water)}</span></span></div><div class="info-tile"><span class="big">🌱</span><span><b>Growth</b><span>${escapeHtml(meta.growth)}</span></span></div><div class="info-tile"><span class="big">📏</span><span><b>Size</b><span>${escapeHtml(meta.size)}</span></span></div><div class="info-tile"><span class="big">🌡️</span><span><b>Climate</b><span>${escapeHtml(meta.climate)}</span></span></div><div class="info-tile"><span class="big">🗓️</span><span><b>Season</b><span>${escapeHtml(meta.season)}</span></span></div></div><div class="guide-block"><b>Botanical profile</b><span>${escapeHtml(meta.scientific||p.scientific||p.name)}${meta.soil?' · Soil: '+escapeHtml(meta.soil):''}</span></div>`;
+  if(type==='alerts')body.innerHTML=`<div class="guide-block"><b>${alerts[0].includes('No active')?'✓ No urgent alerts':'Current alerts'}</b><span>${alerts.map(a=>'• '+a).join('<br>')}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="data.tasks.push(['🌿','Check ${p.name}','This week · plant alert','Medium']);data.events.unshift(['Today','Task created','Check ${p.name}']);service.save(data);closePlantPanel();render();setTab('tasks')">Create care task</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">View in calendar</button></div>`;
+  if(type==='guide'){const img=displayPlantImage(p);body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;}
+  document.getElementById('plantDetailModal').classList.add('open');
+}
+function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>data.cart.push(x));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
+function scanGarden(){openAddPlantModal()}
+function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
+function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
+function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
+function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
+function showLogin(){document.getElementById('login').classList.add('open')}function hideLogin(){document.getElementById('login').classList.remove('open')}
+function mockLogin(google){data.signedIn=true;const email=document.getElementById('emailField')?.value;if(email)data.email=email;data.events.unshift(['Today','User signed in',google?'Google sign-in selected':'Email sign-in selected']);service.save(data);hideLogin();render()}
+document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});render();setTab('tasks');
+</script>
+</body>
+</html>
