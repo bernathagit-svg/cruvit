@@ -1307,7 +1307,7 @@ async function identifySelectedPlantPhoto(){
   if(note)note.textContent='Cruvit is identifying the plant…';
   if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo and preparing matching plant profiles…</div>';
   try{
-    const res=await fetchWithTimeout('/api/plant-identify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl:photo.dataUrl,location:data.location||'Western Galilee, Israel',climate:data.climate||'Mediterranean'})},20000);
+    const res=await fetchWithTimeout('/.netlify/functions/plant-image',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageDataUrl:photo.dataUrl,location:data.location||'Western Galilee, Israel',climate:data.climate||'Mediterranean'})},20000);
     if(!res.ok)throw new Error('Identification service is not reachable');
     const out=await res.json();
     const names=(out.candidates||out.plants||[]).map(x=>typeof x==='string'?x:(x.name||x.commonName||x.scientificName)).filter(Boolean);
