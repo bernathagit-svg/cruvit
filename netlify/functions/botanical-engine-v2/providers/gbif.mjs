@@ -97,10 +97,25 @@ export async function resolveGbifTaxon(queries, options = {}) {
     return [...matched, ...suggested, ...searched];
   }));
 
-  const candidates = dedupe(batches.flat())
-    .map(item => ({ ...item, _score: scoreGbifItem(item, item._query || queryList[0] || '') }))
-    .sort((a, b) => b._score - a._score);
 
+  const allowedRanks = new Set([
+  'GENUS',
+  'SPECIES',
+  'SUBSPECIES',
+  'VARIETY',
+  'FORM',
+  'CULTIVAR'
+]);
+
+const candidates = dedupe(batches.flat())
+  .filter(item =>
+    allowedRanks.has(String(item.rank || '').toUpperCase())
+  )
+  .map(item => ({
+    ...item,
+    _score: scoreGbifItem(item, item.query || queryList[0])
+  }))
+  .sort((a, b) => b._score - a._score);
   const best = candidates[0] || null;
   const threshold = options.aliasMatched ? 14 : 20;
   const confident = Boolean(best) && best._score >= threshold;
