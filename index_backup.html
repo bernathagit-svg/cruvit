@@ -1153,7 +1153,7 @@ function openPlantChooser(source){
     }
   }
 }
-function handlePlantPhotoSelected(input){
+async function handlePlantPhotoSelected(input){
   const note=document.getElementById('scanNote');
   const preview=document.getElementById('plantPhotoPreview');
   const btn=document.getElementById('identifyPlantBtn');
@@ -1170,17 +1170,103 @@ function handlePlantPhotoSelected(input){
     if(btn)btn.classList.add('hidden');
     return;
   }
-  const reader=new FileReader();
-  reader.onload=function(){
-    window.selectedPlantPhoto={name:file.name,type:file.type,size:file.size,dataUrl:String(reader.result||'')};
-    if(preview){preview.classList.remove('hidden');preview.innerHTML=`<img src="${escapeAttr(window.selectedPlantPhoto.dataUrl)}" alt="Plant preview"><span>${escapeHtml(file.name)}</span>`}
-    if(btn){btn.classList.remove('hidden');btn.disabled=false;btn.textContent='Identify plant'}
-    const results=document.getElementById('plantResults');
-    if(results)results.innerHTML='<div class="plant-source-note">Photo selected. Tap Identify plant to analyze it, or type the plant name manually below.</div>';
-    if(note)note.textContent='Photo ready. Tap Identify plant to analyze it.';
+  try{
+  if(note) note.textContent='Preparing photo for identification...';
+
+  const originalDataUrl=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(String(reader.result||''));
+    reader.onerror=()=>reject(new Error('Could not read this photo.'));
+    reader.readAsDataURL(file);
+  });
+
+  const img=await new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onload=()=>resolve(image);
+    image.onerror=()=>reject(new Error('Could not open this photo.'));
+    image.src=originalDataUrl;
+  });
+
+  const sourceWidth=img.naturalWidth||img.width;
+  const sourceHeight=img.naturalHeight||img.height;
+  const maxDimension=1600;
+  const scale=Math.min(
+    1,
+    maxDimension/Math.max(sourceWidth,sourceHeight)
+  );
+
+  const width=Math.max(1,Math.round(sourceWidth*scale));
+  const height=Math.max(1,Math.round(sourceHeight*scale));
+
+  const canvas=document.createElement('canvas');
+  canvas.width=width;
+  canvas.height=height;
+
+  const ctx=canvas.getContext('2d');
+  if(!ctx) throw new Error('Could not prepare this photo.');
+
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,width,height);
+  ctx.drawImage(img,0,0,width,height);
+
+  const dataUrl=canvas.toDataURL('image/jpeg',0.82);
+
+  window.selectedPlantPhoto={
+    name:(file.name||'plant-photo').replace(/\.[^.]+$/,'')+'.jpg',
+    type:'image/jpeg',
+    size:Math.round(dataUrl.length*0.75),
+    dataUrl
   };
-  reader.onerror=function(){if(note)note.textContent='Could not read this photo. Please try another image.'};
-  reader.readAsDataURL(file);
+
+  if(preview){
+    preview.classList.remove('hidden');
+    preview.innerHTML='';
+
+    const previewImage=document.createElement('img');
+    previewImage.src=dataUrl;
+    previewImage.alt='Selected plant';
+
+    const previewName=document.createElement('b');
+    previewName.textContent=file.name||'Plant photo';
+
+    preview.append(previewImage,previewName);
+  }
+
+  if(btn){
+    btn.classList.remove('hidden');
+    btn.disabled=false;
+    btn.textContent='Identify plant';
+  }
+
+  const results=document.getElementById('plantResults');
+  if(results){
+    results.innerHTML=
+      '<div class="plant-source-note">Photo selected. Tap Identify plant.</div>';
+  }
+
+  if(note){
+    note.textContent='Photo ready. Tap Identify plant to analyze it.';
+  }
+}catch(error){
+  window.selectedPlantPhoto=null;
+
+  if(note){
+    note.textContent=
+      'Could not prepare this photo. Please try another image.';
+  }
+
+  if(btn){
+    btn.classList.add('hidden');
+    btn.disabled=true;
+  }
+
+  if(preview){
+    preview.classList.add('hidden');
+    preview.innerHTML='';
+  }
+
+  console.error('Plant photo preparation failed',error);
+}
 }
 async function identifySelectedPlantPhoto(){
   const note=document.getElementById('scanNote');
