@@ -1,0 +1,136 @@
+import { normalizeText, stripGenericPlantWords, text, unique } from './utils.mjs';
+
+const aliases = new Map(Object.entries({
+  // Hebrew — common trees and fruit plants
+  'ארז': 'Cedrus',
+  'עץ ארז': 'Cedrus',
+  'ארז הלבנון': 'Cedrus libani',
+  'אלון': 'Quercus',
+  'עץ אלון': 'Quercus',
+  'אלון מצוי': 'Quercus calliprinos',
+  'אלון תבור': 'Quercus ithaburensis',
+  'אלון התבור': 'Quercus ithaburensis',
+  'אורן': 'Pinus',
+  'עץ אורן': 'Pinus',
+  'אורן ירושלים': 'Pinus halepensis',
+  'ברוש': 'Cupressus',
+  'זית': 'Olea europaea',
+  'עץ זית': 'Olea europaea',
+  'רימון': 'Punica granatum',
+  'עץ רימון': 'Punica granatum',
+  'מנגו': 'Mangifera indica',
+  'עץ מנגו': 'Mangifera indica',
+  'פפאיה': 'Carica papaya',
+  'עץ פפאיה': 'Carica papaya',
+  'ליצי': 'Litchi chinensis',
+  'ליצ׳י': 'Litchi chinensis',
+  'ליצ’י': 'Litchi chinensis',
+  'פטל': 'Rubus idaeus',
+  'פטל אדום': 'Rubus idaeus',
+  'אוכמניות': 'Vaccinium',
+  'תות עץ': 'Morus',
+  'לימון': 'Citrus limon',
+  'תפוז': 'Citrus sinensis',
+  'קלמנטינה': 'Citrus clementina',
+  'אשכולית': 'Citrus paradisi',
+  'גפן': 'Vitis vinifera',
+  'ענבים': 'Vitis vinifera',
+  'פסיפלורה': 'Passiflora edulis',
+  'גויאבה': 'Psidium guajava',
+  'גויאבה תותית': 'Psidium cattleyanum',
+  'אבוקדו': 'Persea americana',
+  'תאנה': 'Ficus carica',
+  'תמר': 'Phoenix dactylifera',
+  'דקל': 'Arecaceae',
+  'בננה': 'Musa',
+  'תות שדה': 'Fragaria × ananassa',
+  'תפוח': 'Malus domestica',
+  'אגס': 'Pyrus communis',
+  'אפרסק': 'Prunus persica',
+  'שזיף': 'Prunus domestica',
+  'משמש': 'Prunus armeniaca',
+  'שקד': 'Prunus dulcis',
+  'דובדבן': 'Prunus avium',
+
+  // Hebrew — ornamentals, herbs and houseplants
+  'יסמין': 'Jasminum',
+  'לבנדר': 'Lavandula angustifolia',
+  'רוזמרין': 'Salvia rosmarinus',
+  'מרווה': 'Salvia',
+  'נענע': 'Mentha',
+  'בזיליקום': 'Ocimum basilicum',
+  'פטרוזיליה': 'Petroselinum crispum',
+  'כוסברה': 'Coriandrum sativum',
+  'טימין': 'Thymus vulgaris',
+  'אורגנו': 'Origanum vulgare',
+  'ורד': 'Rosa',
+  'היביסקוס': 'Hibiscus',
+  'סוזי שחורת עין': 'Thunbergia alata',
+  'עין שחורה': 'Thunbergia alata',
+  'יערה': 'Lonicera',
+  'בוגנוויליה': 'Bougainvillea',
+  'פלומריה': 'Plumeria',
+  'פיקוס': 'Ficus',
+  'אקליפטוס': 'Eucalyptus',
+  'שפלרה': 'Heptapleurum arboricola',
+  'סנסיווריה': 'Dracaena trifasciata',
+  'מונסטרה': 'Monstera deliciosa',
+  'פוטוס': 'Epipremnum aureum',
+  'פילודנדרון': 'Philodendron',
+  'קקטוס': 'Cactaceae',
+  'אלוורה': 'Aloe vera',
+  'רקפת': 'Cyclamen persicum',
+  'גרניום': 'Pelargonium',
+
+  // English common-name bridges
+  'cedar': 'Cedrus',
+  'cedar tree': 'Cedrus',
+  'oak': 'Quercus',
+  'oak tree': 'Quercus',
+  'pine': 'Pinus',
+  'pine tree': 'Pinus',
+  'cypress': 'Cupressus',
+  'papaya': 'Carica papaya',
+  'papaya tree': 'Carica papaya',
+  'mango': 'Mangifera indica',
+  'mango tree': 'Mangifera indica',
+  'pomegranate': 'Punica granatum',
+  'pomegranate tree': 'Punica granatum',
+  'lychee': 'Litchi chinensis',
+  'litchi': 'Litchi chinensis',
+  'raspberry': 'Rubus idaeus',
+  'blackberry': 'Rubus fruticosus aggregate',
+  'lemon': 'Citrus limon',
+  'orange tree': 'Citrus sinensis',
+  'olive tree': 'Olea europaea',
+  'grapevine': 'Vitis vinifera',
+  'passion fruit': 'Passiflora edulis',
+  'strawberry guava': 'Psidium cattleyanum',
+  'black eyed susan vine': 'Thunbergia alata',
+  'black-eyed susan vine': 'Thunbergia alata',
+  'snake plant': 'Dracaena trifasciata',
+  'pothos': 'Epipremnum aureum',
+  'umbrella plant': 'Heptapleurum arboricola'
+}));
+
+export function aliasFor(value) {
+  return aliases.get(normalizeText(value)) || '';
+}
+
+export function buildInitialQueries(rawValue) {
+  const raw = text(rawValue);
+  const stripped = stripGenericPlantWords(raw);
+  const directAlias = aliasFor(raw);
+  const strippedAlias = aliasFor(stripped);
+
+  return {
+    original: raw,
+    aliasMatched: Boolean(directAlias || strippedAlias),
+    queries: unique([
+      directAlias,
+      strippedAlias,
+      raw,
+      stripped
+    ])
+  };
+}
