@@ -1454,7 +1454,7 @@ function fetchWithTimeout(url,options={},ms=9000){
 }
 async function fetchPlantProfile(plantName,source){
   const payload={plantName:canonicalPlantQuery(plantName),originalQuery:plantName,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
-  const endpoints=[OPENAI_READY.endpoint,'/api/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  const endpoints=[OPENAI_READY.endpoint,'/.netlify/functions/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let lastError='';
   for(const endpoint of endpoints){
     try{
