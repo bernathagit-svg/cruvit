@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250629c">
+<link rel="stylesheet" href="styles.css?v=20250630d">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -98,10 +98,10 @@
         <b id="plantCount">7</b>
         <small>Plants in<br>your garden</small>
       </div>
-      <div class="rail-note" id="moodWeatherNote">
+      <button type="button" class="rail-note location-note" id="moodWeatherNote" onclick="openLocationModal()" aria-label="Garden location and weather">
         <span class="rail-note-title">🌤️ No extra care needed this week</span>
         <small class="rail-note-sub">Weather looks good for your garden</small>
-      </div>
+      </button>
       <div class="scan">◷ Last scan: Today, 08:24</div>
     </div>
   </div>
@@ -115,7 +115,8 @@
     </button>
     <figcaption class="garden-snapshot-caption">
       <b>Hagit’s garden</b>
-      <span>Western Galilee climate</span>
+      <span id="gardenLocationLabel">Western Galilee · Mediterranean</span>
+      <button type="button" class="location-setup-btn" onclick="event.stopPropagation();openLocationModal()">📍 Set garden location</button>
       <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
     </figcaption>
   </figure>
@@ -137,7 +138,7 @@
     <div class="tasks" id="tasks"></div>
   </section>
   <section class="panel section hidden" id="view-plants">
-    <div class="section-head"><div><h3>My plants</h3><small>Your garden at a glance.</small></div><button class="text-link" onclick="addPlant()">+ Add plant</button></div>
+    <div class="section-head section-head-plants"><div><h3>My plants</h3><small>Your garden at a glance.</small></div><button type="button" class="add-plant-cta" onclick="addPlant()"><span class="add-plant-cta-ico" aria-hidden="true">🌱</span><span>Add plant</span></button></div>
     <div class="plant-strip" id="plants"></div>
   </section>
   <section class="panel section hidden" id="view-shopping">
@@ -184,7 +185,7 @@
     <div class="modal-head">
       <div><h3 id="addPlantTitle">Add plant</h3><p id="addPlantSubtitle">Choose where this plant comes from. Every option connects back to tasks, calendar and shopping.</p></div>
     </div>
-    <div id="addPlantContent"></div>
+    <div class="modal-body" id="addPlantContent"></div>
   </div>
 </div>
 
@@ -196,6 +197,38 @@
       <button class="modal-x" onclick="closePlantPanel()">×</button>
     </div>
     <div id="plantPanelBody"></div>
+  </div>
+</div>
+
+<div class="plant-modal" id="locationModal" onclick="if(event.target===this)closeLocationModal()">
+  <div class="plant-modalbox location-modalbox" onclick="event.stopPropagation()">
+    <div class="plant-modal-head">
+      <div><h3>Garden location</h3><p>Cruvit uses your garden location for local weather forecasts and weather-smart care tasks.</p></div>
+      <button class="modal-x" onclick="closeLocationModal()">×</button>
+    </div>
+    <div class="location-modal-body">
+      <label class="location-field-label" for="locationInput">City, region or address</label>
+      <input class="field" id="locationInput" autocomplete="off" placeholder="e.g. Haifa, Western Galilee, Tel Aviv…">
+      <label class="location-field-label" for="climateInput">Climate type</label>
+      <select class="field" id="climateInput">
+        <option value="Mediterranean">Mediterranean</option>
+        <option value="Subtropical">Subtropical</option>
+        <option value="Tropical">Tropical</option>
+        <option value="Temperate">Temperate</option>
+        <option value="Cool temperate">Cool temperate</option>
+        <option value="Arid">Arid</option>
+      </select>
+      <div class="location-detect-row">
+        <button type="button" class="btn light" id="locationDetectBtn" onclick="detectGardenLocation()">📍 Detect my location</button>
+        <span class="location-status" id="locationStatus"></span>
+      </div>
+      <div class="location-geo-preview hidden" id="locationGeoPreview"></div>
+      <button type="button" class="btn main hidden" id="locationConfirmGeoBtn" onclick="confirmDetectedLocation()">Use detected location</button>
+      <div class="location-modal-actions">
+        <button type="button" class="btn main" onclick="saveLocationFromModal()">Save location &amp; refresh weather</button>
+        <button type="button" class="btn light" onclick="closeLocationModal()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -543,7 +576,7 @@ function plantImageFallbacks(p){
   ].filter(Boolean);
 }
 function displayPlantImage(p){
-  return plantImage(p)||plantImageProxyUrl(p)||instantPlantImageUrl(p)||'';
+  return plantImage(p)||plantImageProxyUrl(p)||'';
 }
 function swapToInstantPlantImage(imgEl){
   let list=[];
@@ -625,6 +658,24 @@ async function hydratePlantCardImages(){
       }
     }).catch(()=>{p.imageLoading=false});
   }
+}
+async function hydratePlantResultImages(){
+  const pending=[...document.querySelectorAll('#plantResults .thumb-pending[data-plant-query]')];
+  await Promise.all(pending.map(async el=>{
+    const query=el.getAttribute('data-plant-query');
+    const key=el.getAttribute('data-plant-thumb');
+    if(!query) return;
+    const queueKey='result:'+query;
+    if(imageHydrationQueue.has(queueKey)) return;
+    imageHydrationQueue.add(queueKey);
+    const img=await fetchPlantImageFromWikipedia(query);
+    if(!img || !el.isConnected) return;
+    const profile=PLANT_INDEX[key]||PLANT_LIBRARY.find(p=>(p.slug||slugify(p.name))===key);
+    if(profile) profile.imageUrl=img;
+    el.classList.remove('thumb-pending');
+    el.classList.add('thumb-has-img');
+    el.innerHTML='<img src="'+escapeAttr(img)+'" alt="" loading="lazy" data-fallback-list="'+escapeAttr(JSON.stringify(plantImageFallbacks(profile||{name:query,scientific:query})))+'" onerror="swapToInstantPlantImage(this)">';
+  }));
 }
 function mergeLiveProfileIntoLibrary(slug,profile){
   if(!profile)return PLANT_INDEX[slug];
@@ -913,6 +964,259 @@ function generateCareTasksForPlant(ref,source='My Garden'){
 
   if(created.length)data.events.unshift(['Today','Care focus created',`${created[0]} · ${plantName}`]);
   return created;
+}
+
+const DEFAULT_GARDEN_LOCATION={label:'Western Galilee, Israel',climate:'Mediterranean',lat:33.0089,lon:35.0941,source:'default'};
+let pendingGeoLocation=null;
+
+function ensureGardenLocation(){
+  const legacyLabel=typeof data.location==='string'?data.location:'';
+  const legacyClimate=typeof data.climate==='string'?data.climate:'';
+  if(!data.gardenLocation||typeof data.gardenLocation!=='object'){
+    data.gardenLocation={
+      label:legacyLabel||DEFAULT_GARDEN_LOCATION.label,
+      climate:legacyClimate||DEFAULT_GARDEN_LOCATION.climate,
+      lat:DEFAULT_GARDEN_LOCATION.lat,
+      lon:DEFAULT_GARDEN_LOCATION.lon,
+      source:'default'
+    };
+  }
+  if(!data.gardenLocation.label) data.gardenLocation.label=legacyLabel||DEFAULT_GARDEN_LOCATION.label;
+  if(!data.gardenLocation.climate) data.gardenLocation.climate=legacyClimate||DEFAULT_GARDEN_LOCATION.climate;
+  if(!Number.isFinite(Number(data.gardenLocation.lat))) data.gardenLocation.lat=DEFAULT_GARDEN_LOCATION.lat;
+  if(!Number.isFinite(Number(data.gardenLocation.lon))) data.gardenLocation.lon=DEFAULT_GARDEN_LOCATION.lon;
+  data.location=data.gardenLocation.label;
+  data.climate=data.gardenLocation.climate;
+  return data.gardenLocation;
+}
+
+function gardenLocationLabel(){
+  const loc=ensureGardenLocation();
+  return `${loc.label.split(',')[0]} · ${loc.climate||'Local climate'}`;
+}
+
+function weatherIsStale(){
+  if(!data.weather?.fetchedAt) return true;
+  return (Date.now()-new Date(data.weather.fetchedAt).getTime())>(3*60*60*1000);
+}
+
+function setLocationStatus(text){
+  const el=document.getElementById('locationStatus');
+  if(el) el.textContent=text||'';
+}
+
+function openLocationModal(){
+  ensureGardenLocation();
+  const loc=data.gardenLocation;
+  const input=document.getElementById('locationInput');
+  const climate=document.getElementById('climateInput');
+  if(input) input.value=loc.label||'';
+  if(climate) climate.value=loc.climate||'Mediterranean';
+  pendingGeoLocation=null;
+  setLocationStatus('');
+  const preview=document.getElementById('locationGeoPreview');
+  const confirmBtn=document.getElementById('locationConfirmGeoBtn');
+  if(preview){preview.textContent='';preview.classList.add('hidden')}
+  if(confirmBtn) confirmBtn.classList.add('hidden');
+  document.getElementById('locationModal')?.classList.add('open');
+}
+
+function closeLocationModal(){
+  document.getElementById('locationModal')?.classList.remove('open');
+  pendingGeoLocation=null;
+}
+
+async function callGardenWeather(payload){
+  const res=await fetchWithTimeout('/.netlify/functions/garden-weather',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
+  const json=await res.json().catch(()=>({}));
+  if(!res.ok) throw new Error(json.error||'Weather service unavailable');
+  return json;
+}
+
+async function refreshGardenWeather(){
+  const loc=ensureGardenLocation();
+  let payload={mode:'forecast',label:loc.label,climate:loc.climate};
+  if(Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lon))){
+    payload={...payload,lat:Number(loc.lat),lon:Number(loc.lon)};
+  }else if(loc.label){
+    payload={mode:'forecast',query:loc.label};
+  }else{
+    throw new Error('Garden location is not set');
+  }
+  const result=await callGardenWeather(payload);
+  if(result.location){
+    data.gardenLocation=Object.assign({},loc,result.location,{updatedAt:new Date().toISOString()});
+    data.location=data.gardenLocation.label;
+    data.climate=data.gardenLocation.climate||data.climate;
+  }
+  if(result.weather) data.weather=result.weather;
+  return result;
+}
+
+async function refreshGardenWeatherIfStale(){
+  ensureGardenLocation();
+  if(!weatherIsStale()) return;
+  try{
+    await refreshGardenWeather();
+    syncWeatherCareTasks();
+    service.save(data);
+  }catch(err){console.warn('Weather refresh failed',err)}
+}
+
+function detectGardenLocation(){
+  if(!navigator.geolocation){
+    setLocationStatus('Location detection is not supported in this browser.');
+    return;
+  }
+  setLocationStatus('Waiting for browser permission…');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat=pos.coords.latitude;
+    const lon=pos.coords.longitude;
+    pendingGeoLocation={lat,lon,source:'geolocation'};
+    setLocationStatus('Location detected. Confirm below.');
+    try{
+      const result=await callGardenWeather({mode:'reverse',lat,lon});
+      pendingGeoLocation=Object.assign({},pendingGeoLocation,result.location||{});
+      const preview=document.getElementById('locationGeoPreview');
+      const confirmBtn=document.getElementById('locationConfirmGeoBtn');
+      if(preview){
+        preview.textContent=`Detected near ${pendingGeoLocation.label||(`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`)}`;
+        preview.classList.remove('hidden');
+      }
+      if(confirmBtn) confirmBtn.classList.remove('hidden');
+      const input=document.getElementById('locationInput');
+      if(input && pendingGeoLocation.label) input.value=pendingGeoLocation.label;
+      const climate=document.getElementById('climateInput');
+      if(climate && pendingGeoLocation.climate) climate.value=pendingGeoLocation.climate;
+    }catch(err){
+      setLocationStatus(err.message||'Could not resolve detected coordinates.');
+    }
+  }, err=>{
+    const msg=err.code===1?'Location permission denied. Enter your garden location manually.':'Could not detect location. Try manual entry.';
+    setLocationStatus(msg);
+  }, {enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+}
+
+async function confirmDetectedLocation(){
+  if(!pendingGeoLocation) return;
+  await saveGardenLocation(Object.assign({},pendingGeoLocation,{source:'geolocation'}));
+}
+
+async function saveLocationFromModal(){
+  const label=String(document.getElementById('locationInput')?.value||'').trim();
+  const climate=String(document.getElementById('climateInput')?.value||'Mediterranean').trim();
+  if(!label){setLocationStatus('Enter a city or region for your garden.');return}
+  await saveGardenLocation({label,climate,source:'manual'});
+}
+
+async function saveGardenLocation(loc){
+  const current=ensureGardenLocation();
+  const next=Object.assign({},current,loc,{updatedAt:new Date().toISOString()});
+  data.gardenLocation=next;
+  data.location=next.label;
+  data.climate=next.climate||current.climate||'Mediterranean';
+  setLocationStatus('Fetching local weather forecast…');
+  try{
+    const result=await refreshGardenWeather();
+    syncWeatherCareTasks();
+    service.save(data);
+    closeLocationModal();
+    render();
+    data.events.unshift(['Today','Garden location updated',`${data.gardenLocation.label} · ${data.climate}`]);
+    service.save(data);
+    return result;
+  }catch(err){
+    service.save(data);
+    setLocationStatus(err.message||'Saved location, but weather could not be loaded.');
+    throw err;
+  }
+}
+
+function isWeatherTask(t){
+  return String(t?.[6]||'').startsWith('__weather:')||/weather-adjusted/i.test(String(t?.[2]||''));
+}
+function weatherTaskType(t){
+  const m=String(t?.[6]||'').match(/^__weather:(.+)$/);
+  return m?m[1]:'';
+}
+function hasOpenWeatherTask(type){
+  const key='__weather:'+type;
+  return (data.tasks||[]).some(t=>!t.done && (t[6]===key || weatherTaskType(t)===type));
+}
+function addWeatherCareTask(title,type,priority,offsetDays,note){
+  const key='__weather:'+type;
+  if(hasOpenWeatherTask(type)) return false;
+  const iso=isoFromOffset(offsetDays);
+  data.tasks.push(['🌡️',title,taskDueText(iso,note||'weather-adjusted care'),priority||'High',iso,true,key]);
+  data.events.unshift(['Today','Weather task created',title]);
+  return true;
+}
+function isFrostSensitivePlant(p){
+  const meta=plantMeta(p);
+  const blob=[p.status,meta.climate,meta.guide,meta.season,...(meta.warnings||[]),...(p.warnings||[])].join(' ').toLowerCase();
+  return /frost|freeze|cold|young|tropical|subtropical|citrus|avocado|mango|lychee|banana|basil|tomato|pepper|hydrangea|protect from cold|sensitive to frost|חורף|קור|צעיר/i.test(blob);
+}
+function isHeatSensitivePlant(p){
+  const meta=plantMeta(p);
+  const blob=[p.status,meta.water,meta.sun,meta.guide,...(meta.warnings||[]),...(p.warnings||[])].join(' ').toLowerCase();
+  return /hydrangea|basil|mint|lettuce|container|pot|wilts|heat|afternoon shade|moist|high water|young|newly planted|עציץ|חום|הצל/i.test(blob);
+}
+function syncWeatherCareTasks(){
+  const w=data.weather;
+  if(!w||!Array.isArray(w.alerts)) return;
+  const plants=(data.plants||[]).filter(p=>!p.archived);
+  if(w.alerts.includes('heat-wave')||w.alerts.includes('dry-heat')||Number(w.forecastPeak)>=34){
+    addWeatherCareTask('Deep water pots and heat-sensitive plants before hot days','heat-wave','High',0,'heat wave expected · water deeply tonight');
+    plants.filter(isHeatSensitivePlant).slice(0,2).forEach(p=>{
+      if(!taskTitleExists(`Extra water ${p.name} before heat`,p.name)){
+        addAutoCareTask(p,`Extra water ${p.name} before heat`,0,'weather-adjusted · heat wave expected','☀️');
+      }
+    });
+  }
+  if(w.alerts.includes('cold-snap')||w.alerts.includes('frost')||Number(w.forecastLow)<=3){
+    addWeatherCareTask('Cover or move frost-sensitive plants before cold nights','cold-snap','High',0,'cold snap expected · frost risk');
+    plants.filter(isFrostSensitivePlant).slice(0,2).forEach(p=>{
+      if(!taskTitleExists(`Protect ${p.name} from cold`,p.name)){
+        addAutoCareTask(p,`Protect ${p.name} from cold`,0,'weather-adjusted · frost risk','❄️');
+      }
+    });
+  }
+  if(w.alerts.includes('heavy-rain')){
+    addWeatherCareTask('Check drainage and delay watering before heavy rain','heavy-rain','Medium',0,'heavy rain expected · avoid waterlogging');
+  }
+}
+
+function renderWeatherNote(){
+  const loc=ensureGardenLocation();
+  const w=data.weather;
+  const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
+  const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
+  const locLabel=document.getElementById('gardenLocationLabel');
+  if(locLabel) locLabel.textContent=gardenLocationLabel();
+  if(!weatherTitle||!weatherSub) return;
+  if(!loc.lat&&!loc.label){
+    weatherTitle.textContent='📍 Set your garden location';
+    weatherSub.textContent='Tap to add location for weather-smart tasks';
+    return;
+  }
+  if(!w){
+    weatherTitle.textContent='🌤️ Loading local weather…';
+    weatherSub.textContent='Tap to update garden location';
+    return;
+  }
+  if((w.alerts||[]).includes('heat-wave')||(w.alerts||[]).includes('dry-heat')){
+    weatherTitle.textContent=`🌡️ Heat expected · up to ${Math.round(w.forecastPeak||w.maxC)}°C`;
+    weatherSub.textContent='Cruvit added heat-protection tasks';
+  }else if((w.alerts||[]).includes('frost')||(w.alerts||[]).includes('cold-snap')){
+    weatherTitle.textContent=`❄️ Cold snap · down to ${Math.round(w.forecastLow||w.minC)}°C`;
+    weatherSub.textContent='Protect frost-sensitive plants tonight';
+  }else if((w.alerts||[]).includes('heavy-rain')){
+    weatherTitle.textContent='🌧️ Heavy rain expected this week';
+    weatherSub.textContent='Check drainage and skip extra watering';
+  }else{
+    weatherTitle.textContent=`🌤️ ${Math.round(w.tempC)}°C now · ${w.summary||'Fair'}`;
+    weatherSub.textContent=w.forecastHint||`Up to ${Math.round(w.maxC)}°C this week · tap to update location`;
+  }
 }
 
 function syncHealthScore(){
@@ -1214,10 +1518,7 @@ function render(){syncHealthScore();
     const focusTitle=companionTaskTitle(focusEntry)||'Enjoy your garden today';
     const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
   }
-  const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
-  if(weatherTitle)weatherTitle.textContent=visibleTasks?'🌤️ Weather looks manageable today':'🌤️ No extra care needed this week';
-  const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
-  if(weatherSub)weatherSub.textContent=visibleTasks?'Stay on top of watering this week':'Weather looks good for your garden';
+  renderWeatherNote();
   applyGardenPhotoVisual();
   updateGardenSnapshotScan();
   const isHe=window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
@@ -1250,7 +1551,19 @@ function render(){syncHealthScore();
 
   renderCalendar();renderCart();renderRewards();
 }
-function setTab(name){['tasks','plants','shopping','timeline','rewards'].forEach(x=>{document.getElementById('view-'+x).classList.toggle('hidden',x!==name);document.getElementById('tab-'+x).classList.toggle('active',x===name)});window.scrollTo({top:document.querySelector('.tabs').offsetTop-10,behavior:'smooth'})}
+function setTab(name, scroll){
+  if(scroll===undefined)scroll=true;
+  ['tasks','plants','shopping','timeline','rewards'].forEach(x=>{
+    document.getElementById('view-'+x).classList.toggle('hidden',x!==name);
+    document.getElementById('tab-'+x).classList.toggle('active',x===name);
+  });
+  if(!scroll)return;
+  const tabs=document.querySelector('.tabs');
+  if(tabs)window.scrollTo({top:Math.max(0,tabs.offsetTop-10),behavior:'smooth'});
+}
+function scrollToPageTop(behavior){
+  window.scrollTo({top:0,left:0,behavior:behavior||'auto'});
+}
 function toggleTaskMenu(ev,i){
   ev.stopPropagation();
   openMenu=openMenu==='task-'+i?null:'task-'+i;
@@ -1325,7 +1638,6 @@ function openPlantChooser(source){
       <input id="plantGalleryInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" onchange="handlePlantPhotoSelected(this)" style="display:none">
       <div id="plantPhotoPreview" class="scan-preview hidden"></div>
       <button id="identifyPlantBtn" class="btn main scan-identify hidden" type="button" onclick="identifySelectedPlantPhoto()">Identify plant</button>
-      <div class="plant-source-note" id="scanNote">Take or choose a plant photo. Cruvit will identify it automatically.</div>
     </div>`:'';
   document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
   resetAddPlantSearchState();
@@ -1339,7 +1651,7 @@ function openPlantChooser(source){
       const seed=source==='Smart Recommendations'?'mediterranean':'tree sun';
       renderPlantResults(source,seed,{seeded:true});
     }else{
-      results.innerHTML=source==='Scan & Identify'?'<div class="plant-source-note">Upload a plant photo above, or type a plant name manually.</div>':'<div class="plant-source-note">Type a plant name to search. Each new add starts clean, so previous searches will not stay here.</div>';
+      results.innerHTML=source==='Scan & Identify'?'<div class="plant-source-note plant-source-note-quiet">Or search by plant name below.</div>':'<div class="plant-source-note">Type a plant name to search. Each new add starts clean, so previous searches will not stay here.</div>';
     }
   }
 }
@@ -1537,6 +1849,7 @@ function renderScanProfiles(profiles,noteText){
       '<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
   }
   if(note&&noteText)note.textContent=noteText;
+  setTimeout(hydratePlantResultImages,0);
 }
 async function enrichScanProfiles(profiles,candidateNames){
   const names=candidateNames.filter(Boolean).slice(0,2);
@@ -1796,61 +2109,155 @@ function isCredibleLivePlantProfile(profile,query){
   if(directMatch && (hasImage || hasCare)) return true;
   return false;
 }
+function profileFromGbifSuggestion(s,requested){
+  const sci=String(s.scientificName||s.canonicalName||'').trim();
+  const name=String(s.commonName||sci||requested).trim();
+  if(!name && !sci) return null;
+  const profile={
+    slug:slugify(sci||name),
+    name:name||sci,
+    scientific:sci,
+    aliases:[requested,name,sci,s.commonName].filter(Boolean),
+    botanicalVerified:true,
+    icon:'🌿',
+    status:'Healthy',
+    mark:'✓',
+    sun:'See plant guide',
+    water:'See plant guide',
+    growth:'See plant guide',
+    guide:sci?`${sci} — verified botanical match from GBIF.`:'Verified botanical match from GBIF.',
+    tags:['ai-profile','gbif-verified'],
+    imageSearchQuery:sci||name,
+    verification:{source:'GBIF',matchedName:sci,rank:s.rank||'',family:s.family||'',genus:s.genus||''}
+  };
+  return enrichProfileWithQuality(profile,requested);
+}
+function localMatchScore(query,p,source){
+  const q=normalizeQuery(canonicalPlantQuery(query));
+  const text=textForSearch(p);
+  let score=0;
+  const aliases=[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery);
+  if(aliases.some(a=>a===q)) score+=120;
+  if(q.length>=2 && text.includes(q)) score+=40;
+  q.split(' ').filter(w=>w.length>=3).forEach(part=>{if(text.includes(part)) score+=8});
+  if(scorePlantForSource(p,source)) score+=3;
+  return score;
+}
+function isStrongLocalMatch(query,p,source){return localMatchScore(query,p,source)>=(normalizeQuery(canonicalPlantQuery(query)).length>=3?50:20)}
+function samePlantProfile(a,b){
+  if(!a||!b) return false;
+  const ka=normalizeQuery(a.scientific||a.name);
+  const kb=normalizeQuery(b.scientific||b.name);
+  return ka && kb && ka===kb;
+}
+function storePlantProfile(profile){
+  if(!profile) return null;
+  const slug=profile.slug||slugify(profile.name);
+  profile.slug=slug;
+  const existing=PLANT_INDEX[slug];
+  if(!existing){
+    PLANT_LIBRARY.unshift(profile);
+    PLANT_INDEX[slug]=profile;
+    return profile;
+  }
+  const merged=enrichProfileWithQuality({...existing,...profile,slug},profile.name||existing.name);
+  PLANT_INDEX[slug]=merged;
+  const idx=PLANT_LIBRARY.findIndex(x=>x.slug===slug);
+  if(idx>=0) PLANT_LIBRARY[idx]=merged; else PLANT_LIBRARY.unshift(merged);
+  return merged;
+}
+function mergeSearchProfiles(primary,suggestions,locals,query,source){
+  const out=[];
+  const seen=new Set();
+  const push=(p)=>{
+    if(!p) return;
+    const key=normalizeQuery(p.scientific||p.slug||p.name);
+    if(!key||seen.has(key)) return;
+    seen.add(key);
+    out.push(p);
+  };
+  if(primary) push(primary);
+  (suggestions||[]).forEach(s=>{if(!samePlantProfile(s,primary)) push(s)});
+  const allowLocals=primary?(locals||[]).filter(p=>localMatchScore(query,p,source)>=80):(locals||[]);
+  allowLocals.forEach(l=>{if(!out.some(x=>samePlantProfile(x,l))) push(l)});
+  return out.slice(0,8);
+}
+function plantResultThumb(p){
+  const stored=plantImage(p);
+  const proxy=plantImageProxyUrl(p);
+  const src=stored||proxy||'';
+  const key=escapeAttr(p.slug||slugify(p.name));
+  if(src){
+    const fallbacks=escapeAttr(JSON.stringify(plantImageFallbacks(p)));
+    return `<span class="thumb thumb-has-img"><img src="${escapeAttr(src)}" alt="${escapeAttr(p.name||'Plant')}" loading="lazy" data-plant-thumb="${key}" data-fallback-list="${fallbacks}" onerror="swapToInstantPlantImage(this)"></span>`;
+  }
+  return `<span class="thumb thumb-pending" data-plant-thumb="${key}" data-plant-query="${escapeAttr(plantPhotoQuery(p))}"><span class="ico">${p.icon||'🌿'}</span></span>`;
+}
 function renderPlantResults(source,query=''){
   const results=document.getElementById('plantResults');
   if(!results)return;
   if(source==='Scan & Identify'&&window.plantScanInProgress)return;
   const q=(query||'').trim();
   const seq=++plantSearchSeq;
-  const localMatches=getLocalPlantMatches(q,source);
   const renderList=(plants,note='')=>{
-    const seen=new Set();
-    const html=(plants||[]).filter(Boolean).filter(p=>{const key=p.slug||slugify(p.name); if(seen.has(key))return false; seen.add(key); return true;}).slice(0,8).map(p=>plantResultButton(p,source)).join('');
+    const html=(plants||[]).filter(Boolean).slice(0,8).map(p=>plantResultButton(p,source)).join('');
     results.innerHTML=html+(note?`<div class="plant-source-note">${note}</div>`:'');
+    setTimeout(hydratePlantResultImages,0);
   };
   if(!q){
     renderList(PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source)).slice(0,8));
     return;
   }
   if(q.length<2){
+    const localMatches=getLocalPlantMatches(q,source);
     renderList(localMatches, localMatches.length?'':'Type a plant name in Hebrew, English, transliteration, or scientific name.');
     return;
   }
-  // Keep useful local matches visible while the live search runs. Never replace them
-  // with a generic echo result like the exact typed text.
+  const suppressWeakLocals=q.length>=3;
+  const localMatches=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
   renderList(localMatches, `Searching Cruvit plant knowledge for “${escapeHtml(q)}”…`);
-  fetchPlantProfile(q,source).then(profile=>{
+  fetchPlantKnowledgeBundle(q,source).then(({profile,suggestions})=>{
     if(seq!==plantSearchSeq)return;
-    if(isCredibleLivePlantProfile(profile,q)){
-      const existing=PLANT_INDEX[profile.slug];
-      if(!existing){PLANT_LIBRARY.unshift(profile);PLANT_INDEX[profile.slug]=profile;}
-      renderList([PLANT_INDEX[profile.slug],...localMatches], localMatches.length?'Local suggestions remain available below the live match.':'');
-    }else{
-      const err=window.lastPlantSearchError?`<br><small>${escapeHtml(window.lastPlantSearchError)}</small>`:'';
-      renderList(localMatches, localMatches.length?'Live search did not improve the local matches.':'No verified plant match found yet. Try a common name, Hebrew name, scientific name or transliteration.'+err);
+    let primary=null;
+    if(profile && isCredibleLivePlantProfile(profile,q)) primary=storePlantProfile(profile);
+    const altSuggestions=(suggestions||[]).filter(s=>!samePlantProfile(s,primary)).map(s=>storePlantProfile(s)).filter(Boolean);
+    if(primary || altSuggestions.length){
+      const locals=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
+      const merged=mergeSearchProfiles(primary,altSuggestions,locals,q,source);
+      const note=primary
+        ? (merged.length>1?'Tap the best match below. Additional verified suggestions follow.':'Verified plant match from GBIF botanical search.')
+        : 'Pick the closest botanical match below.';
+      renderList(merged,note);
+      return;
     }
-  }).catch((err)=>{
+    const fallbackLocals=getLocalPlantMatches(q,source);
+    const err=window.lastPlantSearchError?`<br><small>${escapeHtml(window.lastPlantSearchError)}</small>`:'';
+    if(fallbackLocals.length){
+      renderList(fallbackLocals,'Live search did not improve the local matches.'+err);
+    }else if(altSuggestions.length){
+      renderList(altSuggestions,'Pick the closest botanical match below.'+err);
+    }else{
+      renderList([],'No verified plant match found yet. Try a common name, Hebrew name, scientific name or transliteration.'+err);
+    }
+  }).catch(err=>{
     if(seq!==plantSearchSeq)return;
-    renderList(localMatches, localMatches.length?'Live search is temporarily unavailable. Showing local matches.':`Could not reach the plant knowledge service.<br><small>${escapeHtml(err.message||'')}</small>`);
+    const fallbackLocals=getLocalPlantMatches(q,source);
+    renderList(fallbackLocals, fallbackLocals.length?'Live search is temporarily unavailable. Showing local matches.':`Could not reach the plant knowledge service.<br><small>${escapeHtml(err.message||'')}</small>`);
   });
 }
 function getLocalPlantMatches(query,source){
   const q=normalizeQuery(canonicalPlantQuery(query));
-  let base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source));
-  if(!q)return base;
-  const scored=[];
-  PLANT_LIBRARY.forEach(p=>{
-    const text=textForSearch(p);
-    let score=0;
-    if([p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q))score+=100;
-    if(text.includes(q))score+=40;
-    q.split(' ').filter(Boolean).forEach(part=>{if(text.includes(part))score+=8});
-    if(scorePlantForSource(p,source))score+=3;
-    if(score>0)scored.push([score,p]);
-  });
-  return scored.sort((a,b)=>b[0]-a[0]).map(x=>x[1]);
+  if(!q) return PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source));
+  const minScore=q.length>=3?50:20;
+  return PLANT_LIBRARY
+    .map(p=>[localMatchScore(q,p,source),p])
+    .filter(x=>x[0]>=minScore)
+    .sort((a,b)=>b[0]-a[0])
+    .map(x=>x[1]);
 }
-function plantResultButton(p,source){const img=displayPlantImage(p)||p.imageUrl||p.image||'';const thumb=img?`<span class="thumb" style="background-image:url('${escapeAttr(img)}')"></span>`:`<span class="ico">${p.icon||'🌿'}</span>`;return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${thumb}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(p.sun||'')} · ${escapeHtml(p.water||'')}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`}
+function plantResultButton(p,source){
+  return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(p.sun||'')} · ${escapeHtml(p.water||'')}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
+}
 function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function slugify(v){return String(v||'plant').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'plant'}
 function fetchWithTimeout(url,options={},ms=9000){
@@ -1858,22 +2265,33 @@ function fetchWithTimeout(url,options={},ms=9000){
   const id=setTimeout(()=>ctrl.abort(),ms);
   return fetch(url,{...options,signal:ctrl.signal}).finally(()=>clearTimeout(id));
 }
-async function fetchPlantProfile(plantName,source){
+async function fetchPlantKnowledgeBundle(plantName,source){
   const rawQuery=String(plantName||'').trim();
   const payload={plantName:rawQuery,query:rawQuery,originalQuery:rawQuery,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
   const endpoints=[OPENAI_READY.endpoint,'/.netlify/functions/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let lastError='';
   for(const endpoint of endpoints){
     try{
-      const res=await fetchWithTimeout(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},22000);
+      const res=await fetchWithTimeout(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},28000);
       if(!res.ok){lastError='Plant knowledge service is not reachable';continue}
       const d=await res.json();
-      if(d.isPlant===false || d.error){lastError=d.error||'No verified botanical match found';continue}
-      return normalizeApiPlant(d,rawQuery);
+      const suggestions=(d.suggestions||[]).map(s=>profileFromGbifSuggestion(s,rawQuery)).filter(Boolean);
+      const hasIdentity=!!(d.botanicalVerified||d.scientificName||d.commonName||d.scientific);
+      if(d.isPlant===false && d.error && !hasIdentity){
+        if(!suggestions.length) lastError=d.error||'No verified botanical match found';
+        window.lastPlantSearchError=lastError;
+        return {profile:null,suggestions,raw:d};
+      }
+      window.lastPlantSearchError='';
+      return {profile:hasIdentity?normalizeApiPlant(d,rawQuery):null,suggestions,raw:d};
     }catch(err){lastError=err.message||'Plant knowledge request failed'}
   }
   window.lastPlantSearchError=lastError;
-  return null;
+  return {profile:null,suggestions:[],raw:null};
+}
+async function fetchPlantProfile(plantName,source){
+  const bundle=await fetchPlantKnowledgeBundle(plantName,source);
+  return bundle?.profile||null;
 }
 function normalizeApiPlant(d,requested){
   const common=d.commonName||d.common_name||d.name||requested;
@@ -2072,7 +2490,13 @@ function toggleCart(force){const drawer=document.getElementById('drawer'); if(fo
 function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
 function showLogin(){document.getElementById('login').classList.add('open')}function hideLogin(){document.getElementById('login').classList.remove('open')}
 function mockLogin(google){data.signedIn=true;const email=document.getElementById('emailField')?.value;if(email)data.email=email;data.events.unshift(['Today','User signed in',google?'Google sign-in selected':'Email sign-in selected']);service.save(data);hideLogin();render()}
-document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});render();setTab('tasks');
+if('scrollRestoration' in history)history.scrollRestoration='manual';
+document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});
+ensureGardenLocation();
+refreshGardenWeatherIfStale().finally(()=>{render();});
+setTab('tasks',false);
+scrollToPageTop('auto');
+window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 </body>
 </html>

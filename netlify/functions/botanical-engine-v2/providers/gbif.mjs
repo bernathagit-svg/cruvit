@@ -36,6 +36,8 @@ export function scoreGbifItem(item, query) {
   if (normalizedNames.includes(normalizedQuery) && normalizedQuery.length >= 3) score += 16;
   if (normalizedQuery.includes(normalizeText(item.canonicalName)) && text(item.canonicalName).length >= 4) score += 10;
   if (looksScientificName(query) && normalizeText(item.scientificName).startsWith(normalizedQuery)) score += 16;
+  if (String(item.rank || '').toUpperCase() === 'GENUS' && normalizeText(item.genus) === normalizedQuery) score += 25;
+  if (String(item.rank || '').toUpperCase() === 'GENUS' && normalizeText(item.canonicalName) === normalizedQuery) score += 22;
   if (Number.isFinite(Number(item.confidence))) score += Number(item.confidence) / 8;
   return score;
 }
@@ -117,7 +119,11 @@ const candidates = dedupe(batches.flat())
   }))
   .sort((a, b) => b._score - a._score);
   const best = candidates[0] || null;
-  const threshold = options.aliasMatched ? 14 : 20;
+  const primaryQuery = normalizeText(queryList[0] || '');
+  const genusMatch = Boolean(best)
+    && String(best.rank || '').toUpperCase() === 'GENUS'
+    && (normalizeText(best.genus) === primaryQuery || normalizeText(best.canonicalName) === primaryQuery);
+  const threshold = options.aliasMatched ? 14 : (genusMatch ? 15 : 20);
   const confident = Boolean(best) && best._score >= threshold;
 
   return {
