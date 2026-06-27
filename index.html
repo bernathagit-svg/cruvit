@@ -7,13 +7,13 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="app"><div class="shell">
 <header class="top">
-  <div class="brand"><img src="assets/cruvit-logo.png" alt="Cruvit"><div><h1>Cruvit</h1><span>My Garden OS</span></div></div>
+  <div class="brand"><img src="assets/cruvit-logo.svg" alt="Cruvit"><div><h1>Cruvit</h1><span>My Garden OS</span></div></div>
   <div class="nav">
     <button class="pill" id="signInBtn" onclick="showLogin()">Sign in</button>
     <button class="pill" onclick="setTab('plants')">Plants</button>
@@ -26,13 +26,15 @@
 <section class="hero">
   <div class="panel intro">
     <div class="intro-leaves" aria-hidden="true"></div>
-    <div class="greeting">🌿 Good morning, Hagit</div>
+    <div class="greeting">🍃 Good morning, Hagit</div>
     <h2>Your garden is looking great</h2>
     <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
     <div class="actions">
       <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
-      <button class="btn light" onclick="scanGarden()">Scan garden 📷</button>
-      <button class="btn light" onclick="addPlant()">Add plant +</button>
+      <div class="actions-row">
+        <button class="btn light" onclick="scanGarden()">Scan garden 📷</button>
+        <button class="btn light" onclick="addPlant()">Add plant +</button>
+      </div>
     </div>
   </div>
 
@@ -40,7 +42,7 @@
     <div class="mood-scene thriving" id="gardenMoodCard" onclick="showHealthBreakdown()" title="View garden mood details">
       <div class="mood-kicker">Garden Mood</div>
       <h3 id="moodTitle">Thriving</h3>
-      <p id="moodMicro">Your garden is happy and flourishing. Keep it light.</p>
+      <p id="moodMicro">Your garden is happy and flourishing. Keep it up! 🍃</p>
       <div class="mood-picture" aria-hidden="true">
         <span class="sun"></span>
         <span class="hill hill-a"></span>
@@ -50,13 +52,25 @@
         <span class="flower flower-b">🌿</span>
         <span class="butterfly">🦋</span>
       </div>
+      <div class="mood-spacer" aria-hidden="true"></div>
       <div class="mood-summary">
-        <div><b id="healthyPlantCount">7</b><span>Healthy<br>plants</span></div>
-        <div><b id="attentionCount">1</b><span>Needs<br>attention</span></div>
-        <div><b id="todayTaskCount">1</b><span>Task<br>today</span></div>
+        <div class="mood-stat">
+          <b id="healthyPlantCount">7</b>
+          <span class="stat-label"><span class="stat-ico">🌿</span> Healthy plants</span>
+        </div>
+        <div class="mood-stat">
+          <b id="attentionCount">1</b>
+          <span class="stat-label"><span class="stat-ico">💛</span> Needs attention</span>
+        </div>
+        <div class="mood-stat">
+          <b id="todayTaskCount">1</b>
+          <span class="stat-label"><span class="stat-ico">💧</span> Task today</span>
+        </div>
       </div>
       <button class="mood-focus" onclick="event.stopPropagation();setTab('tasks')">
-        <span>Today's focus</span><b id="moodFocusText">Water Rosemary</b><em>5 min ›</em>
+        <span class="mood-focus-ico" aria-hidden="true">🪴</span>
+        <span class="mood-focus-copy">Today's focus: <b id="moodFocusText">Water Rosemary</b></span>
+        <em>5 min ›</em>
       </button>
     </div>
 
@@ -73,12 +87,14 @@
       </div>
       <div class="rail-row">
         <span class="rail-icon">🌿</span>
-        <b id="plantCount">4</b>
+        <b id="plantCount">7</b>
         <small>Plants in<br>your garden</small>
       </div>
-      <div class="rail-note" id="moodWeatherNote">🌤️ No extra care needed this week</div>
+      <div class="rail-note" id="moodWeatherNote">
+        <span class="rail-note-title">🌤️ No extra care needed this week</span>
+        <small class="rail-note-sub">Weather looks good for your garden</small>
+      </div>
       <div class="scan">◷ Last scan: Today, 08:24</div>
-      <div class="reward-mini">🏆 <b id="userLevelMini">Seedling</b><span>·</span><b id="creditsMini">0 Credits</b></div>
     </div>
   </div>
 
@@ -91,9 +107,9 @@
 <div class="tabs">
   <button class="tab active" id="tab-tasks" onclick="setTab('tasks')"><span class="tab-ico">📅</span> This week</button>
   <button class="tab" id="tab-plants" onclick="setTab('plants')"><span class="tab-ico">🌿</span> My plants</button>
-  <button class="tab" id="tab-shopping" onclick="setTab('shopping')"><span class="tab-ico">🛒</span> Shopping</button>
+  <button class="tab" id="tab-shopping" onclick="setTab('shopping')"><span class="tab-ico">🛍️</span> Shopping</button>
   <button class="tab" id="tab-timeline" onclick="setTab('timeline')"><span class="tab-ico">📆</span> Timeline</button>
-  <button class="tab" id="tab-rewards" onclick="setTab('rewards')"><span class="tab-ico">🏆</span> Rewards</button>
+  <button class="tab" id="tab-rewards" onclick="setTab('rewards')"><span class="tab-ico">🎁</span> Rewards</button>
 </div>
 
 <main class="content">
@@ -976,7 +992,10 @@ function render(){syncHealthScore();
   const focusEntry=companionOpenTaskEntries()[0];
   const focusTitle=focusEntry?.t?.title||'Enjoy your garden today';
   const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
-  const weather=document.getElementById('moodWeatherNote'); if(weather)weather.textContent=visibleTasks?'🌤️ Weather looks manageable today':'🌤️ No extra care needed this week';
+  const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
+  if(weatherTitle)weatherTitle.textContent=visibleTasks?'🌤️ Weather looks manageable today':'🌤️ No extra care needed this week';
+  const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
+  if(weatherSub)weatherSub.textContent=visibleTasks?'Stay on top of watering this week':'Weather looks good for your garden';
   const hp=document.getElementById('healthyPlantCount'); if(hp)hp.textContent=healthyPlants;
   document.getElementById('plantCount').textContent=visiblePlants.length;
   const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntry?1:0);

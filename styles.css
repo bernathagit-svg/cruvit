@@ -1,20 +1,20 @@
 /* Cruvit — My Garden OS · approved dashboard design */
 :root {
-  --forest: #1a3026;
-  --forest2: #152820;
+  --forest: #0d2c21;
+  --forest2: #0a2319;
   --leaf: #6b9e5e;
   --leaf2: #8fbd7d;
-  --sage: #f2efe9;
+  --sage: #f5f3ef;
   --cream: #f9f8f3;
   --card: #ffffff;
-  --ink: #1a3026;
-  --muted: #6b7268;
+  --ink: #0d2c21;
+  --muted: #667066;
   --muted2: #8a9389;
-  --line: rgba(26, 48, 38, 0.09);
-  --shadow: 0 10px 40px rgba(26, 48, 38, 0.07);
-  --soft: 0 2px 14px rgba(26, 48, 38, 0.05);
+  --line: rgba(13, 44, 33, 0.09);
+  --shadow: 0 12px 44px rgba(13, 44, 33, 0.07);
+  --soft: 0 2px 14px rgba(13, 44, 33, 0.05);
   --r: 28px;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
 
@@ -34,7 +34,7 @@ button { cursor: pointer; }
 
 .app {
   min-height: 100vh;
-  padding: 22px 28px 32px;
+  padding: 24px 32px 36px;
   background: var(--cream);
 }
 
@@ -47,9 +47,9 @@ button { cursor: pointer; }
   align-items: center;
   gap: 16px;
   background: var(--card);
-  border: 1px solid rgba(26, 48, 38, 0.06);
-  border-radius: 24px;
-  padding: 12px 18px;
+  border: 1px solid rgba(13, 44, 33, 0.06);
+  border-radius: 26px;
+  padding: 14px 20px;
   box-shadow: var(--soft);
 }
 
@@ -71,7 +71,7 @@ button { cursor: pointer; }
 .brand h1 {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--forest);
   line-height: 1;
@@ -99,8 +99,8 @@ button { cursor: pointer; }
   border: 1px solid var(--line);
   background: var(--card);
   border-radius: 999px;
-  padding: 9px 16px;
-  font-weight: 650;
+  padding: 10px 18px;
+  font-weight: 600;
   color: var(--forest);
   font-size: 13px;
   line-height: 1.2;
@@ -137,16 +137,16 @@ button { cursor: pointer; }
 
 /* ── Hero row ── */
 .hero {
-  margin-top: 20px;
+  margin-top: 22px;
   display: grid;
-  grid-template-columns: minmax(280px, 0.95fr) minmax(420px, 1.45fr) minmax(220px, 0.72fr);
-  gap: 20px;
+  grid-template-columns: minmax(260px, 0.88fr) minmax(440px, 1.68fr) minmax(200px, 0.62fr);
+  gap: 22px;
   align-items: stretch;
 }
 
 .panel {
   background: var(--card);
-  border: 1px solid rgba(26, 48, 38, 0.06);
+  border: 1px solid rgba(13, 44, 33, 0.06);
   border-radius: var(--r);
   box-shadow: var(--shadow);
 }
@@ -155,25 +155,25 @@ button { cursor: pointer; }
 .intro {
   position: relative;
   overflow: hidden;
-  padding: 36px 38px 40px;
+  padding: 38px 40px 42px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 430px;
+  min-height: 440px;
 }
 
 .intro-leaves {
   position: absolute;
-  left: -8px;
-  bottom: -12px;
-  width: 210px;
-  height: 170px;
+  left: -4px;
+  bottom: -16px;
+  width: 240px;
+  height: 200px;
   pointer-events: none;
-  opacity: 0.92;
+  opacity: 0.95;
   background:
-    radial-gradient(ellipse 55% 45% at 28% 72%, rgba(107, 158, 94, 0.35), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 52% 58%, rgba(143, 189, 125, 0.28), transparent 68%),
-    radial-gradient(ellipse 35% 30% at 18% 48%, rgba(86, 143, 97, 0.22), transparent 65%);
+    radial-gradient(ellipse 58% 48% at 24% 74%, rgba(107, 158, 94, 0.38), transparent 72%),
+    radial-gradient(ellipse 48% 42% at 54% 60%, rgba(143, 189, 125, 0.32), transparent 70%),
+    radial-gradient(ellipse 38% 32% at 14% 46%, rgba(86, 143, 97, 0.24), transparent 68%);
 }
 
 .greeting {
@@ -189,12 +189,12 @@ button { cursor: pointer; }
 
 .intro h2 {
   font-family: var(--font-serif);
-  margin: 14px 0 12px;
+  margin: 16px 0 14px;
   color: var(--forest);
-  font-size: 52px;
-  line-height: 0.98;
+  font-size: 48px;
+  line-height: 1.02;
   letter-spacing: -0.03em;
-  max-width: 420px;
+  max-width: 400px;
   font-weight: 700;
 }
 
@@ -209,12 +209,28 @@ button { cursor: pointer; }
 
 .actions {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 28px;
+  margin-top: 30px;
+  max-width: 300px;
   position: relative;
   z-index: 1;
 }
+
+.actions-row {
+  display: flex;
+  gap: 10px;
+}
+
+.actions .btn.main,
+.actions-row .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions-row .btn { flex: 1; min-width: 0; }
 
 .btn {
   border: 0;
@@ -231,7 +247,7 @@ button { cursor: pointer; }
 .btn.main {
   background: var(--forest);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(26, 48, 38, 0.18);
+  box-shadow: 0 8px 22px rgba(13, 44, 33, 0.2);
 }
 
 .btn.light {
@@ -243,23 +259,23 @@ button { cursor: pointer; }
 /* Garden Mood card */
 .hero .intro,
 .hero .photo-card,
-.hero .premium-mood-panel { min-height: 430px; }
+.hero .premium-mood-panel { min-height: 440px; }
 
 .premium-mood-panel {
   padding: 0;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 168px;
+  grid-template-columns: minmax(0, 1fr) 192px;
   gap: 0;
-  min-height: 430px;
+  min-height: 440px;
   background: var(--card);
 }
 
 .mood-scene {
   --mood-img: url('assets/mood-thriving.jpg');
   position: relative;
-  min-height: 430px;
-  padding: 26px 28px 20px;
+  min-height: 440px;
+  padding: 28px 26px 16px;
   overflow: hidden;
   cursor: pointer;
   display: flex;
@@ -267,7 +283,7 @@ button { cursor: pointer; }
   align-items: center;
   text-align: center;
   isolation: isolate;
-  background: linear-gradient(180deg, #fff 0%, #f7f9f4 100%);
+  background: linear-gradient(180deg, #fff 0%, #f8faf5 100%);
 }
 
 .mood-scene::before {
@@ -276,12 +292,13 @@ button { cursor: pointer; }
   left: 0;
   right: 0;
   bottom: 0;
-  height: 68%;
+  height: 74%;
   background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(249, 248, 243, 0.15) 40%, rgba(242, 239, 233, 0.55) 100%),
-    var(--mood-img);
-  background-size: cover;
-  background-position: center bottom;
+    linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(249, 248, 243, 0.12) 35%, rgba(245, 243, 239, 0.62) 100%),
+    var(--mood-img),
+    linear-gradient(180deg, #eef6e4 0%, #d4e8bc 38%, #9cc87a 72%, #6b9e5e 100%);
+  background-size: cover, cover, cover;
+  background-position: center bottom, center bottom, center bottom;
   z-index: 0;
   opacity: 0.98;
 }
@@ -310,7 +327,7 @@ button { cursor: pointer; }
   margin: 0;
   color: var(--forest);
   font-family: var(--font-serif);
-  font-size: 54px;
+  font-size: 56px;
   line-height: 0.95;
   letter-spacing: -0.04em;
   position: relative;
@@ -319,10 +336,10 @@ button { cursor: pointer; }
 }
 
 .mood-scene p {
-  margin: 8px auto 0;
-  max-width: 360px;
+  margin: 10px auto 0;
+  max-width: 380px;
   color: var(--muted);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.45;
   font-weight: 500;
   position: relative;
@@ -341,73 +358,110 @@ button { cursor: pointer; }
 
 .mood-picture > * { display: none !important; }
 
+.mood-spacer {
+  flex: 1;
+  min-height: 48px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
 .mood-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  width: min(400px, 94%);
-  margin: auto 0 12px;
-  padding: 14px 16px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(26, 48, 38, 0.07);
-  box-shadow: 0 12px 32px rgba(26, 48, 38, 0.08);
+  width: min(520px, 94%);
+  margin: 0 0 10px;
+  padding: 16px 14px;
+  border-radius: 20px;
+  background: #f3f0e8;
+  border: 1px solid rgba(13, 44, 33, 0.05);
+  box-shadow: 0 6px 24px rgba(13, 44, 33, 0.06);
   position: relative;
   z-index: 4;
 }
 
-.mood-summary div + div { border-left: 1px solid var(--line); }
+.mood-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
 
-.mood-summary b {
+.mood-stat + .mood-stat { border-left: 1px solid rgba(13, 44, 33, 0.08); }
+
+.mood-stat b {
   display: block;
   color: var(--forest);
   font-family: var(--font-serif);
-  font-size: 30px;
+  font-size: 32px;
   line-height: 1;
   font-weight: 700;
 }
 
-.mood-summary span {
-  display: block;
+.mood-stat .stat-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   line-height: 1.25;
-  margin-top: 5px;
 }
 
+.mood-stat .stat-ico { font-size: 13px; line-height: 1; }
+
 .mood-focus {
-  width: min(400px, 94%);
+  width: min(520px, 94%);
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 12px;
   align-items: center;
-  padding: 13px 16px;
-  border-radius: 22px;
-  border: 1px solid rgba(26, 48, 38, 0.08);
-  background: rgba(255, 255, 255, 0.94);
+  padding: 14px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(13, 44, 33, 0.07);
+  background: rgba(255, 255, 255, 0.96);
   color: var(--forest);
   font: inherit;
-  font-weight: 650;
-  box-shadow: 0 8px 24px rgba(26, 48, 38, 0.07);
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(13, 44, 33, 0.06);
   position: relative;
   z-index: 4;
   margin-top: auto;
 }
 
-.mood-focus span { color: var(--muted2); font-size: 12px; font-weight: 600; }
-.mood-focus b { text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 15px; font-weight: 650; }
-.mood-focus em { font-style: normal; color: var(--muted); font-size: 12px; font-weight: 600; }
-.mood-focus::before { content: "💧"; font-size: 22px; }
+.mood-focus-ico { font-size: 22px; line-height: 1; }
+
+.mood-focus-copy {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--forest);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mood-focus-copy b { font-weight: 650; }
+
+.mood-focus em {
+  font-style: normal;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 .mood-rail {
-  padding: 24px 18px;
+  padding: 30px 20px;
   background: var(--sage);
   border-left: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .rail-row {
@@ -436,30 +490,34 @@ button { cursor: pointer; }
 }
 
 .rail-note {
-  margin-top: 4px;
-  padding: 12px 0;
+  margin-top: 2px;
+  padding: 14px 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rail-note-title {
   color: var(--muted);
   font-weight: 600;
   font-size: 11.5px;
-  line-height: 1.4;
+  line-height: 1.35;
+}
+
+.rail-note-sub {
+  color: var(--muted2);
+  font-weight: 500;
+  font-size: 10.5px;
+  line-height: 1.35;
 }
 
 .premium-mood-panel .scan {
   font-size: 11.5px;
   color: var(--muted);
   font-weight: 600;
-}
-
-.premium-mood-panel .reward-mini {
-  justify-content: center;
-  margin-top: 0;
-  padding: 9px 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  font-size: 11.5px;
+  line-height: 1.35;
 }
 
 .mood-scene.flourishing { --mood-img: url('assets/mood-flourishing.jpg'); }
@@ -471,78 +529,80 @@ button { cursor: pointer; }
 /* Garden photo */
 .photo-card {
   position: relative;
-  min-height: 430px;
+  min-height: 440px;
   border-radius: var(--r);
   overflow: hidden;
-  background: url('assets/garden-bg.jpg') center/cover;
+  background:
+    url('assets/garden-bg.jpg') center/cover no-repeat,
+    linear-gradient(165deg, #8fbd7d 0%, #4a7d42 38%, #2d5a38 72%, #1a3d28 100%);
   box-shadow: var(--shadow);
-  border: 1px solid rgba(26, 48, 38, 0.06);
+  border: 1px solid rgba(13, 44, 33, 0.06);
 }
 
 .photo-card::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(7, 35, 22, 0.55) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(7, 35, 22, 0.62) 100%);
 }
 
 .camera {
   position: absolute;
-  right: 16px;
-  top: 16px;
+  right: 18px;
+  top: 18px;
   z-index: 2;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: 0;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: var(--soft);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 4px 16px rgba(13, 44, 33, 0.12);
   font-size: 18px;
 }
 
 .photo-label {
   position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
   z-index: 2;
   color: #fff;
 }
 
 .photo-label b {
   display: block;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 650;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
 }
 
 .photo-label span {
   display: block;
-  margin-top: 6px;
-  line-height: 1.45;
+  margin-top: 8px;
+  line-height: 1.5;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
   font-size: 13px;
 }
 
 /* Bottom tabs */
 .tabs {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 24px 0 20px;
+  margin: 26px 0 22px;
 }
 
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   border: 1px solid var(--line);
   background: var(--card);
   border-radius: 999px;
-  padding: 10px 16px;
-  font-weight: 650;
+  padding: 11px 18px;
+  font-weight: 600;
   color: var(--forest);
   font-size: 13px;
   box-shadow: var(--soft);
@@ -1409,9 +1469,10 @@ button { cursor: pointer; }
 
 /* Responsive */
 @media (max-width: 1280px) {
-  .hero { grid-template-columns: 1fr 1.3fr 0.7fr; gap: 16px; }
-  .intro h2 { font-size: 46px; }
-  .mood-scene h3 { font-size: 46px; }
+  .hero { grid-template-columns: 0.9fr 1.55fr 0.65fr; gap: 18px; }
+  .intro h2 { font-size: 42px; }
+  .mood-scene h3 { font-size: 48px; }
+  .premium-mood-panel { grid-template-columns: minmax(0, 1fr) 170px; }
 }
 
 @media (max-width: 1120px) {
@@ -1426,7 +1487,7 @@ button { cursor: pointer; }
     gap: 10px;
     padding: 14px 16px;
   }
-  .rail-note, .premium-mood-panel .scan, .premium-mood-panel .reward-mini { grid-column: 1 / -1; }
+  .rail-note, .premium-mood-panel .scan { grid-column: 1 / -1; }
   .hero .intro, .hero .premium-mood-panel { min-height: auto; }
   .content { grid-template-columns: 1fr; }
   .calendar-split { grid-template-columns: 1fr; }
@@ -1459,7 +1520,9 @@ button { cursor: pointer; }
   .rewards-grid { grid-template-columns: 1fr; }
   .modalbox { top: auto; left: 14px; right: 14px; bottom: 18px; transform: none; width: auto; }
   .modalbox::before { display: none; }
-  .actions .btn { flex: 1; min-width: calc(50% - 6px); justify-content: center; }
+  .actions { max-width: none; }
+  .actions-row { flex-direction: column; }
+  .actions-row .btn { width: 100%; }
 }
 
 @media (max-width: 560px) {
