@@ -186,13 +186,37 @@ function extractJson(text) {
   }
 }
 
+function normalizeConfidence(value) {
+  const raw = cleanText(value).toLowerCase();
+  if (raw === 'high' || raw === 'medium' || raw === 'low') return raw;
+  return 'medium';
+}
+
+function cleanScientificName(value) {
+  return cleanText(value)
+    .replace(/\s+(Thunb|L\.|Mill|Jacq|Aiton|Cav|Lam|Hook|f|subsp|var|cv)\.?$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function cleanCommonName(value, scientificName = '') {
+  const common = cleanText(value);
+  const sci = cleanText(scientificName);
+  if (!common) return sci.split(/\s+/)[0] || '';
+  if (/^(Thunb|L\.|Mill|Jacq|Aiton|Cav|Lam|Hook|f)$/i.test(common)) return sci.split(/\s+/)[0] || common;
+  if (/\bThunb\.?\b|\bL\.?\b|\bMill\.?\b/i.test(common) && !/\s/.test(common.replace(/[.]/g, ''))) {
+    return sci.split(/\s+/)[0] || common.replace(/\s+(Thunb|L|Mill)\.?$/i, '').trim();
+  }
+  return common;
+}
+
 function makeCandidates(result) {
   const candidates = [];
   const seen = new Set();
 
   const add = (name, scientificName = '', confidence = '') => {
-    const common = cleanText(name);
-    const scientific = cleanText(scientificName);
+    const scientific = cleanScientificName(scientificName);
+    const common = cleanCommonName(name, scientific);
     const key = `${common.toLowerCase()}|${scientific.toLowerCase()}`;
 
     if ((!common && !scientific) || seen.has(key)) return;
@@ -202,7 +226,7 @@ function makeCandidates(result) {
       name: common || scientific,
       commonName: common,
       scientificName: scientific,
-      confidence: cleanText(confidence)
+      confidence: normalizeConfidence(confidence)
     });
   };
 
@@ -228,7 +252,66 @@ function makeCandidates(result) {
     }
   }
 
-  return candidates.slice(0, 6);
+  const rank = { high: 3, medium: 2, low: 1 };
+  return candidates
+    .sort((a, b) => (rank[b.confidence] || 0) - (rank[a.confidence] || 0))
+    .slice(0, 4);
+}
+
+async function verifyCandidatesWithGbif(candidates) {
+  const { resolveGbifTaxon } = await import('./botanical-engine-v2/providers/gbif.mjs');
+  const verified = [];
+
+  for (const candidate of candidates) {
+    const queries = uniqueQueries([
+      candidate.scientificName,
+      candidate.commonName,
+      candidate.name
+    ]);
+    if (!queries.length) continue;
+
+    const resolved = await resolveGbifTaxon(queries, { maxQueries: 4 });
+    if (!resolved.ok || !resolved.best) continue;
+
+    const taxon = resolved.best;
+    const scientificName = cleanText(taxon.scientificName || taxon.canonicalName);
+    const commonName = cleanCommonName(
+      candidate.commonName || taxon.vernacularName || taxon.canonicalName,
+      scientificName
+    );
+
+    verified.push({
+      ...candidate,
+      name: commonName || scientificName,
+      commonName,
+      scientificName,
+      gbifVerified: true,
+      gbifRank: cleanText(taxon.rank),
+      gbifScore: Number(taxon._score || 0),
+      gbifKey: taxon.usageKey || taxon.key || ''
+    });
+  }
+
+  return verified.sort((a, b) => {
+    const rank = { high: 3, medium: 2, low: 1 };
+    const scoreA = (rank[a.confidence] || 0) * 10 + Number(a.gbifScore || 0);
+    const scoreB = (rank[b.confidence] || 0) * 10 + Number(b.gbifScore || 0);
+    return scoreB - scoreA;
+  });
+}
+
+function uniqueQueries(values) {
+  const seen = new Set();
+  const out = [];
+  for (const value of values) {
+    const q = cleanText(value);
+    if (!q || q.length < 2) continue;
+    const key = q.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(q);
+  }
+  return out;
 }
 
 export default async function handler(request) {
@@ -267,7 +350,7 @@ export default async function handler(request) {
   const location = cleanText(body?.location);
   const climate = cleanText(body?.climate);
 
-  const prompt = `You are an expert botanist. Identify the plant in the uploaded image.
+  const prompt = `You are an expert botanist identifying a real garden or house plant from a photo.
 Return ONLY valid JSON, without markdown, in this exact shape:
 {
   "common_name": "",
@@ -278,13 +361,14 @@ Return ONLY valid JSON, without markdown, in this exact shape:
   ]
 }
 Rules:
-- Give the best likely identification when a plant is visible.
-- Do not invent certainty. Use medium or low confidence when needed.
-- Include up to 4 plausible alternatives only when useful.
-- Prefer a species; use a genus when the exact species cannot be determined.
-- The user's location is ${JSON.stringify(location || 'not provided')}.
-- Climate context is ${JSON.stringify(climate || 'not provided')}.
-- Identification must be based mainly on the image, not on location.`;
+- Identify from the image only. Location is context only: ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.
+- common_name must be a readable garden name (e.g. "Rose", "Weigela", "Lavender") — never a genus author citation like "Weigela Thunb.".
+- scientific_name must be a real binomial when possible (Genus species), e.g. "Rosa gallica", "Weigela florida", "Lavandula angustifolia".
+- If you can identify the species confidently, set confidence to "high" and return NO alternatives.
+- Include alternatives ONLY when genuinely uncertain between 2-3 closely related species in the SAME genus or look-alike pair.
+- Never list unrelated genera as alternatives. Do not guess random shrubs.
+- Maximum 2 alternatives. Omit the alternatives array when confidence is high.
+- If the image is not a plant, return {"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.`;
 
   const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
@@ -359,7 +443,7 @@ Rules:
         .join('\n');
 
       const result = extractJson(text);
-      const candidates = makeCandidates(result);
+      let candidates = makeCandidates(result);
 
       if (!result || candidates.length === 0) {
         lastError = {
@@ -368,8 +452,24 @@ Rules:
         break;
       }
 
-      const commonName = cleanText(result?.common_name || result?.commonName);
-      const scientificName = cleanText(result?.scientific_name || result?.scientificName);
+      const verified = await verifyCandidatesWithGbif(candidates);
+      if (verified.length) candidates = verified;
+
+      const top = candidates[0] || {};
+      const topConfidence = normalizeConfidence(top.confidence || result?.confidence);
+      if (topConfidence === 'high') {
+        candidates = candidates.slice(0, 1);
+      } else {
+        candidates = candidates.slice(0, 3);
+      }
+
+      const commonName = cleanCommonName(
+        top.commonName || result?.common_name || result?.commonName,
+        top.scientificName || result?.scientific_name || result?.scientificName
+      );
+      const scientificName = cleanScientificName(
+        top.scientificName || result?.scientific_name || result?.scientificName
+      );
 
       return json(200, {
         candidates,
@@ -378,7 +478,8 @@ Rules:
         scientificName,
         common_name: commonName,
         scientific_name: scientificName,
-        confidence: cleanText(result?.confidence)
+        confidence: topConfidence,
+        gbifVerified: Boolean(top.gbifVerified)
       });
     } catch (error) {
       clearTimeout(timer);

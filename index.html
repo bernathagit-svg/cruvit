@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630d">
+<link rel="stylesheet" href="styles.css?v=20250630e">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -1802,11 +1802,11 @@ function buildPlantIdentifyRequestBody(photo){
 function parseIdentifyResponse(out){
   const id=out?.identification||{};
   const normalizeCandidate=(x)=>{
-    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:''};
-    const commonName=x.commonName||x.common_name||'';
-    const scientificName=x.scientificName||x.scientific_name||'';
-    const name=x.name||scientificName||commonName||'';
-    return {name,commonName,scientificName,confidence:x.confidence||''};
+    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:'medium',gbifVerified:false};
+    const commonName=String(x.commonName||x.common_name||'').replace(/\s+(Thunb|L|Mill)\.?$/i,'').trim();
+    const scientificName=String(x.scientificName||x.scientific_name||'').trim();
+    const name=x.name||commonName||scientificName||'';
+    return {name,commonName:commonName||name,scientificName,confidence:String(x.confidence||'medium').toLowerCase(),gbifVerified:!!x.gbifVerified,gbifRank:x.gbifRank||''};
   };
   const seen=new Set();
   const candidates=(out?.candidates||out?.plants||[]).map(normalizeCandidate).filter(c=>{
@@ -1818,9 +1818,77 @@ function parseIdentifyResponse(out){
   const commonName=out?.commonName||out?.common_name||id.common_name||id.commonName||'';
   const scientificName=out?.scientificName||out?.scientific_name||id.scientific_name||id.scientificName||'';
   if(!candidates.length&&(commonName||scientificName)){
-    candidates.push({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||''});
+    candidates.push(normalizeCandidate({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||'medium',gbifVerified:!!out?.gbifVerified}));
   }
-  return {candidates,commonName,scientificName};
+  return {candidates,commonName,scientificName,confidence:String(out?.confidence||id.confidence||'').toLowerCase(),gbifVerified:!!out?.gbifVerified};
+}
+function rankIdentifyCandidates(candidates){
+  const rank={high:3,medium:2,low:1};
+  return [...(candidates||[])].sort((a,b)=>{
+    const score=(c)=>(rank[String(c.confidence||'').toLowerCase()]||0)*10+(c.gbifVerified?5:0);
+    return score(b)-score(a);
+  });
+}
+function hasUsefulCareText(profile){
+  if(!profile)return false;
+  const blob=String(profile.sun||'')+' '+String(profile.water||'')+' '+String(profile.guide||'');
+  if(/confirm light needs|confirm watering|see plant guide|loading verified care|verify by species/i.test(blob)) return false;
+  return !!(profile.sun&&profile.water)||(profile.guide&&profile.guide.length>60);
+}
+function buildScanProfileFromLive(live,candidate,photo){
+  const p=storePlantProfile(Object.assign({},live,{tags:[...(live.tags||[]),'photo-identified','ai-profile']}));
+  p.scanPhotoUrl=photo.dataUrl;
+  p.photoUrl=photo.dataUrl;
+  p.identifyConfidence=candidate.confidence||'';
+  p.identifySource='photo+gbif';
+  if(live.imageUrl&&!/^data:image\//i.test(live.imageUrl)) p.imageUrl=live.imageUrl;
+  else p.imageUrl='';
+  return p;
+}
+async function resolveScanCandidateViaEngine(candidate,photo){
+  const queries=[candidate.scientificName,candidate.commonName,candidate.name].filter(Boolean);
+  for(const query of queries){
+    try{
+      const bundle=await fetchPlantKnowledgeBundle(query,'Scan & Identify');
+      if(bundle.profile&&isCredibleLivePlantProfile(bundle.profile,query)){
+        return buildScanProfileFromLive(bundle.profile,candidate,photo);
+      }
+      const genus=(candidate.scientificName||'').split(/\s+/)[0].toLowerCase();
+      for(const s of (bundle.suggestions||[])){
+        const stub=profileFromGbifSuggestion(s,query);
+        if(!stub) continue;
+        const sci=String(stub.scientific||'').toLowerCase();
+        if(genus&&sci&&!sci.startsWith(genus)) continue;
+        const full=await fetchPlantProfile(stub.scientific||stub.name,'Scan & Identify');
+        if(full&&isCredibleLivePlantProfile(full,query)){
+          return buildScanProfileFromLive(full,candidate,photo);
+        }
+      }
+    }catch(_){}
+  }
+  return null;
+}
+async function resolveScanCandidates(candidates,photo){
+  const ranked=rankIdentifyCandidates(candidates);
+  const resolved=[];
+  for(const candidate of ranked.slice(0,3)){
+    const profile=await resolveScanCandidateViaEngine(candidate,photo);
+    if(profile) resolved.push(profile);
+  }
+  return resolved;
+}
+async function enrichSuggestionProfiles(suggestions,source){
+  const out=[];
+  for(const s of (suggestions||[]).slice(0,4)){
+    const sci=s.scientific||s.scientificName||'';
+    if(!sci){out.push(s);continue}
+    try{
+      const full=await fetchPlantProfile(sci,source);
+      if(full&&isCredibleLivePlantProfile(full,sci)&&hasUsefulCareText(full)) out.push(storePlantProfile(full));
+      else out.push(s);
+    }catch(_){out.push(s)}
+  }
+  return out;
 }
 function buildScanCandidateProfile(candidate,photo){
   const common=candidate.commonName||candidate.name||'Identified plant';
@@ -1828,16 +1896,17 @@ function buildScanCandidateProfile(candidate,photo){
   const profile=normalizeApiPlant({
     commonName:common,
     scientificName:sci,
-    imageUrl:photo.dataUrl,
+    botanicalVerified:!!candidate.gbifVerified,
     icon:'🌿',
-    sun:'Confirm light needs for the identified species',
-    water:'Confirm watering for the identified species',
+    sun:'Loading care profile…',
+    water:'Loading care profile…',
     warnings:['Photo identification should be confirmed before treatment or purchase.'],
     guide:sci?`Identified from photo as ${sci}. Cruvit is loading verified care details…`:'Identified from photo. Cruvit is loading verified care details…'
   },common);
   profile.scanPhotoUrl=photo.dataUrl;
   profile.photoUrl=photo.dataUrl;
-  profile.imageUrl=photo.dataUrl;
+  profile.imageUrl='';
+  profile.identifyConfidence=candidate.confidence||'';
   profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
   return profile;
 }
@@ -1851,20 +1920,17 @@ function renderScanProfiles(profiles,noteText){
   if(note&&noteText)note.textContent=noteText;
   setTimeout(hydratePlantResultImages,0);
 }
-async function enrichScanProfiles(profiles,candidateNames){
-  const names=candidateNames.filter(Boolean).slice(0,2);
-  await Promise.all(names.map(async name=>{
+async function enrichScanProfiles(profiles){
+  await Promise.all((profiles||[]).map(async p=>{
+    if(hasUsefulCareText(p)&&p.botanicalVerified) return;
+    const query=p.scientific||p.name;
+    if(!query) return;
     try{
-      const live=await fetchPlantProfile(name,'Scan & Identify');
-      if(!live||live.isPlant===false)return;
-      const idx=profiles.findIndex(p=>[p.scientific,p.name,...(p.aliases||[])].filter(Boolean).some(v=>normalizeQuery(v)===normalizeQuery(name)));
-      const target=idx>=0?profiles[idx]:profiles[0];
-      if(!target)return;
-      const scanPhoto=target.scanPhotoUrl||target.photoUrl||target.imageUrl||'';
-      Object.assign(target,live,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
-      const merged=mergeLiveProfileIntoLibrary(target.slug||live.slug,live);
-      Object.assign(target,merged,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
-      PLANT_INDEX[target.slug]=target;
+      const live=await fetchPlantProfile(query,'Scan & Identify');
+      if(!live||!isCredibleLivePlantProfile(live,query)||!hasUsefulCareText(live)) return;
+      const scanPhoto=p.scanPhotoUrl||p.photoUrl||'';
+      const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
+      Object.assign(p,updated);
     }catch(_){}
   }));
   renderScanProfiles(profiles,'Identification complete. Choose the matching plant below.');
@@ -2019,29 +2085,26 @@ async function identifySelectedPlantPhoto(){
       throw new Error(out.error||'No plant match found in the photo.');
     }
 
-    const profiles=[];
-    const seenSlugs=new Set();
-    parsed.candidates.slice(0,4).forEach(candidate=>{
-      const profile=buildScanCandidateProfile(candidate,photo);
-      if(seenSlugs.has(profile.slug))return;
-      seenSlugs.add(profile.slug);
-      const existing=PLANT_INDEX[profile.slug];
-      if(!existing){
-        PLANT_LIBRARY.unshift(profile);
-        PLANT_INDEX[profile.slug]=profile;
-      }else{
-        PLANT_INDEX[profile.slug]={...existing,...profile};
-      }
-      profiles.push(PLANT_INDEX[profile.slug]);
-    });
+    if(note)note.textContent='Verifying identification against Cruvit botanical database…';
+    if(results)results.innerHTML='<div class="plant-source-note">Matching photo to verified plant records…</div>';
 
-    renderScanProfiles(profiles,'Best match found. Loading verified care details…');
+    let profiles=await resolveScanCandidates(parsed.candidates,photo);
 
-    const enrichNames=parsed.candidates
-      .flatMap(c=>[c.scientificName,c.commonName,c.name])
-      .filter(Boolean)
-      .filter((name,index,array)=>array.findIndex(x=>normalizeQuery(x)===normalizeQuery(name))===index);
-    enrichScanProfiles(profiles,enrichNames).catch(err=>console.warn('Scan profile enrichment failed',err));
+    if(!profiles.length){
+      const ranked=rankIdentifyCandidates(parsed.candidates);
+      profiles=ranked.slice(0,parsed.confidence==='high'?1:2).map(c=>{
+        const p=buildScanCandidateProfile(c,photo);
+        storePlantProfile(p);
+        return PLANT_INDEX[p.slug]||p;
+      });
+    }
+
+    const noteText=profiles.length===1&&parsed.confidence==='high'
+      ? 'Best match found with high confidence.'
+      : 'Choose the closest verified match below.';
+
+    renderScanProfiles(profiles,noteText+' Loading care details…');
+    enrichScanProfiles(profiles).catch(err=>console.warn('Scan profile enrichment failed',err));
   }catch(err){
     console.error('Plant photo identification failed',err);
     const message=String(err?.message||'Identification failed.');
@@ -2063,15 +2126,18 @@ function textForSearch(p){return [p.name,p.he,p.scientific,(p.aliases||[]).join(
 
 function normalizeQuery(q){return String(q||'').trim().toLowerCase().replace(/[״"׳’`]/g,'').replace(/^עץ\s+/,'').replace(/\s+/g,' ')}
 const PLANT_QUERY_ALIASES={
-  'עץ אלון':'oak tree','אלון':'oak tree','אלון מצוי':'quercus calliprinos','oak':'oak tree','oak tree':'oak tree','quercus':'quercus',
-  'עץ אורן':'pine tree','אורן':'pine tree','אורן ירושלים':'pinus halepensis','pine':'pine tree','pine tree':'pine tree','pinus':'pinus',
-  'עץ פפאיה':'papaya tree','פפאיה':'papaya','עץ מנגו':'mango tree','מנגו':'mango tree','עץ רימון':'pomegranate tree','רימון':'pomegranate tree','פטל':'raspberry','ליצי':'lychee tree','ליצ׳י':'lychee tree',
-  'עץ תפוח':'apple tree','תפוח':'apple tree','עץ אגס':'pear tree','אגס':'pear tree','עץ שקד':'almond tree','שקד':'almond tree','עץ תאנה':'fig tree','תאנה':'fig tree','גפן':'grapevine','ענבים':'grapevine','דקל':'palm tree','תמר':'date palm','אבוקדו':'avocado tree','עץ אבוקדו':'avocado tree','עץ משמש':'apricot tree','משמש':'apricot tree','עץ אפרסק':'peach tree','אפרסק':'peach tree','עץ שזיף':'plum tree','שזיף':'plum tree','ברוש':'cypress tree','עץ ברוש':'cypress tree','פיקוס':'ficus','היביסקוס':'hibiscus','גרניום':'geranium','ורד':'rose','שושנה':'rose','מרווה':'sage','בזיליקום':'basil','כוסברה':'cilantro','פטרוזיליה':'parsley','קקטוס':'cactus','סוקולנט':'succulent'
+  'עץ אלון':'Quercus','אלון':'Quercus','אלון מצוי':'Quercus calliprinos','oak':'Quercus','oak tree':'Quercus','quercus':'Quercus',
+  'עץ אורן':'Pinus','אורן':'Pinus','אורן ירושלים':'Pinus halepensis','pine':'Pinus','pine tree':'Pinus','pinus':'Pinus',
+  'עץ פפאיה':'Carica papaya','פפאיה':'Carica papaya','papaya tree':'Carica papaya',
+  'עץ מנגו':'Mangifera indica','מנגו':'Mangifera indica','עץ רימון':'Punica granatum','רימון':'Punica granatum','פטל':'Rubus idaeus','ליצי':'Litchi chinensis','ליצ׳י':'Litchi chinensis',
+  'עץ תפוח':'Malus domestica','תפוח':'Malus domestica','עץ אגס':'Pyrus communis','אגס':'Pyrus communis','עץ שקד':'Prunus dulcis','שקד':'Prunus dulcis','עץ תאנה':'Ficus carica','תאנה':'Ficus carica','גפן':'Vitis vinifera','ענבים':'Vitis vinifera','דקל':'Phoenix dactylifera','תמר':'Phoenix dactylifera','אבוקדו':'Persea americana','עץ אבוקדו':'Persea americana','עץ משמש':'Prunus armeniaca','משמש':'Prunus armeniaca','עץ אפרסק':'Prunus persica','אפרסק':'Prunus persica','עץ שזיף':'Prunus domestica','שזיף':'Prunus domestica','דובדבן':'Prunus avium',
+  'יסמין':'Jasminum','לבנדר':'Lavandula angustifolia','רוזמרין':'Salvia rosmarinus','מרווה':'Salvia','נענע':'Mentha','בזיליקום':'Ocimum basilicum','פטרוזיליה':'Petroselinum crispum','כוסברה':'Coriandrum sativum','טימין':'Thymus vulgaris','אורגנו':'Origanum vulgare','ורד':'Rosa','שושנה':'Rosa','היביסקוס':'Hibiscus','בוגנוויליה':'Bougainvillea','פלומריה':'Plumeria','פיקוס':'Ficus','אקליפטוס':'Eucalyptus','קקטוס':'Cactaceae','סוקולנט':'succulent','אלוורה':'Aloe vera','רקפת':'Cyclamen persicum','גרניום':'Pelargonium','הידרנגאה':'Hydrangea macrophylla','הורטנזיה':'Hydrangea macrophylla','זית':'Olea europaea','עץ זית':'Olea europaea','לימון':'Citrus limon','תפוז':'Citrus sinensis',
+  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae'
 };
 function canonicalPlantQuery(q){
   const raw=String(q||'').trim();
   const n=normalizeQuery(raw);
-  return PLANT_QUERY_ALIASES[n]||raw;
+  return PLANT_QUERY_ALIASES[n]||PLANT_QUERY_ALIASES[raw.toLowerCase()]||raw;
 }
 
 function searchLocalPlants(query,source){
@@ -2098,10 +2164,11 @@ function isCredibleLivePlantProfile(profile,query){
   const hasScientific=!!sci && !['plant','various plant species','unknown'].includes(sci);
   const hasImage=!!(profile.imageUrl||profile.image||profile.photoUrl);
   const hasCare=!!(profile.sun||profile.water||profile.guide||profile.climate);
-  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
+  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment|confirm light needs|confirm watering|see plant guide|loading care profile/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
   const directMatch=[n,sci,he,...aliases].filter(Boolean).some(a=>a===q || a.includes(q) || q.includes(a));
-  // GBIF-verified profiles from Botanical Engine v2 may use broad placeholder care text before AI enrichment.
-  if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity)) return true;
+  if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity) && (directMatch || hasUsefulCareText(profile))) return true;
+  if(generic && !hasUsefulCareText(profile)) return false;
+  if(profile.botanicalVerified && hasUsefulCareText(profile)) return true;
   // The live plant service is the primary source and can translate Hebrew/common/scientific names.
   // Do NOT require a local-library/direct match; that is what prevented many real plants from being found.
   // Accept any profile with real botanical identity + care/image. Reject only echo/generic results.
@@ -2216,11 +2283,18 @@ function renderPlantResults(source,query=''){
   const suppressWeakLocals=q.length>=3;
   const localMatches=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
   renderList(localMatches, `Searching Cruvit plant knowledge for “${escapeHtml(q)}”…`);
-  fetchPlantKnowledgeBundle(q,source).then(({profile,suggestions})=>{
+  fetchPlantKnowledgeBundle(q,source).then(async ({profile,suggestions})=>{
     if(seq!==plantSearchSeq)return;
     let primary=null;
-    if(profile && isCredibleLivePlantProfile(profile,q)) primary=storePlantProfile(profile);
-    const altSuggestions=(suggestions||[]).filter(s=>!samePlantProfile(s,primary)).map(s=>storePlantProfile(s)).filter(Boolean);
+    if(profile && isCredibleLivePlantProfile(profile,q) && hasUsefulCareText(profile)) primary=storePlantProfile(profile);
+    else if(profile && isCredibleLivePlantProfile(profile,q)) primary=storePlantProfile(profile);
+    let altSuggestions=(suggestions||[]).filter(s=>!samePlantProfile(s,primary)).map(s=>storePlantProfile(s)).filter(Boolean);
+    if(altSuggestions.length) altSuggestions=await enrichSuggestionProfiles(altSuggestions,source);
+    if(!primary && altSuggestions.length){
+      const enriched=await enrichSuggestionProfiles(altSuggestions.slice(0,1),source);
+      if(enriched[0]&&isCredibleLivePlantProfile(enriched[0],q)) primary=enriched[0];
+      altSuggestions=altSuggestions.filter(s=>!samePlantProfile(s,primary));
+    }
     if(primary || altSuggestions.length){
       const locals=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
       const merged=mergeSearchProfiles(primary,altSuggestions,locals,q,source);
