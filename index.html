@@ -168,6 +168,7 @@
         <h4>Level</h4>
         <div class="soft-row"><div><b id="rewardLevel">Seedling</b><br><span id="rewardLevelText">Keep caring for your garden to level up.</span></div><span>🌱</span></div>
         <div id="achievements"></div>
+        <small id="achievementsHelp" class="achievements-help">Tap a locked badge to see how to unlock it.</small>
       </div>
     </div>
   </section>
@@ -1049,18 +1050,102 @@ function awardCredits(amount,reason){
   showRewardToast(amount,reason);
 }
 function showRewardToast(amount,reason){const el=document.getElementById('rewardToast'); if(!el)return; el.textContent=`+${amount} Credits · ${reason}`; el.classList.add('show'); clearTimeout(window.rewardToastTimer); window.rewardToastTimer=setTimeout(()=>el.classList.remove('show'),1800)}
-function checkAchievements(){ensureRewardsState(); const a=data.rewards.achievements; const visible=(data.plants||[]).filter(p=>!p.archived).length; if(visible>=1)a.firstPlant=true; if(visible>=5)a.fivePlants=true; if((data.rewards.history||[]).some(h=>String(h.reason).toLowerCase().includes('scan')))a.firstScan=true; if((data.tasks||[]).filter(t=>t.done).length>=3)a.taskStreak=true}
+function rewardsIsHe(){
+  return window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
+}
+function achievementCatalog(){
+  const isHe=rewardsIsHe();
+  return [
+    {
+      id:'firstPlant',
+      icon:'🌱',
+      title:isHe?'צמח ראשון':'First plant',
+      hint:isHe?'הוסיפי את הצמח הראשון שלך':'Add your first plant',
+      credits:10,
+      how:isHe
+        ? 'לחצי על "+ Add plant" בלוח הבקרה או בלשונית My plants, הוסיפי צמח ושמרי אותו בגינה. מיד עם השמירה תקבלי קרדיטים.'
+        : 'Tap "+ Add plant" on the dashboard or in My plants, add a plant, and save it to your garden. Credits are awarded as soon as it is saved.',
+      cta:isHe?'הוספת צמח':'Add plant'
+    },
+    {
+      id:'firstScan',
+      icon:'📷',
+      title:isHe?'סריקה ראשונה':'First scan',
+      hint:isHe?'סרקי או זהי צמח':'Scan or identify a plant',
+      credits:10,
+      how:isHe
+        ? 'העלי תמונת גינה (מצלמה על תמונת הגן) או השתמשי ב-Scan & Identify בעת הוספת צמח. סריקת צמח מזכה ב-15 קרדיטים; תמונת גינה ראשונה — 10 קרדיטים.'
+        : 'Upload a garden photo (camera on the garden card) or use Scan & Identify when adding a plant. Plant scans earn 15 Credits; your first garden photo earns 10 Credits.',
+      cta:isHe?'עדכון תמונת גינה':'Update garden photo'
+    },
+    {
+      id:'fivePlants',
+      icon:'🌿',
+      title:isHe?'חמישה צמחים':'Five plants',
+      hint:isHe?'עקבי אחר 5 צמחים בגינה':'Track 5 plants in your garden',
+      credits:null,
+      how:isHe
+        ? 'הוסיפי צמחים נוספים עד שיש 5 צמחים פעילים בגינה (לא בארכיון). כל צמח חדש מזכה גם בקרדיטים בזמן ההוספה.'
+        : 'Keep adding plants until you have 5 active plants in your garden (not archived). Each new plant also earns Credits when added.',
+      cta:isHe?'הוספת צמח':'Add plant'
+    },
+    {
+      id:'taskStreak',
+      icon:'✓',
+      title:isHe?'רצף טיפול':'Care streak',
+      hint:isHe?'השלימי 3 משימות טיפול':'Complete 3 care tasks',
+      credits:3,
+      how:isHe
+        ? 'פתחי את לשונית This week, סמני משימות כהושלמו (Water, Fertilize וכו\'). כל משימה מזכה בקרדיטים; אחרי 3 משימות שהושלמו — התג נפתח.'
+        : 'Open the This week tab and mark care tasks as done (water, fertilize, and more). Each task earns Credits; after 3 completed tasks, this badge unlocks.',
+      cta:isHe?'פתיחת משימות':'Open tasks'
+    }
+  ];
+}
+function runAchievementAction(id){
+  closePlantPanel();
+  if(id==='firstPlant'||id==='fivePlants'){setTab('plants');addPlant();return}
+  if(id==='firstScan'){scanGarden();return}
+  if(id==='taskStreak'){setTab('tasks');return}
+}
+function showAchievementHint(id){
+  const def=achievementCatalog().find(d=>d.id===id);
+  if(!def)return;
+  ensureRewardsState();
+  if(data.rewards.achievements&&data.rewards.achievements[id])return;
+  const isHe=rewardsIsHe();
+  document.getElementById('plantPanelTitle').textContent=isHe?'איך מקבלים פרס?':'How to earn this reward';
+  document.getElementById('plantPanelSubtitle').textContent=def.credits
+    ? (isHe?`+${def.credits} קרדיטים כשזה נפתח`:`+${def.credits} Credits when unlocked`)
+    : (isHe?'אבן דרך בגינה':'Garden milestone');
+  const rewardLine=def.credits
+    ? `<p class="achievement-reward-line">${isHe?`פרס: +${def.credits} קרדיטים`:`Reward: +${def.credits} Credits`}</p>`
+    : `<p class="achievement-reward-line">${isHe?'אין קרדיט חד-פעמי — זהו ציון דרך בגינה שלך':'No one-time Credit bonus — this marks progress in your garden'}</p>`;
+  document.getElementById('plantPanelBody').innerHTML=`<div class="guide-block achievement-guide"><b>${def.icon} ${escapeHtml(def.title)}</b><p>${escapeHtml(def.how)}</p>${rewardLine}<button type="button" class="btn main mood-care-cta" onclick="runAchievementAction('${def.id}')">${escapeHtml(def.cta)} →</button></div>`;
+  window.moodStatPanelType=null;
+  document.getElementById('plantDetailModal').classList.add('open');
+}
+function checkAchievements(){ensureRewardsState(); const a=data.rewards.achievements; const visible=(data.plants||[]).filter(p=>!p.archived).length; if(visible>=1)a.firstPlant=true; if(visible>=5)a.fivePlants=true; if(data.gardenPhoto||(data.rewards.history||[]).some(h=>/scan|garden photo/i.test(String(h.reason))))a.firstScan=true; if((data.tasks||[]).filter(t=>t.done).length>=3)a.taskStreak=true}
 function renderRewards(){
   const c=data.rewards?.credits||0; const info=nextRewardInfo(); const level=rewardLevelName();
+  const isHe=rewardsIsHe();
   const miniC=document.getElementById('creditsMini'); if(miniC)miniC.textContent=c+' Credits';
   const navC=document.getElementById('creditsNav'); if(navC)navC.textContent=c;
   const miniL=document.getElementById('userLevelMini'); if(miniL)miniL.textContent=level;
   const shop=document.getElementById('shoppingRewardText'); if(shop)shop.textContent=(c>=500?'You have store credit available.':'Earn '+(500-c)+' more credits for ₪10 store credit.');
   const bal=document.getElementById('creditsBalance'); if(!bal)return;
   bal.textContent=c; document.getElementById('rewardLevel').textContent=level; document.getElementById('rewardLevelText').textContent='Credits convert to store discounts, not cash.'; document.getElementById('nextRewardText').textContent=info.text; document.getElementById('creditsProgress').style.width=Math.max(0,Math.min(100,info.pct))+'%';
+  const achHelp=document.getElementById('achievementsHelp');
+  if(achHelp)achHelp.textContent=isHe?'לחצי על תג נעול כדי לראות איך לפתוח אותו':'Tap a locked badge to see how to unlock it';
   const a=data.rewards.achievements||{};
-  const rows=[['🌱 First plant','Add your first plant',a.firstPlant],['📷 First scan','Scan or identify a plant',a.firstScan],['🌿 Five plants','Track 5 plants in your garden',a.fivePlants],['✓ Care streak','Complete 3 care tasks',a.taskStreak]];
-  document.getElementById('achievements').innerHTML=rows.map(r=>`<div class="achievement"><div><b>${r[0]}</b><br><span>${r[1]}</span></div><span class="state">${r[2]?'Unlocked':'Locked'}</span></div>`).join('');
+  document.getElementById('achievements').innerHTML=achievementCatalog().map(def=>{
+    const unlocked=!!a[def.id];
+    const state=unlocked?(isHe?'נפתח ✓':'Unlocked'):(isHe?'נעול 🔒':'Locked');
+    if(unlocked){
+      return `<div class="achievement achievement-unlocked"><div><b>${def.icon} ${escapeHtml(def.title)}</b><br><span>${escapeHtml(def.hint)}</span></div><span class="state state-unlocked">${state}</span></div>`;
+    }
+    return `<button type="button" class="achievement achievement-locked" onclick="showAchievementHint('${def.id}')" aria-label="${escapeHtml(isHe?'איך לפתוח: ':'How to unlock: ')+escapeHtml(def.title)}"><div><b>${def.icon} ${escapeHtml(def.title)}</b><br><span>${escapeHtml(def.hint)}</span></div><span class="state state-locked">${state}</span></button>`;
+  }).join('');
 }
 
 let enrichTimer=null;
