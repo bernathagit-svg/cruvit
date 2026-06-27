@@ -7,8 +7,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="garden-modes.css">
 </head>
 <body>
 <div class="app"><div class="shell">
@@ -39,10 +40,14 @@
   </div>
 
   <div class="panel status-panel premium-mood-panel">
-    <div class="mood-scene thriving" id="gardenMoodCard" onclick="showHealthBreakdown()" title="View garden mood details">
-      <div class="mood-kicker">Garden Mood</div>
+    <div class="mood-scene thriving" id="gardenMoodCard" onclick="showHealthBreakdown()" title="View garden mode details">
+      <div class="mood-kicker-wrap">
+        <div class="mood-kicker" id="moodKicker">Your Garden Mode</div>
+        <span class="mood-severity" id="moodSeverity" hidden></span>
+      </div>
       <h3 id="moodTitle">Thriving</h3>
       <p id="moodMicro">Your garden is happy and flourishing. Keep it up! 🍃</p>
+      <p class="mood-mode-also" id="gardenModesSecondary" hidden></p>
       <div class="mood-picture" aria-hidden="true">
         <span class="sun"></span>
         <span class="hill hill-a"></span>
@@ -67,10 +72,10 @@
           <span class="stat-label"><span class="stat-ico">💧</span> Task today</span>
         </div>
       </div>
-      <button class="mood-focus" onclick="event.stopPropagation();setTab('tasks')">
+      <button type="button" class="mood-focus" id="moodFocusBtn">
         <span class="mood-focus-ico" aria-hidden="true">🪴</span>
-        <span class="mood-focus-copy">Today's focus: <b id="moodFocusText">Water Rosemary</b></span>
-        <em>5 min ›</em>
+        <span class="mood-focus-copy"><span class="mood-focus-label" id="moodFocusLabel">Today's focus:</span> <b id="moodFocusText">Water Rosemary</b></span>
+        <em id="moodFocusLink">Tasks ›</em>
       </button>
     </div>
 
@@ -99,11 +104,13 @@
   </div>
 
   <aside class="photo-card" onclick="scanGarden()" role="button" tabindex="0" aria-label="Scan Hagit's garden" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();scanGarden()}">
-    <button type="button" class="camera" onclick="event.stopPropagation();scanGarden()" aria-label="Scan garden">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
-        <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
-      </svg>
-    </button>
+    <div class="photo-visual">
+      <button type="button" class="camera" onclick="event.stopPropagation();scanGarden()" aria-label="Scan garden">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
+        </svg>
+      </button>
+    </div>
     <div class="photo-label"><b>Hagit’s garden</b><span>Western Galilee climate<br>Last scan: Today, 08:24</span></div>
   </aside>
 </section>
@@ -185,6 +192,7 @@
 
 <div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
+<script src="garden-modes.js"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -918,10 +926,16 @@ function showHealthBreakdown(){
   const title=document.getElementById('plantPanelTitle');
   const sub=document.getElementById('plantPanelSubtitle');
   const body=document.getElementById('plantPanelBody');
-  const mood=gardenMoodFromHealth(h);
-  title.textContent='Garden Mood';
+  const deps={todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts};
+  const gardenData=window.GardenModes?GardenModes.collectGardenData({data,calculateHealthScore,isTaskOverdue,isPlantAttention,todayIso,taskIsoValue,datePlusDaysIso,plantMeta,plantAlerts}):null;
+  const modes=gardenData&&window.GardenModes?GardenModes.deriveGardenModes(gardenData,deps):null;
+  const mode=modes?modes.primaryMode:null;
+  const mood=mode?{icon:mode.icon,title:GardenModes.t(mode.title),text:GardenModes.t(mode.subtitle)}:gardenMoodFromHealth(h);
+  const actionHtml=mode&&(mode.actions||[]).length?`<div class="guide-block"><b>${GardenModes.gardenModesIsHe()?'פעולות מומלצות':'Suggested actions'}</b><span>${mode.actions.map(a=>GardenModes.t(a)).join(' · ')}</span></div>`:'';
+  const alsoHtml=modes&&modes.warningModes.length?`<div class="guide-block"><b>${GardenModes.gardenModesIsHe()?'שים לב':'Warnings'}</b><span>${modes.warningModes.map(m=>`${m.icon} ${GardenModes.t(m.title)}`).join(' · ')}</span></div>`:'';
+  title.textContent=window.GardenModes?(GardenModes.gardenModesIsHe()?'מצב הגינה שלך':'Your Garden Mode'):'Garden Mood';
   sub.textContent='Why Cruvit is showing this garden status';
-  body.innerHTML=`<div class="guide-block"><b>${mood.icon} ${mood.title}</b><span>${mood.text}</span></div><div class="info-grid">${h.rows.map(r=>`<div class="info-tile"><span class="big">${r.impact.startsWith('+')?'＋':'•'}</span><span><b>${r.label}: ${r.value}</b><span>${r.note}</span></span></div>`).join('')}</div><div class="guide-block"><b>How Cruvit keeps it calm</b><span>Cruvit does not show every possible reminder as urgent. It highlights only the most useful focus action first, so caring for the garden feels light and enjoyable.</span></div>`;
+  body.innerHTML=`<div class="guide-block"><b>${mood.icon} ${mood.title}</b><span>${mood.text}</span></div>${actionHtml}${alsoHtml}<div class="info-grid">${h.rows.map(r=>`<div class="info-tile"><span class="big">${r.impact.startsWith('+')?'＋':'•'}</span><span><b>${r.label}: ${r.value}</b><span>${r.note}</span></span></div>`).join('')}</div><div class="guide-block"><b>How Cruvit keeps it calm</b><span>Cruvit does not show every possible reminder as urgent. It highlights only the most useful focus action first, so caring for the garden feels light and enjoyable.</span></div>`;
   document.getElementById('plantDetailModal').classList.add('open');
 }
 function rewardLevelName(){const c=data.rewards?.credits||0; if(c>=2500)return 'Garden Master'; if(c>=1000)return 'Expert Gardener'; if(c>=500)return 'Gardener'; return 'Seedling'}
@@ -978,32 +992,46 @@ function maybeEnrichVisiblePlants(plants){
   },350);
 }
 
+function collectGardenDataForModes(){
+  if(!window.GardenModes)return {};
+  return GardenModes.collectGardenData({
+    data,calculateHealthScore,isTaskOverdue,isPlantAttention,
+    todayIso,taskIsoValue,datePlusDaysIso,plantMeta,plantAlerts
+  });
+}
+
 function render(){syncHealthScore();
   const health=syncHealthScore();
-  const mood=gardenMoodFromHealth(health);
-  const moodCard=document.getElementById('gardenMoodCard');
-  if(moodCard){moodCard.className=(moodCard.classList.contains('mood-scene')?'mood-scene ':'mood-orb ')+mood.key;}
-  const moodIcon=document.getElementById('moodIcon'); if(moodIcon)moodIcon.textContent=mood.icon;
-  const moodTitle=document.getElementById('moodTitle'); if(moodTitle)moodTitle.textContent=mood.title;
-  const moodMicro=document.getElementById('moodMicro'); if(moodMicro)moodMicro.textContent=mood.micro;
-  const statusH=document.querySelector('.status-text h3'); if(statusH)statusH.textContent=mood.headline;
-  const statusP=document.querySelector('.status-text p'); if(statusP)statusP.textContent=mood.text;
-  const visiblePlants=data.plants.filter(p=>!p.archived);
+  const visiblePlantsEarly=data.plants.filter(p=>!p.archived);
+  const focusEntryEarly=companionOpenTaskEntries()[0];
+  const modeDeps={todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts};
+  if(window.GardenModes){
+    GardenModes.renderGardenMoodPanel(collectGardenDataForModes(),modeDeps,{taskTitle:focusEntryEarly?.t?.title});
+  }else{
+    const mood=gardenMoodFromHealth(health);
+    const moodCard=document.getElementById('gardenMoodCard');
+    if(moodCard){moodCard.className=(moodCard.classList.contains('mood-scene')?'mood-scene ':'mood-orb ')+mood.key;}
+    const moodTitle=document.getElementById('moodTitle'); if(moodTitle)moodTitle.textContent=mood.title;
+    const moodMicro=document.getElementById('moodMicro'); if(moodMicro)moodMicro.textContent=mood.micro;
+  }
+  const visiblePlants=visiblePlantsEarly;
   maybeEnrichVisiblePlants(visiblePlants);
   const attentionPlants=visiblePlants.filter(isPlantAttention).length;
   const visibleTasks=visibleCareTaskCount();
   const healthyPlants=Math.max(0,visiblePlants.length-attentionPlants);
-  const focusEntry=companionOpenTaskEntries()[0];
   const focusIndexes=focusedTaskIndexes();
-  const focusTitle=focusEntry?.t?.title||'Enjoy your garden today';
-  const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
+  if(!window.GardenModes){
+    const focusEntry=focusEntryEarly;
+    const focusTitle=focusEntry?.t?.title||'Enjoy your garden today';
+    const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
+  }
   const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
   if(weatherTitle)weatherTitle.textContent=visibleTasks?'🌤️ Weather looks manageable today':'🌤️ No extra care needed this week';
   const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
   if(weatherSub)weatherSub.textContent=visibleTasks?'Stay on top of watering this week':'Weather looks good for your garden';
   const hp=document.getElementById('healthyPlantCount'); if(hp)hp.textContent=healthyPlants;
   document.getElementById('plantCount').textContent=visiblePlants.length;
-  const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntry?1:0);
+  const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntryEarly?1:0);
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=visibleTasks;
   document.getElementById('attentionCount').textContent=attentionPlants;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;

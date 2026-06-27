@@ -1,0 +1,107 @@
+/* Cruvit — Garden Modes in hero Garden Mood panel (minimal, calm) */
+
+.mood-kicker-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  z-index: 3;
+  margin-bottom: var(--space-2, 8px);
+}
+
+.mood-severity {
+  align-self: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--r-full, 999px);
+  border: 1px solid rgba(15, 61, 46, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted, #3d5c4a);
+}
+
+.mood-severity.garden-mode-severity-important {
+  border-color: rgba(201, 162, 39, 0.28);
+  color: var(--forest-light, #1b5e45);
+}
+
+.mood-severity.garden-mode-severity-urgent {
+  border-color: rgba(180, 72, 52, 0.22);
+  color: #8b3a2f;
+  background: rgba(255, 244, 240, 0.9);
+}
+
+#gardenMoodCard #moodMicro {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mood-mode-also {
+  margin: 6px auto 0;
+  max-width: min(340px, 92%);
+  font-size: 0.6875rem;
+  line-height: 1.35;
+  color: var(--muted, #3d5c4a);
+  opacity: 0.88;
+  position: relative;
+  z-index: 3;
+  text-align: center;
+}
+
+.mood-focus-label {
+  font-weight: 500;
+  opacity: 0.88;
+}
+
+/* Hide duplicate stats in rail — summary row already covers the essentials */
+.premium-mood-panel.garden-mode-active .mood-rail > .rail-row {
+  display: none;
+}
+
+.premium-mood-panel.garden-mode-active .mood-rail {
+  grid-template-columns: 1fr;
+  padding: 8px 14px 10px;
+}
+
+.premium-mood-panel.garden-mode-active .rail-note {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.mood-mode-also.mood-mode-warn {
+  color: #7a4a3a;
+  opacity: 0.92;
+}
+
+#gardenMoodCard[data-mode-id]::before {
+  top: 0;
+  height: 100%;
+  background-image:
+    linear-gradient(180deg, rgba(255, 254, 249, 0.82) 0%, rgba(255, 254, 249, 0.42) 30%, rgba(255, 254, 249, 0.1) 52%, rgba(245, 243, 239, 0.65) 100%),
+    linear-gradient(105deg, rgba(255, 254, 249, 0.88) 0%, rgba(255, 254, 249, 0.35) 36%, transparent 58%),
+    var(--mode-img, none),
+    var(--mode-gradient, linear-gradient(180deg, #eef6e4 0%, #9cc87a 100%));
+  background-size: cover, cover, cover, cover;
+  background-position: center, center, center, center;
+  opacity: 1;
+}
+
+#gardenMoodCard[data-mode-id]::after {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255, 220, 160, 0.18), transparent 34%),
+    radial-gradient(circle at 20% 82%, rgba(255, 192, 203, 0.08), transparent 36%);
+  opacity: 0.75;
+}
+
+@media (max-width: 760px) {
+  .mood-mode-also {
+    max-width: 100%;
+  }
+}
