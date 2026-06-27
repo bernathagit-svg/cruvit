@@ -105,3 +105,122 @@
     max-width: 100%;
   }
 }
+
+/* Clickable mood stats + care task panels */
+.mood-stat-btn {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.mood-stat-btn:hover,
+.mood-stat-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  outline: none;
+}
+
+.mood-care-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.mood-care-plant {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 254, 249, 0.92);
+  border: 1px solid rgba(15, 61, 46, 0.08);
+}
+
+.mood-care-plant-ok {
+  opacity: 0.92;
+}
+
+.mood-care-plant-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mood-care-plant-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.mood-care-plant-head b {
+  display: block;
+  color: var(--forest, #0f3d2e);
+  font-size: 0.9375rem;
+}
+
+.mood-care-plant-head span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted, #3d5c4a);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.mood-care-tasks {
+  display: grid;
+  gap: 8px;
+}
+
+.mood-care-tasks-standalone {
+  margin-top: 4px;
+}
+
+.mood-care-tasks .task {
+  margin: 0;
+}
+
+.mood-care-empty {
+  display: grid;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(237, 245, 230, 0.65);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--forest, #0f3d2e);
+}
+
+.mood-care-link {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: var(--forest-light, #1b5e45);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mood-care-cta {
+  margin-top: 12px;
+  width: 100%;
+}
+
+#plantPanelBody .info-tile-link {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+#plantPanelBody .info-tile-link:hover,
+#plantPanelBody .info-tile-link:focus-visible {
+  background: rgba(237, 245, 230, 0.95);
+  border-color: rgba(15, 61, 46, 0.14);
+  outline: none;
+}
