@@ -481,9 +481,24 @@ function collapseSameGenusCandidates(candidates) {
 
 async function refineLikelyMisidentification(image, firstResult, key, model) {
   const genus = genusKey(firstResult?.scientific_name || firstResult?.scientificName);
-  if (genus !== 'erythrina') return firstResult;
+  if (genus === 'dodonaea') return firstResult;
 
-  const reviewPrompt = `You previously identified this plant as Erythrina (coral tree).
+  const va = firstResult?.visual_analysis || firstResult?.visualAnalysis || {};
+  const prom = String(va.prominent_structure || '').toLowerCase();
+  const analysis = visualAnalysisText(firstResult);
+  const watchGenera = new Set(['erythrina', 'cercis', 'bougainvillea', 'weigela', 'escallonia', 'kalmia', 'abelia']);
+  const shouldReview =
+    watchGenera.has(genus) ||
+    prom.includes('seed') ||
+    prom.includes('fruit') ||
+    looksLikeDodonaeaSignals(analysis) ||
+    (/pink|red|magenta|maroon|purple/i.test(analysis) &&
+      (/shrub|hedge|simple/i.test(analysis) || String(va.leaf_type || '').toLowerCase() === 'simple'));
+
+  if (!shouldReview) return firstResult;
+
+  const previousName = cleanText(firstResult?.scientific_name || firstResult?.scientificName || firstResult?.common_name);
+  const reviewPrompt = `You previously identified this plant as ${JSON.stringify(previousName || 'unknown')}.
 Look again at the photo very carefully and return ONLY JSON:
 {
   "is_papery_winged_seed_capsules": true,
@@ -495,10 +510,10 @@ Look again at the photo very carefully and return ONLY JSON:
   }
 }
 Rules:
-- Dodonaea viscosa (hop bush) has clusters of papery 3-winged seed capsules and simple leathery leaves.
-- Erythrina has trifoliate leaves and large bright red pea-shaped flowers, not papery wings.
-- If the pink/red parts are papery winged seed capsules on simple-leaved shrub, set is_papery_winged_seed_capsules=true and best_identification to Dodonaea viscosa / Hop bush.
-- If large red flowers on trifoliate leaves, keep Erythrina.`;
+- Dodonaea viscosa (hop bush, Hebrew: אשחר) has dense clusters of papery 3-winged seed capsules (pink/red/brown/green) and simple leathery leaves on a shrub/hedge.
+- Erythrina / Cercis / Bougainvillea have real flowers or bracts — not papery 3-winged seed capsules.
+- If the pink/red parts are papery winged seed capsules on a simple-leaved shrub, set is_papery_winged_seed_capsules=true and best_identification to Dodonaea viscosa / Hop bush.
+- Only keep the previous identification if you clearly see large flowers or other non-capsule structures.`;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 18000);
@@ -566,7 +581,7 @@ Rules:
         scientific_name: best?.scientific_name || best?.scientificName || 'Dodonaea viscosa',
         confidence: 'high',
         alternatives: [],
-        _corrected: 'erythrina_second_pass'
+        _corrected: 'seed_capsule_second_pass'
       };
     }
   } catch {
