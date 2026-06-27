@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630g">
+<link rel="stylesheet" href="styles.css?v=20250630h">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -552,9 +552,32 @@ function plantImage(p){
   if(userPhoto && userPhoto!==scanPhoto && (/^https?:\/\//i.test(userPhoto)||/^data:image\//i.test(userPhoto)) && !/garden-bg\.jpg/i.test(userPhoto)) return userPhoto;
   return '';
 }
+function cleanImageSearchQuery(value){
+  return String(value||'')
+    .replace(/\s*\([^)]*\)\s*/g,' ')
+    .replace(/\s+(L|Jacq|Mill|Thunb|DC|Aiton|Pers)\.?\s*$/gi,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function isPlausiblePlantImage(imageUrl,profile){
+  if(!imageUrl||!/^https?:\/\//i.test(imageUrl)) return false;
+  const genus=normalizeQuery(cleanImageSearchQuery(profile?.scientific||profile?.name||'').split(/\s+/)[0]);
+  const blob=normalizeQuery(decodeURIComponent(imageUrl));
+  if(genus&&blob.includes(genus)) return true;
+  if(/pineapple|ananas|lychee|volcano|keyboard|map\.png|resort|beach/i.test(blob)&&genus&&!/ananas|pineapple/.test(genus)) return false;
+  return true;
+}
 function plantPhotoQuery(p){
   const m=plantMeta(p);
-  return [p?.scientific,m?.scientific,p?.imageSearchQuery,m?.imageSearchQuery,p?.name,m?.name].filter(Boolean).join(' ').replace(/\b(garden|generic|placeholder)\b/gi,'').trim()||'plant';
+  const sci=cleanImageSearchQuery(p?.scientific||m?.scientific||'');
+  const binomial=sci.split(/\s+/).slice(0,2).join(' ');
+  return [binomial,p?.imageSearchQuery,m?.imageSearchQuery,p?.name,m?.name]
+    .filter(Boolean)
+    .map(cleanImageSearchQuery)
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\b(garden|generic|placeholder)\b/gi,'')
+    .trim()||'plant';
 }
 function instantPlantImageUrl(p){
   // Browser-renderable plant thumbnail fallback. This keeps the card visual even
@@ -2414,7 +2437,10 @@ function normalizeApiPlant(d,requested){
   const status=warnings.length?'Needs review':'Healthy';
   const mark=warnings.length?'!':'✓';
   const verified=!!d.botanicalVerified;
-  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl:d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'',imageSearchQuery:d.imageSearchQuery||d.image_search_query||'',icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
+  let imageUrl=d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'';
+  if(imageUrl&&!isPlausiblePlantImage(imageUrl,{scientific:sci,name:common})) imageUrl='';
+  const imageSearchQuery=cleanImageSearchQuery(d.imageSearchQuery||d.image_search_query||sci||common);
+  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl,imageSearchQuery,icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
   profile=enrichProfileWithQuality(profile,requested);
   return profile;
 }

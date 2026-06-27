@@ -20,7 +20,11 @@ export function buildBaseProfile({ rawQuery, taxon, summary, imageUrl, confidenc
     genus: text(taxon.genus),
     source: 'Cruvit Botanical Engine v2 — GBIF verified taxonomy',
     imageUrl: imageUrl || '',
-    imageSearchQuery: scientificName || commonName,
+    imageSearchQuery: text(scientificName || commonName)
+      .replace(/\s*\([^)]*\)\s*/g, ' ')
+      .split(/\s+/)
+      .slice(0, 2)
+      .join(' '),
     icon: '🌿',
     sun: broadMatch
       ? 'Light needs vary by species; confirm the exact species or cultivar.'
