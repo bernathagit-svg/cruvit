@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630f">
+<link rel="stylesheet" href="styles.css?v=20250630g">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -1793,13 +1793,16 @@ function buildPlantIdentifyRequestBody(photo){
     mediaType='image/jpeg';
   }
   dataUrl=`data:${mediaType};base64,${base64}`;
+  const hint=document.getElementById('plantSearchInput')?.value?.trim()||'';
   return {
     imageDataUrl:dataUrl,
     imageBase64:base64,
     mediaType,
     mimeType:mediaType,
     location:data.location||'Western Galilee, Israel',
-    climate:data.climate||'Mediterranean'
+    climate:data.climate||'Mediterranean',
+    hint,
+    userQuery:hint
   };
 }
 function parseIdentifyResponse(out){
@@ -2166,7 +2169,7 @@ const PLANT_QUERY_ALIASES={
   'עץ מנגו':'Mangifera indica','מנגו':'Mangifera indica','עץ רימון':'Punica granatum','רימון':'Punica granatum','פטל':'Rubus idaeus','ליצי':'Litchi chinensis','ליצ׳י':'Litchi chinensis',
   'עץ תפוח':'Malus domestica','תפוח':'Malus domestica','עץ אגס':'Pyrus communis','אגס':'Pyrus communis','עץ שקד':'Prunus dulcis','שקד':'Prunus dulcis','עץ תאנה':'Ficus carica','תאנה':'Ficus carica','גפן':'Vitis vinifera','ענבים':'Vitis vinifera','דקל':'Phoenix dactylifera','תמר':'Phoenix dactylifera','אבוקדו':'Persea americana','עץ אבוקדו':'Persea americana','עץ משמש':'Prunus armeniaca','משמש':'Prunus armeniaca','עץ אפרסק':'Prunus persica','אפרסק':'Prunus persica','עץ שזיף':'Prunus domestica','שזיף':'Prunus domestica','דובדבן':'Prunus avium',
   'יסמין':'Jasminum','לבנדר':'Lavandula angustifolia','רוזמרין':'Salvia rosmarinus','מרווה':'Salvia','נענע':'Mentha','בזיליקום':'Ocimum basilicum','פטרוזיליה':'Petroselinum crispum','כוסברה':'Coriandrum sativum','טימין':'Thymus vulgaris','אורגנו':'Origanum vulgare','ורד':'Rosa','שושנה':'Rosa','היביסקוס':'Hibiscus','בוגנוויליה':'Bougainvillea','פלומריה':'Plumeria','פיקוס':'Ficus','אקליפטוס':'Eucalyptus','קקטוס':'Cactaceae','סוקולנט':'succulent','אלוורה':'Aloe vera','רקפת':'Cyclamen persicum','גרניום':'Pelargonium','הידרנגאה':'Hydrangea macrophylla','הורטנזיה':'Hydrangea macrophylla','זית':'Olea europaea','עץ זית':'Olea europaea','לימון':'Citrus limon','תפוז':'Citrus sinensis',
-  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae'
+  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa'
 };
 function canonicalPlantQuery(q){
   const raw=String(q||'').trim();
