@@ -349,6 +349,8 @@
     const weatherHot = weather && (
       Number(weather.tempC) >= 32 ||
       Number(weather.maxC) >= 34 ||
+      Number(weather.forecastPeak) >= 34 ||
+      (Array.isArray(weather.alerts) && (weather.alerts.includes('heat-wave') || weather.alerts.includes('dry-heat'))) ||
       /hot|heat|dry|חם/i.test(String(weather.summary || weather.condition || ''))
     );
     if (weatherHot) return (plants || []).length > 0;
@@ -366,6 +368,9 @@
   function hasWinterRisk(plants, weather, season, deps) {
     const weatherCold = weather && (
       Number(weather.tempC) <= 8 ||
+      Number(weather.minC) <= 5 ||
+      Number(weather.forecastLow) <= 3 ||
+      (Array.isArray(weather.alerts) && (weather.alerts.includes('cold-snap') || weather.alerts.includes('frost'))) ||
       /cold|freeze|frost|קור/i.test(String(weather.summary || weather.condition || ''))
     );
     if (weatherCold) return (plants || []).length > 0;
