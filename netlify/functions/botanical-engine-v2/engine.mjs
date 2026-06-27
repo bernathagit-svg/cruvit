@@ -54,7 +54,7 @@ function suggestionPayload(resolved) {
 }
 
 export async function resolvePlantKnowledge(body = {}) {
-  const rawQuery = text(body.plantName || body.query || body.name);
+  const rawQuery = text(body.plantName || body.query || body.name || body.originalQuery);
   const location = text(body.location);
   const climate = text(body.climate);
   const mode = text(body.mode || 'resolve').toLowerCase();
