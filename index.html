@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="garden-modes.css">
+<link rel="stylesheet" href="styles.css?v=20250628e">
+<link rel="stylesheet" href="garden-modes.css?v=20250628">
+<link rel="stylesheet" href="dashboard-layout.css?v=20250628f">
 </head>
 <body>
 <div class="app"><div class="shell">
@@ -27,14 +28,16 @@
 <section class="hero">
   <div class="panel intro">
     <div class="intro-leaves" aria-hidden="true"></div>
-    <div class="greeting">🍃 Good morning, Hagit</div>
-    <h2>Your garden is looking great</h2>
-    <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
-    <div class="actions">
-      <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
-      <div class="actions-row">
-        <button class="btn light" onclick="scanGarden()">Scan garden 📷</button>
-        <button class="btn light" onclick="addPlant()">Add plant +</button>
+    <div class="intro-content">
+      <div class="greeting">🍃 Good morning, Hagit</div>
+      <h2>Your garden is looking great</h2>
+      <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
+      <div class="actions">
+        <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
+        <div class="actions-row">
+          <button class="btn light intro-action-photo" onclick="scanGarden()">Garden photo</button>
+          <button class="btn light" onclick="addPlant()">Add plant +</button>
+        </div>
       </div>
     </div>
   </div>
@@ -59,13 +62,13 @@
       </div>
       <div class="mood-spacer" aria-hidden="true"></div>
       <div class="mood-summary" onclick="event.stopPropagation()">
-        <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('healthy')">
-          <b id="healthyPlantCount">7</b>
-          <span class="stat-label"><span class="stat-ico">🌿</span> <span id="healthyPlantLabel">Healthy plants</span></span>
+        <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('taskPlants')">
+          <b id="taskPlantCount">7</b>
+          <span class="stat-label"><span class="stat-ico">✨</span> <span id="taskPlantLabel">Picked for you</span></span>
         </button>
-        <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('attention')">
-          <b id="attentionCount">1</b>
-          <span class="stat-label"><span class="stat-ico">💛</span> Needs attention</span>
+        <button type="button" class="mood-stat mood-stat-btn" onclick="event.stopPropagation();setTab('plants')">
+          <b id="gardenPlantCount">1</b>
+          <span class="stat-label"><span class="stat-ico">🪴</span> <span id="gardenPlantLabel">Plants in garden</span></span>
         </button>
         <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('today')">
           <b id="todayTaskCount">1</b>
@@ -103,16 +106,21 @@
     </div>
   </div>
 
-  <aside class="photo-card" onclick="scanGarden()" role="button" tabindex="0" aria-label="Scan Hagit's garden" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();scanGarden()}">
-    <div class="photo-visual">
-      <button type="button" class="camera" onclick="event.stopPropagation();scanGarden()" aria-label="Scan garden">
-        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
-        </svg>
-      </button>
-    </div>
-    <div class="photo-label"><b>Hagit’s garden</b><span>Western Galilee climate<br>Last scan: Today, 08:24</span></div>
-  </aside>
+  <figure class="garden-snapshot" aria-label="Garden photo">
+    <div class="garden-snapshot-bg" id="gardenSnapshotPhoto" role="img" aria-hidden="true"></div>
+    <button type="button" class="garden-snapshot-camera" onclick="scanGarden()" aria-label="Update garden photo">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
+      </svg>
+    </button>
+    <figcaption class="garden-snapshot-caption">
+      <b>Hagit’s garden</b>
+      <span>Western Galilee climate</span>
+      <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
+    </figcaption>
+  </figure>
+
+  <input id="gardenPhotoInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" capture="environment" tabindex="-1" aria-hidden="true" class="visually-hidden" onchange="handleGardenPhotoSelected(this)">
 
   <div class="tabs" role="tablist" aria-label="Garden sections">
     <button class="tab active" id="tab-tasks" role="tab" onclick="setTab('tasks')"><span class="tab-ico">📅</span><span class="tab-label">This week</span></button>
@@ -929,6 +937,11 @@ function visiblePlantEntries(){
 }
 function attentionPlantEntries(){return visiblePlantEntries().filter(x=>isPlantAttention(x.p))}
 function healthyPlantEntries(){return visiblePlantEntries().filter(x=>!isPlantAttention(x.p))}
+function plantEntriesWithOpenTasks(){
+  const open=companionOpenTaskEntries();
+  return visiblePlantEntries().filter(x=>open.some(entry=>taskMatchesPlant(entry.t,x.p.name)));
+}
+function companionTaskTitle(entry){return String(entry?.t?.[1]||entry?.[1]||'').trim()}
 function openTasksForPlant(plantName){
   return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>!x.t.done && taskMatchesPlant(x.t,plantName)).sort((a,b)=>b.score-a.score);
 }
@@ -991,26 +1004,20 @@ function showMoodStatPanel(type){
     title.textContent=isHe?'צריכים טיפול':'Needs attention';
     sub.textContent=plants.length?(isHe?`${plants.length} צמחים עם משימות טיפול פתוחות`:`${plants.length} plant${plants.length===1?'':'s'} with open care tasks`): (isHe?'אין צמחים שדורשים טיפול':'No plants need attention');
     body.innerHTML=plants.length?`<div class="mood-care-list">${plants.map(renderPlantCareBlock).join('')}</div>`:`<div class="guide-block"><span>${isHe?'כל הצמחים נראים במצב טוב כרגע.':'All plants look good right now.'}</span></div>`;
-  }else if(type==='healthy'){
-    const healthy=healthyPlantEntries();
-    const attention=attentionPlantEntries();
-    if(!healthy.length && attention.length){
-      title.textContent=isHe?'איך להחזיר צמחים לבריאות':'Get plants healthy';
-      sub.textContent=isHe?'השלימי את משימות הטיפול הבאות':'Complete these care actions to improve plant health';
-      body.innerHTML=`<div class="guide-block"><span>${isHe?'אין כרגע צמחים במצב בריא מלא. התחילי מהמשימות לכל צמח:':'No plants are fully healthy yet. Start with the tasks for each plant below:'}</span></div><div class="mood-care-list">${attention.map(renderPlantCareBlock).join('')}</div>`;
-    }else if(!healthy.length){
-      title.textContent=isHe?'איך להחזיר צמחים לבריאות':'Get plants healthy';
-      sub.textContent=isHe?'הוסיפי צמחים והשלימי טיפול':'Add plants and complete care to build your garden score';
-      body.innerHTML=`<div class="guide-block"><span>${isHe?'הגינה עדיין ריקה. הוסיפי צמח ראשון כדי להתחיל.':'Your garden is empty. Add your first plant to begin.'}</span></div><button type="button" class="btn main mood-care-cta" onclick="closePlantPanel();addPlant()">${isHe?'הוספת צמח':'Add plant'}</button>`;
-    }else{
-      title.textContent=isHe?'צמחים בריאים':'Healthy plants';
-      sub.textContent=isHe?`${healthy.length} צמחים במצב טוב`:`${healthy.length} plant${healthy.length===1?' is':'s are'} in good shape`;
-      body.innerHTML=`<div class="mood-care-list">${healthy.map(entry=>{
-        const tasks=openTasksForPlant(entry.p.name).filter(x=>isCompanionActionableTask(x.t));
-        const block=renderPlantCareBlock(entry);
-        return tasks.length?block:`<section class="mood-care-plant mood-care-plant-ok"><div class="mood-care-plant-head"><span class="mood-care-plant-icon">${entry.p.icon||plantMeta(entry.p).icon||'🌿'}</span><div><b>${escapeHtml(entry.p.name)}</b><span>${escapeHtml(entry.p.status||plantMeta(entry.p).status||'Healthy')}</span></div></div><div class="mood-care-empty"><span>${isHe?'ממשיכים בשגרת טיפול רגועה.':'Keep your calm care rhythm.'}</span></div></section>`;
-      }).join('')}</div>`;
-    }
+  }else if(type==='taskPlants' || type==='healthy'){
+    const entries=plantEntriesWithOpenTasks();
+    title.textContent=isHe?'המלצות במיוחד עבורך':'Picked for you';
+    sub.textContent=entries.length
+      ? (isHe?`${entries.length} צמחים עם משימות פתוחות כרגע`:`${entries.length} plant${entries.length===1?'':'s'} with open tasks right now`)
+      : (isHe?'אין כרגע צמחים במשימות הפעילות':'No plants in your active task list right now');
+    body.innerHTML=entries.length
+      ? `<div class="mood-care-list">${entries.map(entry=>{
+          const tasks=companionOpenTaskEntries().filter(x=>taskMatchesPlant(x.t,entry.p.name));
+          const icon=entry.p.icon||plantMeta(entry.p).icon||'🌿';
+          const tasksHtml=tasks.map(renderModalTaskHtml).join('');
+          return `<section class="mood-care-plant"><div class="mood-care-plant-head"><span class="mood-care-plant-icon">${icon}</span><div><b>${escapeHtml(entry.p.name)}</b><span>${escapeHtml(entry.p.status||plantMeta(entry.p).status||'In your task list')}</span></div></div><div class="mood-care-tasks">${tasksHtml}</div></section>`;
+        }).join('')}</div>`
+      : `<div class="guide-block"><span>${isHe?'כשתיווצרנה משימות חדשות, הצמחים הרלוונטיים יופיעו כאן.':'When new tasks are added, the related plants will appear here.'}</span></div><button type="button" class="btn main mood-care-cta" onclick="closePlantPanel();setTab('tasks')">${isHe?'פתיחת משימות':'Open tasks'}</button>`;
   }else if(type==='today'){
     const tasks=todayCareTaskEntries();
     title.textContent=isHe?'משימות להיום':'Tasks for today';
@@ -1022,9 +1029,9 @@ function showMoodStatPanel(type){
 }
 function renderHealthInfoGrid(h){
   const isHe=window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
-  const plantAction=h.attentionPlants>0?'attention':'healthy';
+  const plantAction=h.attentionPlants>0?'attention':'taskPlants';
   const tiles=[
-    {label:h.rows[0].label,value:h.rows[0].value,note:h.rows[0].note,impact:h.rows[0].impact,action:plantAction,cta:h.attentionPlants>0?(isHe?'פתיחת רשימת טיפול':'Open care list'):(isHe?'צפייה בצמחים בריאים':'View healthy plants')},
+    {label:h.rows[0].label,value:h.rows[0].value,note:h.rows[0].note,impact:h.rows[0].impact,action:plantAction,cta:h.attentionPlants>0?(isHe?'פתיחת רשימת טיפול':'Open care list'):(isHe?'צפייה בהמלצות':'View recommendations')},
     {label:h.rows[1].label,value:h.rows[1].value,note:h.rows[1].note,impact:h.rows[1].impact,action:'today',cta:isHe?'פתיחת משימות דחופות':'Open urgent tasks'},
     {label:h.rows[2].label,value:h.rows[2].value,note:h.rows[2].note,impact:h.rows[2].impact,action:'',cta:''},
     {label:h.rows[3].label,value:h.rows[3].value,note:h.rows[3].note,impact:h.rows[3].impact,action:'',cta:''}
@@ -1097,9 +1104,13 @@ function render(){syncHealthScore();
   const health=syncHealthScore();
   const visiblePlantsEarly=data.plants.filter(p=>!p.archived);
   const focusEntryEarly=companionOpenTaskEntries()[0];
+  const openTasksForModes=companionOpenTaskEntries().map(x=>x.t);
   const modeDeps={todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts};
   if(window.GardenModes){
-    GardenModes.renderGardenMoodPanel(collectGardenDataForModes(),modeDeps,{taskTitle:focusEntryEarly?.t?.title});
+    GardenModes.renderGardenMoodPanel(collectGardenDataForModes(),modeDeps,{
+      taskTitle:companionTaskTitle(focusEntryEarly),
+      openTasks:openTasksForModes
+    });
   }else{
     const mood=gardenMoodFromHealth(health);
     const moodCard=document.getElementById('gardenMoodCard');
@@ -1115,20 +1126,28 @@ function render(){syncHealthScore();
   const focusIndexes=focusedTaskIndexes();
   if(!window.GardenModes){
     const focusEntry=focusEntryEarly;
-    const focusTitle=focusEntry?.t?.title||'Enjoy your garden today';
+    const focusTitle=companionTaskTitle(focusEntry)||'Enjoy your garden today';
     const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
   }
   const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
   if(weatherTitle)weatherTitle.textContent=visibleTasks?'🌤️ Weather looks manageable today':'🌤️ No extra care needed this week';
   const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
   if(weatherSub)weatherSub.textContent=visibleTasks?'Stay on top of watering this week':'Weather looks good for your garden';
-  const hp=document.getElementById('healthyPlantCount'); if(hp)hp.textContent=healthyPlants;
-  const healthyLabel=document.getElementById('healthyPlantLabel');
-  if(healthyLabel)healthyLabel.textContent=healthyPlants===0&&attentionPlants>0?'Path to healthy':'Healthy plants';
+  applyGardenPhotoVisual();
+  updateGardenSnapshotScan();
+  const isHe=window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
+  const scanEl=document.querySelector('.premium-mood-panel .scan');
+  if(scanEl)scanEl.textContent=`◷ Last scan: ${gardenScanLabel()}`;
+  const taskPlants=plantEntriesWithOpenTasks().length;
+  const tpc=document.getElementById('taskPlantCount'); if(tpc)tpc.textContent=taskPlants;
+  const taskPlantLabel=document.getElementById('taskPlantLabel');
+  if(taskPlantLabel)taskPlantLabel.textContent=isHe?'המלצות במיוחד עבורך':'Picked for you';
+  const gardenLabel=document.getElementById('gardenPlantLabel');
+  if(gardenLabel)gardenLabel.textContent=isHe?'צמחים בגינה':'Plants in garden';
+  const gpc=document.getElementById('gardenPlantCount'); if(gpc)gpc.textContent=visiblePlants.length;
   document.getElementById('plantCount').textContent=visiblePlants.length;
   const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntryEarly?1:0);
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=visibleTasks;
-  document.getElementById('attentionCount').textContent=attentionPlants;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   document.getElementById('signInBtn').textContent=data.signedIn?'Signed in':'Sign in';
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
@@ -1909,7 +1928,59 @@ function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);c
   document.getElementById('plantDetailModal').classList.add('open');
 }
 function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>data.cart.push(x));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
-function scanGarden(){openAddPlantModal();openPlantChooser('Scan & Identify')}
+function scanGarden(){document.getElementById('gardenPhotoInput')?.click()}
+function gardenScanLabel(){
+  if(data.lastGardenScan)return data.lastGardenScan;
+  return 'Today, 08:24';
+}
+function applyGardenPhotoVisual(){
+  const snap=document.getElementById('gardenSnapshotPhoto');
+  if(!snap)return;
+  if(data.gardenPhoto){
+    snap.style.backgroundImage=`url(${JSON.stringify(data.gardenPhoto)})`;
+    snap.style.backgroundSize='cover';
+    snap.style.backgroundPosition='center';
+  }else{
+    snap.style.backgroundImage='';
+    snap.style.backgroundSize='';
+    snap.style.backgroundPosition='';
+  }
+}
+function updateGardenSnapshotScan(){
+  const el=document.getElementById('gardenSnapshotScan');
+  if(el)el.textContent='Last scan: '+gardenScanLabel();
+}
+async function handleGardenPhotoSelected(input){
+  const file=input.files&&input.files[0];
+  input.value='';
+  if(!file)return;
+  if(!isSupportedPlantPhotoFile(file)){
+    alert('Please choose JPG, PNG, WEBP or GIF. HEIC is not supported in the browser.');
+    return;
+  }
+  try{
+    const prepared=await preparePlantPhotoForIdentify(file);
+    data.gardenPhoto=prepared.dataUrl;
+    const now=new Date();
+    data.lastGardenScan=`Today, ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    data.events.unshift(['Today','Garden photo updated','A new garden photo was saved']);
+    ensureRewardsState();
+    if(!data.rewards.achievements.firstScan){
+      data.rewards.achievements.firstScan=true;
+      awardCredits(10,'First garden photo');
+    }
+    syncHealthScore();
+    service.save(data);
+    applyGardenPhotoVisual();
+    updateGardenSnapshotScan();
+    const scanEl=document.querySelector('.premium-mood-panel .scan');
+    if(scanEl)scanEl.textContent=`◷ Last scan: ${gardenScanLabel()}`;
+    render();
+  }catch(error){
+    alert(error?.message||'Could not save this photo. Try another image.');
+    console.error('Garden photo upload failed',error);
+  }
+}
 function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
 function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
