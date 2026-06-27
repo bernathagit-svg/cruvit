@@ -28,6 +28,7 @@
 
   /* Curated garden images */
   --img-garden-card: url('assets/garden-snapshot.png');
+  --img-intro-leaves: url('assets/intro-leaves.png');
 
   /* Spacing (4px rhythm) */
   --space-1: 4px;
@@ -281,39 +282,42 @@ button { cursor: pointer; }
   justify-content: center;
   min-height: 440px;
   background:
-    linear-gradient(128deg, rgba(255, 254, 249, 0.96) 0%, rgba(255, 250, 238, 0.9) 48%, rgba(240, 252, 228, 0.82) 100%);
+    radial-gradient(ellipse 72% 58% at 92% 8%, rgba(240, 215, 140, 0.38), transparent 58%),
+    radial-gradient(ellipse 64% 52% at 8% 96%, rgba(196, 228, 178, 0.32), transparent 54%),
+    linear-gradient(145deg, rgba(255, 254, 249, 0.98) 0%, rgba(255, 252, 244, 0.96) 52%, rgba(248, 252, 242, 0.94) 100%);
   border-color: var(--line-gold);
 }
 
 .intro::after {
   content: "";
   position: absolute;
-  top: -20%;
-  right: -15%;
-  width: 280px;
-  height: 280px;
+  top: -18%;
+  right: -12%;
+  width: 260px;
+  height: 260px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(240, 215, 140, 0.45), transparent 68%);
+  background: radial-gradient(circle, rgba(240, 215, 140, 0.28), transparent 70%);
   pointer-events: none;
 }
 
 .intro-leaves {
   position: absolute;
-  left: -4px;
-  bottom: -16px;
-  width: 280px;
-  height: 220px;
+  left: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 210px;
+  height: 168px;
   pointer-events: none;
   opacity: 1;
-  background:
-    radial-gradient(ellipse 58% 48% at 24% 74%, rgba(47, 158, 106, 0.42), transparent 72%),
-    radial-gradient(ellipse 48% 42% at 54% 60%, rgba(110, 207, 143, 0.38), transparent 70%),
-    radial-gradient(ellipse 38% 32% at 14% 46%, rgba(201, 162, 39, 0.18), transparent 68%);
+  background: var(--img-intro-leaves) left bottom / 210px auto no-repeat;
+  -webkit-mask-image: linear-gradient(125deg, #000 0%, #000 38%, transparent 72%);
+  mask-image: linear-gradient(125deg, #000 0%, #000 38%, transparent 72%);
 }
 
 .intro-content {
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 
 .greeting {
@@ -1901,7 +1905,13 @@ button { cursor: pointer; }
 
   .hero .intro::after,
   .hero .intro .intro-leaves {
-    opacity: 0.55;
+    opacity: 1;
+  }
+
+  .hero .intro .intro-leaves {
+    width: min(46vw, 200px);
+    height: 150px;
+    background-size: min(46vw, 200px) auto;
   }
 
   .hero .intro h2 {
@@ -1990,19 +2000,39 @@ button { cursor: pointer; }
     flex-wrap: nowrap;
     gap: 8px;
     margin: 0;
-    padding: 2px 2px 8px;
+    padding: 2px 2px 10px;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 61, 46, 0.38) rgba(237, 245, 230, 0.75);
     position: static;
     justify-content: flex-start;
   }
 
-  .hero .tabs::-webkit-scrollbar { display: none; }
+  .hero .tabs::-webkit-scrollbar {
+    display: block;
+    height: 5px;
+  }
+
+  .hero .tabs::-webkit-scrollbar-track {
+    margin: 2px 4px 0;
+    background: rgba(237, 245, 230, 0.75);
+    border-radius: var(--r-full);
+  }
+
+  .hero .tabs::-webkit-scrollbar-thumb {
+    background: rgba(15, 61, 46, 0.34);
+    border-radius: var(--r-full);
+  }
+
+  .hero .tabs::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 61, 46, 0.48);
+  }
 
   .hero .tab {
     flex: 0 0 auto;
