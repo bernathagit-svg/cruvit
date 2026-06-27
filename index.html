@@ -1261,11 +1261,11 @@ function openPlantChooser(source){
           <small>Upload from your device.</small>
         </label>
       </div>
-      <input id="plantCameraInput" type="file" accept="image/*" capture="environment" onchange="handlePlantPhotoSelected(this)" style="display:none">
-      <input id="plantGalleryInput" type="file" accept="image/*" onchange="handlePlantPhotoSelected(this)" style="display:none">
+      <input id="plantCameraInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" capture="environment" onchange="handlePlantPhotoSelected(this)" style="display:none">
+      <input id="plantGalleryInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" onchange="handlePlantPhotoSelected(this)" style="display:none">
       <div id="plantPhotoPreview" class="scan-preview hidden"></div>
       <button id="identifyPlantBtn" class="btn main scan-identify hidden" type="button" onclick="identifySelectedPlantPhoto()">Identify plant</button>
-      <div class="plant-source-note" id="scanNote">Take or choose a plant photo, then tap Identify plant.</div>
+      <div class="plant-source-note" id="scanNote">Take or choose a plant photo. Cruvit will identify it automatically.</div>
     </div>`:'';
   document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
   resetAddPlantSearchState();
@@ -1283,6 +1283,219 @@ function openPlantChooser(source){
     }
   }
 }
+function isSupportedPlantPhotoFile(file){
+  if(!file)return false;
+  const type=String(file.type||'').toLowerCase();
+  const name=String(file.name||'').toLowerCase();
+  if(/heic|heif/.test(type)||/\.(heic|heif)$/.test(name))return false;
+  if(type.startsWith('image/'))return true;
+  return /\.(jpe?g|png|webp|gif)$/i.test(name);
+}
+function blobToBase64(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const result=String(reader.result||'');
+      const match=result.match(/^data:([^;]+);base64,(.+)$/i);
+      if(!match){reject(new Error('Could not encode the prepared photo.'));return}
+      const mediaType=match[1].toLowerCase()==='image/jpg'?'image/jpeg':match[1].toLowerCase();
+      const base64=match[2].replace(/\s+/g,'');
+      if(!base64||base64.length<64){reject(new Error('Prepared photo data is empty.'));return}
+      resolve({mediaType,base64,dataUrl:`data:${mediaType};base64,${base64}`});
+    };
+    reader.onerror=()=>reject(new Error('Could not read the prepared photo.'));
+    reader.readAsDataURL(blob);
+  });
+}
+async function loadPlantImageSource(file){
+  if(typeof createImageBitmap==='function'){
+    try{
+      const bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+      return {source:bitmap,release:()=>{try{bitmap.close()}catch(_){}}};
+    }catch(_){}
+  }
+  const objectUrl=URL.createObjectURL(file);
+  try{
+    const image=await new Promise((resolve,reject)=>{
+      const img=new Image();
+      img.onload=()=>resolve(img);
+      img.onerror=()=>reject(new Error('Could not open this photo. Use JPG or PNG instead of HEIC.'));
+      img.src=objectUrl;
+    });
+    return {source:image,release:()=>URL.revokeObjectURL(objectUrl)};
+  }catch(error){
+    URL.revokeObjectURL(objectUrl);
+    throw error;
+  }
+}
+function getImageSourceSize(source){
+  return {
+    width:source.width||source.naturalWidth||0,
+    height:source.height||source.naturalHeight||0
+  };
+}
+function canvasToJpegBlob(canvas,quality){
+  return new Promise((resolve,reject)=>{
+    canvas.toBlob(
+      blob=>blob?resolve(blob):reject(new Error('Could not compress this photo.')),
+      'image/jpeg',
+      quality
+    );
+  });
+}
+async function preparePlantPhotoForIdentify(file){
+  if(!isSupportedPlantPhotoFile(file)){
+    throw new Error('Please choose a JPG, PNG, WEBP or GIF image. HEIC/HEIF is not supported in the browser.');
+  }
+  const loaded=await loadPlantImageSource(file);
+  try{
+    const {width:sourceWidth,height:sourceHeight}=getImageSourceSize(loaded.source);
+    if(!sourceWidth||!sourceHeight)throw new Error('The photo has no readable dimensions.');
+    const maxDimension=1568;
+    const initialScale=Math.min(1,maxDimension/Math.max(sourceWidth,sourceHeight));
+    let width=Math.max(1,Math.round(sourceWidth*initialScale));
+    let height=Math.max(1,Math.round(sourceHeight*initialScale));
+    let quality=.82;
+    const maxBytes=780*1024;
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d',{alpha:false});
+    if(!ctx)throw new Error('Could not prepare this photo.');
+    let blob=null;
+    for(let attempt=0;attempt<7;attempt++){
+      canvas.width=width;
+      canvas.height=height;
+      ctx.fillStyle='#ffffff';
+      ctx.fillRect(0,0,width,height);
+      ctx.drawImage(loaded.source,0,0,width,height);
+      blob=await canvasToJpegBlob(canvas,quality);
+      if(blob.size<=maxBytes)break;
+      if(quality>.58){
+        quality=Math.max(.58,quality-.08);
+      }else{
+        width=Math.max(1,Math.round(width*.84));
+        height=Math.max(1,Math.round(height*.84));
+      }
+    }
+    if(!blob)throw new Error('Could not prepare this photo.');
+    const encoded=await blobToBase64(blob);
+    if(encoded.mediaType!=='image/jpeg'){
+      throw new Error('Prepared photo must be JPEG for plant identification.');
+    }
+    return {
+      name:(file.name||'plant-photo').replace(/\.[^.]+$/,'')+'.jpg',
+      type:'image/jpeg',
+      size:blob.size,
+      dataUrl:encoded.dataUrl,
+      imageBase64:encoded.base64,
+      mediaType:encoded.mediaType
+    };
+  }finally{
+    loaded.release();
+  }
+}
+function buildPlantIdentifyRequestBody(photo){
+  const encoded=photo?.imageBase64
+    ? {
+        mediaType:photo.mediaType||'image/jpeg',
+        base64:String(photo.imageBase64).replace(/\s+/g,''),
+        dataUrl:photo.dataUrl||''
+      }
+    : null;
+  let base64=encoded?.base64||'';
+  let mediaType=encoded?.mediaType||'image/jpeg';
+  let dataUrl=encoded?.dataUrl||String(photo?.dataUrl||'').trim();
+  if(!base64&&dataUrl){
+    const match=dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
+    if(match){
+      mediaType=match[1].toLowerCase()==='image/jpg'?'image/jpeg':match[1].toLowerCase();
+      base64=match[2].replace(/\s+/g,'');
+    }
+  }
+  if(!base64||base64.length<64){
+    throw new Error('Photo payload is invalid. Please choose the image again.');
+  }
+  if(mediaType!=='image/jpeg'&&mediaType!=='image/png'&&mediaType!=='image/webp'&&mediaType!=='image/gif'){
+    mediaType='image/jpeg';
+  }
+  dataUrl=`data:${mediaType};base64,${base64}`;
+  return {
+    imageDataUrl:dataUrl,
+    imageBase64:base64,
+    mediaType,
+    mimeType:mediaType,
+    location:data.location||'Western Galilee, Israel',
+    climate:data.climate||'Mediterranean'
+  };
+}
+function parseIdentifyResponse(out){
+  const id=out?.identification||{};
+  const normalizeCandidate=(x)=>{
+    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:''};
+    const commonName=x.commonName||x.common_name||'';
+    const scientificName=x.scientificName||x.scientific_name||'';
+    const name=x.name||scientificName||commonName||'';
+    return {name,commonName,scientificName,confidence:x.confidence||''};
+  };
+  const seen=new Set();
+  const candidates=(out?.candidates||out?.plants||[]).map(normalizeCandidate).filter(c=>{
+    const key=String(c.scientificName||c.commonName||c.name||'').toLowerCase();
+    if(!key||seen.has(key))return false;
+    seen.add(key);
+    return true;
+  });
+  const commonName=out?.commonName||out?.common_name||id.common_name||id.commonName||'';
+  const scientificName=out?.scientificName||out?.scientific_name||id.scientific_name||id.scientificName||'';
+  if(!candidates.length&&(commonName||scientificName)){
+    candidates.push({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||''});
+  }
+  return {candidates,commonName,scientificName};
+}
+function buildScanCandidateProfile(candidate,photo){
+  const common=candidate.commonName||candidate.name||'Identified plant';
+  const sci=candidate.scientificName||'';
+  const profile=normalizeApiPlant({
+    commonName:common,
+    scientificName:sci,
+    imageUrl:photo.dataUrl,
+    icon:'🌿',
+    sun:'Confirm light needs for the identified species',
+    water:'Confirm watering for the identified species',
+    warnings:['Photo identification should be confirmed before treatment or purchase.'],
+    guide:sci?`Identified from photo as ${sci}. Cruvit is loading verified care details…`:'Identified from photo. Cruvit is loading verified care details…'
+  },common);
+  profile.scanPhotoUrl=photo.dataUrl;
+  profile.photoUrl=photo.dataUrl;
+  profile.imageUrl=photo.dataUrl;
+  profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
+  return profile;
+}
+function renderScanProfiles(profiles,noteText){
+  const results=document.getElementById('plantResults');
+  const note=document.getElementById('scanNote');
+  if(results){
+    results.innerHTML=(profiles||[]).map(p=>plantResultButton(p,'Scan & Identify')).join('')+
+      '<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
+  }
+  if(note&&noteText)note.textContent=noteText;
+}
+async function enrichScanProfiles(profiles,candidateNames){
+  const names=candidateNames.filter(Boolean).slice(0,2);
+  await Promise.all(names.map(async name=>{
+    try{
+      const live=await fetchPlantProfile(name,'Scan & Identify');
+      if(!live||live.isPlant===false)return;
+      const idx=profiles.findIndex(p=>[p.scientific,p.name,...(p.aliases||[])].filter(Boolean).some(v=>normalizeQuery(v)===normalizeQuery(name)));
+      const target=idx>=0?profiles[idx]:profiles[0];
+      if(!target)return;
+      const scanPhoto=target.scanPhotoUrl||target.photoUrl||target.imageUrl||'';
+      Object.assign(target,live,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
+      const merged=mergeLiveProfileIntoLibrary(target.slug||live.slug,live);
+      Object.assign(target,merged,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
+      PLANT_INDEX[target.slug]=target;
+    }catch(_){}
+  }));
+  renderScanProfiles(profiles,'Identification complete. Choose the matching plant below.');
+}
 async function handlePlantPhotoSelected(input){
   const note=document.getElementById('scanNote');
   const preview=document.getElementById('plantPhotoPreview');
@@ -1297,94 +1510,27 @@ async function handlePlantPhotoSelected(input){
     return;
   }
 
-  if(!file.type || !file.type.startsWith('image/')){
-    if(note)note.textContent='Please choose an image file.';
+  if(!isSupportedPlantPhotoFile(file)){
+    if(note)note.textContent='Please choose JPG, PNG, WEBP or GIF. iPhone HEIC photos should be exported as JPG first.';
     if(btn)btn.classList.add('hidden');
+    input.value='';
     return;
   }
 
-  const readBlobAsDataUrl=(blob)=>new Promise((resolve,reject)=>{
-    const reader=new FileReader();
-    reader.onload=()=>resolve(String(reader.result||''));
-    reader.onerror=()=>reject(new Error('Could not read the prepared photo.'));
-    reader.readAsDataURL(blob);
-  });
-
-  const canvasToJpegBlob=(canvas,quality)=>new Promise((resolve,reject)=>{
-    canvas.toBlob(
-      (blob)=>blob?resolve(blob):reject(new Error('Could not compress this photo.')),
-      'image/jpeg',
-      quality
-    );
-  });
-
-  let objectUrl='';
   try{
     if(note)note.textContent='Preparing photo for identification...';
 
-    objectUrl=URL.createObjectURL(file);
-    const img=await new Promise((resolve,reject)=>{
-      const image=new Image();
-      image.onload=()=>resolve(image);
-      image.onerror=()=>reject(new Error('Could not open this photo.'));
-      image.src=objectUrl;
-    });
-
-    const sourceWidth=img.naturalWidth||img.width;
-    const sourceHeight=img.naturalHeight||img.height;
-    if(!sourceWidth||!sourceHeight)throw new Error('The photo has no readable dimensions.');
-
-    const maxDimension=1280;
-    const initialScale=Math.min(1,maxDimension/Math.max(sourceWidth,sourceHeight));
-    let width=Math.max(1,Math.round(sourceWidth*initialScale));
-    let height=Math.max(1,Math.round(sourceHeight*initialScale));
-    let quality=.76;
-    const maxBytes=850*1024;
-
-    const canvas=document.createElement('canvas');
-    const ctx=canvas.getContext('2d');
-    if(!ctx)throw new Error('Could not prepare this photo.');
-
-    let blob=null;
-    for(let attempt=0;attempt<6;attempt++){
-      canvas.width=width;
-      canvas.height=height;
-      ctx.fillStyle='#fff';
-      ctx.fillRect(0,0,width,height);
-      ctx.drawImage(img,0,0,width,height);
-
-      blob=await canvasToJpegBlob(canvas,quality);
-      if(blob.size<=maxBytes)break;
-
-      if(quality>.56){
-        quality=Math.max(.56,quality-.08);
-      }else{
-        width=Math.max(1,Math.round(width*.82));
-        height=Math.max(1,Math.round(height*.82));
-      }
-    }
-
-    if(!blob)throw new Error('Could not prepare this photo.');
-    const dataUrl=await readBlobAsDataUrl(blob);
-
-    window.selectedPlantPhoto={
-      name:(file.name||'plant-photo').replace(/\.[^.]+$/,'')+'.jpg',
-      type:'image/jpeg',
-      size:blob.size,
-      dataUrl
-    };
+    const prepared=await preparePlantPhotoForIdentify(file);
+    window.selectedPlantPhoto=prepared;
 
     if(preview){
       preview.classList.remove('hidden');
       preview.innerHTML='';
-
       const previewImage=document.createElement('img');
-      previewImage.src=dataUrl;
+      previewImage.src=prepared.dataUrl;
       previewImage.alt='Selected plant';
-
       const previewName=document.createElement('b');
       previewName.textContent=file.name||'Plant photo';
-
       preview.append(previewImage,previewName);
     }
 
@@ -1396,17 +1542,20 @@ async function handlePlantPhotoSelected(input){
 
     const results=document.getElementById('plantResults');
     if(results){
-      results.innerHTML='<div class="plant-source-note">Photo selected. Tap Identify plant.</div>';
+      results.innerHTML='<div class="plant-source-note">Photo prepared. Starting identification…</div>';
     }
 
     if(note){
-      note.textContent='Photo ready. Tap Identify plant to analyze it.';
+      note.textContent='Photo ready. Starting identification…';
     }
+
+    input.value='';
+    setTimeout(()=>identifySelectedPlantPhoto(),80);
   }catch(error){
     window.selectedPlantPhoto=null;
 
     if(note){
-      note.textContent='Could not prepare this photo. Please try another image.';
+      note.textContent=String(error?.message||'Could not prepare this photo. Please try another image.');
     }
 
     if(btn){
@@ -1420,8 +1569,7 @@ async function handlePlantPhotoSelected(input){
     }
 
     console.error('Plant photo preparation failed',error);
-  }finally{
-    if(objectUrl)URL.revokeObjectURL(objectUrl);
+    input.value='';
   }
 }
 async function identifySelectedPlantPhoto(){
@@ -1434,39 +1582,39 @@ async function identifySelectedPlantPhoto(){
     if(note)note.textContent='Please choose or take a plant photo first.';
     return;
   }
+  if(window.plantScanInProgress)return;
+  window.plantScanInProgress=true;
 
   if(btn){
     btn.disabled=true;
     btn.textContent='Identifying…';
+    btn.classList.remove('hidden');
     btn.classList.add('loading');
   }
-  if(note)note.textContent='Cruvit is identifying the plant. This can take up to a minute…';
-  if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo and preparing matching plant profiles…</div>';
+  if(note)note.textContent='Cruvit is identifying the plant from your photo…';
+  if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo with Cruvit plant identification…</div>';
 
   try{
-    const requestOptions={
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        imageDataUrl:photo.dataUrl,
-        location:data.location||'Western Galilee, Israel',
-        climate:data.climate||'Mediterranean'
-      })
-    };
+    const requestBody=buildPlantIdentifyRequestBody(photo);
+    const payload=JSON.stringify(requestBody);
 
     let res=null;
     let lastError=null;
 
     for(let attempt=0;attempt<2;attempt++){
       try{
-        res=await fetchWithTimeout('/.netlify/functions/plant-identify',requestOptions,60000);
+        res=await fetchWithTimeout('/.netlify/functions/plant-identify',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:payload
+        },75000);
         if(res.ok)break;
 
         const failedText=await res.text().catch(()=>'');
         let failedMessage='';
         try{
           const failedJson=failedText?JSON.parse(failedText):null;
-          failedMessage=failedJson&&(failedJson.error||failedJson.message)||'';
+          failedMessage=(failedJson&&(failedJson.error||failedJson.message))||'';
         }catch(_){
           failedMessage=failedText;
         }
@@ -1480,7 +1628,7 @@ async function identifySelectedPlantPhoto(){
       }
     }
 
-    if(!res||!res.ok)throw lastError||new Error('Identification service is not reachable');
+    if(!res||!res.ok)throw lastError||new Error('Identification service is not reachable. Run netlify dev locally or deploy to Netlify.');
 
     const responseText=await res.text();
     let out={};
@@ -1490,80 +1638,46 @@ async function identifySelectedPlantPhoto(){
       throw new Error('The identification service returned an invalid response.');
     }
 
-    if(out.error && !(out.candidates||out.plants||out.commonName||out.name||out.scientificName)){
-      throw new Error(out.error);
+    const parsed=parseIdentifyResponse(out);
+    if(out.error && !parsed.candidates.length){
+      throw new Error(typeof out.error==='string'?out.error:'Identification failed.');
     }
-
-    const names=(out.candidates||out.plants||[])
-      .map(x=>typeof x==='string'?x:(x.scientificName||x.commonName||x.name))
-      .filter(Boolean);
-
-    const best=out.scientificName||names[0]||out.commonName||out.name||'';
-    if(!best)throw new Error(out.error||'No plant match found');
-
-    const candidateNames=[best,...names,out.commonName,out.name]
-      .filter(Boolean)
-      .filter((name,index,array)=>array.indexOf(name)===index)
-      .slice(0,4);
+    if(!parsed.candidates.length){
+      throw new Error(out.error||'No plant match found in the photo.');
+    }
 
     const profiles=[];
-    for(const name of candidateNames){
-      const p=await fetchPlantProfile(name,'Scan & Identify').catch(()=>null);
-      if(p&&p.isPlant!==false){
-        p.scanPhotoUrl=photo.dataUrl;
-        p.imageUrl=photo.dataUrl;
-        p.photoUrl=photo.dataUrl;
-        p.aliases=[...(p.aliases||[]),name,'photo identification'].filter(Boolean);
-
-        const existing=PLANT_INDEX[p.slug];
-        if(!existing){
-          PLANT_LIBRARY.unshift(p);
-          PLANT_INDEX[p.slug]=p;
-        }else{
-          PLANT_INDEX[p.slug]={
-            ...existing,
-            ...p,
-            scanPhotoUrl:photo.dataUrl,
-            photoUrl:photo.dataUrl,
-            imageUrl:photo.dataUrl
-          };
-        }
-        profiles.push(PLANT_INDEX[p.slug]);
+    const seenSlugs=new Set();
+    parsed.candidates.slice(0,4).forEach(candidate=>{
+      const profile=buildScanCandidateProfile(candidate,photo);
+      if(seenSlugs.has(profile.slug))return;
+      seenSlugs.add(profile.slug);
+      const existing=PLANT_INDEX[profile.slug];
+      if(!existing){
+        PLANT_LIBRARY.unshift(profile);
+        PLANT_INDEX[profile.slug]=profile;
+      }else{
+        PLANT_INDEX[profile.slug]={...existing,...profile};
       }
-    }
+      profiles.push(PLANT_INDEX[profile.slug]);
+    });
 
-    if(!profiles.length){
-      const fallback=normalizeApiPlant({
-        commonName:out.commonName||out.name||best,
-        scientificName:out.scientificName||best,
-        imageUrl:photo.dataUrl,
-        icon:'🌿',
-        sun:'Check exact species and exposure',
-        water:'Confirm watering after identification',
-        warnings:['AI identification should be confirmed before treatment or purchase.'],
-        guide:'This plant was identified from an uploaded photo. Confirm the exact species and variety before applying care actions.'
-      },best);
+    renderScanProfiles(profiles,'Best match found. Loading verified care details…');
 
-      fallback.scanPhotoUrl=photo.dataUrl;
-      fallback.imageUrl=photo.dataUrl;
-      PLANT_LIBRARY.unshift(fallback);
-      PLANT_INDEX[fallback.slug]=fallback;
-      profiles.push(fallback);
-    }
-
-    if(results){
-      results.innerHTML=
-        profiles.map(p=>plantResultButton(p,'Scan & Identify')).join('')+
-        '<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
-    }
-    if(note)note.textContent='Identification complete. Choose the matching plant below.';
+    const enrichNames=parsed.candidates
+      .flatMap(c=>[c.scientificName,c.commonName,c.name])
+      .filter(Boolean)
+      .filter((name,index,array)=>array.findIndex(x=>normalizeQuery(x)===normalizeQuery(name))===index);
+    enrichScanProfiles(profiles,enrichNames).catch(err=>console.warn('Scan profile enrichment failed',err));
   }catch(err){
     console.error('Plant photo identification failed',err);
+    const message=String(err?.message||'Identification failed.');
     if(note)note.textContent='Could not identify from the photo. Please try once more or use a clearer photo.';
     if(results){
-      results.innerHTML='<div class="plant-source-note">Identification failed. Try again, choose a clearer photo, or type the plant name manually.</div>';
+      results.innerHTML=`<div class="plant-source-note">Identification failed. ${escapeHtml(message)}<br>Try again, choose a clearer photo, or type the plant name manually.</div>`;
     }
   }finally{
+    window.plantScanInProgress=false;
     if(btn){
       btn.disabled=false;
       btn.textContent='Identify plant';
@@ -1613,6 +1727,8 @@ function isCredibleLivePlantProfile(profile,query){
   const hasCare=!!(profile.sun||profile.water||profile.guide||profile.climate);
   const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
   const directMatch=[n,sci,he,...aliases].filter(Boolean).some(a=>a===q || a.includes(q) || q.includes(a));
+  // GBIF-verified profiles from Botanical Engine v2 may use broad placeholder care text before AI enrichment.
+  if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity)) return true;
   // The live plant service is the primary source and can translate Hebrew/common/scientific names.
   // Do NOT require a local-library/direct match; that is what prevented many real plants from being found.
   // Accept any profile with real botanical identity + care/image. Reject only echo/generic results.
@@ -1623,6 +1739,7 @@ function isCredibleLivePlantProfile(profile,query){
 function renderPlantResults(source,query=''){
   const results=document.getElementById('plantResults');
   if(!results)return;
+  if(source==='Scan & Identify'&&window.plantScanInProgress)return;
   const q=(query||'').trim();
   const seq=++plantSearchSeq;
   const localMatches=getLocalPlantMatches(q,source);
@@ -1642,7 +1759,7 @@ function renderPlantResults(source,query=''){
   // Keep useful local matches visible while the live search runs. Never replace them
   // with a generic echo result like the exact typed text.
   renderList(localMatches, `Searching Cruvit plant knowledge for “${escapeHtml(q)}”…`);
-  fetchPlantProfile(canonicalPlantQuery(q),source).then(profile=>{
+  fetchPlantProfile(q,source).then(profile=>{
     if(seq!==plantSearchSeq)return;
     if(isCredibleLivePlantProfile(profile,q)){
       const existing=PLANT_INDEX[profile.slug];
@@ -1682,16 +1799,17 @@ function fetchWithTimeout(url,options={},ms=9000){
   return fetch(url,{...options,signal:ctrl.signal}).finally(()=>clearTimeout(id));
 }
 async function fetchPlantProfile(plantName,source){
-  const payload={plantName:canonicalPlantQuery(plantName),originalQuery:plantName,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
+  const rawQuery=String(plantName||'').trim();
+  const payload={plantName:rawQuery,query:rawQuery,originalQuery:rawQuery,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
   const endpoints=[OPENAI_READY.endpoint,'/.netlify/functions/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let lastError='';
   for(const endpoint of endpoints){
     try{
-      const res=await fetchWithTimeout(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},9000);
+      const res=await fetchWithTimeout(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},22000);
       if(!res.ok){lastError='Plant knowledge service is not reachable';continue}
       const d=await res.json();
-      if(d.error){lastError=d.error;continue}
-      return normalizeApiPlant(d,plantName);
+      if(d.isPlant===false || d.error){lastError=d.error||'No verified botanical match found';continue}
+      return normalizeApiPlant(d,rawQuery);
     }catch(err){lastError=err.message||'Plant knowledge request failed'}
   }
   window.lastPlantSearchError=lastError;
@@ -1705,7 +1823,8 @@ function normalizeApiPlant(d,requested){
   const tasks=Array.isArray(d.tasks)?d.tasks:[];
   const status=warnings.length?'Needs review':'Healthy';
   const mark=warnings.length?'!':'✓';
-  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl:d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'',imageSearchQuery:d.imageSearchQuery||d.image_search_query||'',icon:d.icon||'🌿',status,mark,tags:['ai-profile','verified-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
+  const verified=!!d.botanicalVerified;
+  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl:d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'',imageSearchQuery:d.imageSearchQuery||d.image_search_query||'',icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
   profile=enrichProfileWithQuality(profile,requested);
   return profile;
 }
@@ -1834,7 +1953,7 @@ function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);c
   document.getElementById('plantDetailModal').classList.add('open');
 }
 function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>data.cart.push(x));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
-function scanGarden(){openAddPlantModal()}
+function scanGarden(){openAddPlantModal();openPlantChooser('Scan & Identify')}
 function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
 function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}

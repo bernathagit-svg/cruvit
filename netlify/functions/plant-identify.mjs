@@ -4,6 +4,17 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
+const ALLOWED_MEDIA_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp'
+]);
+
+// Anthropic direct API: up to ~10 MB base64; keep a safe decoded cap for reliability.
+const MAX_DECODED_BYTES = 4_800_000;
+const MAX_BASE64_CHARS = 6_800_000;
+
 function json(status, body) {
   return new Response(JSON.stringify(body), {
     status,
@@ -11,23 +22,155 @@ function json(status, body) {
   });
 }
 
-function parseDataUrl(value) {
-  const match = String(value || '').match(
-    /^data:(image\/(?:jpeg|png|webp|gif));base64,([A-Za-z0-9+/=\s]+)$/i
+function cleanText(value) {
+  return String(value ?? '').trim();
+}
+
+function errorMessage(error) {
+  if (!error) return '';
+  if (typeof error === 'string') return cleanText(error);
+  if (typeof error?.message === 'string') return cleanText(error.message);
+  if (typeof error?.error?.message === 'string') return cleanText(error.error.message);
+  return cleanText(String(error));
+}
+
+function normalizeMediaType(value) {
+  const raw = cleanText(value).toLowerCase();
+  if (!raw) return '';
+  if (raw === 'image/jpg' || raw === 'image/pjpeg') return 'image/jpeg';
+  return raw;
+}
+
+function sanitizeBase64(value) {
+  let raw = cleanText(value);
+  if (!raw) return '';
+
+  const embedded = raw.match(/^data:([^;]+);base64,(.+)$/i);
+  if (embedded) raw = embedded[2];
+
+  raw = raw
+    .replace(/\s+/g, '')
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+    .replace(/[^A-Za-z0-9+/=]/g, '');
+
+  const remainder = raw.length % 4;
+  if (remainder) raw += '='.repeat(4 - remainder);
+
+  return raw;
+}
+
+function isValidBase64(value) {
+  if (!value || value.length < 16) return false;
+  if (value.length % 4 !== 0) return false;
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(value)) return false;
+
+  try {
+    Buffer.from(value, 'base64');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function decodedByteLength(base64) {
+  try {
+    return Buffer.from(base64, 'base64').length;
+  } catch {
+    const padding = (base64.match(/=+$/) || [''])[0].length;
+    return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+  }
+}
+
+function sniffMediaType(base64) {
+  try {
+    const header = Buffer.from(base64.slice(0, 48), 'base64');
+    if (header.length >= 2 && header[0] === 0xff && header[1] === 0xd8) return 'image/jpeg';
+    if (header.length >= 2 && header[0] === 0x89 && header[1] === 0x50) return 'image/png';
+    if (header.length >= 3 && header[0] === 0x47 && header[1] === 0x49 && header[2] === 0x46) {
+      return 'image/gif';
+    }
+    if (header.length >= 12 && header.slice(0, 4).toString('ascii') === 'RIFF' && header.slice(8, 12).toString('ascii') === 'WEBP') {
+      return 'image/webp';
+    }
+  } catch {}
+
+  return '';
+}
+
+function parseImageInput(body = {}) {
+  const dataUrl = cleanText(body.imageDataUrl || body.dataUrl || body.image_url);
+  const rawBase64 = body.imageBase64 || body.base64 || body.image_base64 || '';
+  const declaredType = normalizeMediaType(
+    body.mediaType || body.mimeType || body.media_type || body.contentType
   );
-  if (!match) return null;
+
+  if (dataUrl.startsWith('data:')) {
+    const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
+    if (!match) {
+      return { error: 'Invalid imageDataUrl format. Expected data:image/...;base64,...' };
+    }
+
+    return finalizeImagePayload(
+      normalizeMediaType(match[1]) || declaredType,
+      sanitizeBase64(match[2])
+    );
+  }
+
+  const base64 = sanitizeBase64(rawBase64 || dataUrl);
+  if (!base64) {
+    return { error: 'Missing image data. Send imageDataUrl or imageBase64 with mediaType.' };
+  }
+
+  return finalizeImagePayload(declaredType, base64);
+}
+
+function finalizeImagePayload(mediaType, base64) {
+  if (!base64) {
+    return { error: 'Missing or invalid image data.' };
+  }
+
+  if (base64.length > MAX_BASE64_CHARS) {
+    return { error: 'The image is too large. Please use a smaller image.' };
+  }
+
+  if (!isValidBase64(base64)) {
+    return { error: 'Invalid base64 image data.' };
+  }
+
+  const byteLength = decodedByteLength(base64);
+  if (!byteLength) {
+    return { error: 'Image data is empty.' };
+  }
+
+  if (byteLength > MAX_DECODED_BYTES) {
+    return { error: 'The image is too large. Please use a smaller image.' };
+  }
+
+  let resolvedType = normalizeMediaType(mediaType);
+  if (!ALLOWED_MEDIA_TYPES.has(resolvedType)) {
+    resolvedType = sniffMediaType(base64);
+  }
+
+  if (!ALLOWED_MEDIA_TYPES.has(resolvedType)) {
+    return { error: 'Unsupported image format. Use JPEG, PNG, WEBP or GIF.' };
+  }
+
+  const sniffed = sniffMediaType(base64);
+  if (sniffed && sniffed !== resolvedType) {
+    // Prefer magic-byte detection when the declared MIME type does not match the payload.
+    resolvedType = sniffed;
+  }
 
   return {
-    mediaType:
-      match[1].toLowerCase() === 'image/jpg'
-        ? 'image/jpeg'
-        : match[1].toLowerCase(),
-    data: match[2].replace(/\s+/g, '')
+    mediaType: resolvedType,
+    data: base64,
+    byteLength
   };
 }
 
 function extractJson(text) {
-  const raw = String(text || '').trim();
+  const raw = cleanText(text);
 
   try {
     return JSON.parse(raw);
@@ -41,10 +184,6 @@ function extractJson(text) {
   } catch {
     return null;
   }
-}
-
-function cleanText(value) {
-  return String(value || '').trim();
 }
 
 function makeCandidates(result) {
@@ -108,8 +247,7 @@ export default async function handler(request) {
 
   if (!key) {
     return json(503, {
-      error:
-        'Anthropic API key is missing in Netlify environment variables.'
+      error: 'Anthropic API key is missing in Netlify environment variables.'
     });
   }
 
@@ -121,16 +259,9 @@ export default async function handler(request) {
     return json(400, { error: 'Invalid JSON body.' });
   }
 
-  const image = parseDataUrl(body?.imageDataUrl);
-
-  if (!image) {
-    return json(400, { error: 'Missing or invalid imageDataUrl.' });
-  }
-
-  if (image.data.length > 7_000_000) {
-    return json(413, {
-      error: 'The image is too large. Please use a smaller image.'
-    });
+  const image = parseImageInput(body);
+  if (image?.error) {
+    return json(400, { error: image.error });
   }
 
   const location = cleanText(body?.location);
@@ -155,8 +286,7 @@ Rules:
 - Climate context is ${JSON.stringify(climate || 'not provided')}.
 - Identification must be based mainly on the image, not on location.`;
 
-  const preferred =
-    process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+  const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
   const models = [
     ...new Set(
@@ -176,48 +306,44 @@ Rules:
     const timer = setTimeout(() => controller.abort(), 28000);
 
     try {
-      const response = await fetch(
-        'https://api.anthropic.com/v1/messages',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': key,
-            'anthropic-version': '2023-06-01'
-          },
-          body: JSON.stringify({
-            model,
-            max_tokens: 900,
-            messages: [
-              {
-                role: 'user',
-                content: [
-                  {
-                    type: 'image',
-                    source: {
-                      type: 'base64',
-                      media_type: image.mediaType,
-                      data: image.data
-                    }
-                  },
-                  { type: 'text', text: prompt }
-                ]
-              }
-            ]
-          }),
-          signal: controller.signal
-        }
-      );
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 900,
+          messages: [
+            {
+              role: 'user',
+              content: [
+                {
+                  type: 'image',
+                  source: {
+                    type: 'base64',
+                    media_type: image.mediaType,
+                    data: image.data
+                  }
+                },
+                { type: 'text', text: prompt }
+              ]
+            }
+          ]
+        }),
+        signal: controller.signal
+      });
 
       clearTimeout(timer);
 
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok || payload?.error) {
-        lastError =
-          payload?.error || { message: 'Identification request failed.' };
+        lastError = payload?.error || { message: 'Identification request failed.' };
 
-        const message = cleanText(lastError?.message).toLowerCase();
+        const message = errorMessage(lastError).toLowerCase();
         const modelProblem =
           message.includes('model') ||
           message.includes('not found') ||
@@ -237,15 +363,22 @@ Rules:
 
       if (!result || candidates.length === 0) {
         lastError = {
-          message:
-            'The AI response did not contain a plant identification.'
+          message: 'The AI response did not contain a plant identification.'
         };
         break;
       }
 
+      const commonName = cleanText(result?.common_name || result?.commonName);
+      const scientificName = cleanText(result?.scientific_name || result?.scientificName);
+
       return json(200, {
         candidates,
-        identification: result
+        identification: result,
+        commonName,
+        scientificName,
+        common_name: commonName,
+        scientific_name: scientificName,
+        confidence: cleanText(result?.confidence)
       });
     } catch (error) {
       clearTimeout(timer);
@@ -255,9 +388,7 @@ Rules:
     }
   }
 
-  const message = cleanText(
-    lastError?.message || 'The plant could not be identified.'
-  );
+  const message = errorMessage(lastError) || 'The plant could not be identified.';
 
   return json(502, { error: message });
 }
