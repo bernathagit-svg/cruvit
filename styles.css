@@ -533,10 +533,17 @@ button { cursor: pointer; }
   border-radius: var(--r);
   overflow: hidden;
   background:
-    url('assets/garden-bg.jpg') center/cover no-repeat,
+    url('assets/garden-bg.jpg') center 42% / 112% no-repeat,
     linear-gradient(165deg, #8fbd7d 0%, #4a7d42 38%, #2d5a38 72%, #1a3d28 100%);
   box-shadow: var(--shadow);
   border: 1px solid rgba(13, 44, 33, 0.06);
+  cursor: pointer;
+  isolation: isolate;
+}
+
+.photo-card::before {
+  content: none;
+  display: none;
 }
 
 .photo-card::after {
@@ -544,20 +551,33 @@ button { cursor: pointer; }
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(7, 35, 22, 0.62) 100%);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .camera {
   position: absolute;
   right: 18px;
   top: 18px;
-  z-index: 2;
+  z-index: 3;
   width: 46px;
   height: 46px;
   border-radius: 50%;
   border: 0;
+  padding: 0;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 4px 16px rgba(13, 44, 33, 0.12);
-  font-size: 18px;
+  color: var(--forest);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.camera svg {
+  display: block;
+  flex: 0 0 auto;
 }
 
 .photo-label {
@@ -565,15 +585,16 @@ button { cursor: pointer; }
   left: 22px;
   right: 22px;
   bottom: 22px;
-  z-index: 2;
+  z-index: 3;
   color: #fff;
+  pointer-events: none;
 }
 
 .photo-label b {
   display: block;
   font-size: 18px;
   font-weight: 650;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.32);
 }
 
 .photo-label span {

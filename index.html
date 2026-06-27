@@ -98,8 +98,12 @@
     </div>
   </div>
 
-  <aside class="photo-card">
-    <button class="camera" onclick="scanGarden()">📷</button>
+  <aside class="photo-card" onclick="scanGarden()" role="button" tabindex="0" aria-label="Scan Hagit's garden" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();scanGarden()}">
+    <button type="button" class="camera" onclick="event.stopPropagation();scanGarden()" aria-label="Scan garden">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
+      </svg>
+    </button>
     <div class="photo-label"><b>Hagit’s garden</b><span>Western Galilee climate<br>Last scan: Today, 08:24</span></div>
   </aside>
 </section>
