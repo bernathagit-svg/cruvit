@@ -180,7 +180,7 @@
       icon: '🌱',
       image: 'assets/garden-modes/fertilizing-time.png',
       actions: [
-        { he: 'לדשן לפי סוג הצמח', en: 'Feed by plant type' },
+        { he: 'פתחי משימות — ודשני את הצמחים שברשימה', en: 'Open tasks — fertilize the plants listed there' },
         { he: 'לא לדשן צמחים במצוקה קשה', en: 'Avoid feeding stressed plants' },
         { he: 'לבדוק מינון מתאים', en: 'Check the right dosage' }
       ],
@@ -546,12 +546,37 @@
 
   function shouldShowViewTasks(mode) {
     const taskType = (mode.relatedTaskTypes && mode.relatedTaskTypes[0]) || '';
-    return taskType || mode.id === 'overdue-care' || mode.id === 'needs-water' || mode.id === 'pest-risk';
+    return taskType || mode.id === 'overdue-care' || mode.id === 'needs-water' || mode.id === 'pest-risk' || mode.id === 'fertilizing-time' || mode.id === 'pruning-time';
   }
 
   function viewTasksFilterForMode(mode) {
     const taskType = (mode.relatedTaskTypes && mode.relatedTaskTypes[0]) || '';
     return taskType || mode.id;
+  }
+
+  function taskMatchesModeType(task, types) {
+    const title = taskTitle(task);
+    return (types || []).some(function (type) {
+      if (type === 'watering') return /water|השק/i.test(title);
+      if (type === 'fertilizing') return /fertiliz|feed|nutrient|דיש/i.test(title);
+      if (type === 'pruning') return /prun|trim|גיז/i.test(title);
+      if (type === 'pest') return /pest|check|leaf|מזיק|על/i.test(title);
+      return false;
+    });
+  }
+
+  function resolveFocusTaskTitle(primaryMode, uiOpts) {
+    uiOpts = uiOpts || {};
+    const openTasks = uiOpts.openTasks || [];
+    const types = (primaryMode && primaryMode.relatedTaskTypes) || [];
+    if (types.length) {
+      for (let i = 0; i < openTasks.length; i++) {
+        if (taskMatchesModeType(openTasks[i], types)) {
+          return String(openTasks[i][1] || '').trim();
+        }
+      }
+    }
+    return String(uiOpts.taskTitle || '').trim();
   }
 
   function applyMoodFocusBar(primaryMode, uiOpts, warningModes) {
@@ -563,13 +588,13 @@
     const emEl = document.getElementById('moodFocusLink');
     const focusBtn = document.getElementById('moodFocusBtn');
 
-    const taskTitle = uiOpts.taskTitle;
-    const hasTask = !!taskTitle;
+    const resolvedTitle = resolveFocusTaskTitle(primaryMode, uiOpts);
+    const hasTask = !!resolvedTitle;
     const topWarning = warningModes[0] || null;
     const tasksMode = topWarning || primaryMode;
     const firstAction = (primaryMode.actions || [])[0];
     let text = hasTask
-      ? String(taskTitle).replace(/^(Water|Check|Fertilize|Prune|Review)\s+/, '$1 ')
+      ? resolvedTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/, '$1 ')
       : (firstAction ? t(firstAction) : (gardenModesIsHe() ? 'הנאי מהגינה' : 'Enjoy your garden today'));
 
     if (labelEl) {

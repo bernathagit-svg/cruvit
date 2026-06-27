@@ -11,13 +11,30 @@
   margin-bottom: var(--space-2, 8px);
 }
 
+.mood-kicker-wrap .mood-kicker {
+  margin-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  min-height: 26px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+}
+
 .mood-severity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   align-self: center;
+  line-height: 1.2;
+  min-height: 26px;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 6px 12px;
+  box-sizing: border-box;
   border-radius: var(--r-full, 999px);
   border: 1px solid rgba(15, 61, 46, 0.08);
   background: rgba(255, 255, 255, 0.72);
