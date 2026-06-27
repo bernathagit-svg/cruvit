@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630d">
+<link rel="stylesheet" href="styles.css?v=20250630h">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -545,13 +545,39 @@ function flickrFallbackPhotoUrl(p){ return ''; }
 function fallbackPlantImageUrl(p){ return ''; }
 function plantImage(p){
   const m=plantMeta(p);
-  const img=p?.imageUrl||p?.photoUrl||m?.imageUrl||m?.image||m?.photoUrl||'';
+  const scanPhoto=p?.scanPhotoUrl||'';
+  const userPhoto=p?.photoUrl||m?.photoUrl||'';
+  const img=p?.imageUrl||m?.imageUrl||m?.image||'';
   if(img && (/^https?:\/\//i.test(img)||/^data:image\//i.test(img)) && !/garden-bg\.jpg/i.test(img) && !/source\.unsplash\.com/i.test(img) && !/loremflickr\.com/i.test(img)) return img;
+  if(userPhoto && userPhoto!==scanPhoto && (/^https?:\/\//i.test(userPhoto)||/^data:image\//i.test(userPhoto)) && !/garden-bg\.jpg/i.test(userPhoto)) return userPhoto;
   return '';
+}
+function cleanImageSearchQuery(value){
+  return String(value||'')
+    .replace(/\s*\([^)]*\)\s*/g,' ')
+    .replace(/\s+(L|Jacq|Mill|Thunb|DC|Aiton|Pers)\.?\s*$/gi,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function isPlausiblePlantImage(imageUrl,profile){
+  if(!imageUrl||!/^https?:\/\//i.test(imageUrl)) return false;
+  const genus=normalizeQuery(cleanImageSearchQuery(profile?.scientific||profile?.name||'').split(/\s+/)[0]);
+  const blob=normalizeQuery(decodeURIComponent(imageUrl));
+  if(genus&&blob.includes(genus)) return true;
+  if(/pineapple|ananas|lychee|volcano|keyboard|map\.png|resort|beach/i.test(blob)&&genus&&!/ananas|pineapple/.test(genus)) return false;
+  return true;
 }
 function plantPhotoQuery(p){
   const m=plantMeta(p);
-  return [p?.scientific,m?.scientific,p?.imageSearchQuery,m?.imageSearchQuery,p?.name,m?.name].filter(Boolean).join(' ').replace(/\b(garden|generic|placeholder)\b/gi,'').trim()||'plant';
+  const sci=cleanImageSearchQuery(p?.scientific||m?.scientific||'');
+  const binomial=sci.split(/\s+/).slice(0,2).join(' ');
+  return [binomial,p?.imageSearchQuery,m?.imageSearchQuery,p?.name,m?.name]
+    .filter(Boolean)
+    .map(cleanImageSearchQuery)
+    .filter(Boolean)
+    .join(' ')
+    .replace(/\b(garden|generic|placeholder)\b/gi,'')
+    .trim()||'plant';
 }
 function instantPlantImageUrl(p){
   // Browser-renderable plant thumbnail fallback. This keeps the card visual even
@@ -1790,23 +1816,26 @@ function buildPlantIdentifyRequestBody(photo){
     mediaType='image/jpeg';
   }
   dataUrl=`data:${mediaType};base64,${base64}`;
+  const hint=document.getElementById('plantSearchInput')?.value?.trim()||'';
   return {
     imageDataUrl:dataUrl,
     imageBase64:base64,
     mediaType,
     mimeType:mediaType,
     location:data.location||'Western Galilee, Israel',
-    climate:data.climate||'Mediterranean'
+    climate:data.climate||'Mediterranean',
+    hint,
+    userQuery:hint
   };
 }
 function parseIdentifyResponse(out){
   const id=out?.identification||{};
   const normalizeCandidate=(x)=>{
-    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:''};
-    const commonName=x.commonName||x.common_name||'';
-    const scientificName=x.scientificName||x.scientific_name||'';
-    const name=x.name||scientificName||commonName||'';
-    return {name,commonName,scientificName,confidence:x.confidence||''};
+    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:'medium',gbifVerified:false};
+    const commonName=String(x.commonName||x.common_name||'').replace(/\s+(Thunb|L|Mill)\.?$/i,'').trim();
+    const scientificName=String(x.scientificName||x.scientific_name||'').trim();
+    const name=x.name||commonName||scientificName||'';
+    return {name,commonName:commonName||name,scientificName,confidence:String(x.confidence||'medium').toLowerCase(),gbifVerified:!!x.gbifVerified,gbifRank:x.gbifRank||''};
   };
   const seen=new Set();
   const candidates=(out?.candidates||out?.plants||[]).map(normalizeCandidate).filter(c=>{
@@ -1818,9 +1847,106 @@ function parseIdentifyResponse(out){
   const commonName=out?.commonName||out?.common_name||id.common_name||id.commonName||'';
   const scientificName=out?.scientificName||out?.scientific_name||id.scientific_name||id.scientificName||'';
   if(!candidates.length&&(commonName||scientificName)){
-    candidates.push({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||''});
+    candidates.push(normalizeCandidate({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||'medium',gbifVerified:!!out?.gbifVerified}));
   }
-  return {candidates,commonName,scientificName};
+  return {candidates,commonName,scientificName,confidence:String(out?.confidence||id.confidence||'').toLowerCase(),gbifVerified:!!out?.gbifVerified};
+}
+function rankIdentifyCandidates(candidates){
+  const rank={high:3,medium:2,low:1};
+  return [...(candidates||[])].sort((a,b)=>{
+    const score=(c)=>(rank[String(c.confidence||'').toLowerCase()]||0)*10+(c.gbifVerified?5:0);
+    return score(b)-score(a);
+  });
+}
+function hasUsefulCareText(profile){
+  if(!profile)return false;
+  const blob=String(profile.sun||'')+' '+String(profile.water||'')+' '+String(profile.guide||'');
+  if(/confirm light needs|confirm watering|see plant guide|loading verified care|verify by species|match light exposure to the confirmed species|water according to season, soil drainage|light needs vary by species|watering varies by species/i.test(blob)) return false;
+  return !!(profile.sun&&profile.water&&!isVagueCareText(profile.sun)&&!isVagueCareText(profile.water))||(profile.guide&&profile.guide.length>60&&!isVagueCareText(profile.guide));
+}
+function genusFromScientific(value){
+  return String(value||'').trim().split(/\s+/)[0].toLowerCase();
+}
+function collapseScanCandidates(candidates){
+  const ranked=rankIdentifyCandidates(candidates||[]);
+  if(ranked.length<=1) return ranked;
+  const topGenus=genusFromScientific(ranked[0].scientificName);
+  if(!topGenus) return ranked.slice(0,1);
+  const sameGenus=ranked.filter(c=>genusFromScientific(c.scientificName)===topGenus);
+  if(sameGenus.length>=2) return [ranked[0]];
+  return ranked.slice(0,2);
+}
+function isSpeciesLevelProfile(profile){
+  if(!profile) return false;
+  const rank=String(profile.taxonRank||profile.verification?.rank||'').toUpperCase();
+  if(['SPECIES','SUBSPECIES','VARIETY','FORM','CULTIVAR'].includes(rank)) return true;
+  return String(profile.scientific||'').trim().split(/\s+/).filter(Boolean).length>=2;
+}
+function scanResultSummary(profile){
+  if(hasUsefulCareText(profile)) return `${profile.sun||''} · ${profile.water||''}`.replace(/^ · | · $/g,'').trim();
+  const guide=String(profile.guide||'').trim();
+  if(guide.length>48 && !/confirm the exact species|confirm exact species|could not be found/i.test(guide)) return guide.slice(0,140);
+  if(profile.scientific) return `Verified botanical match · ${profile.scientific}`;
+  return 'Verified botanical match from Cruvit plant knowledge.';
+}
+function buildScanProfileFromLive(live,candidate,photo){
+  const p=storePlantProfile(Object.assign({},live,{tags:[...(live.tags||[]),'photo-identified','ai-profile']}));
+  p.scanPhotoUrl=photo.dataUrl;
+  p.identifyConfidence=candidate.confidence||'';
+  p.identifySource='photo+gbif';
+  if(live.imageUrl&&!/^data:image\//i.test(live.imageUrl)) p.imageUrl=live.imageUrl;
+  else p.imageUrl='';
+  delete p.photoUrl;
+  p.scanSummary=scanResultSummary(p);
+  return p;
+}
+async function resolveScanCandidateViaEngine(candidate,photo){
+  const queries=[candidate.scientificName,candidate.commonName,candidate.name].filter(Boolean);
+  for(const query of queries){
+    try{
+      const bundle=await fetchPlantKnowledgeBundle(query,'Scan & Identify');
+      if(bundle.profile&&isSpeciesLevelProfile(bundle.profile)&&isCredibleLivePlantProfile(bundle.profile,query)){
+        return buildScanProfileFromLive(bundle.profile,candidate,photo);
+      }
+      const genus=genusFromScientific(candidate.scientificName);
+      for(const s of (bundle.suggestions||[])){
+        const stub=profileFromGbifSuggestion(s,query);
+        if(!stub) continue;
+        const sci=String(stub.scientific||'').toLowerCase();
+        if(genus&&sci&&!sci.startsWith(genus)) continue;
+        const full=await fetchPlantProfile(stub.scientific||stub.name,'Scan & Identify');
+        if(full&&isSpeciesLevelProfile(full)&&isCredibleLivePlantProfile(full,query)){
+          return buildScanProfileFromLive(full,candidate,photo);
+        }
+      }
+      if(bundle.profile&&isCredibleLivePlantProfile(bundle.profile,query)){
+        return buildScanProfileFromLive(bundle.profile,candidate,photo);
+      }
+    }catch(_){}
+  }
+  return null;
+}
+async function resolveScanCandidates(candidates,photo){
+  const ranked=collapseScanCandidates(candidates);
+  const resolved=[];
+  for(const candidate of ranked){
+    const profile=await resolveScanCandidateViaEngine(candidate,photo);
+    if(profile) resolved.push(profile);
+  }
+  return resolved.slice(0,1);
+}
+async function enrichSuggestionProfiles(suggestions,source){
+  const out=[];
+  for(const s of (suggestions||[]).slice(0,4)){
+    const sci=s.scientific||s.scientificName||'';
+    if(!sci){out.push(s);continue}
+    try{
+      const full=await fetchPlantProfile(sci,source);
+      if(full&&isCredibleLivePlantProfile(full,sci)&&hasUsefulCareText(full)) out.push(storePlantProfile(full));
+      else out.push(s);
+    }catch(_){out.push(s)}
+  }
+  return out;
 }
 function buildScanCandidateProfile(candidate,photo){
   const common=candidate.commonName||candidate.name||'Identified plant';
@@ -1828,17 +1954,18 @@ function buildScanCandidateProfile(candidate,photo){
   const profile=normalizeApiPlant({
     commonName:common,
     scientificName:sci,
-    imageUrl:photo.dataUrl,
+    botanicalVerified:!!candidate.gbifVerified,
     icon:'🌿',
-    sun:'Confirm light needs for the identified species',
-    water:'Confirm watering for the identified species',
+    sun:'Loading care profile…',
+    water:'Loading care profile…',
     warnings:['Photo identification should be confirmed before treatment or purchase.'],
     guide:sci?`Identified from photo as ${sci}. Cruvit is loading verified care details…`:'Identified from photo. Cruvit is loading verified care details…'
   },common);
   profile.scanPhotoUrl=photo.dataUrl;
-  profile.photoUrl=photo.dataUrl;
-  profile.imageUrl=photo.dataUrl;
+  profile.imageUrl='';
+  profile.identifyConfidence=candidate.confidence||'';
   profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
+  profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
   return profile;
 }
 function renderScanProfiles(profiles,noteText){
@@ -1851,23 +1978,20 @@ function renderScanProfiles(profiles,noteText){
   if(note&&noteText)note.textContent=noteText;
   setTimeout(hydratePlantResultImages,0);
 }
-async function enrichScanProfiles(profiles,candidateNames){
-  const names=candidateNames.filter(Boolean).slice(0,2);
-  await Promise.all(names.map(async name=>{
+async function enrichScanProfiles(profiles){
+  await Promise.all((profiles||[]).map(async p=>{
+    const query=p.scientific||p.name;
+    if(!query) return;
     try{
-      const live=await fetchPlantProfile(name,'Scan & Identify');
-      if(!live||live.isPlant===false)return;
-      const idx=profiles.findIndex(p=>[p.scientific,p.name,...(p.aliases||[])].filter(Boolean).some(v=>normalizeQuery(v)===normalizeQuery(name)));
-      const target=idx>=0?profiles[idx]:profiles[0];
-      if(!target)return;
-      const scanPhoto=target.scanPhotoUrl||target.photoUrl||target.imageUrl||'';
-      Object.assign(target,live,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
-      const merged=mergeLiveProfileIntoLibrary(target.slug||live.slug,live);
-      Object.assign(target,merged,{scanPhotoUrl:scanPhoto,photoUrl:scanPhoto,imageUrl:scanPhoto});
-      PLANT_INDEX[target.slug]=target;
+      const live=await fetchPlantProfile(query,'Scan & Identify');
+      if(!live||!isCredibleLivePlantProfile(live,query)) return;
+      const scanPhoto=p.scanPhotoUrl||'';
+      const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
+      Object.assign(p,updated);
+      p.scanSummary=scanResultSummary(p);
     }catch(_){}
   }));
-  renderScanProfiles(profiles,'Identification complete. Choose the matching plant below.');
+  return profiles;
 }
 async function handlePlantPhotoSelected(input){
   const note=document.getElementById('scanNote');
@@ -2019,29 +2143,28 @@ async function identifySelectedPlantPhoto(){
       throw new Error(out.error||'No plant match found in the photo.');
     }
 
-    const profiles=[];
-    const seenSlugs=new Set();
-    parsed.candidates.slice(0,4).forEach(candidate=>{
-      const profile=buildScanCandidateProfile(candidate,photo);
-      if(seenSlugs.has(profile.slug))return;
-      seenSlugs.add(profile.slug);
-      const existing=PLANT_INDEX[profile.slug];
-      if(!existing){
-        PLANT_LIBRARY.unshift(profile);
-        PLANT_INDEX[profile.slug]=profile;
-      }else{
-        PLANT_INDEX[profile.slug]={...existing,...profile};
+    if(note)note.textContent='Verifying identification against Cruvit botanical database…';
+    if(results)results.innerHTML='<div class="plant-source-note">Matching photo to verified plant records…</div>';
+
+    let profiles=await resolveScanCandidates(parsed.candidates,photo);
+
+    if(!profiles.length){
+      const ranked=collapseScanCandidates(parsed.candidates);
+      const top=ranked[0];
+      if(top){
+        const p=buildScanCandidateProfile(top,photo);
+        storePlantProfile(p);
+        profiles=[PLANT_INDEX[p.slug]||p];
       }
-      profiles.push(PLANT_INDEX[profile.slug]);
-    });
+    }
 
-    renderScanProfiles(profiles,'Best match found. Loading verified care details…');
+    profiles=await enrichScanProfiles(profiles);
 
-    const enrichNames=parsed.candidates
-      .flatMap(c=>[c.scientificName,c.commonName,c.name])
-      .filter(Boolean)
-      .filter((name,index,array)=>array.findIndex(x=>normalizeQuery(x)===normalizeQuery(name))===index);
-    enrichScanProfiles(profiles,enrichNames).catch(err=>console.warn('Scan profile enrichment failed',err));
+    const noteText=profiles.length===1
+      ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
+      : 'Choose the closest verified match below.';
+
+    renderScanProfiles(profiles,noteText);
   }catch(err){
     console.error('Plant photo identification failed',err);
     const message=String(err?.message||'Identification failed.');
@@ -2063,15 +2186,18 @@ function textForSearch(p){return [p.name,p.he,p.scientific,(p.aliases||[]).join(
 
 function normalizeQuery(q){return String(q||'').trim().toLowerCase().replace(/[״"׳’`]/g,'').replace(/^עץ\s+/,'').replace(/\s+/g,' ')}
 const PLANT_QUERY_ALIASES={
-  'עץ אלון':'oak tree','אלון':'oak tree','אלון מצוי':'quercus calliprinos','oak':'oak tree','oak tree':'oak tree','quercus':'quercus',
-  'עץ אורן':'pine tree','אורן':'pine tree','אורן ירושלים':'pinus halepensis','pine':'pine tree','pine tree':'pine tree','pinus':'pinus',
-  'עץ פפאיה':'papaya tree','פפאיה':'papaya','עץ מנגו':'mango tree','מנגו':'mango tree','עץ רימון':'pomegranate tree','רימון':'pomegranate tree','פטל':'raspberry','ליצי':'lychee tree','ליצ׳י':'lychee tree',
-  'עץ תפוח':'apple tree','תפוח':'apple tree','עץ אגס':'pear tree','אגס':'pear tree','עץ שקד':'almond tree','שקד':'almond tree','עץ תאנה':'fig tree','תאנה':'fig tree','גפן':'grapevine','ענבים':'grapevine','דקל':'palm tree','תמר':'date palm','אבוקדו':'avocado tree','עץ אבוקדו':'avocado tree','עץ משמש':'apricot tree','משמש':'apricot tree','עץ אפרסק':'peach tree','אפרסק':'peach tree','עץ שזיף':'plum tree','שזיף':'plum tree','ברוש':'cypress tree','עץ ברוש':'cypress tree','פיקוס':'ficus','היביסקוס':'hibiscus','גרניום':'geranium','ורד':'rose','שושנה':'rose','מרווה':'sage','בזיליקום':'basil','כוסברה':'cilantro','פטרוזיליה':'parsley','קקטוס':'cactus','סוקולנט':'succulent'
+  'עץ אלון':'Quercus','אלון':'Quercus','אלון מצוי':'Quercus calliprinos','oak':'Quercus','oak tree':'Quercus','quercus':'Quercus',
+  'עץ אורן':'Pinus','אורן':'Pinus','אורן ירושלים':'Pinus halepensis','pine':'Pinus','pine tree':'Pinus','pinus':'Pinus',
+  'עץ פפאיה':'Carica papaya','פפאיה':'Carica papaya','papaya tree':'Carica papaya',
+  'עץ מנגו':'Mangifera indica','מנגו':'Mangifera indica','עץ רימון':'Punica granatum','רימון':'Punica granatum','פטל':'Rubus idaeus','ליצי':'Litchi chinensis','ליצ׳י':'Litchi chinensis',
+  'עץ תפוח':'Malus domestica','תפוח':'Malus domestica','עץ אגס':'Pyrus communis','אגס':'Pyrus communis','עץ שקד':'Prunus dulcis','שקד':'Prunus dulcis','עץ תאנה':'Ficus carica','תאנה':'Ficus carica','גפן':'Vitis vinifera','ענבים':'Vitis vinifera','דקל':'Phoenix dactylifera','תמר':'Phoenix dactylifera','אבוקדו':'Persea americana','עץ אבוקדו':'Persea americana','עץ משמש':'Prunus armeniaca','משמש':'Prunus armeniaca','עץ אפרסק':'Prunus persica','אפרסק':'Prunus persica','עץ שזיף':'Prunus domestica','שזיף':'Prunus domestica','דובדבן':'Prunus avium',
+  'יסמין':'Jasminum','לבנדר':'Lavandula angustifolia','רוזמרין':'Salvia rosmarinus','מרווה':'Salvia','נענע':'Mentha','בזיליקום':'Ocimum basilicum','פטרוזיליה':'Petroselinum crispum','כוסברה':'Coriandrum sativum','טימין':'Thymus vulgaris','אורגנו':'Origanum vulgare','ורד':'Rosa','שושנה':'Rosa','היביסקוס':'Hibiscus','בוגנוויליה':'Bougainvillea','פלומריה':'Plumeria','פיקוס':'Ficus','אקליפטוס':'Eucalyptus','קקטוס':'Cactaceae','סוקולנט':'succulent','אלוורה':'Aloe vera','רקפת':'Cyclamen persicum','גרניום':'Pelargonium','הידרנגאה':'Hydrangea macrophylla','הורטנזיה':'Hydrangea macrophylla','זית':'Olea europaea','עץ זית':'Olea europaea','לימון':'Citrus limon','תפוז':'Citrus sinensis',
+  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa'
 };
 function canonicalPlantQuery(q){
   const raw=String(q||'').trim();
   const n=normalizeQuery(raw);
-  return PLANT_QUERY_ALIASES[n]||raw;
+  return PLANT_QUERY_ALIASES[n]||PLANT_QUERY_ALIASES[raw.toLowerCase()]||raw;
 }
 
 function searchLocalPlants(query,source){
@@ -2098,10 +2224,11 @@ function isCredibleLivePlantProfile(profile,query){
   const hasScientific=!!sci && !['plant','various plant species','unknown'].includes(sci);
   const hasImage=!!(profile.imageUrl||profile.image||profile.photoUrl);
   const hasCare=!!(profile.sun||profile.water||profile.guide||profile.climate);
-  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
+  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment|confirm light needs|confirm watering|see plant guide|loading care profile|match light exposure to the confirmed species|light needs vary by species|watering varies by species/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
   const directMatch=[n,sci,he,...aliases].filter(Boolean).some(a=>a===q || a.includes(q) || q.includes(a));
-  // GBIF-verified profiles from Botanical Engine v2 may use broad placeholder care text before AI enrichment.
-  if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity)) return true;
+  if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity) && (directMatch || hasUsefulCareText(profile))) return true;
+  if(generic && !hasUsefulCareText(profile)) return false;
+  if(profile.botanicalVerified && hasUsefulCareText(profile)) return true;
   // The live plant service is the primary source and can translate Hebrew/common/scientific names.
   // Do NOT require a local-library/direct match; that is what prevented many real plants from being found.
   // Accept any profile with real botanical identity + care/image. Reject only echo/generic results.
@@ -2216,11 +2343,18 @@ function renderPlantResults(source,query=''){
   const suppressWeakLocals=q.length>=3;
   const localMatches=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
   renderList(localMatches, `Searching Cruvit plant knowledge for “${escapeHtml(q)}”…`);
-  fetchPlantKnowledgeBundle(q,source).then(({profile,suggestions})=>{
+  fetchPlantKnowledgeBundle(q,source).then(async ({profile,suggestions})=>{
     if(seq!==plantSearchSeq)return;
     let primary=null;
-    if(profile && isCredibleLivePlantProfile(profile,q)) primary=storePlantProfile(profile);
-    const altSuggestions=(suggestions||[]).filter(s=>!samePlantProfile(s,primary)).map(s=>storePlantProfile(s)).filter(Boolean);
+    if(profile && isCredibleLivePlantProfile(profile,q) && hasUsefulCareText(profile)) primary=storePlantProfile(profile);
+    else if(profile && isCredibleLivePlantProfile(profile,q)) primary=storePlantProfile(profile);
+    let altSuggestions=(suggestions||[]).filter(s=>!samePlantProfile(s,primary)).map(s=>storePlantProfile(s)).filter(Boolean);
+    if(altSuggestions.length) altSuggestions=await enrichSuggestionProfiles(altSuggestions,source);
+    if(!primary && altSuggestions.length){
+      const enriched=await enrichSuggestionProfiles(altSuggestions.slice(0,1),source);
+      if(enriched[0]&&isCredibleLivePlantProfile(enriched[0],q)) primary=enriched[0];
+      altSuggestions=altSuggestions.filter(s=>!samePlantProfile(s,primary));
+    }
     if(primary || altSuggestions.length){
       const locals=suppressWeakLocals?[]:getLocalPlantMatches(q,source).filter(p=>isStrongLocalMatch(q,p,source));
       const merged=mergeSearchProfiles(primary,altSuggestions,locals,q,source);
@@ -2256,7 +2390,8 @@ function getLocalPlantMatches(query,source){
     .map(x=>x[1]);
 }
 function plantResultButton(p,source){
-  return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(p.sun||'')} · ${escapeHtml(p.water||'')}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
+  const careLine=source==='Scan & Identify'?(p.scanSummary||scanResultSummary(p)):`${p.sun||''} · ${p.water||''}`;
+  return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(careLine)}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function slugify(v){return String(v||'plant').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'plant'}
@@ -2302,7 +2437,10 @@ function normalizeApiPlant(d,requested){
   const status=warnings.length?'Needs review':'Healthy';
   const mark=warnings.length?'!':'✓';
   const verified=!!d.botanicalVerified;
-  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl:d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'',imageSearchQuery:d.imageSearchQuery||d.image_search_query||'',icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
+  let imageUrl=d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'';
+  if(imageUrl&&!isPlausiblePlantImage(imageUrl,{scientific:sci,name:common})) imageUrl='';
+  const imageSearchQuery=cleanImageSearchQuery(d.imageSearchQuery||d.image_search_query||sci||common);
+  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl,imageSearchQuery,icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
   profile=enrichProfileWithQuality(profile,requested);
   return profile;
 }
@@ -2333,7 +2471,7 @@ function safeUiAfterPlantAdd(){
 function buildPlantFromReference(ref,source,options){
   const safeRef=ref||{};
   const prefs={autoTasks:options?.autoTasks!==false,reminders:options?.reminders!==false,alerts:true};
-  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||safeRef.photoUrl||instantPlantImageUrl(safeRef)||'';
+  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||'';
   const plant=applyProfileToPlant({name:safeRef.name||'Plant',status:safeRef.status||'Healthy',mark:safeRef.mark||'✓',source,archived:false,prefs},safeRef);
   plant.id='plant_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
   plant.name=safeRef.name||plant.name||'Plant';
@@ -2343,6 +2481,7 @@ function buildPlantFromReference(ref,source,options){
   plant.archived=false;
   plant.prefs=prefs;
   plant.imageUrl=existingImage||plant.imageUrl||'';
+  if(safeRef.scanPhotoUrl && source==='Scan & Identify') plant.photoUrl=safeRef.scanPhotoUrl;
   plant.meta=plant.meta||{};
   if(plant.imageUrl)plant.meta.imageUrl=plant.imageUrl;
   return plant;

@@ -110,7 +110,11 @@ const aliases = new Map(Object.entries({
   'black-eyed susan vine': 'Thunbergia alata',
   'snake plant': 'Dracaena trifasciata',
   'pothos': 'Epipremnum aureum',
-  'umbrella plant': 'Heptapleurum arboricola'
+  'umbrella plant': 'Heptapleurum arboricola',
+  'dodonaea': 'Dodonaea viscosa',
+  'hop bush': 'Dodonaea viscosa',
+  'אשחר': 'Dodonaea viscosa',
+  'עץ אשחר': 'Dodonaea viscosa'
 }));
 
 export function aliasFor(value) {
