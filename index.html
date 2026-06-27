@@ -117,7 +117,7 @@
     <div class="section-head"><div><h3 id="tasksTitle">Today’s focus</h3><small id="tasksSubtitle">Cruvit shows only the care that really matters now.</small></div><button class="text-link" id="completeFocusBtn" onclick="completeAll()">Complete focus</button></div>
     <div class="tasks" id="tasks"></div>
   </section>
-  <section class="panel section" id="view-plants">
+  <section class="panel section hidden" id="view-plants">
     <div class="section-head"><div><h3>My plants</h3><small>Your garden at a glance.</small></div><button class="text-link" onclick="addPlant()">+ Add plant</button></div>
     <div class="plant-strip" id="plants"></div>
   </section>
@@ -990,6 +990,7 @@ function render(){syncHealthScore();
   const visibleTasks=visibleCareTaskCount();
   const healthyPlants=Math.max(0,visiblePlants.length-attentionPlants);
   const focusEntry=companionOpenTaskEntries()[0];
+  const focusIndexes=focusedTaskIndexes();
   const focusTitle=focusEntry?.t?.title||'Enjoy your garden today';
   const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
   const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
@@ -1006,7 +1007,6 @@ function render(){syncHealthScore();
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
   
-  const focusIndexes=focusedTaskIndexes();
   const actionableTasks=companionOpenTaskEntries();
   const openTotal=actionableTasks.length;
   const hiddenCount=Math.max(0,Math.min(openTotal,3)-focusIndexes.length);
