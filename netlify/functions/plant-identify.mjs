@@ -314,6 +314,28 @@ function uniqueQueries(values) {
   return out;
 }
 
+function genusKey(scientificName = '') {
+  return cleanText(scientificName).split(/\s+/)[0].toLowerCase();
+}
+
+function collapseSameGenusCandidates(candidates) {
+  if (!Array.isArray(candidates) || candidates.length <= 1) return candidates || [];
+
+  const top = candidates[0];
+  const topGenus = genusKey(top.scientificName);
+  if (!topGenus) return candidates.slice(0, 1);
+
+  const sameGenus = candidates.filter(
+    candidate => genusKey(candidate.scientificName) === topGenus
+  );
+
+  if (sameGenus.length >= 2) {
+    return [top];
+  }
+
+  return candidates.slice(0, 2);
+}
+
 export default async function handler(request) {
   if (request.method === 'OPTIONS') {
     return new Response('', { status: 200, headers: corsHeaders });
@@ -365,9 +387,10 @@ Rules:
 - common_name must be a readable garden name (e.g. "Rose", "Weigela", "Lavender") — never a genus author citation like "Weigela Thunb.".
 - scientific_name must be a real binomial when possible (Genus species), e.g. "Rosa gallica", "Weigela florida", "Lavandula angustifolia".
 - If you can identify the species confidently, set confidence to "high" and return NO alternatives.
-- Include alternatives ONLY when genuinely uncertain between 2-3 closely related species in the SAME genus or look-alike pair.
+- Include alternatives ONLY when genuinely uncertain between 2 closely related species in the SAME genus.
 - Never list unrelated genera as alternatives. Do not guess random shrubs.
-- Maximum 2 alternatives. Omit the alternatives array when confidence is high.
+- Never return multiple species from the same genus (e.g. do not list three Erythrina species). Pick the single best species match.
+- Maximum 1 alternative. Omit the alternatives array when confidence is high.
 - If the image is not a plant, return {"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.`;
 
   const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
@@ -455,12 +478,14 @@ Rules:
       const verified = await verifyCandidatesWithGbif(candidates);
       if (verified.length) candidates = verified;
 
+      candidates = collapseSameGenusCandidates(candidates);
+
       const top = candidates[0] || {};
       const topConfidence = normalizeConfidence(top.confidence || result?.confidence);
       if (topConfidence === 'high') {
         candidates = candidates.slice(0, 1);
       } else {
-        candidates = candidates.slice(0, 3);
+        candidates = candidates.slice(0, 2);
       }
 
       const commonName = cleanCommonName(

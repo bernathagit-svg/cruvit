@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630e">
+<link rel="stylesheet" href="styles.css?v=20250630f">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -545,8 +545,11 @@ function flickrFallbackPhotoUrl(p){ return ''; }
 function fallbackPlantImageUrl(p){ return ''; }
 function plantImage(p){
   const m=plantMeta(p);
-  const img=p?.imageUrl||p?.photoUrl||m?.imageUrl||m?.image||m?.photoUrl||'';
+  const scanPhoto=p?.scanPhotoUrl||'';
+  const userPhoto=p?.photoUrl||m?.photoUrl||'';
+  const img=p?.imageUrl||m?.imageUrl||m?.image||'';
   if(img && (/^https?:\/\//i.test(img)||/^data:image\//i.test(img)) && !/garden-bg\.jpg/i.test(img) && !/source\.unsplash\.com/i.test(img) && !/loremflickr\.com/i.test(img)) return img;
+  if(userPhoto && userPhoto!==scanPhoto && (/^https?:\/\//i.test(userPhoto)||/^data:image\//i.test(userPhoto)) && !/garden-bg\.jpg/i.test(userPhoto)) return userPhoto;
   return '';
 }
 function plantPhotoQuery(p){
@@ -1832,17 +1835,43 @@ function rankIdentifyCandidates(candidates){
 function hasUsefulCareText(profile){
   if(!profile)return false;
   const blob=String(profile.sun||'')+' '+String(profile.water||'')+' '+String(profile.guide||'');
-  if(/confirm light needs|confirm watering|see plant guide|loading verified care|verify by species/i.test(blob)) return false;
-  return !!(profile.sun&&profile.water)||(profile.guide&&profile.guide.length>60);
+  if(/confirm light needs|confirm watering|see plant guide|loading verified care|verify by species|match light exposure to the confirmed species|water according to season, soil drainage|light needs vary by species|watering varies by species/i.test(blob)) return false;
+  return !!(profile.sun&&profile.water&&!isVagueCareText(profile.sun)&&!isVagueCareText(profile.water))||(profile.guide&&profile.guide.length>60&&!isVagueCareText(profile.guide));
+}
+function genusFromScientific(value){
+  return String(value||'').trim().split(/\s+/)[0].toLowerCase();
+}
+function collapseScanCandidates(candidates){
+  const ranked=rankIdentifyCandidates(candidates||[]);
+  if(ranked.length<=1) return ranked;
+  const topGenus=genusFromScientific(ranked[0].scientificName);
+  if(!topGenus) return ranked.slice(0,1);
+  const sameGenus=ranked.filter(c=>genusFromScientific(c.scientificName)===topGenus);
+  if(sameGenus.length>=2) return [ranked[0]];
+  return ranked.slice(0,2);
+}
+function isSpeciesLevelProfile(profile){
+  if(!profile) return false;
+  const rank=String(profile.taxonRank||profile.verification?.rank||'').toUpperCase();
+  if(['SPECIES','SUBSPECIES','VARIETY','FORM','CULTIVAR'].includes(rank)) return true;
+  return String(profile.scientific||'').trim().split(/\s+/).filter(Boolean).length>=2;
+}
+function scanResultSummary(profile){
+  if(hasUsefulCareText(profile)) return `${profile.sun||''} · ${profile.water||''}`.replace(/^ · | · $/g,'').trim();
+  const guide=String(profile.guide||'').trim();
+  if(guide.length>48 && !/confirm the exact species|confirm exact species|could not be found/i.test(guide)) return guide.slice(0,140);
+  if(profile.scientific) return `Verified botanical match · ${profile.scientific}`;
+  return 'Verified botanical match from Cruvit plant knowledge.';
 }
 function buildScanProfileFromLive(live,candidate,photo){
   const p=storePlantProfile(Object.assign({},live,{tags:[...(live.tags||[]),'photo-identified','ai-profile']}));
   p.scanPhotoUrl=photo.dataUrl;
-  p.photoUrl=photo.dataUrl;
   p.identifyConfidence=candidate.confidence||'';
   p.identifySource='photo+gbif';
   if(live.imageUrl&&!/^data:image\//i.test(live.imageUrl)) p.imageUrl=live.imageUrl;
   else p.imageUrl='';
+  delete p.photoUrl;
+  p.scanSummary=scanResultSummary(p);
   return p;
 }
 async function resolveScanCandidateViaEngine(candidate,photo){
@@ -1850,32 +1879,35 @@ async function resolveScanCandidateViaEngine(candidate,photo){
   for(const query of queries){
     try{
       const bundle=await fetchPlantKnowledgeBundle(query,'Scan & Identify');
-      if(bundle.profile&&isCredibleLivePlantProfile(bundle.profile,query)){
+      if(bundle.profile&&isSpeciesLevelProfile(bundle.profile)&&isCredibleLivePlantProfile(bundle.profile,query)){
         return buildScanProfileFromLive(bundle.profile,candidate,photo);
       }
-      const genus=(candidate.scientificName||'').split(/\s+/)[0].toLowerCase();
+      const genus=genusFromScientific(candidate.scientificName);
       for(const s of (bundle.suggestions||[])){
         const stub=profileFromGbifSuggestion(s,query);
         if(!stub) continue;
         const sci=String(stub.scientific||'').toLowerCase();
         if(genus&&sci&&!sci.startsWith(genus)) continue;
         const full=await fetchPlantProfile(stub.scientific||stub.name,'Scan & Identify');
-        if(full&&isCredibleLivePlantProfile(full,query)){
+        if(full&&isSpeciesLevelProfile(full)&&isCredibleLivePlantProfile(full,query)){
           return buildScanProfileFromLive(full,candidate,photo);
         }
+      }
+      if(bundle.profile&&isCredibleLivePlantProfile(bundle.profile,query)){
+        return buildScanProfileFromLive(bundle.profile,candidate,photo);
       }
     }catch(_){}
   }
   return null;
 }
 async function resolveScanCandidates(candidates,photo){
-  const ranked=rankIdentifyCandidates(candidates);
+  const ranked=collapseScanCandidates(candidates);
   const resolved=[];
-  for(const candidate of ranked.slice(0,3)){
+  for(const candidate of ranked){
     const profile=await resolveScanCandidateViaEngine(candidate,photo);
     if(profile) resolved.push(profile);
   }
-  return resolved;
+  return resolved.slice(0,1);
 }
 async function enrichSuggestionProfiles(suggestions,source){
   const out=[];
@@ -1904,10 +1936,10 @@ function buildScanCandidateProfile(candidate,photo){
     guide:sci?`Identified from photo as ${sci}. Cruvit is loading verified care details…`:'Identified from photo. Cruvit is loading verified care details…'
   },common);
   profile.scanPhotoUrl=photo.dataUrl;
-  profile.photoUrl=photo.dataUrl;
   profile.imageUrl='';
   profile.identifyConfidence=candidate.confidence||'';
   profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
+  profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
   return profile;
 }
 function renderScanProfiles(profiles,noteText){
@@ -1922,18 +1954,18 @@ function renderScanProfiles(profiles,noteText){
 }
 async function enrichScanProfiles(profiles){
   await Promise.all((profiles||[]).map(async p=>{
-    if(hasUsefulCareText(p)&&p.botanicalVerified) return;
     const query=p.scientific||p.name;
     if(!query) return;
     try{
       const live=await fetchPlantProfile(query,'Scan & Identify');
-      if(!live||!isCredibleLivePlantProfile(live,query)||!hasUsefulCareText(live)) return;
-      const scanPhoto=p.scanPhotoUrl||p.photoUrl||'';
+      if(!live||!isCredibleLivePlantProfile(live,query)) return;
+      const scanPhoto=p.scanPhotoUrl||'';
       const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
       Object.assign(p,updated);
+      p.scanSummary=scanResultSummary(p);
     }catch(_){}
   }));
-  renderScanProfiles(profiles,'Identification complete. Choose the matching plant below.');
+  return profiles;
 }
 async function handlePlantPhotoSelected(input){
   const note=document.getElementById('scanNote');
@@ -2091,20 +2123,22 @@ async function identifySelectedPlantPhoto(){
     let profiles=await resolveScanCandidates(parsed.candidates,photo);
 
     if(!profiles.length){
-      const ranked=rankIdentifyCandidates(parsed.candidates);
-      profiles=ranked.slice(0,parsed.confidence==='high'?1:2).map(c=>{
-        const p=buildScanCandidateProfile(c,photo);
+      const ranked=collapseScanCandidates(parsed.candidates);
+      const top=ranked[0];
+      if(top){
+        const p=buildScanCandidateProfile(top,photo);
         storePlantProfile(p);
-        return PLANT_INDEX[p.slug]||p;
-      });
+        profiles=[PLANT_INDEX[p.slug]||p];
+      }
     }
 
-    const noteText=profiles.length===1&&parsed.confidence==='high'
-      ? 'Best match found with high confidence.'
+    profiles=await enrichScanProfiles(profiles);
+
+    const noteText=profiles.length===1
+      ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
       : 'Choose the closest verified match below.';
 
-    renderScanProfiles(profiles,noteText+' Loading care details…');
-    enrichScanProfiles(profiles).catch(err=>console.warn('Scan profile enrichment failed',err));
+    renderScanProfiles(profiles,noteText);
   }catch(err){
     console.error('Plant photo identification failed',err);
     const message=String(err?.message||'Identification failed.');
@@ -2164,7 +2198,7 @@ function isCredibleLivePlantProfile(profile,query){
   const hasScientific=!!sci && !['plant','various plant species','unknown'].includes(sci);
   const hasImage=!!(profile.imageUrl||profile.image||profile.photoUrl);
   const hasCare=!!(profile.sun||profile.water||profile.guide||profile.climate);
-  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment|confirm light needs|confirm watering|see plant guide|loading care profile/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
+  const generic=/verify by species|water according to season|growth habit depends|plant profile could not be found|confirm exact species before treatment|confirm light needs|confirm watering|see plant guide|loading care profile|match light exposure to the confirmed species|light needs vary by species|watering varies by species/i.test(String(profile.sun+' '+profile.water+' '+profile.growth+' '+profile.guide));
   const directMatch=[n,sci,he,...aliases].filter(Boolean).some(a=>a===q || a.includes(q) || q.includes(a));
   if(profile.botanicalVerified && (hasScientific || hasImage || hasIdentity) && (directMatch || hasUsefulCareText(profile))) return true;
   if(generic && !hasUsefulCareText(profile)) return false;
@@ -2330,7 +2364,8 @@ function getLocalPlantMatches(query,source){
     .map(x=>x[1]);
 }
 function plantResultButton(p,source){
-  return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(p.sun||'')} · ${escapeHtml(p.water||'')}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
+  const careLine=source==='Scan & Identify'?(p.scanSummary||scanResultSummary(p)):`${p.sun||''} · ${p.water||''}`;
+  return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(careLine)}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function slugify(v){return String(v||'plant').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'plant'}
@@ -2407,7 +2442,7 @@ function safeUiAfterPlantAdd(){
 function buildPlantFromReference(ref,source,options){
   const safeRef=ref||{};
   const prefs={autoTasks:options?.autoTasks!==false,reminders:options?.reminders!==false,alerts:true};
-  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||safeRef.photoUrl||instantPlantImageUrl(safeRef)||'';
+  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||'';
   const plant=applyProfileToPlant({name:safeRef.name||'Plant',status:safeRef.status||'Healthy',mark:safeRef.mark||'✓',source,archived:false,prefs},safeRef);
   plant.id='plant_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
   plant.name=safeRef.name||plant.name||'Plant';
@@ -2417,6 +2452,7 @@ function buildPlantFromReference(ref,source,options){
   plant.archived=false;
   plant.prefs=prefs;
   plant.imageUrl=existingImage||plant.imageUrl||'';
+  if(safeRef.scanPhotoUrl && source==='Scan & Identify') plant.photoUrl=safeRef.scanPhotoUrl;
   plant.meta=plant.meta||{};
   if(plant.imageUrl)plant.meta.imageUrl=plant.imageUrl;
   return plant;
