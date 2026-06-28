@@ -1,7 +1,6 @@
-/* Cruvit — Dashboard layout & visual system (mockup-aligned, CSS only) */
+/* Cruvit — Dashboard layout & visual system (hero v2) */
 
 @media (min-width: 1121px) {
-  /* ── Page shell ── */
   .app {
     padding: var(--space-5) var(--space-6) var(--space-8);
     background: linear-gradient(180deg, #faf8f2 0%, #f3f7ee 48%, #eef4e8 100%);
@@ -31,272 +30,19 @@
     font-weight: 600;
   }
 
-  /* ── 3-column hero (Welcome | Garden Mode | Side rail + photo) ── */
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(270px, 0.84fr) minmax(480px, 1.52fr) minmax(250px, 0.72fr);
-    grid-template-rows: minmax(460px, auto) auto;
-    gap: 24px;
-    align-items: stretch;
+  .hero-v2-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     margin-top: var(--space-5);
   }
 
-  .hero .intro {
-    grid-column: 1;
-    grid-row: 1;
-    min-height: 460px;
-    padding: var(--space-8) var(--space-7);
-    background:
-      radial-gradient(ellipse 72% 58% at 92% 8%, rgba(240, 215, 140, 0.34), transparent 58%),
-      radial-gradient(ellipse 64% 52% at 8% 96%, rgba(196, 228, 178, 0.28), transparent 54%),
-      rgba(255, 254, 249, 0.96);
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    border-radius: 28px;
-    box-shadow: 0 14px 40px rgba(15, 61, 46, 0.07);
-    justify-content: flex-start;
-  }
-
-  .hero .intro::after {
-    opacity: 0.85;
-  }
-
-  .hero .intro-leaves {
-    opacity: 1;
-    width: 220px;
-    height: 176px;
-    background-size: 220px auto;
-  }
-
-  .hero .intro .greeting {
-    display: none;
-  }
-
-  .hero .intro h2 {
-    margin-top: var(--space-2);
-    font-size: clamp(2rem, 2.6vw, 2.75rem);
-    max-width: none;
-    line-height: 1.08;
-    font-weight: 600;
-  }
-
-  .hero .intro p {
-    max-width: none;
-    font-size: 0.9375rem;
-    color: var(--muted2);
-    margin-top: var(--space-4);
-  }
-
-  .hero .intro .actions {
-    margin-top: auto;
-    max-width: 100%;
-    padding-top: var(--space-6);
-  }
-
-  .hero .intro .btn.main {
-    width: 100%;
-    padding: 14px 22px;
-    border-radius: var(--r-full);
-    font-size: 0.9375rem;
-    box-shadow: 0 10px 28px rgba(15, 61, 46, 0.18);
-  }
-
-  .hero .intro .actions-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .hero .intro .actions-row .btn.light {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    justify-content: flex-start;
-    padding: 8px 2px;
-    font-weight: 500;
-    color: var(--forest-light);
-  }
-
-  .hero .intro .actions-row .btn.light:hover {
-    background: transparent;
-    color: var(--forest);
-    transform: none;
-  }
-
-  .hero .intro .intro-action-photo::before {
-    content: "🗺️ ";
-  }
-
-  .hero .intro .intro-action-photo {
-    font-size: 0;
-  }
-
-  .hero .intro .intro-action-photo::after {
-    content: "View garden";
-    font-size: 0.9375rem;
-  }
-
-  .hero .intro .actions-row .btn.light:last-child::before {
-    content: "+ ";
-    font-weight: 600;
-  }
-
-  /* Split mood panel into center scene + right sidebar */
-  .premium-mood-panel {
-    display: contents;
-  }
-
-  .mood-scene {
-    grid-column: 2;
-    grid-row: 1;
-    min-height: 460px;
-    border-radius: 28px;
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    box-shadow: 0 14px 40px rgba(15, 61, 46, 0.07);
-    background: rgba(255, 254, 249, 0.96);
-  }
-
-  .mood-scene h3 {
-    font-size: clamp(2.5rem, 3.2vw, 3.25rem);
-    font-weight: 600;
-  }
-
-  .mood-summary {
-    background: rgba(255, 254, 249, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    border-radius: var(--r-full);
-    box-shadow: 0 8px 24px rgba(15, 61, 46, 0.08);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-
-  .mood-focus {
-    width: min(520px, 92%);
-    background: rgba(255, 254, 249, 0.92);
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    border-radius: 20px;
-    box-shadow: 0 8px 22px rgba(15, 61, 46, 0.07);
-  }
-
-  /* Right column: stats list + garden photo */
-  .mood-rail {
-    grid-column: 3;
-    grid-row: 1;
-    align-self: start;
-    z-index: 2;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding: 16px 16px 12px;
-    background: transparent;
-    border: 0;
-  }
-
-  .mood-rail > .rail-row {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    grid-template-rows: auto auto;
-    align-items: center;
-    gap: 2px 12px;
-    text-align: left;
-    padding: 0;
-  }
-
-  .mood-rail .rail-icon {
-    grid-row: 1 / 3;
-    font-size: 18px;
-    order: unset;
-  }
-
-  .mood-rail .rail-row b {
-    grid-column: 2;
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #fff;
-    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.38);
-    order: unset;
-  }
-
-  .mood-rail .rail-row small {
-    grid-column: 2;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.32);
-    order: unset;
-  }
-
-  .mood-rail .rail-row small br {
-    display: none;
-  }
-
-  .mood-rail .rail-row small::first-line {
-    font-weight: 500;
-  }
-
-  .mood-rail .rail-note {
-    border: 0;
-    padding: 0;
-    margin: 4px 0 0;
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  .mood-rail button.rail-note.location-note {
-    text-align: left;
-    align-items: flex-start;
-  }
-
-  .mood-rail .rail-note-title,
-  .mood-rail .rail-note-sub {
-    font-size: 0.8125rem;
-    text-align: left;
-    color: #fff;
-    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.38);
-  }
-
-  .mood-rail .rail-note-sub {
-    color: rgba(255, 255, 255, 0.86);
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.32);
-  }
-
-  .mood-rail .scan {
-    display: none;
-  }
-
-  .garden-snapshot {
-    grid-column: 3;
-    grid-row: 1;
-    align-self: stretch;
-    width: 100%;
-    min-height: 460px;
-    height: 100%;
-    max-height: none;
-    aspect-ratio: auto;
-    border-radius: 28px;
-    box-shadow: 0 16px 42px rgba(15, 61, 46, 0.14);
-  }
-
-  .hero .garden-snapshot::after {
-    background: linear-gradient(
-      180deg,
-      rgba(3, 14, 10, 0.68) 0%,
-      rgba(4, 16, 11, 0.32) 24%,
-      rgba(6, 24, 16, 0.06) 46%,
-      rgba(4, 18, 12, 0.38) 72%,
-      rgba(3, 14, 10, 0.78) 100%
-    );
-  }
-
-  /* Bottom nav — floating pill bar */
-  .hero .tabs {
-    grid-column: 1 / -1;
-    grid-row: 2;
+  .hero-v2-layout .tabs {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     gap: 6px;
-    margin: 8px auto 0;
+    margin: 4px auto 0;
     padding: 8px 10px;
     max-width: min(760px, 100%);
     background: rgba(255, 254, 249, 0.94);
@@ -307,7 +53,7 @@
     -webkit-backdrop-filter: blur(16px);
   }
 
-  .hero .tab {
+  .hero-v2-layout .tab {
     padding: 10px 18px;
     font-weight: 500;
     font-size: 0.8125rem;
@@ -317,18 +63,22 @@
     box-shadow: none;
   }
 
-  .hero .tab:hover {
+  .hero-v2-layout .tab:hover {
     background: rgba(237, 245, 230, 0.85);
   }
 
-  .hero .tab.active {
+  .hero-v2-layout .tab.active {
     background: linear-gradient(135deg, var(--forest-light) 0%, var(--forest) 100%);
     color: #fff;
     box-shadow: 0 6px 18px rgba(15, 61, 46, 0.2);
   }
 
-  .hero .tab-ico {
+  .hero-v2-layout .tab-ico {
     font-size: 14px;
+  }
+
+  .hero-meta-bar {
+    padding: 0 4px;
   }
 
   .content {
@@ -343,72 +93,17 @@
 }
 
 @media (min-width: 761px) and (max-width: 1120px) {
-  .hero {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .premium-mood-panel {
-    display: grid;
-  }
-
-  .mood-scene,
-  .mood-rail,
-  .garden-snapshot {
-    grid-column: auto;
-    grid-row: auto;
-    align-self: auto;
-  }
-
-  .mood-rail {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    padding: 10px 14px 12px;
-    background: linear-gradient(180deg, rgba(237, 245, 230, 0.92) 0%, rgba(220, 234, 200, 0.95) 100%);
-    border-top: 1px solid rgba(255, 255, 255, 0.55);
-  }
-
-  .mood-rail .scan {
-    display: block;
-  }
-
-  .garden-snapshot {
-    width: 100%;
-    min-height: 440px;
-    max-height: none;
-    aspect-ratio: 4 / 5;
-    border-radius: 28px;
-  }
-
-  .hero .tabs {
+  .hero-v2-layout .tabs {
     max-width: none;
   }
 }
 
 @media (max-width: 760px) {
-  /* Mobile: calm stacked flow, keep logic order */
   .app {
     background: linear-gradient(180deg, #faf8f2 0%, #f0f5ea 100%);
   }
 
-  .hero .intro {
-    border: 1px solid rgba(15, 61, 46, 0.06);
-  }
-
-  .premium-mood-panel,
-  .mood-scene {
-    border-radius: 24px;
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    box-shadow: 0 10px 28px rgba(15, 61, 46, 0.07);
-  }
-
-  .garden-snapshot {
-    border-radius: 28px;
-    box-shadow: 0 14px 36px rgba(15, 61, 46, 0.12);
-  }
-
-  .hero .tabs {
+  .hero-v2-layout .tabs {
     padding: 6px 8px 10px;
     overflow-x: auto;
     scrollbar-width: thin;
@@ -419,7 +114,7 @@
     box-shadow: 0 8px 24px rgba(15, 61, 46, 0.08);
   }
 
-  .hero .tab.active {
+  .hero-v2-layout .tab.active {
     box-shadow: 0 4px 14px rgba(15, 61, 46, 0.16);
   }
 }
