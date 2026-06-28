@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250631b">
+<link rel="stylesheet" href="styles.css?v=20250631d">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -16,8 +16,11 @@
 <div class="app"><div class="shell">
 <header class="top" id="topBar">
   <button type="button" class="brand brand-menu-btn" id="brandMenuBtn" onclick="toggleMobileNav(event)" aria-expanded="false" aria-controls="headerNav" aria-label="Open Cruvit menu">
-    <img src="assets/cruvit-logo.svg" alt="">
-    <div><h1>Cruvit</h1><span>My Garden OS</span></div>
+    <span class="brand-menu-mark">
+      <img src="assets/cruvit-logo.svg" alt="">
+      <span class="brand-menu-label" id="brandMenuLabel">Menu</span>
+    </span>
+    <div class="brand-copy"><h1>Cruvit</h1><span>My Garden OS</span></div>
   </button>
   <button type="button" class="pill dark mobile-header-cart" onclick="toggleCart()">🛒 Cart <span id="cartCountMobile" class="badge">0</span></button>
   <nav class="nav" id="headerNav">
@@ -252,6 +255,7 @@
     <h2>Save your garden</h2>
     <p class="login-lead">Sign in to keep your plants, tasks and rewards synced.</p>
     <p class="login-error hidden" id="loginError" role="alert"></p>
+    <p class="login-social-note hidden" id="loginSocialNote">Google and Facebook buttons appear once social sign-in keys are added in Netlify.</p>
     <input class="field" id="emailField" type="email" placeholder="Email address" autocomplete="email">
     <input class="field" id="passwordField" type="password" placeholder="Password" autocomplete="current-password">
     <button type="button" class="btn main login-btn" onclick="loginWithEmail()">Continue</button>
@@ -526,6 +530,8 @@ function toggleMobileNav(event){
   if(btn){
     btn.setAttribute('aria-expanded',open?'true':'false');
     btn.setAttribute('aria-label',open?'Close Cruvit menu':'Open Cruvit menu');
+    const label=document.getElementById('brandMenuLabel');
+    if(label)label.textContent=open?'Close':'Menu';
   }
 }
 function closeMobileNav(){
@@ -536,6 +542,8 @@ function closeMobileNav(){
   if(btn){
     btn.setAttribute('aria-expanded','false');
     btn.setAttribute('aria-label','Open Cruvit menu');
+    const label=document.getElementById('brandMenuLabel');
+    if(label)label.textContent='Menu';
   }
 }
 function openRemindersFromHeader(event){
@@ -3475,10 +3483,9 @@ async function prepareSocialSignIn(){
     const hasFacebook=useSupabase||!!cfg.facebookAppId;
     googleFallback?.classList.toggle('hidden',!hasGoogle);
     fbBtn?.classList.toggle('hidden',!hasFacebook);
-    if(!hasGoogle&&!hasFacebook&&!useSupabase){
-      showLoginError('Social sign-in is not configured yet. Use email or ask the site admin to add Google/Facebook keys in Netlify.');
-      return;
-    }
+    const socialNote=document.getElementById('loginSocialNote');
+    if(socialNote)socialNote.classList.toggle('hidden',hasGoogle||hasFacebook||useSupabase);
+    if(!hasGoogle&&!hasFacebook&&!useSupabase)return;
     if(!useSupabase&&cfg.googleClientId&&googleMount){
       try{
         await ensureGoogleScript();

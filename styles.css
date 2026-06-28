@@ -174,6 +174,23 @@ button { cursor: pointer; }
   gap: var(--space-3);
 }
 
+.brand-menu-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.brand-menu-label {
+  display: none;
+}
+
+.brand-copy h1,
+.brand-copy span {
+  display: block;
+}
+
 .mobile-header-cart {
   display: none;
 }
@@ -2158,6 +2175,19 @@ button.rail-note.location-note:hover {
 
 .login-error.hidden { display: none; }
 
+.login-social-note {
+  margin: 0 0 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(47, 158, 106, 0.08);
+  color: #4a6354;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.login-social-note.hidden { display: none; }
+
 .login-btn {
   width: 100%;
   margin-top: 12px;
@@ -2524,6 +2554,40 @@ button.rail-note.location-note:hover {
     min-width: 0;
     cursor: pointer;
     padding: 0;
+    align-items: center;
+  }
+
+  .brand-menu-mark {
+    padding: 2px 4px 0;
+    border-radius: var(--r-md);
+    border: 1px solid rgba(15, 61, 46, 0.12);
+    background: linear-gradient(145deg, #fff, var(--sage-warm));
+    box-shadow: var(--shadow-xs);
+  }
+
+  .brand-menu-mark img {
+    width: 38px;
+    height: 38px;
+    padding: 4px;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .brand-menu-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest);
+    line-height: 1;
+    padding-bottom: 4px;
+  }
+
+  .top.nav-open .brand-menu-mark {
+    border-color: rgba(47, 158, 106, 0.35);
+    box-shadow: inset 0 0 0 1px rgba(47, 158, 106, 0.12);
   }
 
   .top.nav-open .brand-menu-btn {
