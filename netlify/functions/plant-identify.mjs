@@ -352,14 +352,30 @@ function identificationBlob(result) {
 
 function looksLikeDodonaeaSignals(text = '') {
   const blob = String(text || '').toLowerCase();
+  if (looksLikeHouseplantSignals(blob)) return false;
   return (
-    /seed.?cap|seed pod|fruit|papery wing|winged cap|three.?wing|3.?wing|samara|hop bush|dodonaea|אשחר|viscosa/i.test(
+    (/seed.?cap|seed pod|papery wing|winged cap|three.?wing|3.?wing|samara|hop bush|hopbush|dodonaea|אשחר|viscosa/i.test(
       blob
-    ) &&
+    ) ||
+      (/papery|winged/i.test(blob) && /cap|pod|seed|samara/i.test(blob))) &&
     !/large (showy )?(red )?flower|coral flower|pea.?shaped flower|billowing petal|trifoliate flower cluster/i.test(
       blob
     )
   );
+}
+
+function looksLikeHouseplantSignals(text = '') {
+  return /zamioculcas|zz plant|pothos|monstera|philodendron|snake plant|dracaena|ficus elastica|rubber plant|peace lily|spathiphyllum|indoor|houseplant|house plant|potted|pot plant|glossy.*leaf|waxy.*leaf|thick.*stem|compound leaf|pinnate leaf|leaflets along|upright stem/i.test(
+    String(text || '').toLowerCase()
+  );
+}
+
+function hasExplicitSeedCapsules(result) {
+  const va = result?.visual_analysis || result?.visualAnalysis || {};
+  const prom = String(va.prominent_structure || '').toLowerCase();
+  const desc = String(va.structure_description || '').toLowerCase();
+  if (prom === 'seed_fruit' && /papery|wing|capsule|samara|hop/i.test(desc)) return true;
+  return /papery.*wing|winged.*seed|3.?wing|three.?wing|seed capsule|hop bush/i.test(desc);
 }
 
 function looksLikeErythrinaSignals(text = '') {
@@ -372,6 +388,10 @@ function applyIdentificationCorrections(result, userHint = '') {
   const hint = cleanText(userHint).toLowerCase();
   const analysis = visualAnalysisText(result);
   const combined = `${analysis} ${identificationBlob(result)}`;
+
+  if (looksLikeHouseplantSignals(analysis) || looksLikeHouseplantSignals(identificationBlob(result))) {
+    return result;
+  }
 
   if (/dodonaea|hop bush|אשחר|viscosa/i.test(hint)) {
     return {
@@ -389,7 +409,7 @@ function applyIdentificationCorrections(result, userHint = '') {
 
   if (
     (idGenus === 'erythrina' || looksLikeErythrinaSignals(idBlob)) &&
-    (looksLikeDodonaeaSignals(analysis) || looksLikeDodonaeaSignals(combined))
+    (hasExplicitSeedCapsules(result) || looksLikeDodonaeaSignals(analysis))
   ) {
     return {
       ...result,
@@ -401,7 +421,7 @@ function applyIdentificationCorrections(result, userHint = '') {
     };
   }
 
-  if (looksLikeDodonaeaSignals(analysis) && idGenus !== 'dodonaea') {
+  if (hasExplicitSeedCapsules(result) && looksLikeDodonaeaSignals(analysis) && idGenus !== 'dodonaea') {
     return {
       ...result,
       common_name: 'Hop bush',
@@ -436,17 +456,22 @@ Return ONLY valid JSON, without markdown, in this exact shape:
 }
 
 Follow these steps IN ORDER before naming the plant:
-1. Describe what the colored pink/red/maroon parts actually are: large showy flowers, papery winged seed capsules, colored bracts, or colored leaves?
-2. Describe leaf type: simple elongated leaves vs trifoliate (3 leaflets) vs pinnate vs needles.
-3. Only then choose the genus/species.
+1. Is this an indoor/potted houseplant or an outdoor garden plant?
+2. Describe what any colored pink/red/maroon parts actually are: large showy flowers, papery winged seed capsules, colored bracts, or just green/colored leaves?
+3. Describe leaf type: simple vs compound/pinnate vs trifoliate vs needles.
+4. Only then choose the genus/species.
 
-Critical Mediterranean look-alikes — do NOT confuse these:
-- Dodonaea viscosa (hop bush, Hebrew: אשחר): dense clusters of papery 3-winged seed capsules (pink/red/brown/green), simple leathery leaves, common hedge shrub. NOT large flowers.
-- Erythrina (coral tree): trifoliate leaves and large bright red pea-shaped flowers. NOT papery winged seed capsules.
+Common houseplants (identify these when the photo shows a potted indoor plant):
+- Zamioculcas zamiifolia (ZZ plant): thick upright stems, glossy dark-green oval leaflets in pairs.
+- Epipremnum aureum (pothos), Monstera deliciosa, Sansevieria, Ficus elastica, Spathiphyllum, Philodendron.
+
+Outdoor Mediterranean look-alikes — only apply when the photo clearly shows an outdoor shrub/tree:
+- Dodonaea viscosa (hop bush, Hebrew: אשחר): ONLY when you see dense papery 3-winged seed capsules on a hedge shrub — never for indoor potted plants.
+- Erythrina (coral tree): trifoliate leaves and large bright red pea-shaped flowers — not papery seed capsules.
 - Bougainvillea: papery bracts around tiny white flowers, often on a vine.
-- Weigela / Escallonia: shrub with real trumpet or small flowers, not papery wings.
 
-If the photo shows papery 3-winged seed capsules on a shrub with simple leaves, identify as Dodonaea viscosa — never Erythrina.
+Do NOT identify a green indoor potted plant as Dodonaea, Erythrina, or other outdoor hedge shrubs.
+Only identify Dodonaea viscosa when papery winged seed capsules are clearly visible on an outdoor shrub.
 
 Rules:
 - Identify from the image only. Location context: ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.
@@ -483,17 +508,17 @@ async function refineLikelyMisidentification(image, firstResult, key, model) {
   const genus = genusKey(firstResult?.scientific_name || firstResult?.scientificName);
   if (genus === 'dodonaea') return firstResult;
 
+  const analysis = visualAnalysisText(firstResult);
+  if (looksLikeHouseplantSignals(analysis) || looksLikeHouseplantSignals(identificationBlob(firstResult))) {
+    return firstResult;
+  }
+
   const va = firstResult?.visual_analysis || firstResult?.visualAnalysis || {};
   const prom = String(va.prominent_structure || '').toLowerCase();
-  const analysis = visualAnalysisText(firstResult);
-  const watchGenera = new Set(['erythrina', 'cercis', 'bougainvillea', 'weigela', 'escallonia', 'kalmia', 'abelia']);
+  const watchGenera = new Set(['erythrina', 'cercis']);
   const shouldReview =
     watchGenera.has(genus) ||
-    prom.includes('seed') ||
-    prom.includes('fruit') ||
-    looksLikeDodonaeaSignals(analysis) ||
-    (/pink|red|magenta|maroon|purple/i.test(analysis) &&
-      (/shrub|hedge|simple/i.test(analysis) || String(va.leaf_type || '').toLowerCase() === 'simple'));
+    (prom === 'seed_fruit' && hasExplicitSeedCapsules(firstResult));
 
   if (!shouldReview) return firstResult;
 
@@ -563,27 +588,30 @@ Rules:
       review?.is_papery_winged_seed_capsules === true ||
       review?.isPaperyWingedSeedCapsules === true;
 
-    if (
-      isCapsules ||
-      looksLikeDodonaeaSignals(JSON.stringify(review || {})) ||
-      genusKey(best?.scientific_name || best?.scientificName) === 'dodonaea'
-    ) {
-      return {
-        ...firstResult,
-        visual_analysis: {
-          ...(firstResult?.visual_analysis || {}),
-          prominent_structure: 'seed_fruit',
-          structure_description: 'Papery winged seed capsules',
-          leaf_type: review?.leaf_type || 'simple',
-          notes: 'Refined from Erythrina misidentification'
-        },
-        common_name: best?.common_name || best?.commonName || 'Hop bush',
-        scientific_name: best?.scientific_name || best?.scientificName || 'Dodonaea viscosa',
-        confidence: 'high',
-        alternatives: [],
-        _corrected: 'seed_capsule_second_pass'
-      };
+    if (review?.is_papery_winged_seed_capsules === false || review?.isPaperyWingedSeedCapsules === false) {
+      return firstResult;
     }
+
+    if (!isCapsules) return firstResult;
+
+    const bestGenus = genusKey(best?.scientific_name || best?.scientificName);
+    if (bestGenus !== 'dodonaea') return firstResult;
+
+    return {
+      ...firstResult,
+      visual_analysis: {
+        ...(firstResult?.visual_analysis || {}),
+        prominent_structure: 'seed_fruit',
+        structure_description: 'Papery winged seed capsules',
+        leaf_type: review?.leaf_type || 'simple',
+        notes: 'Refined from likely misidentification'
+      },
+      common_name: best?.common_name || best?.commonName || 'Hop bush',
+      scientific_name: best?.scientific_name || best?.scientificName || 'Dodonaea viscosa',
+      confidence: 'high',
+      alternatives: [],
+      _corrected: 'seed_capsule_second_pass'
+    };
   } catch {
     clearTimeout(timer);
   }

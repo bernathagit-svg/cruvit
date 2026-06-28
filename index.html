@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630h">
+<link rel="stylesheet" href="styles.css?v=20250630i">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -1643,6 +1643,7 @@ function renderAddOptions(){
   </div><div class="source-ready">Knowledge layer is structured for a real OpenAI/Supabase connection later, without exposing your API key in the browser.</div>`;
 }
 function openPlantChooser(source){
+  window.plantScanHint='';
   const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.toggle('scan-mode', source==='Scan & Identify');
   document.getElementById('addPlantTitle').textContent=source==='Scan & Identify'?'Identify and add plant':source;
   document.getElementById('addPlantSubtitle').textContent=source==='Scan & Identify'?'Take or upload a plant photo. Cruvit will identify it, then you can add the verified plant profile to My Garden.':'Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
@@ -1665,7 +1666,7 @@ function openPlantChooser(source){
       <div id="plantPhotoPreview" class="scan-preview hidden"></div>
       <button id="identifyPlantBtn" class="btn main scan-identify hidden" type="button" onclick="identifySelectedPlantPhoto()">Identify plant</button>
     </div>`:'';
-  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
+  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="window.plantScanHint=this.value.trim();renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
   resetAddPlantSearchState();
   addPlantSearchState.source=source;
   window.selectedPlantPhoto=null;
@@ -1816,7 +1817,7 @@ function buildPlantIdentifyRequestBody(photo){
     mediaType='image/jpeg';
   }
   dataUrl=`data:${mediaType};base64,${base64}`;
-  const hint=document.getElementById('plantSearchInput')?.value?.trim()||'';
+  const hint=window.plantScanHint||'';
   return {
     imageDataUrl:dataUrl,
     imageBase64:base64,
@@ -1968,7 +1969,8 @@ function buildScanCandidateProfile(candidate,photo){
   profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
   return profile;
 }
-function renderScanProfiles(profiles,noteText){
+function renderScanProfiles(profiles,noteText,seq){
+  if(seq!==undefined && seq!==plantScanSeq) return;
   const results=document.getElementById('plantResults');
   const note=document.getElementById('scanNote');
   if(results){
@@ -1978,12 +1980,13 @@ function renderScanProfiles(profiles,noteText){
   if(note&&noteText)note.textContent=noteText;
   setTimeout(hydratePlantResultImages,0);
 }
-async function enrichScanProfiles(profiles){
+async function enrichScanProfiles(profiles,seq){
   await Promise.all((profiles||[]).map(async p=>{
     const query=p.scientific||p.name;
     if(!query) return;
     try{
       const live=await fetchPlantProfile(query,'Scan & Identify');
+      if(seq!==plantScanSeq) return;
       if(!live||!isCredibleLivePlantProfile(live,query)) return;
       const scanPhoto=p.scanPhotoUrl||'';
       const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
@@ -1991,6 +1994,7 @@ async function enrichScanProfiles(profiles){
       p.scanSummary=scanResultSummary(p);
     }catch(_){}
   }));
+  if(seq!==undefined && seq!==plantScanSeq) return profiles;
   return profiles;
 }
 async function handlePlantPhotoSelected(input){
@@ -1999,6 +2003,7 @@ async function handlePlantPhotoSelected(input){
   const btn=document.getElementById('identifyPlantBtn');
   const file=input.files&&input.files[0];
   window.selectedPlantPhoto=null;
+  window.plantScanHint='';
 
   if(!file){
     if(note)note.textContent='Choose or photograph a plant to start AI identification.';
@@ -2081,6 +2086,7 @@ async function identifySelectedPlantPhoto(){
   }
   if(window.plantScanInProgress)return;
   window.plantScanInProgress=true;
+  const scanSeq=++plantScanSeq;
 
   if(btn){
     btn.disabled=true;
@@ -2146,7 +2152,10 @@ async function identifySelectedPlantPhoto(){
     if(note)note.textContent='Verifying identification against Cruvit botanical database…';
     if(results)results.innerHTML='<div class="plant-source-note">Matching photo to verified plant records…</div>';
 
+    if(scanSeq!==plantScanSeq) return;
+
     let profiles=await resolveScanCandidates(parsed.candidates,photo);
+    if(scanSeq!==plantScanSeq) return;
 
     if(!profiles.length){
       const ranked=collapseScanCandidates(parsed.candidates);
@@ -2158,13 +2167,14 @@ async function identifySelectedPlantPhoto(){
       }
     }
 
-    profiles=await enrichScanProfiles(profiles);
+    profiles=await enrichScanProfiles(profiles,scanSeq);
+    if(scanSeq!==plantScanSeq) return;
 
     const noteText=profiles.length===1
       ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
       : 'Choose the closest verified match below.';
 
-    renderScanProfiles(profiles,noteText);
+    renderScanProfiles(profiles,noteText,scanSeq);
   }catch(err){
     console.error('Plant photo identification failed',err);
     const message=String(err?.message||'Identification failed.');
@@ -2192,7 +2202,7 @@ const PLANT_QUERY_ALIASES={
   'עץ מנגו':'Mangifera indica','מנגו':'Mangifera indica','עץ רימון':'Punica granatum','רימון':'Punica granatum','פטל':'Rubus idaeus','ליצי':'Litchi chinensis','ליצ׳י':'Litchi chinensis',
   'עץ תפוח':'Malus domestica','תפוח':'Malus domestica','עץ אגס':'Pyrus communis','אגס':'Pyrus communis','עץ שקד':'Prunus dulcis','שקד':'Prunus dulcis','עץ תאנה':'Ficus carica','תאנה':'Ficus carica','גפן':'Vitis vinifera','ענבים':'Vitis vinifera','דקל':'Phoenix dactylifera','תמר':'Phoenix dactylifera','אבוקדו':'Persea americana','עץ אבוקדו':'Persea americana','עץ משמש':'Prunus armeniaca','משמש':'Prunus armeniaca','עץ אפרסק':'Prunus persica','אפרסק':'Prunus persica','עץ שזיף':'Prunus domestica','שזיף':'Prunus domestica','דובדבן':'Prunus avium',
   'יסמין':'Jasminum','לבנדר':'Lavandula angustifolia','רוזמרין':'Salvia rosmarinus','מרווה':'Salvia','נענע':'Mentha','בזיליקום':'Ocimum basilicum','פטרוזיליה':'Petroselinum crispum','כוסברה':'Coriandrum sativum','טימין':'Thymus vulgaris','אורגנו':'Origanum vulgare','ורד':'Rosa','שושנה':'Rosa','היביסקוס':'Hibiscus','בוגנוויליה':'Bougainvillea','פלומריה':'Plumeria','פיקוס':'Ficus','אקליפטוס':'Eucalyptus','קקטוס':'Cactaceae','סוקולנט':'succulent','אלוורה':'Aloe vera','רקפת':'Cyclamen persicum','גרניום':'Pelargonium','הידרנגאה':'Hydrangea macrophylla','הורטנזיה':'Hydrangea macrophylla','זית':'Olea europaea','עץ זית':'Olea europaea','לימון':'Citrus limon','תפוז':'Citrus sinensis',
-  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa'
+  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa','zz plant':'Zamioculcas zamiifolia','zamioculcas':'Zamioculcas zamiifolia','עץ דולר':'Zamioculcas zamiifolia','דולר':'Zamioculcas zamiifolia'
 };
 function canonicalPlantQuery(q){
   const raw=String(q||'').trim();
@@ -2213,6 +2223,7 @@ function searchLocalPlants(query,source){
   return [...exact,...contains].filter((p,i,a)=>a.findIndex(x=>x.slug===p.slug)===i);
 }
 let plantSearchSeq=0;
+let plantScanSeq=0;
 function isCredibleLivePlantProfile(profile,query){
   if(!profile || profile.isPlant===false || profile.error) return false;
   const q=normalizeQuery(canonicalPlantQuery(query));

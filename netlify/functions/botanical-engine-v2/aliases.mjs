@@ -114,7 +114,11 @@ const aliases = new Map(Object.entries({
   'dodonaea': 'Dodonaea viscosa',
   'hop bush': 'Dodonaea viscosa',
   'אשחר': 'Dodonaea viscosa',
-  'עץ אשחר': 'Dodonaea viscosa'
+  'עץ אשחר': 'Dodonaea viscosa',
+  'zz plant': 'Zamioculcas zamiifolia',
+  'zamioculcas': 'Zamioculcas zamiifolia',
+  'עץ דולר': 'Zamioculcas zamiifolia',
+  'דולר': 'Zamioculcas zamiifolia'
 }));
 
 export function aliasFor(value) {
