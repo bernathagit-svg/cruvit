@@ -1135,6 +1135,39 @@ button.rail-note.location-note:hover {
   margin-left: auto;
   margin-right: auto;
   box-sizing: border-box;
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 61, 46, 0.35) rgba(237, 245, 230, 0.85);
+  padding-bottom: 12px;
+}
+
+.hero .tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.hero .tabs::-webkit-scrollbar-track {
+  margin: 0 8px;
+  background: rgba(237, 245, 230, 0.85);
+  border-radius: 999px;
+}
+
+.hero .tabs::-webkit-scrollbar-thumb {
+  background: rgba(15, 61, 46, 0.35);
+  border-radius: 999px;
+}
+
+.hero .tab {
+  flex: 0 0 auto;
+  min-width: max-content;
+}
+
+.hero .tab-label {
+  max-width: none;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .tabs {
@@ -2458,38 +2491,14 @@ button.rail-note.location-note:hover {
   }
   .rail-row b { font-size: 1.125rem; }
 
-  /* Bottom nav — horizontal scroll on mobile so full labels stay readable */
+  /* Bottom nav — mobile spacing (scroll/labels shared with desktop) */
   .hero .tabs {
     gap: 8px;
     margin: var(--space-3) auto var(--space-4);
     padding: 8px 10px 12px;
-    justify-content: flex-start;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(15, 61, 46, 0.35) rgba(237, 245, 230, 0.85);
-  }
-
-  .hero .tabs::-webkit-scrollbar {
-    display: block;
-    height: 4px;
-  }
-
-  .hero .tabs::-webkit-scrollbar-track {
-    margin: 0 8px;
-    background: rgba(237, 245, 230, 0.85);
-    border-radius: 999px;
-  }
-
-  .hero .tabs::-webkit-scrollbar-thumb {
-    background: rgba(15, 61, 46, 0.35);
-    border-radius: 999px;
   }
 
   .hero .tab {
-    flex: 0 0 auto;
-    min-width: max-content;
     flex-direction: row;
     gap: 6px;
     padding: 10px 14px;
@@ -2530,10 +2539,6 @@ button.rail-note.location-note:hover {
 
   .hero .tab-label {
     font-size: 0.8125rem;
-    max-width: none;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: unset;
   }
 
   #tab-rewards {

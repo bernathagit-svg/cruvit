@@ -39,7 +39,7 @@
     gap: 24px;
     align-items: stretch;
     margin-top: var(--space-5);
-    --mood-bar-width: min(520px, 92%);
+    --mood-bar-width: min(680px, 96%);
   }
 
   .hero .intro {
@@ -263,10 +263,10 @@
     grid-row: 2;
     display: flex;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 6px;
     margin: 8px auto 0;
-    padding: 8px 10px;
+    padding: 8px 10px 12px;
     width: var(--mood-bar-width);
     max-width: 100%;
     box-sizing: border-box;
@@ -279,7 +279,9 @@
   }
 
   .hero .tab {
-    padding: 10px 18px;
+    flex: 0 0 auto;
+    min-width: max-content;
+    padding: 10px 16px;
     font-weight: 500;
     font-size: 0.8125rem;
     border-radius: var(--r-full);
