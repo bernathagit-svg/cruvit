@@ -421,10 +421,13 @@ function applyIdentificationCorrections(result, userHint = '') {
   return result;
 }
 
-function buildIdentifyPrompt(location, climate, userHint = '', scanContext = '') {
+function buildIdentifyPrompt(location, climate, userHint = '', scanContext = '', scanId = '') {
   const contextNote = scanContext ? `\n- ${scanContext}` : '';
+  const scanNote = scanId
+    ? `\nThis is a fresh independent scan (id: ${scanId}). Analyze ONLY the attached image in this request. Do not assume continuity with any previous identification.\n`
+    : '';
   return `You are an expert botanist identifying a plant from a photo.
-Return ONLY valid JSON, without markdown, in this exact shape:
+${scanNote}Return ONLY valid JSON, without markdown, in this exact shape:
 {
   "visual_analysis": {
     "prominent_structure": "flowers|seed_fruit|leaves_only|mixed|unclear",
@@ -657,8 +660,9 @@ export default async function handler(request) {
   const climate = cleanText(body?.climate);
   const scanContext = cleanText(body?.scanContext);
   const userHint = cleanText(body?.hint || body?.userQuery || body?.userHint || body?.plantName);
+  const scanId = cleanText(body?.scanId || body?.scan_id);
 
-  const prompt = buildIdentifyPrompt(location, climate, userHint, scanContext);
+  const prompt = buildIdentifyPrompt(location, climate, userHint, scanContext, scanId);
 
   const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 

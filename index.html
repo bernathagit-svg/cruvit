@@ -340,7 +340,20 @@ function enrichProfileWithQuality(profile,requested){
   return merged;
 }
 
-const OPENAI_READY={enabled:true,endpoint:'/.netlify/functions/plant-knowledge',note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
+const CRUVIT_DEPLOY_ORIGIN='https://friendly-taiyaki-64aacb.netlify.app';
+function netlifyFunctionUrl(path){
+  const p=String(path||'').startsWith('/')?path:'/'+path;
+  const host=location.hostname;
+  const localHost=location.protocol==='file:'||host==='localhost'||host==='127.0.0.1'||/^\d+\.\d+\.\d+\.\d+$/.test(host);
+  if(localHost) return CRUVIT_DEPLOY_ORIGIN+p;
+  return p;
+}
+function isLocalCruvitPreview(){
+  const host=location.hostname;
+  return location.protocol==='file:'||host==='localhost'||host==='127.0.0.1'||/^\d+\.\d+\.\d+\.\d+$/.test(host);
+}
+
+const OPENAI_READY={enabled:true,get endpoint(){return netlifyFunctionUrl('/.netlify/functions/plant-knowledge')},note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
 
 const TASK_DONE_IDX=7;
 function normalizeTaskRow(t){
@@ -618,7 +631,7 @@ function instantPlantImageUrl(p){
 function plantImageProxyUrl(p){
   const q=plantPhotoQuery(p);
   if(!q || normalizeQuery(q)==='plant') return '';
-  return '/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q);
+  return netlifyFunctionUrl('/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q));
 }
 function plantImageFallbacks(p){
   const q=plantPhotoQuery(p);
@@ -656,7 +669,7 @@ async function fetchPlantImageFromWikipedia(query){
   // First try the Netlify image proxy. This avoids browser/CORS issues and uses the same
   // server-side image lookup for every plant card.
   try{
-    const res=await fetch('/.netlify/functions/plant-image?query='+encodeURIComponent(q));
+    const res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-image?query='+encodeURIComponent(q)));
     if(res.ok){
       const json=await res.json();
       if(json?.imageUrl && /^https?:\/\//i.test(json.imageUrl) && !/\.svg($|\?)/i.test(json.imageUrl)) return json.imageUrl;
@@ -1136,7 +1149,7 @@ function closeLocationModal(){
 }
 
 async function callGardenWeather(payload){
-  const res=await fetchWithTimeout('/.netlify/functions/garden-weather',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
+  const res=await fetchWithTimeout(netlifyFunctionUrl('/.netlify/functions/garden-weather'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
   const json=await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(json.error||'Weather service unavailable');
   return json;
@@ -1796,6 +1809,7 @@ function openAddPlantModal(){
   renderAddOptions();
 }
 function closeAddPlantModal(){
+  resetScanSession();
   resetAddPlantSearchState();
   const modal=document.getElementById('addPlantModal');
   if(modal)modal.classList.remove('open');
@@ -1803,6 +1817,7 @@ function closeAddPlantModal(){
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAddPlantModal()});
 function addPlant(){openAddPlantModal()}
 function renderAddOptions(){
+  resetScanSession();
   const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.remove('scan-mode');
   resetAddPlantSearchState();
   document.getElementById('addPlantTitle').textContent='Add plant';
@@ -1815,10 +1830,7 @@ function renderAddOptions(){
   </div><div class="source-ready">Knowledge layer is structured for a real OpenAI/Supabase connection later, without exposing your API key in the browser.</div>`;
 }
 function openPlantChooser(source){
-  window.plantScanHint='';
-  abortActivePlantScan();
-  ++plantScanSeq;
-  window.selectedPlantPhoto=null;
+  resetScanSession();
   const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.toggle('scan-mode', source==='Scan & Identify');
   document.getElementById('addPlantTitle').textContent=source==='Scan & Identify'?'Identify and add plant':source;
   document.getElementById('addPlantSubtitle').textContent=source==='Scan & Identify'?'Take or upload a plant photo. Cruvit will identify it, then you can add the verified plant profile to My Garden.':'Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
@@ -1844,7 +1856,6 @@ function openPlantChooser(source){
   document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="window.plantScanHint=this.value.trim();renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
   resetAddPlantSearchState();
   addPlantSearchState.source=source;
-  window.selectedPlantPhoto=null;
   const input=document.getElementById('plantSearchInput');
   if(input) input.value='';
   const results=document.getElementById('plantResults');
@@ -2002,7 +2013,9 @@ function buildPlantIdentifyRequestBody(photo){
     climate:data.climate||'',
     scanContext:'Indoor houseplants and potted plants are common — identify from the photo, not from climate assumptions.',
     hint,
-    userQuery:hint
+    userQuery:hint,
+    scanId:photo.scanId||'',
+    imageFingerprint:String(photo.imageBase64||'').length+'-'+String(photo.imageBase64||'').slice(-48)
   };
 }
 function userRequestedDodonaeaHint(){
@@ -2083,6 +2096,7 @@ function buildScanProfileFromLive(live,candidate,photo){
   const p=cacheScanProfile(Object.assign(base,{
     tags:[...(base.tags||[]),'photo-identified','ai-profile'],
     scanPhotoUrl:photo.dataUrl,
+    scanSessionId:photo.scanId||'',
     identifyConfidence:candidate.confidence||'',
     identifySource:'photo+gbif',
     imageUrl:(live.imageUrl&&!/^data:image\//i.test(live.imageUrl))?live.imageUrl:'',
@@ -2154,18 +2168,22 @@ function buildScanCandidateProfile(candidate,photo){
     guide:sci?`Identified from photo as ${sci}. Cruvit is loading verified care details…`:'Identified from photo. Cruvit is loading verified care details…'
   },common);
   profile.scanPhotoUrl=photo.dataUrl;
+  profile.scanSessionId=photo.scanId||'';
   profile.imageUrl='';
   profile.identifyConfidence=candidate.confidence||'';
   profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
   profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
   return cacheScanProfile(profile);
 }
-function renderScanProfiles(profiles,noteText,seq){
+function renderScanProfiles(profiles,noteText,seq,photo){
   if(seq!==undefined && seq!==plantScanSeq) return;
+  if(photo && window.selectedPlantPhoto!==photo) return;
   const results=document.getElementById('plantResults');
   const note=document.getElementById('scanNote');
+  const sessionId=photo?.scanId||'';
+  const stamped=(profiles||[]).map(p=>Object.assign({},p,{scanSessionId:sessionId,scanPhotoUrl:photo?.dataUrl||p.scanPhotoUrl||''}));
   if(results){
-    results.innerHTML=(profiles||[]).map(p=>plantResultButton(p,'Scan & Identify')).join('')+
+    results.innerHTML=stamped.map(p=>plantResultButton(p,'Scan & Identify')).join('')+
       '<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
   }
   if(note&&noteText)note.textContent=noteText;
@@ -2173,15 +2191,17 @@ function renderScanProfiles(profiles,noteText,seq){
 }
 async function enrichScanProfiles(profiles,seq,photo){
   await Promise.all((profiles||[]).map(async p=>{
+    if(isScanStale(seq,photo)) return;
     const query=p.scientific||p.name;
     if(!query) return;
     try{
       const live=await fetchPlantProfile(query,'Scan & Identify');
       if(isScanStale(seq,photo)) return;
       if(!live||!isCredibleLivePlantProfile(live,query)) return;
-      const scanPhoto=p.scanPhotoUrl||'';
+      const scanPhoto=photo?.dataUrl||p.scanPhotoUrl||'';
       const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
-      Object.assign(p,updated);
+      if(isScanStale(seq,photo)) return;
+      Object.assign(p,updated,{scanSessionId:photo?.scanId||'',scanPhotoUrl:scanPhoto});
       cacheScanProfile(p);
       p.scanSummary=scanResultSummary(p);
     }catch(_){}
@@ -2190,6 +2210,7 @@ async function enrichScanProfiles(profiles,seq,photo){
   return profiles;
 }
 async function handlePlantPhotoSelected(input){
+  const prepareSeq=++plantPhotoPrepareSeq;
   const note=document.getElementById('scanNote');
   const preview=document.getElementById('plantPhotoPreview');
   const btn=document.getElementById('identifyPlantBtn');
@@ -2198,6 +2219,7 @@ async function handlePlantPhotoSelected(input){
   abortActivePlantScan();
   window.selectedPlantPhoto=null;
   window.plantScanHint='';
+  clearScanProfileCache();
 
   if(!file){
     if(note)note.textContent='Choose or photograph a plant to start AI identification.';
@@ -2217,7 +2239,9 @@ async function handlePlantPhotoSelected(input){
     if(note)note.textContent='Preparing photo for identification...';
 
     const prepared=await preparePlantPhotoForIdentify(file);
-    prepared.scanId=Date.now().toString(36)+'-'+prepared.imageBase64.length+'-'+prepared.imageBase64.slice(0,24);
+    if(prepareSeq!==plantPhotoPrepareSeq) return;
+
+    prepared.scanId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)+'-'+prepared.imageBase64.length;
     window.selectedPlantPhoto=prepared;
 
     if(preview){
@@ -2308,7 +2332,7 @@ async function identifySelectedPlantPhoto(){
       try{
         const timeoutId=setTimeout(()=>{ try{scanAbort.abort()}catch(_){} },75000);
         try{
-          res=await fetch('/.netlify/functions/plant-identify',{
+          res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-identify?scan='+encodeURIComponent(photo.scanId||String(scanSeq))),{
             method:'POST',
             headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
             body:payload,
@@ -2329,7 +2353,7 @@ async function identifySelectedPlantPhoto(){
           failedMessage=failedText;
         }
 
-        lastError=new Error(failedMessage||`Identification service returned ${res.status}`);
+        lastError=new Error(failedMessage||`Identification service returned ${res.status}${res.status===404&&isLocalCruvitPreview()?'. Run "netlify dev" locally or open '+CRUVIT_DEPLOY_ORIGIN:''}`);
         if(res.status<500||attempt===1)throw lastError;
       }catch(error){
         if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
@@ -2386,7 +2410,7 @@ async function identifySelectedPlantPhoto(){
       ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
       : 'Choose the closest verified match below.';
 
-    renderScanProfiles(profiles,noteText,scanSeq);
+    renderScanProfiles(profiles,noteText,scanSeq,photo);
   }catch(err){
     if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
     console.error('Plant photo identification failed',err);
@@ -2438,8 +2462,22 @@ function searchLocalPlants(query,source){
 }
 let plantSearchSeq=0;
 let plantScanSeq=0;
+let plantPhotoPrepareSeq=0;
 let plantScanAbortController=null;
 const scanProfileCache={};
+
+function clearScanProfileCache(){
+  for(const key of Object.keys(scanProfileCache)) delete scanProfileCache[key];
+}
+
+function resetScanSession(){
+  abortActivePlantScan();
+  ++plantScanSeq;
+  ++plantPhotoPrepareSeq;
+  window.selectedPlantPhoto=null;
+  window.plantScanHint='';
+  clearScanProfileCache();
+}
 
 function isScanStale(scanSeq,photo){
   return scanSeq!==plantScanSeq || window.selectedPlantPhoto!==photo;
@@ -2650,7 +2688,7 @@ function fetchWithTimeout(url,options={},ms=9000){
 async function fetchPlantKnowledgeBundle(plantName,source){
   const rawQuery=String(plantName||'').trim();
   const payload={plantName:rawQuery,query:rawQuery,originalQuery:rawQuery,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
-  const endpoints=[OPENAI_READY.endpoint,'/.netlify/functions/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  const endpoints=[OPENAI_READY.endpoint,netlifyFunctionUrl('/.netlify/functions/plant-knowledge')].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let lastError='';
   for(const endpoint of endpoints){
     try{
