@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630z">
+<link rel="stylesheet" href="styles.css?v=20250631a">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -18,8 +18,8 @@
   <button type="button" class="brand brand-menu-btn" id="brandMenuBtn" onclick="toggleMobileNav(event)" aria-expanded="false" aria-controls="headerNav" aria-label="Open Cruvit menu">
     <img src="assets/cruvit-logo.svg" alt="">
     <div><h1>Cruvit</h1><span>My Garden OS</span></div>
-    <span class="brand-menu-chevron" aria-hidden="true">▾</span>
   </button>
+  <button type="button" class="pill dark mobile-header-cart" onclick="toggleCart()">🛒 Cart <span id="cartCountMobile" class="badge">0</span></button>
   <nav class="nav" id="headerNav">
     <button class="pill" id="signInBtn" onclick="showLogin();closeMobileNav()">Sign in</button>
     <button type="button" class="pill reminders-pill" id="remindersPill" onclick="openRemindersFromHeader(event)">
@@ -29,7 +29,7 @@
     <button class="pill" onclick="setTab('plants');closeMobileNav()">Plants</button>
     <button class="pill" onclick="setTab('timeline');closeMobileNav()">History</button>
     <button class="pill" onclick="setTab('rewards');closeMobileNav()">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
-    <button class="pill dark" onclick="toggleCart();closeMobileNav()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
+    <button class="pill dark nav-cart-pill" onclick="toggleCart();closeMobileNav()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
   </nav>
 </header>
 
@@ -521,14 +521,20 @@ function toggleMobileNav(event){
   if(!top)return;
   const open=!top.classList.contains('nav-open');
   top.classList.toggle('nav-open',open);
-  if(btn)btn.setAttribute('aria-expanded',open?'true':'false');
+  if(btn){
+    btn.setAttribute('aria-expanded',open?'true':'false');
+    btn.setAttribute('aria-label',open?'Close Cruvit menu':'Open Cruvit menu');
+  }
 }
 function closeMobileNav(){
   const top=document.getElementById('topBar');
   const btn=document.getElementById('brandMenuBtn');
   if(!top)return;
   top.classList.remove('nav-open');
-  if(btn)btn.setAttribute('aria-expanded','false');
+  if(btn){
+    btn.setAttribute('aria-expanded','false');
+    btn.setAttribute('aria-label','Open Cruvit menu');
+  }
 }
 function openRemindersFromHeader(event){
   if(event?.target?.closest?.('#headerNotifySwitch'))return;
@@ -3134,7 +3140,14 @@ async function handleGardenPhotoSelected(input){
   }
 }
 function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
-function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
+function renderCart(){
+  const count=data.cart.length;
+  const cartCountEl=document.getElementById('cartCount');
+  const cartCountMobileEl=document.getElementById('cartCountMobile');
+  if(cartCountEl)cartCountEl.textContent=count;
+  if(cartCountMobileEl)cartCountMobileEl.textContent=count;
+  document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>';
+}
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
 function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();setGoogleSignInLoading(false)}

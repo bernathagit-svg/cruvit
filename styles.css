@@ -169,16 +169,13 @@ button { cursor: pointer; }
   color: inherit;
   text-align: left;
   cursor: default;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
-.brand-menu-chevron {
+.mobile-header-cart {
   display: none;
-  margin-left: auto;
-  padding-left: var(--space-2);
-  color: var(--forest-light);
-  font-size: 14px;
-  line-height: 1;
-  transition: transform 0.18s ease;
 }
 
 .brand-menu-btn .brand h1,
@@ -537,6 +534,16 @@ button { cursor: pointer; }
   .garden-snapshot {
     min-height: 440px;
     align-self: stretch;
+  }
+
+  .brand-menu-btn {
+    width: auto;
+    flex: 0 1 auto;
+    cursor: default;
+  }
+
+  .mobile-header-cart {
+    display: none !important;
   }
 }
 
@@ -2365,41 +2372,47 @@ button.rail-note.location-note:hover {
   .app { padding: var(--space-3) var(--space-4) var(--space-6); }
   .top {
     border-radius: var(--r-lg);
-    align-items: stretch;
+    align-items: center;
     flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
     position: relative;
-    gap: 0;
+    gap: 10px;
+    padding: var(--space-3) var(--space-4);
   }
 
   .brand-menu-btn {
-    width: 100%;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
     cursor: pointer;
-    padding: 2px 0;
+    padding: 0;
   }
 
-  .brand-menu-chevron {
-    display: inline-flex;
+  .top.nav-open .brand-menu-btn {
+    border-radius: var(--r-md);
+    box-shadow: inset 0 0 0 1.5px rgba(15, 61, 46, 0.14);
+  }
+
+  .mobile-header-cart {
+    display: inline-flex !important;
+    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    background: rgba(237, 245, 230, 0.9);
-    border: 1px solid var(--line);
-  }
-
-  .top.nav-open .brand-menu-chevron {
-    transform: rotate(180deg);
+    gap: 6px;
+    padding: 10px 16px;
+    margin-left: auto;
+    white-space: nowrap;
   }
 
   .nav {
     display: none;
     width: 100%;
+    flex-basis: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
     padding-top: var(--space-3);
-    margin-top: var(--space-2);
+    margin-top: 0;
     border-top: 1px solid var(--line);
   }
 
@@ -2412,6 +2425,10 @@ button.rail-note.location-note:hover {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .nav .pill.nav-cart-pill {
+    display: none !important;
   }
 
   .nav .pill.reminders-pill {
