@@ -587,11 +587,17 @@
   function taskMatchesModeType(task, types) {
     const title = taskTitle(task);
     return (types || []).some(function (type) {
-      if (type === 'watering') return /water|השק/i.test(title);
+      if (type === 'overdue') {
+        if (taskIsDone(task)) return false;
+        const iso = task && task[4];
+        if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return false;
+        return iso < new Date().toISOString().slice(0, 10);
+      }
+      if (type === 'watering') return /water|moisture|irrigation|השק/i.test(title);
       if (type === 'fertilizing') return /fertiliz|feed|nutrient|דיש/i.test(title);
       if (type === 'pruning') return /prun|trim|גיז/i.test(title);
-      if (type === 'pest') return /pest|check|leaf|מזיק|על/i.test(title);
-      return false;
+      if (type === 'pest-check' || type === 'pest') return /pest|disease|check|leaf|inspect|מזיק|מחל/i.test(title);
+      return matchesTaskType(task, [type]);
     });
   }
 

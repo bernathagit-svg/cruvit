@@ -498,9 +498,9 @@ function isCompanionActionableTask(t){
 
   // Cruvit should reduce pressure: generic review/checkup tasks stay in the background.
   if(title.includes('review ')||title.includes('review care')||title.includes('status checked'))return false;
-  if(title.includes('check ') && !/pest|disease|yellow|wilting|leaves|urgent|attention/.test(title))return false;
+  if(title.includes('check ') && !/pest|disease|yellow|wilting|leaves|urgent|attention|moisture|soil|cold|heat|frost|protect|drain/.test(title))return false;
 
-  const careAction=/water|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat/.test(title);
+  const careAction=/water|moisture|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat|protect|cover|drain|cold|heat|frost/.test(title);
   if(!careAction)return false;
 
   // Future tasks should not feel like today's burden. Surface only due/near-term care.
@@ -514,14 +514,58 @@ function companionOpenTaskEntries(){
   open.sort((a,b)=>b.score-a.score);
   return open;
 }
+function taskMatchesGardenModeFilter(t,filter){
+  if(!filter)return true;
+  const title=String(t?.[1]||'').toLowerCase();
+  if(filter==='overdue-care'||filter==='overdue')return isTaskOverdue(t);
+  if(filter==='needs-water'||filter==='watering')return /water|moisture|irrigation|השק/i.test(title);
+  if(filter==='fertilizing-time'||filter==='fertilizing')return /fertiliz|feed|nutrient|דיש/i.test(title);
+  if(filter==='pruning-time'||filter==='pruning')return /prun|trim|גיז/i.test(title);
+  if(filter==='pest-risk'||filter==='pest-check'||filter==='pest')return /pest|disease|leaf|inspect|check|מזיק/i.test(title);
+  return true;
+}
+function companionOpenTaskEntriesFiltered(){
+  const filter=window.gardenModesTaskFilter;
+  if(!filter)return companionOpenTaskEntries();
+  return companionOpenTaskEntries().filter(x=>taskMatchesGardenModeFilter(x.t,filter));
+}
+function companionTasksThisWeek(){
+  const weekEnd=datePlusDaysIso(7);
+  return companionOpenTaskEntries().filter(x=>{
+    const iso=taskIsoValue(x.t);
+    if(iso)return iso<=weekEnd;
+    const when=String(x.t[2]||'').toLowerCase();
+    return when.includes('today')||when.includes('tomorrow')||when.includes('this week');
+  });
+}
 function visibleCareTaskCount(){
-  // Keep dashboard numbers consistent with the calm companion view:
-  // one focus task + up to two near-term actions. Do not count every background reminder.
-  return Math.min(3, companionOpenTaskEntries().length);
+  return companionOpenTaskEntries().length;
 }
 function focusedTaskIndexes(){
-  const open=companionOpenTaskEntries();
-  return (showAllTasks?open.slice(0,3):open.slice(0,1)).map(x=>x.i);
+  const open=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
+  const limit=showAllTasks?Math.min(open.length,10):1;
+  return open.slice(0,limit).map(x=>x.i);
+}
+function refreshOpenTaskPanels(){
+  if(window.moodStatPanelType&&document.getElementById('plantDetailModal')?.classList.contains('open')){
+    showMoodStatPanel(window.moodStatPanelType);
+  }
+}
+function createPlantAlertTask(plant){
+  const ref=Object.assign({},plantMeta(plant),plant);
+  const title=`Check ${plant.name} leaves`;
+  if(taskTitleExists(title,plant.name))return false;
+  return addAutoCareTask(ref,title,2,'plant alert · inspect closely','🔎');
+}
+function removeTasksForPlant(plantName){
+  const norm=normalizeQuery(plantName||'');
+  if(!norm)return;
+  data.tasks=(data.tasks||[]).filter(t=>{
+    if(taskDone(t))return true;
+    const linked=normalizeQuery(t[6]||'')===norm;
+    const inTitle=normalizeQuery(t[1]||'').includes(norm);
+    return !(linked||inTitle);
+  });
 }
 function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
 function renderCalendar(){
@@ -993,7 +1037,7 @@ function inferWaterTask(ref){
 }
 function generateCareTasksForPlant(ref,source='My Garden'){
   // Cruvit is a garden companion, not a task manager: create only the most useful care action now.
-  const openCount=(data.tasks||[]).filter(t=>!taskDone(t)).length;
+  const openCount=companionOpenTaskEntries().length;
   const created=[];
   const plantName=ref.name||'Plant';
   const profileTasks=(ref.tasks||[]).map(t=>typeof t==='string'?{title:t}:t).filter(t=>t&&t.title);
@@ -1395,9 +1439,8 @@ function syncWeatherCareTasks(){
 function syncPlantCareTasks(){
   const plants=(data.plants||[]).filter(p=>!p.archived);
   plants.forEach(p=>{
-    if(openTasksForPlant(p.name).length) return;
-    const meta=plantMeta(p);
-    const ref=Object.assign({},meta,p);
+    if(companionOpenTasksForPlant(p.name).length) return;
+    const ref=Object.assign({},plantMeta(p),p);
     generateCareTasksForPlant(ref,p.source||'My Garden');
   });
 }
@@ -1463,8 +1506,11 @@ function plantEntriesWithOpenTasks(){
   return visiblePlantEntries().filter(x=>open.some(entry=>taskMatchesPlant(entry.t,x.p.name)));
 }
 function companionTaskTitle(entry){return String(entry?.t?.[1]||entry?.[1]||'').trim()}
+function companionOpenTasksForPlant(plantName){
+  return companionOpenTaskEntries().filter(x=>taskMatchesPlant(x.t,plantName));
+}
 function openTasksForPlant(plantName){
-  return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>!taskDone(x.t) && taskMatchesPlant(x.t,plantName)).sort((a,b)=>b.score-a.score);
+  return companionOpenTasksForPlant(plantName);
 }
 function todayCareTaskEntries(){
   return companionOpenTaskEntries().filter(x=>{
@@ -1748,7 +1794,6 @@ function render(){syncHealthScore();
   const visiblePlants=visiblePlantsEarly;
   maybeEnrichVisiblePlants(visiblePlants);
   const attentionPlants=visiblePlants.filter(isPlantAttention).length;
-  const visibleTasks=visibleCareTaskCount();
   const healthyPlants=Math.max(0,visiblePlants.length-attentionPlants);
   const focusIndexes=focusedTaskIndexes();
   if(!window.GardenModes){
@@ -1770,16 +1815,18 @@ function render(){syncHealthScore();
   if(gardenLabel)gardenLabel.textContent=isHe?'צמחים בגינה':'Plants in garden';
   const gpc=document.getElementById('gardenPlantCount'); if(gpc)gpc.textContent=visiblePlants.length;
   document.getElementById('plantCount').textContent=visiblePlants.length;
-  const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntryEarly?1:0);
-  const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=visibleTasks;
+  const todayCount=todayCareTaskEntries().length;
+  const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=todayCount;
+  const weekCount=companionTasksThisWeek().length;
+  const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   document.getElementById('signInBtn').textContent=data.signedIn?'Signed in':'Sign in';
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
   
-  const actionableTasks=companionOpenTaskEntries();
+  const actionableTasks=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
   const openTotal=actionableTasks.length;
-  const hiddenCount=Math.max(0,Math.min(openTotal,3)-focusIndexes.length);
+  const hiddenCount=Math.max(0,openTotal-focusIndexes.length);
   const tasksTitle=document.getElementById('tasksTitle'); if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
   const tasksSubtitle=document.getElementById('tasksSubtitle'); if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Everything else waits until it matters.':'Everything looks good. Enjoy your garden today.';
   const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
@@ -1790,6 +1837,7 @@ function render(){syncHealthScore();
   renderCalendar();renderCart();renderRewards();
 }
 function setTab(name, scroll){
+  if(name!=='tasks')window.gardenModesTaskFilter=null;
   if(scroll===undefined)scroll=true;
   ['tasks','plants','shopping','timeline','rewards'].forEach(x=>{
     document.getElementById('view-'+x).classList.toggle('hidden',x!==name);
@@ -1818,11 +1866,24 @@ function toggleTaskMenu(ev,i){
     });
   }
 }
-function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render()}}
-function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render()}
+function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels()}}
+function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
-function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();if(window.moodStatPanelType&&document.getElementById('plantDetailModal').classList.contains('open'))showMoodStatPanel(window.moodStatPanelType)}
-function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render()}
+function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels()}
+function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels()}
+function createPlantAlertTaskFromPanel(i){
+  const p=data.plants[i];
+  if(!p)return;
+  if(createPlantAlertTask(p)){
+    data.events.unshift(['Today','Task created',`Check ${p.name} leaves`]);
+    service.save(data);
+    closePlantPanel();
+    render();
+    setTab('tasks');
+  }else{
+    alert('A similar care task is already open for this plant.');
+  }
+}
 
 function resetAddPlantSearchState(){
   currentPlantSetup={slug:null,source:'My Garden'};
@@ -2818,7 +2879,10 @@ function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,re
     setTimeout(()=>{
       try{awardCredits(source==='Scan & Identify'?15:10,source==='Scan & Identify'?'Plant scan + add':'Plant added')}catch(e){console.warn('Rewards failed after plant save',e)}
       try{
-        if(plant.prefs?.autoTasks!==false){generateCareTasksForPlant(ref,source)}else{data.events.unshift(['Today','Auto tasks skipped',`${plant.name} · user preference`])}
+        if(plant.prefs?.autoTasks!==false){
+          const taskRef=Object.assign({},plantMeta(plant),plant);
+          generateCareTasksForPlant(taskRef,source);
+        }else{data.events.unshift(['Today','Auto tasks skipped',`${plant.name} · user preference`])}
         if(source==='Smart Recommendations'||source==='Garden Design'){
           (ref.products||[]).slice(0,1).forEach(x=>data.cart.push(x));
           data.events.unshift(['Today','Shopping suggestion created',`${plant.name} · ${ref.products?.[0]||'Care product'}`]);
@@ -2874,11 +2938,11 @@ function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant st
 function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); service.save(data); openMenu=null; render()}
 function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');syncHealthScore();service.save(data);openMenu=null;render()}
 function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);syncHealthScore();service.save(data);openMenu=null;render()}}
-function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);syncHealthScore();service.save(data);openMenu=null;render()}}
+function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);removeTasksForPlant(name);data.events.unshift(['Today','Plant deleted',name]);syncHealthScore();service.save(data);openMenu=null;render()}}
 function closePlantPanel(){document.getElementById('plantDetailModal').classList.remove('open');window.moodStatPanelType=null}
 function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);const alerts=plantAlerts(p);const title=document.getElementById('plantPanelTitle');const sub=document.getElementById('plantPanelSubtitle');const body=document.getElementById('plantPanelBody');title.textContent=p.name;sub.textContent=type==='info'?'Quick care icons':type==='alerts'?'Alerts and tasks':'Detailed plant guide';
   if(type==='info')body.innerHTML=`<div class="info-grid"><div class="info-tile"><span class="big">☀️</span><span><b>Light</b><span>${escapeHtml(meta.sun)}</span></span></div><div class="info-tile"><span class="big">💧</span><span><b>Water</b><span>${escapeHtml(meta.water)}</span></span></div><div class="info-tile"><span class="big">🌱</span><span><b>Growth</b><span>${escapeHtml(meta.growth)}</span></span></div><div class="info-tile"><span class="big">📏</span><span><b>Size</b><span>${escapeHtml(meta.size)}</span></span></div><div class="info-tile"><span class="big">🌡️</span><span><b>Climate</b><span>${escapeHtml(meta.climate)}</span></span></div><div class="info-tile"><span class="big">🗓️</span><span><b>Season</b><span>${escapeHtml(meta.season)}</span></span></div></div><div class="guide-block"><b>Botanical profile</b><span>${escapeHtml(meta.scientific||p.scientific||p.name)}${meta.soil?' · Soil: '+escapeHtml(meta.soil):''}</span></div>`;
-  if(type==='alerts')body.innerHTML=`<div class="guide-block"><b>${alerts[0].includes('No active')?'✓ No urgent alerts':'Current alerts'}</b><span>${alerts.map(a=>'• '+a).join('<br>')}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="data.tasks.push(['🌿','Check ${p.name}','This week · plant alert','Medium']);data.events.unshift(['Today','Task created','Check ${p.name}']);service.save(data);closePlantPanel();render();setTab('tasks')">Create care task</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">View in calendar</button></div>`;
+  if(type==='alerts')body.innerHTML=`<div class="guide-block"><b>${alerts[0].includes('No active')?'✓ No urgent alerts':'Current alerts'}</b><span>${alerts.map(a=>'• '+a).join('<br>')}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="createPlantAlertTaskFromPanel(${i})">Create care task</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">View in calendar</button></div>`;
   if(type==='guide'){const img=displayPlantImage(p);body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;}
   document.getElementById('plantDetailModal').classList.add('open');
 }
