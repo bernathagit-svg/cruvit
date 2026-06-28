@@ -39,6 +39,7 @@
     gap: 24px;
     align-items: stretch;
     margin-top: var(--space-5);
+    --mood-bar-width: min(520px, 92%);
   }
 
   .hero .intro {
@@ -120,8 +121,8 @@
     font-weight: 600;
   }
 
-  .mood-bar-stack {
-    --mood-bar-width: min(520px, 92%);
+  .mood-scene {
+    --mood-bar-width: min(520px, 100%);
   }
 
   .mood-summary {
@@ -256,7 +257,7 @@
     );
   }
 
-  /* Bottom nav — floating pill bar */
+  /* Bottom nav — floating pill bar, aligned with mood stack */
   .hero .tabs {
     grid-column: 1 / -1;
     grid-row: 2;
@@ -266,7 +267,9 @@
     gap: 6px;
     margin: 8px auto 0;
     padding: 8px 10px;
-    max-width: min(760px, 100%);
+    width: var(--mood-bar-width);
+    max-width: 100%;
+    box-sizing: border-box;
     background: rgba(255, 254, 249, 0.94);
     border: 1px solid rgba(15, 61, 46, 0.08);
     border-radius: var(--r-full);
@@ -376,15 +379,15 @@
     box-shadow: 0 14px 36px rgba(15, 61, 46, 0.12);
   }
 
+  .mood-scene {
+    --mood-bar-width: min(500px, calc(100% - 2 * var(--space-4)));
+  }
+
   .hero .tabs {
-    padding: 6px 8px 10px;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(15, 61, 46, 0.38) rgba(237, 245, 230, 0.75);
-    background: rgba(255, 254, 249, 0.92);
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    border-radius: var(--r-full);
-    box-shadow: 0 8px 24px rgba(15, 61, 46, 0.08);
+    width: var(--mood-bar-width);
+    max-width: calc(100% - 2 * var(--space-4));
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .hero .tab.active {

@@ -318,6 +318,7 @@ button { cursor: pointer; }
 
 /* ── Hero row ── */
 .hero {
+  --mood-bar-width: min(500px, calc(100% - 2 * var(--space-4)));
   margin-top: var(--space-6);
   display: grid;
   grid-template-columns: minmax(260px, 0.88fr) minmax(440px, 1.68fr) minmax(200px, 0.62fr);
@@ -654,8 +655,8 @@ button { cursor: pointer; }
 }
 
 .mood-bar-stack {
-  --mood-bar-width: min(500px, 90%);
   width: var(--mood-bar-width);
+  max-width: 100%;
   margin: auto auto 0;
   padding-bottom: 4px;
   display: flex;
@@ -664,6 +665,7 @@ button { cursor: pointer; }
   gap: 8px;
   position: relative;
   z-index: 4;
+  box-sizing: border-box;
 }
 
 .mood-summary {
@@ -1125,18 +1127,24 @@ button.rail-note.location-note:hover {
   border: 0;
 }
 
-/* Bottom tabs */
+/* Bottom tabs — same width as mood stats / focus stack */
 .hero .tabs {
   grid-column: 1 / -1;
+  width: var(--mood-bar-width);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
 }
 
 .tabs {
   display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  gap: var(--space-2);
+  flex-wrap: nowrap;
   justify-content: center;
-  margin: var(--space-7) 0 var(--space-6);
-  padding: var(--space-2) var(--space-3);
+  align-items: center;
+  margin: var(--space-4) auto var(--space-5);
+  padding: 8px 10px;
   border-radius: var(--r-full);
   background: rgba(255, 254, 249, 0.55);
   backdrop-filter: blur(12px);
@@ -1148,18 +1156,26 @@ button.rail-note.location-note:hover {
 .tab {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  justify-content: center;
+  gap: var(--space-1);
+  flex: 1 1 0;
+  min-width: 0;
   border: 1px solid transparent;
   background: transparent;
   border-radius: var(--r-full);
-  padding: 11px 20px;
+  padding: 10px 8px;
   font-weight: 600;
   color: var(--forest);
   font-size: var(--text-sm);
   transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
 }
 
-.tab-label { line-height: 1.15; }
+.tab-label {
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .tab:hover {
   background: rgba(228, 248, 214, 0.65);
@@ -2434,92 +2450,52 @@ button.rail-note.location-note:hover {
 
   .hero .tabs { order: 3; }
 
-  .mood-scene { min-height: 360px; padding: var(--space-5) var(--space-4) var(--space-4); }
+  .mood-scene { min-height: 360px; padding: var(--space-5) var(--space-4) var(--space-4); --mood-bar-width: min(500px, 100%); }
   .mood-scene h3 { font-size: 2.375rem; }
-  .mood-bar-stack { width: 100%; }
-  .mood-summary, .mood-focus { width: 100%; }
   .mood-rail {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     padding: 8px 10px 10px;
   }
   .rail-row b { font-size: 1.125rem; }
 
-  /* Calm navigation — horizontal glass pills */
+  /* Bottom nav — same width pill as mood stack */
   .hero .tabs {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    margin: 0;
-    padding: 2px 2px 10px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(15, 61, 46, 0.38) rgba(237, 245, 230, 0.75);
-    position: static;
-    justify-content: flex-start;
+    gap: 4px;
+    margin: var(--space-3) auto var(--space-4);
+    padding: 6px 8px;
+    overflow: hidden;
   }
 
-  .hero .tabs::-webkit-scrollbar {
-    display: block;
-    height: 5px;
-  }
-
-  .hero .tabs::-webkit-scrollbar-track {
-    margin: 2px 4px 0;
-    background: rgba(237, 245, 230, 0.75);
-    border-radius: var(--r-full);
-  }
-
-  .hero .tabs::-webkit-scrollbar-thumb {
-    background: rgba(15, 61, 46, 0.34);
-    border-radius: var(--r-full);
-  }
-
-  .hero .tabs::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 61, 46, 0.48);
-  }
+  .hero .tabs::-webkit-scrollbar { display: none; }
 
   .hero .tab {
-    flex: 0 0 auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 7px;
-    min-height: 0;
-    padding: 10px 15px;
-    border-radius: var(--r-full);
-    border: 1px solid rgba(201, 162, 39, 0.2);
-    background: rgba(255, 254, 249, 0.82);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 4px 14px rgba(15, 61, 46, 0.06);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: var(--forest);
-    transform: none;
+    flex: 1 1 0;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 4px;
+    font-size: 0.625rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .hero .tab:hover {
-    background: rgba(255, 254, 249, 0.94);
-    border-color: rgba(47, 158, 106, 0.24);
+    background: rgba(237, 245, 230, 0.75);
+    border-color: transparent;
     filter: none;
   }
 
   .hero .tab:active {
     transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(15, 61, 46, 0.08);
+    box-shadow: none;
   }
 
   .hero .tab.active {
     color: #fffef9;
     background: linear-gradient(135deg, rgba(27, 94, 69, 0.94) 0%, rgba(15, 61, 46, 0.98) 100%);
-    border-color: rgba(201, 162, 39, 0.38);
-    box-shadow: 0 6px 18px rgba(15, 61, 46, 0.2);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(15, 61, 46, 0.16);
   }
 
   .hero .tab.active:active {
@@ -2528,13 +2504,17 @@ button.rail-note.location-note:hover {
   }
 
   .hero .tab-ico {
-    font-size: 15px;
+    font-size: 1rem;
     line-height: 1;
     filter: none;
   }
 
   .hero .tab-label {
+    font-size: 0.625rem;
+    max-width: 100%;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   #tab-rewards {
