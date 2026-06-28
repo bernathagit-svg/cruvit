@@ -627,9 +627,14 @@ async function recoverInvalidDodonaeaIdentification(image, result, key, model) {
   const analysis = visualAnalysisText(result);
   const va = result?.visual_analysis || result?.visualAnalysis || {};
   const prom = String(va.prominent_structure || '').toLowerCase();
+  const leafType = String(va.leaf_type || '').toLowerCase();
   const invalidDodonaea =
     looksLikeHouseplantSignals(analysis) ||
     prom === 'leaves_only' ||
+    leafType === 'compound' ||
+    leafType === 'pinnate' ||
+    String(va.habit || '').toLowerCase() === 'herb' ||
+    /glossy|waxy|upright|potted|indoor|pot/i.test(analysis) ||
     (!hasExplicitSeedCapsules(result) && !looksLikeDodonaeaSignals(analysis));
 
   if (!invalidDodonaea) return result;
