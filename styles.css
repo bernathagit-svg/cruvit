@@ -2458,23 +2458,42 @@ button.rail-note.location-note:hover {
   }
   .rail-row b { font-size: 1.125rem; }
 
-  /* Bottom nav — same width pill as mood stack */
+  /* Bottom nav — horizontal scroll on mobile so full labels stay readable */
   .hero .tabs {
-    gap: 4px;
+    gap: 8px;
     margin: var(--space-3) auto var(--space-4);
-    padding: 6px 8px;
-    overflow: hidden;
+    padding: 8px 10px 12px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 61, 46, 0.35) rgba(237, 245, 230, 0.85);
   }
 
-  .hero .tabs::-webkit-scrollbar { display: none; }
+  .hero .tabs::-webkit-scrollbar {
+    display: block;
+    height: 4px;
+  }
+
+  .hero .tabs::-webkit-scrollbar-track {
+    margin: 0 8px;
+    background: rgba(237, 245, 230, 0.85);
+    border-radius: 999px;
+  }
+
+  .hero .tabs::-webkit-scrollbar-thumb {
+    background: rgba(15, 61, 46, 0.35);
+    border-radius: 999px;
+  }
 
   .hero .tab {
-    flex: 1 1 0;
-    min-width: 0;
-    flex-direction: column;
-    gap: 3px;
-    padding: 8px 4px;
-    font-size: 0.625rem;
+    flex: 0 0 auto;
+    min-width: max-content;
+    flex-direction: row;
+    gap: 6px;
+    padding: 10px 14px;
+    font-size: 0.8125rem;
     border: 0;
     background: transparent;
     box-shadow: none;
@@ -2510,11 +2529,11 @@ button.rail-note.location-note:hover {
   }
 
   .hero .tab-label {
-    font-size: 0.625rem;
-    max-width: 100%;
+    font-size: 0.8125rem;
+    max-width: none;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
+    text-overflow: unset;
   }
 
   #tab-rewards {
@@ -2664,8 +2683,8 @@ button.rail-note.location-note:hover {
 @media (max-width: 560px) {
   .plant-strip { grid-template-columns: 1fr; }
   .hero .intro h2 { font-size: 1.625rem; }
-  .hero .tab { padding: 9px 13px; font-size: 0.75rem; }
-  .hero .tab-ico { font-size: 14px; }
+  .hero .tab { padding: 10px 14px; font-size: 0.8125rem; }
+  .hero .tab-label { font-size: 0.8125rem; }
   .notify-grid { grid-template-columns: 1fr; }
   .calendar { grid-template-columns: repeat(2, 1fr); }
   .weekday { display: none; }
