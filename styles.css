@@ -263,6 +263,14 @@ button { cursor: pointer; }
   align-items: stretch;
 }
 
+.hero.hero-v2-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: var(--space-5);
+  align-items: stretch;
+}
+
 .panel {
   background: var(--card);
   border: 1px solid rgba(47, 158, 106, 0.14);
@@ -881,68 +889,60 @@ button.rail-note.location-note:hover {
 .mood-scene.love { --mood-img: url('assets/mood-love.jpg'); }
 .mood-scene.ready { --mood-img: url('assets/mood-ready.jpg'); }
 
-/* ── Hero v2 — unified garden mode banner ── */
+.hero-scene.flourishing { --hero-bg: url('assets/mood-flourishing.jpg'); }
+.hero-scene.thriving { --hero-bg: url('assets/mood-thriving.jpg'); }
+.hero-scene.gentle { --hero-bg: url('assets/mood-gentle.jpg'); }
+.hero-scene.love { --hero-bg: url('assets/mood-love.jpg'); }
+.hero-scene.ready { --hero-bg: url('assets/mood-ready.jpg'); }
+
+/* ── Hero v2 — unified garden mode banner (mockup-aligned) ── */
 .hero-v2-layout {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  margin-top: var(--space-4);
+  gap: 14px;
 }
 
 .hero-banner {
   position: relative;
-  min-height: 340px;
-  border-radius: 22px;
+  min-height: 360px;
+  border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
   display: flex;
   align-items: flex-end;
-  padding: 14px;
+  padding: 0 14px 16px;
   border: 1px solid rgba(15, 61, 46, 0.08);
-  box-shadow: 0 14px 40px rgba(15, 61, 46, 0.12);
+  box-shadow: 0 16px 48px rgba(15, 61, 46, 0.14);
   isolation: isolate;
-}
-
-.hero-banner.mood-scene {
+  background-image: var(--hero-bg, url('assets/mood-thriving.jpg'));
+  background-size: cover;
+  background-position: center 35%;
   text-align: left;
-  align-items: flex-end;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 14px;
-  min-height: 340px;
-  background: transparent;
 }
 
-.hero-banner.mood-scene::before {
+.hero-banner::before {
+  content: "";
+  position: absolute;
   inset: 0;
-  height: 100%;
-  background-image:
-    linear-gradient(180deg, rgba(15, 61, 46, 0.06) 0%, rgba(15, 61, 46, 0.02) 28%, rgba(15, 61, 46, 0.52) 100%),
-    var(--mood-img),
-    linear-gradient(180deg, #eef6e4 0%, #6b9e5e 100%);
-  background-size: cover, cover, cover;
-  background-position: center, center 35%, center;
-  opacity: 1;
-}
-
-.hero-banner.mood-scene::after {
-  background:
-    radial-gradient(circle at 78% 14%, rgba(255, 220, 160, 0.22), transparent 34%),
-    radial-gradient(circle at 18% 86%, rgba(255, 192, 203, 0.1), transparent 36%);
-  opacity: 0.65;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 61, 46, 0.06) 0%,
+    rgba(15, 61, 46, 0.02) 30%,
+    rgba(15, 61, 46, 0.5) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .hero-glass {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   width: 100%;
   padding: 16px 18px;
   background: rgba(255, 254, 249, 0.76);
   border: 1px solid rgba(255, 255, 255, 0.88);
-  border-radius: 20px;
+  border-radius: 22px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(15, 61, 46, 0.12);
+  box-shadow: 0 8px 32px rgba(15, 61, 46, 0.12), 0 2px 8px rgba(15, 61, 46, 0.06);
 }
 
 .hero-kickers {
@@ -987,7 +987,7 @@ button.rail-note.location-note:hover {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .hero-head-copy {
@@ -996,21 +996,26 @@ button.rail-note.location-note:hover {
 }
 
 .hero-banner h2 {
-  margin: 0;
+  margin: 0 0 6px;
   font-family: var(--font-serif);
-  font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+  font-size: clamp(1.45rem, 4.5vw, 1.85rem);
   line-height: 1.15;
   font-weight: 700;
   color: var(--forest);
   letter-spacing: -0.02em;
+  text-shadow: none;
 }
 
 .hero-affirm {
-  margin: 6px 0 0;
-  font-size: var(--text-sm);
+  margin: 0;
+  max-width: none;
+  font-size: 0.8125rem;
   line-height: 1.45;
   color: var(--muted2);
   font-weight: 500;
+  text-align: left;
+  text-shadow: none;
+  position: static;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1018,13 +1023,16 @@ button.rail-note.location-note:hover {
 }
 
 .hero-mode-warn {
-  margin: 6px 0 0;
+  margin: 0 0 6px;
+  max-width: none;
   font-size: 0.6875rem;
   line-height: 1.35;
   color: #7a4a3a;
+  text-align: left;
+  opacity: 0.92;
 }
 
-.mode-orb {
+.hero-banner .mode-orb {
   flex-shrink: 0;
   width: 72px;
   height: 72px;
@@ -1039,7 +1047,7 @@ button.rail-note.location-note:hover {
   box-shadow: 0 4px 20px rgba(15, 61, 46, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-.mode-orb::before {
+.hero-banner .mode-orb::before {
   content: '';
   position: absolute;
   inset: -4px;
@@ -1054,13 +1062,13 @@ button.rail-note.location-note:hover {
   50% { transform: scale(1.06); opacity: 0.25; }
 }
 
-.mode-orb-icon {
+.hero-banner .mode-orb-icon {
   font-size: 26px;
   line-height: 1;
   margin-bottom: 2px;
 }
 
-.mode-orb-label {
+.hero-banner .mode-orb-label {
   font-size: 0.5625rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1107,6 +1115,7 @@ button.rail-note.location-note:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 13px 20px;
   font: 700 0.9375rem/1 var(--font-sans);
@@ -1125,26 +1134,37 @@ button.rail-note.location-note:hover {
   filter: brightness(1.06);
 }
 
-.hero-focus-bar {
+.hero-v2-layout .hero-focus-bar.mood-focus {
   width: 100%;
+  max-width: none;
   margin: 0;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 61, 46, 0.08);
+  background: rgba(255, 254, 249, 0.94);
+  box-shadow: 0 4px 18px rgba(15, 61, 46, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-meta-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 2px 0;
+  align-items: stretch;
+  gap: 10px;
+  padding: 0 2px;
 }
 
 .hero-meta-note {
-  flex: 1 1 180px;
+  flex: 1 1 220px;
   min-width: 0;
-  border: 0;
-  background: rgba(255, 254, 249, 0.88);
+  background: rgba(255, 254, 249, 0.92);
   border-radius: 16px;
-  padding: 10px 14px;
+  padding: 12px 14px;
   text-align: left;
   cursor: pointer;
   border: 1px solid rgba(15, 61, 46, 0.08);
@@ -1168,10 +1188,13 @@ button.rail-note.location-note:hover {
 
 .hero-meta-action {
   flex: 0 0 auto;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
   border: 1px solid rgba(15, 61, 46, 0.1);
   background: rgba(255, 254, 249, 0.92);
   border-radius: var(--r-full);
-  padding: 10px 14px;
+  padding: 10px 16px;
   font-size: 0.8125rem;
   font-weight: 600;
   color: var(--forest-light);
@@ -1186,26 +1209,37 @@ button.rail-note.location-note:hover {
 
 @media (min-width: 1121px) {
   .hero-banner {
-    min-height: 400px;
-    border-radius: 28px;
-    padding: 18px;
+    min-height: 320px;
+    border-radius: 24px;
+    padding: 0 24px 24px;
+  }
+
+  .hero-glass {
+    max-width: min(560px, 100%);
   }
 
   .hero-banner h2 {
-    font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+    font-size: clamp(1.75rem, 2.4vw, 2rem);
   }
 
-  .mode-orb {
+  .hero-banner .mode-orb {
     width: 80px;
     height: 80px;
   }
 
-  .mode-orb-icon {
+  .hero-banner .mode-orb-icon {
     font-size: 30px;
   }
 
   .hero-cta {
-    max-width: 240px;
+    max-width: 220px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero-banner {
+    min-height: 360px;
+    border-radius: 22px;
   }
 }
 
@@ -2444,13 +2478,13 @@ button.rail-note.location-note:hover {
 
 /* Responsive */
 @media (max-width: 1280px) {
-  .hero { grid-template-columns: 0.9fr 1.55fr 0.65fr; gap: 18px; }
+  .hero:not(.hero-v2-layout) { grid-template-columns: 0.9fr 1.55fr 0.65fr; gap: 18px; }
   .intro h2 { font-size: 42px; }
   .mood-scene h3 { font-size: 48px; }
 }
 
 @media (max-width: 1120px) {
-  .hero { grid-template-columns: 1fr; }
+  .hero:not(.hero-v2-layout) { grid-template-columns: 1fr; }
   .garden-snapshot {
     grid-column: 1 / -1;
     width: 100%;
@@ -2468,7 +2502,7 @@ button.rail-note.location-note:hover {
   .app { padding: var(--space-3) var(--space-4) var(--space-6); }
   .top { border-radius: var(--r-lg); align-items: flex-start; flex-wrap: wrap; }
   .nav .pill:not(.dark):not(:last-child) { display: none; }
-  .hero {
+  .hero:not(.hero-v2-layout) {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);

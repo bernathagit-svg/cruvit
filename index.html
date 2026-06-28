@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630j">
-<link rel="stylesheet" href="garden-modes.css?v=20250630">
+<link rel="stylesheet" href="styles.css?v=20250630k">
+<link rel="stylesheet" href="garden-modes.css?v=20250630b">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630">
 </head>
 <body>
@@ -26,7 +26,7 @@
 </header>
 
 <section class="hero hero-v2-layout">
-  <article class="hero-banner mood-scene thriving" id="heroBanner" onclick="showHealthBreakdown()" title="View garden mode details">
+  <article class="hero-banner hero-scene thriving" id="heroBanner" onclick="showHealthBreakdown()" title="View garden mode details">
     <div class="hero-glass">
       <div class="hero-kickers">
         <span class="hero-kicker" id="moodKicker">Your Garden Mode</span>
@@ -35,10 +35,10 @@
       <div class="hero-head">
         <div class="hero-head-copy">
           <h2 id="moodTitle">Thriving</h2>
-          <p class="hero-affirm" id="moodMicro">Your garden is happy and flourishing. Keep it up!</p>
           <p class="hero-mode-warn" id="gardenModesSecondary" hidden></p>
+          <p class="hero-affirm" id="moodMicro">Your garden is happy and flourishing. Keep it up!</p>
         </div>
-        <div class="mode-orb" id="heroModeOrb" aria-hidden="true">
+        <div class="mode-orb" id="heroModeOrb" aria-label="Garden mode indicator">
           <span class="mode-orb-icon" id="heroModeOrbIcon">🌿</span>
           <span class="mode-orb-label" id="heroModeOrbLabel">Flourishing</span>
         </div>
@@ -183,7 +183,7 @@
 
 <div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630"></script>
+<script src="garden-modes.js?v=20250630b"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1659,7 +1659,7 @@ function render(){syncHealthScore();
   }else{
     const mood=gardenMoodFromHealth(health);
     const moodCard=document.getElementById('heroBanner')||document.getElementById('gardenMoodCard');
-    if(moodCard){moodCard.className='hero-banner mood-scene '+mood.key;}
+    if(moodCard){moodCard.className='hero-banner hero-scene '+mood.key;}
     const moodTitle=document.getElementById('moodTitle'); if(moodTitle)moodTitle.textContent=mood.title;
     const moodMicro=document.getElementById('moodMicro'); if(moodMicro)moodMicro.textContent=mood.micro;
   }

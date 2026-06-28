@@ -692,7 +692,7 @@
     const { primaryMode, warningModes } = deriveGardenModes(gardenData, deps);
     const sceneKey = MODE_SCENE_KEY[primaryMode.id] || 'thriving';
 
-    card.className = 'hero-banner mood-scene ' + sceneKey;
+    card.className = 'hero-banner hero-scene ' + sceneKey;
     card.style.removeProperty('--mode-gradient');
     card.style.removeProperty('--mode-img');
     card.dataset.modeId = primaryMode.id;
