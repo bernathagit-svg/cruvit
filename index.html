@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630k">
-<link rel="stylesheet" href="garden-modes.css?v=20250630b">
-<link rel="stylesheet" href="dashboard-layout.css?v=20250630">
+<link rel="stylesheet" href="styles.css?v=20250630i">
+<link rel="stylesheet" href="garden-modes.css?v=20250628">
+<link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
 <body>
 <div class="app"><div class="shell">
@@ -25,47 +25,101 @@
   </div>
 </header>
 
-<section class="hero hero-v2-layout">
-  <article class="hero-banner hero-scene thriving" id="heroBanner" onclick="showHealthBreakdown()" title="View garden mode details">
-    <div class="hero-glass">
-      <div class="hero-kickers">
-        <span class="hero-kicker" id="moodKicker">Your Garden Mode</span>
-        <span class="hero-kicker hero-kicker-severity garden-mode-severity-calm" id="moodSeverity">Calm</span>
-      </div>
-      <div class="hero-head">
-        <div class="hero-head-copy">
-          <h2 id="moodTitle">Thriving</h2>
-          <p class="hero-mode-warn" id="gardenModesSecondary" hidden></p>
-          <p class="hero-affirm" id="moodMicro">Your garden is happy and flourishing. Keep it up!</p>
-        </div>
-        <div class="mode-orb" id="heroModeOrb" aria-label="Garden mode indicator">
-          <span class="mode-orb-icon" id="heroModeOrbIcon">🌿</span>
-          <span class="mode-orb-label" id="heroModeOrbLabel">Flourishing</span>
+<section class="hero">
+  <div class="panel intro">
+    <div class="intro-leaves" aria-hidden="true"></div>
+    <div class="intro-content">
+      <div class="greeting">🍃 Good morning, Hagit</div>
+      <h2>Your garden is looking great</h2>
+      <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
+      <div class="actions">
+        <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
+        <div class="actions-row">
+          <button class="btn light intro-action-photo" onclick="scanGarden()">Garden photo</button>
+          <button class="btn light" onclick="addPlant()">Add plant +</button>
         </div>
       </div>
-      <div class="hero-badges" id="heroBadges">
-        <span class="hero-badge"><span class="hero-badge-dot"></span><span id="heroBadgePlantsText">0 plants</span></span>
-        <span class="hero-badge"><span class="hero-badge-dot"></span><span id="heroBadgeTasksText">0 tasks today</span></span>
-        <span class="hero-badge hero-badge-warn" id="heroBadgeWarn" hidden><span class="hero-badge-dot"></span><span id="heroBadgeWarnText">Needs care</span></span>
-      </div>
-      <button type="button" class="hero-cta" onclick="event.stopPropagation();setTab('tasks')">Review tasks →</button>
     </div>
-  </article>
-
-  <button type="button" class="hero-focus-bar mood-focus" id="moodFocusBtn">
-    <span class="mood-focus-ico" aria-hidden="true">🪴</span>
-    <span class="mood-focus-copy"><span class="mood-focus-label" id="moodFocusLabel">Today's focus:</span> <b id="moodFocusText">Water Rosemary</b></span>
-    <em id="moodFocusLink">Tasks ›</em>
-  </button>
-
-  <div class="hero-meta-bar">
-    <button type="button" class="hero-meta-note" id="moodWeatherNote" onclick="openLocationModal()" aria-label="Garden location and weather">
-      <span class="hero-meta-title" id="heroWeatherTitle">🌤️ Set garden location</span>
-      <small class="hero-meta-sub" id="heroWeatherSub">Tap to add location for weather-smart tasks</small>
-    </button>
-    <button type="button" class="hero-meta-action" onclick="scanGarden()">📷 Garden photo</button>
-    <button type="button" class="hero-meta-action" onclick="addPlant()">+ Add plant</button>
   </div>
+
+  <div class="panel status-panel premium-mood-panel">
+    <div class="mood-scene thriving" id="gardenMoodCard" onclick="showHealthBreakdown()" title="View garden mode details">
+      <div class="mood-kicker-wrap">
+        <div class="mood-kicker" id="moodKicker">Your Garden Mode</div>
+        <span class="mood-severity" id="moodSeverity" hidden></span>
+      </div>
+      <h3 id="moodTitle">Thriving</h3>
+      <p id="moodMicro">Your garden is happy and flourishing. Keep it up! 🍃</p>
+      <p class="mood-mode-also" id="gardenModesSecondary" hidden></p>
+      <div class="mood-picture" aria-hidden="true">
+        <span class="sun"></span>
+        <span class="hill hill-a"></span>
+        <span class="hill hill-b"></span>
+        <span class="tree"></span>
+        <span class="flower flower-a">🌸</span>
+        <span class="flower flower-b">🌿</span>
+        <span class="butterfly">🦋</span>
+      </div>
+      <div class="mood-spacer" aria-hidden="true"></div>
+      <div class="mood-summary" onclick="event.stopPropagation()">
+        <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('taskPlants')">
+          <b id="taskPlantCount">7</b>
+          <span class="stat-label"><span class="stat-ico">✨</span> <span id="taskPlantLabel">Picked for you</span></span>
+        </button>
+        <button type="button" class="mood-stat mood-stat-btn" onclick="event.stopPropagation();setTab('plants')">
+          <b id="gardenPlantCount">1</b>
+          <span class="stat-label"><span class="stat-ico">🪴</span> <span id="gardenPlantLabel">Plants in garden</span></span>
+        </button>
+        <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('today')">
+          <b id="todayTaskCount">1</b>
+          <span class="stat-label"><span class="stat-ico">💧</span> Task today</span>
+        </button>
+      </div>
+      <button type="button" class="mood-focus" id="moodFocusBtn">
+        <span class="mood-focus-ico" aria-hidden="true">🪴</span>
+        <span class="mood-focus-copy"><span class="mood-focus-label" id="moodFocusLabel">Today's focus:</span> <b id="moodFocusText">Water Rosemary</b></span>
+        <em id="moodFocusLink">Tasks ›</em>
+      </button>
+    </div>
+
+    <div class="mood-rail">
+      <div class="rail-row">
+        <span class="rail-icon">📋</span>
+        <b id="taskCountRail">3</b>
+        <small>Tasks<br>this week</small>
+      </div>
+      <div class="rail-row">
+        <span class="rail-icon">🪴</span>
+        <b id="attentionCountRail">1</b>
+        <small>Plant needs<br>attention</small>
+      </div>
+      <div class="rail-row">
+        <span class="rail-icon">🌿</span>
+        <b id="plantCount">7</b>
+        <small>Plants in<br>your garden</small>
+      </div>
+      <button type="button" class="rail-note location-note" id="moodWeatherNote" onclick="openLocationModal()" aria-label="Garden location and weather">
+        <span class="rail-note-title">🌤️ No extra care needed this week</span>
+        <small class="rail-note-sub">Weather looks good for your garden</small>
+      </button>
+      <div class="scan">◷ Last scan: Today, 08:24</div>
+    </div>
+  </div>
+
+  <figure class="garden-snapshot" aria-label="Garden photo">
+    <div class="garden-snapshot-bg" id="gardenSnapshotPhoto" role="img" aria-hidden="true"></div>
+    <button type="button" class="garden-snapshot-camera" onclick="scanGarden()" aria-label="Update garden photo">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M9.5 7A2.5 2.5 0 0 0 7 9.5v5A2.5 2.5 0 0 0 9.5 17h5a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 14.5 7h-5Zm-1 2.5A1 1 0 0 1 9.5 8.5h5A1 1 0 0 1 15.5 9.5v5a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-5ZM12 10.25a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm0 1.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5ZM7 6.5h2.1l.55-1.1A1.5 1.5 0 0 1 11 4.5h2a1.5 1.5 0 0 1 1.35.9L14.9 6.5H17a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8.5a2 2 0 0 1 2-2Z"/>
+      </svg>
+    </button>
+    <figcaption class="garden-snapshot-caption">
+      <b>Hagit’s garden</b>
+      <span id="gardenLocationLabel">Western Galilee · Mediterranean</span>
+      <button type="button" class="location-setup-btn" onclick="event.stopPropagation();openLocationModal()">📍 Set garden location</button>
+      <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
+    </figcaption>
+  </figure>
 
   <input id="gardenPhotoInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" capture="environment" tabindex="-1" aria-hidden="true" class="visually-hidden" onchange="handleGardenPhotoSelected(this)">
 
@@ -183,7 +237,7 @@
 
 <div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630b"></script>
+<script src="garden-modes.js"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1346,10 +1400,11 @@ function syncPlantCareTasks(){
 function renderWeatherNote(){
   const loc=ensureGardenLocation();
   const w=data.weather;
-  const weatherTitle=document.getElementById('heroWeatherTitle');
-  const weatherSub=document.getElementById('heroWeatherSub');
+  const weatherTitle=document.querySelector('#moodWeatherNote .rail-note-title');
+  const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
+  const locLabel=document.getElementById('gardenLocationLabel');
+  if(locLabel) locLabel.textContent=gardenLocationLabel();
   if(!weatherTitle||!weatherSub) return;
-  const locLine=gardenLocationLabel();
   if(!loc.lat&&!loc.label){
     weatherTitle.textContent='📍 Set your garden location';
     weatherSub.textContent='Tap to add location for weather-smart tasks';
@@ -1357,21 +1412,21 @@ function renderWeatherNote(){
   }
   if(!w){
     weatherTitle.textContent='🌤️ Loading local weather…';
-    weatherSub.textContent=locLine||'Tap to update garden location';
+    weatherSub.textContent='Tap to update garden location';
     return;
   }
   if((w.alerts||[]).includes('heat-wave')||(w.alerts||[]).includes('dry-heat')){
     weatherTitle.textContent=`🌡️ Heat expected · up to ${Math.round(w.forecastPeak||w.maxC)}°C`;
-    weatherSub.textContent=(locLine?locLine+' · ':'')+'Cruvit added heat-protection tasks';
+    weatherSub.textContent='Cruvit added heat-protection tasks';
   }else if((w.alerts||[]).includes('frost')||(w.alerts||[]).includes('cold-snap')){
     weatherTitle.textContent=`❄️ Cold snap · down to ${Math.round(w.forecastLow||w.minC)}°C`;
-    weatherSub.textContent=(locLine?locLine+' · ':'')+'Protect frost-sensitive plants tonight';
+    weatherSub.textContent='Protect frost-sensitive plants tonight';
   }else if((w.alerts||[]).includes('heavy-rain')){
     weatherTitle.textContent='🌧️ Heavy rain expected this week';
-    weatherSub.textContent=(locLine?locLine+' · ':'')+'Check drainage and skip extra watering';
+    weatherSub.textContent='Check drainage and skip extra watering';
   }else{
     weatherTitle.textContent=`🌤️ ${Math.round(w.tempC)}°C now · ${w.summary||'Fair'}`;
-    weatherSub.textContent=w.forecastHint||`${locLine?locLine+' · ':''}Up to ${Math.round(w.maxC)}°C this week`;
+    weatherSub.textContent=w.forecastHint||`Up to ${Math.round(w.maxC)}°C this week · tap to update location`;
   }
 }
 
@@ -1658,8 +1713,8 @@ function render(){syncHealthScore();
     });
   }else{
     const mood=gardenMoodFromHealth(health);
-    const moodCard=document.getElementById('heroBanner')||document.getElementById('gardenMoodCard');
-    if(moodCard){moodCard.className='hero-banner hero-scene '+mood.key;}
+    const moodCard=document.getElementById('gardenMoodCard');
+    if(moodCard){moodCard.className=(moodCard.classList.contains('mood-scene')?'mood-scene ':'mood-orb ')+mood.key;}
     const moodTitle=document.getElementById('moodTitle'); if(moodTitle)moodTitle.textContent=mood.title;
     const moodMicro=document.getElementById('moodMicro'); if(moodMicro)moodMicro.textContent=mood.micro;
   }
@@ -1675,23 +1730,22 @@ function render(){syncHealthScore();
     const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
   }
   renderWeatherNote();
+  applyGardenPhotoVisual();
+  updateGardenSnapshotScan();
   const isHe=window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
-  const todayCount=Math.max(focusIndexes.length, focusEntryEarly?1:0);
-  const plantsText=document.getElementById('heroBadgePlantsText');
-  if(plantsText)plantsText.textContent=isHe?`${visiblePlants.length} צמחים`:`${visiblePlants.length} plant${visiblePlants.length===1?'':'s'}`;
-  const tasksText=document.getElementById('heroBadgeTasksText');
-  if(tasksText)tasksText.textContent=isHe?`${todayCount} משימות היום`:`${todayCount} task${todayCount===1?'':'s'} today`;
-  const warnBadge=document.getElementById('heroBadgeWarn');
-  const warnText=document.getElementById('heroBadgeWarnText');
-  const needsCare=attentionPlants>0||visibleTasks>todayCount;
-  if(warnBadge&&warnText){
-    if(needsCare){
-      warnBadge.hidden=false;
-      warnText.textContent=isHe?(attentionPlants?`${attentionPlants} צריכים טיפול`:'יש משימות'):(attentionPlants?`${attentionPlants} need care`:'Tasks due');
-    }else{
-      warnBadge.hidden=true;
-    }
-  }
+  const scanEl=document.querySelector('.premium-mood-panel .scan');
+  if(scanEl)scanEl.textContent=`◷ Last scan: ${gardenScanLabel()}`;
+  const taskPlants=plantEntriesWithOpenTasks().length;
+  const tpc=document.getElementById('taskPlantCount'); if(tpc)tpc.textContent=taskPlants;
+  const taskPlantLabel=document.getElementById('taskPlantLabel');
+  if(taskPlantLabel)taskPlantLabel.textContent=isHe?'המלצות במיוחד עבורך':'Picked for you';
+  const gardenLabel=document.getElementById('gardenPlantLabel');
+  if(gardenLabel)gardenLabel.textContent=isHe?'צמחים בגינה':'Plants in garden';
+  const gpc=document.getElementById('gardenPlantCount'); if(gpc)gpc.textContent=visiblePlants.length;
+  document.getElementById('plantCount').textContent=visiblePlants.length;
+  const todayEl=document.getElementById('todayTaskCount'); if(todayEl)todayEl.textContent=Math.max(focusIndexes.length, focusEntryEarly?1:0);
+  const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=visibleTasks;
+  const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   document.getElementById('signInBtn').textContent=data.signedIn?'Signed in':'Sign in';
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
@@ -2807,8 +2861,23 @@ function gardenScanLabel(){
   if(data.lastGardenScan)return data.lastGardenScan;
   return 'Today, 08:24';
 }
-function applyGardenPhotoVisual(){}
-function updateGardenSnapshotScan(){}
+function applyGardenPhotoVisual(){
+  const snap=document.getElementById('gardenSnapshotPhoto');
+  if(!snap)return;
+  if(data.gardenPhoto){
+    snap.style.backgroundImage=`url(${JSON.stringify(data.gardenPhoto)})`;
+    snap.style.backgroundSize='cover';
+    snap.style.backgroundPosition='center';
+  }else{
+    snap.style.backgroundImage='';
+    snap.style.backgroundSize='';
+    snap.style.backgroundPosition='';
+  }
+}
+function updateGardenSnapshotScan(){
+  const el=document.getElementById('gardenSnapshotScan');
+  if(el)el.textContent='Last scan: '+gardenScanLabel();
+}
 async function handleGardenPhotoSelected(input){
   const file=input.files&&input.files[0];
   input.value='';
@@ -2830,6 +2899,10 @@ async function handleGardenPhotoSelected(input){
     }
     syncHealthScore();
     service.save(data);
+    applyGardenPhotoVisual();
+    updateGardenSnapshotScan();
+    const scanEl=document.querySelector('.premium-mood-panel .scan');
+    if(scanEl)scanEl.textContent=`◷ Last scan: ${gardenScanLabel()}`;
     render();
   }catch(error){
     alert(error?.message||'Could not save this photo. Try another image.');

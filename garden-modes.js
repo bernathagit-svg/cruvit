@@ -554,43 +554,6 @@
     'new-garden': 'ready'
   };
 
-  const MODE_ORB_LABEL = {
-    'healthy': { en: 'Balanced', he: 'מאוזן' },
-    'needs-water': { en: 'Attentive', he: 'קשובה' },
-    'overdue-care': { en: 'Catch up', he: 'להשלים' },
-    'pest-risk': { en: 'Vigilant', he: 'ערנית' },
-    'heat-stress': { en: 'Protective', he: 'מגנה' },
-    'winter-protection': { en: 'Prepared', he: 'מוכנה' },
-    'pruning-time': { en: 'Shaping', he: 'גיזום' },
-    'fertilizing-time': { en: 'Well cared', he: 'מטופלת' },
-    'blooming-season': { en: 'In bloom', he: 'פורחת' },
-    'new-garden': { en: 'Growing', he: 'צומחת' }
-  };
-
-  const MODE_ORB_BG = {
-    'healthy': 'linear-gradient(145deg, rgba(237,245,230,0.95) 0%, rgba(184,223,160,0.9) 55%, rgba(111,189,125,0.75) 100%)',
-    'needs-water': 'linear-gradient(145deg, rgba(227,244,251,0.95) 0%, rgba(159,212,239,0.85) 55%, rgba(107,184,222,0.55) 100%)',
-    'overdue-care': 'linear-gradient(145deg, rgba(255,240,235,0.95) 0%, rgba(240,190,170,0.85) 55%, rgba(220,140,120,0.45) 100%)',
-    'pest-risk': 'linear-gradient(145deg, rgba(245,248,230,0.95) 0%, rgba(210,230,160,0.85) 55%, rgba(170,200,110,0.55) 100%)',
-    'heat-stress': 'linear-gradient(145deg, rgba(255,245,230,0.95) 0%, rgba(255,210,150,0.85) 55%, rgba(240,170,90,0.45) 100%)',
-    'winter-protection': 'linear-gradient(145deg, rgba(235,245,255,0.95) 0%, rgba(190,215,240,0.85) 55%, rgba(150,185,220,0.55) 100%)',
-    'pruning-time': 'linear-gradient(145deg, rgba(237,245,230,0.95) 0%, rgba(184,223,160,0.9) 55%, rgba(142,207,106,0.85) 100%)',
-    'fertilizing-time': 'linear-gradient(145deg, rgba(245,240,232,0.95) 0%, rgba(220,201,154,0.9) 55%, rgba(201,162,39,0.35) 100%)',
-    'blooming-season': 'linear-gradient(145deg, rgba(255,240,245,0.95) 0%, rgba(240,200,220,0.85) 55%, rgba(232,160,192,0.5) 100%)',
-    'new-garden': 'linear-gradient(145deg, rgba(240,250,240,0.95) 0%, rgba(200,230,190,0.85) 55%, rgba(160,210,140,0.55) 100%)'
-  };
-
-  function applyModeOrb(primaryMode) {
-    const orb = document.getElementById('heroModeOrb');
-    const iconEl = document.getElementById('heroModeOrbIcon');
-    const labelEl = document.getElementById('heroModeOrbLabel');
-    const labels = MODE_ORB_LABEL[primaryMode.id] || MODE_ORB_LABEL.healthy;
-    const orbLabel = gardenModesIsHe() ? labels.he : labels.en;
-    if (iconEl) iconEl.textContent = primaryMode.icon || '🌿';
-    if (labelEl) labelEl.textContent = orbLabel;
-    if (orb) orb.style.setProperty('--orb-bg', MODE_ORB_BG[primaryMode.id] || MODE_ORB_BG.healthy);
-  }
-
   function shouldShowViewTasks(mode) {
     const taskType = (mode.relatedTaskTypes && mode.relatedTaskTypes[0]) || '';
     return taskType || mode.id === 'overdue-care' || mode.id === 'needs-water' || mode.id === 'pest-risk' || mode.id === 'fertilizing-time' || mode.id === 'pruning-time';
@@ -682,20 +645,32 @@
     const prefix = gardenModesIsHe() ? 'שים לב · ' : 'Note · ';
     host.textContent = prefix + warningModes.slice(0, 3).map(m => (m.icon || '') + ' ' + t(m.title)).join(' · ');
     host.hidden = false;
-    host.classList.add('mood-mode-warn', 'hero-mode-warn');
+    host.classList.add('mood-mode-warn');
+  }
+
+  function setModeHeroImage(card, mode) {
+    if (!card || !mode) return;
+    const png = mode.image || ('assets/garden-modes/' + mode.id + '.png');
+    const img = new Image();
+    img.onload = function () { card.style.setProperty('--mode-img', "url('" + png + "')"); };
+    img.onerror = function () { card.style.removeProperty('--mode-img'); };
+    img.src = png;
   }
 
   function renderGardenMoodPanel(gardenData, deps, uiOpts) {
-    const card = document.getElementById('heroBanner') || document.getElementById('gardenMoodCard');
+    const card = document.getElementById('gardenMoodCard');
     if (!card) return;
 
     const { primaryMode, warningModes } = deriveGardenModes(gardenData, deps);
-    const sceneKey = MODE_SCENE_KEY[primaryMode.id] || 'thriving';
+    const gradient = MODE_GRADIENTS[primaryMode.id] || MODE_GRADIENTS.healthy;
 
-    card.className = 'hero-banner hero-scene ' + sceneKey;
-    card.style.removeProperty('--mode-gradient');
-    card.style.removeProperty('--mode-img');
+    card.className = 'mood-scene';
+    card.style.setProperty('--mode-gradient', gradient);
     card.dataset.modeId = primaryMode.id;
+    setModeHeroImage(card, primaryMode);
+
+    const panel = card.closest('.premium-mood-panel');
+    if (panel) panel.classList.add('garden-mode-active');
 
     const kicker = document.getElementById('moodKicker');
     if (kicker) kicker.textContent = gardenModesIsHe() ? 'מצב הגינה שלך' : 'Your Garden Mode';
@@ -703,7 +678,7 @@
     const severityEl = document.getElementById('moodSeverity');
     if (severityEl) {
       severityEl.textContent = severityLabel(primaryMode.severity);
-      severityEl.className = 'hero-kicker hero-kicker-severity garden-mode-severity garden-mode-severity-' + primaryMode.severity;
+      severityEl.className = 'mood-severity garden-mode-severity garden-mode-severity-' + primaryMode.severity;
       severityEl.hidden = false;
     }
 
@@ -713,7 +688,6 @@
     const microEl = document.getElementById('moodMicro');
     if (microEl) microEl.textContent = t(primaryMode.subtitle);
 
-    applyModeOrb(primaryMode);
     renderWarningLine(warningModes);
     applyMoodFocusBar(primaryMode, uiOpts || {}, warningModes);
   }
