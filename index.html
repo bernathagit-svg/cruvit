@@ -1990,17 +1990,17 @@ function buildPlantIdentifyRequestBody(photo){
     userQuery:hint
   };
 }
-function scanResultLooksLikeWrongDodonaea(parsed,out){
+function userRequestedDodonaeaHint(){
+  const hint=normalizeQuery(window.plantScanHint||'');
+  return /dodonaea|hop bush|viscosa|אשחר/.test(hint);
+}
+function scanResultLooksLikeWrongDodonaea(parsed){
   const top=(parsed.candidates||[])[0];
   if(!top) return false;
   const sci=String(top.scientificName||top.name||'').toLowerCase();
   if(!/dodonaea|hop bush|viscosa|אשחר/.test(sci)) return false;
-  if(String(out?.corrected||'').includes('invalid_dodonaea_recovery')) return false;
-  const va=out?.visualAnalysis||out?.identification?.visual_analysis||{};
-  const prom=String(va.prominent_structure||'').toLowerCase();
-  const notes=String(va.notes||va.structure_description||'').toLowerCase();
-  if(prom==='flowers'||/orchid|phalaenopsis|potted|indoor|houseplant|pot plant|planter|ceramic pot|showy flower|blooming|פרח|סחלב/.test(notes+prom)) return true;
-  return !out?.corrected;
+  if(userRequestedDodonaeaHint()) return false;
+  return true;
 }
 function parseIdentifyResponse(out){
   const id=out?.identification||{};
@@ -2197,6 +2197,8 @@ async function handlePlantPhotoSelected(input){
 
     const prepared=await preparePlantPhotoForIdentify(file);
     window.selectedPlantPhoto=prepared;
+    ++plantScanSeq;
+    window.plantScanInProgress=false;
 
     if(preview){
       preview.classList.remove('hidden');
@@ -2318,8 +2320,8 @@ async function identifySelectedPlantPhoto(){
     if(out.error && !parsed.candidates.length){
       throw new Error(typeof out.error==='string'?out.error:'Identification failed.');
     }
-    if(scanResultLooksLikeWrongDodonaea(parsed,out)){
-      throw new Error('Identification returned an unlikely match for this photo. Please try again with a clearer photo of the plant only.');
+    if(scanResultLooksLikeWrongDodonaea(parsed)){
+      throw new Error('Photo scan returned an unlikely match. Please try again — use a clear photo of the plant only.');
     }
     if(!parsed.candidates.length){
       throw new Error(out.error||'No plant match found in the photo.');

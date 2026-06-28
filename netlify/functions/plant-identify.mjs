@@ -576,10 +576,19 @@ ${userHint ? `The gardener suggests: ${JSON.stringify(userHint)}. Verify visuall
   }
 }
 
+function userRequestedDodonaea(userHint = '') {
+  return /dodonaea|hop bush|אשחר|viscosa/i.test(cleanText(userHint).toLowerCase());
+}
+
+function isBlockedScanIdentification(result, userHint = '') {
+  if (userRequestedDodonaea(userHint)) return false;
+  return genusKey(result?.scientific_name || result?.scientificName) === 'dodonaea';
+}
+
 async function recoverInvalidDodonaeaIdentification(image, result, key, model, userHint = '', context = {}) {
   const genus = genusKey(result?.scientific_name || result?.scientificName);
   if (genus !== 'dodonaea') return result;
-  if (/dodonaea|hop bush|אשחר|viscosa/i.test(cleanText(userHint).toLowerCase())) return result;
+  if (userRequestedDodonaea(userHint)) return result;
 
   const retryModels = [...new Set([model, 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'].filter(Boolean))];
   const retryReasons = [
@@ -607,8 +616,6 @@ async function recoverInvalidDodonaeaIdentification(image, result, key, model, u
       _corrected: 'invalid_dodonaea_recovery'
     };
   }
-
-  if (isStrictlyValidDodonaea(result)) return result;
 
   return null;
 }
@@ -736,10 +743,10 @@ export default async function handler(request) {
         { location, climate }
       );
 
-      if (!recovered) {
+      if (!recovered || isBlockedScanIdentification(recovered, userHint)) {
         lastError = {
           message:
-            'Could not confidently identify this plant. The photo does not look like a hop bush — try a clearer photo of the plant only, without app UI.'
+            'Could not confidently identify this plant from the photo. Try a clearer photo of the plant only, without app buttons or text in the frame.'
         };
         break;
       }
