@@ -1190,12 +1190,24 @@ function closeLocationModal(){
 }
 
 async function resolveLocationFromQuery(label){
-  if(pendingGeoLocation && pendingGeoLocation.label===label && Number.isFinite(Number(pendingGeoLocation.lat))){
-    return pendingGeoLocation;
+  if(pendingGeoLocation && Number.isFinite(Number(pendingGeoLocation.lat))){
+    const pendingLabel=String(pendingGeoLocation.label||'').trim();
+    const firstPart=pendingLabel.split(',')[0].trim();
+    if(pendingLabel===label || firstPart===label) return pendingGeoLocation;
   }
-  const result=await callGardenWeather({mode:'geocode',query:label});
-  if(!result.location) throw new Error('Location not found. Try a nearby city or region in Hebrew or English.');
-  return result.location;
+  const attempts=[label];
+  if(/[\u0590-\u05FF]/.test(label) && !/ישראל/.test(label)) attempts.push(label+', ישראל');
+  else if(!/\bisrael\b/i.test(label)) attempts.push(label+', Israel');
+  let lastErr=null;
+  for(const query of attempts){
+    try{
+      const result=await callGardenWeather({mode:'geocode',query});
+      if(result.location) return result.location;
+    }catch(err){
+      lastErr=err;
+    }
+  }
+  throw lastErr||new Error('Location not found. Try a nearby city or region in Hebrew or English.');
 }
 
 async function detectGardenLocation(){
@@ -1804,6 +1816,9 @@ function renderAddOptions(){
 }
 function openPlantChooser(source){
   window.plantScanHint='';
+  abortActivePlantScan();
+  ++plantScanSeq;
+  window.selectedPlantPhoto=null;
   const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.toggle('scan-mode', source==='Scan & Identify');
   document.getElementById('addPlantTitle').textContent=source==='Scan & Identify'?'Identify and add plant':source;
   document.getElementById('addPlantSubtitle').textContent=source==='Scan & Identify'?'Take or upload a plant photo. Cruvit will identify it, then you can add the verified plant profile to My Garden.':'Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
@@ -2064,12 +2079,15 @@ function scanResultSummary(profile){
   return 'Verified botanical match from Cruvit plant knowledge.';
 }
 function buildScanProfileFromLive(live,candidate,photo){
-  const p=storePlantProfile(Object.assign({},live,{tags:[...(live.tags||[]),'photo-identified','ai-profile']}));
-  p.scanPhotoUrl=photo.dataUrl;
-  p.identifyConfidence=candidate.confidence||'';
-  p.identifySource='photo+gbif';
-  if(live.imageUrl&&!/^data:image\//i.test(live.imageUrl)) p.imageUrl=live.imageUrl;
-  else p.imageUrl='';
+  const base=Object.assign({},enrichProfileWithQuality(Object.assign({},live),live.name||candidate.commonName||candidate.name));
+  const p=cacheScanProfile(Object.assign(base,{
+    tags:[...(base.tags||[]),'photo-identified','ai-profile'],
+    scanPhotoUrl:photo.dataUrl,
+    identifyConfidence:candidate.confidence||'',
+    identifySource:'photo+gbif',
+    imageUrl:(live.imageUrl&&!/^data:image\//i.test(live.imageUrl))?live.imageUrl:'',
+    photoUrl:undefined
+  }));
   delete p.photoUrl;
   p.scanSummary=scanResultSummary(p);
   return p;
@@ -2140,7 +2158,7 @@ function buildScanCandidateProfile(candidate,photo){
   profile.identifyConfidence=candidate.confidence||'';
   profile.aliases=[...(profile.aliases||[]),common,sci,'photo identification'].filter(Boolean);
   profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
-  return profile;
+  return cacheScanProfile(profile);
 }
 function renderScanProfiles(profiles,noteText,seq){
   if(seq!==undefined && seq!==plantScanSeq) return;
@@ -2153,21 +2171,22 @@ function renderScanProfiles(profiles,noteText,seq){
   if(note&&noteText)note.textContent=noteText;
   setTimeout(hydratePlantResultImages,0);
 }
-async function enrichScanProfiles(profiles,seq){
+async function enrichScanProfiles(profiles,seq,photo){
   await Promise.all((profiles||[]).map(async p=>{
     const query=p.scientific||p.name;
     if(!query) return;
     try{
       const live=await fetchPlantProfile(query,'Scan & Identify');
-      if(seq!==plantScanSeq) return;
+      if(isScanStale(seq,photo)) return;
       if(!live||!isCredibleLivePlantProfile(live,query)) return;
       const scanPhoto=p.scanPhotoUrl||'';
       const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
       Object.assign(p,updated);
+      cacheScanProfile(p);
       p.scanSummary=scanResultSummary(p);
     }catch(_){}
   }));
-  if(seq!==undefined && seq!==plantScanSeq) return profiles;
+  if(isScanStale(seq,photo)) return profiles;
   return profiles;
 }
 async function handlePlantPhotoSelected(input){
@@ -2175,6 +2194,8 @@ async function handlePlantPhotoSelected(input){
   const preview=document.getElementById('plantPhotoPreview');
   const btn=document.getElementById('identifyPlantBtn');
   const file=input.files&&input.files[0];
+  if(input) input.value='';
+  abortActivePlantScan();
   window.selectedPlantPhoto=null;
   window.plantScanHint='';
 
@@ -2196,9 +2217,8 @@ async function handlePlantPhotoSelected(input){
     if(note)note.textContent='Preparing photo for identification...';
 
     const prepared=await preparePlantPhotoForIdentify(file);
+    prepared.scanId=Date.now().toString(36)+'-'+prepared.imageBase64.length+'-'+prepared.imageBase64.slice(0,24);
     window.selectedPlantPhoto=prepared;
-    ++plantScanSeq;
-    window.plantScanInProgress=false;
 
     if(preview){
       preview.classList.remove('hidden');
@@ -2226,8 +2246,7 @@ async function handlePlantPhotoSelected(input){
       note.textContent='Photo ready. Starting identification…';
     }
 
-    input.value='';
-    setTimeout(()=>identifySelectedPlantPhoto(),80);
+    void identifySelectedPlantPhoto();
   }catch(error){
     window.selectedPlantPhoto=null;
 
@@ -2246,7 +2265,6 @@ async function handlePlantPhotoSelected(input){
     }
 
     console.error('Plant photo preparation failed',error);
-    input.value='';
   }
 }
 async function identifySelectedPlantPhoto(){
@@ -2259,9 +2277,12 @@ async function identifySelectedPlantPhoto(){
     if(note)note.textContent='Please choose or take a plant photo first.';
     return;
   }
-  if(window.plantScanInProgress)return;
-  window.plantScanInProgress=true;
+
+  abortActivePlantScan();
   const scanSeq=++plantScanSeq;
+  const scanAbort=new AbortController();
+  plantScanAbortController=scanAbort;
+  window.plantScanInProgress=true;
 
   if(btn){
     btn.disabled=true;
@@ -2273,19 +2294,30 @@ async function identifySelectedPlantPhoto(){
   if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo with Cruvit plant identification…</div>';
 
   try{
-    const requestBody=buildPlantIdentifyRequestBody(photo);
+    const requestBody=Object.assign(buildPlantIdentifyRequestBody(photo),{
+      scanId:photo.scanId||String(scanSeq),
+      scanSeq
+    });
     const payload=JSON.stringify(requestBody);
 
     let res=null;
     let lastError=null;
 
     for(let attempt=0;attempt<2;attempt++){
+      if(isScanStale(scanSeq,photo)) return;
       try{
-        res=await fetchWithTimeout('/.netlify/functions/plant-identify',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:payload
-        },75000);
+        const timeoutId=setTimeout(()=>{ try{scanAbort.abort()}catch(_){} },75000);
+        try{
+          res=await fetch('/.netlify/functions/plant-identify',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
+            body:payload,
+            cache:'no-store',
+            signal:scanAbort.signal
+          });
+        }finally{
+          clearTimeout(timeoutId);
+        }
         if(res.ok)break;
 
         const failedText=await res.text().catch(()=>'');
@@ -2300,6 +2332,7 @@ async function identifySelectedPlantPhoto(){
         lastError=new Error(failedMessage||`Identification service returned ${res.status}`);
         if(res.status<500||attempt===1)throw lastError;
       }catch(error){
+        if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
         lastError=error;
         if(attempt===1)throw error;
         await new Promise(resolve=>setTimeout(resolve,900));
@@ -2307,6 +2340,8 @@ async function identifySelectedPlantPhoto(){
     }
 
     if(!res||!res.ok)throw lastError||new Error('Identification service is not reachable. Run netlify dev locally or deploy to Netlify.');
+
+    if(isScanStale(scanSeq,photo)) return;
 
     const responseText=await res.text();
     let out={};
@@ -2327,26 +2362,25 @@ async function identifySelectedPlantPhoto(){
       throw new Error(out.error||'No plant match found in the photo.');
     }
 
+    if(isScanStale(scanSeq,photo)) return;
+
     if(note)note.textContent='Verifying identification against Cruvit botanical database…';
     if(results)results.innerHTML='<div class="plant-source-note">Matching photo to verified plant records…</div>';
 
-    if(scanSeq!==plantScanSeq) return;
-
     let profiles=await resolveScanCandidates(parsed.candidates,photo);
-    if(scanSeq!==plantScanSeq) return;
+    if(isScanStale(scanSeq,photo)) return;
 
     if(!profiles.length){
       const ranked=collapseScanCandidates(parsed.candidates);
       const top=ranked[0];
       if(top){
-        const p=buildScanCandidateProfile(top,photo);
-        storePlantProfile(p);
-        profiles=[PLANT_INDEX[p.slug]||p];
+        const p=cacheScanProfile(buildScanCandidateProfile(top,photo));
+        profiles=[p];
       }
     }
 
-    profiles=await enrichScanProfiles(profiles,scanSeq);
-    if(scanSeq!==plantScanSeq) return;
+    profiles=await enrichScanProfiles(profiles,scanSeq,photo);
+    if(isScanStale(scanSeq,photo)) return;
 
     const noteText=profiles.length===1
       ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
@@ -2354,6 +2388,7 @@ async function identifySelectedPlantPhoto(){
 
     renderScanProfiles(profiles,noteText,scanSeq);
   }catch(err){
+    if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
     console.error('Plant photo identification failed',err);
     const message=String(err?.message||'Identification failed.');
     if(note)note.textContent='Could not identify from the photo. Please try once more or use a clearer photo.';
@@ -2361,7 +2396,8 @@ async function identifySelectedPlantPhoto(){
       results.innerHTML=`<div class="plant-source-note">Identification failed. ${escapeHtml(message)}<br>Try again, choose a clearer photo, or type the plant name manually.</div>`;
     }
   }finally{
-    window.plantScanInProgress=false;
+    if(plantScanAbortController===scanAbort) plantScanAbortController=null;
+    if(!isScanStale(scanSeq,photo)) window.plantScanInProgress=false;
     if(btn){
       btn.disabled=false;
       btn.textContent='Identify plant';
@@ -2402,6 +2438,28 @@ function searchLocalPlants(query,source){
 }
 let plantSearchSeq=0;
 let plantScanSeq=0;
+let plantScanAbortController=null;
+const scanProfileCache={};
+
+function isScanStale(scanSeq,photo){
+  return scanSeq!==plantScanSeq || window.selectedPlantPhoto!==photo;
+}
+
+function cacheScanProfile(profile){
+  if(!profile) return profile;
+  const slug=profile.slug||slugify(profile.name||profile.scientific||'plant');
+  profile.slug=slug;
+  scanProfileCache[slug]=profile;
+  return profile;
+}
+
+function abortActivePlantScan(){
+  if(plantScanAbortController){
+    try{plantScanAbortController.abort()}catch(_){}
+    plantScanAbortController=null;
+  }
+  window.plantScanInProgress=false;
+}
 function isCredibleLivePlantProfile(profile,query){
   if(!profile || profile.isPlant===false || profile.error) return false;
   const q=normalizeQuery(canonicalPlantQuery(query));
@@ -2634,7 +2692,7 @@ function normalizeApiPlant(d,requested){
   return profile;
 }
 function showPlantSetup(slug,source='My Garden'){
-  const ref=PLANT_INDEX[slug]; if(!ref)return;
+  const ref=PLANT_INDEX[slug]||scanProfileCache[slug]; if(!ref)return;
   currentPlantSetup={slug,source};
   const img=displayPlantImage(ref)||ref.imageUrl||ref.image||'';
   const heroStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"`:'';
@@ -2676,7 +2734,8 @@ function buildPlantFromReference(ref,source,options){
   return plant;
 }
 function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,reminders:true}){
-  let ref=PLANT_INDEX[slug] || PLANT_LIBRARY.find(p=>p.slug===slug);
+  let ref=PLANT_INDEX[slug]||scanProfileCache[slug]||PLANT_LIBRARY.find(p=>p.slug===slug);
+  if(ref && !PLANT_INDEX[slug]) storePlantProfile(ref);
   if(!ref){
     const fallbackName=String(slug||'Plant').replace(/-/g,' ');
     ref={slug:slugify(fallbackName),name:fallbackName,status:'Needs review',mark:'!',icon:'🌿',sun:'See guide',water:'See guide',warnings:['Confirm exact species before treatment or purchase.'],guide:'Plant profile could not be found locally. Search again or use the live plant knowledge service.',products:[],tasks:[]};
