@@ -8,25 +8,29 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630o">
+<link rel="stylesheet" href="styles.css?v=20250630p">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630a">
 </head>
 <body>
 <div class="app"><div class="shell">
-<header class="top">
-  <div class="brand"><img src="assets/cruvit-logo.svg" alt="Cruvit"><div><h1>Cruvit</h1><span>My Garden OS</span></div></div>
-  <div class="nav">
-    <button class="pill" id="signInBtn" onclick="showLogin()">Sign in</button>
+<header class="top" id="topBar">
+  <button type="button" class="brand brand-menu-btn" id="brandMenuBtn" onclick="toggleMobileNav(event)" aria-expanded="false" aria-controls="headerNav" aria-label="Open Cruvit menu">
+    <img src="assets/cruvit-logo.svg" alt="">
+    <div><h1>Cruvit</h1><span>My Garden OS</span></div>
+    <span class="brand-menu-chevron" aria-hidden="true">▾</span>
+  </button>
+  <nav class="nav" id="headerNav">
+    <button class="pill" id="signInBtn" onclick="showLogin();closeMobileNav()">Sign in</button>
     <button type="button" class="pill reminders-pill" id="remindersPill" onclick="openRemindersFromHeader(event)">
       <span class="reminders-pill-label">🔔 Garden reminders</span>
       <span class="switch" id="headerNotifySwitch" role="switch" aria-label="Toggle garden reminders" onclick="toggleHeaderNotifications(event)"></span>
     </button>
-    <button class="pill" onclick="setTab('plants')">Plants</button>
-    <button class="pill" onclick="setTab('timeline')">History</button>
-    <button class="pill" onclick="setTab('rewards')">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
-    <button class="pill dark" onclick="toggleCart()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
-  </div>
+    <button class="pill" onclick="setTab('plants');closeMobileNav()">Plants</button>
+    <button class="pill" onclick="setTab('timeline');closeMobileNav()">History</button>
+    <button class="pill" onclick="setTab('rewards');closeMobileNav()">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
+    <button class="pill dark" onclick="toggleCart();closeMobileNav()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
+  </nav>
 </header>
 
 <section class="hero">
@@ -506,6 +510,24 @@ function toggleHeaderNotifications(event){
   updateRemindersUi();
   openRemindersModal();
 }
+function isMobileNav(){return window.matchMedia('(max-width: 760px)').matches}
+function toggleMobileNav(event){
+  event?.stopPropagation?.();
+  if(!isMobileNav())return;
+  const top=document.getElementById('topBar');
+  const btn=document.getElementById('brandMenuBtn');
+  if(!top)return;
+  const open=!top.classList.contains('nav-open');
+  top.classList.toggle('nav-open',open);
+  if(btn)btn.setAttribute('aria-expanded',open?'true':'false');
+}
+function closeMobileNav(){
+  const top=document.getElementById('topBar');
+  const btn=document.getElementById('brandMenuBtn');
+  if(!top)return;
+  top.classList.remove('nav-open');
+  if(btn)btn.setAttribute('aria-expanded','false');
+}
 function openRemindersFromHeader(event){
   if(event?.target?.closest?.('#headerNotifySwitch'))return;
   if(!data.notifications.enabled){
@@ -513,6 +535,7 @@ function openRemindersFromHeader(event){
     return;
   }
   openRemindersModal();
+  closeMobileNav();
 }
 function openRemindersModal(){
   renderRemindersModalOptions();
@@ -2009,6 +2032,7 @@ document.addEventListener('keydown',function(e){
   closeAddPlantModal();
   closeRemindersModal();
   hideLogin();
+  closeMobileNav();
 });
 function addPlant(){openAddPlantModal()}
 function renderAddOptions(){
@@ -3286,7 +3310,11 @@ function loadSupabaseScript(){
 }
 loadSupabaseScript().then(()=>initAuth());
 if('scrollRestoration' in history)history.scrollRestoration='manual';
-document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});
+document.addEventListener('click',function(e){
+  if(openMenu){openMenu=null;render()}
+  const top=document.getElementById('topBar');
+  if(top?.classList.contains('nav-open')&&!e.target.closest('#topBar'))closeMobileNav();
+});
 ensureGardenLocation();
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);

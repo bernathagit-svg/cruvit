@@ -161,6 +161,31 @@ button { cursor: pointer; }
   gap: var(--space-3);
 }
 
+.brand-menu-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.brand-menu-chevron {
+  display: none;
+  margin-left: auto;
+  padding-left: var(--space-2);
+  color: var(--forest-light);
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 0.18s ease;
+}
+
+.brand-menu-btn .brand h1,
+.brand-menu-btn h1 {
+  margin: 0;
+}
+
 .brand img {
   width: 44px;
   height: 44px;
@@ -2275,9 +2300,65 @@ button.rail-note.location-note:hover {
 
 @media (max-width: 760px) {
   .app { padding: var(--space-3) var(--space-4) var(--space-6); }
-  .top { border-radius: var(--r-lg); align-items: flex-start; flex-wrap: wrap; }
-  .nav .pill:not(.dark):not(:last-child):not(.reminders-pill) { display: none; }
-  .nav .pill.reminders-pill { display: inline-flex; }
+  .top {
+    border-radius: var(--r-lg);
+    align-items: stretch;
+    flex-wrap: wrap;
+    position: relative;
+    gap: 0;
+  }
+
+  .brand-menu-btn {
+    width: 100%;
+    cursor: pointer;
+    padding: 2px 0;
+  }
+
+  .brand-menu-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(237, 245, 230, 0.9);
+    border: 1px solid var(--line);
+  }
+
+  .top.nav-open .brand-menu-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: var(--space-3);
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--line);
+  }
+
+  .top.nav-open .nav {
+    display: flex;
+  }
+
+  .nav .pill {
+    display: flex !important;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .nav .pill.reminders-pill {
+    justify-content: space-between;
+  }
+
+  .nav .pill.dark {
+    justify-content: space-between;
+  }
+
   .hero {
     display: flex;
     flex-direction: column;
