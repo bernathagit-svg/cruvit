@@ -15,7 +15,27 @@
     'new-garden'
   ];
 
-  /** Most positive first — used as hero primary when both positive and warning modes are active */
+  /** Calm hero copy when care is needed but the panel stays uplifting */
+  const POSITIVE_HERO_FALLBACK = {
+    id: 'healthy',
+    title: { he: 'מטופלת היטב', en: 'Well cared' },
+    subtitle: {
+      he: 'את דואגת לגינה בקשב — כל צעד טיפול קטן שומר עליה שמחה ופורחת.',
+      en: 'You\'re giving your garden thoughtful attention — each care step keeps it happy and growing.'
+    },
+    severity: 'calm',
+    icon: '🌿',
+    image: 'assets/garden-modes/healthy.png',
+    actions: [
+      { he: 'לסמן משימות שהושלמו', en: 'Mark completed tasks' },
+      { he: 'לבדוק משימות קרובות', en: 'Review upcoming tasks' },
+      { he: 'לעקוב אחרי צמחים צעירים', en: 'Watch young plants' }
+    ],
+    relatedTaskTypes: [],
+    priority: 20
+  };
+
+  /** Most positive first — hero always shows one of these (never warning modes) */
   const POSITIVE_PRIORITY = [
     'blooming-season',
     'healthy',
@@ -497,21 +517,21 @@
     if (positiveIds.length > 0) {
       primaryId = POSITIVE_PRIORITY.find(id => positiveIds.includes(id)) || positiveIds[0];
     } else {
-      primaryId = PRIORITY_ORDER.find(id => warningIds.includes(id)) || activeIds[0];
+      primaryId = null;
     }
 
     const warningModes = warningIds
       .sort((a, b) => PRIORITY_ORDER.indexOf(a) - PRIORITY_ORDER.indexOf(b))
       .map(id => Object.assign({}, MODE_BY_ID[id]));
 
-    const notesModes = !isWarningMode(primaryId)
-      ? warningModes
-      : warningModes.filter(m => m.id !== primaryId);
+    const primaryMode = primaryId
+      ? Object.assign({}, MODE_BY_ID[primaryId])
+      : Object.assign({}, POSITIVE_HERO_FALLBACK);
 
     return {
-      primaryMode: Object.assign({}, MODE_BY_ID[primaryId]),
-      secondaryModes: notesModes.slice(0, 3),
-      warningModes: notesModes
+      primaryMode,
+      secondaryModes: [],
+      warningModes
     };
   }
 
@@ -633,19 +653,12 @@
     }
   }
 
-  function renderWarningLine(warningModes) {
+  function renderWarningLine() {
     const host = document.getElementById('gardenModesSecondary');
     if (!host) return;
-    if (!warningModes.length) {
-      host.textContent = '';
-      host.hidden = true;
-      host.classList.remove('mood-mode-warn');
-      return;
-    }
-    const prefix = gardenModesIsHe() ? 'שים לב · ' : 'Note · ';
-    host.textContent = prefix + warningModes.slice(0, 3).map(m => (m.icon || '') + ' ' + t(m.title)).join(' · ');
-    host.hidden = false;
-    host.classList.add('mood-mode-warn');
+    host.textContent = '';
+    host.hidden = true;
+    host.classList.remove('mood-mode-warn', 'hero-mode-warn');
   }
 
   function setModeHeroImage(card, mode) {
@@ -677,8 +690,8 @@
 
     const severityEl = document.getElementById('moodSeverity');
     if (severityEl) {
-      severityEl.textContent = severityLabel(primaryMode.severity);
-      severityEl.className = 'mood-severity garden-mode-severity garden-mode-severity-' + primaryMode.severity;
+      severityEl.textContent = severityLabel('calm');
+      severityEl.className = 'mood-severity garden-mode-severity garden-mode-severity-calm';
       severityEl.hidden = false;
     }
 
@@ -688,7 +701,7 @@
     const microEl = document.getElementById('moodMicro');
     if (microEl) microEl.textContent = t(primaryMode.subtitle);
 
-    renderWarningLine(warningModes);
+    renderWarningLine();
     applyMoodFocusBar(primaryMode, uiOpts || {}, warningModes);
   }
 

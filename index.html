@@ -237,7 +237,7 @@
 
 <div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js"></script>
+<script src="garden-modes.js?v=20250630c"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1507,10 +1507,9 @@ function showMoodStatPanel(type){
     const mode=modes?modes.primaryMode:null;
     const mood=mode?{icon:mode.icon,title:GardenModes.t(mode.title),text:GardenModes.t(mode.subtitle)}:gardenMoodFromHealth(h);
     const actionHtml=mode&&(mode.actions||[]).length?`<div class="guide-block"><b>${isHe?'פעולות מומלצות':'Suggested actions'}</b><span>${mode.actions.map(a=>GardenModes.t(a)).join(' · ')}</span></div>`:'';
-    const alsoHtml=modes&&modes.warningModes.length?`<div class="guide-block"><b>${isHe?'שים לב':'Warnings'}</b><span>${modes.warningModes.map(m=>`${m.icon} ${GardenModes.t(m.title)}`).join(' · ')}</span></div>`:'';
     title.textContent=isHe?'מצב הגינה שלך':'Your Garden Mode';
     sub.textContent=isHe?'למה Cruvit מציגה את המצב הזה':'Why Cruvit is showing this garden status';
-    body.innerHTML=`<div class="guide-block"><b>${mood.icon} ${mood.title}</b><span>${mood.text}</span></div>${actionHtml}${alsoHtml}${renderHealthInfoGrid(h)}<div class="guide-block"><b>${isHe?'איך Cruvit שומרת על רוגע':'How Cruvit keeps it calm'}</b><span>${isHe?'Cruvit לא מציגה כל תזכורת כדחופה. קודם מוצג הצעד הכי שימושי, כדי שהטיפול בגינה ירגיש קל ונעים.':'Cruvit does not show every possible reminder as urgent. It highlights only the most useful focus action first, so caring for the garden feels light and enjoyable.'}</span></div>`;
+    body.innerHTML=`<div class="guide-block"><b>${mood.icon} ${mood.title}</b><span>${mood.text}</span></div>${actionHtml}${renderHealthInfoGrid(h)}<div class="guide-block"><b>${isHe?'איך Cruvit שומרת על רוגע':'How Cruvit keeps it calm'}</b><span>${isHe?'Cruvit לא מציגה כל תזכורת כדחופה. קודם מוצג הצעד הכי שימושי, כדי שהטיפול בגינה ירגיש קל ונעים.':'Cruvit does not show every possible reminder as urgent. It highlights only the most useful focus action first, so caring for the garden feels light and enjoyable.'}</span></div>`;
     document.getElementById('plantDetailModal').classList.add('open');
     return;
   }
