@@ -98,39 +98,203 @@ function buildForecastHint(daily, alerts) {
   return `Up to ${Math.round(peak)}°C this week`;
 }
 
-async function geocodeQuery(query) {
-  const q = cleanText(query);
-  if (!q) return null;
-  const url = 'https://geocoding-api.open-meteo.com/v1/search?' + new URLSearchParams({
-    name: q,
-    count: '6',
-    language: 'en',
-    format: 'json'
+function hasHebrew(text) {
+  return /[\u0590-\u05FF]/.test(String(text || ''));
+}
+
+function locationLabelFromParts(name, admin1, country) {
+  return [name, admin1, country].filter(Boolean).join(', ');
+}
+
+function pickBestGeocodeResult(results, query) {
+  if (!Array.isArray(results) || !results.length) return null;
+  const q = cleanText(query).toLowerCase();
+  const qHe = cleanText(query);
+  const exact = results.find(r => {
+    const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
+    return name.toLowerCase() === q || name === qHe;
   });
-  const data = await fetchJson(url);
-  const results = Array.isArray(data?.results) ? data.results : [];
-  if (!results.length) return null;
-  const best = results[0];
-  const label = [best.name, best.admin1, best.country].filter(Boolean).join(', ');
+  return exact || results[0];
+}
+
+function mapOpenMeteoResult(best, query) {
+  if (!best) return null;
+  const country = best.country || '';
+  const label = locationLabelFromParts(best.name, best.admin1, country);
   return {
     label,
-    lat: best.latitude,
-    lon: best.longitude,
-    country: best.country || '',
+    lat: Number(best.latitude),
+    lon: Number(best.longitude),
+    country,
     timezone: best.timezone || '',
-    climate: inferClimate(best.latitude, best.longitude, best.country || '')
+    climate: inferClimate(best.latitude, best.longitude, country)
   };
 }
 
-async function reverseGeocode(lat, lon) {
-  const url = 'https://nominatim.openstreetmap.org/reverse?' + new URLSearchParams({
-    lat: String(lat),
-    lon: String(lon),
-    format: 'json',
-    zoom: '10',
-    addressdetails: '1'
+async function geocodeWithOpenMeteo(query, language = 'en') {
+  const q = cleanText(query);
+  if (!q) return null;
+  const url =
+    'https://geocoding-api.open-meteo.com/v1/search?' +
+    new URLSearchParams({
+      name: q,
+      count: '8',
+      language,
+      format: 'json'
+    });
+  const data = await fetchJson(url);
+  const results = Array.isArray(data?.results) ? data.results : [];
+  if (!results.length) return null;
+  return mapOpenMeteoResult(pickBestGeocodeResult(results, q), q);
+}
+
+async function geocodeWithNominatim(query) {
+  const q = cleanText(query);
+  if (!q) return null;
+  const url =
+    'https://nominatim.openstreetmap.org/search?' +
+    new URLSearchParams({
+      q,
+      format: 'json',
+      limit: '6',
+      addressdetails: '1'
+    });
+  const data = await fetchJson(
+    url,
+    {
+      headers: {
+        Referer: 'https://cruvit.netlify.app/',
+        'Accept-Language': hasHebrew(q) ? 'he,en' : 'en,he'
+      }
+    },
+    14000
+  );
+  if (!Array.isArray(data) || !data.length) return null;
+
+  const mapped = data.map(item => {
+    const addr = item.address || {};
+    const name =
+      item.name ||
+      addr.village ||
+      addr.town ||
+      addr.city ||
+      addr.suburb ||
+      addr.hamlet ||
+      q;
+    const label =
+      [name, addr.state_district || addr.state || addr.region, addr.country]
+        .filter(Boolean)
+        .join(', ') || cleanText(item.display_name);
+    return {
+      label,
+      lat: Number(item.lat),
+      lon: Number(item.lon),
+      country: addr.country || '',
+      timezone: '',
+      climate: inferClimate(item.lat, item.lon, addr.country || '')
+    };
   });
-  const data = await fetchJson(url, {}, 14000);
+
+  return pickBestGeocodeResult(mapped, q);
+}
+
+async function searchLocationSuggestions(query) {
+  const q = cleanText(query);
+  if (!q || q.length < 2) return [];
+
+  const seen = new Set();
+  const out = [];
+
+  const add = loc => {
+    if (!loc || !Number.isFinite(loc.lat) || !Number.isFinite(loc.lon)) return;
+    const key = `${loc.label.toLowerCase()}|${loc.lat.toFixed(3)}|${loc.lon.toFixed(3)}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(loc);
+  };
+
+  const langs = hasHebrew(q) ? ['he', 'en'] : ['en', 'he'];
+  for (const lang of langs) {
+    const url =
+      'https://geocoding-api.open-meteo.com/v1/search?' +
+      new URLSearchParams({ name: q, count: '6', language: lang, format: 'json' });
+    const data = await fetchJson(url);
+    for (const item of Array.isArray(data?.results) ? data.results : []) {
+      add(mapOpenMeteoResult(item, q));
+    }
+  }
+
+  const nominatim = await geocodeWithNominatim(q);
+  if (nominatim) add(nominatim);
+
+  const nominatimListUrl =
+    'https://nominatim.openstreetmap.org/search?' +
+    new URLSearchParams({ q, format: 'json', limit: '5', addressdetails: '1' });
+  const nominatimList = await fetchJson(
+    nominatimListUrl,
+    {
+      headers: {
+        Referer: 'https://cruvit.netlify.app/',
+        'Accept-Language': hasHebrew(q) ? 'he,en' : 'en,he'
+      }
+    },
+    14000
+  );
+  if (Array.isArray(nominatimList)) {
+    for (const item of nominatimList) {
+      const addr = item.address || {};
+      const name =
+        item.name || addr.village || addr.town || addr.city || addr.suburb || addr.hamlet || q;
+      add({
+        label:
+          [name, addr.state_district || addr.state || addr.region, addr.country]
+            .filter(Boolean)
+            .join(', ') || cleanText(item.display_name),
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+        country: addr.country || '',
+        timezone: '',
+        climate: inferClimate(item.lat, item.lon, addr.country || '')
+      });
+    }
+  }
+
+  return out.slice(0, 6);
+}
+
+async function geocodeQuery(query) {
+  const q = cleanText(query);
+  if (!q) return null;
+
+  const langs = hasHebrew(q) ? ['he', 'en'] : ['en', 'he'];
+  for (const lang of langs) {
+    const found = await geocodeWithOpenMeteo(q, lang);
+    if (found) return found;
+  }
+
+  return await geocodeWithNominatim(q);
+}
+
+async function reverseGeocode(lat, lon) {
+  const url =
+    'https://nominatim.openstreetmap.org/reverse?' +
+    new URLSearchParams({
+      lat: String(lat),
+      lon: String(lon),
+      format: 'json',
+      zoom: '12',
+      addressdetails: '1'
+    });
+  const data = await fetchJson(
+    url,
+    {
+      headers: {
+        Referer: 'https://cruvit.netlify.app/',
+        'Accept-Language': 'he,en'
+      }
+    },
+    14000
+  );
   if (!data) {
     return {
       label: `${Number(lat).toFixed(2)}°, ${Number(lon).toFixed(2)}°`,
@@ -141,11 +305,21 @@ async function reverseGeocode(lat, lon) {
     };
   }
   const addr = data.address || {};
-  const label = [
-    addr.city || addr.town || addr.village || addr.suburb || addr.county,
-    addr.state || addr.region,
-    addr.country
-  ].filter(Boolean).join(', ') || data.display_name || `${Number(lat).toFixed(2)}°, ${Number(lon).toFixed(2)}°`;
+  const placeName =
+    addr.village ||
+    addr.town ||
+    addr.city ||
+    addr.suburb ||
+    addr.hamlet ||
+    addr.locality ||
+    data.name ||
+    '';
+  const label =
+    [placeName, addr.state_district || addr.state || addr.region, addr.country]
+      .filter(Boolean)
+      .join(', ') ||
+    data.display_name ||
+    `${Number(lat).toFixed(2)}°, ${Number(lon).toFixed(2)}°`;
   return {
     label,
     lat: Number(lat),
@@ -231,8 +405,17 @@ export default async function handler(request) {
       } else {
         location = await geocodeQuery(query);
       }
-      if (!location) return json(404, { error: 'Location not found. Try a city or region name.' });
+      if (!location) return json(404, { error: 'Location not found. Try a city, village or region name in Hebrew or English.' });
       return json(200, { location });
+    }
+
+    if (mode === 'search') {
+      if (!query) return json(400, { error: 'Missing location query' });
+      const suggestions = await searchLocationSuggestions(query);
+      if (!suggestions.length) {
+        return json(404, { error: 'No matching places found. Try a nearby city or region.' });
+      }
+      return json(200, { suggestions });
     }
 
     // forecast (default)

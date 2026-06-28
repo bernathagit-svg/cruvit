@@ -350,16 +350,38 @@ function identificationBlob(result) {
     .toLowerCase();
 }
 
+function looksLikeFloweringPlantSignals(text = '') {
+  return /orchid|phalaenopsis|dendrobium|cattleya|rose|tulip|daisy|sunflower|hibiscus|jasmine|bougainvillea|geranium|petunia|marigold|lily|iris|daffodil|chrysanthemum|begonia|anthurium|flowering|showy flower|blooming|in bloom|פרח|סחלב|ורד|פריחה/i.test(
+    String(text || '').toLowerCase()
+  );
+}
+
 function looksLikeDodonaeaSignals(text = '') {
   const blob = String(text || '').toLowerCase();
+  if (looksLikeHouseplantSignals(blob) || looksLikeFloweringPlantSignals(blob)) return false;
   return (
-    /seed.?cap|seed pod|fruit|papery wing|winged cap|three.?wing|3.?wing|samara|hop bush|dodonaea|אשחר|viscosa/i.test(
+    (/seed.?cap|seed pod|papery wing|winged cap|three.?wing|3.?wing|samara|hop bush|hopbush|dodonaea|אשחר|viscosa/i.test(
       blob
-    ) &&
-    !/large (showy )?(red )?flower|coral flower|pea.?shaped flower|billowing petal|trifoliate flower cluster/i.test(
+    ) ||
+      (/papery|winged/i.test(blob) && /cap|pod|seed|samara/i.test(blob))) &&
+    !/large (showy )?(red )?flower|coral flower|pea.?shaped flower|billowing petal|trifoliate flower cluster|orchid|phalaenopsis/i.test(
       blob
     )
   );
+}
+
+function looksLikeHouseplantSignals(text = '') {
+  return /zamioculcas|zz plant|pothos|monstera|philodendron|snake plant|dracaena|ficus elastica|rubber plant|peace lily|spathiphyllum|orchid|phalaenopsis|anthurium|indoor|houseplant|house plant|potted|pot plant|glossy.*leaf|waxy.*leaf|thick.*stem|compound leaf|pinnate leaf|leaflets along|upright stem|ceramic pot|plastic pot|planter|windowsill|סחלב|עציץ|צמח בית/i.test(
+    String(text || '').toLowerCase()
+  );
+}
+
+function hasExplicitSeedCapsules(result) {
+  const va = result?.visual_analysis || result?.visualAnalysis || {};
+  const prom = String(va.prominent_structure || '').toLowerCase();
+  const desc = String(va.structure_description || '').toLowerCase();
+  if (prom === 'seed_fruit' && /papery|wing|capsule|samara|hop/i.test(desc)) return true;
+  return /papery.*wing|winged.*seed|3.?wing|three.?wing|seed capsule|hop bush/i.test(desc);
 }
 
 function looksLikeErythrinaSignals(text = '') {
@@ -368,10 +390,22 @@ function looksLikeErythrinaSignals(text = '') {
   );
 }
 
+function isStrictlyValidDodonaea(result) {
+  const analysis = visualAnalysisText(result);
+  const va = result?.visual_analysis || result?.visualAnalysis || {};
+  const prom = String(va.prominent_structure || '').toLowerCase();
+  const habit = String(va.habit || '').toLowerCase();
+
+  if (looksLikeHouseplantSignals(analysis) || looksLikeFloweringPlantSignals(analysis)) return false;
+  if (prom !== 'seed_fruit') return false;
+  if (habit && habit !== 'shrub' && habit !== 'tree') return false;
+  if (!hasExplicitSeedCapsules(result)) return false;
+  if (!looksLikeDodonaeaSignals(analysis)) return false;
+  return true;
+}
+
 function applyIdentificationCorrections(result, userHint = '') {
   const hint = cleanText(userHint).toLowerCase();
-  const analysis = visualAnalysisText(result);
-  const combined = `${analysis} ${identificationBlob(result)}`;
 
   if (/dodonaea|hop bush|אשחר|viscosa/i.test(hint)) {
     return {
@@ -384,39 +418,12 @@ function applyIdentificationCorrections(result, userHint = '') {
     };
   }
 
-  const idBlob = identificationBlob(result);
-  const idGenus = genusKey(result?.scientific_name || result?.scientificName);
-
-  if (
-    (idGenus === 'erythrina' || looksLikeErythrinaSignals(idBlob)) &&
-    (looksLikeDodonaeaSignals(analysis) || looksLikeDodonaeaSignals(combined))
-  ) {
-    return {
-      ...result,
-      common_name: 'Hop bush',
-      scientific_name: 'Dodonaea viscosa',
-      confidence: 'high',
-      alternatives: [],
-      _corrected: 'dodonaea_vs_erythrina'
-    };
-  }
-
-  if (looksLikeDodonaeaSignals(analysis) && idGenus !== 'dodonaea') {
-    return {
-      ...result,
-      common_name: 'Hop bush',
-      scientific_name: 'Dodonaea viscosa',
-      confidence: 'high',
-      alternatives: [],
-      _corrected: 'visual_seed_capsules'
-    };
-  }
-
   return result;
 }
 
-function buildIdentifyPrompt(location, climate, userHint = '') {
-  return `You are an expert botanist identifying a real garden or house plant from a photo.
+function buildIdentifyPrompt(location, climate, userHint = '', scanContext = '') {
+  const contextNote = scanContext ? `\n- ${scanContext}` : '';
+  return `You are an expert botanist identifying a plant from a photo.
 Return ONLY valid JSON, without markdown, in this exact shape:
 {
   "visual_analysis": {
@@ -436,29 +443,26 @@ Return ONLY valid JSON, without markdown, in this exact shape:
 }
 
 Follow these steps IN ORDER before naming the plant:
-1. Describe what the colored pink/red/maroon parts actually are: large showy flowers, papery winged seed capsules, colored bracts, or colored leaves?
-2. Describe leaf type: simple elongated leaves vs trifoliate (3 leaflets) vs pinnate vs needles.
-3. Only then choose the genus/species.
+1. Is this an indoor/potted houseplant or an outdoor garden plant?
+2. If you see showy flowers (orchid spikes, rose blooms, etc.), set prominent_structure to "flowers" — NOT seed_fruit.
+3. Describe leaf type and growth habit honestly.
+4. Name the plant that best matches what is visible.
 
-Critical Mediterranean look-alikes — do NOT confuse these:
-- Dodonaea viscosa (hop bush, Hebrew: אשחר): dense clusters of papery 3-winged seed capsules (pink/red/brown/green), simple leathery leaves, common hedge shrub. NOT large flowers.
-- Erythrina (coral tree): trifoliate leaves and large bright red pea-shaped flowers. NOT papery winged seed capsules.
-- Bougainvillea: papery bracts around tiny white flowers, often on a vine.
-- Weigela / Escallonia: shrub with real trumpet or small flowers, not papery wings.
-
-If the photo shows papery 3-winged seed capsules on a shrub with simple leaves, identify as Dodonaea viscosa — never Erythrina.
+The photo may show ANY common plant: orchids (Phalaenopsis), pothos, Monstera, ZZ plant, roses, herbs, succulents, citrus, tomatoes, lavender, etc.
+Do NOT guess a random outdoor shrub unless the image clearly shows that exact plant outdoors.
 
 Rules:
-- Identify from the image only. Location context: ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.
+- Identify from the image only. Location hint (may be irrelevant for indoor plants): ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.${contextNote}
 ${userHint ? `- The gardener suggests this may be: ${JSON.stringify(userHint)}. Verify visually; use only if it matches the image.` : ''}
-- common_name must be readable (e.g. "Hop bush", "Rose", "Lavender") — never a genus author citation.
+- common_name must be readable (e.g. "Moth orchid", "Rose", "ZZ plant") — never a genus author citation.
 - scientific_name must be a real binomial when possible (Genus species).
 - Fill visual_analysis honestly before choosing common_name and scientific_name.
 - If species is confident, set confidence to "high" and return NO alternatives.
 - Include alternatives ONLY when genuinely uncertain between 2 closely related species in the SAME genus.
 - Never list unrelated genera. Never list multiple species from the same genus.
 - Maximum 1 alternative. Omit alternatives when confidence is high.
-- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.`;
+- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.
+- Ignore all text, buttons, app UI, labels, and overlays visible in the photo. Identify only the actual plant.`;
 }
 
 function collapseSameGenusCandidates(candidates) {
@@ -479,44 +483,48 @@ function collapseSameGenusCandidates(candidates) {
   return candidates.slice(0, 2);
 }
 
-async function refineLikelyMisidentification(image, firstResult, key, model) {
-  const genus = genusKey(firstResult?.scientific_name || firstResult?.scientificName);
-  if (genus === 'dodonaea') return firstResult;
+async function reIdentifyPlant(image, key, model, options = {}) {
+  const {
+    userHint = '',
+    location = '',
+    climate = '',
+    excludeGenera = [],
+    reason = ''
+  } = options;
 
-  const va = firstResult?.visual_analysis || firstResult?.visualAnalysis || {};
-  const prom = String(va.prominent_structure || '').toLowerCase();
-  const analysis = visualAnalysisText(firstResult);
-  const watchGenera = new Set(['erythrina', 'cercis', 'bougainvillea', 'weigela', 'escallonia', 'kalmia', 'abelia']);
-  const shouldReview =
-    watchGenera.has(genus) ||
-    prom.includes('seed') ||
-    prom.includes('fruit') ||
-    looksLikeDodonaeaSignals(analysis) ||
-    (/pink|red|magenta|maroon|purple/i.test(analysis) &&
-      (/shrub|hedge|simple/i.test(analysis) || String(va.leaf_type || '').toLowerCase() === 'simple'));
+  const excludeNote = excludeGenera.length
+    ? `\nIMPORTANT: The previous guess (${excludeGenera.join(', ')}) was wrong. Do NOT repeat it unless the image unmistakably shows that exact plant.\n`
+    : '';
 
-  if (!shouldReview) return firstResult;
-
-  const previousName = cleanText(firstResult?.scientific_name || firstResult?.scientificName || firstResult?.common_name);
-  const reviewPrompt = `You previously identified this plant as ${JSON.stringify(previousName || 'unknown')}.
-Look again at the photo very carefully and return ONLY JSON:
+  const prompt = `You are an expert botanist identifying a real plant from a photo.
+${excludeNote}${reason ? `Context: ${reason}\n` : ''}
+Return ONLY valid JSON, without markdown, in this exact shape:
 {
-  "is_papery_winged_seed_capsules": true,
-  "leaf_type": "simple|trifoliate|other",
-  "best_identification": {
-    "common_name": "",
-    "scientific_name": "",
-    "confidence": "high|medium|low"
-  }
+  "visual_analysis": {
+    "prominent_structure": "flowers|seed_fruit|leaves_only|mixed|unclear",
+    "structure_description": "",
+    "leaf_type": "simple|trifoliate|pinnate|needle|unclear",
+    "leaf_description": "",
+    "habit": "shrub|tree|vine|herb|unclear",
+    "notes": ""
+  },
+  "common_name": "",
+  "scientific_name": "",
+  "confidence": "high|medium|low",
+  "alternatives": []
 }
-Rules:
-- Dodonaea viscosa (hop bush, Hebrew: אשחר) has dense clusters of papery 3-winged seed capsules (pink/red/brown/green) and simple leathery leaves on a shrub/hedge.
-- Erythrina / Cercis / Bougainvillea have real flowers or bracts — not papery 3-winged seed capsules.
-- If the pink/red parts are papery winged seed capsules on a simple-leaved shrub, set is_papery_winged_seed_capsules=true and best_identification to Dodonaea viscosa / Hop bush.
-- Only keep the previous identification if you clearly see large flowers or other non-capsule structures.`;
+
+Identify the actual plant visible in the photo: houseplants, orchids, succulents, herbs, vegetables, trees, shrubs, or garden flowers.
+Location context: ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.
+${userHint ? `The gardener suggests: ${JSON.stringify(userHint)}. Verify visually; use only if it matches.` : ''}
+- common_name must be readable (e.g. "Moth orchid", "Rose", "ZZ plant") — never a genus author citation.
+- scientific_name must be a real binomial when possible.
+- Fill visual_analysis honestly before naming the plant.
+- If species is confident, set confidence to "high" and return NO alternatives.
+- Ignore all text, buttons, app UI, labels, and overlays. Identify only the actual plant.`;
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 18000);
+  const timer = setTimeout(() => controller.abort(), 24000);
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -528,7 +536,7 @@ Rules:
       },
       body: JSON.stringify({
         model,
-        max_tokens: 500,
+        max_tokens: 900,
         messages: [
           {
             role: 'user',
@@ -541,7 +549,7 @@ Rules:
                   data: image.data
                 }
               },
-              { type: 'text', text: reviewPrompt }
+              { type: 'text', text: prompt }
             ]
           }
         ]
@@ -550,45 +558,66 @@ Rules:
     });
 
     clearTimeout(timer);
-    if (!response.ok) return firstResult;
+    if (!response.ok) return null;
 
     const payload = await response.json().catch(() => ({}));
     const text = (payload?.content || [])
       .filter(part => part?.type === 'text')
       .map(part => part.text)
       .join('\n');
-    const review = extractJson(text);
-    const best = review?.best_identification || review?.bestIdentification;
-    const isCapsules =
-      review?.is_papery_winged_seed_capsules === true ||
-      review?.isPaperyWingedSeedCapsules === true;
-
-    if (
-      isCapsules ||
-      looksLikeDodonaeaSignals(JSON.stringify(review || {})) ||
-      genusKey(best?.scientific_name || best?.scientificName) === 'dodonaea'
-    ) {
-      return {
-        ...firstResult,
-        visual_analysis: {
-          ...(firstResult?.visual_analysis || {}),
-          prominent_structure: 'seed_fruit',
-          structure_description: 'Papery winged seed capsules',
-          leaf_type: review?.leaf_type || 'simple',
-          notes: 'Refined from Erythrina misidentification'
-        },
-        common_name: best?.common_name || best?.commonName || 'Hop bush',
-        scientific_name: best?.scientific_name || best?.scientificName || 'Dodonaea viscosa',
-        confidence: 'high',
-        alternatives: [],
-        _corrected: 'seed_capsule_second_pass'
-      };
+    const parsed = extractJson(text);
+    if (!parsed?.scientific_name && !parsed?.scientificName && !parsed?.common_name && !parsed?.commonName) {
+      return null;
     }
+    return parsed;
   } catch {
     clearTimeout(timer);
+    return null;
+  }
+}
+
+function userRequestedDodonaea(userHint = '') {
+  return /dodonaea|hop bush|אשחר|viscosa/i.test(cleanText(userHint).toLowerCase());
+}
+
+function isBlockedScanIdentification(result, userHint = '') {
+  if (userRequestedDodonaea(userHint)) return false;
+  return genusKey(result?.scientific_name || result?.scientificName) === 'dodonaea';
+}
+
+async function recoverInvalidDodonaeaIdentification(image, result, key, model, userHint = '', context = {}) {
+  const genus = genusKey(result?.scientific_name || result?.scientificName);
+  if (genus !== 'dodonaea') return result;
+  if (userRequestedDodonaea(userHint)) return result;
+
+  const retryModels = [...new Set([model, 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'].filter(Boolean))];
+  const retryReasons = [
+    'Previous identification was Dodonaea viscosa but the photo likely shows a different plant (houseplant, orchid, or garden plant).',
+    'Look for orchid flowers on a spike, potted houseplants, herbs, succulents, or garden flowers — NOT Dodonaea hop bush.',
+    'Final retry: identify the exact plant in the pot or garden bed. Do NOT return Dodonaea unless papery winged seed capsules on an outdoor hedge are unmistakable.'
+  ];
+
+  for (let i = 0; i < retryModels.length; i++) {
+    const fresh = await reIdentifyPlant(image, key, retryModels[i], {
+      userHint,
+      location: context.location || '',
+      climate: context.climate || '',
+      excludeGenera: ['Dodonaea viscosa', 'Dodonaea', 'Hop bush', 'אשחר'],
+      reason: retryReasons[Math.min(i, retryReasons.length - 1)]
+    });
+    if (!fresh) continue;
+
+    const freshGenus = genusKey(fresh?.scientific_name || fresh?.scientificName);
+    if (!freshGenus || freshGenus === 'dodonaea') continue;
+
+    return {
+      ...fresh,
+      alternatives: [],
+      _corrected: 'invalid_dodonaea_recovery'
+    };
   }
 
-  return firstResult;
+  return null;
 }
 
 export default async function handler(request) {
@@ -626,9 +655,10 @@ export default async function handler(request) {
 
   const location = cleanText(body?.location);
   const climate = cleanText(body?.climate);
+  const scanContext = cleanText(body?.scanContext);
   const userHint = cleanText(body?.hint || body?.userQuery || body?.userHint || body?.plantName);
 
-  const prompt = buildIdentifyPrompt(location, climate, userHint);
+  const prompt = buildIdentifyPrompt(location, climate, userHint, scanContext);
 
   const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
@@ -703,11 +733,27 @@ export default async function handler(request) {
         .join('\n');
 
       const result = extractJson(text);
-      const refined = await refineLikelyMisidentification(image, result, key, model);
-      const corrected = applyIdentificationCorrections(refined, userHint);
-      let candidates = makeCandidates(corrected);
+      const corrected = applyIdentificationCorrections(result, userHint);
+      let recovered = await recoverInvalidDodonaeaIdentification(
+        image,
+        corrected,
+        key,
+        model,
+        userHint,
+        { location, climate }
+      );
 
-      if (!refined || candidates.length === 0) {
+      if (!recovered || isBlockedScanIdentification(recovered, userHint)) {
+        lastError = {
+          message:
+            'Could not confidently identify this plant from the photo. Try a clearer photo of the plant only, without app buttons or text in the frame.'
+        };
+        break;
+      }
+
+      let candidates = makeCandidates(recovered);
+
+      if (!recovered || candidates.length === 0) {
         lastError = {
           message: 'The AI response did not contain a plant identification.'
         };
@@ -737,9 +783,9 @@ export default async function handler(request) {
 
       return json(200, {
         candidates,
-        identification: corrected,
-        visualAnalysis: corrected?.visual_analysis || corrected?.visualAnalysis || null,
-        corrected: corrected?._corrected || '',
+        identification: recovered,
+        visualAnalysis: recovered?.visual_analysis || recovered?.visualAnalysis || null,
+        corrected: recovered?._corrected || '',
         commonName,
         scientificName,
         common_name: commonName,
