@@ -339,12 +339,31 @@ function enrichProfileWithQuality(profile,requested){
 
 const OPENAI_READY={enabled:true,endpoint:'/.netlify/functions/plant-knowledge',note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
 
+const TASK_DONE_IDX=7;
+function normalizeTaskRow(t){
+  if(!t) return ['🌿','Garden care','This week','Low','',false,'',false];
+  let row;
+  if(Array.isArray(t)){
+    row=t.slice();
+    if(t.done===true) row[TASK_DONE_IDX]=true;
+  }else if(typeof t==='object'){
+    row=[t.icon||t[0]||'🌿',t.title||t.name||t[1]||'Garden care',t.when||t.date||t[2]||'This week',t.priority||t[3]||'Low',t.iso||t[4]||'',t.auto??t[5]??false,t.plantName||t[6]||'',!!t.done];
+  }else{
+    row=[String(t),'Garden care','This week','Low','',false,'',false];
+  }
+  while(row.length<=TASK_DONE_IDX) row.push(undefined);
+  row[TASK_DONE_IDX]=!!row[TASK_DONE_IDX];
+  return row;
+}
+function taskDone(t){return !!normalizeTaskRow(t)[TASK_DONE_IDX]}
+function setTaskDone(t,done){const row=normalizeTaskRow(t);row[TASK_DONE_IDX]=!!done;return row}
+
 const service={key:'cruvit_mg_v23_real_plant_profiles',load(){let saved=null;try{saved=JSON.parse(localStorage.getItem(this.key)||'null')}catch(e){console.warn('Saved garden data could not be parsed',e)}const base={plants:[['Lavender','Healthy','✓'],['Lemon Tree','Needs fertilizer','!'],['Rosemary','Water today','✓'],['Jasmine','Check leaves','!']],tasks:[['💧','Water Rosemary','Today · 5 minutes','High'],['🌿','Fertilize Lemon Tree','Tomorrow · recommended','Medium'],['🔎','Check Jasmine Leaves','This week · possible pests','Low']],events:[['Today','Garden status checked','Your garden is looking good'],['June 20','Lemon task added','Fertilizer suggested'],['June 18','Lavender scan','Plant looks healthy'],['June 14','Shopping list created','Three items were added']],cart:[],score:87,signedIn:false,notifications:{enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false},rewards:{credits:120,history:[],achievements:{firstPlant:true}}};return Object.assign(base,saved||{})},save(data){try{localStorage.setItem(this.key,JSON.stringify(data));return true}catch(e){console.warn('Garden data was not saved to localStorage, but the screen will continue to work',e);return false}}};
 function normalizeGardenDataShape(){
   if(!Array.isArray(data.plants)) data.plants=[];
   data.plants=data.plants.map(p=>Array.isArray(p)?{name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓'}:(p&&typeof p==='object'?p:{name:String(p||'Plant'),status:'Healthy',mark:'✓'}));
   if(!Array.isArray(data.tasks)) data.tasks=[];
-  data.tasks=data.tasks.map(t=>Array.isArray(t)?t:[t.icon||'🌿',t.title||t.name||'Garden care',t.when||t.date||'This week',t.priority||'Low']).filter(Boolean);
+  data.tasks=data.tasks.map(normalizeTaskRow).filter(t=>t[1]);
   if(!Array.isArray(data.events)) data.events=[];
   if(!Array.isArray(data.cart)) data.cart=[];
   if(!data.notifications||typeof data.notifications!=='object')data.notifications={enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false};
@@ -374,24 +393,30 @@ if(!data.notifications)data.notifications={enabled:true,watering:true,pruning:tr
 ensureRewardsState();
 if(!data.rewards.history)data.rewards.history=[];
 if(!data.rewards.achievements)data.rewards.achievements={};
-let currentMonthIndex=5; // June, zero based
-let selectedDay=22;
+let currentMonthIndex=new Date().getMonth();
+let selectedDay=new Date().getDate();
 let openMenu=null;
 let showAllTasks=false;
 let currentPlantSetup={slug:null,source:'My Garden'};
 let addPlantSearchState={source:null,query:'',results:[],liveProfile:null,loading:false};
-const calendarYear=2026;
+let calendarYear=new Date().getFullYear();
+function initCalendarFromToday(){
+  const now=new Date();
+  currentMonthIndex=now.getMonth();
+  selectedDay=now.getDate();
+  calendarYear=now.getFullYear();
+}
 const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function isoParts(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?{year:+m[1],month:+m[2]-1,day:+m[3]}:null}
 function eventToDay(e,i){
   const iso=isoParts(e[0]); if(iso)return iso.day;
-  if(e[0]==='Today'||e[0]==='Now')return 22;
+  if(e[0]==='Today'||e[0]==='Now')return new Date().getDate();
   const m=String(e[0]).match(/([A-Za-z]+)\s+(\d+)/);
-  return m?parseInt(m[2],10):Math.max(1,22-i)
+  return m?parseInt(m[2],10):Math.max(1,new Date().getDate()-i)
 }
 function eventToMonth(e){
   const iso=isoParts(e[0]); if(iso)return iso.month;
-  if(e[0]==='Today'||e[0]==='Now')return 5;
+  if(e[0]==='Today'||e[0]==='Now')return new Date().getMonth();
   const m=String(e[0]).match(/([A-Za-z]+)\s+(\d+)/);
   if(!m)return 5;
   const idx=monthNames.findIndex(x=>x.toLowerCase()===m[1].toLowerCase());
@@ -428,7 +453,7 @@ function updateNotifyPref(name,checked){
 
 function taskIsoValue(t){return (t&&typeof t[4]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(t[4]))?t[4]:''}
 function taskUrgencyScore(t){
-  if(t?.done)return -999;
+  if(taskDone(t))return -999;
   const title=String(t?.[1]||'').toLowerCase();
   const priority=String(t?.[3]||'').toLowerCase();
   let score=0;
@@ -444,7 +469,7 @@ function taskUrgencyScore(t){
 }
 function datePlusDaysIso(days){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
 function isCompanionActionableTask(t){
-  if(!t||t.done)return false;
+  if(!t||taskDone(t))return false;
   const title=String(t[1]||'').toLowerCase();
   const when=String(t[2]||'').toLowerCase();
   const priority=String(t[3]||'').toLowerCase();
@@ -488,7 +513,8 @@ function renderCalendar(){
   for(let i=0;i<firstDay;i++)cells+=`<div class="day empty"></div>`;
   for(let d=1;d<=daysInMonth;d++){
     const events=eventsByDay[d]||[];const ev=events[0];const type=ev?eventType(ev):'';
-    const isToday=(currentMonthIndex===5 && d===22);
+    const now=new Date();
+    const isToday=(currentMonthIndex===now.getMonth()&&calendarYear===now.getFullYear()&&d===now.getDate());
     cells+=`<div class="day ${isToday?'today':''} ${d===selectedDay?'selected':''}" onclick="selectCalendarDay(${d})"><span class="date">${d}</span>${ev?`<div class="cal-event ${type}">${ev[1]}</div>`:''}</div>`
   }
   const dayEvents=eventsByDay[selectedDay]||[];
@@ -858,7 +884,7 @@ function healthRelevantTaskEntries(){
   return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>isCompanionActionableTask(x.t));
 }
 function isHealthUrgentTask(t){
-  if(!t||t.done)return false;
+  if(!t||taskDone(t))return false;
   if(!isCompanionActionableTask(t))return false;
   const iso=taskIsoValue(t);
   const when=String(t?.[2]||'').toLowerCase();
@@ -900,7 +926,7 @@ function calculateHealthScore(){
   const healthTasks=healthRelevantTaskEntries();
   const urgentTasks=healthTasks.filter(x=>isHealthUrgentTask(x.t));
   const urgentPenalty=Math.min(16,urgentTasks.reduce((sum,x)=>sum+taskHealthPenalty(x.t),0));
-  const doneTasks=tasks.filter(t=>t.done).length;
+  const doneTasks=tasks.filter(t=>taskDone(t)).length;
   const recentActivity=hasRecentGardenActivity();
   const noPlantsPenalty=totalPlants?0:8;
   const plantPenalty=Math.min(30,attentionPlants*4);
@@ -921,20 +947,20 @@ function calculateHealthScore(){
 
 // Keep calculateHealthScore globally available after code merges. Some handlers call it directly.
 try{window.calculateHealthScore=calculateHealthScore}catch(e){}
-function todayIso(){return '2026-06-22'}
-function isoFromOffset(offset){const d=new Date(2026,5,22+offset);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function todayIso(){const d=new Date();d.setHours(0,0,0,0);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function isoFromOffset(offset){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+offset);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function labelFromIso(iso){const p=isoParts(iso); if(!p)return 'This week'; if(iso===todayIso())return 'Today'; return `${monthNames[p.month]} ${p.day}`}
 function taskDueText(iso,note){return `${labelFromIso(iso)} · ${note}`}
 function taskMatchesPlant(t,plantName){return normalizeQuery(t?.[1]||'').includes(normalizeQuery(plantName||''))}
 function taskTitleExists(title,plantName){const tNorm=normalizeQuery(title); const pNorm=normalizeQuery(plantName||''); return (data.tasks||[]).some(t=>normalizeQuery(t?.[1]||'')===tNorm || (pNorm && normalizeQuery(t?.[1]||'').includes(pNorm) && normalizeQuery(t?.[1]||'').includes(tNorm.slice(0,12))))}
-function isTaskOverdue(t){if(t?.done)return false; const iso=t?.[4]; if(!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso))return false; return iso<todayIso()}
+function isTaskOverdue(t){if(taskDone(t))return false; const iso=t?.[4]; if(!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso))return false; return iso<todayIso()}
 function autoTaskPriority(title,ref){const txt=(title+' '+(ref.status||'')+' '+(ref.warnings||[]).join(' ')).toLowerCase(); if(txt.includes('disease')||txt.includes('pest')||txt.includes('check')||txt.includes('yellow')||txt.includes('wilting'))return 'High'; if(txt.includes('fertiliz')||txt.includes('prun')||txt.includes('feed'))return 'Medium'; return 'Low'}
 function addAutoCareTask(ref,title,offset,note,icon){
   const plantName=ref.name||'Plant';
   if(taskTitleExists(title,plantName))return false;
   const iso=isoFromOffset(offset);
   const priority=autoTaskPriority(title,ref);
-  data.tasks.push([icon||ref.icon||'🌿',title,taskDueText(iso,note||'auto-generated care task'),priority,iso,true,plantName]);
+  data.tasks.push([icon||ref.icon||'🌿',title,taskDueText(iso,note||'auto-generated care task'),priority,iso,true,plantName,false]);
   data.events.unshift([labelFromIso(iso),'Care task created',`${title} · ${plantName}`]);
   return true;
 }
@@ -946,7 +972,7 @@ function inferWaterTask(ref){
 }
 function generateCareTasksForPlant(ref,source='My Garden'){
   // Cruvit is a garden companion, not a task manager: create only the most useful care action now.
-  const openCount=(data.tasks||[]).filter(t=>!t.done).length;
+  const openCount=(data.tasks||[]).filter(t=>!taskDone(t)).length;
   const created=[];
   const plantName=ref.name||'Plant';
   const profileTasks=(ref.tasks||[]).map(t=>typeof t==='string'?{title:t}:t).filter(t=>t&&t.title);
@@ -1079,8 +1105,19 @@ async function refreshGardenWeather(){
   return result;
 }
 
-async function refreshGardenWeatherIfStale(){
+async function refreshGardenSession(){
+  data.tasks=(data.tasks||[]).map(normalizeTaskRow);
+  initCalendarFromToday();
   ensureGardenLocation();
+  try{
+    if(weatherIsStale()) await refreshGardenWeather();
+    syncWeatherCareTasks();
+    syncPlantCareTasks();
+  }catch(err){console.warn('Garden session refresh failed',err)}
+  service.save(data);
+}
+
+async function refreshGardenWeatherIfStale(){
   if(!weatherIsStale()) return;
   try{
     await refreshGardenWeather();
@@ -1167,13 +1204,13 @@ function weatherTaskType(t){
 }
 function hasOpenWeatherTask(type){
   const key='__weather:'+type;
-  return (data.tasks||[]).some(t=>!t.done && (t[6]===key || weatherTaskType(t)===type));
+  return (data.tasks||[]).some(t=>!taskDone(t) && (t[6]===key || weatherTaskType(t)===type));
 }
 function addWeatherCareTask(title,type,priority,offsetDays,note){
   const key='__weather:'+type;
   if(hasOpenWeatherTask(type)) return false;
   const iso=isoFromOffset(offsetDays);
-  data.tasks.push(['🌡️',title,taskDueText(iso,note||'weather-adjusted care'),priority||'High',iso,true,key]);
+  data.tasks.push(['🌡️',title,taskDueText(iso,note||'weather-adjusted care'),priority||'High',iso,true,key,false]);
   data.events.unshift(['Today','Weather task created',title]);
   return true;
 }
@@ -1210,6 +1247,16 @@ function syncWeatherCareTasks(){
   if(w.alerts.includes('heavy-rain')){
     addWeatherCareTask('Check drainage and delay watering before heavy rain','heavy-rain','Medium',0,'heavy rain expected · avoid waterlogging');
   }
+}
+
+function syncPlantCareTasks(){
+  const plants=(data.plants||[]).filter(p=>!p.archived);
+  plants.forEach(p=>{
+    if(openTasksForPlant(p.name).length) return;
+    const meta=plantMeta(p);
+    const ref=Object.assign({},meta,p);
+    generateCareTasksForPlant(ref,p.source||'My Garden');
+  });
 }
 
 function renderWeatherNote(){
@@ -1274,7 +1321,7 @@ function plantEntriesWithOpenTasks(){
 }
 function companionTaskTitle(entry){return String(entry?.t?.[1]||entry?.[1]||'').trim()}
 function openTasksForPlant(plantName){
-  return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>!x.t.done && taskMatchesPlant(x.t,plantName)).sort((a,b)=>b.score-a.score);
+  return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)})).filter(x=>!taskDone(x.t) && taskMatchesPlant(x.t,plantName)).sort((a,b)=>b.score-a.score);
 }
 function todayCareTaskEntries(){
   return companionOpenTaskEntries().filter(x=>{
@@ -1297,7 +1344,7 @@ function suggestedPlantCareHint(p){
 }
 function renderModalTaskHtml(entry){
   const t=entry.t,i=entry.i;
-  return `<div class="task ${t.done?'done':''}"><div class="taskIcon">${t[0]}</div><div><b>${escapeHtml(t[1])}</b><span>${escapeHtml(t[2])}</span></div><button type="button" class="priority" onclick="event.stopPropagation();completeTask(${i})">${t.done?'Done':escapeHtml(t[3])}</button></div>`;
+  return `<div class="task ${taskDone(t)?'done':''}"><div class="taskIcon">${t[0]}</div><div><b>${escapeHtml(t[1])}</b><span>${escapeHtml(t[2])}</span></div><button type="button" class="priority" onclick="event.stopPropagation();completeTask(${i})">${taskDone(t)?'Done':escapeHtml(t[3])}</button></div>`;
 }
 function renderPlantCareBlock(entry){
   const p=entry.p,idx=entry.index;
@@ -1455,7 +1502,7 @@ function showAchievementHint(id){
   window.moodStatPanelType=null;
   document.getElementById('plantDetailModal').classList.add('open');
 }
-function checkAchievements(){ensureRewardsState(); const a=data.rewards.achievements; const visible=(data.plants||[]).filter(p=>!p.archived).length; if(visible>=1)a.firstPlant=true; if(visible>=5)a.fivePlants=true; if(data.gardenPhoto||(data.rewards.history||[]).some(h=>/scan|garden photo/i.test(String(h.reason))))a.firstScan=true; if((data.tasks||[]).filter(t=>t.done).length>=3)a.taskStreak=true}
+function checkAchievements(){ensureRewardsState(); const a=data.rewards.achievements; const visible=(data.plants||[]).filter(p=>!p.archived).length; if(visible>=1)a.firstPlant=true; if(visible>=5)a.fivePlants=true; if(data.gardenPhoto||(data.rewards.history||[]).some(h=>/scan|garden photo/i.test(String(h.reason))))a.firstScan=true; if((data.tasks||[]).filter(t=>taskDone(t)).length>=3)a.taskStreak=true}
 function renderRewards(){
   const c=data.rewards?.credits||0; const info=nextRewardInfo(); const level=rewardLevelName();
   const isHe=rewardsIsHe();
@@ -1571,7 +1618,7 @@ function render(){syncHealthScore();
   const tasksTitle=document.getElementById('tasksTitle'); if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
   const tasksSubtitle=document.getElementById('tasksSubtitle'); if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Everything else waits until it matters.':'Everything looks good. Enjoy your garden today.';
   const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
-  const taskHtml=focusIndexes.map(i=>{const t=data.tasks[i];return `<div class="task ${t.done?'done':''}"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${t[1]}</b><span>${t[2]}</span></div><div class="task-side"><button class="priority" onclick="completeTask(${i})">${t.done?'Done':t[3]}</button><div class="card-actions"><button type="button" class="kebab" onclick="toggleTaskMenu(event,${i})" aria-label="Task options">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div></div>`}).join('');
+  const taskHtml=focusIndexes.map(i=>{const t=data.tasks[i];return `<div class="task ${taskDone(t)?'done':''}"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${t[1]}</b><span>${t[2]}</span></div><div class="task-side"><button class="priority" onclick="completeTask(${i})">${taskDone(t)?'Done':t[3]}</button><div class="card-actions"><button type="button" class="kebab" onclick="toggleTaskMenu(event,${i})" aria-label="Task options">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div></div>`}).join('');
   const footer= openTotal===0 ? `<div class="garden-rest-note">🌿 No urgent care is needed right now. Cruvit will only surface tasks when they are actually useful.</div>` : hiddenCount>0 && !showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Upcoming this week (${hiddenCount})</button></div>` : showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Show only today’s focus</button></div>` : '';
   document.getElementById('tasks').innerHTML=taskHtml+footer;
 
@@ -1607,10 +1654,10 @@ function toggleTaskMenu(ev,i){
   }
 }
 function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render()}}
-function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,'23'),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render()}
+function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
-function completeTask(i){if(data.tasks[i].done)return;data.tasks[i].done=true;data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();if(window.moodStatPanelType&&document.getElementById('plantDetailModal').classList.contains('open'))showMoodStatPanel(window.moodStatPanelType)}
-function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i].done=true});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render()}
+function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();if(window.moodStatPanelType&&document.getElementById('plantDetailModal').classList.contains('open'))showMoodStatPanel(window.moodStatPanelType)}
+function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render()}
 
 function resetAddPlantSearchState(){
   currentPlantSetup={slug:null,source:'My Garden'};
@@ -1823,11 +1870,24 @@ function buildPlantIdentifyRequestBody(photo){
     imageBase64:base64,
     mediaType,
     mimeType:mediaType,
-    location:data.location||'Western Galilee, Israel',
-    climate:data.climate||'Mediterranean',
+    location:data.location||'',
+    climate:data.climate||'',
+    scanContext:'Indoor houseplants and potted plants are common — identify from the photo, not from climate assumptions.',
     hint,
     userQuery:hint
   };
+}
+function scanResultLooksLikeWrongDodonaea(parsed,out){
+  const top=(parsed.candidates||[])[0];
+  if(!top) return false;
+  const sci=String(top.scientificName||top.name||'').toLowerCase();
+  if(!/dodonaea|hop bush|viscosa|אשחר/.test(sci)) return false;
+  if(String(out?.corrected||'').includes('invalid_dodonaea_recovery')) return false;
+  const va=out?.visualAnalysis||out?.identification?.visual_analysis||{};
+  const prom=String(va.prominent_structure||'').toLowerCase();
+  const notes=String(va.notes||va.structure_description||'').toLowerCase();
+  if(prom==='flowers'||/orchid|phalaenopsis|potted|indoor|houseplant|pot plant|planter|ceramic pot|showy flower|blooming|פרח|סחלב/.test(notes+prom)) return true;
+  return !out?.corrected;
 }
 function parseIdentifyResponse(out){
   const id=out?.identification||{};
@@ -2145,6 +2205,9 @@ async function identifySelectedPlantPhoto(){
     if(out.error && !parsed.candidates.length){
       throw new Error(typeof out.error==='string'?out.error:'Identification failed.');
     }
+    if(scanResultLooksLikeWrongDodonaea(parsed,out)){
+      throw new Error('Identification returned an unlikely match for this photo. Please try again with a clearer photo of the plant only.');
+    }
     if(!parsed.candidates.length){
       throw new Error(out.error||'No plant match found in the photo.');
     }
@@ -2202,7 +2265,7 @@ const PLANT_QUERY_ALIASES={
   'עץ מנגו':'Mangifera indica','מנגו':'Mangifera indica','עץ רימון':'Punica granatum','רימון':'Punica granatum','פטל':'Rubus idaeus','ליצי':'Litchi chinensis','ליצ׳י':'Litchi chinensis',
   'עץ תפוח':'Malus domestica','תפוח':'Malus domestica','עץ אגס':'Pyrus communis','אגס':'Pyrus communis','עץ שקד':'Prunus dulcis','שקד':'Prunus dulcis','עץ תאנה':'Ficus carica','תאנה':'Ficus carica','גפן':'Vitis vinifera','ענבים':'Vitis vinifera','דקל':'Phoenix dactylifera','תמר':'Phoenix dactylifera','אבוקדו':'Persea americana','עץ אבוקדו':'Persea americana','עץ משמש':'Prunus armeniaca','משמש':'Prunus armeniaca','עץ אפרסק':'Prunus persica','אפרסק':'Prunus persica','עץ שזיף':'Prunus domestica','שזיף':'Prunus domestica','דובדבן':'Prunus avium',
   'יסמין':'Jasminum','לבנדר':'Lavandula angustifolia','רוזמרין':'Salvia rosmarinus','מרווה':'Salvia','נענע':'Mentha','בזיליקום':'Ocimum basilicum','פטרוזיליה':'Petroselinum crispum','כוסברה':'Coriandrum sativum','טימין':'Thymus vulgaris','אורגנו':'Origanum vulgare','ורד':'Rosa','שושנה':'Rosa','היביסקוס':'Hibiscus','בוגנוויליה':'Bougainvillea','פלומריה':'Plumeria','פיקוס':'Ficus','אקליפטוס':'Eucalyptus','קקטוס':'Cactaceae','סוקולנט':'succulent','אלוורה':'Aloe vera','רקפת':'Cyclamen persicum','גרניום':'Pelargonium','הידרנגאה':'Hydrangea macrophylla','הורטנזיה':'Hydrangea macrophylla','זית':'Olea europaea','עץ זית':'Olea europaea','לימון':'Citrus limon','תפוז':'Citrus sinensis',
-  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa','zz plant':'Zamioculcas zamiifolia','zamioculcas':'Zamioculcas zamiifolia','עץ דולר':'Zamioculcas zamiifolia','דולר':'Zamioculcas zamiifolia'
+  'cedar':'Cedrus','cedar tree':'Cedrus','cypress':'Cupressus','papaya':'Carica papaya','mango':'Mangifera indica','pomegranate':'Punica granatum','lychee':'Litchi chinensis','lemon':'Citrus limon','orange tree':'Citrus sinensis','olive tree':'Olea europaea','passion fruit':'Passiflora edulis','lavender':'Lavandula angustifolia','jasmine':'Jasminum','rosemary':'Salvia rosmarinus','mint':'Mentha','basil':'Ocimum basilicum','hydrangea':'Hydrangea macrophylla','rose':'Rosa','ficus':'Ficus','hibiscus':'Hibiscus','cactus':'Cactaceae','dodonaea':'Dodonaea viscosa','hop bush':'Dodonaea viscosa','אשחר':'Dodonaea viscosa','orchid':'Phalaenopsis','phalaenopsis':'Phalaenopsis','moth orchid':'Phalaenopsis','סחלב':'Phalaenopsis','סחלבים':'Phalaenopsis','zz plant':'Zamioculcas zamiifolia','zamioculcas':'Zamioculcas zamiifolia','עץ דולר':'Zamioculcas zamiifolia','דולר':'Zamioculcas zamiifolia'
 };
 function canonicalPlantQuery(q){
   const raw=String(q||'').trim();
@@ -2643,7 +2706,7 @@ function mockLogin(google){data.signedIn=true;const email=document.getElementByI
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});
 ensureGardenLocation();
-refreshGardenWeatherIfStale().finally(()=>{render();});
+refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');
 window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});

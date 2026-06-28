@@ -262,9 +262,14 @@
 
   function taskTitle(t) { return String((t && t[1]) || '').toLowerCase(); }
   function taskWhen(t) { return String((t && t[2]) || '').toLowerCase(); }
+  function taskIsDone(t) {
+    if (!t) return false;
+    if (Array.isArray(t)) return !!t[7];
+    return !!t.done;
+  }
 
   function getOverdueTasks(tasks, isTaskOverdue) {
-    return (tasks || []).filter(t => !t.done && (isTaskOverdue ? isTaskOverdue(t) : false));
+    return (tasks || []).filter(t => !taskIsDone(t) && (isTaskOverdue ? isTaskOverdue(t) : false));
   }
 
   function getUpcomingTasks(tasks, days, deps) {
@@ -274,7 +279,7 @@
     if (!todayIso || !taskIsoValue || !datePlusDaysIso) return [];
     const limit = datePlusDaysIso(days);
     return (tasks || []).filter(t => {
-      if (t.done) return false;
+      if (taskIsDone(t)) return false;
       const iso = taskIsoValue(t);
       if (!iso) return taskWhen(t).includes('today') || taskWhen(t).includes('tomorrow');
       return iso >= todayIso() && iso <= limit;
@@ -296,7 +301,7 @@
   function hasWateringDue(tasks, deps) {
     const todayIso = deps.todayIso;
     const isTaskOverdue = deps.isTaskOverdue;
-    const open = (tasks || []).filter(t => !t.done);
+    const open = (tasks || []).filter(t => !taskIsDone(t));
     return open.some(t => {
       if (!/water|moisture|irrigation|השק/i.test(taskTitle(t))) return false;
       if (isTaskOverdue && isTaskOverdue(t)) return true;
@@ -342,7 +347,7 @@
     if (Array.isArray(doctor) && doctor.some(r => pestRe.test(JSON.stringify(r)))) return true;
     if (doctor && typeof doctor === 'object' && pestRe.test(JSON.stringify(doctor))) return true;
     const tasks = deps.tasks || [];
-    return tasks.some(t => !t.done && pestRe.test(taskTitle(t)));
+    return tasks.some(t => !taskIsDone(t) && pestRe.test(taskTitle(t)));
   }
 
   function hasHeatRisk(plants, weather, season, deps) {
@@ -457,7 +462,7 @@
     return {
       plants,
       tasks,
-      completedTasks: tasks.filter(t => t.done),
+      completedTasks: tasks.filter(t => taskIsDone(t)),
       overdueTasks,
       healthScore: health.score,
       attentionPlants: health.attentionPlants,
