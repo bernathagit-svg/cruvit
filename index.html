@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630m">
-<link rel="stylesheet" href="garden-modes.css?v=20250628">
+<link rel="stylesheet" href="styles.css?v=20250630n">
+<link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630a">
 </head>
 <body>
@@ -30,7 +30,7 @@
     <div class="intro-leaves" aria-hidden="true"></div>
     <div class="intro-content">
       <div class="greeting">🍃 Good morning, Hagit</div>
-      <h2>Your garden is looking great</h2>
+      <h2 id="introHeadline">Your garden is looking great</h2>
       <div class="tip-box" id="dailyTipBox" aria-labelledby="dailyTipHeading">
         <div class="tip-box-head">
           <span class="tip-box-icon" aria-hidden="true">💡</span>
@@ -251,7 +251,7 @@
   </div>
 </div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630d"></script>
+<script src="garden-modes.js?v=20250630e"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1780,9 +1780,20 @@ function renderDailyTip(){
   textEl.textContent=isHe?tip.he:tip.en;
   if(titleEl)titleEl.textContent=isHe?'הטיפ היומי':'Daily tip';
 }
+function renderIntroHeadline(){
+  const el=document.getElementById('introHeadline');
+  if(!el)return;
+  if(window.GardenModes&&GardenModes.getIntroHeadline){
+    el.textContent=GardenModes.getIntroHeadline(collectGardenDataForModes(),{todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts});
+    return;
+  }
+  const h=syncHealthScore();
+  el.textContent=h.attentionPlants>0||h.urgentTasks>0?'A few plants need your attention today':'Your garden is blooming beautifully!';
+}
 
 function render(){syncHealthScore();
   renderDailyTip();
+  renderIntroHeadline();
   const health=syncHealthScore();
   const visiblePlantsEarly=data.plants.filter(p=>!p.archived);
   const focusEntryEarly=companionOpenTaskEntries()[0];
@@ -3013,12 +3024,22 @@ function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shoppin
 function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
-function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();mountGoogleSignInButton()}
-function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError()}
+function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();setGoogleSignInLoading(false)}
+function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError();setGoogleSignInLoading(false)}
 function clearLoginError(){const el=document.getElementById('loginError');if(el){el.textContent='';el.classList.add('hidden')}}
 function showLoginError(msg){const el=document.getElementById('loginError');if(!el)return;el.textContent=msg;el.classList.remove('hidden')}
-const authState={config:null,supabase:null,ready:false,loading:null};
-function parseJwtPayload(token){try{return JSON.parse(atob(String(token||'').split('.')[1]||''))}catch(_){return null}}
+function setGoogleSignInLoading(on){
+  const btn=document.getElementById('googleSignInFallback');
+  if(!btn)return;
+  btn.disabled=!!on;
+  btn.classList.toggle('is-loading',!!on);
+  btn.textContent=on?'Signing in…':'Continue with Google';
+}
+const authState={config:null,supabase:null,ready:false,loading:null,googleTokenClient:null,googleTokenClientId:''};
+function isValidSupabaseConfig(cfg){
+  return !!(cfg?.supabaseUrl?.startsWith('https://')&&cfg?.supabaseAnonKey&&String(cfg.supabaseAnonKey).length>20);
+}
+function parseJwtPayload(token){try{return JSON.parse(atob(String(token||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(_){return null}}
 async function loadAuthConfig(){
   if(authState.config)return authState.config;
   if(!authState.loading){
@@ -3029,12 +3050,21 @@ async function loadAuthConfig(){
 }
 async function initAuth(){
   if(authState.ready)return;
-  const cfg=await loadAuthConfig();
-  if(cfg.supabaseUrl&&cfg.supabaseAnonKey&&window.supabase?.createClient){
-    authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
-    const {data:{session}}=await authState.supabase.auth.getSession();
-    if(session?.user)applyUserSession(session.user,'supabase');
-    authState.supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user)applyUserSession(session.user,'supabase');});
+  try{
+    const cfg=await loadAuthConfig();
+    if(isValidSupabaseConfig(cfg)&&window.supabase?.createClient){
+      authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+      try{
+        const {data:{session}}=await authState.supabase.auth.getSession();
+        if(session?.user)applyUserSession(session.user,'supabase');
+        authState.supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user)applyUserSession(session.user,'supabase');});
+      }catch(err){
+        console.warn('Supabase session unavailable',err);
+        authState.supabase=null;
+      }
+    }
+  }catch(err){
+    console.warn('Auth init failed',err);
   }
   authState.ready=true;
 }
@@ -3044,6 +3074,7 @@ function applyUserSession(user,provider){
   if(data.user.email)data.email=data.user.email;
   data.events.unshift(['Today','User signed in',provider==='google'||provider==='supabase'?'Google sign-in':'Email sign-in']);
   service.save(data);
+  setGoogleSignInLoading(false);
   hideLogin();
   render();
 }
@@ -3054,65 +3085,106 @@ async function loginWithEmail(){
   const password=String(document.getElementById('passwordField')?.value||'');
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showLoginError('Enter a valid email address.');return}
   if(!password||password.length<4){showLoginError('Enter your password (at least 4 characters).');return}
-  await initAuth();
-  if(authState.supabase){
-    const {error}=await authState.supabase.auth.signInWithPassword({email,password});
-    if(error){showLoginError(error.message||'Could not sign in.');return}
-    return;
+  try{
+    await initAuth();
+    if(authState.supabase){
+      const {error}=await authState.supabase.auth.signInWithPassword({email,password});
+      if(error){showLoginError(error.message||'Could not sign in.');return}
+      return;
+    }
+    finishLocalSignIn({email,name:email.split('@')[0],provider:'email'});
+  }catch(err){
+    showLoginError(err.message||'Could not sign in.');
   }
-  finishLocalSignIn({email,name:email.split('@')[0],provider:'email'});
 }
 function handleGoogleCredential(response){
+  setGoogleSignInLoading(false);
   clearLoginError();
   const payload=parseJwtPayload(response?.credential);
   if(!payload?.email){showLoginError('Google sign-in did not return an email.');return}
   finishLocalSignIn({email:payload.email,name:payload.name||payload.given_name||payload.email,provider:'google'});
 }
-async function loginWithGoogle(){
-  clearLoginError();
-  await initAuth();
-  if(authState.supabase){
-    const {error}=await authState.supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
-    if(error)showLoginError(error.message||'Google sign-in failed.');
+async function handleGoogleTokenResponse(tokenResponse){
+  setGoogleSignInLoading(false);
+  if(tokenResponse?.error){
+    showLoginError(tokenResponse.error_description||tokenResponse.error||'Google sign-in was cancelled.');
     return;
   }
-  const cfg=await loadAuthConfig();
-  if(cfg.googleClientId&&window.google?.accounts?.id){
-    window.google.accounts.id.prompt();
-    return;
+  try{
+    const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+tokenResponse.access_token}});
+    if(!res.ok)throw new Error('Could not read your Google profile.');
+    const profile=await res.json();
+    if(!profile?.email)throw new Error('Google did not return an email address.');
+    finishLocalSignIn({email:profile.email,name:profile.name||profile.given_name||profile.email,provider:'google'});
+  }catch(err){
+    showLoginError(err.message||'Google sign-in failed.');
   }
-  finishLocalSignIn({email:'guest@cruvit.app',name:'Guest',provider:'google'});
 }
-function mountGoogleSignInButton(){
-  const mount=document.getElementById('googleSignInMount');
-  const fallback=document.getElementById('googleSignInFallback');
-  if(!mount||!fallback)return;
-  Promise.all([loadAuthConfig(),initAuth()]).then(([cfg])=>{
-    if(cfg.supabaseUrl&&cfg.supabaseAnonKey){
-      mount.innerHTML='';
-      fallback.classList.remove('hidden');
-      return;
-    }
-    if(cfg.googleClientId&&window.google?.accounts?.id){
-      fallback.classList.add('hidden');
-      mount.innerHTML='';
-      window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true});
-      window.google.accounts.id.renderButton(mount,{theme:'outline',size:'large',shape:'pill',text:'continue_with',width:Math.min(360,mount.clientWidth||360)});
-      return;
-    }
-    mount.innerHTML='';
-    fallback.classList.remove('hidden');
+function getGoogleTokenClient(clientId){
+  if(!window.google?.accounts?.oauth2)return null;
+  if(!authState.googleTokenClient||authState.googleTokenClientId!==clientId){
+    authState.googleTokenClient=window.google.accounts.oauth2.initTokenClient({
+      client_id:clientId,
+      scope:'openid email profile',
+      callback:handleGoogleTokenResponse
+    });
+    authState.googleTokenClientId=clientId;
+  }
+  return authState.googleTokenClient;
+}
+async function ensureGoogleScript(){
+  if(window.google?.accounts)return;
+  if(document.getElementById('googleIdentityScript')){
+    await new Promise(resolve=>{const s=document.getElementById('googleIdentityScript');if(s?.dataset.loaded==='1')resolve();else s?.addEventListener('load',resolve,{once:true});});
+    return;
+  }
+  await new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.id='googleIdentityScript';
+    s.src='https://accounts.google.com/gsi/client';
+    s.async=true;
+    s.defer=true;
+    s.onload=()=>{s.dataset.loaded='1';resolve();};
+    s.onerror=()=>reject(new Error('Google sign-in script could not load.'));
+    document.head.appendChild(s);
   });
 }
-function loadGoogleIdentityScript(){
-  if(document.getElementById('googleIdentityScript'))return;
-  const s=document.createElement('script');
-  s.id='googleIdentityScript';
-  s.src='https://accounts.google.com/gsi/client';
-  s.async=true;
-  s.defer=true;
-  s.onload=()=>mountGoogleSignInButton();
-  document.head.appendChild(s);
+async function loginWithGoogle(){
+  clearLoginError();
+  setGoogleSignInLoading(true);
+  try{
+    await initAuth();
+    const cfg=await loadAuthConfig();
+    if(authState.supabase){
+      const {error}=await authState.supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
+      if(error){
+        setGoogleSignInLoading(false);
+        showLoginError(error.message||'Google sign-in failed.');
+      }
+      return;
+    }
+    if(cfg.googleClientId){
+      await ensureGoogleScript();
+      if(window.google?.accounts?.id){
+        window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true});
+      }
+      const tokenClient=getGoogleTokenClient(cfg.googleClientId);
+      if(tokenClient){
+        tokenClient.requestAccessToken({prompt:'select_account'});
+        return;
+      }
+    }
+    const email=String(document.getElementById('emailField')?.value||'').trim();
+    finishLocalSignIn({
+      email:email&&email.includes('@')?email:'guest@cruvit.app',
+      name:email?email.split('@')[0].replace(/\./g,' '):'Guest',
+      provider:'google'
+    });
+  }catch(err){
+    setGoogleSignInLoading(false);
+    console.error('Google sign-in failed',err);
+    showLoginError(err.message||'Google sign-in failed. Try again.');
+  }
 }
 function loadSupabaseScript(){
   if(document.getElementById('supabaseScript'))return Promise.resolve();
@@ -3125,7 +3197,7 @@ function loadSupabaseScript(){
     document.head.appendChild(s);
   });
 }
-loadSupabaseScript().then(()=>{loadGoogleIdentityScript();initAuth()});
+loadSupabaseScript().then(()=>initAuth());
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});
 ensureGardenLocation();

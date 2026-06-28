@@ -717,6 +717,59 @@
     }, 120);
   }
 
+  const INTRO_HEADLINE_CRITICAL = new Set(['overdue-care', 'heat-stress']);
+  const INTRO_HEADLINE_NEEDS_CARE = new Set(['needs-water', 'pest-risk', 'winter-protection']);
+  const INTRO_HEADLINES = {
+    excellent: {
+      en: ['Your garden is blooming beautifully!', 'The garden is loving your care!'],
+      he: ['הגינה שלך פורחת ויפה!', 'הגינה אוהבת את הטיפול שלך!']
+    },
+    needsCare: {
+      en: ['A few plants need your attention today', 'Time for some garden love'],
+      he: ['כמה צמחים צריכים את תשומת הלב שלך היום', 'זמן לקצת אהבה לגינה']
+    },
+    critical: {
+      en: ['Let\'s get your garden back on track'],
+      he: ['בואי נחזיר את הגינה למסלול']
+    }
+  };
+
+  function pickStableHeadlineVariant(variants, seed) {
+    if (!variants || !variants.length) return '';
+    let hash = 0;
+    const key = String(seed || 'garden');
+    for (let i = 0; i < key.length; i++) hash = (hash + key.charCodeAt(i) * (i + 3)) % variants.length;
+    return variants[hash];
+  }
+
+  function getIntroHeadline(gardenData, deps) {
+    deps = deps || {};
+    const modes = deriveGardenModes(gardenData, deps);
+    const warningModes = modes.warningModes || [];
+    const primaryMode = modes.primaryMode || {};
+    const lang = gardenModesIsHe() ? 'he' : 'en';
+    const dayKey = deps.todayIso ? deps.todayIso() : '';
+
+    let tier = 'excellent';
+    let seed = primaryMode.id || 'healthy';
+
+    const criticalMode = warningModes.find(m => INTRO_HEADLINE_CRITICAL.has(m.id));
+    const needsCareMode = warningModes.find(m => INTRO_HEADLINE_NEEDS_CARE.has(m.id));
+
+    if (criticalMode) {
+      tier = 'critical';
+      seed = criticalMode.id;
+    } else if (needsCareMode) {
+      tier = 'needsCare';
+      seed = needsCareMode.id;
+    } else if (primaryMode.id === 'blooming-season') {
+      tier = 'excellent';
+      seed = 'blooming-season';
+    }
+
+    return pickStableHeadlineVariant(INTRO_HEADLINES[tier][lang], seed + dayKey);
+  }
+
   global.GardenModes = {
     GARDEN_MODES_CONFIG,
     deriveGardenModes,
@@ -736,7 +789,8 @@
     isNewGarden,
     t,
     gardenModesIsHe,
-    gardenModesViewTasks
+    gardenModesViewTasks,
+    getIntroHeadline
   };
   global.gardenModesViewTasks = gardenModesViewTasks;
 
