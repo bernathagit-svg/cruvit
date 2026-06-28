@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630n">
+<link rel="stylesheet" href="styles.css?v=20250630o">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630a">
 </head>
@@ -18,6 +18,10 @@
   <div class="brand"><img src="assets/cruvit-logo.svg" alt="Cruvit"><div><h1>Cruvit</h1><span>My Garden OS</span></div></div>
   <div class="nav">
     <button class="pill" id="signInBtn" onclick="showLogin()">Sign in</button>
+    <button type="button" class="pill reminders-pill" id="remindersPill" onclick="openRemindersFromHeader(event)">
+      <span class="reminders-pill-label">🔔 Garden reminders</span>
+      <span class="switch" id="headerNotifySwitch" role="switch" aria-label="Toggle garden reminders" onclick="toggleHeaderNotifications(event)"></span>
+    </button>
     <button class="pill" onclick="setTab('plants')">Plants</button>
     <button class="pill" onclick="setTab('timeline')">History</button>
     <button class="pill" onclick="setTab('rewards')">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
@@ -250,6 +254,21 @@
     <button type="button" class="btn light login-btn login-close" onclick="hideLogin()">Close</button>
   </div>
 </div>
+
+<div class="login reminders-modal" id="remindersModal" onclick="if(event.target===this)closeRemindersModal()">
+  <div class="loginbox reminders-box">
+    <div class="login-kicker">🔔 Garden reminders</div>
+    <h2>Your notification preferences</h2>
+    <p class="login-lead">Choose which reminders Cruvit should send you. You can change these anytime from the header.</p>
+    <div class="notify-top reminders-modal-top">
+      <div><b>Reminders on</b><br><span>Turn off to pause all garden notifications.</span></div>
+      <button type="button" class="switch" id="modalNotifySwitch" onclick="toggleHeaderNotifications(event)" aria-label="Toggle garden reminders"></button>
+    </div>
+    <div class="notify-grid reminders-modal-grid" id="remindersModalOptions"></div>
+    <button type="button" class="btn main login-btn" onclick="saveRemindersModal()">Save preferences</button>
+    <button type="button" class="btn light login-btn login-close" onclick="closeRemindersModal()">Close</button>
+  </div>
+</div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
 <script src="garden-modes.js?v=20250630e"></script>
 <script>
@@ -396,7 +415,8 @@ function normalizeGardenDataShape(){
   data.tasks=data.tasks.map(normalizeTaskRow).filter(t=>t[1]);
   if(!Array.isArray(data.events)) data.events=[];
   if(!Array.isArray(data.cart)) data.cart=[];
-  if(!data.notifications||typeof data.notifications!=='object')data.notifications={enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false};
+  if(!data.notifications||typeof data.notifications!=='object')data.notifications={enabled:true,tasks:true,watering:true,shopping:false};
+  if(data.notifications.tasks===undefined)data.notifications.tasks=!!(data.notifications.pruning||data.notifications.fertilizing||data.notifications.disease);
   if(!data.rewards||typeof data.rewards!=='object')data.rewards={credits:0,history:[],achievements:{}};
 }
 let data=service.load();
@@ -419,7 +439,7 @@ function normalizePlant(p){
 data.plants=(data.plants||[]).map(normalizePlant);
 if(typeof data.score!=='number')data.score=87;
 if(typeof data.signedIn!=='boolean')data.signedIn=false;
-if(!data.notifications)data.notifications={enabled:true,watering:true,pruning:true,fertilizing:true,disease:true,shopping:false};
+if(!data.notifications)data.notifications={enabled:true,tasks:true,watering:true,shopping:false};
 ensureRewardsState();
 if(!data.rewards.history)data.rewards.history=[];
 if(!data.rewards.achievements)data.rewards.achievements={};
@@ -469,16 +489,69 @@ function addCalendarNote(){
   service.save(data);
   renderCalendar();
 }
-function toggleNotifications(){
-  data.notifications.enabled=!data.notifications.enabled;
-  if(data.notifications.enabled && 'Notification' in window && Notification.permission==='default'){
-    Notification.requestPermission().catch(()=>{});
+function toggleHeaderNotifications(event){
+  event?.stopPropagation?.();
+  event?.preventDefault?.();
+  const n=data.notifications;
+  if(n.enabled){
+    n.enabled=false;
+    service.save(data);
+    updateRemindersUi();
+    closeRemindersModal();
+    return;
   }
-  service.save(data);renderCalendar();
+  n.enabled=true;
+  if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});
+  service.save(data);
+  updateRemindersUi();
+  openRemindersModal();
+}
+function openRemindersFromHeader(event){
+  if(event?.target?.closest?.('#headerNotifySwitch'))return;
+  if(!data.notifications.enabled){
+    toggleHeaderNotifications(event);
+    return;
+  }
+  openRemindersModal();
+}
+function openRemindersModal(){
+  renderRemindersModalOptions();
+  updateRemindersUi();
+  document.getElementById('remindersModal')?.classList.add('open');
+}
+function closeRemindersModal(){
+  document.getElementById('remindersModal')?.classList.remove('open');
+}
+function renderRemindersModalOptions(){
+  const host=document.getElementById('remindersModalOptions');
+  if(!host)return;
+  const n=data.notifications||{enabled:false,tasks:true,watering:true,shopping:false};
+  const disabled=n.enabled?'':' disabled';
+  host.innerHTML=`
+    <label class="notify-option"><input type="checkbox" ${n.tasks?'checked':''}${disabled} onchange="updateNotifyPref('tasks',this.checked)"><span><b>Tasks</b><br>Weekly care reminders</span></label>
+    <label class="notify-option"><input type="checkbox" ${n.watering?'checked':''}${disabled} onchange="updateNotifyPref('watering',this.checked)"><span><b>Watering</b><br>Weather-aware alerts</span></label>
+    <label class="notify-option"><input type="checkbox" ${n.shopping?'checked':''}${disabled} onchange="updateNotifyPref('shopping',this.checked)"><span><b>Shopping</b><br>Only useful product suggestions</span></label>`;
+}
+function saveRemindersModal(){
+  service.save(data);
+  closeRemindersModal();
+  updateRemindersUi();
+}
+function updateRemindersUi(){
+  const on=!!data.notifications?.enabled;
+  ['headerNotifySwitch','modalNotifySwitch'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.classList.toggle('on',on);
+    el.setAttribute('aria-checked',on?'true':'false');
+  });
+  renderRemindersModalOptions();
 }
 function updateNotifyPref(name,checked){
+  if(!data.notifications.enabled)return;
   data.notifications[name]=checked;
-  service.save(data);renderCalendar();
+  service.save(data);
+  updateRemindersUi();
 }
 
 function taskIsoValue(t){return (t&&typeof t[4]==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(t[4]))?t[4]:''}
@@ -593,7 +666,6 @@ function renderCalendar(){
   }
   const dayEvents=eventsByDay[selectedDay]||[];
   const details=dayEvents.length?dayEvents.map(e=>`<div class="event-card"><div class="event-icon">${eventIcon(e)}</div><div><b>${e[1]}</b><span>${e[2]}</span></div></div>`).join(''):`<div class="empty-day-note">No garden activity saved for this day. Use “Add note” to save something here.</div>`;
-  const n=data.notifications||{enabled:false,tasks:true,watering:true,shopping:false};
   document.getElementById('timeline').innerHTML=`
     <div class="calendar-top">
       <div class="month-nav">
@@ -609,14 +681,6 @@ function renderCalendar(){
       <div class="calendar-left"><div class="calendar">${cells}</div></div>
       <div class="calendar-side">
         <div class="event-detail"><div class="event-detail-head"><div><h4>${monthNames[currentMonthIndex]} ${selectedDay}</h4><small>${dayEvents.length?dayEvents.length+' saved event'+(dayEvents.length>1?'s':''):'No saved events yet'}</small></div></div>${details}</div>
-        <div class="notify-box">
-          <div class="notify-top"><div><b>Garden reminders</b><br><span>Choose whether Cruvit should remind this user about garden care. This preference is saved now and will later sync to Supabase.</span></div><button class="switch ${n.enabled?'on':''}" onclick="toggleNotifications()" aria-label="Toggle notifications"></button></div>
-          <div class="notify-grid">
-            <label class="notify-option"><input type="checkbox" ${n.tasks?'checked':''} onchange="updateNotifyPref('tasks',this.checked)"><span><b>Tasks</b><br>Weekly care reminders</span></label>
-            <label class="notify-option"><input type="checkbox" ${n.watering?'checked':''} onchange="updateNotifyPref('watering',this.checked)"><span><b>Watering</b><br>Weather-aware alerts</span></label>
-            <label class="notify-option"><input type="checkbox" ${n.shopping?'checked':''} onchange="updateNotifyPref('shopping',this.checked)"><span><b>Shopping</b><br>Only useful product suggestions</span></label>
-          </div>
-        </div>
       </div>
     </div>`
 }
@@ -1794,6 +1858,7 @@ function renderIntroHeadline(){
 function render(){syncHealthScore();
   renderDailyTip();
   renderIntroHeadline();
+  updateRemindersUi();
   const health=syncHealthScore();
   const visiblePlantsEarly=data.plants.filter(p=>!p.archived);
   const focusEntryEarly=companionOpenTaskEntries()[0];
@@ -1922,7 +1987,12 @@ function closeAddPlantModal(){
   const modal=document.getElementById('addPlantModal');
   if(modal)modal.classList.remove('open');
 }
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAddPlantModal()});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  closeAddPlantModal();
+  closeRemindersModal();
+  hideLogin();
+});
 function addPlant(){openAddPlantModal()}
 function renderAddOptions(){
   resetScanSession();

@@ -232,6 +232,43 @@ button { cursor: pointer; }
   background: linear-gradient(135deg, #227a5a 0%, var(--forest2) 100%);
 }
 
+.reminders-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px 8px 16px;
+  cursor: pointer;
+}
+
+.reminders-pill-label {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.reminders-pill .switch {
+  flex-shrink: 0;
+}
+
+.reminders-modal .reminders-box {
+  max-width: 460px;
+}
+
+.reminders-modal-top {
+  margin-top: var(--space-4);
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--sage);
+}
+
+.reminders-modal-grid {
+  margin-top: var(--space-3);
+}
+
+.reminders-modal-grid .notify-option:has(input:disabled) {
+  opacity: 0.55;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -2239,7 +2276,8 @@ button.rail-note.location-note:hover {
 @media (max-width: 760px) {
   .app { padding: var(--space-3) var(--space-4) var(--space-6); }
   .top { border-radius: var(--r-lg); align-items: flex-start; flex-wrap: wrap; }
-  .nav .pill:not(.dark):not(:last-child) { display: none; }
+  .nav .pill:not(.dark):not(:last-child):not(.reminders-pill) { display: none; }
+  .nav .pill.reminders-pill { display: inline-flex; }
   .hero {
     display: flex;
     flex-direction: column;
