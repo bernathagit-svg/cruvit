@@ -120,6 +120,10 @@
     font-weight: 600;
   }
 
+  .mood-bar-stack {
+    --mood-bar-width: min(520px, 92%);
+  }
+
   .mood-summary {
     background: rgba(255, 254, 249, 0.78);
     border: 1px solid rgba(255, 255, 255, 0.65);
@@ -130,11 +134,15 @@
   }
 
   .mood-focus {
-    width: min(520px, 92%);
-    background: rgba(255, 254, 249, 0.92);
-    border: 1px solid rgba(15, 61, 46, 0.08);
-    border-radius: 20px;
-    box-shadow: 0 8px 22px rgba(15, 61, 46, 0.07);
+    border-radius: var(--r-full);
+    background: rgba(255, 254, 249, 0.52);
+    border: 1px solid rgba(255, 255, 255, 0.48);
+    box-shadow: 0 4px 14px rgba(15, 61, 46, 0.05);
+  }
+
+  .mood-focus:hover {
+    background: rgba(255, 254, 249, 0.68);
+    box-shadow: 0 5px 16px rgba(15, 61, 46, 0.07);
   }
 
   /* Right column: stats list + garden photo */

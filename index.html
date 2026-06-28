@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630p">
+<link rel="stylesheet" href="styles.css?v=20250630q">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
-<link rel="stylesheet" href="dashboard-layout.css?v=20250630a">
+<link rel="stylesheet" href="dashboard-layout.css?v=20250630b">
 </head>
 <body>
 <div class="app"><div class="shell">
@@ -70,7 +70,8 @@
         <span class="butterfly">🦋</span>
       </div>
       <div class="mood-spacer" aria-hidden="true"></div>
-      <div class="mood-summary" onclick="event.stopPropagation()">
+      <div class="mood-bar-stack" onclick="event.stopPropagation()">
+      <div class="mood-summary">
         <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('taskPlants')">
           <b id="taskPlantCount">7</b>
           <span class="stat-label"><span class="stat-ico">✨</span> <span id="taskPlantLabel">Picked for you</span></span>
@@ -89,6 +90,7 @@
         <span class="mood-focus-copy"><span class="mood-focus-label" id="moodFocusLabel">Today's focus:</span> <b id="moodFocusText">Water Rosemary</b></span>
         <em id="moodFocusLink">Tasks ›</em>
       </button>
+      </div>
     </div>
 
     <div class="mood-rail">
