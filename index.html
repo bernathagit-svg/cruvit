@@ -1190,12 +1190,24 @@ function closeLocationModal(){
 }
 
 async function resolveLocationFromQuery(label){
-  if(pendingGeoLocation && pendingGeoLocation.label===label && Number.isFinite(Number(pendingGeoLocation.lat))){
-    return pendingGeoLocation;
+  if(pendingGeoLocation && Number.isFinite(Number(pendingGeoLocation.lat))){
+    const pendingLabel=String(pendingGeoLocation.label||'').trim();
+    const firstPart=pendingLabel.split(',')[0].trim();
+    if(pendingLabel===label || firstPart===label) return pendingGeoLocation;
   }
-  const result=await callGardenWeather({mode:'geocode',query:label});
-  if(!result.location) throw new Error('Location not found. Try a nearby city or region in Hebrew or English.');
-  return result.location;
+  const attempts=[label];
+  if(/[\u0590-\u05FF]/.test(label) && !/ישראל/.test(label)) attempts.push(label+', ישראל');
+  else if(!/\bisrael\b/i.test(label)) attempts.push(label+', Israel');
+  let lastErr=null;
+  for(const query of attempts){
+    try{
+      const result=await callGardenWeather({mode:'geocode',query});
+      if(result.location) return result.location;
+    }catch(err){
+      lastErr=err;
+    }
+  }
+  throw lastErr||new Error('Location not found. Try a nearby city or region in Hebrew or English.');
 }
 
 async function detectGardenLocation(){

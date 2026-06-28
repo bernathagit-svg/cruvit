@@ -110,11 +110,84 @@ function pickBestGeocodeResult(results, query) {
   if (!Array.isArray(results) || !results.length) return null;
   const q = cleanText(query).toLowerCase();
   const qHe = cleanText(query);
-  const exact = results.find(r => {
+  const score = r => {
     const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
-    return name.toLowerCase() === q || name === qHe;
-  });
-  return exact || results[0];
+    const label = cleanText(r.label || '').toLowerCase();
+    if (name.toLowerCase() === q || name === qHe) return 100;
+    if (label.startsWith(q) || label.includes(q)) return 60;
+    if (hasHebrew(qHe) && (r.country || '').includes('Israel')) return 40;
+    return 10;
+  };
+  return [...results].sort((a, b) => score(b) - score(a))[0];
+}
+
+const GEO_TIMEOUT_MS = 5500;
+const NOMINATIM_UA = 'Cruvit/1.0 (+https://github.com/bernathagit-svg/cruvit)';
+
+function nominatimHeaders(query) {
+  return {
+    Referer: 'https://cruvit.netlify.app/',
+    'User-Agent': NOMINATIM_UA,
+    'Accept-Language': hasHebrew(query) ? 'he,en' : 'en,he'
+  };
+}
+
+function buildQueryVariants(query) {
+  const q = cleanText(query);
+  if (!q) return [];
+  const variants = [q];
+  if (hasHebrew(q)) {
+    variants.push(`${q}, ישראל`, `${q}, Israel`);
+  } else if (!/\bisrael\b/i.test(q)) {
+    variants.push(`${q}, Israel`);
+  }
+  return [...new Set(variants)];
+}
+
+function mapNominatimItem(item, fallbackName = '') {
+  const addr = item.address || {};
+  const name =
+    item.name ||
+    addr.village ||
+    addr.town ||
+    addr.city ||
+    addr.suburb ||
+    addr.hamlet ||
+    fallbackName;
+  const label =
+    [name, addr.state_district || addr.state || addr.region, addr.country]
+      .filter(Boolean)
+      .join(', ') || cleanText(item.display_name);
+  return {
+    name,
+    label,
+    lat: Number(item.lat),
+    lon: Number(item.lon),
+    country: addr.country || '',
+    timezone: '',
+    climate: inferClimate(item.lat, item.lon, addr.country || '')
+  };
+}
+
+function mapPhotonFeature(feature, query) {
+  const p = feature?.properties || {};
+  const coords = feature?.geometry?.coordinates || [];
+  const lon = Number(coords[0]);
+  const lat = Number(coords[1]);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+  const isStreet = p.osm_key === 'highway';
+  const name = p.name || p.city || query;
+  const label = [name, p.state || p.county, p.country].filter(Boolean).join(', ');
+  return {
+    name,
+    label,
+    lat,
+    lon,
+    country: p.country || '',
+    timezone: '',
+    climate: inferClimate(lat, lon, p.country || ''),
+    isStreet
+  };
 }
 
 function mapOpenMeteoResult(best, query) {
@@ -131,7 +204,7 @@ function mapOpenMeteoResult(best, query) {
   };
 }
 
-async function geocodeWithOpenMeteo(query, language = 'en') {
+async function geocodeWithOpenMeteo(query, language = 'en', timeoutMs = GEO_TIMEOUT_MS) {
   const q = cleanText(query);
   if (!q) return null;
   const url =
@@ -142,137 +215,139 @@ async function geocodeWithOpenMeteo(query, language = 'en') {
       language,
       format: 'json'
     });
-  const data = await fetchJson(url);
+  const data = await fetchJson(url, {}, timeoutMs);
   const results = Array.isArray(data?.results) ? data.results : [];
   if (!results.length) return null;
   return mapOpenMeteoResult(pickBestGeocodeResult(results, q), q);
 }
 
-async function geocodeWithNominatim(query) {
+async function geocodeWithNominatim(query, options = {}) {
   const q = cleanText(query);
   if (!q) return null;
-  const url =
-    'https://nominatim.openstreetmap.org/search?' +
-    new URLSearchParams({
-      q,
-      format: 'json',
-      limit: '6',
-      addressdetails: '1'
-    });
+  const params = {
+    q,
+    format: 'json',
+    limit: '6',
+    addressdetails: '1'
+  };
+  if (options.countrycodes) params.countrycodes = options.countrycodes;
+  const url = 'https://nominatim.openstreetmap.org/search?' + new URLSearchParams(params);
   const data = await fetchJson(
     url,
-    {
-      headers: {
-        Referer: 'https://cruvit.netlify.app/',
-        'Accept-Language': hasHebrew(q) ? 'he,en' : 'en,he'
-      }
-    },
-    14000
+    { headers: nominatimHeaders(q) },
+    options.timeoutMs || GEO_TIMEOUT_MS
   );
   if (!Array.isArray(data) || !data.length) return null;
-
-  const mapped = data.map(item => {
-    const addr = item.address || {};
-    const name =
-      item.name ||
-      addr.village ||
-      addr.town ||
-      addr.city ||
-      addr.suburb ||
-      addr.hamlet ||
-      q;
-    const label =
-      [name, addr.state_district || addr.state || addr.region, addr.country]
-        .filter(Boolean)
-        .join(', ') || cleanText(item.display_name);
-    return {
-      label,
-      lat: Number(item.lat),
-      lon: Number(item.lon),
-      country: addr.country || '',
-      timezone: '',
-      climate: inferClimate(item.lat, item.lon, addr.country || '')
-    };
-  });
-
+  const mapped = data.map(item => mapNominatimItem(item, q));
   return pickBestGeocodeResult(mapped, q);
 }
 
-async function searchLocationSuggestions(query) {
+async function fetchNominatimList(query, countrycodes) {
   const q = cleanText(query);
-  if (!q || q.length < 2) return [];
+  if (!q) return [];
+  const params = { q, format: 'json', limit: '5', addressdetails: '1' };
+  if (countrycodes) params.countrycodes = countrycodes;
+  const url = 'https://nominatim.openstreetmap.org/search?' + new URLSearchParams(params);
+  const data = await fetchJson(url, { headers: nominatimHeaders(q) }, GEO_TIMEOUT_MS);
+  if (!Array.isArray(data)) return [];
+  return data.map(item => mapNominatimItem(item, q));
+}
 
+async function geocodeWithPhoton(query, timeoutMs = GEO_TIMEOUT_MS) {
+  const q = cleanText(query);
+  if (!q) return null;
+  const url = 'https://photon.komoot.io/api/?' + new URLSearchParams({ q, limit: '8' });
+  const data = await fetchJson(url, {}, timeoutMs);
+  const features = Array.isArray(data?.features) ? data.features : [];
+  const mapped = features.map(f => mapPhotonFeature(f, q)).filter(Boolean);
+  const places = mapped.filter(m => !m.isStreet);
+  const pool = places.length ? places : mapped;
+  const best = pickBestGeocodeResult(pool, q);
+  if (best) delete best.isStreet;
+  return best;
+}
+
+async function fetchPhotonList(query) {
+  const q = cleanText(query);
+  if (!q) return [];
+  const url = 'https://photon.komoot.io/api/?' + new URLSearchParams({ q, limit: '6' });
+  const data = await fetchJson(url, {}, GEO_TIMEOUT_MS);
+  const features = Array.isArray(data?.features) ? data.features : [];
+  return features
+    .map(f => mapPhotonFeature(f, q))
+    .filter(Boolean)
+    .filter(m => !m.isStreet)
+    .map(({ isStreet, ...rest }) => rest);
+}
+
+async function fetchAllGeocodeCandidates(query) {
+  const q = cleanText(query);
+  if (!q) return [];
+
+  const variants = buildQueryVariants(q);
+  const hebrew = hasHebrew(q);
+  const tasks = [];
+
+  if (hebrew) {
+    // Open-Meteo Hebrew queries often hang — use English with a short timeout only.
+    tasks.push(geocodeWithOpenMeteo(q, 'en', 4000));
+    for (const v of variants) {
+      tasks.push(geocodeWithNominatim(v, { countrycodes: 'il' }));
+      tasks.push(geocodeWithPhoton(v));
+      tasks.push(fetchNominatimList(v, 'il'));
+      tasks.push(fetchPhotonList(v));
+    }
+  } else {
+    tasks.push(geocodeWithOpenMeteo(q, 'en'));
+    tasks.push(geocodeWithOpenMeteo(q, 'he', 4000));
+    for (const v of variants) {
+      tasks.push(geocodeWithNominatim(v));
+      tasks.push(geocodeWithPhoton(v));
+      tasks.push(fetchNominatimList(v));
+      tasks.push(fetchPhotonList(v));
+    }
+  }
+
+  const settled = await Promise.allSettled(tasks);
   const seen = new Set();
   const out = [];
 
   const add = loc => {
     if (!loc || !Number.isFinite(loc.lat) || !Number.isFinite(loc.lon)) return;
-    const key = `${loc.label.toLowerCase()}|${loc.lat.toFixed(3)}|${loc.lon.toFixed(3)}`;
+    const key = `${loc.lat.toFixed(4)}|${loc.lon.toFixed(4)}`;
     if (seen.has(key)) return;
     seen.add(key);
     out.push(loc);
   };
 
-  const langs = hasHebrew(q) ? ['he', 'en'] : ['en', 'he'];
-  for (const lang of langs) {
-    const url =
-      'https://geocoding-api.open-meteo.com/v1/search?' +
-      new URLSearchParams({ name: q, count: '6', language: lang, format: 'json' });
-    const data = await fetchJson(url);
-    for (const item of Array.isArray(data?.results) ? data.results : []) {
-      add(mapOpenMeteoResult(item, q));
-    }
+  for (const result of settled) {
+    if (result.status !== 'fulfilled' || !result.value) continue;
+    if (Array.isArray(result.value)) result.value.forEach(add);
+    else add(result.value);
   }
 
-  const nominatim = await geocodeWithNominatim(q);
-  if (nominatim) add(nominatim);
+  return out;
+}
 
-  const nominatimListUrl =
-    'https://nominatim.openstreetmap.org/search?' +
-    new URLSearchParams({ q, format: 'json', limit: '5', addressdetails: '1' });
-  const nominatimList = await fetchJson(
-    nominatimListUrl,
-    {
-      headers: {
-        Referer: 'https://cruvit.netlify.app/',
-        'Accept-Language': hasHebrew(q) ? 'he,en' : 'en,he'
-      }
-    },
-    14000
-  );
-  if (Array.isArray(nominatimList)) {
-    for (const item of nominatimList) {
-      const addr = item.address || {};
-      const name =
-        item.name || addr.village || addr.town || addr.city || addr.suburb || addr.hamlet || q;
-      add({
-        label:
-          [name, addr.state_district || addr.state || addr.region, addr.country]
-            .filter(Boolean)
-            .join(', ') || cleanText(item.display_name),
-        lat: Number(item.lat),
-        lon: Number(item.lon),
-        country: addr.country || '',
-        timezone: '',
-        climate: inferClimate(item.lat, item.lon, addr.country || '')
-      });
-    }
-  }
-
-  return out.slice(0, 6);
+async function searchLocationSuggestions(query) {
+  const q = cleanText(query);
+  if (!q || q.length < 2) return [];
+  const candidates = await fetchAllGeocodeCandidates(q);
+  if (!candidates.length) return [];
+  const score = r => {
+    const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
+    if (name === q) return 100;
+    if (cleanText(r.label || '').includes(q)) return 50;
+    return 0;
+  };
+  return [...candidates].sort((a, b) => score(b) - score(a)).slice(0, 6);
 }
 
 async function geocodeQuery(query) {
   const q = cleanText(query);
   if (!q) return null;
-
-  const langs = hasHebrew(q) ? ['he', 'en'] : ['en', 'he'];
-  for (const lang of langs) {
-    const found = await geocodeWithOpenMeteo(q, lang);
-    if (found) return found;
-  }
-
-  return await geocodeWithNominatim(q);
+  const candidates = await fetchAllGeocodeCandidates(q);
+  return pickBestGeocodeResult(candidates, q);
 }
 
 async function reverseGeocode(lat, lon) {
@@ -287,13 +362,8 @@ async function reverseGeocode(lat, lon) {
     });
   const data = await fetchJson(
     url,
-    {
-      headers: {
-        Referer: 'https://cruvit.netlify.app/',
-        'Accept-Language': 'he,en'
-      }
-    },
-    14000
+    { headers: nominatimHeaders('') },
+    GEO_TIMEOUT_MS
   );
   if (!data) {
     return {
