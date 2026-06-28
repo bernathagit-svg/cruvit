@@ -208,7 +208,10 @@
     </div>
     <div class="location-modal-body">
       <label class="location-field-label" for="locationInput">City, region or address</label>
-      <input class="field" id="locationInput" autocomplete="off" placeholder="e.g. Haifa, Western Galilee, Tel Aviv…">
+      <div class="location-search-wrap">
+        <input class="field" id="locationInput" autocomplete="off" placeholder="e.g. יחיעם, חיפה, Tel Aviv, Haifa…" oninput="handleLocationInputChange(this.value)">
+        <div class="location-suggestions hidden" id="locationSuggestions"></div>
+      </div>
       <label class="location-field-label" for="climateInput">Climate type</label>
       <select class="field" id="climateInput">
         <option value="Mediterranean">Mediterranean</option>
@@ -1020,6 +1023,9 @@ function generateCareTasksForPlant(ref,source='My Garden'){
 
 const DEFAULT_GARDEN_LOCATION={label:'Western Galilee, Israel',climate:'Mediterranean',lat:33.0089,lon:35.0941,source:'default'};
 let pendingGeoLocation=null;
+let locationSearchTimer=null;
+let locationSearchSeq=0;
+let locationSuggestionResults=[];
 
 function ensureGardenLocation(){
   const legacyLabel=typeof data.location==='string'?data.location:'';
@@ -1057,6 +1063,56 @@ function setLocationStatus(text){
   if(el) el.textContent=text||'';
 }
 
+function hideLocationSuggestions(){
+  const box=document.getElementById('locationSuggestions');
+  if(box){box.classList.add('hidden');box.innerHTML=''}
+  locationSuggestionResults=[];
+}
+
+function renderLocationSuggestions(items){
+  const box=document.getElementById('locationSuggestions');
+  if(!box) return;
+  locationSuggestionResults=items||[];
+  if(!locationSuggestionResults.length){hideLocationSuggestions();return}
+  box.innerHTML=locationSuggestionResults.map((loc,i)=>`<button type="button" class="location-suggestion" onclick="selectLocationSuggestion(${i})">${escapeHtml(loc.label)}</button>`).join('');
+  box.classList.remove('hidden');
+}
+
+function selectLocationSuggestion(index){
+  const loc=locationSuggestionResults[index];
+  if(!loc) return;
+  const input=document.getElementById('locationInput');
+  if(input) input.value=loc.label||'';
+  pendingGeoLocation=Object.assign({},loc,{source:'manual'});
+  const climate=document.getElementById('climateInput');
+  if(climate && loc.climate) climate.value=loc.climate;
+  hideLocationSuggestions();
+  setLocationStatus('Location selected. Tap save to refresh weather.');
+}
+
+async function handleLocationInputChange(value){
+  pendingGeoLocation=null;
+  const q=String(value||'').trim();
+  if(locationSearchTimer) clearTimeout(locationSearchTimer);
+  if(q.length<2){hideLocationSuggestions();return}
+  const seq=++locationSearchSeq;
+  locationSearchTimer=setTimeout(async()=>{
+    try{
+      const result=await callGardenWeather({mode:'search',query:q});
+      if(seq!==locationSearchSeq) return;
+      renderLocationSuggestions(result.suggestions||[]);
+    }catch(_){
+      if(seq===locationSearchSeq) hideLocationSuggestions();
+    }
+  },320);
+}
+
+function requestGardenPosition(options){
+  return new Promise((resolve,reject)=>{
+    navigator.geolocation.getCurrentPosition(resolve,reject,options);
+  });
+}
+
 function openLocationModal(){
   ensureGardenLocation();
   const loc=data.gardenLocation;
@@ -1065,6 +1121,7 @@ function openLocationModal(){
   if(input) input.value=loc.label||'';
   if(climate) climate.value=loc.climate||'Mediterranean';
   pendingGeoLocation=null;
+  hideLocationSuggestions();
   setLocationStatus('');
   const preview=document.getElementById('locationGeoPreview');
   const confirmBtn=document.getElementById('locationConfirmGeoBtn');
@@ -1097,7 +1154,7 @@ async function refreshGardenWeather(){
   }
   const result=await callGardenWeather(payload);
   if(result.location){
-    data.gardenLocation=Object.assign({},loc,result.location,{updatedAt:new Date().toISOString()});
+    data.gardenLocation=Object.assign({},loc,result.location,{updatedAt:new Date().toISOString(),climate:loc.climate||result.location.climate});
     data.location=data.gardenLocation.label;
     data.climate=data.gardenLocation.climate||data.climate;
   }
@@ -1126,38 +1183,80 @@ async function refreshGardenWeatherIfStale(){
   }catch(err){console.warn('Weather refresh failed',err)}
 }
 
-function detectGardenLocation(){
+function closeLocationModal(){
+  document.getElementById('locationModal')?.classList.remove('open');
+  pendingGeoLocation=null;
+  hideLocationSuggestions();
+}
+
+async function resolveLocationFromQuery(label){
+  if(pendingGeoLocation && pendingGeoLocation.label===label && Number.isFinite(Number(pendingGeoLocation.lat))){
+    return pendingGeoLocation;
+  }
+  const result=await callGardenWeather({mode:'geocode',query:label});
+  if(!result.location) throw new Error('Location not found. Try a nearby city or region in Hebrew or English.');
+  return result.location;
+}
+
+async function detectGardenLocation(){
   if(!navigator.geolocation){
     setLocationStatus('Location detection is not supported in this browser.');
     return;
   }
   setLocationStatus('Waiting for browser permission…');
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const lat=pos.coords.latitude;
-    const lon=pos.coords.longitude;
-    pendingGeoLocation={lat,lon,source:'geolocation'};
-    setLocationStatus('Location detected. Confirm below.');
+  hideLocationSuggestions();
+  let pos=null;
+  try{
+    pos=await requestGardenPosition({enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+  }catch(firstErr){
     try{
-      const result=await callGardenWeather({mode:'reverse',lat,lon});
-      pendingGeoLocation=Object.assign({},pendingGeoLocation,result.location||{});
-      const preview=document.getElementById('locationGeoPreview');
-      const confirmBtn=document.getElementById('locationConfirmGeoBtn');
-      if(preview){
-        preview.textContent=`Detected near ${pendingGeoLocation.label||(`${lat.toFixed(2)}°, ${lon.toFixed(2)}°`)}`;
-        preview.classList.remove('hidden');
-      }
-      if(confirmBtn) confirmBtn.classList.remove('hidden');
-      const input=document.getElementById('locationInput');
-      if(input && pendingGeoLocation.label) input.value=pendingGeoLocation.label;
-      const climate=document.getElementById('climateInput');
-      if(climate && pendingGeoLocation.climate) climate.value=pendingGeoLocation.climate;
-    }catch(err){
-      setLocationStatus(err.message||'Could not resolve detected coordinates.');
+      pos=await requestGardenPosition({enableHighAccuracy:true,timeout:18000,maximumAge:0});
+    }catch(secondErr){
+      const err=secondErr||firstErr;
+      const msg=err?.code===1
+        ? 'Location permission denied. Allow location access in browser settings, or type your place manually.'
+        : err?.code===3
+          ? 'Location timed out. Try again outdoors or enter your place manually.'
+          : 'Could not detect GPS location. Type your city or village manually — Hebrew works.';
+      setLocationStatus(msg);
+      return;
     }
-  }, err=>{
-    const msg=err.code===1?'Location permission denied. Enter your garden location manually.':'Could not detect location. Try manual entry.';
-    setLocationStatus(msg);
-  }, {enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+  }
+  const lat=pos.coords.latitude;
+  const lon=pos.coords.longitude;
+  pendingGeoLocation={lat,lon,source:'geolocation'};
+  setLocationStatus('Location detected. Resolving place name…');
+  try{
+    const result=await callGardenWeather({mode:'reverse',lat,lon});
+    pendingGeoLocation=Object.assign({},pendingGeoLocation,result.location||{});
+  }catch(_){
+    pendingGeoLocation.label=`${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+    pendingGeoLocation.climate=inferClientClimate(lat,lon);
+    setLocationStatus('Coordinates detected. Edit the name if needed, then save.');
+  }
+  const preview=document.getElementById('locationGeoPreview');
+  const confirmBtn=document.getElementById('locationConfirmGeoBtn');
+  if(preview){
+    preview.textContent=`Detected near ${pendingGeoLocation.label||(`${lat.toFixed(4)}°, ${lon.toFixed(4)}°`)}`;
+    preview.classList.remove('hidden');
+  }
+  if(confirmBtn) confirmBtn.classList.remove('hidden');
+  const input=document.getElementById('locationInput');
+  if(input && pendingGeoLocation.label) input.value=pendingGeoLocation.label;
+  const climate=document.getElementById('climateInput');
+  if(climate && pendingGeoLocation.climate) climate.value=pendingGeoLocation.climate;
+  if(!String(document.getElementById('locationStatus')?.textContent||'').includes('Coordinates detected')){
+    setLocationStatus('Location detected. Confirm below or save.');
+  }
+}
+
+function inferClientClimate(lat,lon){
+  const absLat=Math.abs(Number(lat)||0);
+  if(absLat<=23) return 'Tropical';
+  if(absLat<=35 && Number(lon)>=34 && Number(lon)<=36 && Number(lat)>=29 && Number(lat)<=34) return 'Mediterranean';
+  if(absLat<=35) return 'Subtropical';
+  if(absLat<=50) return 'Temperate';
+  return 'Cool temperate';
 }
 
 async function confirmDetectedLocation(){
@@ -1168,8 +1267,22 @@ async function confirmDetectedLocation(){
 async function saveLocationFromModal(){
   const label=String(document.getElementById('locationInput')?.value||'').trim();
   const climate=String(document.getElementById('climateInput')?.value||'Mediterranean').trim();
-  if(!label){setLocationStatus('Enter a city or region for your garden.');return}
-  await saveGardenLocation({label,climate,source:'manual'});
+  if(!label){setLocationStatus('Enter a city, village or region for your garden.');return}
+  setLocationStatus('Looking up location…');
+  hideLocationSuggestions();
+  try{
+    const resolved=await resolveLocationFromQuery(label);
+    await saveGardenLocation({
+      label:resolved.label||label,
+      lat:resolved.lat,
+      lon:resolved.lon,
+      country:resolved.country||'',
+      climate:climate||resolved.climate||'Mediterranean',
+      source:pendingGeoLocation?.source==='geolocation'?'geolocation':'manual'
+    });
+  }catch(err){
+    setLocationStatus(err.message||'Could not find that location.');
+  }
 }
 
 async function saveGardenLocation(loc){

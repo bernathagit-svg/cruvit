@@ -793,6 +793,44 @@ button.rail-note.location-note:hover {
   color: var(--forest);
 }
 
+.location-search-wrap {
+  position: relative;
+}
+
+.location-suggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid rgba(28, 61, 42, 0.1);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 10px 24px rgba(31, 53, 35, 0.12);
+  max-height: 220px;
+  overflow: auto;
+}
+
+.location-suggestion {
+  border: 0;
+  background: transparent;
+  text-align: start;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--forest);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.location-suggestion:hover {
+  background: var(--sage);
+}
+
 .location-detect-row {
   display: flex;
   flex-wrap: wrap;
