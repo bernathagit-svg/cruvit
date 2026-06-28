@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250631a">
+<link rel="stylesheet" href="styles.css?v=20250631b">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -257,6 +257,7 @@
     <button type="button" class="btn main login-btn" onclick="loginWithEmail()">Continue</button>
     <div id="googleSignInMount" class="google-signin-mount"></div>
     <button type="button" class="btn light login-btn" id="googleSignInFallback" onclick="loginWithGoogle()">Continue with Google</button>
+    <button type="button" class="btn light login-btn social-btn social-btn-facebook hidden" id="facebookSignInBtn" onclick="loginWithFacebook()">Continue with Facebook</button>
     <button type="button" class="btn light login-btn login-close" onclick="hideLogin()">Close</button>
   </div>
 </div>
@@ -421,6 +422,7 @@ function normalizeGardenDataShape(){
   data.tasks=data.tasks.map(normalizeTaskRow).filter(t=>t[1]);
   if(!Array.isArray(data.events)) data.events=[];
   if(!Array.isArray(data.cart)) data.cart=[];
+  data.cart=data.cart.map(normalizeCartItem);
   if(!data.notifications||typeof data.notifications!=='object')data.notifications={enabled:true,tasks:true,watering:true,shopping:false};
   if(data.notifications.tasks===undefined)data.notifications.tasks=!!(data.notifications.pruning||data.notifications.fertilizing||data.notifications.disease);
   if(!data.rewards||typeof data.rewards!=='object')data.rewards={credits:0,history:[],achievements:{}};
@@ -679,6 +681,50 @@ function removeTasksForPlant(plantName){
     const inTitle=normalizeQuery(t[1]||'').includes(norm);
     return !(linked||inTitle);
   });
+}
+function activeGardenPlants(){return (data.plants||[]).filter(p=>!p.archived)}
+function taskReferencesActivePlant(t,activePlants){
+  const link=String(t?.[6]||'');
+  if(isWeatherTask(t))return true;
+  if(link)return activePlants.some(p=>normalizeQuery(p.name)===normalizeQuery(link));
+  return activePlants.some(p=>taskMatchesPlant(t,p.name));
+}
+function removeOrphanPlantTasks(){
+  const activePlants=activeGardenPlants();
+  data.tasks=(data.tasks||[]).filter(t=>{
+    if(taskDone(t))return true;
+    const link=String(t?.[6]||'');
+    if(isWeatherTask(t))return true;
+    if(link)return activePlants.some(p=>normalizeQuery(p.name)===normalizeQuery(link));
+    if(t[5])return taskReferencesActivePlant(t,activePlants);
+    const archived=(data.plants||[]).filter(p=>p.archived);
+    if(archived.some(p=>taskMatchesPlant(t,p.name))&&!activePlants.some(p=>taskMatchesPlant(t,p.name)))return false;
+    return true;
+  });
+}
+function renameTasksForPlant(oldName,newName){
+  const oldNorm=normalizeQuery(oldName||'');
+  const nextName=String(newName||'').trim();
+  if(!oldNorm||!nextName||oldNorm===normalizeQuery(nextName))return;
+  (data.tasks||[]).forEach(t=>{
+    if(normalizeQuery(t[6]||'')===oldNorm)t[6]=nextName;
+    const title=String(t[1]||'');
+    if(title&&normalizeQuery(title).includes(oldNorm)){
+      const re=new RegExp(oldName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+      t[1]=title.replace(re,nextName);
+    }
+  });
+}
+function syncTasksWithPlants(){
+  removeOrphanPlantTasks();
+  syncPlantCareTasks();
+}
+function finalizePlantListChange(){
+  syncTasksWithPlants();
+  syncHealthScore();
+  service.save(data);
+  refreshOpenTaskPanels();
+  render();
 }
 function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
 function renderCalendar(){
@@ -1335,7 +1381,7 @@ async function refreshGardenSession(){
   try{
     if(weatherIsStale()) await refreshGardenWeather();
     syncWeatherCareTasks();
-    syncPlantCareTasks();
+    syncTasksWithPlants();
   }catch(err){console.warn('Garden session refresh failed',err)}
   service.save(data);
 }
@@ -1541,9 +1587,9 @@ function syncWeatherCareTasks(){
 }
 
 function syncPlantCareTasks(){
-  const plants=(data.plants||[]).filter(p=>!p.archived);
-  plants.forEach(p=>{
-    if(companionOpenTasksForPlant(p.name).length) return;
+  activeGardenPlants().forEach(p=>{
+    if(p.prefs?.autoTasks===false)return;
+    if(companionOpenTasksForPlant(p.name).length)return;
     const ref=Object.assign({},plantMeta(p),p);
     generateCareTasksForPlant(ref,p.source||'My Garden');
   });
@@ -1866,6 +1912,68 @@ function pickDailyTipIndex(){
   if(dailyTipPick===null)dailyTipPick=Math.floor(Math.random()*DAILY_GARDEN_TIPS.length);
   return dailyTipPick;
 }
+function plantCartProducts(p){
+  const products=(plantMeta(p).products||[]).filter(Boolean);
+  if(products.length)return products;
+  return [`Care supplies for ${p.name}`];
+}
+function normalizeCartItem(item){
+  if(typeof item==='string')return {name:item,qty:1,plant:''};
+  if(item&&typeof item==='object')return {name:String(item.name||item.title||'Item'),qty:Math.max(1,Math.min(99,Number(item.qty)||1)),plant:String(item.plant||'')};
+  return {name:'Item',qty:1,plant:''};
+}
+function normalizeCartData(){data.cart=(data.cart||[]).map(normalizeCartItem)}
+function cartTotalQty(){normalizeCartData();return data.cart.reduce((sum,item)=>sum+item.qty,0)}
+function addToCartWithQty(name,qty,plantName){
+  normalizeCartData();
+  const label=String(name||'Item').trim();
+  const q=Math.max(1,Math.min(99,Number(qty)||1));
+  const plant=String(plantName||'');
+  const existing=data.cart.find(item=>item.name===label&&item.plant===plant);
+  if(existing)existing.qty=Math.min(99,existing.qty+q);
+  else data.cart.push({name:label,qty:q,plant});
+  return {name:label,qty:q,plant};
+}
+function renderPlantCartBlock(realIndex,p){
+  const products=plantCartProducts(p);
+  const productField=products.length>1
+    ? `<select id="plant-cart-product-${realIndex}" class="plant-cart-select" onclick="event.stopPropagation()">${products.map((prod,i)=>`<option value="${i}">${escapeHtml(prod)}</option>`).join('')}</select>`
+    : `<span class="plant-cart-product-name">${escapeHtml(products[0])}</span>`;
+  return `<div class="plant-cart" onclick="event.stopPropagation()"><div class="plant-cart-product">${productField}</div><div class="plant-cart-controls"><div class="plant-qty" aria-label="Quantity"><button type="button" class="plant-qty-btn" onclick="adjustPlantCartQty(${realIndex},-1)">−</button><input type="number" id="plant-cart-qty-${realIndex}" class="plant-qty-input" value="1" min="1" max="99" inputmode="numeric" aria-label="Quantity" onclick="event.stopPropagation()"><button type="button" class="plant-qty-btn" onclick="adjustPlantCartQty(${realIndex},1)">+</button></div><button type="button" class="plant-cart-add" onclick="addPlantCartItem(${realIndex})">🛒 Add to cart</button></div></div>`;
+}
+function adjustPlantCartQty(realIndex,delta){
+  const input=document.getElementById('plant-cart-qty-'+realIndex);
+  if(!input)return;
+  input.value=String(Math.max(1,Math.min(99,(parseInt(input.value,10)||1)+delta)));
+}
+function addPlantCartItem(realIndex){
+  const p=data.plants[realIndex];
+  if(!p)return;
+  const products=plantCartProducts(p);
+  const select=document.getElementById('plant-cart-product-'+realIndex);
+  const product=products[select?parseInt(select.value,10)||0:0]||products[0];
+  const qty=Math.max(1,Math.min(99,parseInt(document.getElementById('plant-cart-qty-'+realIndex)?.value,10)||1));
+  const added=addToCartWithQty(product,qty,p.name);
+  data.events.unshift(['Today','Added to cart',`${added.qty}× ${added.name}${added.plant?` · ${added.plant}`:''}`]);
+  syncHealthScore();
+  service.save(data);
+  renderCart();
+  toggleCart(true);
+}
+function removeCartLine(index){
+  normalizeCartData();
+  data.cart.splice(index,1);
+  service.save(data);
+  renderCart();
+}
+function changeCartLineQty(index,delta){
+  normalizeCartData();
+  const item=data.cart[index];
+  if(!item)return;
+  item.qty=Math.max(1,Math.min(99,item.qty+delta));
+  service.save(data);
+  renderCart();
+}
 function renderDailyTip(){
   const textEl=document.getElementById('dailyTipText');
   const titleEl=document.getElementById('dailyTipHeading');
@@ -1954,7 +2062,7 @@ function render(){syncHealthScore();
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   document.getElementById('signInBtn').textContent=data.signedIn?(data.user?.name||data.email||'Signed in'):'Sign in';
-  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
+  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
   
   const actionableTasks=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
@@ -2980,6 +3088,14 @@ function safeUiAfterPlantAdd(){
   try{render()}catch(e){console.error('Render failed after plant add',e)}
   try{setTab('plants')}catch(e){console.warn('Could not switch to plants tab',e)}
 }
+function applyPlantTaskSync(plant,source){
+  if(plant.prefs?.autoTasks===false){
+    data.events.unshift(['Today','Auto tasks skipped',`${plant.name} · user preference`]);
+    return;
+  }
+  const taskRef=Object.assign({},plantMeta(plant),plant);
+  generateCareTasksForPlant(taskRef,source||plant.source||'My Garden');
+}
 function buildPlantFromReference(ref,source,options){
   const safeRef=ref||{};
   const prefs={autoTasks:options?.autoTasks!==false,reminders:options?.reminders!==false,alerts:true};
@@ -3011,19 +3127,17 @@ function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,re
     const plant=buildPlantFromReference(ref,source,options||{});
     data.plants.push(plant);
     data.events.unshift(['Today','Plant added',`${plant.name} · ${source}`]);
+    applyPlantTaskSync(plant,source);
+    syncTasksWithPlants();
 
-    // Show the plant immediately. No reward/task/API failure is allowed to block this.
+    // Show the plant and updated tasks immediately.
     safeUiAfterPlantAdd();
 
     setTimeout(()=>{
       try{awardCredits(source==='Scan & Identify'?15:10,source==='Scan & Identify'?'Plant scan + add':'Plant added')}catch(e){console.warn('Rewards failed after plant save',e)}
       try{
-        if(plant.prefs?.autoTasks!==false){
-          const taskRef=Object.assign({},plantMeta(plant),plant);
-          generateCareTasksForPlant(taskRef,source);
-        }else{data.events.unshift(['Today','Auto tasks skipped',`${plant.name} · user preference`])}
         if(source==='Smart Recommendations'||source==='Garden Design'){
-          (ref.products||[]).slice(0,1).forEach(x=>data.cart.push(x));
+          (ref.products||[]).slice(0,1).forEach(x=>addToCartWithQty(x,1,plant.name));
           data.events.unshift(['Today','Shopping suggestion created',`${plant.name} · ${ref.products?.[0]||'Care product'}`]);
         }
         data.events.unshift(['Today',plant.prefs?.reminders!==false?'Plant reminders enabled':'Plant reminders off',plant.name]);
@@ -3072,12 +3186,12 @@ function addPlantManual(){openPlantChooser('Manual entry')}
 function addPlantFromRecommendations(){openPlantChooser('Smart Recommendations')}
 function addPlantFromDesign(){openPlantChooser('Garden Design')}
 function togglePlantMenu(ev,i){ev.stopPropagation();openMenu=openMenu==='plant-'+i?null:'plant-'+i;render()}
-function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p.name);if(!name)return;p.name=name;data.events.unshift(['Today','Plant renamed',name]);syncHealthScore();service.save(data);openMenu=null;render()}
-function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);syncHealthScore();service.save(data);openMenu=null;render()}
-function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); service.save(data); openMenu=null; render()}
-function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');syncHealthScore();service.save(data);openMenu=null;render()}
-function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);syncHealthScore();service.save(data);openMenu=null;render()}}
-function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);removeTasksForPlant(name);data.events.unshift(['Today','Plant deleted',name]);syncHealthScore();service.save(data);openMenu=null;render()}}
+function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p.name);if(!name||name===p.name)return;const oldName=p.name;p.name=name;renameTasksForPlant(oldName,name);data.events.unshift(['Today','Plant renamed',name]);openMenu=null;finalizePlantListChange()}
+function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantListChange()}
+function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; if(!auto)removeTasksForPlant(p.name); data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); openMenu=null; finalizePlantListChange()}
+function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');openMenu=null;finalizePlantListChange()}
+function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);openMenu=null;finalizePlantListChange()}}
+function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);openMenu=null;finalizePlantListChange()}}
 function closePlantPanel(){document.getElementById('plantDetailModal').classList.remove('open');window.moodStatPanelType=null}
 function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);const alerts=plantAlerts(p);const title=document.getElementById('plantPanelTitle');const sub=document.getElementById('plantPanelSubtitle');const body=document.getElementById('plantPanelBody');title.textContent=p.name;sub.textContent=type==='info'?'Quick care icons':type==='alerts'?'Alerts and tasks':'Detailed plant guide';
   if(type==='info')body.innerHTML=`<div class="info-grid"><div class="info-tile"><span class="big">☀️</span><span><b>Light</b><span>${escapeHtml(meta.sun)}</span></span></div><div class="info-tile"><span class="big">💧</span><span><b>Water</b><span>${escapeHtml(meta.water)}</span></span></div><div class="info-tile"><span class="big">🌱</span><span><b>Growth</b><span>${escapeHtml(meta.growth)}</span></span></div><div class="info-tile"><span class="big">📏</span><span><b>Size</b><span>${escapeHtml(meta.size)}</span></span></div><div class="info-tile"><span class="big">🌡️</span><span><b>Climate</b><span>${escapeHtml(meta.climate)}</span></span></div><div class="info-tile"><span class="big">🗓️</span><span><b>Season</b><span>${escapeHtml(meta.season)}</span></span></div></div><div class="guide-block"><b>Botanical profile</b><span>${escapeHtml(meta.scientific||p.scientific||p.name)}${meta.soil?' · Soil: '+escapeHtml(meta.soil):''}</span></div>`;
@@ -3085,7 +3199,7 @@ function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);c
   if(type==='guide'){const img=displayPlantImage(p);body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;}
   document.getElementById('plantDetailModal').classList.add('open');
 }
-function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>data.cart.push(x));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
+function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>addToCartWithQty(x,1,p.name));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
 function scanGarden(){document.getElementById('gardenPhotoInput')?.click()}
 function gardenScanLabel(){
   if(data.lastGardenScan)return data.lastGardenScan;
@@ -3139,33 +3253,46 @@ async function handleGardenPhotoSelected(input){
     console.error('Garden photo upload failed',error);
   }
 }
-function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
+function addOne(item){addToCartWithQty(item,1,'');data.events.unshift(['Today','Shopping item added',item]);syncHealthScore();service.save(data);renderCart();toggleCart(true)}
 function renderCart(){
-  const count=data.cart.length;
+  normalizeCartData();
+  const total=cartTotalQty();
   const cartCountEl=document.getElementById('cartCount');
   const cartCountMobileEl=document.getElementById('cartCountMobile');
-  if(cartCountEl)cartCountEl.textContent=count;
-  if(cartCountMobileEl)cartCountMobileEl.textContent=count;
-  document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>';
+  if(cartCountEl)cartCountEl.textContent=total;
+  if(cartCountMobileEl)cartCountMobileEl.textContent=total;
+  document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>{
+    const label=c.plant?`${c.name} · ${c.plant}`:c.name;
+    return `<div class="cartrow"><div class="cartrow-copy"><b>${escapeHtml(label)}</b><span class="cartrow-qty"><button type="button" class="plant-qty-btn" onclick="changeCartLineQty(${i},-1)">−</button><em>${c.qty}</em><button type="button" class="plant-qty-btn" onclick="changeCartLineQty(${i},1)">+</button></span></div><button class="priority" onclick="removeCartLine(${i})">Remove</button></div>`;
+  }).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>';
 }
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
-function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
-function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();setGoogleSignInLoading(false)}
-function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError();setGoogleSignInLoading(false)}
+function checkoutDemo(){normalizeCartData();if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
+function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();setSocialSignInLoading('google',false);setSocialSignInLoading('facebook',false);prepareSocialSignIn()}
+function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError();setSocialSignInLoading('google',false);setSocialSignInLoading('facebook',false)}
 function clearLoginError(){const el=document.getElementById('loginError');if(el){el.textContent='';el.classList.add('hidden')}}
 function showLoginError(msg){const el=document.getElementById('loginError');if(!el)return;el.textContent=msg;el.classList.remove('hidden')}
-function setGoogleSignInLoading(on){
-  const btn=document.getElementById('googleSignInFallback');
+function socialSignInButtonId(provider){return provider==='facebook'?'facebookSignInBtn':'googleSignInFallback'}
+function setSocialSignInLoading(provider,on){
+  const btn=document.getElementById(socialSignInButtonId(provider));
   if(!btn)return;
   btn.disabled=!!on;
   btn.classList.toggle('is-loading',!!on);
-  btn.textContent=on?'Signing in…':'Continue with Google';
+  btn.textContent=on
+    ?'Signing in…'
+    :(provider==='facebook'?'Continue with Facebook':'Continue with Google');
 }
-const authState={config:null,supabase:null,ready:false,loading:null,googleTokenClient:null,googleTokenClientId:''};
+const authState={config:null,supabase:null,ready:false,loading:null,googleTokenClient:null,googleTokenClientId:'',facebookReady:false};
+function authRedirectUrl(){return window.location.origin+window.location.pathname}
 function isValidSupabaseConfig(cfg){
   return !!(cfg?.supabaseUrl?.startsWith('https://')&&cfg?.supabaseAnonKey&&String(cfg.supabaseAnonKey).length>20);
 }
 function parseJwtPayload(token){try{return JSON.parse(atob(String(token||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(_){return null}}
+function providerSignInLabel(provider){
+  if(provider==='facebook')return 'Facebook sign-in';
+  if(provider==='google'||provider==='supabase')return 'Google sign-in';
+  return 'Email sign-in';
+}
 async function loadAuthConfig(){
   if(authState.config)return authState.config;
   if(!authState.loading){
@@ -3174,16 +3301,44 @@ async function loadAuthConfig(){
   authState.config=await authState.loading;
   return authState.config;
 }
+async function completeSupabaseOAuthReturn(){
+  if(!authState.supabase)return null;
+  const url=new URL(window.location.href);
+  const authError=url.searchParams.get('error_description')||url.searchParams.get('error');
+  if(authError){
+    history.replaceState({},'',url.pathname);
+    throw new Error(decodeURIComponent(String(authError).replace(/\+/g,' ')));
+  }
+  const code=url.searchParams.get('code');
+  if(code){
+    const {data,error}=await authState.supabase.auth.exchangeCodeForSession(code);
+    history.replaceState({},'',url.pathname);
+    if(error)throw error;
+    if(data.session?.user)return data.session.user;
+  }
+  return null;
+}
 async function initAuth(){
   if(authState.ready)return;
   try{
     const cfg=await loadAuthConfig();
     if(isValidSupabaseConfig(cfg)&&window.supabase?.createClient){
-      authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+      authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{
+        auth:{detectSessionInUrl:true,flowType:'pkce',persistSession:true,autoRefreshToken:true}
+      });
+      try{
+        const returnedUser=await completeSupabaseOAuthReturn();
+        if(returnedUser)applyUserSession(returnedUser,'supabase');
+      }catch(err){
+        console.warn('Supabase OAuth return failed',err);
+        if(String(err?.message||err).trim())showLoginError(err.message||String(err));
+      }
       try{
         const {data:{session}}=await authState.supabase.auth.getSession();
         if(session?.user)applyUserSession(session.user,'supabase');
-        authState.supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user)applyUserSession(session.user,'supabase');});
+        authState.supabase.auth.onAuthStateChange((event,session)=>{
+          if(session?.user&&event==='SIGNED_IN')applyUserSession(session.user,'supabase');
+        });
       }catch(err){
         console.warn('Supabase session unavailable',err);
         authState.supabase=null;
@@ -3195,12 +3350,15 @@ async function initAuth(){
   authState.ready=true;
 }
 function applyUserSession(user,provider){
+  const id=user.id||user.sub||'';
+  const sameUser=data.signedIn&&data.user?.id===id;
   data.signedIn=true;
-  data.user={id:user.id||user.sub||'',email:user.email||'',name:user.user_metadata?.full_name||user.user_metadata?.name||user.name||user.email||'Garden member',avatar:user.user_metadata?.avatar_url||user.picture||'',provider:provider||'email'};
+  data.user={id,email:user.email||'',name:user.user_metadata?.full_name||user.user_metadata?.name||user.name||user.email||'Garden member',avatar:user.user_metadata?.avatar_url||user.picture||'',provider:provider||'email'};
   if(data.user.email)data.email=data.user.email;
-  data.events.unshift(['Today','User signed in',provider==='google'||provider==='supabase'?'Google sign-in':'Email sign-in']);
+  if(!sameUser)data.events.unshift(['Today','User signed in',providerSignInLabel(provider)]);
   service.save(data);
-  setGoogleSignInLoading(false);
+  setSocialSignInLoading('google',false);
+  setSocialSignInLoading('facebook',false);
   hideLogin();
   render();
 }
@@ -3224,14 +3382,14 @@ async function loginWithEmail(){
   }
 }
 function handleGoogleCredential(response){
-  setGoogleSignInLoading(false);
+  setSocialSignInLoading('google',false);
   clearLoginError();
   const payload=parseJwtPayload(response?.credential);
   if(!payload?.email){showLoginError('Google sign-in did not return an email.');return}
   finishLocalSignIn({email:payload.email,name:payload.name||payload.given_name||payload.email,provider:'google'});
 }
 async function handleGoogleTokenResponse(tokenResponse){
-  setGoogleSignInLoading(false);
+  setSocialSignInLoading('google',false);
   if(tokenResponse?.error){
     showLoginError(tokenResponse.error_description||tokenResponse.error||'Google sign-in was cancelled.');
     return;
@@ -3275,41 +3433,154 @@ async function ensureGoogleScript(){
     document.head.appendChild(s);
   });
 }
+async function ensureFacebookScript(appId){
+  const cfg=await loadAuthConfig();
+  const id=String(appId||cfg.facebookAppId||'').trim();
+  if(!id)throw new Error('Facebook sign-in is not configured yet.');
+  if(window.FB&&authState.facebookReady&&authState.config?.facebookAppId===id)return;
+  await new Promise((resolve,reject)=>{
+    const finish=()=>{
+      try{
+        window.FB.init({appId:id,cookie:true,xfbml:false,version:'v19.0'});
+        authState.facebookReady=true;
+        resolve();
+      }catch(err){reject(err)}
+    };
+    if(window.FB){finish();return}
+    window.fbAsyncInit=finish;
+    if(document.getElementById('facebook-jssdk')){
+      const wait=setInterval(()=>{if(window.FB){clearInterval(wait);finish()}},50);
+      setTimeout(()=>{clearInterval(wait);if(!window.FB)reject(new Error('Facebook sign-in script could not load.'))},8000);
+      return;
+    }
+    const s=document.createElement('script');
+    s.id='facebook-jssdk';
+    s.src='https://connect.facebook.net/en_US/sdk.js';
+    s.async=true;
+    s.defer=true;
+    s.onerror=()=>reject(new Error('Facebook sign-in script could not load.'));
+    document.head.appendChild(s);
+  });
+}
+async function prepareSocialSignIn(){
+  try{
+    await initAuth();
+    const cfg=await loadAuthConfig();
+    const googleMount=document.getElementById('googleSignInMount');
+    const googleFallback=document.getElementById('googleSignInFallback');
+    const fbBtn=document.getElementById('facebookSignInBtn');
+    if(googleMount)googleMount.innerHTML='';
+    const useSupabase=!!authState.supabase;
+    const hasGoogle=useSupabase||!!cfg.googleClientId;
+    const hasFacebook=useSupabase||!!cfg.facebookAppId;
+    googleFallback?.classList.toggle('hidden',!hasGoogle);
+    fbBtn?.classList.toggle('hidden',!hasFacebook);
+    if(!hasGoogle&&!hasFacebook&&!useSupabase){
+      showLoginError('Social sign-in is not configured yet. Use email or ask the site admin to add Google/Facebook keys in Netlify.');
+      return;
+    }
+    if(!useSupabase&&cfg.googleClientId&&googleMount){
+      try{
+        await ensureGoogleScript();
+        if(window.google?.accounts?.id){
+          window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true,use_fedcm_for_prompt:false});
+          const width=Math.min(360,Math.max(280,(googleMount.parentElement?.clientWidth||360)-48));
+          window.google.accounts.id.renderButton(googleMount,{type:'standard',theme:'outline',size:'large',text:'continue_with',width});
+          googleFallback?.classList.add('hidden');
+        }
+      }catch(err){
+        console.warn('Google button render failed',err);
+        googleFallback?.classList.remove('hidden');
+      }
+    }
+  }catch(err){
+    console.warn('Social sign-in setup failed',err);
+  }
+}
+async function loginWithSupabaseOAuth(provider,cfg){
+  const {error}=await authState.supabase.auth.signInWithOAuth({
+    provider,
+    options:{redirectTo:authRedirectUrl(),queryParams:provider==='google'?{prompt:'select_account'}:undefined}
+  });
+  if(error){
+    if(provider==='google'&&cfg.googleClientId)return loginWithGoogleDirect(cfg);
+    if(provider==='facebook'&&cfg.facebookAppId)return loginWithFacebookDirect(cfg);
+    throw error;
+  }
+}
+async function loginWithGoogleDirect(cfg){
+  if(!cfg?.googleClientId)throw new Error('Google sign-in is not configured yet.');
+  await ensureGoogleScript();
+  if(window.google?.accounts?.id){
+    window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true,use_fedcm_for_prompt:false});
+  }
+  const tokenClient=getGoogleTokenClient(cfg.googleClientId);
+  if(!tokenClient)throw new Error('Google sign-in could not start in this browser.');
+  tokenClient.requestAccessToken({prompt:'select_account'});
+}
 async function loginWithGoogle(){
   clearLoginError();
-  setGoogleSignInLoading(true);
+  setSocialSignInLoading('google',true);
   try{
     await initAuth();
     const cfg=await loadAuthConfig();
     if(authState.supabase){
-      const {error}=await authState.supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
-      if(error){
-        setGoogleSignInLoading(false);
-        showLoginError(error.message||'Google sign-in failed.');
-      }
+      await loginWithSupabaseOAuth('google',cfg);
       return;
     }
     if(cfg.googleClientId){
-      await ensureGoogleScript();
-      if(window.google?.accounts?.id){
-        window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true});
-      }
-      const tokenClient=getGoogleTokenClient(cfg.googleClientId);
-      if(tokenClient){
-        tokenClient.requestAccessToken({prompt:'select_account'});
-        return;
-      }
+      await loginWithGoogleDirect(cfg);
+      return;
     }
-    const email=String(document.getElementById('emailField')?.value||'').trim();
-    finishLocalSignIn({
-      email:email&&email.includes('@')?email:'guest@cruvit.app',
-      name:email?email.split('@')[0].replace(/\./g,' '):'Guest',
-      provider:'google'
-    });
+    throw new Error('Google sign-in is not configured yet. Add GOOGLE_CLIENT_ID in Netlify, or connect Supabase Auth.');
   }catch(err){
-    setGoogleSignInLoading(false);
+    setSocialSignInLoading('google',false);
     console.error('Google sign-in failed',err);
     showLoginError(err.message||'Google sign-in failed. Try again.');
+  }
+}
+async function loginWithFacebookDirect(cfg){
+  if(!cfg?.facebookAppId)throw new Error('Facebook sign-in is not configured yet.');
+  await ensureFacebookScript(cfg.facebookAppId);
+  await new Promise((resolve,reject)=>{
+    window.FB.login(function(response){
+      if(!response?.authResponse){
+        reject(new Error('Facebook sign-in was cancelled.'));
+        return;
+      }
+      fetch('https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token='+encodeURIComponent(response.authResponse.access_token))
+        .then(r=>r.ok?r.json():Promise.reject(new Error('Could not read your Facebook profile.')))
+        .then(profile=>{
+          if(!profile?.email){
+            reject(new Error('Facebook did not share your email. Allow email permission or use email sign-in.'));
+            return;
+          }
+          finishLocalSignIn({email:profile.email,name:profile.name||profile.email,provider:'facebook'});
+          resolve();
+        })
+        .catch(reject);
+    },{scope:'public_profile,email',return_scopes:true});
+  });
+}
+async function loginWithFacebook(){
+  clearLoginError();
+  setSocialSignInLoading('facebook',true);
+  try{
+    await initAuth();
+    const cfg=await loadAuthConfig();
+    if(authState.supabase){
+      await loginWithSupabaseOAuth('facebook',cfg);
+      return;
+    }
+    if(cfg.facebookAppId){
+      await loginWithFacebookDirect(cfg);
+      return;
+    }
+    throw new Error('Facebook sign-in is not configured yet. Add FACEBOOK_APP_ID in Netlify, or connect Supabase Auth.');
+  }catch(err){
+    setSocialSignInLoading('facebook',false);
+    console.error('Facebook sign-in failed',err);
+    showLoginError(err.message||'Facebook sign-in failed. Try again.');
   }
 }
 function loadSupabaseScript(){

@@ -8,8 +8,16 @@ This version uses a true universal plant search flow:
 Required Netlify environment variable:
 `OPENAI_API_KEY`
 
-Optional auth (for Google sign-in on the login screen):
-- `GOOGLE_CLIENT_ID` — Google OAuth client ID (authorized origin: your Netlify site URL)
-- `SUPABASE_URL` + `SUPABASE_ANON_KEY` — enables Supabase Auth with Google OAuth redirect
+Optional auth (Google / Facebook sign-in on the login screen):
+
+**Option A — Supabase Auth (recommended for production)**
+- `SUPABASE_URL` + `SUPABASE_ANON_KEY`
+- In Supabase Dashboard → Authentication → Providers: enable **Google** and **Facebook**
+- In Supabase → URL Configuration, add redirect URL: `https://friendly-taiyaki-64aacb.netlify.app/` (and your custom domain if any)
+- For Facebook in Supabase: create a [Meta app](https://developers.facebook.com/), add Facebook Login, set Valid OAuth Redirect URI to your Supabase callback (`https://<project>.supabase.co/auth/v1/callback`)
+
+**Option B — Direct client IDs (works without Supabase)**
+- `GOOGLE_CLIENT_ID` — OAuth Web client ID; authorized JavaScript origin: your Netlify site URL
+- `FACEBOOK_APP_ID` — Meta app ID; add your site URL under Facebook Login → Settings → Valid OAuth Redirect URIs (`https://your-site/`)
 
 Do not put API keys inside `index.html`.

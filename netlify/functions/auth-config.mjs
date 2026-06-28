@@ -7,6 +7,7 @@ export async function handler() {
     },
     body: JSON.stringify({
       googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+      facebookAppId: process.env.FACEBOOK_APP_ID || '',
       supabaseUrl: process.env.SUPABASE_URL || '',
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY || ''
     })
