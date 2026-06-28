@@ -8,9 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630l">
+<link rel="stylesheet" href="styles.css?v=20250630m">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
-<link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
+<link rel="stylesheet" href="dashboard-layout.css?v=20250630a">
 </head>
 <body>
 <div class="app"><div class="shell">
@@ -40,10 +40,6 @@
       </div>
       <div class="actions">
         <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
-        <div class="actions-row">
-          <button class="btn light intro-action-photo" onclick="scanGarden()">Garden photo</button>
-          <button class="btn light" onclick="addPlant()">Add plant +</button>
-        </div>
       </div>
     </div>
   </div>
@@ -240,7 +236,20 @@
   </div>
 </div>
 
-<div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
+<div class="login" id="login" onclick="if(event.target===this)hideLogin()">
+  <div class="loginbox">
+    <div class="login-kicker">🌿 Account ready</div>
+    <h2>Save your garden</h2>
+    <p class="login-lead">Sign in to keep your plants, tasks and rewards synced.</p>
+    <p class="login-error hidden" id="loginError" role="alert"></p>
+    <input class="field" id="emailField" type="email" placeholder="Email address" autocomplete="email">
+    <input class="field" id="passwordField" type="password" placeholder="Password" autocomplete="current-password">
+    <button type="button" class="btn main login-btn" onclick="loginWithEmail()">Continue</button>
+    <div id="googleSignInMount" class="google-signin-mount"></div>
+    <button type="button" class="btn light login-btn" id="googleSignInFallback" onclick="loginWithGoogle()">Continue with Google</button>
+    <button type="button" class="btn light login-btn login-close" onclick="hideLogin()">Close</button>
+  </div>
+</div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
 <script src="garden-modes.js?v=20250630d"></script>
 <script>
@@ -1820,7 +1829,7 @@ function render(){syncHealthScore();
   const weekCount=companionTasksThisWeek().length;
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
-  document.getElementById('signInBtn').textContent=data.signedIn?'Signed in':'Sign in';
+  document.getElementById('signInBtn').textContent=data.signedIn?(data.user?.name||data.email||'Signed in'):'Sign in';
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div></div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
   
@@ -3004,8 +3013,119 @@ function addOne(item){data.cart.push(item);data.events.unshift(['Today','Shoppin
 function renderCart(){document.getElementById('cartCount').textContent=data.cart.length;document.getElementById('cartRows').innerHTML=data.cart.length?data.cart.map((c,i)=>`<div class="cartrow"><span>${c}</span><button class="priority" onclick="data.cart.splice(${i},1);service.save(data);renderCart()">Remove</button></div>`).join(''):'<p style="font-weight:800;color:#6c7b6c">Your cart is empty.</p>'}
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
-function showLogin(){document.getElementById('login').classList.add('open')}function hideLogin(){document.getElementById('login').classList.remove('open')}
-function mockLogin(google){data.signedIn=true;const email=document.getElementById('emailField')?.value;if(email)data.email=email;data.events.unshift(['Today','User signed in',google?'Google sign-in selected':'Email sign-in selected']);service.save(data);hideLogin();render()}
+function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();mountGoogleSignInButton()}
+function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError()}
+function clearLoginError(){const el=document.getElementById('loginError');if(el){el.textContent='';el.classList.add('hidden')}}
+function showLoginError(msg){const el=document.getElementById('loginError');if(!el)return;el.textContent=msg;el.classList.remove('hidden')}
+const authState={config:null,supabase:null,ready:false,loading:null};
+function parseJwtPayload(token){try{return JSON.parse(atob(String(token||'').split('.')[1]||''))}catch(_){return null}}
+async function loadAuthConfig(){
+  if(authState.config)return authState.config;
+  if(!authState.loading){
+    authState.loading=fetch(netlifyFunctionUrl('/.netlify/functions/auth-config')).then(r=>r.ok?r.json():{}).catch(()=>({}));
+  }
+  authState.config=await authState.loading;
+  return authState.config;
+}
+async function initAuth(){
+  if(authState.ready)return;
+  const cfg=await loadAuthConfig();
+  if(cfg.supabaseUrl&&cfg.supabaseAnonKey&&window.supabase?.createClient){
+    authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+    const {data:{session}}=await authState.supabase.auth.getSession();
+    if(session?.user)applyUserSession(session.user,'supabase');
+    authState.supabase.auth.onAuthStateChange((_event,session)=>{if(session?.user)applyUserSession(session.user,'supabase');});
+  }
+  authState.ready=true;
+}
+function applyUserSession(user,provider){
+  data.signedIn=true;
+  data.user={id:user.id||user.sub||'',email:user.email||'',name:user.user_metadata?.full_name||user.user_metadata?.name||user.name||user.email||'Garden member',avatar:user.user_metadata?.avatar_url||user.picture||'',provider:provider||'email'};
+  if(data.user.email)data.email=data.user.email;
+  data.events.unshift(['Today','User signed in',provider==='google'||provider==='supabase'?'Google sign-in':'Email sign-in']);
+  service.save(data);
+  hideLogin();
+  render();
+}
+function finishLocalSignIn({email,name,provider}){applyUserSession({id:'local-'+Date.now(),email:email||'',name:name||email||'Garden member',user_metadata:{full_name:name||''}},provider||'email')}
+async function loginWithEmail(){
+  clearLoginError();
+  const email=String(document.getElementById('emailField')?.value||'').trim();
+  const password=String(document.getElementById('passwordField')?.value||'');
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showLoginError('Enter a valid email address.');return}
+  if(!password||password.length<4){showLoginError('Enter your password (at least 4 characters).');return}
+  await initAuth();
+  if(authState.supabase){
+    const {error}=await authState.supabase.auth.signInWithPassword({email,password});
+    if(error){showLoginError(error.message||'Could not sign in.');return}
+    return;
+  }
+  finishLocalSignIn({email,name:email.split('@')[0],provider:'email'});
+}
+function handleGoogleCredential(response){
+  clearLoginError();
+  const payload=parseJwtPayload(response?.credential);
+  if(!payload?.email){showLoginError('Google sign-in did not return an email.');return}
+  finishLocalSignIn({email:payload.email,name:payload.name||payload.given_name||payload.email,provider:'google'});
+}
+async function loginWithGoogle(){
+  clearLoginError();
+  await initAuth();
+  if(authState.supabase){
+    const {error}=await authState.supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
+    if(error)showLoginError(error.message||'Google sign-in failed.');
+    return;
+  }
+  const cfg=await loadAuthConfig();
+  if(cfg.googleClientId&&window.google?.accounts?.id){
+    window.google.accounts.id.prompt();
+    return;
+  }
+  finishLocalSignIn({email:'guest@cruvit.app',name:'Guest',provider:'google'});
+}
+function mountGoogleSignInButton(){
+  const mount=document.getElementById('googleSignInMount');
+  const fallback=document.getElementById('googleSignInFallback');
+  if(!mount||!fallback)return;
+  Promise.all([loadAuthConfig(),initAuth()]).then(([cfg])=>{
+    if(cfg.supabaseUrl&&cfg.supabaseAnonKey){
+      mount.innerHTML='';
+      fallback.classList.remove('hidden');
+      return;
+    }
+    if(cfg.googleClientId&&window.google?.accounts?.id){
+      fallback.classList.add('hidden');
+      mount.innerHTML='';
+      window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true});
+      window.google.accounts.id.renderButton(mount,{theme:'outline',size:'large',shape:'pill',text:'continue_with',width:Math.min(360,mount.clientWidth||360)});
+      return;
+    }
+    mount.innerHTML='';
+    fallback.classList.remove('hidden');
+  });
+}
+function loadGoogleIdentityScript(){
+  if(document.getElementById('googleIdentityScript'))return;
+  const s=document.createElement('script');
+  s.id='googleIdentityScript';
+  s.src='https://accounts.google.com/gsi/client';
+  s.async=true;
+  s.defer=true;
+  s.onload=()=>mountGoogleSignInButton();
+  document.head.appendChild(s);
+}
+function loadSupabaseScript(){
+  if(document.getElementById('supabaseScript'))return Promise.resolve();
+  return new Promise(resolve=>{
+    const s=document.createElement('script');
+    s.id='supabaseScript';
+    s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+    s.onload=resolve;
+    s.onerror=resolve;
+    document.head.appendChild(s);
+  });
+}
+loadSupabaseScript().then(()=>{loadGoogleIdentityScript();initAuth()});
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 document.addEventListener('click',()=>{if(openMenu){openMenu=null;render()}});
 ensureGardenLocation();

@@ -35,7 +35,7 @@
   .hero {
     display: grid;
     grid-template-columns: minmax(270px, 0.84fr) minmax(480px, 1.52fr) minmax(250px, 0.72fr);
-    grid-template-rows: minmax(460px, auto) auto;
+    grid-template-rows: minmax(400px, auto) auto;
     gap: 24px;
     align-items: stretch;
     margin-top: var(--space-5);
@@ -44,7 +44,7 @@
   .hero .intro {
     grid-column: 1;
     grid-row: 1;
-    min-height: 460px;
+    min-height: 400px;
     padding: var(--space-8) var(--space-7);
     background:
       radial-gradient(ellipse 72% 58% at 92% 8%, rgba(240, 215, 140, 0.34), transparent 58%),
@@ -89,7 +89,7 @@
   .hero .intro .actions {
     margin-top: auto;
     max-width: 100%;
-    padding-top: var(--space-6);
+    padding-top: var(--space-5);
   }
 
   .hero .intro .btn.main {
@@ -100,46 +100,6 @@
     box-shadow: 0 10px 28px rgba(15, 61, 46, 0.18);
   }
 
-  .hero .intro .actions-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .hero .intro .actions-row .btn.light {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    justify-content: flex-start;
-    padding: 8px 2px;
-    font-weight: 500;
-    color: var(--forest-light);
-  }
-
-  .hero .intro .actions-row .btn.light:hover {
-    background: transparent;
-    color: var(--forest);
-    transform: none;
-  }
-
-  .hero .intro .intro-action-photo::before {
-    content: "🗺️ ";
-  }
-
-  .hero .intro .intro-action-photo {
-    font-size: 0;
-  }
-
-  .hero .intro .intro-action-photo::after {
-    content: "View garden";
-    font-size: 0.9375rem;
-  }
-
-  .hero .intro .actions-row .btn.light:last-child::before {
-    content: "+ ";
-    font-weight: 600;
-  }
-
   /* Split mood panel into center scene + right sidebar */
   .premium-mood-panel {
     display: contents;
@@ -148,7 +108,7 @@
   .mood-scene {
     grid-column: 2;
     grid-row: 1;
-    min-height: 460px;
+    min-height: 400px;
     border-radius: 28px;
     border: 1px solid rgba(15, 61, 46, 0.08);
     box-shadow: 0 14px 40px rgba(15, 61, 46, 0.07);
@@ -269,7 +229,7 @@
     grid-row: 1;
     align-self: stretch;
     width: 100%;
-    min-height: 460px;
+    min-height: 400px;
     height: 100%;
     max-height: none;
     aspect-ratio: auto;

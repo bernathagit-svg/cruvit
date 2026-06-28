@@ -1850,23 +1850,73 @@ button.rail-note.location-note:hover {
 .login.open { display: flex; }
 
 .loginbox {
-  max-width: 430px;
+  max-width: 400px;
   width: 100%;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--r);
-  padding: var(--space-7);
+  border-radius: 24px;
+  padding: var(--space-6) var(--space-6) var(--space-5);
   box-shadow: var(--shadow-lg), var(--highlight);
+}
+
+.login-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest-light);
 }
 
 .loginbox h2 {
   font-family: var(--font-serif);
   color: var(--forest);
-  font-size: 2rem;
+  font-size: clamp(1.65rem, 4vw, 1.9rem);
   margin: var(--space-3) 0 var(--space-2);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
 }
+
+.login-lead {
+  margin: 0 0 var(--space-2);
+  color: var(--muted2);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.login-error {
+  margin: var(--space-2) 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(180, 60, 40, 0.08);
+  color: #9a3b2a;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.login-error.hidden { display: none; }
+
+.login-btn {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.login-close {
+  margin-top: 8px;
+}
+
+.google-signin-mount {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  min-height: 44px;
+}
+
+.google-signin-mount:empty { display: none; }
+
+#googleSignInFallback.hidden { display: none; }
 
 .field {
   width: 100%;
@@ -2221,52 +2271,12 @@ button.rail-note.location-note:hover {
   }
 
   .hero .intro .actions {
-    margin-top: var(--space-6);
+    margin-top: var(--space-5);
     max-width: none;
   }
 
   .hero .intro .btn.main {
     width: 100%;
-  }
-
-  .hero .intro .actions-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .hero .intro .actions-row .btn.light {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    justify-content: flex-start;
-    padding: 8px 2px;
-    font-weight: 500;
-    color: var(--forest-light);
-  }
-
-  .hero .intro .actions-row .btn.light:hover {
-    background: transparent;
-    color: var(--forest);
-    transform: none;
-  }
-
-  .hero .intro .intro-action-photo::before {
-    content: "🗺️ ";
-  }
-
-  .hero .intro .intro-action-photo {
-    font-size: 0;
-  }
-
-  .hero .intro .intro-action-photo::after {
-    content: "View garden";
-    font-size: 0.9375rem;
-  }
-
-  .hero .intro .actions-row .btn.light:last-child::before {
-    content: "+ ";
-    font-weight: 600;
   }
 
   .hero .premium-mood-panel { order: 1; }
