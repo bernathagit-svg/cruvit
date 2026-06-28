@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250630i">
+<link rel="stylesheet" href="styles.css?v=20250630l">
 <link rel="stylesheet" href="garden-modes.css?v=20250628">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250629c">
 </head>
@@ -31,7 +31,13 @@
     <div class="intro-content">
       <div class="greeting">🍃 Good morning, Hagit</div>
       <h2>Your garden is looking great</h2>
-      <p>Here’s what matters now — a clear view of your garden’s health and what needs your attention today.</p>
+      <div class="tip-box" id="dailyTipBox" aria-labelledby="dailyTipHeading">
+        <div class="tip-box-head">
+          <span class="tip-box-icon" aria-hidden="true">💡</span>
+          <strong class="tip-box-title" id="dailyTipHeading">הטיפ היומי</strong>
+        </div>
+        <p class="tip-box-text" id="dailyTipText"></p>
+      </div>
       <div class="actions">
         <button class="btn main" onclick="setTab('tasks')">Review tasks →</button>
         <div class="actions-row">
@@ -46,7 +52,6 @@
     <div class="mood-scene thriving" id="gardenMoodCard" onclick="showHealthBreakdown()" title="View garden mode details">
       <div class="mood-kicker-wrap">
         <div class="mood-kicker" id="moodKicker">Your Garden Mode</div>
-        <span class="mood-severity" id="moodSeverity" hidden></span>
       </div>
       <h3 id="moodTitle">Thriving</h3>
       <p id="moodMicro">Your garden is happy and flourishing. Keep it up! 🍃</p>
@@ -237,7 +242,7 @@
 
 <div class="login" id="login"><div class="loginbox"><div class="greeting">🌿 Account ready</div><h2>Save your garden</h2><p>This screen is prepared for real login. In the next step it connects to Supabase Auth, Database and Storage.</p><input class="field" id="emailField" placeholder="Email address"><input class="field" placeholder="Password" type="password"><button class="btn main" style="width:100%;margin-top:14px" onclick="mockLogin()">Continue</button><button class="btn light" style="width:100%;margin-top:10px" onclick="mockLogin(true)">Continue with Google</button><button class="btn light" style="width:100%;margin-top:10px" onclick="hideLogin()">Close</button></div></div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630c"></script>
+<script src="garden-modes.js?v=20250630d"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1699,7 +1704,30 @@ function collectGardenDataForModes(){
   });
 }
 
+const DAILY_GARDEN_TIPS=[
+  {he:'השקי בבוקר מוקדם — פחות אידוי ויותר לחות לשורשים.',en:'Water early in the morning — less evaporation and more moisture reaches the roots.'},
+  {he:'לפני השקיה, הכניסי אצבע 3 ס"מ לעומק — אם האדמה יבשה, הגיע הזמן.',en:'Before watering, push a finger 3 cm into the soil — if it feels dry, it is time to water.'},
+  {he:'דשני ליד שורשים, לא על העלים — כך הצמח מנצל את ההזנה ביעילות.',en:'Fertilize near the roots, not on the leaves — plants absorb nutrients more efficiently that way.'},
+  {he:'שכבת כיסוי אורגני דקה סביב הצמחים שומרת לחות ומצמצמת עשבייה.',en:'A thin mulch layer around plants holds moisture and keeps weeds down.'},
+  {he:'בדקי את הצד התחתון של העלים — שם מזיקים מתחילים להופיע ראשונים.',en:'Check the undersides of leaves — pests often appear there first.'}
+];
+let dailyTipPick=null;
+function pickDailyTipIndex(){
+  if(dailyTipPick===null)dailyTipPick=Math.floor(Math.random()*DAILY_GARDEN_TIPS.length);
+  return dailyTipPick;
+}
+function renderDailyTip(){
+  const textEl=document.getElementById('dailyTipText');
+  const titleEl=document.getElementById('dailyTipHeading');
+  if(!textEl)return;
+  const isHe=window.GardenModes&&GardenModes.gardenModesIsHe&&GardenModes.gardenModesIsHe();
+  const tip=DAILY_GARDEN_TIPS[pickDailyTipIndex()];
+  textEl.textContent=isHe?tip.he:tip.en;
+  if(titleEl)titleEl.textContent=isHe?'הטיפ היומי':'Daily tip';
+}
+
 function render(){syncHealthScore();
+  renderDailyTip();
   const health=syncHealthScore();
   const visiblePlantsEarly=data.plants.filter(p=>!p.archived);
   const focusEntryEarly=companionOpenTaskEntries()[0];

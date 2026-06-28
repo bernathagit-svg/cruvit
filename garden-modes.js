@@ -688,13 +688,6 @@
     const kicker = document.getElementById('moodKicker');
     if (kicker) kicker.textContent = gardenModesIsHe() ? 'מצב הגינה שלך' : 'Your Garden Mode';
 
-    const severityEl = document.getElementById('moodSeverity');
-    if (severityEl) {
-      severityEl.textContent = severityLabel('calm');
-      severityEl.className = 'mood-severity garden-mode-severity garden-mode-severity-calm';
-      severityEl.hidden = false;
-    }
-
     const titleEl = document.getElementById('moodTitle');
     if (titleEl) titleEl.textContent = t(primaryMode.title);
 
