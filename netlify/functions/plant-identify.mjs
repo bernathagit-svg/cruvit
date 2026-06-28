@@ -483,7 +483,8 @@ ${userHint ? `- The gardener suggests this may be: ${JSON.stringify(userHint)}. 
 - Include alternatives ONLY when genuinely uncertain between 2 closely related species in the SAME genus.
 - Never list unrelated genera. Never list multiple species from the same genus.
 - Maximum 1 alternative. Omit alternatives when confidence is high.
-- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.`;
+- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.
+- Ignore all text, buttons, app UI, labels, and overlays visible in the photo. Identify only the actual plant.`;
 }
 
 function collapseSameGenusCandidates(candidates) {
@@ -619,6 +620,105 @@ Rules:
   return firstResult;
 }
 
+async function recoverInvalidDodonaeaIdentification(image, result, key, model) {
+  const genus = genusKey(result?.scientific_name || result?.scientificName);
+  if (genus !== 'dodonaea') return result;
+
+  const analysis = visualAnalysisText(result);
+  const va = result?.visual_analysis || result?.visualAnalysis || {};
+  const prom = String(va.prominent_structure || '').toLowerCase();
+  const invalidDodonaea =
+    looksLikeHouseplantSignals(analysis) ||
+    prom === 'leaves_only' ||
+    (!hasExplicitSeedCapsules(result) && !looksLikeDodonaeaSignals(analysis));
+
+  if (!invalidDodonaea) return result;
+
+  const reviewPrompt = `The previous identification was Dodonaea viscosa, but that is likely wrong for this photo.
+Look only at the actual plant (ignore any app UI, text, or labels in the image).
+Return ONLY JSON:
+{
+  "is_indoor_houseplant": true,
+  "best_identification": {
+    "common_name": "",
+    "scientific_name": "",
+    "confidence": "high|medium|low"
+  }
+}
+Rules:
+- If this is a potted indoor plant with glossy green leaves on upright stems, identify Zamioculcas zamiifolia (ZZ plant).
+- Other common houseplants: Epipremnum (pothos), Monstera, Sansevieria, Spathiphyllum, Ficus elastica, Philodendron.
+- Only keep Dodonaea viscosa if papery winged seed capsules are clearly visible on an outdoor shrub.`;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 18000);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 500,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: {
+                  type: 'base64',
+                  media_type: image.mediaType,
+                  data: image.data
+                }
+              },
+              { type: 'text', text: reviewPrompt }
+            ]
+          }
+        ]
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timer);
+    if (!response.ok) return result;
+
+    const payload = await response.json().catch(() => ({}));
+    const text = (payload?.content || [])
+      .filter(part => part?.type === 'text')
+      .map(part => part.text)
+      .join('\n');
+    const review = extractJson(text);
+    const best = review?.best_identification || review?.bestIdentification;
+    const bestGenus = genusKey(best?.scientific_name || best?.scientificName);
+    if (!bestGenus || bestGenus === 'dodonaea') return result;
+
+    return {
+      ...result,
+      visual_analysis: {
+        prominent_structure: 'leaves_only',
+        structure_description: 'Indoor houseplant foliage',
+        leaf_type: review?.leaf_type || 'compound',
+        habit: 'herb',
+        notes: 'Recovered from invalid Dodonaea identification'
+      },
+      common_name: best?.common_name || best?.commonName || result?.common_name,
+      scientific_name: best?.scientific_name || best?.scientificName || result?.scientific_name,
+      confidence: normalizeConfidence(best?.confidence || 'medium'),
+      alternatives: [],
+      _corrected: 'invalid_dodonaea_recovery'
+    };
+  } catch {
+    clearTimeout(timer);
+  }
+
+  return result;
+}
+
 export default async function handler(request) {
   if (request.method === 'OPTIONS') {
     return new Response('', { status: 200, headers: corsHeaders });
@@ -733,9 +833,10 @@ export default async function handler(request) {
       const result = extractJson(text);
       const refined = await refineLikelyMisidentification(image, result, key, model);
       const corrected = applyIdentificationCorrections(refined, userHint);
-      let candidates = makeCandidates(corrected);
+      const recovered = await recoverInvalidDodonaeaIdentification(image, corrected, key, model);
+      let candidates = makeCandidates(recovered);
 
-      if (!refined || candidates.length === 0) {
+      if (!recovered || candidates.length === 0) {
         lastError = {
           message: 'The AI response did not contain a plant identification.'
         };
@@ -765,9 +866,9 @@ export default async function handler(request) {
 
       return json(200, {
         candidates,
-        identification: corrected,
-        visualAnalysis: corrected?.visual_analysis || corrected?.visualAnalysis || null,
-        corrected: corrected?._corrected || '',
+        identification: recovered,
+        visualAnalysis: recovered?.visual_analysis || recovered?.visualAnalysis || null,
+        corrected: recovered?._corrected || '',
         commonName,
         scientificName,
         common_name: commonName,
