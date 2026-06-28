@@ -340,7 +340,20 @@ function enrichProfileWithQuality(profile,requested){
   return merged;
 }
 
-const OPENAI_READY={enabled:true,endpoint:'/.netlify/functions/plant-knowledge',note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
+const CRUVIT_DEPLOY_ORIGIN='https://friendly-taiyaki-64aacb.netlify.app';
+function netlifyFunctionUrl(path){
+  const p=String(path||'').startsWith('/')?path:'/'+path;
+  const host=location.hostname;
+  const localHost=location.protocol==='file:'||host==='localhost'||host==='127.0.0.1'||/^\d+\.\d+\.\d+\.\d+$/.test(host);
+  if(localHost) return CRUVIT_DEPLOY_ORIGIN+p;
+  return p;
+}
+function isLocalCruvitPreview(){
+  const host=location.hostname;
+  return location.protocol==='file:'||host==='localhost'||host==='127.0.0.1'||/^\d+\.\d+\.\d+\.\d+$/.test(host);
+}
+
+const OPENAI_READY={enabled:true,get endpoint(){return netlifyFunctionUrl('/.netlify/functions/plant-knowledge')},note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
 
 const TASK_DONE_IDX=7;
 function normalizeTaskRow(t){
@@ -618,7 +631,7 @@ function instantPlantImageUrl(p){
 function plantImageProxyUrl(p){
   const q=plantPhotoQuery(p);
   if(!q || normalizeQuery(q)==='plant') return '';
-  return '/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q);
+  return netlifyFunctionUrl('/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q));
 }
 function plantImageFallbacks(p){
   const q=plantPhotoQuery(p);
@@ -656,7 +669,7 @@ async function fetchPlantImageFromWikipedia(query){
   // First try the Netlify image proxy. This avoids browser/CORS issues and uses the same
   // server-side image lookup for every plant card.
   try{
-    const res=await fetch('/.netlify/functions/plant-image?query='+encodeURIComponent(q));
+    const res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-image?query='+encodeURIComponent(q)));
     if(res.ok){
       const json=await res.json();
       if(json?.imageUrl && /^https?:\/\//i.test(json.imageUrl) && !/\.svg($|\?)/i.test(json.imageUrl)) return json.imageUrl;
@@ -1136,7 +1149,7 @@ function closeLocationModal(){
 }
 
 async function callGardenWeather(payload){
-  const res=await fetchWithTimeout('/.netlify/functions/garden-weather',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
+  const res=await fetchWithTimeout(netlifyFunctionUrl('/.netlify/functions/garden-weather'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
   const json=await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(json.error||'Weather service unavailable');
   return json;
@@ -2308,7 +2321,7 @@ async function identifySelectedPlantPhoto(){
       try{
         const timeoutId=setTimeout(()=>{ try{scanAbort.abort()}catch(_){} },75000);
         try{
-          res=await fetch('/.netlify/functions/plant-identify',{
+          res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-identify'),{
             method:'POST',
             headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
             body:payload,
@@ -2329,7 +2342,7 @@ async function identifySelectedPlantPhoto(){
           failedMessage=failedText;
         }
 
-        lastError=new Error(failedMessage||`Identification service returned ${res.status}`);
+        lastError=new Error(failedMessage||`Identification service returned ${res.status}${res.status===404&&isLocalCruvitPreview()?'. Run "netlify dev" locally or open '+CRUVIT_DEPLOY_ORIGIN:''}`);
         if(res.status<500||attempt===1)throw lastError;
       }catch(error){
         if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
@@ -2650,7 +2663,7 @@ function fetchWithTimeout(url,options={},ms=9000){
 async function fetchPlantKnowledgeBundle(plantName,source){
   const rawQuery=String(plantName||'').trim();
   const payload={plantName:rawQuery,query:rawQuery,originalQuery:rawQuery,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
-  const endpoints=[OPENAI_READY.endpoint,'/.netlify/functions/plant-knowledge'].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  const endpoints=[OPENAI_READY.endpoint,netlifyFunctionUrl('/.netlify/functions/plant-knowledge')].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let lastError='';
   for(const endpoint of endpoints){
     try{
