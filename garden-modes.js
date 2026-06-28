@@ -717,8 +717,6 @@
     }, 120);
   }
 
-  const INTRO_HEADLINE_CRITICAL = new Set(['overdue-care', 'heat-stress']);
-  const INTRO_HEADLINE_NEEDS_CARE = new Set(['needs-water', 'pest-risk', 'winter-protection']);
   const INTRO_HEADLINES = {
     excellent: {
       en: ['Your garden is blooming beautifully!', 'The garden is loving your care!'],
@@ -744,27 +742,31 @@
 
   function getIntroHeadline(gardenData, deps) {
     deps = deps || {};
-    const modes = deriveGardenModes(gardenData, deps);
-    const warningModes = modes.warningModes || [];
-    const primaryMode = modes.primaryMode || {};
     const lang = gardenModesIsHe() ? 'he' : 'en';
     const dayKey = deps.todayIso ? deps.todayIso() : '';
+    const openCount = Number(deps.companionOpenCount) || 0;
+    const overdueCount = Number(deps.companionOverdueCount) || 0;
+    const todayCount = Number(deps.todayTaskCount) || 0;
+    const attentionPlants = Number(gardenData.attentionPlants) || 0;
 
-    let tier = 'excellent';
-    let seed = primaryMode.id || 'healthy';
+    // Headline must match the same companion task list shown in the UI.
+    if (openCount === 0) {
+      const modes = deriveGardenModes(gardenData, deps);
+      const seed = modes.primaryMode && modes.primaryMode.id === 'blooming-season' ? 'blooming-season' : 'healthy';
+      return pickStableHeadlineVariant(INTRO_HEADLINES.excellent[lang], seed + dayKey);
+    }
 
-    const criticalMode = warningModes.find(m => INTRO_HEADLINE_CRITICAL.has(m.id));
-    const needsCareMode = warningModes.find(m => INTRO_HEADLINE_NEEDS_CARE.has(m.id));
-
-    if (criticalMode) {
+    let tier = 'needsCare';
+    let seed = 'open-tasks';
+    if (overdueCount > 0) {
       tier = 'critical';
-      seed = criticalMode.id;
-    } else if (needsCareMode) {
+      seed = 'overdue-care';
+    } else if (todayCount > 0) {
       tier = 'needsCare';
-      seed = needsCareMode.id;
-    } else if (primaryMode.id === 'blooming-season') {
-      tier = 'excellent';
-      seed = 'blooming-season';
+      seed = 'today';
+    } else if (attentionPlants > 0) {
+      tier = 'needsCare';
+      seed = 'attention';
     }
 
     return pickStableHeadlineVariant(INTRO_HEADLINES[tier][lang], seed + dayKey);

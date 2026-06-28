@@ -270,7 +270,7 @@
   </div>
 </div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630e"></script>
+<script src="garden-modes.js?v=20250630f"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -1844,15 +1844,32 @@ function renderDailyTip(){
   textEl.textContent=isHe?tip.he:tip.en;
   if(titleEl)titleEl.textContent=isHe?'הטיפ היומי':'Daily tip';
 }
+function introHeadlineDeps(){
+  const open=companionOpenTaskEntries();
+  return {
+    todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts,
+    companionOpenCount:open.length,
+    companionOverdueCount:open.filter(x=>isTaskOverdue(x.t)).length,
+    todayTaskCount:todayCareTaskEntries().length
+  };
+}
 function renderIntroHeadline(){
   const el=document.getElementById('introHeadline');
   if(!el)return;
+  const deps=introHeadlineDeps();
   if(window.GardenModes&&GardenModes.getIntroHeadline){
-    el.textContent=GardenModes.getIntroHeadline(collectGardenDataForModes(),{todayIso,taskIsoValue,datePlusDaysIso,isTaskOverdue,plantMeta,plantAlerts});
+    el.textContent=GardenModes.getIntroHeadline(collectGardenDataForModes(),deps);
     return;
   }
-  const h=syncHealthScore();
-  el.textContent=h.attentionPlants>0||h.urgentTasks>0?'A few plants need your attention today':'Your garden is blooming beautifully!';
+  if(deps.companionOpenCount===0){
+    el.textContent='Your garden is blooming beautifully!';
+    return;
+  }
+  if(deps.companionOverdueCount>0){
+    el.textContent='Let\'s get your garden back on track';
+    return;
+  }
+  el.textContent='A few plants need your attention today';
 }
 
 function render(){syncHealthScore();
