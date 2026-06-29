@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250632d">
+<link rel="stylesheet" href="styles.css?v=20250633">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -24,7 +24,6 @@
   </button>
   <button type="button" class="pill dark mobile-header-cart" onclick="toggleCart()">🛒 Cart <span id="cartCountMobile" class="badge">0</span></button>
   <nav class="nav" id="headerNav">
-    <button class="pill" id="signInBtn" onclick="showLogin();closeMobileNav()">Sign in</button>
     <button type="button" class="pill reminders-pill" id="remindersPill" onclick="openRemindersFromHeader(event)">
       <span class="reminders-pill-label">🔔 Garden reminders</span>
       <span class="switch" id="headerNotifySwitch" role="switch" aria-label="Toggle garden reminders" onclick="toggleHeaderNotifications(event)"></span>
@@ -40,7 +39,7 @@
   <div class="panel intro">
     <div class="intro-leaves" aria-hidden="true"></div>
     <div class="intro-content">
-      <div class="greeting">🍃 Good morning, Hagit</div>
+      <div class="greeting" id="userGreeting">🍃 Good morning, Hagit</div>
       <h2 id="introHeadline">Your garden is looking great</h2>
       <div class="tip-box" id="dailyTipBox" aria-labelledby="dailyTipHeading">
         <div class="tip-box-head">
@@ -128,7 +127,7 @@
       </svg>
     </button>
     <figcaption class="garden-snapshot-caption">
-      <b>Hagit’s garden</b>
+      <b id="gardenTitle">Hagit’s garden</b>
       <span id="gardenLocationLabel">Western Galilee · Mediterranean</span>
       <button type="button" class="location-setup-btn" onclick="event.stopPropagation();openLocationModal()">📍 Set garden location</button>
       <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
@@ -246,25 +245,6 @@
         <button type="button" class="btn light" onclick="closeLocationModal()">Cancel</button>
       </div>
     </div>
-  </div>
-</div>
-
-<div class="login" id="login" onclick="if(event.target===this)hideLogin()">
-  <div class="loginbox">
-    <div class="login-kicker">🌿 Account ready</div>
-    <h2>Save your garden</h2>
-    <p class="login-lead">Sign in to keep your plants, tasks and rewards synced.</p>
-    <p class="login-error hidden" id="loginError" role="alert"></p>
-    <p class="login-social-note hidden" id="loginSocialNote">Sign in with your email to save your garden on this device. Google/Facebook use full OAuth once keys are added in Netlify.</p>
-    <form id="loginForm" novalidate onsubmit="event.preventDefault();loginWithEmail();return false">
-      <input class="field" id="emailField" name="email" type="email" placeholder="Email address" autocomplete="username email">
-      <input class="field" id="passwordField" name="password" type="password" placeholder="Password (optional on this device)" autocomplete="current-password">
-      <button type="submit" class="btn main login-btn">Continue</button>
-    </form>
-    <div id="googleSignInMount" class="google-signin-mount"></div>
-    <button type="button" class="btn light login-btn" id="googleSignInFallback" onclick="loginWithGoogle()">Continue with Google</button>
-    <button type="button" class="btn light login-btn social-btn social-btn-facebook hidden" id="facebookSignInBtn" onclick="loginWithFacebook()">Continue with Facebook</button>
-    <button type="button" class="btn light login-btn login-close" onclick="hideLogin()">Close</button>
   </div>
 </div>
 
@@ -452,7 +432,6 @@ function normalizePlant(p){
 }
 data.plants=(data.plants||[]).map(normalizePlant);
 if(typeof data.score!=='number')data.score=87;
-if(typeof data.signedIn!=='boolean')data.signedIn=false;
 if(!data.notifications)data.notifications={enabled:true,tasks:true,watering:true,shopping:false};
 ensureRewardsState();
 if(!data.rewards.history)data.rewards.history=[];
@@ -471,6 +450,81 @@ function initCalendarFromToday(){
   calendarYear=now.getFullYear();
 }
 const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const GARDEN_USER_SESSION_KEYS=['cruvit_session','cruvit_user','cruvit_auth'];
+const DEFAULT_GARDEN_USER_NAME='Hagit';
+function readMainAppUserSession(){
+  for(const key of GARDEN_USER_SESSION_KEYS){
+    try{
+      const raw=localStorage.getItem(key);
+      if(!raw)continue;
+      const parsed=JSON.parse(raw);
+      const name=parsed?.name||parsed?.user?.name||parsed?.user?.user_metadata?.full_name;
+      if(name)return {name:String(name).trim(),email:parsed?.email||parsed?.user?.email||''};
+    }catch(_){}
+  }
+  return null;
+}
+function syncGardenUserProfile(){
+  const fromWindow=window.__CRUVIT_USER__;
+  if(fromWindow?.name){
+    data.userName=String(fromWindow.name).trim();
+    if(fromWindow.email)data.email=fromWindow.email;
+    return data.userName;
+  }
+  const params=new URLSearchParams(window.location.search);
+  const urlName=params.get('userName')||params.get('name')||params.get('user');
+  if(urlName){
+    data.userName=String(urlName).trim();
+    return data.userName;
+  }
+  const shell=readMainAppUserSession();
+  if(shell?.name){
+    data.userName=shell.name;
+    if(shell.email)data.email=shell.email;
+    return data.userName;
+  }
+  if(data.user?.name)data.userName=String(data.user.name).trim();
+  else if(data.userName)data.userName=String(data.userName).trim();
+  else data.userName=DEFAULT_GARDEN_USER_NAME;
+  return data.userName;
+}
+function gardenUserFirstName(){
+  syncGardenUserProfile();
+  const name=String(data.userName||'').trim();
+  if(!name)return '';
+  return name.split(/\s+/)[0];
+}
+function gardenPossessiveLabel(name){
+  const n=String(name||'').trim();
+  if(!n)return 'Your';
+  if(/[sS]$/.test(n))return n+'’';
+  return n+'’s';
+}
+function userGreetingText(){
+  const first=gardenUserFirstName();
+  const hour=new Date().getHours();
+  const part=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+  if(!first)return '🍃 '+part;
+  return '🍃 '+part+', '+first;
+}
+function gardenTitleText(){
+  const first=gardenUserFirstName();
+  if(!first)return 'Your garden';
+  return gardenPossessiveLabel(first)+' garden';
+}
+function applyGardenUserLabels(){
+  const greetingEl=document.getElementById('userGreeting');
+  if(greetingEl)greetingEl.textContent=userGreetingText();
+  const titleEl=document.getElementById('gardenTitle');
+  if(titleEl)titleEl.textContent=gardenTitleText();
+}
+window.setCruvitUser=function(profile){
+  window.__CRUVIT_USER__=profile||{};
+  syncGardenUserProfile();
+  service.save(data);
+  applyGardenUserLabels();
+  render();
+};
 function isoParts(v){const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?{year:+m[1],month:+m[2]-1,day:+m[3]}:null}
 function eventToDay(e,i){
   const iso=isoParts(e[0]); if(iso)return iso.day;
@@ -2199,7 +2253,7 @@ function render(){syncHealthScore();
   const weekCount=companionTasksThisWeek().length;
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
-  document.getElementById('signInBtn').textContent=data.signedIn?(data.user?.name||data.email||'Signed in'):'Sign in';
+  applyGardenUserLabels();
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
   setTimeout(hydratePlantCardImages,0);
   
@@ -3424,463 +3478,6 @@ function renderCart(){
 }
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){normalizeCartData();if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
-function showLogin(){
-  document.getElementById('login').classList.add('open');
-  clearLoginError();
-  setSocialSignInLoading('google',false);
-  setSocialSignInLoading('facebook',false);
-  prepareSocialSignIn();
-  hookLoginAutofillSync();
-  requestAnimationFrame(()=>syncAutofillLoginFields());
-}
-function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError();setSocialSignInLoading('google',false);setSocialSignInLoading('facebook',false)}
-function clearLoginError(){const el=document.getElementById('loginError');if(el){el.textContent='';el.classList.add('hidden')}}
-function showLoginError(msg){const el=document.getElementById('loginError');if(!el)return;el.textContent=msg;el.classList.remove('hidden')}
-function socialSignInButtonId(provider){return provider==='facebook'?'facebookSignInBtn':'googleSignInFallback'}
-function setSocialSignInLoading(provider,on){
-  const btn=document.getElementById(socialSignInButtonId(provider));
-  if(!btn)return;
-  btn.disabled=!!on;
-  btn.classList.toggle('is-loading',!!on);
-  btn.textContent=on
-    ?'Signing in…'
-    :(provider==='facebook'?'Continue with Facebook':'Continue with Google');
-}
-const authState={config:null,supabase:null,ready:false,loading:null,googleTokenClient:null,googleTokenClientId:'',facebookReady:false};
-function authRedirectUrl(){return window.location.origin+window.location.pathname}
-function isValidSupabaseConfig(cfg){
-  return !!(cfg?.supabaseUrl?.startsWith('https://')&&cfg?.supabaseAnonKey&&String(cfg.supabaseAnonKey).length>20);
-}
-function parseJwtPayload(token){try{return JSON.parse(atob(String(token||'').split('.')[1].replace(/-/g,'+').replace(/_/g,'/')))}catch(_){return null}}
-function providerSignInLabel(provider){
-  if(provider==='facebook')return 'Facebook sign-in';
-  if(provider==='google'||provider==='supabase')return 'Google sign-in';
-  return 'Email sign-in';
-}
-async function loadAuthConfig(){
-  if(authState.config)return authState.config;
-  if(!authState.loading){
-    authState.loading=fetch(netlifyFunctionUrl('/.netlify/functions/auth-config')).then(r=>r.ok?r.json():{}).catch(()=>({}));
-  }
-  authState.config=await authState.loading;
-  return authState.config;
-}
-async function completeSupabaseOAuthReturn(){
-  if(!authState.supabase)return null;
-  const url=new URL(window.location.href);
-  const authError=url.searchParams.get('error_description')||url.searchParams.get('error');
-  if(authError){
-    history.replaceState({},'',url.pathname);
-    throw new Error(decodeURIComponent(String(authError).replace(/\+/g,' ')));
-  }
-  const code=url.searchParams.get('code');
-  if(code){
-    const {data,error}=await authState.supabase.auth.exchangeCodeForSession(code);
-    history.replaceState({},'',url.pathname);
-    if(error)throw error;
-    if(data.session?.user)return data.session.user;
-  }
-  return null;
-}
-async function initAuth(){
-  if(authState.ready)return;
-  try{
-    const cfg=await loadAuthConfig();
-    if(isValidSupabaseConfig(cfg)&&window.supabase?.createClient){
-      authState.supabase=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{
-        auth:{detectSessionInUrl:true,flowType:'pkce',persistSession:true,autoRefreshToken:true}
-      });
-      try{
-        const returnedUser=await completeSupabaseOAuthReturn();
-        if(returnedUser)applyUserSession(returnedUser,'supabase');
-      }catch(err){
-        console.warn('Supabase OAuth return failed',err);
-        if(String(err?.message||err).trim())showLoginError(err.message||String(err));
-      }
-      try{
-        const {data:{session}}=await authState.supabase.auth.getSession();
-        if(session?.user)applyUserSession(session.user,'supabase');
-        authState.supabase.auth.onAuthStateChange((event,session)=>{
-          if(session?.user&&event==='SIGNED_IN')applyUserSession(session.user,'supabase');
-        });
-      }catch(err){
-        console.warn('Supabase session unavailable',err);
-        authState.supabase=null;
-      }
-    }
-  }catch(err){
-    console.warn('Auth init failed',err);
-  }
-  authState.ready=true;
-}
-function applyUserSession(user,provider){
-  const id=user.id||user.sub||'';
-  const sameUser=data.signedIn&&data.user?.id===id;
-  data.signedIn=true;
-  data.user={id,email:user.email||'',name:user.user_metadata?.full_name||user.user_metadata?.name||user.name||user.email||'Garden member',avatar:user.user_metadata?.avatar_url||user.picture||'',provider:provider||'email'};
-  if(data.user.email)data.email=data.user.email;
-  if(!sameUser)data.events.unshift(['Today','User signed in',providerSignInLabel(provider)]);
-  service.save(data);
-  setSocialSignInLoading('google',false);
-  setSocialSignInLoading('facebook',false);
-  setEmailSignInLoading(false);
-  hideLogin();
-  render();
-}
-function finishLocalSignIn({email,name,provider}){applyUserSession({id:'local-'+Date.now(),email:email||'',name:name||email||'Garden member',user_metadata:{full_name:name||''}},provider||'email')}
-let loginEmailDraft='';
-function hookLoginAutofillSync(){
-  const el=document.getElementById('emailField');
-  if(!el||el.dataset.autofillHook==='1')return;
-  el.dataset.autofillHook='1';
-  const capture=()=>{loginEmailDraft=String(el.value||'').trim()};
-  el.addEventListener('input',capture);
-  el.addEventListener('change',capture);
-  el.addEventListener('animationstart',e=>{
-    if(e.animationName==='cruvitAutofillStart')capture();
-  });
-}
-function loginFieldHasAutofill(el){
-  if(!el)return false;
-  try{return el.matches(':-webkit-autofill')}catch(_){return false}
-}
-function syncAutofillLoginFields(){
-  const el=document.getElementById('emailField');
-  if(!el||String(el.value||'').trim())return;
-  if(loginFieldHasAutofill(el)){
-    el.focus({preventScroll:true});
-    el.dispatchEvent(new Event('input',{bubbles:true}));
-  }
-}
-function readLoginEmailField(){
-  syncAutofillLoginFields();
-  const el=document.getElementById('emailField');
-  if(!el)return loginEmailDraft||'';
-  const fromInput=String(el.value||'').trim();
-  if(fromInput){
-    loginEmailDraft=fromInput;
-    return fromInput;
-  }
-  const form=document.getElementById('loginForm');
-  if(form){
-    const fromForm=String(new FormData(form).get('email')||'').trim();
-    if(fromForm){
-      loginEmailDraft=fromForm;
-      return fromForm;
-    }
-  }
-  return loginEmailDraft||'';
-}
-async function readLoginEmailFieldAsync(){
-  hookLoginAutofillSync();
-  for(let i=0;i<12;i++){
-    const email=readLoginEmailField();
-    if(email)return email;
-    syncAutofillLoginFields();
-    await new Promise(r=>requestAnimationFrame(r));
-  }
-  return readLoginEmailField();
-}
-async function tryLocalSignInFromForm(provider){
-  syncLoginFieldValues();
-  const el=document.getElementById('emailField');
-  const email=await readLoginEmailFieldAsync();
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    showLoginError('Enter your email address above, then try again.');
-    el?.focus();
-    return false;
-  }
-  finishLocalSignIn({email,name:email.split('@')[0].replace(/\./g,' '),provider:provider||'email'});
-  return true;
-}
-function syncLoginFieldValues(){
-  ['emailField','passwordField'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el)el.dispatchEvent(new Event('input',{bubbles:true}));
-  });
-}
-function setEmailSignInLoading(on){
-  const btn=document.querySelector('#login .btn.main.login-btn');
-  if(!btn)return;
-  btn.disabled=!!on;
-  btn.classList.toggle('is-loading',!!on);
-  btn.textContent=on?'Signing in…':'Continue';
-}
-async function loginWithEmail(){
-  clearLoginError();
-  const email=await readLoginEmailFieldAsync();
-  const password=String(document.getElementById('passwordField')?.value||'');
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showLoginError('Enter a valid email address.');document.getElementById('emailField')?.focus();return}
-  setEmailSignInLoading(true);
-  try{
-    await initAuth();
-    if(!authState.supabase){
-      finishLocalSignIn({email,name:email.split('@')[0],provider:'email'});
-      return;
-    }
-    if(!password||password.length<4){showLoginError('Enter your password (at least 4 characters), or remove Supabase keys to use device-only sign-in.');return}
-    const {error}=await authState.supabase.auth.signInWithPassword({email,password});
-    if(error){
-      if(/invalid login credentials/i.test(error.message||'')){
-        const {error:signUpError}=await authState.supabase.auth.signUp({email,password});
-        if(signUpError){showLoginError(signUpError.message||'Could not create account.');return}
-        showLoginError('Account created. Check your email to confirm, then sign in again.');
-        return;
-      }
-      showLoginError(error.message||'Could not sign in.');return;
-    }
-  }catch(err){
-    showLoginError(err.message||'Could not sign in.');
-  }finally{
-    setEmailSignInLoading(false);
-  }
-}
-function handleGoogleCredential(response){
-  setSocialSignInLoading('google',false);
-  clearLoginError();
-  const payload=parseJwtPayload(response?.credential);
-  if(!payload?.email){showLoginError('Google sign-in did not return an email.');return}
-  finishLocalSignIn({email:payload.email,name:payload.name||payload.given_name||payload.email,provider:'google'});
-}
-async function handleGoogleTokenResponse(tokenResponse){
-  setSocialSignInLoading('google',false);
-  if(tokenResponse?.error){
-    showLoginError(tokenResponse.error_description||tokenResponse.error||'Google sign-in was cancelled.');
-    return;
-  }
-  try{
-    const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+tokenResponse.access_token}});
-    if(!res.ok)throw new Error('Could not read your Google profile.');
-    const profile=await res.json();
-    if(!profile?.email)throw new Error('Google did not return an email address.');
-    finishLocalSignIn({email:profile.email,name:profile.name||profile.given_name||profile.email,provider:'google'});
-  }catch(err){
-    showLoginError(err.message||'Google sign-in failed.');
-  }
-}
-function getGoogleTokenClient(clientId){
-  if(!window.google?.accounts?.oauth2)return null;
-  if(!authState.googleTokenClient||authState.googleTokenClientId!==clientId){
-    authState.googleTokenClient=window.google.accounts.oauth2.initTokenClient({
-      client_id:clientId,
-      scope:'openid email profile',
-      callback:handleGoogleTokenResponse
-    });
-    authState.googleTokenClientId=clientId;
-  }
-  return authState.googleTokenClient;
-}
-async function ensureGoogleScript(){
-  if(window.google?.accounts)return;
-  if(document.getElementById('googleIdentityScript')){
-    await new Promise(resolve=>{const s=document.getElementById('googleIdentityScript');if(s?.dataset.loaded==='1')resolve();else s?.addEventListener('load',resolve,{once:true});});
-    return;
-  }
-  await new Promise((resolve,reject)=>{
-    const s=document.createElement('script');
-    s.id='googleIdentityScript';
-    s.src='https://accounts.google.com/gsi/client';
-    s.async=true;
-    s.defer=true;
-    s.onload=()=>{s.dataset.loaded='1';resolve();};
-    s.onerror=()=>reject(new Error('Google sign-in script could not load.'));
-    document.head.appendChild(s);
-  });
-}
-async function ensureFacebookScript(appId){
-  const cfg=await loadAuthConfig();
-  const id=String(appId||cfg.facebookAppId||'').trim();
-  if(!id)throw new Error('Facebook sign-in is not configured yet.');
-  if(window.FB&&authState.facebookReady&&authState.config?.facebookAppId===id)return;
-  await new Promise((resolve,reject)=>{
-    const finish=()=>{
-      try{
-        window.FB.init({appId:id,cookie:true,xfbml:false,version:'v19.0'});
-        authState.facebookReady=true;
-        resolve();
-      }catch(err){reject(err)}
-    };
-    if(window.FB){finish();return}
-    window.fbAsyncInit=finish;
-    if(document.getElementById('facebook-jssdk')){
-      const wait=setInterval(()=>{if(window.FB){clearInterval(wait);finish()}},50);
-      setTimeout(()=>{clearInterval(wait);if(!window.FB)reject(new Error('Facebook sign-in script could not load.'))},8000);
-      return;
-    }
-    const s=document.createElement('script');
-    s.id='facebook-jssdk';
-    s.src='https://connect.facebook.net/en_US/sdk.js';
-    s.async=true;
-    s.defer=true;
-    s.onerror=()=>reject(new Error('Facebook sign-in script could not load.'));
-    document.head.appendChild(s);
-  });
-}
-async function prepareSocialSignIn(){
-  try{
-    await initAuth();
-    const cfg=await loadAuthConfig();
-    const googleMount=document.getElementById('googleSignInMount');
-    const googleFallback=document.getElementById('googleSignInFallback');
-    const fbBtn=document.getElementById('facebookSignInBtn');
-    if(googleMount)googleMount.innerHTML='';
-    const useSupabase=!!authState.supabase;
-    const hasGoogle=useSupabase||!!cfg.googleClientId;
-    const hasFacebook=useSupabase||!!cfg.facebookAppId;
-    googleFallback?.classList.remove('hidden');
-    fbBtn?.classList.remove('hidden');
-    const socialNote=document.getElementById('loginSocialNote');
-    if(socialNote)socialNote.classList.toggle('hidden',hasGoogle||hasFacebook||useSupabase);
-  }catch(err){
-    console.warn('Social sign-in setup failed',err);
-  }
-}
-async function loginWithSupabaseOAuth(provider,cfg){
-  const {data,error}=await authState.supabase.auth.signInWithOAuth({
-    provider,
-    options:{redirectTo:authRedirectUrl(),queryParams:provider==='google'?{prompt:'select_account'}:undefined}
-  });
-  if(error){
-    if(provider==='google'&&cfg.googleClientId)return loginWithGoogleDirect(cfg);
-    if(provider==='facebook'&&cfg.facebookAppId)return loginWithFacebookDirect(cfg);
-    throw error;
-  }
-  if(data?.url){
-    window.location.assign(data.url);
-    return 'redirect';
-  }
-}
-async function loginWithGoogleDirect(cfg){
-  if(!cfg?.googleClientId)throw new Error('Google sign-in is not configured yet.');
-  await ensureGoogleScript();
-  if(window.google?.accounts?.id){
-    window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true,use_fedcm_for_prompt:false});
-  }
-  const tokenClient=getGoogleTokenClient(cfg.googleClientId);
-  if(tokenClient){
-    tokenClient.requestAccessToken({prompt:'select_account'});
-    return 'popup';
-  }
-  if(window.google?.accounts?.id?.prompt){
-    return new Promise((resolve,reject)=>{
-      window.google.accounts.id.prompt(notification=>{
-        if(notification?.isNotDisplayed?.()||notification?.isSkippedMoment?.()){
-          reject(new Error('Google sign-in could not open in this browser. Try email sign-in or another browser.'));
-          return;
-        }
-        resolve('prompt');
-      });
-    });
-  }
-  throw new Error('Google sign-in could not start in this browser.');
-}
-async function loginWithGoogle(){
-  clearLoginError();
-  setSocialSignInLoading('google',true);
-  let keepLoading=false;
-  try{
-    await initAuth();
-    const cfg=await loadAuthConfig();
-    const hasGoogleOAuth=!!authState.supabase||!!cfg.googleClientId;
-    if(authState.supabase){
-      try{
-        const result=await loginWithSupabaseOAuth('google',cfg);
-        if(result==='redirect'){keepLoading=true;return}
-        return;
-      }catch(err){
-        console.warn('Supabase Google OAuth unavailable',err);
-        if(cfg.googleClientId){
-          const mode=await loginWithGoogleDirect(cfg);
-          if(mode==='popup'){keepLoading=true;return}
-          return;
-        }
-      }
-    }else if(cfg.googleClientId){
-      const mode=await loginWithGoogleDirect(cfg);
-      if(mode==='popup'){keepLoading=true;return}
-      return;
-    }
-    if(hasGoogleOAuth){
-      showLoginError('Could not open Google sign-in. Try again or use Continue with your email.');
-      return;
-    }
-    showLoginError('Google sign-in is not set up yet. Use Continue with your email above.');
-  }catch(err){
-    showLoginError(err.message||'Could not sign in with Google.');
-  }finally{
-    if(!keepLoading)setSocialSignInLoading('google',false);
-  }
-}
-async function loginWithFacebookDirect(cfg){
-  if(!cfg?.facebookAppId)throw new Error('Facebook sign-in is not configured yet.');
-  await ensureFacebookScript(cfg.facebookAppId);
-  await new Promise((resolve,reject)=>{
-    window.FB.login(function(response){
-      if(!response?.authResponse){
-        reject(new Error('Facebook sign-in was cancelled.'));
-        return;
-      }
-      fetch('https://graph.facebook.com/me?fields=id,name,email,picture.type(large)&access_token='+encodeURIComponent(response.authResponse.access_token))
-        .then(r=>r.ok?r.json():Promise.reject(new Error('Could not read your Facebook profile.')))
-        .then(profile=>{
-          if(!profile?.email){
-            reject(new Error('Facebook did not share your email. Allow email permission or use email sign-in.'));
-            return;
-          }
-          finishLocalSignIn({email:profile.email,name:profile.name||profile.email,provider:'facebook'});
-          resolve();
-        })
-        .catch(reject);
-    },{scope:'public_profile,email',return_scopes:true});
-  });
-}
-async function loginWithFacebook(){
-  clearLoginError();
-  setSocialSignInLoading('facebook',true);
-  let keepLoading=false;
-  try{
-    await initAuth();
-    const cfg=await loadAuthConfig();
-    const hasFacebookOAuth=!!authState.supabase||!!cfg.facebookAppId;
-    if(authState.supabase){
-      try{
-        const result=await loginWithSupabaseOAuth('facebook',cfg);
-        if(result==='redirect'){keepLoading=true;return}
-        return;
-      }catch(err){
-        console.warn('Supabase Facebook OAuth unavailable',err);
-        if(cfg.facebookAppId){
-          await loginWithFacebookDirect(cfg);
-          return;
-        }
-      }
-    }else if(cfg.facebookAppId){
-      await loginWithFacebookDirect(cfg);
-      return;
-    }
-    if(hasFacebookOAuth){
-      showLoginError('Could not open Facebook sign-in. Try again or use Continue with your email.');
-      return;
-    }
-    showLoginError('Facebook sign-in is not set up yet. Use Continue with your email above.');
-  }catch(err){
-    showLoginError(err.message||'Could not sign in with Facebook.');
-  }finally{
-    if(!keepLoading)setSocialSignInLoading('facebook',false);
-  }
-}
-function loadSupabaseScript(){
-  if(document.getElementById('supabaseScript'))return Promise.resolve();
-  return new Promise(resolve=>{
-    const s=document.createElement('script');
-    s.id='supabaseScript';
-    s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-    s.onload=resolve;
-    s.onerror=resolve;
-    document.head.appendChild(s);
-  });
-}
-loadSupabaseScript().then(()=>initAuth());
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 document.addEventListener('click',function(e){
   if(openMenu){openMenu=null;render()}
@@ -3888,7 +3485,7 @@ document.addEventListener('click',function(e){
   if(top?.classList.contains('nav-open')&&!e.target.closest('#topBar'))closeMobileNav();
 });
 ensureGardenLocation();
-hookLoginAutofillSync();
+syncGardenUserProfile();
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');
