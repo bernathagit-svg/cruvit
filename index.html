@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250632b">
+<link rel="stylesheet" href="styles.css?v=20250632c">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -256,9 +256,11 @@
     <p class="login-lead">Sign in to keep your plants, tasks and rewards synced.</p>
     <p class="login-error hidden" id="loginError" role="alert"></p>
     <p class="login-social-note hidden" id="loginSocialNote">Sign in with your email to save your garden on this device. Google/Facebook use full OAuth once keys are added in Netlify.</p>
-    <input class="field" id="emailField" name="email" type="email" placeholder="Email address" autocomplete="email">
-    <input class="field" id="passwordField" name="password" type="password" placeholder="Password (optional on this device)" autocomplete="current-password">
-    <button type="button" class="btn main login-btn" onclick="loginWithEmail()">Continue</button>
+    <form id="loginForm" novalidate onsubmit="event.preventDefault();loginWithEmail();return false">
+      <input class="field" id="emailField" name="email" type="email" placeholder="Email address" autocomplete="username email">
+      <input class="field" id="passwordField" name="password" type="password" placeholder="Password (optional on this device)" autocomplete="current-password">
+      <button type="submit" class="btn main login-btn">Continue</button>
+    </form>
     <div id="googleSignInMount" class="google-signin-mount"></div>
     <button type="button" class="btn light login-btn" id="googleSignInFallback" onclick="loginWithGoogle()">Continue with Google</button>
     <button type="button" class="btn light login-btn social-btn social-btn-facebook hidden" id="facebookSignInBtn" onclick="loginWithFacebook()">Continue with Facebook</button>
@@ -3422,7 +3424,15 @@ function renderCart(){
 }
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){normalizeCartData();if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
-function showLogin(){document.getElementById('login').classList.add('open');clearLoginError();setSocialSignInLoading('google',false);setSocialSignInLoading('facebook',false);prepareSocialSignIn()}
+function showLogin(){
+  document.getElementById('login').classList.add('open');
+  clearLoginError();
+  setSocialSignInLoading('google',false);
+  setSocialSignInLoading('facebook',false);
+  prepareSocialSignIn();
+  hookLoginAutofillSync();
+  requestAnimationFrame(()=>syncAutofillLoginFields());
+}
 function hideLogin(){document.getElementById('login').classList.remove('open');clearLoginError();setSocialSignInLoading('google',false);setSocialSignInLoading('facebook',false)}
 function clearLoginError(){const el=document.getElementById('loginError');if(el){el.textContent='';el.classList.add('hidden')}}
 function showLoginError(msg){const el=document.getElementById('loginError');if(!el)return;el.textContent=msg;el.classList.remove('hidden')}
@@ -3518,17 +3528,63 @@ function applyUserSession(user,provider){
   render();
 }
 function finishLocalSignIn({email,name,provider}){applyUserSession({id:'local-'+Date.now(),email:email||'',name:name||email||'Garden member',user_metadata:{full_name:name||''}},provider||'email')}
-function readLoginEmailField(){
+let loginEmailDraft='';
+function hookLoginAutofillSync(){
   const el=document.getElementById('emailField');
-  if(!el)return '';
-  el.dispatchEvent(new Event('input',{bubbles:true}));
-  return String(el.value||'').trim();
+  if(!el||el.dataset.autofillHook==='1')return;
+  el.dataset.autofillHook='1';
+  const capture=()=>{loginEmailDraft=String(el.value||'').trim()};
+  el.addEventListener('input',capture);
+  el.addEventListener('change',capture);
+  el.addEventListener('animationstart',e=>{
+    if(e.animationName==='cruvitAutofillStart')capture();
+  });
 }
-function tryLocalSignInFromForm(provider){
+function loginFieldHasAutofill(el){
+  if(!el)return false;
+  try{return el.matches(':-webkit-autofill')}catch(_){return false}
+}
+function syncAutofillLoginFields(){
+  const el=document.getElementById('emailField');
+  if(!el||String(el.value||'').trim())return;
+  if(loginFieldHasAutofill(el)){
+    el.focus({preventScroll:true});
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+}
+function readLoginEmailField(){
+  syncAutofillLoginFields();
+  const el=document.getElementById('emailField');
+  if(!el)return loginEmailDraft||'';
+  const fromInput=String(el.value||'').trim();
+  if(fromInput){
+    loginEmailDraft=fromInput;
+    return fromInput;
+  }
+  const form=document.getElementById('loginForm');
+  if(form){
+    const fromForm=String(new FormData(form).get('email')||'').trim();
+    if(fromForm){
+      loginEmailDraft=fromForm;
+      return fromForm;
+    }
+  }
+  return loginEmailDraft||'';
+}
+async function readLoginEmailFieldAsync(){
+  hookLoginAutofillSync();
+  for(let i=0;i<12;i++){
+    const email=readLoginEmailField();
+    if(email)return email;
+    syncAutofillLoginFields();
+    await new Promise(r=>requestAnimationFrame(r));
+  }
+  return readLoginEmailField();
+}
+async function tryLocalSignInFromForm(provider){
   syncLoginFieldValues();
   const el=document.getElementById('emailField');
-  if(el&&!readLoginEmailField())el.focus();
-  const email=readLoginEmailField();
+  const email=await readLoginEmailFieldAsync();
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     showLoginError('Enter your email address above, then try again.');
     el?.focus();
@@ -3552,7 +3608,7 @@ function setEmailSignInLoading(on){
 }
 async function loginWithEmail(){
   clearLoginError();
-  const email=readLoginEmailField();
+  const email=await readLoginEmailFieldAsync();
   const password=String(document.getElementById('passwordField')?.value||'');
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showLoginError('Enter a valid email address.');document.getElementById('emailField')?.focus();return}
   setEmailSignInLoading(true);
@@ -3738,7 +3794,7 @@ async function loginWithGoogle(){
         console.warn('Google OAuth unavailable',err);
       }
     }
-    if(tryLocalSignInFromForm('google'))return;
+    if(await tryLocalSignInFromForm('google'))return;
   }catch(err){
     showLoginError(err.message||'Could not sign in.');
   }finally{
@@ -3792,7 +3848,7 @@ async function loginWithFacebook(){
         console.warn('Facebook OAuth unavailable',err);
       }
     }
-    if(tryLocalSignInFromForm('facebook'))return;
+    if(await tryLocalSignInFromForm('facebook'))return;
   }catch(err){
     showLoginError(err.message||'Could not sign in.');
   }finally{
@@ -3818,6 +3874,7 @@ document.addEventListener('click',function(e){
   if(top?.classList.contains('nav-open')&&!e.target.closest('#topBar'))closeMobileNav();
 });
 ensureGardenLocation();
+hookLoginAutofillSync();
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');

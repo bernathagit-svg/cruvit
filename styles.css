@@ -2235,6 +2235,21 @@ button.rail-note.location-note:hover {
 
 .login-social-note.hidden { display: none; }
 
+.loginbox form {
+  display: grid;
+  gap: 10px;
+}
+
+#emailField:-webkit-autofill {
+  animation-name: cruvitAutofillStart;
+  animation-duration: 0.001s;
+}
+
+@keyframes cruvitAutofillStart {
+  from { opacity: 1; }
+  to { opacity: 1; }
+}
+
 .login-btn {
   width: 100%;
   margin-top: 12px;
