@@ -1761,7 +1761,7 @@ button.rail-note.location-note:hover {
 }
 
 .day {
-  min-height: 72px;
+  min-height: 82px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--sage);
@@ -1769,6 +1769,9 @@ button.rail-note.location-note:hover {
   position: relative;
   cursor: pointer;
   transition: 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .day.empty { background: rgba(255, 255, 255, 0.5); cursor: default; }
@@ -1789,27 +1792,37 @@ button.rail-note.location-note:hover {
 
 .day.today .date { background: var(--forest); color: #fff; }
 
-.day.has-tasks .date { position: relative; }
+.day.has-activity .date { position: relative; }
 
-.cal-task-count {
+.cal-day-badge {
   position: absolute;
-  top: -4px;
-  right: -6px;
-  min-width: 14px;
-  height: 14px;
-  padding: 0 3px;
+  top: 6px;
+  right: 6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
   border-radius: 999px;
-  background: var(--leaf);
+  background: var(--forest);
   color: #fff;
   font-size: 9px;
   font-weight: 800;
-  line-height: 14px;
+  line-height: 16px;
   text-align: center;
+  z-index: 1;
 }
 
-.cal-event.task { background: rgba(47, 158, 106, 0.12); }
-
-.event-card.task-card { border-color: rgba(47, 158, 106, 0.22); }
+.cal-event-pill {
+  margin-top: auto;
+  border-radius: 10px;
+  padding: 6px 7px;
+  background: var(--card);
+  color: var(--forest);
+  font-size: 10px;
+  line-height: 1.3;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(15, 61, 46, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
 
 .cal-event {
   margin-top: 6px;
@@ -1833,7 +1846,7 @@ button.rail-note.location-note:hover {
 
 .event-card {
   display: grid;
-  grid-template-columns: 40px 1fr;
+  grid-template-columns: 40px 1fr auto;
   gap: 10px;
   align-items: center;
   border: 1px solid var(--line);
@@ -1841,6 +1854,8 @@ button.rail-note.location-note:hover {
   background: var(--card);
   padding: 10px;
 }
+
+.event-card.task-card { border-color: rgba(47, 158, 106, 0.22); }
 
 .event-icon {
   width: 40px;
