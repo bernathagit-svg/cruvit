@@ -102,23 +102,52 @@ function hasHebrew(text) {
   return /[\u0590-\u05FF]/.test(String(text || ''));
 }
 
+/** Hebrew place names that geocoders often resolve to the whole country. */
+const HEBREW_PLACE_ALIASES = new Map([
+  ['יחיעם', 'Yehiam, Israel'],
+  ['יהיעם', 'Yehiam, Israel'],
+  ['כפר ורדים', 'Kfar Vradim, Israel'],
+  ['מעלות', 'Maalot, Israel'],
+  ['נהריה', 'Nahariya, Israel'],
+  ['עכו', 'Acre, Israel'],
+  ['חיפה', 'Haifa, Israel'],
+  ['תל אביב', 'Tel Aviv, Israel'],
+  ['ירושלים', 'Jerusalem, Israel'],
+  ['באר שבע', 'Beersheba, Israel'],
+  ['אילת', 'Eilat, Israel']
+]);
+
 function locationLabelFromParts(name, admin1, country) {
   return [name, admin1, country].filter(Boolean).join(', ');
+}
+
+function isBroadCountryResult(loc) {
+  if (!loc) return false;
+  const name = cleanText(loc.name || '').toLowerCase();
+  const label = cleanText(loc.label || '').toLowerCase();
+  return name === 'israel' || name === 'ישראל' || label === 'israel, israel';
 }
 
 function pickBestGeocodeResult(results, query) {
   if (!Array.isArray(results) || !results.length) return null;
   const q = cleanText(query).toLowerCase();
   const qHe = cleanText(query);
+  const qIsCountry = q === 'israel' || qHe === 'ישראל';
   const score = r => {
     const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
     const label = cleanText(r.label || '').toLowerCase();
+    if (!qIsCountry && isBroadCountryResult(r)) return 1;
     if (name.toLowerCase() === q || name === qHe) return 100;
     if (label.startsWith(q) || label.includes(q)) return 60;
-    if (hasHebrew(qHe) && (r.country || '').includes('Israel')) return 40;
+    if (hasHebrew(qHe) && (r.country || '').includes('Israel') && !isBroadCountryResult(r)) return 40;
     return 10;
   };
-  return [...results].sort((a, b) => score(b) - score(a))[0];
+  const ranked = [...results].sort((a, b) => score(b) - score(a));
+  const best = ranked[0];
+  if (!qIsCountry && isBroadCountryResult(best)) {
+    return ranked.find(r => !isBroadCountryResult(r)) || null;
+  }
+  return best;
 }
 
 const GEO_TIMEOUT_MS = 5500;
@@ -343,11 +372,32 @@ async function searchLocationSuggestions(query) {
   return [...candidates].sort((a, b) => score(b) - score(a)).slice(0, 6);
 }
 
+function geocodeSearchQueries(query) {
+  const q = cleanText(query);
+  if (!q) return [];
+  const out = [];
+  const alias = HEBREW_PLACE_ALIASES.get(q);
+  if (alias) out.push(alias);
+  out.push(q);
+  for (const v of buildQueryVariants(q)) out.push(v);
+  return [...new Set(out.filter(Boolean))];
+}
+
 async function geocodeQuery(query) {
   const q = cleanText(query);
   if (!q) return null;
-  const candidates = await fetchAllGeocodeCandidates(q);
-  return pickBestGeocodeResult(candidates, q);
+  const queries = geocodeSearchQueries(q);
+  let fallback = null;
+
+  for (const searchQ of queries) {
+    const candidates = await fetchAllGeocodeCandidates(searchQ);
+    const best = pickBestGeocodeResult(candidates, q);
+    if (!best) continue;
+    if (!isBroadCountryResult(best)) return best;
+    if (!fallback) fallback = best;
+  }
+
+  return fallback;
 }
 
 async function reverseGeocode(lat, lon) {

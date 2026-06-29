@@ -1,6 +1,6 @@
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
   'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
@@ -404,6 +404,140 @@ function isStrictlyValidDodonaea(result) {
   return true;
 }
 
+function looksLikeAroidFoliage(text = '') {
+  return /alocasia|colocasia|xanthosoma|aroid|elephant.?ear|sagittate|cordate.*thick|arrow.?head.*leaf|peltate|U-?shaped.*petiole|macrorrhizos|amazonica|polly/i.test(
+    String(text || '').toLowerCase()
+  );
+}
+
+function looksLikeBrushFlowerTaxa(text = '') {
+  return /callistemon|metrosideros|melaleuca|bottlebrush|pohutukawa|new zealand christmas|brush.?like.*flower|cylindrical.*red.*spike/i.test(
+    String(text || '').toLowerCase()
+  );
+}
+
+function prominentStructure(result) {
+  const va = result?.visual_analysis || result?.visualAnalysis || {};
+  return String(va.prominent_structure || '').toLowerCase();
+}
+
+function calibrateConfidence(result) {
+  if (!result) return result;
+
+  const prom = prominentStructure(result);
+  const analysis = visualAnalysisText(result);
+  let confidence = normalizeConfidence(result.confidence);
+
+  if (prom === 'leaves_only' && confidence === 'high') {
+    const hasDistinctiveLeaves =
+      looksLikeAroidFoliage(analysis) ||
+      /variegated|fenestrated|split leaf|lobed|serrated|waxy.*heart|red.*spathe|zz plant|monstera/i.test(analysis);
+    if (!hasDistinctiveLeaves) {
+      confidence = 'medium';
+    }
+  }
+
+  if (confidence === 'high' && prom === 'flowers' && looksLikeBrushFlowerTaxa(analysis)) {
+    const genus = genusKey(result?.scientific_name || result?.scientificName);
+    if (genus === 'callistemon' || genus === 'metrosideros') {
+      const alt = Array.isArray(result?.alternatives) ? result.alternatives[0] : null;
+      const altGenus =
+        typeof alt === 'object'
+          ? genusKey(alt?.scientific_name || alt?.scientificName)
+          : genusKey(String(alt || ''));
+      if (altGenus && altGenus !== genus && (altGenus === 'callistemon' || altGenus === 'metrosideros')) {
+        confidence = 'medium';
+      }
+    }
+  }
+
+  result.confidence = confidence;
+  return result;
+}
+
+function needsAroidRecovery(result) {
+  const genus = genusKey(result?.scientific_name || result?.scientificName);
+  if (!['alocasia', 'colocasia', 'xanthosoma'].includes(genus)) return false;
+
+  const prom = prominentStructure(result);
+  const analysis = visualAnalysisText(result);
+  const confidence = normalizeConfidence(result.confidence);
+
+  if (prom === 'flowers') return false;
+  if (looksLikeHouseplantSignals(analysis) && genus === 'alocasia' && /macrorrhizos/i.test(result?.scientific_name || '')) {
+    return true;
+  }
+  if (confidence === 'high' && !looksLikeAroidFoliage(analysis)) return true;
+  return false;
+}
+
+function needsBrushFlowerRecovery(result) {
+  const prom = prominentStructure(result);
+  if (prom !== 'flowers' && prom !== 'mixed') return false;
+
+  const genus = genusKey(result?.scientific_name || result?.scientificName);
+  if (genus !== 'callistemon' && genus !== 'metrosideros' && genus !== 'melaleuca') return false;
+
+  const alts = Array.isArray(result?.alternatives) ? result.alternatives : [];
+  const altGenera = alts
+    .map(item =>
+      typeof item === 'object'
+        ? genusKey(item?.scientific_name || item?.scientificName)
+        : genusKey(String(item || ''))
+    )
+    .filter(Boolean);
+
+  if (normalizeConfidence(result.confidence) === 'high' && altGenera.length) return true;
+  if (altGenera.includes('callistemon') && altGenera.includes('metrosideros')) return true;
+  return normalizeConfidence(result.confidence) !== 'high' && altGenera.length > 0;
+}
+
+async function recoverWeakIdentification(image, result, key, model, context = {}) {
+  if (!result) return result;
+
+  if (needsAroidRecovery(result)) {
+    const genus = genusKey(result?.scientific_name || result?.scientificName);
+    const fresh = await reIdentifyPlant(image, key, model, {
+      userHint: context.userHint || '',
+      location: context.location || '',
+      climate: context.climate || '',
+      excludeGenera: [genus, 'Alocasia macrorrhizos', 'Colocasia esculenta'],
+      reason:
+        'The previous elephant-ear / aroid guess may be wrong. Study leaf shape, venation, petiole, and pot context. ' +
+        'If leaves are plain green in a pot without clear upright elephant-ear morphology, consider Anthurium foliage, ' +
+        'Caladium, Colocasia (drooping leaf base), Begonia, Ficus, Spathiphyllum, Philodendron, or Syngonium. ' +
+        'Only return Alocasia/Colocasia/Xanthosoma when the visible leaf morphology clearly matches that genus.'
+    });
+    if (fresh && !needsAroidRecovery(fresh)) {
+      return { ...fresh, alternatives: fresh.alternatives || [], _corrected: 'aroid_recovery' };
+    }
+  }
+
+  if (needsBrushFlowerRecovery(result)) {
+    const fresh = await reIdentifyPlant(image, key, model, {
+      userHint: context.userHint || '',
+      location: context.location || '',
+      climate: context.climate || '',
+      reason:
+        'Red brush-like flowers were detected. Distinguish carefully: ' +
+        'Callistemon (Bottlebrush) — narrow stiff leaves, cylindrical bottlebrush spikes on woody shrub. ' +
+        'Metrosideros (Pohutukawa / NZ Christmas tree) — broader leathery leaves, often larger red brush clusters, tree or large shrub. ' +
+        'Melaleuca — softer needle-like leaves, bottlebrush flowers. Match BOTH leaves and flower structure visible in the photo.'
+    });
+    if (fresh) {
+      const freshGenus = genusKey(fresh?.scientific_name || fresh?.scientificName);
+      if (freshGenus && freshGenus !== genusKey(result?.scientific_name || result?.scientificName)) {
+        return { ...fresh, alternatives: fresh.alternatives || [], _corrected: 'brush_flower_recovery' };
+      }
+      if (normalizeConfidence(fresh.confidence) === 'high') {
+        return { ...fresh, alternatives: [], _corrected: 'brush_flower_recovery' };
+      }
+    }
+  }
+
+  return result;
+}
+
 function applyIdentificationCorrections(result, userHint = '') {
   const hint = cleanText(userHint).toLowerCase();
 
@@ -419,6 +553,174 @@ function applyIdentificationCorrections(result, userHint = '') {
   }
 
   return result;
+}
+
+function buildLocalCarePrompt({ commonName, scientificName, location, climate, language }) {
+  const langHint =
+    language === 'he'
+      ? 'Write all user-facing string fields in Hebrew.'
+      : 'Write all user-facing string fields in English.';
+
+  return `You are an expert horticulturist with deep knowledge of garden plants worldwide.
+Return ONLY valid JSON, without markdown, in this exact shape:
+{
+  "climate_fit": "high|medium|low",
+  "climate_summary": "",
+  "care": {
+    "light": "",
+    "water": "",
+    "soil": "",
+    "season": "",
+    "pruning": "",
+    "fertilizer": ""
+  }
+}
+
+Plant common name: ${JSON.stringify(commonName || '')}
+Plant scientific name: ${JSON.stringify(scientificName || '')}
+Gardener location: ${JSON.stringify(location || '')}
+Climate zone: ${JSON.stringify(climate || '')}
+
+${langHint}
+
+Rules:
+- Use established botanical and horticultural knowledge for THIS exact species.
+- climate_summary: 2-4 sentences assessing suitability for this specific location and climate. Address heat, frost, humidity, rainfall, and whether it belongs in sun or shade locally.
+- climate_fit: "high" if it thrives outdoors there, "medium" if it needs extra care or protection, "low" if it is a poor outdoor match.
+- Each care field must be one practical sentence specific to this species — never generic boilerplate like "match light to the species".
+- Be honest: shade-loving moisture plants (e.g. Astilbe, Hosta, ferns) are often "medium" or "low" in hot dry Mediterranean gardens even if they can be grown with irrigation and shade.
+- If the plant is typically a houseplant or needs shade in hot climates, say so clearly.`;
+}
+
+function buildSpeciesCarePrompt({ commonName, scientificName, language }) {
+  const langHint =
+    language === 'he'
+      ? 'Write all user-facing string fields in Hebrew.'
+      : 'Write all user-facing string fields in English.';
+
+  return `You are an expert horticulturist. Return ONLY valid JSON, without markdown:
+{
+  "sun": "",
+  "water": "",
+  "soil": "",
+  "growth": "",
+  "size": "",
+  "climate": "",
+  "season": "",
+  "pruning": "",
+  "fertilizer": "",
+  "guide": ""
+}
+
+Plant: ${JSON.stringify(commonName || '')} (${JSON.stringify(scientificName || '')})
+${langHint}
+
+Rules:
+- Fill EVERY field with one practical, species-specific sentence for this exact plant species.
+- sun = light needs; water = watering; growth = habit/form; size = typical garden size; climate = general climate suitability; season = seasonal care.
+- Never use generic boilerplate like "match light to the species", "water according to season", or "see detailed guide".
+- guide = 2-3 sentences of useful care overview for home gardeners.`;
+}
+
+async function requestAnthropicJsonPrompt(prompt, key, model, maxTokens = 1600) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 26000);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        messages: [{ role: 'user', content: prompt }]
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timer);
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || payload?.error) {
+      return { ok: false, error: errorMessage(payload?.error) || 'Care request failed.' };
+    }
+
+    const text = payload?.content?.[0]?.text || '';
+    const parsed = extractJson(text);
+    if (!parsed || typeof parsed !== 'object') {
+      return { ok: false, error: 'Could not parse care response.' };
+    }
+
+    return { ok: true, data: parsed };
+  } catch (error) {
+    clearTimeout(timer);
+    const message =
+      error?.name === 'AbortError'
+        ? 'The care request took too long. Please try again.'
+        : (error?.message || 'Care request failed.');
+    return { ok: false, error: message };
+  }
+}
+
+async function requestLocalCareProfile(body, key, model) {
+  const commonName = cleanText(body?.commonName || body?.common_name || body?.plantName || body?.name);
+  const scientificName = cleanText(body?.scientificName || body?.scientific_name);
+  const location = cleanText(body?.location);
+  const climate = cleanText(body?.climate);
+  const language = cleanText(body?.language || 'en');
+
+  if (!scientificName && !commonName) {
+    return { ok: false, error: 'Missing plant name.' };
+  }
+  if (!location) {
+    return { ok: false, error: 'Missing location.' };
+  }
+
+  const prompt = buildLocalCarePrompt({ commonName, scientificName, location, climate, language });
+  const result = await requestAnthropicJsonPrompt(prompt, key, model, 1600);
+  if (!result.ok) return result;
+
+  const parsed = result.data;
+  return {
+    ok: true,
+    climate_fit: cleanText(parsed.climate_fit || parsed.climateFit || '').toLowerCase(),
+    climate_summary: cleanText(parsed.climate_summary || parsed.climateSummary || parsed.climateFit || ''),
+    care: parsed.care || {}
+  };
+}
+
+async function requestSpeciesCareProfile(body, key, model) {
+  const commonName = cleanText(body?.commonName || body?.common_name || body?.plantName || body?.name);
+  const scientificName = cleanText(body?.scientificName || body?.scientific_name);
+  const language = cleanText(body?.language || 'en');
+
+  if (!scientificName && !commonName) {
+    return { ok: false, error: 'Missing plant name.' };
+  }
+
+  const prompt = buildSpeciesCarePrompt({ commonName, scientificName, language });
+  const result = await requestAnthropicJsonPrompt(prompt, key, model, 1800);
+  if (!result.ok) return result;
+
+  const parsed = result.data;
+  const care = parsed.care || parsed;
+  return {
+    ok: true,
+    sun: cleanText(parsed.sun || care.light || care.sun || ''),
+    water: cleanText(parsed.water || care.water || care.watering || ''),
+    soil: cleanText(parsed.soil || care.soil || ''),
+    growth: cleanText(parsed.growth || care.growth || ''),
+    size: cleanText(parsed.size || care.size || ''),
+    climate: cleanText(parsed.climate || parsed.climateFit || parsed.climate_fit || ''),
+    season: cleanText(parsed.season || parsed.seasonCare || care.season || ''),
+    pruning: cleanText(parsed.pruning || care.pruning || ''),
+    fertilizer: cleanText(parsed.fertilizer || care.fertilizer || ''),
+    guide: cleanText(parsed.guide || parsed.careGuide || '')
+  };
 }
 
 function buildIdentifyPrompt(location, climate, userHint = '', scanContext = '', scanId = '') {
@@ -442,17 +744,33 @@ ${scanNote}Return ONLY valid JSON, without markdown, in this exact shape:
   "confidence": "high|medium|low",
   "alternatives": [
     {"common_name":"", "scientific_name":"", "confidence":"high|medium|low"}
-  ]
+  ],
+  "climate_fit": "high|medium|low|unknown",
+  "climate_summary": "",
+  "care": {
+    "light": "",
+    "water": "",
+    "soil": "",
+    "season": "",
+    "pruning": "",
+    "fertilizer": ""
+  }
 }
 
 Follow these steps IN ORDER before naming the plant:
 1. Is this an indoor/potted houseplant or an outdoor garden plant?
-2. If you see showy flowers (orchid spikes, rose blooms, etc.), set prominent_structure to "flowers" — NOT seed_fruit.
-3. Describe leaf type and growth habit honestly.
-4. Name the plant that best matches what is visible.
+2. If you see showy flowers (orchid spikes, rose blooms, red brush spikes, etc.), set prominent_structure to "flowers" — NOT seed_fruit.
+3. Describe leaf shape, venation, petiole, and growth habit honestly in visual_analysis.
+4. Name the plant that best matches ONLY what is visible — do not default to a famous species name.
 
-The photo may show ANY common plant: orchids (Phalaenopsis), pothos, Monstera, ZZ plant, roses, herbs, succulents, citrus, tomatoes, lavender, etc.
-Do NOT guess a random outdoor shrub unless the image clearly shows that exact plant outdoors.
+Accuracy rules for commonly confused plants:
+- Elephant ears (Alocasia / Colocasia / Xanthosoma): ONLY if sagittate or cordate leaves with clear aroid petiole are visible. Do NOT guess "Giant Taro" (Alocasia macrorrhizos) for generic potted green leaves.
+- Potted foliage with no flowers: prefer the exact houseplant/garden genus seen; use confidence "medium" unless markers are unmistakable.
+- Red brush flowers: distinguish Callistemon (narrow stiff leaves, cylindrical bottlebrush) vs Metrosideros/Pohutukawa (broader leathery leaves, tree/shrub habit) vs Melaleuca (soft needle leaves).
+- If only leaves are visible, confidence MUST NOT be "high" unless the species has unmistakable leaf traits.
+
+The photo may show ANY common plant: orchids (Phalaenopsis), pothos, Monstera, ZZ plant, roses, herbs, succulents, citrus, tomatoes, lavender, anthurium foliage, caladium, etc.
+Do NOT guess a random outdoor shrub or elephant ear unless the image clearly shows that exact plant.
 
 Rules:
 - Identify from the image only. Location hint (may be irrelevant for indoor plants): ${JSON.stringify(location || 'not provided')}, climate: ${JSON.stringify(climate || 'not provided')}.${contextNote}
@@ -464,7 +782,9 @@ ${userHint ? `- The gardener suggests this may be: ${JSON.stringify(userHint)}. 
 - Include alternatives ONLY when genuinely uncertain between 2 closely related species in the SAME genus.
 - Never list unrelated genera. Never list multiple species from the same genus.
 - Maximum 1 alternative. Omit alternatives when confidence is high.
-- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[]}.
+- Fill care fields with concise, species-specific guidance when identification is confident enough.
+- When a gardener location and climate are provided, fill climate_fit and climate_summary for that exact place. climate_fit: high if the species thrives there outdoors, medium if it needs extra care, low if it is a poor match. climate_summary: 2-4 practical sentences — never generic boilerplate or encyclopedia copy.
+- If the image is not a plant, return {"visual_analysis":{"prominent_structure":"unclear","structure_description":"","leaf_type":"unclear","leaf_description":"","habit":"unclear","notes":""},"common_name":"","scientific_name":"","confidence":"low","alternatives":[],"climate_fit":"unknown","climate_summary":"","care":{"light":"","water":"","soil":"","season":"","pruning":"","fertilizer":""}}.
 - Ignore all text, buttons, app UI, labels, and overlays visible in the photo. Identify only the actual plant.`;
 }
 
@@ -651,6 +971,66 @@ export default async function handler(request) {
     return json(400, { error: 'Invalid JSON body.' });
   }
 
+  const mode = cleanText(body?.mode).toLowerCase();
+  const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
+
+  if (mode === 'localcare' || mode === 'local-care') {
+    const models = [
+      ...new Set([preferred, 'claude-sonnet-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'].filter(Boolean))
+    ];
+    let lastError = 'Local care request failed.';
+    for (const model of models) {
+      const result = await requestLocalCareProfile(body, key, model);
+      if (result.ok) {
+        return json(200, {
+          mode: 'localCare',
+          climate_fit: result.climate_fit,
+          climate_summary: result.climate_summary,
+          care: result.care
+        });
+      }
+      lastError = result.error || lastError;
+      if (!/model|not found|invalid/i.test(String(lastError))) break;
+    }
+    return json(502, { error: lastError });
+  }
+
+  if (mode === 'speciescare' || mode === 'species-care') {
+    const models = [
+      ...new Set([preferred, 'claude-sonnet-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001'].filter(Boolean))
+    ];
+    let lastError = 'Species care request failed.';
+    for (const model of models) {
+      const result = await requestSpeciesCareProfile(body, key, model);
+      if (result.ok) {
+        return json(200, {
+          mode: 'speciesCare',
+          sun: result.sun,
+          water: result.water,
+          soil: result.soil,
+          growth: result.growth,
+          size: result.size,
+          climate: result.climate,
+          season: result.season,
+          pruning: result.pruning,
+          fertilizer: result.fertilizer,
+          guide: result.guide,
+          care: {
+            light: result.sun,
+            water: result.water,
+            soil: result.soil,
+            season: result.season,
+            pruning: result.pruning,
+            fertilizer: result.fertilizer
+          }
+        });
+      }
+      lastError = result.error || lastError;
+      if (!/model|not found|invalid/i.test(String(lastError))) break;
+    }
+    return json(502, { error: lastError });
+  }
+
   const image = parseImageInput(body);
   if (image?.error) {
     return json(400, { error: image.error });
@@ -663,8 +1043,6 @@ export default async function handler(request) {
   const scanId = cleanText(body?.scanId || body?.scan_id);
 
   const prompt = buildIdentifyPrompt(location, climate, userHint, scanContext, scanId);
-
-  const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
 
   const models = [
     ...new Set(
@@ -693,7 +1071,7 @@ export default async function handler(request) {
         },
         body: JSON.stringify({
           model,
-          max_tokens: 1200,
+          max_tokens: 1500,
           messages: [
             {
               role: 'user',
@@ -747,6 +1125,16 @@ export default async function handler(request) {
         { location, climate }
       );
 
+      if (recovered) {
+        recovered = calibrateConfidence(recovered);
+        recovered = await recoverWeakIdentification(image, recovered, key, model, {
+          userHint,
+          location,
+          climate
+        });
+        recovered = calibrateConfidence(recovered);
+      }
+
       if (!recovered || isBlockedScanIdentification(recovered, userHint)) {
         lastError = {
           message:
@@ -795,7 +1183,8 @@ export default async function handler(request) {
         common_name: commonName,
         scientific_name: scientificName,
         confidence: topConfidence,
-        gbifVerified: Boolean(top.gbifVerified)
+        gbifVerified: Boolean(top.gbifVerified),
+        care: recovered?.care || null
       });
     } catch (error) {
       clearTimeout(timer);

@@ -115,7 +115,8 @@ export async function resolvePlantKnowledge(body = {}) {
     taxon,
     summary,
     location,
-    climate
+    climate,
+    language: text(body.language)
   }).catch(() => null);
 
   const profile = mergeCareProfile(baseProfile, aiProfile);

@@ -70,6 +70,8 @@ export function mergeCareProfile(base, aiProfile) {
     size: text(aiProfile.size, base.size),
     climateFit: text(aiProfile.climateFit || aiProfile.climate_fit || aiProfile.climate, base.climateFit),
     seasonCare: text(aiProfile.seasonCare || aiProfile.season, base.seasonCare),
+    pruning: text(aiProfile.pruning, base.pruning || ''),
+    fertilizer: text(aiProfile.fertilizer, base.fertilizer || ''),
     warnings: arrays.warnings.length ? arrays.warnings : base.warnings,
     tasks: arrays.tasks.length ? arrays.tasks : base.tasks,
     guide: text(aiProfile.guide || aiProfile.careGuide || aiProfile.description, base.guide),

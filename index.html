@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -7,13 +7,120 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700;800;900&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=20250633">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
+<link rel="stylesheet" href="entry-screen.css?v=20250663">
+<link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20250645">
 </head>
 <body>
-<div class="app"><div class="shell">
+<div class="app entry-visible" id="appRoot">
+<section class="entry-screen" id="entryScreen" aria-label="Cruvit home">
+  <div class="entry-backdrop" aria-hidden="true">
+    <div class="entry-garden-photo"></div>
+    <div class="entry-backdrop-shade"></div>
+    <div class="entry-leaves-deco"></div>
+  </div>
+  <div class="entry-wrap shell">
+    <header class="top entry-top">
+      <div class="brand">
+        <img src="assets/cruvit-logo.svg" alt="">
+        <div class="brand-copy">
+          <h1>Cruvit</h1>
+          <span id="entryBrandTag">My Garden OS</span>
+        </div>
+      </div>
+      <select class="entry-lang" id="entryLangSelect" aria-label="Language">
+        <option value="en">EN English</option>
+        <option value="he">HE עברית</option>
+      </select>
+    </header>
+
+    <div class="entry-showcase">
+      <div class="entry-hero-copy">
+        <div class="greeting" id="entryKicker">🍃 Your garden companion</div>
+        <h2 class="entry-title" id="entryHeadline">Design, care and grow — with plants that fit your climate.</h2>
+        <p class="entry-lead" id="entrySubhead">Smart recommendations, daily tasks, plant scans and shopping — all in one calm garden space.</p>
+        <div class="entry-cta-row">
+          <button type="button" class="btn main" id="entrySkipBtn">Go to my garden dashboard →</button>
+        </div>
+        <div class="entry-trust" aria-hidden="true">
+          <span class="entry-trust-item"><b>87</b><em id="entryTrustHealth">Garden health</em></span>
+          <span class="entry-trust-item"><b>🌿</b><em id="entryTrustClimate">Climate-smart care</em></span>
+          <span class="entry-trust-item"><b>✓</b><em id="entryTrustVerified">Verified plant profiles</em></span>
+        </div>
+      </div>
+      <div class="entry-scene-card panel" aria-hidden="true">
+        <div class="entry-mini-scene">
+          <div class="entry-scene-sky">
+            <span class="entry-scene-sun"></span>
+            <span class="entry-scene-cloud entry-scene-cloud-a"></span>
+            <span class="entry-scene-cloud entry-scene-cloud-b"></span>
+          </div>
+          <div class="entry-scene-hills">
+            <span class="entry-scene-hill entry-scene-hill-back"></span>
+            <span class="entry-scene-hill entry-scene-hill-front"></span>
+            <span class="entry-scene-tree"></span>
+            <span class="entry-scene-flower entry-scene-flower-a">🌸</span>
+            <span class="entry-scene-flower entry-scene-flower-b">🌿</span>
+            <span class="entry-scene-butterfly">🦋</span>
+          </div>
+          <p class="entry-scene-caption" id="entrySceneCaption">Your garden is thriving</p>
+        </div>
+      </div>
+    </div>
+
+    <nav class="entry-bento" aria-label="Main actions">
+      <p class="entry-bento-label" id="entryMenuLabel">Choose your path into the garden</p>
+      <div class="entry-bento-grid">
+        <button type="button" class="entry-tile entry-tile-rec" data-entry-action="recommendations">
+          <span class="entry-tile-bg" aria-hidden="true"></span>
+          <span class="entry-tile-content">
+            <span class="entry-tile-icon">🌿</span>
+            <span class="entry-tile-copy">
+              <b class="entry-action-title">Smart Recommendations</b>
+              <span class="entry-action-desc" data-entry-desc="recommendations">Climate-matched plants for your garden</span>
+            </span>
+            <span class="entry-tile-go" aria-hidden="true">→</span>
+          </span>
+        </button>
+        <button type="button" class="entry-tile entry-tile-design" data-entry-action="design">
+          <span class="entry-tile-bg" aria-hidden="true"></span>
+          <span class="entry-tile-content">
+            <span class="entry-tile-icon">📷</span>
+            <span class="entry-tile-copy">
+              <b class="entry-action-title">Design · Scan Plants</b>
+              <span class="entry-action-desc" data-entry-desc="design">Plan your garden and identify plants from a photo</span>
+            </span>
+            <span class="entry-tile-go" aria-hidden="true">→</span>
+          </span>
+        </button>
+        <button type="button" class="entry-tile entry-tile-diag" data-entry-action="diagnose">
+          <span class="entry-tile-content">
+            <span class="entry-tile-icon">🔎</span>
+            <span class="entry-tile-copy">
+              <b class="entry-action-title">What's Wrong With My Garden?</b>
+              <span class="entry-action-desc" data-entry-desc="diagnose">Check plant health, pests and care gaps</span>
+            </span>
+            <span class="entry-tile-go" aria-hidden="true">→</span>
+          </span>
+        </button>
+        <button type="button" class="entry-tile entry-tile-shop" data-entry-action="shop">
+          <span class="entry-tile-content">
+            <span class="entry-tile-icon">🛒</span>
+            <span class="entry-tile-copy">
+              <b class="entry-action-title">Shop</b>
+              <span class="entry-action-desc" data-entry-desc="shop">Tools and products picked for your plants</span>
+            </span>
+            <span class="entry-tile-go" aria-hidden="true">→</span>
+          </span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</section>
+<div class="shell">
 <header class="top" id="topBar">
   <button type="button" class="brand brand-menu-btn" id="brandMenuBtn" onclick="toggleMobileNav(event)" aria-expanded="false" aria-controls="headerNav" aria-label="Open Cruvit menu">
     <span class="brand-menu-mark">
@@ -24,6 +131,7 @@
   </button>
   <button type="button" class="pill dark mobile-header-cart" onclick="toggleCart()">🛒 Cart <span id="cartCountMobile" class="badge">0</span></button>
   <nav class="nav" id="headerNav">
+    <button type="button" class="pill home-pill" onclick="goHome();closeMobileNav()">Home</button>
     <button type="button" class="pill reminders-pill" id="remindersPill" onclick="openRemindersFromHeader(event)">
       <span class="reminders-pill-label">🔔 Garden reminders</span>
       <span class="switch" id="headerNotifySwitch" role="switch" aria-label="Toggle garden reminders" onclick="toggleHeaderNotifications(event)"></span>
@@ -263,7 +371,9 @@
   </div>
 </div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
+<div id="plant-identifier-root"></div>
 <script src="garden-modes.js?v=20250631a"></script>
+<script src="scripts/plant-identifier-loader.js?v=20250655"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -351,6 +461,7 @@ function careProfileForPlant(input){
 }
 function isVagueCareText(v){return !String(v||'').trim() || /verify|depends|varies by|check local|according to season|see detailed|unknown|needs verification/i.test(String(v));}
 function enrichProfileWithQuality(profile,requested){
+  if((profile?.tags||[]).includes('scan-result')) return profile;
   const q=profile?.slug||profile?.name||profile?.commonName||profile?.scientific||requested;
   const o=careProfileForPlant(q)||careProfileForPlant(requested)||careProfileForPlant(profile?.scientific);
   if(!o)return profile;
@@ -370,7 +481,9 @@ const CRUVIT_DEPLOY_ORIGIN='https://friendly-taiyaki-64aacb.netlify.app';
 function netlifyFunctionUrl(path){
   const p=String(path||'').startsWith('/')?path:'/'+path;
   const host=location.hostname;
+  const port=location.port;
   const localHost=location.protocol==='file:'||host==='localhost'||host==='127.0.0.1'||/^\d+\.\d+\.\d+\.\d+$/.test(host);
+  if(localHost&&port==='8888') return p;
   if(localHost) return CRUVIT_DEPLOY_ORIGIN+p;
   return p;
 }
@@ -627,6 +740,12 @@ function openRemindersModal(){
 }
 function closeRemindersModal(){
   document.getElementById('remindersModal')?.classList.remove('open');
+}
+function hideLogin(){
+  document.getElementById('login')?.classList.remove('open');
+}
+function showLogin(){
+  document.getElementById('login')?.classList.add('open');
 }
 function renderRemindersModalOptions(){
   const host=document.getElementById('remindersModalOptions');
@@ -1603,22 +1722,56 @@ function closeLocationModal(){
 }
 
 async function resolveLocationFromQuery(label){
+  const HEBREW_PLACE_ALIASES={
+    'יחיעם':'Yehiam, Israel',
+    'יהיעם':'Yehiam, Israel',
+    'כפר ורדים':'Kfar Vradim, Israel',
+    'מעלות':'Maalot, Israel',
+    'נהריה':'Nahariya, Israel',
+    'עכו':'Acre, Israel',
+    'חיפה':'Haifa, Israel',
+    'תל אביב':'Tel Aviv, Israel',
+    'ירושלים':'Jerusalem, Israel',
+    'באר שבע':'Beersheba, Israel',
+    'אילת':'Eilat, Israel'
+  };
+  const isBroadCountryLocation=(loc)=>{
+    const name=String(loc?.name||'').trim().toLowerCase();
+    const locLabel=String(loc?.label||'').trim().toLowerCase();
+    return name==='israel'||name==='ישראל'||locLabel==='israel, israel';
+  };
+  const q=String(label||'').trim().normalize('NFKC').replace(/[\u200E\u200F]/g,'');
   if(pendingGeoLocation && Number.isFinite(Number(pendingGeoLocation.lat))){
     const pendingLabel=String(pendingGeoLocation.label||'').trim();
     const firstPart=pendingLabel.split(',')[0].trim();
-    if(pendingLabel===label || firstPart===label) return pendingGeoLocation;
+    if(pendingLabel===q || firstPart===q) return pendingGeoLocation;
   }
-  const attempts=[label];
-  if(/[\u0590-\u05FF]/.test(label) && !/ישראל/.test(label)) attempts.push(label+', ישראל');
-  else if(!/\bisrael\b/i.test(label)) attempts.push(label+', Israel');
+  const attempts=[];
+  if(HEBREW_PLACE_ALIASES[q]) attempts.push(HEBREW_PLACE_ALIASES[q]);
+  attempts.push(q);
+  if(/[\u0590-\u05FF]/.test(q) && !/ישראל/.test(q)) attempts.push(q+', ישראל');
+  else if(!/\bisrael\b/i.test(q)) attempts.push(q+', Israel');
   let lastErr=null;
-  for(const query of attempts){
+  for(const query of [...new Set(attempts)]){
     try{
       const result=await callGardenWeather({mode:'geocode',query});
-      if(result.location) return result.location;
+      if(result.location && !isBroadCountryLocation(result.location)) return result.location;
     }catch(err){
       lastErr=err;
     }
+  }
+  try{
+    const result=await callGardenWeather({mode:'search',query:q});
+    const pick=(result.suggestions||[])
+      .filter(loc=>!isBroadCountryLocation(loc))
+      .sort((a,b)=>{
+        const score=(loc)=>((loc.country||'').includes('Israel')?2:0)+
+          (String(loc.label||loc.name||'').includes(q)?1:0);
+        return score(b)-score(a);
+      })[0];
+    if(pick) return pick;
+  }catch(err){
+    lastErr=lastErr||err;
   }
   throw lastErr||new Error('Location not found. Try a nearby city or region in Hebrew or English.');
 }
@@ -2377,7 +2530,7 @@ function renderAddOptions(){
   document.getElementById('addPlantTitle').textContent='Add plant';
   document.getElementById('addPlantSubtitle').textContent='Choose where this plant comes from. Every option uses Cruvit plant knowledge and connects back to tasks, calendar and shopping.';
   document.getElementById('addPlantContent').innerHTML=`<div class="add-grid">
-    <button class="add-card" onclick="openPlantChooser('Scan & Identify')"><span class="ico">📷</span><span><b>Scan & identify</b><span>Upload or photograph a plant, then choose the matching real plant.</span></span></button>
+    <button class="add-card" onclick="openPlantIdentifierScan()"><span class="ico">📷</span><span><b>Scan & identify</b><span>Upload or photograph a plant with the AI identifier.</span></span></button>
     <button class="add-card" onclick="openPlantChooser('Manual entry')"><span class="ico">✍️</span><span><b>Add manually</b><span>Search a real plant name and save verified care data.</span></span></button>
     <button class="add-card" onclick="openPlantChooser('Smart Recommendations')"><span class="ico">🌿</span><span><b>From recommendations</b><span>Climate-matched plants based on your garden profile.</span></span></button>
     <button class="add-card" onclick="openPlantChooser('Garden Design')"><span class="ico">🎨</span><span><b>From garden design</b><span>Plants typically used in your design concept.</span></span></button>
@@ -2385,29 +2538,10 @@ function renderAddOptions(){
 }
 function openPlantChooser(source){
   resetScanSession();
-  const box=document.querySelector('#addPlantModal .modalbox'); if(box)box.classList.toggle('scan-mode', source==='Scan & Identify');
-  document.getElementById('addPlantTitle').textContent=source==='Scan & Identify'?'Identify and add plant':source;
-  document.getElementById('addPlantSubtitle').textContent=source==='Scan & Identify'?'Take or upload a plant photo. Cruvit will identify it, then you can add the verified plant profile to My Garden.':'Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
-  let helper=source==='Scan & Identify'?`
-    <div class="scan-uploader">
-      <div class="scan-actions">
-        <label class="scan-drop" for="plantCameraInput">
-          <span class="scan-icon">📷</span>
-          <b>Take photo</b>
-          <small>Use the camera on mobile.</small>
-        </label>
-        <label class="scan-drop" for="plantGalleryInput">
-          <span class="scan-icon">🖼️</span>
-          <b>Choose image</b>
-          <small>Upload from your device.</small>
-        </label>
-      </div>
-      <input id="plantCameraInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" capture="environment" onchange="handlePlantPhotoSelected(this)" style="display:none">
-      <input id="plantGalleryInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" onchange="handlePlantPhotoSelected(this)" style="display:none">
-      <div id="plantPhotoPreview" class="scan-preview hidden"></div>
-      <button id="identifyPlantBtn" class="btn main scan-identify hidden" type="button" onclick="identifySelectedPlantPhoto()">Identify plant</button>
-    </div>`:'';
-  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search">${helper}<input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="window.plantScanHint=this.value.trim();renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
+  document.querySelector('#addPlantModal .modalbox')?.classList.remove('scan-mode');
+  document.getElementById('addPlantTitle').textContent=source;
+  document.getElementById('addPlantSubtitle').textContent='Choose a real plant. Cruvit will save care, warnings, guide, products and calendar tasks.';
+  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="renderAddOptions()">← Back</button><div class="plant-search"><input class="field" id="plantSearchInput" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Search any plant, e.g. oak, pine, papaya, עץ אלון…" oninput="renderPlantResults('${source}',this.value)"><div class="real-data-badge">🌿 Real plant profile · care · warnings · shopping</div><div class="plant-results" id="plantResults"></div></div>`;
   resetAddPlantSearchState();
   addPlantSearchState.source=source;
   const input=document.getElementById('plantSearchInput');
@@ -2418,7 +2552,7 @@ function openPlantChooser(source){
       const seed=source==='Smart Recommendations'?'mediterranean':'tree sun';
       renderPlantResults(source,seed,{seeded:true});
     }else{
-      results.innerHTML=source==='Scan & Identify'?'<div class="plant-source-note plant-source-note-quiet">Or search by plant name below.</div>':'<div class="plant-source-note">Type a plant name to search. Each new add starts clean, so previous searches will not stay here.</div>';
+      results.innerHTML='<div class="plant-source-note">Type a plant name to search. Each new add starts clean, so previous searches will not stay here.</div>';
     }
   }
 }
@@ -2531,81 +2665,6 @@ async function preparePlantPhotoForIdentify(file){
   }finally{
     loaded.release();
   }
-}
-function buildPlantIdentifyRequestBody(photo){
-  const encoded=photo?.imageBase64
-    ? {
-        mediaType:photo.mediaType||'image/jpeg',
-        base64:String(photo.imageBase64).replace(/\s+/g,''),
-        dataUrl:photo.dataUrl||''
-      }
-    : null;
-  let base64=encoded?.base64||'';
-  let mediaType=encoded?.mediaType||'image/jpeg';
-  let dataUrl=encoded?.dataUrl||String(photo?.dataUrl||'').trim();
-  if(!base64&&dataUrl){
-    const match=dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
-    if(match){
-      mediaType=match[1].toLowerCase()==='image/jpg'?'image/jpeg':match[1].toLowerCase();
-      base64=match[2].replace(/\s+/g,'');
-    }
-  }
-  if(!base64||base64.length<64){
-    throw new Error('Photo payload is invalid. Please choose the image again.');
-  }
-  if(mediaType!=='image/jpeg'&&mediaType!=='image/png'&&mediaType!=='image/webp'&&mediaType!=='image/gif'){
-    mediaType='image/jpeg';
-  }
-  dataUrl=`data:${mediaType};base64,${base64}`;
-  const hint=window.plantScanHint||'';
-  return {
-    imageDataUrl:dataUrl,
-    imageBase64:base64,
-    mediaType,
-    mimeType:mediaType,
-    location:data.location||'',
-    climate:data.climate||'',
-    scanContext:'Indoor houseplants and potted plants are common — identify from the photo, not from climate assumptions.',
-    hint,
-    userQuery:hint,
-    scanId:photo.scanId||'',
-    imageFingerprint:String(photo.imageBase64||'').length+'-'+String(photo.imageBase64||'').slice(-48)
-  };
-}
-function userRequestedDodonaeaHint(){
-  const hint=normalizeQuery(window.plantScanHint||'');
-  return /dodonaea|hop bush|viscosa|אשחר/.test(hint);
-}
-function scanResultLooksLikeWrongDodonaea(parsed){
-  const top=(parsed.candidates||[])[0];
-  if(!top) return false;
-  const sci=String(top.scientificName||top.name||'').toLowerCase();
-  if(!/dodonaea|hop bush|viscosa|אשחר/.test(sci)) return false;
-  if(userRequestedDodonaeaHint()) return false;
-  return true;
-}
-function parseIdentifyResponse(out){
-  const id=out?.identification||{};
-  const normalizeCandidate=(x)=>{
-    if(typeof x==='string')return {name:x,commonName:x,scientificName:'',confidence:'medium',gbifVerified:false};
-    const commonName=String(x.commonName||x.common_name||'').replace(/\s+(Thunb|L|Mill)\.?$/i,'').trim();
-    const scientificName=String(x.scientificName||x.scientific_name||'').trim();
-    const name=x.name||commonName||scientificName||'';
-    return {name,commonName:commonName||name,scientificName,confidence:String(x.confidence||'medium').toLowerCase(),gbifVerified:!!x.gbifVerified,gbifRank:x.gbifRank||''};
-  };
-  const seen=new Set();
-  const candidates=(out?.candidates||out?.plants||[]).map(normalizeCandidate).filter(c=>{
-    const key=String(c.scientificName||c.commonName||c.name||'').toLowerCase();
-    if(!key||seen.has(key))return false;
-    seen.add(key);
-    return true;
-  });
-  const commonName=out?.commonName||out?.common_name||id.common_name||id.commonName||'';
-  const scientificName=out?.scientificName||out?.scientific_name||id.scientific_name||id.scientificName||'';
-  if(!candidates.length&&(commonName||scientificName)){
-    candidates.push(normalizeCandidate({name:scientificName||commonName,commonName,scientificName,confidence:out?.confidence||id.confidence||'medium',gbifVerified:!!out?.gbifVerified}));
-  }
-  return {candidates,commonName,scientificName,confidence:String(out?.confidence||id.confidence||'').toLowerCase(),gbifVerified:!!out?.gbifVerified};
 }
 function rankIdentifyCandidates(candidates){
   const rank={high:3,medium:2,low:1};
@@ -2729,259 +2788,25 @@ function buildScanCandidateProfile(candidate,photo){
   profile.scanSummary=sci?`Identified from photo as ${sci}. Loading verified care details…`:'Identified from photo. Loading verified care details…';
   return cacheScanProfile(profile);
 }
-function renderScanProfiles(profiles,noteText,seq,photo){
-  if(seq!==undefined && seq!==plantScanSeq) return;
-  if(photo && window.selectedPlantPhoto!==photo) return;
-  const results=document.getElementById('plantResults');
-  const note=document.getElementById('scanNote');
-  const sessionId=photo?.scanId||'';
-  const stamped=(profiles||[]).map(p=>Object.assign({},p,{scanSessionId:sessionId,scanPhotoUrl:photo?.dataUrl||p.scanPhotoUrl||''}));
-  if(results){
-    results.innerHTML=stamped.map(p=>plantResultButton(p,'Scan & Identify')).join('')+
-      '<div class="plant-source-note">Tap Add to save the best match. The uploaded photo will be kept on the plant card.</div>';
-  }
-  if(note&&noteText)note.textContent=noteText;
-  setTimeout(hydratePlantResultImages,0);
-}
 async function enrichScanProfiles(profiles,seq,photo){
   await Promise.all((profiles||[]).map(async p=>{
-    if(isScanStale(seq,photo)) return;
+    if(isScanStale(seq)) return;
     const query=p.scientific||p.name;
     if(!query) return;
     try{
       const live=await fetchPlantProfile(query,'Scan & Identify');
-      if(isScanStale(seq,photo)) return;
+      if(isScanStale(seq)) return;
       if(!live||!isCredibleLivePlantProfile(live,query)) return;
       const scanPhoto=photo?.dataUrl||p.scanPhotoUrl||'';
       const updated=buildScanProfileFromLive(live,{confidence:p.identifyConfidence||'medium'},{dataUrl:scanPhoto});
-      if(isScanStale(seq,photo)) return;
+      if(isScanStale(seq)) return;
       Object.assign(p,updated,{scanSessionId:photo?.scanId||'',scanPhotoUrl:scanPhoto});
       cacheScanProfile(p);
       p.scanSummary=scanResultSummary(p);
     }catch(_){}
   }));
-  if(isScanStale(seq,photo)) return profiles;
+  if(isScanStale(seq)) return profiles;
   return profiles;
-}
-async function handlePlantPhotoSelected(input){
-  const prepareSeq=++plantPhotoPrepareSeq;
-  const note=document.getElementById('scanNote');
-  const preview=document.getElementById('plantPhotoPreview');
-  const btn=document.getElementById('identifyPlantBtn');
-  const file=input.files&&input.files[0];
-  if(input) input.value='';
-  abortActivePlantScan();
-  window.selectedPlantPhoto=null;
-  window.plantScanHint='';
-  clearScanProfileCache();
-
-  if(!file){
-    if(note)note.textContent='Choose or photograph a plant to start AI identification.';
-    if(preview){preview.classList.add('hidden');preview.innerHTML=''}
-    if(btn)btn.classList.add('hidden');
-    return;
-  }
-
-  if(!isSupportedPlantPhotoFile(file)){
-    if(note)note.textContent='Please choose JPG, PNG, WEBP or GIF. iPhone HEIC photos should be exported as JPG first.';
-    if(btn)btn.classList.add('hidden');
-    input.value='';
-    return;
-  }
-
-  try{
-    if(note)note.textContent='Preparing photo for identification...';
-
-    const prepared=await preparePlantPhotoForIdentify(file);
-    if(prepareSeq!==plantPhotoPrepareSeq) return;
-
-    prepared.scanId=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)+'-'+prepared.imageBase64.length;
-    window.selectedPlantPhoto=prepared;
-
-    if(preview){
-      preview.classList.remove('hidden');
-      preview.innerHTML='';
-      const previewImage=document.createElement('img');
-      previewImage.src=prepared.dataUrl;
-      previewImage.alt='Selected plant';
-      const previewName=document.createElement('b');
-      previewName.textContent=file.name||'Plant photo';
-      preview.append(previewImage,previewName);
-    }
-
-    if(btn){
-      btn.classList.remove('hidden');
-      btn.disabled=false;
-      btn.textContent='Identify plant';
-    }
-
-    const results=document.getElementById('plantResults');
-    if(results){
-      results.innerHTML='<div class="plant-source-note">Photo prepared. Starting identification…</div>';
-    }
-
-    if(note){
-      note.textContent='Photo ready. Starting identification…';
-    }
-
-    void identifySelectedPlantPhoto();
-  }catch(error){
-    window.selectedPlantPhoto=null;
-
-    if(note){
-      note.textContent=String(error?.message||'Could not prepare this photo. Please try another image.');
-    }
-
-    if(btn){
-      btn.classList.add('hidden');
-      btn.disabled=true;
-    }
-
-    if(preview){
-      preview.classList.add('hidden');
-      preview.innerHTML='';
-    }
-
-    console.error('Plant photo preparation failed',error);
-  }
-}
-async function identifySelectedPlantPhoto(){
-  const note=document.getElementById('scanNote');
-  const results=document.getElementById('plantResults');
-  const btn=document.getElementById('identifyPlantBtn');
-  const photo=window.selectedPlantPhoto;
-
-  if(!photo||!photo.dataUrl){
-    if(note)note.textContent='Please choose or take a plant photo first.';
-    return;
-  }
-
-  abortActivePlantScan();
-  const scanSeq=++plantScanSeq;
-  const scanAbort=new AbortController();
-  plantScanAbortController=scanAbort;
-  window.plantScanInProgress=true;
-
-  if(btn){
-    btn.disabled=true;
-    btn.textContent='Identifying…';
-    btn.classList.remove('hidden');
-    btn.classList.add('loading');
-  }
-  if(note)note.textContent='Cruvit is identifying the plant from your photo…';
-  if(results)results.innerHTML='<div class="plant-source-note">Analyzing photo with Cruvit plant identification…</div>';
-
-  try{
-    const requestBody=Object.assign(buildPlantIdentifyRequestBody(photo),{
-      scanId:photo.scanId||String(scanSeq),
-      scanSeq
-    });
-    const payload=JSON.stringify(requestBody);
-
-    let res=null;
-    let lastError=null;
-
-    for(let attempt=0;attempt<2;attempt++){
-      if(isScanStale(scanSeq,photo)) return;
-      try{
-        const timeoutId=setTimeout(()=>{ try{scanAbort.abort()}catch(_){} },75000);
-        try{
-          res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-identify?scan='+encodeURIComponent(photo.scanId||String(scanSeq))),{
-            method:'POST',
-            headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},
-            body:payload,
-            cache:'no-store',
-            signal:scanAbort.signal
-          });
-        }finally{
-          clearTimeout(timeoutId);
-        }
-        if(res.ok)break;
-
-        const failedText=await res.text().catch(()=>'');
-        let failedMessage='';
-        try{
-          const failedJson=failedText?JSON.parse(failedText):null;
-          failedMessage=(failedJson&&(failedJson.error||failedJson.message))||'';
-        }catch(_){
-          failedMessage=failedText;
-        }
-
-        lastError=new Error(failedMessage||`Identification service returned ${res.status}${res.status===404&&isLocalCruvitPreview()?'. Run "netlify dev" locally or open '+CRUVIT_DEPLOY_ORIGIN:''}`);
-        if(res.status<500||attempt===1)throw lastError;
-      }catch(error){
-        if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
-        lastError=error;
-        if(attempt===1)throw error;
-        await new Promise(resolve=>setTimeout(resolve,900));
-      }
-    }
-
-    if(!res||!res.ok)throw lastError||new Error('Identification service is not reachable. Run netlify dev locally or deploy to Netlify.');
-
-    if(isScanStale(scanSeq,photo)) return;
-
-    const responseText=await res.text();
-    let out={};
-    try{
-      out=responseText?JSON.parse(responseText):{};
-    }catch(_){
-      throw new Error('The identification service returned an invalid response.');
-    }
-
-    const parsed=parseIdentifyResponse(out);
-    if(out.error && !parsed.candidates.length){
-      throw new Error(typeof out.error==='string'?out.error:'Identification failed.');
-    }
-    if(scanResultLooksLikeWrongDodonaea(parsed)){
-      throw new Error('Photo scan returned an unlikely match. Please try again — use a clear photo of the plant only.');
-    }
-    if(!parsed.candidates.length){
-      throw new Error(out.error||'No plant match found in the photo.');
-    }
-
-    if(isScanStale(scanSeq,photo)) return;
-
-    if(note)note.textContent='Verifying identification against Cruvit botanical database…';
-    if(results)results.innerHTML='<div class="plant-source-note">Matching photo to verified plant records…</div>';
-
-    let profiles=await resolveScanCandidates(parsed.candidates,photo);
-    if(isScanStale(scanSeq,photo)) return;
-
-    if(!profiles.length){
-      const ranked=collapseScanCandidates(parsed.candidates);
-      const top=ranked[0];
-      if(top){
-        const p=cacheScanProfile(buildScanCandidateProfile(top,photo));
-        profiles=[p];
-      }
-    }
-
-    profiles=await enrichScanProfiles(profiles,scanSeq,photo);
-    if(isScanStale(scanSeq,photo)) return;
-
-    const noteText=profiles.length===1
-      ? (parsed.confidence==='high'?'Best match found with high confidence.':'Best verified match from your photo.')
-      : 'Choose the closest verified match below.';
-
-    renderScanProfiles(profiles,noteText,scanSeq,photo);
-  }catch(err){
-    if(scanAbort.signal.aborted || isScanStale(scanSeq,photo)) return;
-    console.error('Plant photo identification failed',err);
-    const message=String(err?.message||'Identification failed.');
-    if(note)note.textContent='Could not identify from the photo. Please try once more or use a clearer photo.';
-    if(results){
-      results.innerHTML=`<div class="plant-source-note">Identification failed. ${escapeHtml(message)}<br>Try again, choose a clearer photo, or type the plant name manually.</div>`;
-    }
-  }finally{
-    if(plantScanAbortController===scanAbort) plantScanAbortController=null;
-    if(!isScanStale(scanSeq,photo)) window.plantScanInProgress=false;
-    if(btn){
-      btn.disabled=false;
-      btn.textContent='Identify plant';
-      btn.classList.remove('loading');
-    }
-  }
 }
 function scorePlantForSource(p,source){const t=(p.tags||[]).join(' ').toLowerCase(); if(source==='Smart Recommendations')return t.includes('mediterranean')||t.includes('low water')||t.includes('sun'); if(source==='Garden Design')return t.includes('tree')||t.includes('climber')||t.includes('flowering')||t.includes('mediterranean'); return true}
 function textForSearch(p){return [p.name,p.he,p.scientific,(p.aliases||[]).join(' '),(p.tags||[]).join(' '),p.sun,p.water,p.climate,p.guide].join(' ').toLowerCase()}
@@ -3002,6 +2827,7 @@ function canonicalPlantQuery(q){
   return PLANT_QUERY_ALIASES[n]||PLANT_QUERY_ALIASES[raw.toLowerCase()]||raw;
 }
 
+
 function searchLocalPlants(query,source){
   const q=normalizeQuery(canonicalPlantQuery(query));
   let base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source));
@@ -3016,8 +2842,6 @@ function searchLocalPlants(query,source){
 }
 let plantSearchSeq=0;
 let plantScanSeq=0;
-let plantPhotoPrepareSeq=0;
-let plantScanAbortController=null;
 const scanProfileCache={};
 
 function clearScanProfileCache(){
@@ -3025,16 +2849,12 @@ function clearScanProfileCache(){
 }
 
 function resetScanSession(){
-  abortActivePlantScan();
   ++plantScanSeq;
-  ++plantPhotoPrepareSeq;
-  window.selectedPlantPhoto=null;
-  window.plantScanHint='';
   clearScanProfileCache();
 }
 
-function isScanStale(scanSeq,photo){
-  return scanSeq!==plantScanSeq || window.selectedPlantPhoto!==photo;
+function isScanStale(seq){
+  return seq!==plantScanSeq;
 }
 
 function cacheScanProfile(profile){
@@ -3045,13 +2865,6 @@ function cacheScanProfile(profile){
   return profile;
 }
 
-function abortActivePlantScan(){
-  if(plantScanAbortController){
-    try{plantScanAbortController.abort()}catch(_){}
-    plantScanAbortController=null;
-  }
-  window.plantScanInProgress=false;
-}
 function isCredibleLivePlantProfile(profile,query){
   if(!profile || profile.isPlant===false || profile.error) return false;
   const q=normalizeQuery(canonicalPlantQuery(query));
@@ -3162,7 +2975,6 @@ function plantResultThumb(p){
 function renderPlantResults(source,query=''){
   const results=document.getElementById('plantResults');
   if(!results)return;
-  if(source==='Scan & Identify'&&window.plantScanInProgress)return;
   const q=(query||'').trim();
   const seq=++plantSearchSeq;
   const renderList=(plants,note='')=>{
@@ -3273,13 +3085,14 @@ function normalizeApiPlant(d,requested){
   const warnings=Array.isArray(d.warnings)?d.warnings.filter(Boolean):[];
   const products=Array.isArray(d.shoppingProducts)?d.shoppingProducts:Array.isArray(d.products)?d.products:[];
   const tasks=Array.isArray(d.tasks)?d.tasks:[];
-  const status=warnings.length?'Needs review':'Healthy';
-  const mark=warnings.length?'!':'✓';
+  const status=d.status||(warnings.length?'Needs review':'Healthy');
+  const mark=d.mark||(warnings.length?'!':'✓');
   const verified=!!d.botanicalVerified;
   let imageUrl=d.imageUrl||d.image_url||d.photoUrl||d.photo_url||'';
   if(imageUrl&&!isPlausiblePlantImage(imageUrl,{scientific:sci,name:common})) imageUrl='';
   const imageSearchQuery=cleanImageSearchQuery(d.imageSearchQuery||d.image_search_query||sci||common);
-  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl,imageSearchQuery,icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'],sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
+  const defaultTags=verified?['ai-profile','verified-profile','gbif-verified']:['ai-profile'];
+  let profile={slug:slugify(common||requested),name:common,he:d.hebrewName||d.hebrew_name||'',aliases:[requested,common,sci,d.hebrewName].filter(Boolean),scientific:sci,imageUrl,imageSearchQuery,icon:d.icon||'🌿',status,mark,isPlant:d.isPlant!==false,botanicalVerified:verified,engineVersion:d.engineVersion||'',verification:d.verification||null,tags:Array.isArray(d.tags)&&d.tags.length?d.tags.slice():defaultTags,sun:d.sun||d.light||'See detailed guide',water:d.water||d.watering||'See detailed guide',soil:d.soil||'',growth:d.growth||'See detailed guide',size:d.size||'Varies by variety and pruning',climate:d.climateFit||d.climate_fit||d.climate||'Check by location',season:d.seasonCare||d.season||'Seasonal care depends on local climate',pruning:d.pruning||'',fertilizer:d.fertilizer||'',warnings,guide:d.guide||d.careGuide||d.detailedGuide||d.description||'Plant profile generated from the plant knowledge service. Confirm variety-specific details when buying.',products:products.map(x=>typeof x==='string'?x:(x.name||x.desc||'Care product')).filter(Boolean),tasks};
   profile=enrichProfileWithQuality(profile,requested);
   return profile;
 }
@@ -3366,7 +3179,7 @@ function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,re
 
     setTimeout(async()=>{
       try{
-        const needsLive=!(ref.tags||[]).includes('ai-profile') || !(ref.imageUrl||ref.image||ref.photoUrl);
+        const needsLive=!(ref.tags||[]).includes('scan-result') && (!(ref.tags||[]).includes('ai-profile') || !(ref.imageUrl||ref.image||ref.photoUrl));
         if(needsLive){
           const live=await fetchPlantProfile(ref.name||slug,source);
           if(live&&live.isPlant!==false){
@@ -3400,7 +3213,7 @@ function savePlant(name,status='New',mark='✓',source='My Garden'){
   openPlantChooser(source||'Manual entry');setTimeout(()=>{const input=document.getElementById('plantSearchInput');if(input){input.value=name;renderPlantResults(source||'Manual entry',name)}},30);
 }
 function findPlantByName(name){const q=normalizeQuery(name);return PLANT_LIBRARY.find(p=>[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q||a.replace(/^עץ\s+/,'')===q))||PLANT_LIBRARY.find(p=>textForSearch(p).includes(q)||q.includes(normalizeQuery(p.name)))}
-function addPlantFromScan(){openPlantChooser('Scan & Identify')}
+function addPlantFromScan(){openPlantIdentifierScan()}
 function addPlantManual(){openPlantChooser('Manual entry')}
 function addPlantFromRecommendations(){openPlantChooser('Smart Recommendations')}
 function addPlantFromDesign(){openPlantChooser('Garden Design')}
@@ -3487,6 +3300,398 @@ function renderCart(){
 }
 function toggleCart(force){const drawer=document.getElementById('drawer'); if(force===true){drawer.classList.add('open')}else if(force===false){drawer.classList.remove('open')}else{drawer.classList.toggle('open')}}
 function checkoutDemo(){normalizeCartData();if(!data.cart.length){alert('Your cart is empty. Add a product first.');return}alert('Checkout is ready for Shopify connection. In production this will open Shopify Checkout.')}
+
+const ENTRY_COPY={
+  en:{
+    brandTag:'My Garden OS',
+    kicker:'🍃 Your garden companion',
+    headline:'Design, <em>care</em> and grow — with plants that fit <em>your climate</em>.',
+    subhead:'Smart recommendations, daily tasks, plant scans and shopping — woven into one sunlit sanctuary.',
+    menuLabel:'Choose your path into the garden',
+    sceneCaption:'Your garden is thriving today',
+    trustHealth:'Garden health',
+    trustClimate:'Climate-smart care',
+    trustVerified:'Verified profiles',
+    recommendations:'Smart Recommendations',
+    design:'Design · Scan Plants',
+    diagnose:"What's Wrong With My Garden?",
+    shop:'Shop',
+    recDesc:'Climate-matched plants curated for your plot',
+    designDesc:'Plan beds and identify any plant from a photo',
+    diagDesc:'Spot health issues, pests and care gaps',
+    shopDesc:'Tools and products picked for your plants',
+    skip:'Go to my garden dashboard →'
+  },
+  he:{
+    brandTag:'מערכת הגינה שלי',
+    kicker:'🍃 בוט גינה אישי',
+    headline:'לעצב, <em>לטפל</em> ולגדל — עם צמחים שמתאימים <em>לאקלים שלך</em>.',
+    subhead:'המלצות חכמות, משימות יומיות, סריקת צמחים וקניות — הכל במקום אחד שמש.',
+    menuLabel:'בחרו את הדרך אל הגינה',
+    sceneCaption:'הגינה שלך משגשגת היום',
+    trustHealth:'בריאות הגינה',
+    trustClimate:'טיפול מותאם אקלים',
+    trustVerified:'פרופילים מאומתים',
+    diagDesc:'זיהוי בעיות בריאות, מזיקים ופערים בטיפול',
+    recommendations:'המלצות חכמות',
+    design:'עיצוב · סריקת צמחים',
+    diagnose:'מה לא בסדר בגינה?',
+    shop:'חנות',
+    recDesc:'צמחים מותאמים לאקלים ולגינה שלך',
+    designDesc:'תכנון גינה וזיהוי צמח מכל תמונה',
+    shopDesc:'כלים ומוצרים שנבחרו לצמחים שלך',
+    skip:'ללוח הבקרה של הגינה →'
+  }
+};
+
+function getEntryLang(){
+  return localStorage.getItem('cruvit_lang')||localStorage.getItem('cruvitLang')||'en';
+}
+
+function applyEntryScreenLang(lang){
+  const copy=ENTRY_COPY[lang]||ENTRY_COPY.en;
+  const headline=document.getElementById('entryHeadline');
+  const subhead=document.getElementById('entrySubhead');
+  const skip=document.getElementById('entrySkipBtn');
+  const kicker=document.getElementById('entryKicker');
+  const brandTag=document.getElementById('entryBrandTag');
+  const menuLabel=document.getElementById('entryMenuLabel');
+  const sceneCaption=document.getElementById('entrySceneCaption');
+  const trustHealth=document.getElementById('entryTrustHealth');
+  const trustClimate=document.getElementById('entryTrustClimate');
+  const trustVerified=document.getElementById('entryTrustVerified');
+  if(kicker)kicker.textContent=copy.kicker||'';
+  if(brandTag)brandTag.textContent=copy.brandTag||'My Garden OS';
+  if(menuLabel)menuLabel.textContent=copy.menuLabel||'';
+  if(sceneCaption)sceneCaption.textContent=copy.sceneCaption||'';
+  if(trustHealth)trustHealth.textContent=copy.trustHealth||'';
+  if(trustClimate)trustClimate.textContent=copy.trustClimate||'';
+  if(trustVerified)trustVerified.textContent=copy.trustVerified||'';
+  if(headline)headline.innerHTML=copy.headline||'';
+  if(subhead)subhead.textContent=copy.subhead||'';
+  if(skip)skip.textContent=copy.skip||'';
+  document.querySelectorAll('[data-entry-action]').forEach(btn=>{
+    const key=btn.getAttribute('data-entry-action');
+    const map={recommendations:'recommendations',design:'design',diagnose:'diagnose',shop:'shop'};
+    const title=btn.querySelector('.entry-action-title');
+    if(map[key]&&copy[map[key]]&&title)title.textContent=copy[map[key]];
+  });
+  document.querySelectorAll('[data-entry-desc]').forEach(el=>{
+    const key=el.getAttribute('data-entry-desc');
+    const descKey={recommendations:'recDesc',design:'designDesc',diagnose:'diagDesc',shop:'shopDesc'}[key];
+    if(descKey&&copy[descKey])el.textContent=copy[descKey];
+  });
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='he'?'rtl':'ltr';
+}
+
+function dismissEntryScreen(){
+  const app=document.getElementById('appRoot');
+  if(app)app.classList.remove('entry-visible');
+}
+
+function showEntryScreen(){
+  const app=document.getElementById('appRoot');
+  if(app)app.classList.add('entry-visible');
+}
+
+function goHome(){
+  closeAddPlantModal();
+  closeRemindersModal();
+  hideLogin();
+  closeMobileNav();
+  setPlantIdentifierShellOpen(false);
+  if(typeof PlantIdentifier!=='undefined'){
+    PlantIdentifier.closeHome();
+    PlantIdentifier.closeScan();
+  }
+  toggleCart(false);
+  closePlantPanel();
+  showEntryScreen();
+  scrollToPageTop('auto');
+}
+
+function openPlantIdentifierScan(){
+  void openPlantIdentifierScanAsync();
+}
+
+function setPlantIdentifierShellOpen(open){
+  const root=document.getElementById('plant-identifier-root');
+  const app=document.getElementById('appRoot');
+  if(root) root.classList.toggle('pi-active',!!open);
+  if(app) app.classList.toggle('pi-open',!!open);
+}
+
+async function openPlantIdentifierScanAsync(){
+  try{
+    await loadPlantIdentifierScript();
+    if(!initPlantIdentifierModule()) throw new Error('Plant identifier init failed');
+    dismissEntryScreen();
+    setPlantIdentifierShellOpen(true);
+    PlantIdentifier.openHome();
+  }catch(err){
+    console.error('Plant identifier unavailable',err);
+    setPlantIdentifierShellOpen(false);
+    alert((err&&err.message)||'Plant identifier is not available. Open DevTools → Network and check modules/plant-identifier/plant-identifier.js');
+    showEntryScreen();
+  }
+}
+
+function openGardenDashboardWithHealth(){
+  dismissEntryScreen();
+  syncHealthScore();
+  render();
+  setTab('tasks',false);
+  scrollToPageTop('auto');
+  requestAnimationFrame(()=>{
+    const mood=document.getElementById('gardenMoodCard')||document.querySelector('.hero');
+    if(mood)mood.scrollIntoView({behavior:'smooth',block:'nearest'});
+    setTimeout(()=>{ try{showHealthBreakdown()}catch(_){} },400);
+  });
+}
+
+function handleEntryAction(action){
+  if(action==='design'){
+    openPlantIdentifierScan();
+    return;
+  }
+  if(action==='recommendations'){
+    dismissEntryScreen();
+    addPlantFromRecommendations();
+    return;
+  }
+  if(action==='diagnose'){
+    openGardenDashboardWithHealth();
+    return;
+  }
+  if(action==='shop'){
+    dismissEntryScreen();
+    setTab('shopping');
+  }
+}
+
+function buildScanProfileFromIdentifyResult(result,photo){
+  if(result._plantProfile){
+    const live=result._plantProfile;
+    const base=Object.assign({},enrichProfileWithQuality(Object.assign({},live),live.name||result.common_name));
+    const checked=!!result._climateChecked;
+    const climateFit=checked?String(result.climate_fit||'unknown').toLowerCase():'unknown';
+    const climateZone=checked?(result.climate_zone||''):'';
+    const climateSummary=checked?String(result.climate_summary||'').trim():'';
+    const locationLabel=checked?(result._resolvedLocation||''):'';
+    const care=result.care||{};
+    const profile=Object.assign({},base,{
+      tags:[...(base.tags||[]).filter(t=>t!=='ai-profile'),'photo-identified','scan-result','ai-profile'],
+      sun:(care.light&&!isGenericScanCareText(care.light))?care.light:base.sun,
+      water:(care.water&&!isGenericScanCareText(care.water))?care.water:base.water,
+      soil:(care.soil&&!isGenericScanCareText(care.soil))?care.soil:base.soil,
+      season:(care.season&&!isGenericScanCareText(care.season))?care.season:base.season,
+      pruning:(care.pruning&&!isGenericScanCareText(care.pruning))?care.pruning:base.pruning,
+      fertilizer:(care.fertilizer&&!isGenericScanCareText(care.fertilizer))?care.fertilizer:base.fertilizer,
+      climate:checked&&climateSummary&&!isGenericScanCareText(climateSummary)?climateSummary:base.climate,
+      status:climateFit==='low'?'Needs care':climateFit==='medium'?'Check climate fit':base.status||'Healthy',
+      mark:climateFit==='low'||climateFit==='medium'?'!':base.mark||'✓'
+    });
+    profile.scanPhotoUrl=photo.dataUrl;
+    profile.scanSessionId=photo.scanId||'';
+    profile.imageUrl=(base.imageUrl&&!/^data:image\//i.test(base.imageUrl))?base.imageUrl:'';
+    profile.identifyConfidence=result.confidence||'medium';
+    profile.identifySource='photo+scan-result';
+    profile.scanClimateFit=climateFit;
+    profile.scanClimateZone=climateZone;
+    profile.scanClimateLocation=locationLabel;
+    profile.scanSummary=buildScanResultSummary(profile,climateFit,climateZone);
+    return cacheScanProfile(profile);
+  }
+  const common=result.common_name||result.commonName||'Plant';
+  const sci=result.scientific_name||result.scientificName||'';
+  const care=result.care||{};
+  const checked=!!result._climateChecked;
+  const climateFit=checked?String(result.climate_fit||'unknown').toLowerCase():'unknown';
+  const climateZone=checked?(result.climate_zone||''):'';
+  const climateSummary=checked?String(result.climate_summary||'').trim():'';
+  const locationLabel=checked?(result._resolvedLocation||''):'';
+  const fitGuide={
+    high:locationLabel?`Well suited for ${locationLabel}${climateZone?' ('+climateZone+')':''}.`:'Well suited to your local climate.',
+    medium:locationLabel?`Can grow in ${locationLabel} with attentive care.`:'Manageable with attentive care in your climate.',
+    low:locationLabel?`Challenging outdoors in ${locationLabel}; consider protection or containers.`:'May be difficult outdoors in your climate.',
+    unknown:climateSummary||'Check climate fit for your garden location.'
+  };
+  const climateText=(!isGenericScanCareText(climateSummary)&&climateSummary)||fitGuide[climateFit]||fitGuide.unknown;
+  const guideParts=[climateText,care.light,care.water,care.soil].filter(x=>x&&!isGenericScanCareText(x));
+  const status=climateFit==='low'?'Needs care':climateFit==='medium'?'Check climate fit':'Healthy';
+  const mark=climateFit==='low'||climateFit==='medium'?'!':'✓';
+  const profile=normalizeApiPlant({
+    commonName:common,
+    scientificName:sci,
+    botanicalVerified:true,
+    icon:'🌿',
+    status,
+    mark,
+    tags:['photo-identified','scan-result','ai-profile'],
+    sun:care.light||'',
+    water:care.water||'',
+    soil:care.soil||'',
+    seasonCare:care.season||'',
+    pruning:care.pruning||'',
+    fertilizer:care.fertilizer||'',
+    climateFit:climateText,
+    climate:climateZone,
+    guide:guideParts.join(' ')||`Identified from photo as ${sci||common}.`,
+    warnings:Array.isArray(result.warnings)&&result.warnings.length?result.warnings:['Confirm exact cultivar before treatment or purchase.']
+  },common);
+  profile.scanPhotoUrl=photo.dataUrl;
+  profile.scanSessionId=photo.scanId||'';
+  profile.imageUrl='';
+  profile.identifyConfidence=result.confidence||'medium';
+  profile.identifySource='photo+scan-result';
+  profile.scanClimateFit=climateFit;
+  profile.scanClimateZone=climateZone;
+  profile.scanClimateLocation=locationLabel;
+  profile.scanSummary=buildScanResultSummary(profile,climateFit,climateZone);
+  return cacheScanProfile(profile);
+}
+function isGenericScanCareText(value){
+  const s=String(value||'').trim();
+  if(!s) return true;
+  return /location-specific suitability|match light exposure|water according to season|use soil appropriate|cruvit should generate|loading care profile|confirm the exact species/i.test(s);
+}
+function buildScanResultSummary(profile,climateFit,climateZone){
+  const lang=localStorage.getItem('cruvitLang')||localStorage.getItem('cruvit_lang')||'en';
+  const fitLabels=lang==='he'
+    ?{high:'מתאים לאקלים',medium:'דורש טיפול',low:'לא מתאים',unknown:'בדוק התאמה'}
+    :{high:'Climate fit',medium:'Needs care',low:'Poor climate fit',unknown:'Check climate'};
+  const fitLabel=fitLabels[climateFit]||fitLabels.unknown;
+  const zone=climateZone?` · ${climateZone}`:'';
+  if(hasUsefulCareText(profile)){
+    return `${fitLabel}${zone} · ${profile.sun} · ${profile.water}`.replace(/ · $/g,'').trim();
+  }
+  if(profile.scientific) return `${fitLabel}${zone} · ${profile.scientific}`;
+  return `${fitLabel}${zone}`;
+}
+async function commitIdentifiedPlantFromModule(result){
+  if(!result) return;
+  const dataUrl=String(result._img||'');
+  let imageBase64='';
+  let mediaType='image/jpeg';
+  const embedded=dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
+  if(embedded){
+    mediaType=embedded[1].toLowerCase()==='image/jpg'?'image/jpeg':embedded[1].toLowerCase();
+    imageBase64=embedded[2].replace(/\s+/g,'');
+  }
+  const photo={
+    dataUrl,
+    imageBase64,
+    mediaType,
+    scanId:'pi-'+Date.now().toString(36)
+  };
+  const profile=buildScanProfileFromIdentifyResult(result,photo);
+  const ref=storePlantProfile(profile);
+  savePlantFromLibrary(ref.slug,'Scan & Identify');
+  if(typeof PlantIdentifier!=='undefined'){
+    PlantIdentifier.closeScan();
+    PlantIdentifier.closeHome();
+  }
+  dismissEntryScreen();
+  setTab('plants');
+}
+
+function plantIdentifierDeps(langOverride){
+  const lang=langOverride||getEntryLang();
+  return {
+    getData:()=>data,
+    finalizePlantListChange,
+    netlifyFunctionUrl,
+    escapeHtml,
+    preparePlantPhoto:preparePlantPhotoForIdentify,
+    lang,
+    commitIdentifiedPlant(result){
+      void commitIdentifiedPlantFromModule(result).catch(err=>{
+        alert(err?.message||'Could not save this plant to your garden.');
+        console.error('commitIdentifiedPlantFromModule failed',err);
+      });
+    },
+    onIdentified(){
+      dismissEntryScreen();
+    },
+    goHome: () => goHome(),
+    resolveLocation: resolveLocationFromQuery,
+    callGardenWeather,
+    searchLocations: async (query) => {
+      const q = String(query || '').trim();
+      if (q.length < 2) return [];
+      const result = await callGardenWeather({ mode: 'search', query: q });
+      return result.suggestions || [];
+    },
+    setShellOpen: (open) => setPlantIdentifierShellOpen(!!open),
+    fetchPlantProfile,
+    findPlantByName,
+    hasUsefulCareText,
+    enrichProfileWithQuality,
+    isVagueCareText,
+    resolveScanProfileFromIdentify: async (result) => {
+      const dataUrl = String(result?._img || '');
+      let imageBase64 = '';
+      let mediaType = 'image/jpeg';
+      const embedded = dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
+      if (embedded) {
+        mediaType = embedded[1].toLowerCase() === 'image/jpg' ? 'image/jpeg' : embedded[1].toLowerCase();
+        imageBase64 = embedded[2].replace(/\s+/g, '');
+      }
+      const photo = {
+        dataUrl,
+        imageBase64,
+        mediaType,
+        scanId: 'pi-' + Date.now().toString(36)
+      };
+      const candidate = {
+        commonName: result?.common_name || result?.commonName || '',
+        scientificName: result?.scientific_name || result?.scientificName || '',
+        name: result?.common_name || '',
+        confidence: result?.confidence || 'medium'
+      };
+      return resolveScanCandidateViaEngine(candidate, photo);
+    }
+  };
+}
+
+function initPlantIdentifierModule(){
+  if(typeof PlantIdentifier==='undefined'){
+    console.warn('PlantIdentifier script not loaded yet');
+    return false;
+  }
+  PlantIdentifier.init(plantIdentifierDeps());
+  const root=document.getElementById('plant-identifier-root');
+  const needsMount=!root?.querySelector('[data-pi-id="homeOverlay"]');
+  if(needsMount){
+    PlantIdentifier.mount({root:'#plant-identifier-root',includeHistory:true});
+  }
+  return true;
+}
+
+function initEntryScreen(){
+  const langSelect=document.getElementById('entryLangSelect');
+  const lang=getEntryLang();
+  if(langSelect){
+    langSelect.value=lang==='he'?'he':'en';
+    langSelect.addEventListener('change',()=>{
+      const next=langSelect.value==='he'?'he':'en';
+      localStorage.setItem('cruvit_lang',next);
+      localStorage.setItem('cruvitLang',next);
+      applyEntryScreenLang(next);
+      if(typeof PlantIdentifier!=='undefined')PlantIdentifier.init(plantIdentifierDeps(next));
+    });
+  }
+  applyEntryScreenLang(lang);
+  document.querySelectorAll('[data-entry-action]').forEach(btn=>{
+    btn.addEventListener('click',()=>handleEntryAction(btn.getAttribute('data-entry-action')));
+  });
+  document.getElementById('entrySkipBtn')?.addEventListener('click',()=>{
+    dismissEntryScreen();
+    setTab('tasks',false);
+  });
+}
+
 if('scrollRestoration' in history)history.scrollRestoration='manual';
 document.addEventListener('click',function(e){
   if(openMenu){openMenu=null;render()}
@@ -3496,6 +3701,10 @@ document.addEventListener('click',function(e){
 ensureGardenLocation();
 hookMainAppUserSync();
 syncGardenUserProfile();
+initEntryScreen();
+loadPlantIdentifierScript()
+  .then(()=>initPlantIdentifierModule())
+  .catch(err=>console.warn('Plant identifier preload skipped:',err&&err.message?err.message:err));
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
 scrollToPageTop('auto');
