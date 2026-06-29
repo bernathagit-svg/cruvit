@@ -233,7 +233,7 @@
         en: 'Your garden is still taking shape. Add plant details for better recommendations.'
       },
       severity: 'calm',
-      icon: '🪴',
+      icon: '🌱',
       image: 'assets/garden-modes/new-garden.png',
       actions: [
         { he: 'להוסיף עוד צמחים', en: 'Add more plants' },
@@ -639,7 +639,7 @@
         : (hasTask ? "Today's focus:" : 'Next step:');
     }
     if (focusEl) focusEl.textContent = text;
-    if (icoEl) icoEl.textContent = primaryMode.icon || '🪴';
+    if (icoEl) icoEl.textContent = primaryMode.icon || '🌿';
 
     if (!emEl || !focusBtn) return;
 

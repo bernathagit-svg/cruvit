@@ -1430,7 +1430,7 @@ button.rail-note.location-note:hover {
   box-shadow: var(--shadow-xs);
 }
 
-.tasks-footer { display: flex; justify-content: center; margin-top: 4px; }
+.tasks-footer { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 
 .show-all-tasks {
   border: 1px solid var(--line);
@@ -1788,6 +1788,28 @@ button.rail-note.location-note:hover {
 }
 
 .day.today .date { background: var(--forest); color: #fff; }
+
+.day.has-tasks .date { position: relative; }
+
+.cal-task-count {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--leaf);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 14px;
+  text-align: center;
+}
+
+.cal-event.task { background: rgba(47, 158, 106, 0.12); }
+
+.event-card.task-card { border-color: rgba(47, 158, 106, 0.22); }
 
 .cal-event {
   margin-top: 6px;

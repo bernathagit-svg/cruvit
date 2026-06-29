@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250631e">
+<link rel="stylesheet" href="styles.css?v=20250632a">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -81,7 +81,7 @@
         </button>
         <button type="button" class="mood-stat mood-stat-btn" onclick="event.stopPropagation();setTab('plants')">
           <b id="gardenPlantCount">1</b>
-          <span class="stat-label"><span class="stat-ico">🪴</span> <span id="gardenPlantLabel">Plants in garden</span></span>
+          <span class="stat-label"><span class="stat-ico">🌸</span> <span id="gardenPlantLabel">Plants in garden</span></span>
         </button>
         <button type="button" class="mood-stat mood-stat-btn" onclick="showMoodStatPanel('today')">
           <b id="todayTaskCount">1</b>
@@ -89,7 +89,7 @@
         </button>
       </div>
       <button type="button" class="mood-focus" id="moodFocusBtn">
-        <span class="mood-focus-ico" aria-hidden="true">🪴</span>
+        <span class="mood-focus-ico" aria-hidden="true">🌿</span>
         <span class="mood-focus-copy"><span class="mood-focus-label" id="moodFocusLabel">Today's focus:</span> <b id="moodFocusText">Water Rosemary</b></span>
         <em id="moodFocusLink">Tasks ›</em>
       </button>
@@ -103,7 +103,7 @@
         <small>Tasks<br>this week</small>
       </div>
       <div class="rail-row">
-        <span class="rail-icon">🪴</span>
+        <span class="rail-icon">⚠️</span>
         <b id="attentionCountRail">1</b>
         <small>Plant needs<br>attention</small>
       </div>
@@ -255,7 +255,7 @@
     <h2>Save your garden</h2>
     <p class="login-lead">Sign in to keep your plants, tasks and rewards synced.</p>
     <p class="login-error hidden" id="loginError" role="alert"></p>
-    <p class="login-social-note hidden" id="loginSocialNote">Google and Facebook buttons appear once social sign-in keys are added in Netlify.</p>
+    <p class="login-social-note hidden" id="loginSocialNote">Sign in with email below to save your garden on this device. Google/Facebook appear once keys are added in Netlify.</p>
     <input class="field" id="emailField" type="email" placeholder="Email address" autocomplete="email">
     <input class="field" id="passwordField" type="password" placeholder="Password" autocomplete="current-password">
     <button type="button" class="btn main login-btn" onclick="loginWithEmail()">Continue</button>
@@ -281,7 +281,7 @@
   </div>
 </div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
-<script src="garden-modes.js?v=20250630f"></script>
+<script src="garden-modes.js?v=20250631a"></script>
 <script>
 
 const PLANT_LIBRARY=[
@@ -459,6 +459,7 @@ let currentMonthIndex=new Date().getMonth();
 let selectedDay=new Date().getDate();
 let openMenu=null;
 let showAllTasks=false;
+let showCarePlan=false;
 let currentPlantSetup={slug:null,source:'My Garden'};
 let addPlantSearchState={source:null,query:'',results:[],liveProfile:null,loading:false};
 let calendarYear=new Date().getFullYear();
@@ -612,6 +613,22 @@ function taskUrgencyScore(t){
   return score;
 }
 function datePlusDaysIso(days){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
+const CARE_PLAN_HORIZON_DAYS=180;
+function isCoreCareTaskTitle(title){
+  return /water|moisture|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat|protect|cover|drain|check|inspect/.test(String(title||'').toLowerCase());
+}
+function isPlannedCareTask(t){
+  if(!t||taskDone(t)||isWeatherTask(t))return false;
+  if(!isCoreCareTaskTitle(t[1]))return false;
+  const iso=taskIsoValue(t);
+  if(!iso)return false;
+  return iso<=datePlusDaysIso(CARE_PLAN_HORIZON_DAYS);
+}
+function plannedCareTaskEntries(){
+  return (data.tasks||[]).map((t,i)=>({t,i,score:taskUrgencyScore(t)}))
+    .filter(x=>isPlannedCareTask(x.t))
+    .sort((a,b)=>{const ai=taskIsoValue(a.t)||'9999-99-99';const bi=taskIsoValue(b.t)||'9999-99-99';return ai.localeCompare(bi)||b.score-a.score;});
+}
 function isCompanionActionableTask(t){
   if(!t||taskDone(t))return false;
   const title=String(t[1]||'').toLowerCase();
@@ -665,6 +682,10 @@ function visibleCareTaskCount(){
   return companionOpenTaskEntries().length;
 }
 function focusedTaskIndexes(){
+  if(showCarePlan){
+    const planned=plannedCareTaskEntries();
+    return planned.slice(0,Math.min(planned.length,25)).map(x=>x.i);
+  }
   const open=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
   const limit=showAllTasks?Math.min(open.length,10):1;
   return open.slice(0,limit).map(x=>x.i);
@@ -734,23 +755,42 @@ function finalizePlantListChange(){
   refreshOpenTaskPanels();
   render();
 }
-function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
+function toggleAllTasks(){showAllTasks=!showAllTasks;showCarePlan=false;render()}
+function toggleCarePlan(){showCarePlan=!showCarePlan;showAllTasks=false;render()}
 function renderCalendar(){
   const week=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const firstDay=new Date(calendarYear,currentMonthIndex,1).getDay();
   const daysInMonth=new Date(calendarYear,currentMonthIndex+1,0).getDate();
   const eventsByDay={};
+  const tasksByDay={};
   data.events.forEach((e,i)=>{if(eventToMonth(e)===currentMonthIndex){const day=eventToDay(e,i);(eventsByDay[day]=eventsByDay[day]||[]).push(e)}});
+  (data.tasks||[]).forEach(t=>{
+    if(taskDone(t))return;
+    const iso=taskIsoValue(t);
+    const p=iso?isoParts(iso):null;
+    if(!p||p.month!==currentMonthIndex||p.year!==calendarYear)return;
+    (tasksByDay[p.day]=tasksByDay[p.day]||[]).push(t);
+  });
   let cells=week.map(w=>`<div class="weekday">${w}</div>`).join('');
   for(let i=0;i<firstDay;i++)cells+=`<div class="day empty"></div>`;
   for(let d=1;d<=daysInMonth;d++){
-    const events=eventsByDay[d]||[];const ev=events[0];const type=ev?eventType(ev):'';
+    const events=eventsByDay[d]||[];
+    const dayTasks=tasksByDay[d]||[];
+    const ev=events[0];
+    const taskPreview=dayTasks[0];
+    const type=ev?eventType(ev):(taskPreview?'task':'');
+    const previewLabel=ev?ev[1]:(taskPreview?taskPreview[1]:'');
     const now=new Date();
     const isToday=(currentMonthIndex===now.getMonth()&&calendarYear===now.getFullYear()&&d===now.getDate());
-    cells+=`<div class="day ${isToday?'today':''} ${d===selectedDay?'selected':''}" onclick="selectCalendarDay(${d})"><span class="date">${d}</span>${ev?`<div class="cal-event ${type}">${ev[1]}</div>`:''}</div>`
+    const taskBadge=dayTasks.length?`<span class="cal-task-count">${dayTasks.length}</span>`:'';
+    cells+=`<div class="day ${isToday?'today':''} ${d===selectedDay?'selected':''} ${dayTasks.length?'has-tasks':''}" onclick="selectCalendarDay(${d})"><span class="date">${d}${taskBadge}</span>${previewLabel?`<div class="cal-event ${type}">${escapeHtml(String(previewLabel).slice(0,28))}</div>`:''}</div>`
   }
   const dayEvents=eventsByDay[selectedDay]||[];
-  const details=dayEvents.length?dayEvents.map(e=>`<div class="event-card"><div class="event-icon">${eventIcon(e)}</div><div><b>${e[1]}</b><span>${e[2]}</span></div></div>`).join(''):`<div class="empty-day-note">No garden activity saved for this day. Use “Add note” to save something here.</div>`;
+  const dayTasks=(tasksByDay[selectedDay]||[]).map(t=>`<div class="event-card task-card"><div class="event-icon">${t[0]||'🌿'}</div><div><b>${escapeHtml(t[1])}</b><span>${escapeHtml(t[2])}</span></div></div>`).join('');
+  const details=(dayEvents.length||dayTasks)?dayEvents.map(e=>`<div class="event-card"><div class="event-icon">${eventIcon(e)}</div><div><b>${e[1]}</b><span>${e[2]}</span></div></div>`).join('')+dayTasks:`<div class="empty-day-note">No garden activity saved for this day. Use “Add note” to save something here.</div>`;
+  const taskCount=(tasksByDay[selectedDay]||[]).length;
+  const eventCount=dayEvents.length;
+  const daySummary=taskCount||eventCount?`${eventCount?eventCount+' saved event'+(eventCount>1?'s':''):''}${eventCount&&taskCount?' · ':''}${taskCount?taskCount+' planned care task'+(taskCount>1?'s':''):''}`:'No saved events yet';
   document.getElementById('timeline').innerHTML=`
     <div class="calendar-top">
       <div class="month-nav">
@@ -765,7 +805,7 @@ function renderCalendar(){
     <div class="calendar-split">
       <div class="calendar-left"><div class="calendar">${cells}</div></div>
       <div class="calendar-side">
-        <div class="event-detail"><div class="event-detail-head"><div><h4>${monthNames[currentMonthIndex]} ${selectedDay}</h4><small>${dayEvents.length?dayEvents.length+' saved event'+(dayEvents.length>1?'s':''):'No saved events yet'}</small></div></div>${details}</div>
+        <div class="event-detail"><div class="event-detail-head"><div><h4>${monthNames[currentMonthIndex]} ${selectedDay}</h4><small>${daySummary}</small></div></div>${details}</div>
       </div>
     </div>`
 }
@@ -1176,16 +1216,83 @@ function labelFromIso(iso){const p=isoParts(iso); if(!p)return 'This week'; if(i
 function taskDueText(iso,note){return `${labelFromIso(iso)} · ${note}`}
 function taskMatchesPlant(t,plantName){return normalizeQuery(t?.[1]||'').includes(normalizeQuery(plantName||''))}
 function taskTitleExists(title,plantName){const tNorm=normalizeQuery(title); const pNorm=normalizeQuery(plantName||''); return (data.tasks||[]).some(t=>normalizeQuery(t?.[1]||'')===tNorm || (pNorm && normalizeQuery(t?.[1]||'').includes(pNorm) && normalizeQuery(t?.[1]||'').includes(tNorm.slice(0,12))))}
+function taskExistsForPlantAt(title,plantName,iso){
+  const tNorm=normalizeQuery(title);
+  const pNorm=normalizeQuery(plantName||'');
+  return (data.tasks||[]).some(t=>{
+    if(taskDone(t))return false;
+    if(normalizeQuery(t[1]||'')!==tNorm)return false;
+    if(pNorm&&!taskMatchesPlant(t,plantName))return false;
+    return taskIsoValue(t)===iso;
+  });
+}
 function isTaskOverdue(t){if(taskDone(t))return false; const iso=t?.[4]; if(!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso))return false; return iso<todayIso()}
 function autoTaskPriority(title,ref){const txt=(title+' '+(ref.status||'')+' '+(ref.warnings||[]).join(' ')).toLowerCase(); if(txt.includes('disease')||txt.includes('pest')||txt.includes('check')||txt.includes('yellow')||txt.includes('wilting'))return 'High'; if(txt.includes('fertiliz')||txt.includes('prun')||txt.includes('feed'))return 'Medium'; return 'Low'}
 function addAutoCareTask(ref,title,offset,note,icon){
   const plantName=ref.name||'Plant';
-  if(taskTitleExists(title,plantName))return false;
   const iso=isoFromOffset(offset);
+  if(taskExistsForPlantAt(title,plantName,iso))return false;
   const priority=autoTaskPriority(title,ref);
   data.tasks.push([icon||ref.icon||'🌿',title,taskDueText(iso,note||'auto-generated care task'),priority,iso,true,plantName,false]);
   data.events.unshift([labelFromIso(iso),'Care task created',`${title} · ${plantName}`]);
   return true;
+}
+function plantWaterIntervalDays(ref){
+  const w=String(ref.water||'').toLowerCase();
+  if(/low|dry|succulent|cactus|infrequent|sparing|drought/.test(w))return 14;
+  if(/high|moist|constant|daily|often|wet/.test(w))return 4;
+  return 7;
+}
+function plantWantsFertilizer(ref){
+  const blob=[ref.season,ref.guide,ref.growth,(ref.tags||[]).join(''),...(ref.warnings||[])].join(' ').toLowerCase();
+  return /fertiliz|feed|fruit|flower|vegetable|herb|tree|citrus|rose|tomato|annual|spring|summer|דשן|דישון/.test(blob);
+}
+function plantWantsPruning(ref){
+  const blob=[ref.season,ref.guide,ref.growth,ref.size].join(' ').toLowerCase();
+  return /prun|trim|clip|harvest|deadhead|גיז/.test(blob);
+}
+function plantCarePlanReachDays(plantName){
+  const today=todayIso();
+  let furthest='';
+  (data.tasks||[]).forEach(t=>{
+    if(taskDone(t)||!taskMatchesPlant(t,plantName))return;
+    const iso=taskIsoValue(t);
+    if(!iso||iso<today)return;
+    if(!furthest||iso>furthest)furthest=iso;
+  });
+  if(!furthest)return 0;
+  const start=isoParts(today),end=isoParts(furthest);
+  if(!start||!end)return 0;
+  const ms=new Date(end.year,end.month,end.day)-new Date(start.year,start.month,start.day);
+  return Math.max(0,Math.round(ms/86400000));
+}
+function maintainSeasonalCarePlanForPlant(ref){
+  const plantName=ref.name||'Plant';
+  const horizon=CARE_PLAN_HORIZON_DAYS;
+  const beforeReach=plantCarePlanReachDays(plantName);
+  const waterEvery=plantWaterIntervalDays(ref);
+  let created=0;
+  for(let offset=8;offset<=horizon;offset+=waterEvery){
+    if(addAutoCareTask(ref,`Water ${plantName}`,offset,`6-month plan · every ${waterEvery} days`,'💧'))created++;
+  }
+  if(plantWantsFertilizer(ref)){
+    for(let offset=30;offset<=horizon;offset+=45){
+      if(addAutoCareTask(ref,`Fertilize ${plantName}`,offset,'6-month plan · feed cycle','🌿'))created++;
+    }
+  }
+  if(plantWantsPruning(ref)){
+    for(let offset=90;offset<=horizon;offset+=90){
+      if(addAutoCareTask(ref,`Prune ${plantName}`,offset,'6-month plan · trim window','✂️'))created++;
+    }
+  }
+  for(let offset=30;offset<=horizon;offset+=30){
+    if(addAutoCareTask(ref,`Check ${plantName} leaves`,offset,'6-month plan · monthly check','🔎'))created++;
+  }
+  const afterReach=plantCarePlanReachDays(plantName);
+  if(created && afterReach>beforeReach){
+    data.events.unshift(['Today','Care plan updated',`${plantName} · ${afterReach} days ahead`]);
+  }
+  return created;
 }
 function inferWaterTask(ref){
   const w=String(ref.water||'').toLowerCase();
@@ -1597,9 +1704,9 @@ function syncWeatherCareTasks(){
 function syncPlantCareTasks(){
   activeGardenPlants().forEach(p=>{
     if(p.prefs?.autoTasks===false)return;
-    if(companionOpenTasksForPlant(p.name).length)return;
     const ref=Object.assign({},plantMeta(p),p);
-    generateCareTasksForPlant(ref,p.source||'My Garden');
+    if(!companionOpenTasksForPlant(p.name).length)generateCareTasksForPlant(ref,p.source||'My Garden');
+    maintainSeasonalCarePlanForPlant(ref);
   });
 }
 
@@ -2074,13 +2181,25 @@ function render(){syncHealthScore();
   setTimeout(hydratePlantCardImages,0);
   
   const actionableTasks=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
-  const openTotal=actionableTasks.length;
-  const hiddenCount=Math.max(0,openTotal-focusIndexes.length);
-  const tasksTitle=document.getElementById('tasksTitle'); if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
-  const tasksSubtitle=document.getElementById('tasksSubtitle'); if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Everything else waits until it matters.':'Everything looks good. Enjoy your garden today.';
-  const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
+  const openTotal=showCarePlan?focusedTaskIndexes().length:actionableTasks.length;
+  const hiddenCount=showCarePlan?0:Math.max(0,openTotal-focusIndexes.length);
+  const planCount=plannedCareTaskEntries().filter(x=>{const iso=taskIsoValue(x.t);return iso&&iso>datePlusDaysIso(7);}).length;
+  const tasksTitle=document.getElementById('tasksTitle');
+  if(tasksTitle)tasksTitle.textContent=showCarePlan?'6-month care plan':openTotal?'Today’s focus':'Your garden can rest today';
+  const tasksSubtitle=document.getElementById('tasksSubtitle');
+  if(tasksSubtitle)tasksSubtitle.textContent=showCarePlan?'Seasonal watering, feeding and checks based on your plants.':openTotal?'Only the most useful care is shown first. Everything else waits until it matters.':'Everything looks good. Enjoy your garden today.';
+  const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=(!showCarePlan&&openTotal)?'inline-block':'none';
   const taskHtml=focusIndexes.map(i=>{const t=data.tasks[i];return `<div class="task ${taskDone(t)?'done':''}"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${t[1]}</b><span>${t[2]}</span></div><div class="task-side"><button class="priority" onclick="completeTask(${i})">${taskDone(t)?'Done':t[3]}</button><div class="card-actions"><button type="button" class="kebab" onclick="toggleTaskMenu(event,${i})" aria-label="Task options">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div></div>`}).join('');
-  const footer= openTotal===0 ? `<div class="garden-rest-note">🌿 No urgent care is needed right now. Cruvit will only surface tasks when they are actually useful.</div>` : hiddenCount>0 && !showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Upcoming this week (${hiddenCount})</button></div>` : showAllTasks ? `<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Show only today’s focus</button></div>` : '';
+  let footer='';
+  if(showCarePlan){
+    footer=`<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleCarePlan()">Back to today’s focus</button></div>`;
+  }else if(openTotal===0 && !planCount){
+    footer=`<div class="garden-rest-note">🌿 No urgent care is needed right now. Cruvit will only surface tasks when they are actually useful.</div>`;
+  }else if(!showAllTasks && (hiddenCount>0 || planCount>0)){
+    footer=`<div class="tasks-footer">${hiddenCount>0?`<button class="show-all-tasks" onclick="toggleAllTasks()">Upcoming this week (${hiddenCount})</button>`:''}${planCount>0?`<button class="show-all-tasks" onclick="toggleCarePlan()">6-month care plan (${planCount})</button>`:''}</div>`;
+  }else if(showAllTasks){
+    footer=`<div class="tasks-footer"><button class="show-all-tasks" onclick="toggleAllTasks()">Show only today’s focus</button>${planCount>0?`<button class="show-all-tasks" onclick="toggleCarePlan()">6-month care plan (${planCount})</button>`:''}</div>`;
+  }
   document.getElementById('tasks').innerHTML=taskHtml+footer;
 
   renderCalendar();renderCart();renderRewards();
@@ -3367,26 +3486,45 @@ function applyUserSession(user,provider){
   service.save(data);
   setSocialSignInLoading('google',false);
   setSocialSignInLoading('facebook',false);
+  setEmailSignInLoading(false);
   hideLogin();
   render();
 }
 function finishLocalSignIn({email,name,provider}){applyUserSession({id:'local-'+Date.now(),email:email||'',name:name||email||'Garden member',user_metadata:{full_name:name||''}},provider||'email')}
+function setEmailSignInLoading(on){
+  const btn=document.querySelector('#login .btn.main.login-btn');
+  if(!btn)return;
+  btn.disabled=!!on;
+  btn.classList.toggle('is-loading',!!on);
+  btn.textContent=on?'Signing in…':'Continue';
+}
 async function loginWithEmail(){
   clearLoginError();
   const email=String(document.getElementById('emailField')?.value||'').trim();
   const password=String(document.getElementById('passwordField')?.value||'');
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showLoginError('Enter a valid email address.');return}
   if(!password||password.length<4){showLoginError('Enter your password (at least 4 characters).');return}
+  setEmailSignInLoading(true);
   try{
     await initAuth();
     if(authState.supabase){
       const {error}=await authState.supabase.auth.signInWithPassword({email,password});
-      if(error){showLoginError(error.message||'Could not sign in.');return}
+      if(error){
+        if(/invalid login credentials/i.test(error.message||'')){
+          const {error:signUpError}=await authState.supabase.auth.signUp({email,password});
+          if(signUpError){showLoginError(signUpError.message||'Could not create account.');return}
+          showLoginError('Account created. Check your email to confirm, then sign in again.');
+          return;
+        }
+        showLoginError(error.message||'Could not sign in.');return;
+      }
       return;
     }
     finishLocalSignIn({email,name:email.split('@')[0],provider:'email'});
   }catch(err){
     showLoginError(err.message||'Could not sign in.');
+  }finally{
+    setEmailSignInLoading(false);
   }
 }
 function handleGoogleCredential(response){
@@ -3481,11 +3619,10 @@ async function prepareSocialSignIn(){
     const useSupabase=!!authState.supabase;
     const hasGoogle=useSupabase||!!cfg.googleClientId;
     const hasFacebook=useSupabase||!!cfg.facebookAppId;
-    googleFallback?.classList.toggle('hidden',!hasGoogle);
-    fbBtn?.classList.toggle('hidden',!hasFacebook);
+    googleFallback?.classList.remove('hidden');
+    fbBtn?.classList.remove('hidden');
     const socialNote=document.getElementById('loginSocialNote');
     if(socialNote)socialNote.classList.toggle('hidden',hasGoogle||hasFacebook||useSupabase);
-    if(!hasGoogle&&!hasFacebook&&!useSupabase)return;
     if(!useSupabase&&cfg.googleClientId&&googleMount){
       try{
         await ensureGoogleScript();
@@ -3539,7 +3676,12 @@ async function loginWithGoogle(){
       await loginWithGoogleDirect(cfg);
       return;
     }
-    throw new Error('Google sign-in is not configured yet. Add GOOGLE_CLIENT_ID in Netlify, or connect Supabase Auth.');
+    const email=String(document.getElementById('emailField')?.value||'').trim();
+    if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      finishLocalSignIn({email,name:email.split('@')[0].replace(/\./g,' '),provider:'google'});
+      return;
+    }
+    throw new Error('Enter your email above, or add GOOGLE_CLIENT_ID in Netlify for full Google sign-in.');
   }catch(err){
     setSocialSignInLoading('google',false);
     console.error('Google sign-in failed',err);
@@ -3583,7 +3725,12 @@ async function loginWithFacebook(){
       await loginWithFacebookDirect(cfg);
       return;
     }
-    throw new Error('Facebook sign-in is not configured yet. Add FACEBOOK_APP_ID in Netlify, or connect Supabase Auth.');
+    const email=String(document.getElementById('emailField')?.value||'').trim();
+    if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      finishLocalSignIn({email,name:email.split('@')[0].replace(/\./g,' '),provider:'facebook'});
+      return;
+    }
+    throw new Error('Enter your email above, or add FACEBOOK_APP_ID in Netlify for full Facebook sign-in.');
   }catch(err){
     setSocialSignInLoading('facebook',false);
     console.error('Facebook sign-in failed',err);
