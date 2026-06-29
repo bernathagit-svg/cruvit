@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250632c">
+<link rel="stylesheet" href="styles.css?v=20250632d">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 </head>
@@ -3731,26 +3731,12 @@ async function prepareSocialSignIn(){
     fbBtn?.classList.remove('hidden');
     const socialNote=document.getElementById('loginSocialNote');
     if(socialNote)socialNote.classList.toggle('hidden',hasGoogle||hasFacebook||useSupabase);
-    if(!useSupabase&&cfg.googleClientId&&googleMount){
-      try{
-        await ensureGoogleScript();
-        if(window.google?.accounts?.id){
-          window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true,use_fedcm_for_prompt:false});
-          const width=Math.min(360,Math.max(280,(googleMount.parentElement?.clientWidth||360)-48));
-          window.google.accounts.id.renderButton(googleMount,{type:'standard',theme:'outline',size:'large',text:'continue_with',width});
-          googleFallback?.classList.add('hidden');
-        }
-      }catch(err){
-        console.warn('Google button render failed',err);
-        googleFallback?.classList.remove('hidden');
-      }
-    }
   }catch(err){
     console.warn('Social sign-in setup failed',err);
   }
 }
 async function loginWithSupabaseOAuth(provider,cfg){
-  const {error}=await authState.supabase.auth.signInWithOAuth({
+  const {data,error}=await authState.supabase.auth.signInWithOAuth({
     provider,
     options:{redirectTo:authRedirectUrl(),queryParams:provider==='google'?{prompt:'select_account'}:undefined}
   });
@@ -3758,6 +3744,10 @@ async function loginWithSupabaseOAuth(provider,cfg){
     if(provider==='google'&&cfg.googleClientId)return loginWithGoogleDirect(cfg);
     if(provider==='facebook'&&cfg.facebookAppId)return loginWithFacebookDirect(cfg);
     throw error;
+  }
+  if(data?.url){
+    window.location.assign(data.url);
+    return 'redirect';
   }
 }
 async function loginWithGoogleDirect(cfg){
@@ -3767,38 +3757,58 @@ async function loginWithGoogleDirect(cfg){
     window.google.accounts.id.initialize({client_id:cfg.googleClientId,callback:handleGoogleCredential,auto_select:false,cancel_on_tap_outside:true,use_fedcm_for_prompt:false});
   }
   const tokenClient=getGoogleTokenClient(cfg.googleClientId);
-  if(!tokenClient)throw new Error('Google sign-in could not start in this browser.');
-  tokenClient.requestAccessToken({prompt:'select_account'});
+  if(tokenClient){
+    tokenClient.requestAccessToken({prompt:'select_account'});
+    return 'popup';
+  }
+  if(window.google?.accounts?.id?.prompt){
+    return new Promise((resolve,reject)=>{
+      window.google.accounts.id.prompt(notification=>{
+        if(notification?.isNotDisplayed?.()||notification?.isSkippedMoment?.()){
+          reject(new Error('Google sign-in could not open in this browser. Try email sign-in or another browser.'));
+          return;
+        }
+        resolve('prompt');
+      });
+    });
+  }
+  throw new Error('Google sign-in could not start in this browser.');
 }
 async function loginWithGoogle(){
   clearLoginError();
   setSocialSignInLoading('google',true);
+  let keepLoading=false;
   try{
     await initAuth();
     const cfg=await loadAuthConfig();
+    const hasGoogleOAuth=!!authState.supabase||!!cfg.googleClientId;
     if(authState.supabase){
       try{
-        await loginWithSupabaseOAuth('google',cfg);
+        const result=await loginWithSupabaseOAuth('google',cfg);
+        if(result==='redirect'){keepLoading=true;return}
         return;
       }catch(err){
         console.warn('Supabase Google OAuth unavailable',err);
         if(cfg.googleClientId){
-          try{await loginWithGoogleDirect(cfg);return}catch(directErr){console.warn('Direct Google OAuth unavailable',directErr)}
+          const mode=await loginWithGoogleDirect(cfg);
+          if(mode==='popup'){keepLoading=true;return}
+          return;
         }
       }
     }else if(cfg.googleClientId){
-      try{
-        await loginWithGoogleDirect(cfg);
-        return;
-      }catch(err){
-        console.warn('Google OAuth unavailable',err);
-      }
+      const mode=await loginWithGoogleDirect(cfg);
+      if(mode==='popup'){keepLoading=true;return}
+      return;
     }
-    if(await tryLocalSignInFromForm('google'))return;
+    if(hasGoogleOAuth){
+      showLoginError('Could not open Google sign-in. Try again or use Continue with your email.');
+      return;
+    }
+    showLoginError('Google sign-in is not set up yet. Use Continue with your email above.');
   }catch(err){
-    showLoginError(err.message||'Could not sign in.');
+    showLoginError(err.message||'Could not sign in with Google.');
   }finally{
-    setSocialSignInLoading('google',false);
+    if(!keepLoading)setSocialSignInLoading('google',false);
   }
 }
 async function loginWithFacebookDirect(cfg){
@@ -3827,32 +3837,36 @@ async function loginWithFacebookDirect(cfg){
 async function loginWithFacebook(){
   clearLoginError();
   setSocialSignInLoading('facebook',true);
+  let keepLoading=false;
   try{
     await initAuth();
     const cfg=await loadAuthConfig();
+    const hasFacebookOAuth=!!authState.supabase||!!cfg.facebookAppId;
     if(authState.supabase){
       try{
-        await loginWithSupabaseOAuth('facebook',cfg);
+        const result=await loginWithSupabaseOAuth('facebook',cfg);
+        if(result==='redirect'){keepLoading=true;return}
         return;
       }catch(err){
         console.warn('Supabase Facebook OAuth unavailable',err);
         if(cfg.facebookAppId){
-          try{await loginWithFacebookDirect(cfg);return}catch(directErr){console.warn('Direct Facebook OAuth unavailable',directErr)}
+          await loginWithFacebookDirect(cfg);
+          return;
         }
       }
     }else if(cfg.facebookAppId){
-      try{
-        await loginWithFacebookDirect(cfg);
-        return;
-      }catch(err){
-        console.warn('Facebook OAuth unavailable',err);
-      }
+      await loginWithFacebookDirect(cfg);
+      return;
     }
-    if(await tryLocalSignInFromForm('facebook'))return;
+    if(hasFacebookOAuth){
+      showLoginError('Could not open Facebook sign-in. Try again or use Continue with your email.');
+      return;
+    }
+    showLoginError('Facebook sign-in is not set up yet. Use Continue with your email above.');
   }catch(err){
-    showLoginError(err.message||'Could not sign in.');
+    showLoginError(err.message||'Could not sign in with Facebook.');
   }finally{
-    setSocialSignInLoading('facebook',false);
+    if(!keepLoading)setSocialSignInLoading('facebook',false);
   }
 }
 function loadSupabaseScript(){
