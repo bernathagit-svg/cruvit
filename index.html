@@ -39,7 +39,7 @@
   <div class="panel intro">
     <div class="intro-leaves" aria-hidden="true"></div>
     <div class="intro-content">
-      <div class="greeting" id="userGreeting">🍃 Good morning, Hagit</div>
+      <div class="greeting" id="userGreeting">🍃 Good morning</div>
       <h2 id="introHeadline">Your garden is looking great</h2>
       <div class="tip-box" id="dailyTipBox" aria-labelledby="dailyTipHeading">
         <div class="tip-box-head">
@@ -127,7 +127,7 @@
       </svg>
     </button>
     <figcaption class="garden-snapshot-caption">
-      <b id="gardenTitle">Hagit’s garden</b>
+      <b id="gardenTitle">Your garden</b>
       <span id="gardenLocationLabel">Western Galilee · Mediterranean</span>
       <button type="button" class="location-setup-btn" onclick="event.stopPropagation();openLocationModal()">📍 Set garden location</button>
       <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
@@ -451,7 +451,7 @@ function initCalendarFromToday(){
 }
 const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const GARDEN_USER_SESSION_KEYS=['cruvit_session','cruvit_user','cruvit_auth'];
-const DEFAULT_GARDEN_USER_NAME='Hagit';
+let gardenUserProfile={name:'',email:''};
 function readMainAppUserSession(){
   for(const key of GARDEN_USER_SESSION_KEYS){
     try{
@@ -459,38 +459,30 @@ function readMainAppUserSession(){
       if(!raw)continue;
       const parsed=JSON.parse(raw);
       const name=parsed?.name||parsed?.user?.name||parsed?.user?.user_metadata?.full_name;
-      if(name)return {name:String(name).trim(),email:parsed?.email||parsed?.user?.email||''};
+      if(name)return {name:String(name).trim(),email:String(parsed?.email||parsed?.user?.email||'').trim()};
     }catch(_){}
   }
   return null;
 }
-function syncGardenUserProfile(){
+function resolveGardenUserProfile(){
   const fromWindow=window.__CRUVIT_USER__;
   if(fromWindow?.name){
-    data.userName=String(fromWindow.name).trim();
-    if(fromWindow.email)data.email=fromWindow.email;
-    return data.userName;
-  }
-  const params=new URLSearchParams(window.location.search);
-  const urlName=params.get('userName')||params.get('name')||params.get('user');
-  if(urlName){
-    data.userName=String(urlName).trim();
-    return data.userName;
+    return {name:String(fromWindow.name).trim(),email:String(fromWindow.email||'').trim()};
   }
   const shell=readMainAppUserSession();
-  if(shell?.name){
-    data.userName=shell.name;
-    if(shell.email)data.email=shell.email;
-    return data.userName;
-  }
-  if(data.user?.name)data.userName=String(data.user.name).trim();
-  else if(data.userName)data.userName=String(data.userName).trim();
-  else data.userName=DEFAULT_GARDEN_USER_NAME;
-  return data.userName;
+  if(shell?.name)return shell;
+  const params=new URLSearchParams(window.location.search);
+  const urlName=params.get('userName')||params.get('name')||params.get('user');
+  if(urlName)return {name:String(urlName).trim(),email:''};
+  return {name:'',email:''};
+}
+function syncGardenUserProfile(){
+  gardenUserProfile=resolveGardenUserProfile();
+  return gardenUserProfile.name;
 }
 function gardenUserFirstName(){
   syncGardenUserProfile();
-  const name=String(data.userName||'').trim();
+  const name=String(gardenUserProfile.name||'').trim();
   if(!name)return '';
   return name.split(/\s+/)[0];
 }
@@ -518,10 +510,27 @@ function applyGardenUserLabels(){
   const titleEl=document.getElementById('gardenTitle');
   if(titleEl)titleEl.textContent=gardenTitleText();
 }
+function hookMainAppUserSync(){
+  if(window.__cruvitUserSyncHooked)return;
+  window.__cruvitUserSyncHooked=true;
+  window.addEventListener('storage',e=>{
+    if(e.key&&GARDEN_USER_SESSION_KEYS.includes(e.key)){
+      applyGardenUserLabels();
+      render();
+    }
+  });
+  window.addEventListener('message',e=>{
+    const msg=e?.data;
+    if(!msg||typeof msg!=='object')return;
+    if(msg.type==='cruvit:user'||msg.type==='CRUVIT_USER'){
+      window.__CRUVIT_USER__={name:msg.name||msg.userName||'',email:msg.email||''};
+      applyGardenUserLabels();
+      render();
+    }
+  });
+}
 window.setCruvitUser=function(profile){
   window.__CRUVIT_USER__=profile||{};
-  syncGardenUserProfile();
-  service.save(data);
   applyGardenUserLabels();
   render();
 };
@@ -3485,6 +3494,7 @@ document.addEventListener('click',function(e){
   if(top?.classList.contains('nav-open')&&!e.target.closest('#topBar'))closeMobileNav();
 });
 ensureGardenLocation();
+hookMainAppUserSync();
 syncGardenUserProfile();
 refreshGardenSession().finally(()=>{render();});
 setTab('tasks',false);
