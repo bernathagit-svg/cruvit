@@ -11,6 +11,15 @@ export async function handler(event) {
     };
   }
 
+  const apiKey = process.env.STABILITY_KEY || process.env.STABILITY_API_KEY;
+  if (!apiKey) {
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: 'Missing STABILITY_KEY or STABILITY_API_KEY server environment variable.' })
+    };
+  }
+
   try {
     const { prompt, imageBase64 } = JSON.parse(event.body);
 
@@ -44,7 +53,7 @@ export async function handler(event) {
     const response = await fetch('https://api.stability.ai/v2beta/stable-image/generate/sd3', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + process.env.STABILITY_KEY,
+        'Authorization': 'Bearer ' + apiKey,
         'Accept': 'image/*'
       },
       body: formData

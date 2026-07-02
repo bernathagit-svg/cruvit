@@ -2436,19 +2436,63 @@ function setLang(l, btn) {
 }
 
 // ── API functions ──
+const GD_FETCH_TIMEOUT_CLAUDE_MS = 60000;
+const GD_FETCH_TIMEOUT_IMAGE_MS = 90000;
+const GD_FETCH_TIMEOUT_REPLICATE_MS = 90000;
+
+function gdFetchTimeoutError(label) {
+  return new Error(label + ' took too long. Please try again � this can take up to a minute.');
+}
+
+async function gdFetch(url, options, timeoutMs) {
+  const ms = timeoutMs || GD_FETCH_TIMEOUT_IMAGE_MS;
+  if (typeof AbortController === 'undefined') return fetch(url, options);
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, Object.assign({}, options, { signal: ctrl.signal }));
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw gdFetchTimeoutError('The design service');
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function gdHideLoading() {
+  const ld = document.getElementById('s-loading');
+  if (ld) ld.style.display = 'none';
+}
+
+function gdShowGenerationError(screenId, errElId, message) {
+  gdHideLoading();
+  if (screenId && typeof show === 'function') show(screenId);
+  if (errElId) {
+    const el = document.getElementById(errElId);
+    if (el) {
+      el.textContent = 'Error: ' + message;
+      el.classList.add('show');
+    }
+  }
+}
+
 async function claude(messages, maxT=1500){
-  const r=await fetch('/.netlify/functions/gd-claude',{
+  const r=await gdFetch('/.netlify/functions/gd-claude',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:maxT,messages})
-  });
+  }, GD_FETCH_TIMEOUT_CLAUDE_MS);
   if(!r.ok){
     throw new Error(r.status===404
       ? 'AI design service is not available in this preview. It requires a Netlify deploy (gd-claude function).'
+      : r.status===504
+      ? 'AI analysis timed out on the server. Please try again.'
       : 'AI design service error ('+r.status+'). Please try again.');
   }
   const d=await r.json();
-  if(d.error)throw new Error(d.error.message);
+  if(d.error)throw new Error(d.error.message || String(d.error));
+  if(d.type==='error')throw new Error(d.error?.message || 'AI design service error. Please try again.');
+  if(!d.content || !d.content[0] || !d.content[0].text) throw new Error('AI returned an empty response. Please try again.');
   return d.content[0].text;
 }
 
@@ -2460,14 +2504,16 @@ async function stabilityImg2Img(prompt, imageBase64, useOpenAI){
   const enhancedPrompt = useOpenAI
     ? prompt + '. IMPORTANT: realistic plant proportions, plants fit naturally in the interior space, plants are grounded and integrated.'
     : prompt + '. CRITICAL: add ONLY the exact named plants listed. Each plant must be botanically accurate, realistically scaled, rooted in the soil. Do NOT change the garden structure, paths, walls, or furniture.';
-  const r = await fetch(endpoint, {
+  const r = await gdFetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ prompt: enhancedPrompt, imageBase64 })
-  });
-  if(!r.ok) throw new Error('Image generation failed. Please try again.');
+  }, GD_FETCH_TIMEOUT_IMAGE_MS);
+  if(!r.ok) throw new Error(r.status===504
+    ? 'Image generation timed out on the server. Please try again.'
+    : 'Image generation failed (' + r.status + '). Please try again.');
   const d = await r.json();
-  if(d.error) throw new Error('Image error: ' + d.error);
+  if(d.error) throw new Error('Image error: ' + (typeof d.error === 'string' ? d.error : (d.error.message || JSON.stringify(d.error))));
   if(!d.imageUrl) throw new Error('No image returned');
   return d.imageUrl;
 }
@@ -2615,28 +2661,40 @@ async function inpaintWithSDXL(prompt, imageBase64, placements, imageW, imageH) 
 }
 
 async function replicate(prompt){
-  const startR=await fetch('/.netlify/functions/gd-replicate',{
+  const startR=await gdFetch('/.netlify/functions/gd-replicate',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({action:'start', prompt})
-  });
-  const pred=await startR.json();
-  if(pred.error)throw new Error('Replicate error: ' + JSON.stringify(pred.error));
-  if(!pred.id)throw new Error('No prediction ID. Response: ' + JSON.stringify(pred));
-  for(let i=0;i<90;i++){
-    await new Promise(r=>setTimeout(r,2000));
-    try{
-      const pollR=await fetch('/.netlify/functions/gd-replicate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'poll', predictionId:pred.id})
-      });
-      const res=await pollR.json();
-      if(res.status==='succeeded')return Array.isArray(res.output)?res.output[0]:res.output;
-      if(res.status==='failed')throw new Error('Image generation failed: '+(res.error||'unknown'));
-    }catch(pollErr){}
+  }, GD_FETCH_TIMEOUT_REPLICATE_MS);
+  if(!startR.ok){
+    throw new Error(startR.status===504
+      ? 'Sketch generation timed out on the server. Please try again.'
+      : 'Sketch image service error (' + startR.status + '). Please try again.');
   }
-  throw new Error('Timeout — please try again');
+  const pred=await startR.json();
+  if(pred.status===401 || pred.title==='Unauthenticated'){
+    throw new Error('Sketch generation is not configured (missing Replicate API token on server).');
+  }
+  if(pred.error)throw new Error('Replicate error: ' + (pred.error.message || JSON.stringify(pred.error)));
+  if(!pred.id)throw new Error('Could not start sketch generation. ' + (pred.detail || pred.title || 'Please try again.'));
+  const deadline=Date.now()+GD_FETCH_TIMEOUT_REPLICATE_MS;
+  for(let i=0;i<45;i++){
+    if(Date.now()>deadline) throw new Error('Sketch image generation took too long. Please try again.');
+    await new Promise(r=>setTimeout(r,2000));
+    const pollR=await gdFetch('/.netlify/functions/gd-replicate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'poll', predictionId:pred.id})
+    }, 20000);
+    if(!pollR.ok) throw new Error('Could not check sketch generation status (' + pollR.status + ').');
+    const res=await pollR.json();
+    if(res.status===401 || res.title==='Unauthenticated'){
+      throw new Error('Sketch generation auth failed. Check Replicate API token on server.');
+    }
+    if(res.status==='succeeded')return Array.isArray(res.output)?res.output[0]:res.output;
+    if(res.status==='failed')throw new Error('Image generation failed: '+(res.error||res.detail||'unknown'));
+  }
+  throw new Error('Sketch image generation timed out. Please try again.');
 }
 
 // ── Location autocomplete (OpenStreetMap Nominatim) ──
@@ -2900,9 +2958,7 @@ Rules:
     showPlants(data.plants || []);
 
   } catch(e) {
-    show('s-photo');
-    document.getElementById('photoErr').textContent = 'Error: ' + e.message;
-    document.getElementById('photoErr').classList.add('show');
+    gdShowGenerationError('s-photo', 'photoErr', e.message);
   }
 }
 
@@ -3016,9 +3072,7 @@ The plants array MUST match the exact counts specified above.`}
     const afterB64 = imgUrl.startsWith('data:') ? imgUrl.split(',')[1] : null;
     showPlants(data.plants);
   }catch(e){
-    show('s-photo');
-    document.getElementById('photoErr').textContent='Error: '+e.message;
-    document.getElementById('photoErr').classList.add('show');
+    gdShowGenerationError('s-photo', 'photoErr', e.message);
   }
 }
 
@@ -3081,9 +3135,7 @@ The plants array MUST match the exact counts specified above.`}]);
     document.getElementById('resultDesc').textContent=data.description;
     showPlants(data.plants);
   }catch(e){
-    show('s-sketch');
-    document.getElementById('sketchErr').textContent='Error: '+e.message;
-    document.getElementById('sketchErr').classList.add('show');
+    gdShowGenerationError('s-sketch', 'sketchErr', e.message);
   }
 }
 </script>
@@ -3173,7 +3225,7 @@ The plants array MUST match the exact counts specified above.`}]);
       <div style="font-size:42px;margin-bottom:12px">🌱</div>
       <h2 style="margin:0 0 8px;font-size:20px;font-weight:700">Design couldn’t be generated</h2>
       <p id="gd-fatal-msg" style="margin:0 0 18px;font-size:14px;opacity:.92;line-height:1.5"></p>
-      <button type="button" onclick="document.getElementById('gd-fatal').style.display='none'" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#fff;color:#0f3d2e;font-weight:700;cursor:pointer">Back</button>
+      <button type="button" onclick="document.getElementById('gd-fatal').style.display='none';if(typeof show==='function')show('s-photo');" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#fff;color:#0f3d2e;font-weight:700;cursor:pointer">Back</button>
     </div>
   </div>
   <script>
@@ -3189,1345 +3241,7 @@ The plants array MUST match the exact counts specified above.`}]);
     }
     window.gdFatal=gdFatal;
     window.addEventListener('unhandledrejection',function(e){
-      gdFatal((e&&e.reason&&e.reason.message)||'AI generation failed.');
-    });
-    window.addEventListener('error',function(e){
-      if(e&&e.message&&/netlify|fetch|failed|ai design|json/i.test(e.message)) gdFatal(e.message);
-    });
-  })();
-  </script>
-</body>
-</html>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Update counter
-  const countEl = document.getElementById('plantsCount');
-  if (countEl) countEl.textContent = currentPlants.filter(p => p.active).length;
-
-  // Show/hide Apply button
-  const hasRemovals = currentPlants.some(p => !p.active);
-  const applyBtn = document.getElementById('applyRemovalsBtn');
-  if (applyBtn) {
-    applyBtn.style.display = hasRemovals ? 'block' : 'none';
-    const count = currentPlants.filter(p => !p.active).length;
-    applyBtn.textContent = `🔄 Apply — remove ${count} marked plant${count > 1 ? 's' : ''} from image`;
-  }
-}
-
-function togglePlant(idx) {
-  currentPlants[idx].active = !currentPlants[idx].active;
-  renderPlantsDrawer();
-  updateOverlay();
-  const err = document.getElementById('applyRemovalsErr');
-  if (err) err.style.display = 'none';
-}
-
-async function applyRemovals() {
-  const toRemove = currentPlants.filter(p => !p.active);
-  if (toRemove.length === 0) return;
-  if (!lastGeneratedB64) return;
-
-  const btn = document.getElementById('applyRemovalsBtn');
-  const err = document.getElementById('applyRemovalsErr');
-  err.style.display = 'none';
-  btn.disabled = true;
-  btn.textContent = '⏳ Removing plants from image...';
-
-  try {
-    const removeList = toRemove.map(p => p.name).join(', ');
-    const keepList = currentPlants.filter(p => p.active).map(p => p.name).join(', ');
-
-    const prompt = `Remove these plants completely from the garden: ${removeList}. Fill the space naturally with soil, grass or ground cover that matches the surroundings. Keep everything else exactly the same — same layout, same viewpoint, same background${keepList ? ', keep these plants: ' + keepList : ''}.`;
-
-    const newImgUrl = await stabilityImg2Img(prompt, lastGeneratedB64, false);
-    const afterB64 = newImgUrl.startsWith('data:') ? newImgUrl.split(',')[1] : null;
-    lastGeneratedImg = newImgUrl;
-    lastGeneratedB64 = afterB64;
-
-    if (isPhotoMode) {
-      document.getElementById('imgAfter').src = newImgUrl;
-    } else {
-      document.getElementById('imgSketch').src = newImgUrl;
-    }
-
-    // Remove the marked plants from list permanently
-    currentPlants = currentPlants.filter(p => p.active);
-    renderPlantsDrawer();
-    const countEl = document.getElementById('plantsCount');
-    if (countEl) countEl.textContent = `(${currentPlants.length})`;
-
-  } catch(e) {
-    err.textContent = 'Error: ' + e.message;
-    err.style.display = 'block';
-    // Re-enable button so user can retry
-    btn.disabled = false;
-    btn.textContent = `🔄 Apply — remove ${toRemove.length} marked plant${toRemove.length > 1 ? 's' : ''} from image`;
-    return;
-  }
-
-  btn.disabled = false;
-}
-
-// ── Flow pulse management ──
-const FLOW_STEPS = ['upload', 'loc', 'type', 'describe', 'redesign'];
-let currentFlowStep = 'upload';
-
-function setFlowPulse(step) {
-  // Remove pulse from all
-  const ids = {
-    upload: 'upIcon',
-    loc: 'flow-btn-loc1',
-    type: 'flow-btn-type1',
-    describe: 'flow-btn-describe1',
-    redesign: 'flow-btn-redesign1'
-  };
-  // Also pulse the location panel when it's the active step
-  const locPanel = document.getElementById('flow-panel-loc1');
-  if (locPanel && locPanel.style.display !== 'none') {
-    if (step === 'loc') {
-      locPanel.style.boxShadow = '0 0 0 3px rgba(61,138,80,.4)';
-      locPanel.style.borderColor = '#3d8a50';
-    } else {
-      locPanel.style.boxShadow = '';
-      locPanel.style.borderColor = '';
-    }
-  }
-  Object.values(ids).forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('flow-pulse');
-  });
-  // Add pulse to current step
-  if (step && ids[step]) {
-    const el = document.getElementById(ids[step]);
-    if (el) el.classList.add('flow-pulse');
-  }
-  currentFlowStep = step;
-}
-
-function advanceFlow(completedStep) {
-  const order = FLOW_STEPS;
-  const idx = order.indexOf(completedStep);
-  if (idx >= 0 && idx < order.length - 1) {
-    setFlowPulse(order[idx + 1]);
-  } else if (completedStep === 'redesign') {
-    setFlowPulse(null);
-  }
-}
-
-// Start pulsing on upload
-document.addEventListener('DOMContentLoaded', () => setFlowPulse('upload'));
-setTimeout(() => setFlowPulse('upload'), 100);
-
-function flowToggle(id) {
-  const panel = document.getElementById('flow-panel-' + id);
-  if (!panel) return;
-  const isOpen = panel.style.display !== 'none';
-
-  // Close all panels first
-  ['loc1','type1'].forEach(p => {
-    const el = document.getElementById('flow-panel-' + p);
-    if (el) el.style.display = 'none';
-    const btn = document.getElementById('flow-btn-' + p);
-    if (btn) { btn.style.borderColor = ''; btn.style.boxShadow = ''; }
-  });
-
-  if (!isOpen) {
-    panel.style.display = 'block';
-    // Animate icon
-    const btn = document.getElementById('flow-btn-' + id);
-    if (btn) {
-      btn.classList.add('flow-icon-active');
-      btn.style.borderColor = '#3d8a50';
-      btn.style.boxShadow = '0 0 0 4px rgba(61,138,80,0.2)';
-      setTimeout(() => btn.classList.remove('flow-icon-active'), 300);
-    }
-    // Pulse location panel when it opens
-    if (id === 'loc1') {
-      const lp = document.getElementById('flow-panel-loc1');
-      if (lp) { lp.style.borderColor = '#3d8a50'; lp.style.boxShadow = '0 0 0 3px rgba(61,138,80,.3)'; }
-    }
-  }
-}
-
-function updateFlowStyleVal(group) {
-  const selected = Object.keys(styleData[group] || {});
-  advanceFlow('type');
-  const el = document.getElementById('flow-val-type' + group);
-  if (el) el.textContent = selected.length ? selected.slice(0,2).join(', ') + (selected.length > 2 ? '…' : '') : '';
-}
-
-function toggleLangMenu() {
-  if (window.innerWidth <= 640) {
-    // Mobile: bottom sheet
-    document.getElementById('langSheet').classList.toggle('open');
-    document.getElementById('langOverlay').classList.toggle('open');
-  } else {
-    // Desktop: dropdown
-    const menu = document.getElementById('langMenu');
-    if (menu) menu.classList.toggle('open');
-  }
-}
-
-function closeLangMenu() {
-  document.getElementById('langSheet').classList.remove('open');
-  document.getElementById('langOverlay').classList.remove('open');
-  const menu = document.getElementById('langMenu');
-  if (menu) menu.classList.remove('open');
-}
-
-function selectLang(code, label) {
-  document.getElementById('langLabel').textContent = label;
-  document.querySelectorAll('.lang-option').forEach(el => el.classList.remove('active'));
-  event.target.classList.add('active');
-  closeLangMenu();
-  const dummyBtn = {classList:{add:()=>{},remove:()=>{}}};
-  setLang(code, dummyBtn);
-}
-
-document.addEventListener('click', e => {
-  const dd = document.getElementById('langDropdown');
-  if (dd && !dd.contains(e.target)) closeLangMenu();
-});
-
-
-function togglePlantsDrawer() {} // no-op: section is always visible
-
-function addAllToSmart() {
-  const activePlants = currentPlants.filter(p => p.active);
-  if (activePlants.length === 0) return;
-
-  // Add to selectedSmartPlants set (used by smart recommendations)
-  activePlants.forEach(p => selectedSmartPlants.add(p.name));
-
-  const msg = document.getElementById('smartAddMsg');
-  msg.textContent = `✓ ${activePlants.length} plant${activePlants.length > 1 ? 's' : ''} added to Smart Recommendations`;
-  msg.style.display = 'block';
-  setTimeout(() => { msg.style.display = 'none'; }, 3000);
-}
-
-// ── Zoom ──
-function openZoom(src) {
-  document.getElementById('zoomImg').src = src;
-  document.getElementById('zoomModal').classList.add('open');
-}
-function closeZoom() {
-  document.getElementById('zoomModal').classList.remove('open');
-}
-
-// ── Reset ──
-// Track last generated image for refinement
-let lastGeneratedImg = null;
-let lastGeneratedB64 = null;
-let lastGeneratedMediaType = "image/jpeg";
-let isPhotoMode = true;
-
-function getRefinePrompt() {
-  return document.getElementById('refineGeneral').value.trim();
-}
-
-async function refineDesign() {
-  const err = document.getElementById('redesignErr');
-  const btn = document.getElementById('redesignBtn');
-  let refinePrompt = getRefinePrompt();
-
-  // If field is empty, use the plant list as the request
-  if (!refinePrompt) {
-    err.textContent = 'Please describe what you want to change. e.g. "Add a lemon tree"';
-    err.classList.add('show');
-    return;
-  }
-  if (!lastGeneratedB64) {
-    err.textContent = 'No image to refine.';
-    err.classList.add('show');
-    return;
-  }
-  err.classList.remove('show');
-  btn.disabled = true;
-  btn.textContent = '⏳ Redesigning...';
-
-  // Visual descriptions for accurate plant rendering
-  const PLANT_VISUALS = {
-    'lemon tree': 'small evergreen tree with glossy dark green oval leaves, bright yellow lemons hanging from branches, white fragrant flowers, rounded canopy, rough grey-brown bark',
-    'olive tree': 'ancient gnarled grey trunk, narrow silvery-green leaves, small oval olives, wide spreading canopy',
-    'lavender': 'low mounding shrub with silver-grey foliage, tall purple flower spikes, aromatic',
-    'rosemary': 'upright woody shrub with narrow needle-like dark green leaves, small blue flowers',
-    'bougainvillea': 'vigorous climbing vine with bright magenta/pink papery bracts, thorny stems',
-    'cypress': 'tall narrow columnar evergreen tree, dark green dense foliage, pencil-thin shape',
-    'jasmine': 'climbing vine with small glossy green leaves and clusters of tiny white star-shaped flowers',
-    'agave': 'rosette of thick fleshy blue-grey spiky pointed leaves, no trunk',
-    'rose': 'thorny shrub with glossy green pinnate leaves, large fragrant blooms in various colors',
-    'fig tree': 'wide spreading tree with large deeply lobed rough green leaves, smooth grey bark, purple-green figs',
-    'palm': 'tall single trunk with ring marks, crown of long arching feather or fan-shaped fronds',
-    'bamboo': 'tall hollow segmented green culms, small narrow lance-shaped leaves, grows in dense clumps',
-  };
-  function getPlantVisual(prompt) {
-    const p = prompt.toLowerCase();
-    for (const [key, desc] of Object.entries(PLANT_VISUALS)) {
-      if (p.includes(key)) return desc;
-    }
-    return '';
-  }
-
-  // Get current style context for refine
-  const refineStyleNames = getStyleNames('1') || getStyleNames('2') || '';
-  const refinePlantGuide = getStylePlantGuide('1') || getStylePlantGuide('2') || '';
-  const styleContext = refineStyleNames ? `Garden style: ${refineStyleNames}.` : '';
-  const plantContext = refinePlantGuide ? `
-Only suggest plants that fit this style. Approved plants:
-${refinePlantGuide}` : '';
-
-  try {
-    const txt = await claude([{role:'user', content:[
-      {type:'image', source:{type:'base64', media_type:lastGeneratedMediaType, data:lastGeneratedB64}},
-      {type:'text', text:`This is a garden design image. ${styleContext}
-IMPORTANT: Keep ALL existing plants and elements EXACTLY as they are. ONLY ADD what is requested — never remove or modify existing plants.
-Addition requested: ${refinePrompt}${plantContext}
-Return ONLY valid JSON (no markdown):
-{"prompt":"this exact same garden design with all existing plants unchanged. ONLY ADD: ${refinePrompt}. Place each new plant in a DIFFERENT location — spread them across the garden, not clustered together. Left side, right side, background — vary the positions. The added plant must look exactly like this: ${getPlantVisual(refinePrompt) || 'botanically accurate and realistic'}. Do not remove or change any existing plants","plants":[{"name":"","latin":"","emoji":"🌿","role":"","warnings":[],"cm":85,"cr":"1 sentence why it suits this climate","care":{"w":"low","l":"full_sun","d":"easy","t":"1 short care tip"}}]}
-For warnings use ONLY (empty [] if none): spiky, invasive_roots, toxic_humans, toxic_pets, high_water, deep_shade, invasive_spread, allergenic.
-STRICT: plants array must contain ONLY the EXACT plant(s) being ADDED in "${refinePrompt}".
-Do NOT substitute with similar plants. Do NOT include existing plants already in the garden.`}
-    ]}]);
-
-    const data = safeParseJSON(txt);
-    const isHouseplantsRefine = Object.values(styleData['1']).some(s => s.name === 'Houseplants') || Object.values(styleData['2']).some(s => s.name === 'Houseplants');
-    const refinePlantNames = (data.plants||[]).map(p=>p.name).filter(Boolean).join(', ');
-    const refinePromptFinal = refinePlantNames
-      ? `ADD these specific plants visibly into the garden: ${refinePlantNames}. ${data.prompt}. These plants must be clearly visible and botanically accurate: ${refinePlantNames}.`
-      : data.prompt;
-    const newImgUrl = await stabilityImg2Img(refinePromptFinal, lastGeneratedB64, isHouseplantsRefine);
-    const afterB64 = newImgUrl.startsWith('data:') ? newImgUrl.split(',')[1] : null;
-    lastGeneratedImg = newImgUrl;
-    lastGeneratedB64 = afterB64;
-
-    if (isPhotoMode) {
-      document.getElementById('imgAfter').src = newImgUrl;
-    } else {
-      document.getElementById('imgSketch').src = newImgUrl;
-    }
-
-    showPlants(data.plants);
-    document.getElementById('refineGeneral').value = '';
-
-  } catch(e) {
-    err.textContent = 'Error: ' + e.message;
-    err.classList.add('show');
-  }
-
-  btn.disabled = false;
-  btn.textContent = '↺ Redesign';
-}
-
-function resetAll() {
-  closePlantPopup(null);
-  cartPlants = new Set();
-  setFlowPulse('upload');
-  photoB64 = null; photoDataUrl = null;
-  styleData = {'1':{}, '2':{}};
-  lastGeneratedImg = null; lastGeneratedB64 = null;
-  currentPlants = [];
-  specificPlants = {'1':[], '2':[]};
-  const safe = id => document.getElementById(id);
-  if(safe('plantList1')) safe('plantList1').innerHTML='';
-  if(safe('plantList2')) safe('plantList2').innerHTML='';
-  if(safe('plantsGrid')) safe('plantsGrid').innerHTML='';
-  if(safe('plantsOverlay')) safe('plantsOverlay').innerHTML='';
-  if(safe('plantsOverlaySketch')) safe('plantsOverlaySketch').innerHTML='';
-  if(safe('plantsCount')) safe('plantsCount').textContent='';
-  const sec = document.getElementById('plantsSection');
-  if (sec) sec.classList.remove('visible');
-  if(safe('refineGeneral')) safe('refineGeneral').value='';
-  if(safe('redesignErr')) safe('redesignErr').classList.remove('show');
-  document.querySelectorAll('.style-card').forEach(el => el.classList.remove('on'));
-  document.querySelectorAll('[id^="panels"]').forEach(el => el.innerHTML = '');
-  if(safe('photoPreview')) safe('photoPreview').classList.remove('show');
-  if(safe('uploadCard')) safe('uploadCard').style.display = 'grid';
-  if(safe('upIcon')) safe('upIcon').style.display = 'flex';
-  if(safe('upButtons')) safe('upButtons').style.display = 'flex';
-  show('s-photo');
-}
-function tryAgainSamePhoto() {
-  document.getElementById('photoErr').classList.remove('show');
-  show('s-photo');
-}
-
-// ── Language ──
-const T = {
-  en:{
-    subtitle:'Garden Design AI', title:'Transform your garden', desc:'Upload a photo and watch AI redesign it with beautiful plants',
-    btnUpload:'📁 Upload photo', btnCamera:'📷 Take photo', btnScratch:'📐 From scratch',
-    loadingTitle:'Designing your garden...', loadingSub:'This takes about 30–60 seconds',
-    ls1:'🔍 Analyzing your garden', ls2:'🎨 Creating design', ls3:'🖼️ Generating image', ls4:'🌱 Building plant list',
-    plantsBtn:'Added Plants List', refinePlaceholder:'Describe what you want… e.g. Add a lemon tree next to the fence, make it more colorful',
-    redesignBtn:'↺ Redesign', tryAgain:'🔁 Try again same photo', shopPlants:'🛒 Shop these plants',
-    t:'Design your <em>perfect garden</em>',s:"Choose how you'd like to get started",
-    l1:'Upload a photo',d1:'Upload a photo of your garden. Our AI will analyze and redesign it.',t1:'✨ AI Photo Redesign',
-    l2:'Design from scratch',d2:'Enter dimensions and our AI generates a complete design.',t2:'📐 Custom Blueprint'
-  ,
-    locLabel:'Your Location',
-    locPlaceholder:'Type your city...',
-    smartLabel:'Smart Plants',
-    smartVal:'Use my recommendations',
-    styleLabel:'Garden style — select one or more',
-    prefPlaceholder:'Describe what you want... e.g. Add a lemon tree next to the fence, make it more colorful',
-    submitBtn:'✨ Redesign my garden',
-    flow1title:'2. Location', flow1sub:'Tap to set\nyour city',
-    flow2title:'3. Style', flow2sub:'Choose your\ngarden style',
-    flow3title:'4. Describe', flow3sub:'Tell us what\nyou want',
-    flow4title:'5. Redesign!', flow4sub:'Tap to create\nyour garden'
-  },
-  ar:{
-    subtitle:'تصميم الحديقة بالذكاء الاصطناعي', title:'حوّل حديقتك', desc:'ارفع صورة وشاهد الذكاء الاصطناعي يعيد تصميمها بنباتات جميلة',
-    btnUpload:'📁 رفع صورة', btnCamera:'📷 التقاط صورة', btnScratch:'📐 تصميم من الصفر',
-    loadingTitle:'جارٍ تصميم حديقتك...', loadingSub:'يستغرق هذا حوالي 30-60 ثانية',
-    ls1:'🔍 تحليل حديقتك', ls2:'🎨 إنشاء التصميم', ls3:'🖼️ توليد الصورة', ls4:'🌱 بناء قائمة النباتات',
-    plantsBtn:'قائمة النباتات المضافة', refinePlaceholder:'صف ما تريد… مثال: أضف شجرة ليمون بجانب السياج',
-    redesignBtn:'↺ إعادة تصميم', tryAgain:'🔁 المحاولة مرة أخرى', shopPlants:'🛒 تسوق هذه النباتات',
-    t:'صمم <em>حديقتك المثالية</em>',s:'اختر كيف تريد البدء',
-    l1:'رفع صورة',d1:'ارفع صورة حديقتك وسيقوم الذكاء الاصطناعي بإعادة تصميمها.',t1:'✨ إعادة تصميم',
-    l2:'تصميم من الصفر',d2:'أدخل الأبعاد وسيولد الذكاء الاصطناعي تصميماً كاملاً.',t2:'📐 مخطط مخصص'
-  ,
-    locLabel:'موقعك',
-    locPlaceholder:'اكتب مدينتك...',
-    smartLabel:'نباتات ذكية',
-    smartVal:'استخدم توصياتي',
-    styleLabel:'أسلوب الحديقة — اختر واحداً أو أكثر',
-    prefPlaceholder:'صف ما تريد... مثال: أضف شجرة ليمون بجانب السياج',
-    submitBtn:'✨ إعادة تصميم حديقتي',
-    flow1title:'2. الموقع', flow1sub:'اضغط لتحديد مدينتك',
-    flow2title:'3. الأسلوب', flow2sub:'اختر أسلوب حديقتك',
-    flow3title:'4. الوصف', flow3sub:'أخبرنا ما تريده',
-    flow4title:'5. تصميم!', flow4sub:'اضغط لإنشاء حديقتك'
-  },
-  es:{
-    subtitle:'Diseño de jardín con IA', title:'Transforma tu jardín', desc:'Sube una foto y mira cómo la IA lo rediseña con plantas hermosas',
-    btnUpload:'📁 Subir foto', btnCamera:'📷 Tomar foto', btnScratch:'📐 Diseñar desde cero',
-    loadingTitle:'Diseñando tu jardín...', loadingSub:'Esto tarda unos 30-60 segundos',
-    ls1:'🔍 Analizando tu jardín', ls2:'🎨 Creando diseño', ls3:'🖼️ Generando imagen', ls4:'🌱 Construyendo lista de plantas',
-    plantsBtn:'Lista de plantas añadidas', refinePlaceholder:'Describe lo que quieres… ej: Añade un limonero junto a la valla',
-    redesignBtn:'↺ Rediseñar', tryAgain:'🔁 Intentar con la misma foto', shopPlants:'🛒 Comprar estas plantas',
-    t:'Diseña tu <em>jardín perfecto</em>',s:'Elige cómo quieres empezar',
-    l1:'Subir foto',d1:'Sube una foto de tu jardín y la IA lo rediseñará.',t1:'✨ Rediseño IA',
-    l2:'Diseñar desde cero',d2:'Ingresa dimensiones y la IA generará un diseño completo.',t2:'📐 Plano personalizado'
-  ,
-    locLabel:'Tu ubicación',
-    locPlaceholder:'Escribe tu ciudad...',
-    smartLabel:'Plantas inteligentes',
-    smartVal:'Usar mis recomendaciones',
-    styleLabel:'Estilo de jardín — selecciona uno o más',
-    prefPlaceholder:'Describe lo que quieres... ej: Añade un limonero junto a la valla',
-    submitBtn:'✨ Rediseñar mi jardín',
-    flow1title:'2. Ubicación', flow1sub:'Toca para poner\ntu ciudad',
-    flow2title:'3. Estilo', flow2sub:'Elige el estilo\nde tu jardín',
-    flow3title:'4. Describir', flow3sub:'Dinos lo que\nquieres',
-    flow4title:'5. ¡Diseñar!', flow4sub:'Toca para crear\ntu jardín'
-  },
-  fr:{
-    subtitle:'Design de jardin par IA', title:'Transformez votre jardin', desc:"Téléchargez une photo et regardez l'IA le redesigner avec de belles plantes",
-    btnUpload:'📁 Télécharger photo', btnCamera:'📷 Prendre photo', btnScratch:'📐 Concevoir de zéro',
-    loadingTitle:'Conception de votre jardin...', loadingSub:'Cela prend environ 30 à 60 secondes',
-    ls1:"🔍 Analyse de votre jardin", ls2:'🎨 Création du design', ls3:"🖼️ Génération de l'image", ls4:'🌱 Construction de la liste des plantes',
-    plantsBtn:'Liste des plantes ajoutées', refinePlaceholder:'Décrivez ce que vous voulez… ex: Ajoutez un citronnier près de la clôture',
-    redesignBtn:'↺ Reconcevoir', tryAgain:'🔁 Réessayer avec la même photo', shopPlants:'🛒 Acheter ces plantes',
-    t:'Concevez votre <em>jardin parfait</em>',s:'Choisissez comment commencer',
-    l1:'Télécharger photo',d1:"Téléchargez une photo et l'IA redessinera votre jardin.",t1:'✨ Refonte IA',
-    l2:'Concevoir de zéro',d2:"Entrez les dimensions et l'IA créera un design complet.",t2:'📐 Plan personnalisé'
-  ,
-    locLabel:'Votre emplacement',
-    locPlaceholder:'Tapez votre ville...',
-    smartLabel:'Plantes intelligentes',
-    smartVal:'Utiliser mes recommandations',
-    styleLabel:'Style de jardin — sélectionnez un ou plusieurs',
-    prefPlaceholder:'Décrivez ce que vous voulez... ex: Ajoutez un citronnier près de la clôture',
-    submitBtn:'✨ Reconcevoir mon jardin',
-    flow1title:'2. Lieu', flow1sub:'Appuyez pour\nvotre ville',
-    flow2title:'3. Style', flow2sub:'Choisissez le\nstyle du jardin',
-    flow3title:'4. Décrire', flow3sub:'Dites-nous ce\nque vous voulez',
-    flow4title:'5. Concevoir!', flow4sub:'Appuyez pour\ncréer votre jardin'
-  },
-  ru:{
-    subtitle:'Дизайн сада с ИИ', title:'Преобразите ваш сад', desc:'Загрузите фото и смотрите, как ИИ переделает его с красивыми растениями',
-    btnUpload:'📁 Загрузить фото', btnCamera:'📷 Сделать фото', btnScratch:'📐 Дизайн с нуля',
-    loadingTitle:'Проектируем ваш сад...', loadingSub:'Это займёт около 30–60 секунд',
-    ls1:'🔍 Анализ вашего сада', ls2:'🎨 Создание дизайна', ls3:'🖼️ Генерация изображения', ls4:'🌱 Составление списка растений',
-    plantsBtn:'Список добавленных растений', refinePlaceholder:'Опишите что вы хотите… напр: Добавьте лимонное дерево у забора',
-    redesignBtn:'↺ Перепроектировать', tryAgain:'🔁 Попробовать с тем же фото', shopPlants:'🛒 Купить эти растения',
-    t:'Создайте <em>идеальный сад</em>',s:'Выберите способ начала',
-    l1:'Загрузить фото',d1:'Загрузите фото и ИИ переработает ваш сад.',t1:'✨ Редизайн ИИ',
-    l2:'Дизайн с нуля',d2:'Введите размеры и ИИ создаст полный дизайн.',t2:'📐 Индивидуальный план'
-  ,
-    locLabel:'Ваше местоположение',
-    locPlaceholder:'Введите ваш город...',
-    smartLabel:'Умные растения',
-    smartVal:'Использовать мои рекомендации',
-    styleLabel:'Стиль сада — выберите один или несколько',
-    prefPlaceholder:'Опишите что вы хотите... напр: Добавьте лимонное дерево у забора',
-    submitBtn:'✨ Перепроектировать мой сад',
-    flow1title:'2. Место', flow1sub:'Нажмите для\nвашего города',
-    flow2title:'3. Стиль', flow2sub:'Выберите стиль\nсада',
-    flow3title:'4. Описать', flow3sub:'Расскажите\nчто хотите',
-    flow4title:'5. Дизайн!', flow4sub:'Нажмите для\nсоздания сада'
-  },
-  pt:{
-    subtitle:'Design de jardim com IA', title:'Transforme seu jardim', desc:'Envie uma foto e veja a IA redesenhar com plantas bonitas',
-    btnUpload:'📁 Enviar foto', btnCamera:'📷 Tirar foto', btnScratch:'📐 Criar do zero',
-    loadingTitle:'Desenhando seu jardim...', loadingSub:'Isso leva cerca de 30 a 60 segundos',
-    ls1:'🔍 Analisando seu jardim', ls2:'🎨 Criando design', ls3:'🖼️ Gerando imagem', ls4:'🌱 Construindo lista de plantas',
-    plantsBtn:'Lista de plantas adicionadas', refinePlaceholder:'Descreva o que você quer… ex: Adicione um limoeiro perto da cerca',
-    redesignBtn:'↺ Redesenhar', tryAgain:'🔁 Tentar com a mesma foto', shopPlants:'🛒 Comprar estas plantas',
-    t:'Crie seu <em>jardim perfeito</em>',s:'Escolha como começar',
-    l1:'Enviar foto',d1:'Envie uma foto do seu jardim e a IA irá redesenhá-lo.',t1:'✨ Redesign IA',
-    l2:'Criar do zero',d2:'Insira as dimensões e a IA criará um design completo.',t2:'📐 Planta personalizada'
-  ,
-    locLabel:'Sua localização',
-    locPlaceholder:'Digite sua cidade...',
-    smartLabel:'Plantas inteligentes',
-    smartVal:'Usar minhas recomendações',
-    styleLabel:'Estilo de jardim — selecione um ou mais',
-    prefPlaceholder:'Descreva o que você quer... ex: Adicione um limoeiro perto da cerca',
-    submitBtn:'✨ Redesenhar meu jardim',
-    flow1title:'2. Local', flow1sub:'Toque para sua\ncidade',
-    flow2title:'3. Estilo', flow2sub:'Escolha o estilo\ndo jardim',
-    flow3title:'4. Descrever', flow3sub:'Diga-nos o que\nvocê quer',
-    flow4title:'5. Criar!', flow4sub:'Toque para criar\nseu jardim'
-  },
-  de:{
-    subtitle:'Gartendesign mit KI', title:'Verwandle deinen Garten', desc:'Lade ein Foto hoch und sieh zu, wie KI ihn mit schönen Pflanzen neu gestaltet',
-    btnUpload:'📁 Foto hochladen', btnCamera:'📷 Foto aufnehmen', btnScratch:'📐 Von Grund auf',
-    loadingTitle:'Dein Garten wird gestaltet...', loadingSub:'Dies dauert etwa 30–60 Sekunden',
-    ls1:'🔍 Analyse deines Gartens', ls2:'🎨 Design erstellen', ls3:'🖼️ Bild generieren', ls4:'🌱 Pflanzenliste erstellen',
-    plantsBtn:'Liste der hinzugefügten Pflanzen', refinePlaceholder:'Beschreibe was du möchtest… z.B: Füge einen Zitronenbaum am Zaun hinzu',
-    redesignBtn:'↺ Neu gestalten', tryAgain:'🔁 Mit demselben Foto versuchen', shopPlants:'🛒 Diese Pflanzen kaufen',
-    t:'Gestalte deinen <em>perfekten Garten</em>',s:'Wähle, wie du beginnen möchtest',
-    l1:'Foto hochladen',d1:'Lade ein Foto deines Gartens hoch und die KI gestaltet ihn neu.',t1:'✨ KI-Redesign',
-    l2:'Von Grund auf',d2:'Gib die Abmessungen ein und die KI erstellt ein vollständiges Design.',t2:'📐 Individueller Plan'
-  ,
-    locLabel:'Ihr Standort',
-    locPlaceholder:'Geben Sie Ihre Stadt ein...',
-    smartLabel:'Smarte Pflanzen',
-    smartVal:'Meine Empfehlungen nutzen',
-    styleLabel:'Gartenstil — wähle einen oder mehrere',
-    prefPlaceholder:'Beschreibe was du möchtest... z.B: Füge einen Zitronenbaum am Zaun hinzu',
-    submitBtn:'✨ Meinen Garten neu gestalten',
-    flow1title:'2. Standort', flow1sub:'Tippe für\ndeine Stadt',
-    flow2title:'3. Stil', flow2sub:'Wähle den\nGartenstil',
-    flow3title:'4. Beschreiben', flow3sub:'Sag uns was\ndu möchtest',
-    flow4title:'5. Gestalten!', flow4sub:'Tippe zum\nErstellen'
-  },
-  hi:{
-    subtitle:'AI से गार्डन डिज़ाइन', title:'अपने बगीचे को बदलें', desc:'एक फोटो अपलोड करें और देखें AI इसे सुंदर पौधों से कैसे नया रूप देता है',
-    btnUpload:'📁 फोटो अपलोड करें', btnCamera:'📷 फोटो लें', btnScratch:'📐 नए सिरे से',
-    loadingTitle:'आपका बगीचा डिज़ाइन हो रहा है...', loadingSub:'इसमें लगभग 30-60 सेकंड लगते हैं',
-    ls1:'🔍 आपके बगीचे का विश्लेषण', ls2:'🎨 डिज़ाइन बनाना', ls3:'🖼️ छवि बनाना', ls4:'🌱 पौधों की सूची बनाना',
-    plantsBtn:'जोड़े गए पौधों की सूची', refinePlaceholder:'बताएं आप क्या चाहते हैं… उदा: बाड़ के पास नींबू का पेड़ लगाएं',
-    redesignBtn:'↺ फिर से डिज़ाइन', tryAgain:'🔁 उसी फोटो से फिर कोशिश', shopPlants:'🛒 ये पौधे खरीदें',
-    t:'अपना <em>परफेक्ट गार्डन</em> डिज़ाइन करें',s:'शुरू करने का तरीका चुनें',
-    l1:'फोटो अपलोड करें',d1:'अपने बगीचे की फोटो अपलोड करें और AI उसे नया रूप देगा।',t1:'✨ AI रीडिज़ाइन',
-    l2:'नए सिरे से',d2:'आयाम दर्ज करें और AI एक पूरा डिज़ाइन तैयार करेगा।',t2:'📐 कस्टम प्लान'
-  ,
-    locLabel:'आपका स्थान',
-    locPlaceholder:'अपना शहर लिखें...',
-    smartLabel:'स्मार्ट पौधे',
-    smartVal:'मेरी सिफारिशें उपयोग करें',
-    styleLabel:'गार्डन शैली — एक या अधिक चुनें',
-    prefPlaceholder:'बताएं आप क्या चाहते हैं... उदा: बाड़ के पास नींबू का पेड़ लगाएं',
-    submitBtn:'✨ मेरे बगीचे को नया रूप दें',
-    flow1title:'2. स्थान', flow1sub:'शहर चुनने के\nलिए टैप करें',
-    flow2title:'3. शैली', flow2sub:'बगीचे की शैली\nचुनें',
-    flow3title:'4. बताएं', flow3sub:'हमें बताएं\nआप क्या चाहते हैं',
-    flow4title:'5. डिज़ाइन!', flow4sub:'बनाने के लिए\nटैप करें'
-  }
-};
-function setLang(l, btn) {
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const t = T[l];
-  const safe = (id, prop, val) => { const el = document.getElementById(id); if(el) el[prop] = val; };
-  const safeAttr = (id, attr, val) => { const el = document.getElementById(id); if(el) el.setAttribute(attr, val); };
-  // Upload card
-  safe('uploadSubtitle','textContent',t.subtitle);
-  safe('uploadTitle','textContent',t.title);
-  safe('uploadDesc','textContent',t.desc);
-  safe('btnUpload','textContent',t.btnUpload);
-  safe('btnCamera','textContent',t.btnCamera);
-  safe('btnScratch','textContent',t.btnScratch);
-  // Loading screen
-  safe('loadingTitle','textContent',t.loadingTitle);
-  safe('loadingSub','textContent',t.loadingSub);
-  safe('ls1','textContent',t.ls1);
-  safe('ls2','textContent',t.ls2);
-  safe('ls3','textContent',t.ls3);
-  safe('ls4','textContent',t.ls4);
-  // Result screen
-  safe('btnTryAgain','textContent',t.tryAgain);
-  safe('btnShop','textContent',t.shopPlants);
-  safe('redesignBtn','textContent',t.redesignBtn);
-  safeAttr('refineGeneral','placeholder',t.refinePlaceholder);
-
-  // Location & style form
-  safe('locLabel1','textContent',t.locLabel);
-  safeAttr('photoLoc','placeholder',t.locPlaceholder);
-  safe('smartLabel','textContent',t.smartLabel);
-  safe('smartVal','textContent',t.smartVal);
-  safe('styleLabel1','textContent',t.styleLabel);
-  safeAttr('photoPrefs','placeholder',t.prefPlaceholder);
-  safe('submitBtn','textContent',t.submitBtn);
-  // Flow bar
-  if(t.flow1title) {
-    safe('flow1title','textContent',t.flow1title);
-    safe('flow1sub','innerHTML',(t.flow1sub||'').replace('\n','<br>'));
-    safe('flow2title','textContent',t.flow2title);
-    safe('flow2sub','innerHTML',(t.flow2sub||'').replace('\n','<br>'));
-    safe('flow3title','textContent',t.flow3title);
-    safe('flow3sub','innerHTML',(t.flow3sub||'').replace('\n','<br>'));
-    safe('flow4title','textContent',t.flow4title);
-    safe('flow4sub','innerHTML',(t.flow4sub||'').replace('\n','<br>'));
-  }
-  // Legacy
-  safe('choiceTitle','innerHTML',t.t);
-  safe('choiceSub','textContent',t.s);
-  safe('opt1Label','textContent',t.l1);
-  safe('opt2Label','textContent',t.l2);
-  // RTL
-  document.body.style.direction = (l === 'ar') ? 'rtl' : 'ltr';
-}
-
-// ── API functions ──
-async function claude(messages, maxT=1500){
-  const r=await fetch('/.netlify/functions/gd-claude',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:maxT,messages})
-  });
-  if(!r.ok){
-    throw new Error(r.status===404
-      ? 'AI design service is not available in this preview. It requires a Netlify deploy (gd-claude function).'
-      : 'AI design service error ('+r.status+'). Please try again.');
-  }
-  const d=await r.json();
-  if(d.error)throw new Error(d.error.message);
-  return d.content[0].text;
-}
-
-// ── Pin placement mode ──
-let pinModeActive = false;
-let pinModePlant = null;
-
-function confirmApmWriteWithPin() {
-  const text = document.getElementById('apmWishText').value.trim();
-  if (!text) return;
-  closeAddPlantModal();
-  enterPinMode(text);
-}
-
-function enterPinMode(plantName) {
-  pinModeActive = true;
-  pinModePlant = plantName;
-  const wrap = document.getElementById('imgAfterWrap');
-  const bar = document.getElementById('pinModeBar');
-  const text = document.getElementById('pinModeText');
-  if (wrap) wrap.classList.add('pin-active');
-  if (bar) bar.classList.add('visible');
-  if (text) text.textContent = '📍 Tap where to plant: ' + plantName;
-  // Scroll to image
-  wrap && wrap.scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-function cancelPinMode() {
-  pinModeActive = false;
-  pinModePlant = null;
-  const bar = document.getElementById('pinModeBar');
-  if (bar) bar.classList.remove('visible');
-  const wrap = document.getElementById('imgAfterWrap');
-  if (wrap) wrap.classList.remove('pin-active');
-  const pins = document.getElementById('imgPins');
-  if (pins) pins.innerHTML = '';
-}
-
-function handleImgClick(e) {
-  if (!pinModeActive) {
-    // Normal click = zoom
-    const img = document.getElementById('imgAfter');
-    if (img && img.src) openZoom(img.src);
-    return;
-  }
-  e.stopPropagation();
-  const wrap = document.getElementById('imgAfterWrap');
-  const rect = wrap.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width;
-  const y = (e.clientY - rect.top) / rect.height;
-  // Show pin
-  const pins = document.getElementById('imgPins');
-  pins.innerHTML = `<div class="img-pin" style="left:${x*100}%;top:${y*100}%">
-    <svg width="32" height="40" viewBox="0 0 32 40"><path d="M16 0C7.16 0 0 7.16 0 16c0 10 16 24 16 24s16-14 16-24C32 7.16 24.84 0 16 0z" fill="#3d8a50"/><circle cx="16" cy="16" r="7" fill="white"/></svg>
-  </div>`;
-  // Build prompt with position hint
-  const posLabel = x < 0.33 ? 'left side' : x > 0.66 ? 'right side' : 'center';
-  const posVLabel = y < 0.4 ? 'background' : y > 0.7 ? 'foreground' : 'middle ground';
-  // Plant-specific sizing — trees are tall, ground covers are low
-  const plantLower = pinModePlant.toLowerCase();
-  const isTree = ['pine','maple','cherry','oak','palm','fig','olive','lemon','plum','ginkgo'].some(t => plantLower.includes(t));
-  const isGround = ['liriope','moss','mondo','grass','sedum','clover','ivy','creeping'].some(t => plantLower.includes(t));
-  const pw = isTree ? 0.18 : isGround ? 0.22 : 0.15;
-  const ph = isTree ? 0.35 : isGround ? 0.12 : 0.2;
-  const py = isGround ? Math.min(y + 0.05, 0.9) : y; // ground covers sit lower
-  const prompt = `Add ONLY one ${pinModePlant} plant at the ${posLabel} ${posVLabel} of the garden. The plant must be realistically sized and grounded — roots touching the soil, not floating. Preserve everything else in the image exactly.`;
-  const placements = [{name: pinModePlant, x, y: py, w: pw, h: ph}];
-  cancelPinMode();
-  const rf = document.getElementById('refineGeneral');
-  if (rf) rf.value = prompt;
-  // Use inpainting directly
-  runInpaintFromPin(prompt, placements);
-}
-
-async function runInpaintFromPin(prompt, placements) {
-  const btn = document.getElementById('redesignBtn');
-  const err = document.getElementById('redesignErr');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Placing plant...'; }
-  try {
-    const data = await claude([{role:'user', content:[
-      {type:'image', source:{type:'base64', media_type:lastGeneratedMediaType, data:lastGeneratedB64}},
-      {type:'text', text:`This garden image needs one addition: ${prompt}
-Return ONLY valid JSON: {"prompt":"${prompt}, botanically accurate, photorealistic","plants":[{"name":"${placements[0].name}","latin":"","emoji":"🌿","role":"placed at requested location","warnings":[],"cm":85,"cr":"","care":{"w":"low","l":"full_sun","d":"easy","t":""}}]}`}
-    ]}]);
-    const parsed = JSON.parse(data.replace(/\`\`\`json|\`\`\`/g,'').trim());
-    let imgUrl;
-    try {
-      imgUrl = await inpaintWithSDXL(parsed.prompt, lastGeneratedB64, placements, 1024, 768);
-    } catch(e) {
-      console.warn('Inpainting failed, using Stability:', e.message);
-      const pinPromptEnhanced = `ADD this plant visibly into the garden: ${placements[0].name}. Place it in the specified location. ${parsed.prompt}. The plant must be clearly visible and botanically accurate.`;
-      imgUrl = await stabilityImg2Img(pinPromptEnhanced, lastGeneratedB64, false);
-    }
-    const afterB64 = imgUrl.startsWith('data:') ? imgUrl.split(',')[1] : null;
-    lastGeneratedImg = imgUrl;
-    lastGeneratedB64 = afterB64;
-    document.getElementById('imgAfter').src = imgUrl;
-    showPlants(parsed.plants);
-    const rf = document.getElementById('refineGeneral');
-    if (rf) rf.value = '';
-  } catch(e) {
-    if (err) { err.textContent = 'Error: ' + e.message; err.classList.add('show'); }
-  }
-  if (btn) { btn.disabled = false; btn.textContent = '↺ Redesign'; }
-}
-
-// ── SDXL Inpainting — plant placement with mask ──
-function createPlantMask(imageW, imageH, placements) {
-  const canvas = document.createElement('canvas');
-  canvas.width = imageW;
-  canvas.height = imageH;
-  const ctx = canvas.getContext('2d');
-  // Black background = keep original
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, imageW, imageH);
-  // White areas = inpaint (where to place plants)
-  ctx.fillStyle = 'white';
-  placements.forEach(p => {
-    const x = Math.round(p.x * imageW);
-    const y = Math.round(p.y * imageH);
-    const w = Math.round((p.w || 0.2) * imageW);
-    const h = Math.round((p.h || 0.25) * imageH);
-    // Soft oval mask
-    ctx.beginPath();
-    ctx.ellipse(x, y, w/2, h/2, 0, 0, Math.PI*2);
-    ctx.fill();
-  });
-  return canvas.toDataURL('image/png').split(',')[1];
-}
-
-async function inpaintWithSDXL(prompt, imageBase64, placements, imageW, imageH) {
-  // Use OpenAI gpt-image-1 for pin placement — best at following exact plant names
-  const plantNames = placements.map(p => p.name).filter(Boolean).join(', ');
-  const posLabel = placements[0] ? (
-    placements[0].x < 0.33 ? 'left side' : placements[0].x > 0.66 ? 'right side' : 'center'
-  ) : 'garden';
-  const posVLabel = placements[0] ? (
-    placements[0].y < 0.4 ? 'background' : placements[0].y > 0.7 ? 'foreground' : 'middle ground'
-  ) : '';
-  const stabilityPrompt = plantNames
-    ? `ADD these exact plants: ${plantNames}. Place at ${posLabel} ${posVLabel}. Each plant botanically accurate, rooted in soil. Preserve all existing garden elements unchanged. ${prompt}`
-    : prompt;
-  return await stabilityImg2Img(stabilityPrompt, imageBase64, false);
-}
-
-async function replicate(prompt){
-  const startR=await fetch('/.netlify/functions/gd-replicate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'start', prompt})
-  });
-  const pred=await startR.json();
-  if(pred.error)throw new Error('Replicate error: ' + JSON.stringify(pred.error));
-  if(!pred.id)throw new Error('No prediction ID. Response: ' + JSON.stringify(pred));
-  for(let i=0;i<90;i++){
-    await new Promise(r=>setTimeout(r,2000));
-    try{
-      const pollR=await fetch('/.netlify/functions/gd-replicate',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'poll', predictionId:pred.id})
-      });
-      const res=await pollR.json();
-      if(res.status==='succeeded')return Array.isArray(res.output)?res.output[0]:res.output;
-      if(res.status==='failed')throw new Error('Image generation failed: '+(res.error||'unknown'));
-    }catch(pollErr){}
-  }
-  throw new Error('Timeout — please try again');
-}
-
-// ── Location autocomplete (OpenStreetMap Nominatim) ──
-let locDebounce = null;
-// Store full location data per field
-let locData = {'photoLoc': null, 'sketchLoc': null};
-
-async function searchLocation(input, dropId) {
-  const q = input.value.trim();
-  const drop = document.getElementById(dropId);
-  clearTimeout(locDebounce);
-  if (q.length < 2) { drop.classList.remove('show'); return; }
-  locDebounce = setTimeout(async () => {
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`, {
-        headers: {'Accept-Language': 'en'}
-      });
-      const results = await res.json();
-      if (!results.length) { drop.classList.remove('show'); return; }
-      drop.innerHTML = results.map((r, i) => {
-        const main = r.name || r.display_name.split(',')[0];
-        const sub = r.display_name;
-        return `<div class="loc-item" onmousedown="pickLocation(event,'${input.id}','${dropId}',${i})">
-          <div class="loc-item-main">${main}</div>
-          <div class="loc-item-sub">${sub}</div>
-        </div>`;
-      }).join('');
-      drop._results = results;
-      drop.classList.add('show');
-    } catch(e) {}
-  }, 350);
-}
-
-async function pickLocation(e, inputId, dropId, idx) {
-  e.preventDefault();
-  const drop = document.getElementById(dropId);
-  const r = drop._results[idx];
-  const input = document.getElementById(inputId);
-  
-  // Set display name
-  const city = r.address?.city || r.address?.town || r.address?.village || r.address?.county || r.name;
-  const country = r.address?.country || '';
-  const displayName = city + (country ? ', ' + country : '');
-  input.value = displayName;
-  drop.classList.remove('show');
-
-  // Get climate info via Claude
-  const infoId = inputId === 'photoLoc' ? 'locInfo1' : 'locInfo2';
-  const infoEl = document.getElementById(infoId);
-  infoEl.textContent = '🌍 Loading climate data...';
-  infoEl.style.display = 'block';
-
-  try {
-    const lat = parseFloat(r.lat).toFixed(2);
-    const lon = parseFloat(r.lon).toFixed(2);
-    const txt = await claude([{role:'user', content:
-      `Location: ${displayName} (lat: ${lat}, lon: ${lon}).
-      Return ONLY valid JSON (no markdown):
-      {"climate":"climate type (e.g. Mediterranean, Tropical, Arid)","hardiness":"USDA hardiness zone","avg_temp":"average temperature range","rainfall":"annual rainfall","seasons":"growing season notes","suitable_plants":"2-3 example plant types that thrive here"}`
-    }]);
-    const data = safeParseJSON(txt);
-    locData[inputId] = { name: displayName, lat, lon, ...data };
-    infoEl.innerHTML = `<span class='climate-chip'>🌍 ${data.climate}</span><span class='climate-chip'>🌡 ${data.avg_temp}</span><span class='climate-chip'>🌧 ${data.rainfall}</span>`;
-  } catch(e) {
-    locData[inputId] = { name: displayName };
-    infoEl.textContent = '📍 ' + displayName;
-  }
-}
-
-function handleBack() {
-  const photo = document.getElementById('s-photo');
-  const sketch = document.getElementById('s-sketch');
-  const result = document.getElementById('s-result');
-  if (result && result.style.display !== 'none') { show('s-photo'); }
-  else { show('s-photo'); }
-}
-function updateBackBtn() {
-  const btn = document.getElementById('globalBack');
-  if (!btn) return;
-  const choice = document.getElementById('s-choice');
-  btn.style.display = choice && choice.style.display !== 'none' ? 'none' : 'flex';
-}
-
-function hideDrop(dropId) {
-  const drop = document.getElementById(dropId);
-  if (drop) drop.classList.remove('show');
-}
-
-function getLocStr(inputId) {
-  const d = locData[inputId];
-  if (!d) return document.getElementById(inputId).value.trim();
-  let str = d.name;
-  if (d.climate) str += ` (${d.climate} climate, ${d.hardiness}, avg temp ${d.avg_temp}, rainfall ${d.rainfall})`;
-  return str;
-}
-
-// ── Specific plant lists ──
-let specificPlants = {'1': [], '2': []};
-
-async function addPlantToList(group) {
-  const inputId = group === '1' ? 'photoPlantInput' : 'sketchPlantInput';
-  const input = document.getElementById(inputId);
-  const plantName = input.value.trim();
-  if (!plantName) return;
-
-  const btn = input.nextElementSibling;
-  btn.disabled = true;
-  btn.textContent = '...';
-
-  try {
-    // Ask Claude to research this plant and suggest placement
-    const contextHint = group === '1' && photoDataUrl
-      ? 'The user has uploaded a garden photo that will be redesigned.'
-      : 'The user is designing a new garden from dimensions.';
-
-    const txt = await claude([{role:'user', content:
-      `Research the plant "${plantName}". ${contextHint}
-      Return ONLY valid JSON (no markdown):
-      {"name":"Common name in English","latin":"Scientific name","emoji":"relevant emoji","climate":"suitable climates (1 line)","size":"mature height/spread","sun":"sun requirements","placement":"where to place this plant in a garden (1 sentence, specific and practical)"}`
-    }]);
-
-    const data = safeParseJSON(txt);
-    specificPlants[group].push(data);
-    renderPlantList(group);
-    input.value = '';
-    // Auto-fill redesign field so plant appears in image too
-    if (group === '1') {
-      const rf = document.getElementById('refineGeneral');
-      if (rf && lastGeneratedB64) {
-        rf.value = 'Add ' + (data.name || plantName) + ' to the garden';
-        rf.style.borderColor = '#3d8a50';
-        setTimeout(() => rf.style.borderColor = '', 2000);
-      }
-    }
-  } catch(e) {
-    specificPlants[group].push({name: plantName, emoji:'🌿', placement:'To be placed by AI'});
-    renderPlantList(group);
-    input.value = '';
-    if (group === '1') {
-      const rf = document.getElementById('refineGeneral');
-      if (rf && lastGeneratedB64) rf.value = 'Add ' + plantName + ' to the garden';
-    }
-  }
-
-  btn.disabled = false;
-  btn.textContent = '+ Add';
-}
-
-function renderPlantList(group) {
-  const container = document.getElementById('plantList' + group);
-  container.innerHTML = specificPlants[group].map((p, i) => `
-    <div class="plant-tag">
-      <div class="plant-tag-info">
-        <div class="plant-tag-name">${p.emoji||'🌿'} ${p.name}${p.latin ? ' <span style="font-weight:300;color:var(--muted);font-style:italic">'+p.latin+'</span>' : ''}</div>
-        ${p.climate ? `<div class="plant-tag-details">☀️ ${p.sun||''} · 📏 ${p.size||''} · 🌍 ${p.climate}</div>` : ''}
-        <div class="plant-tag-placement">📍 ${p.placement||''}</div>
-      </div>
-      <button class="plant-tag-remove" onclick="removePlant('${group}',${i})">×</button>
-    </div>`).join('');
-}
-
-function removePlant(group, idx) {
-  specificPlants[group].splice(idx, 1);
-  renderPlantList(group);
-}
-
-function getSpecificPlantsStr(group) {
-  const plants = specificPlants[group];
-  if (plants.length === 0) return '';
-  return 'You MUST include ALL of these specific plants in the design and plant list: ' + 
-    plants.map(p => `${p.name}${p.latin ? ' ('+p.latin+')' : ''} — place it: ${p.placement}`).join('; ') + 
-    '. These plants MUST appear in the plants JSON array.';
-}
-
-let designMode = 'auto'; // 'auto' or 'manual'
-
-function showDesignChoice() {
-  const locRaw = document.getElementById('photoLoc').value.trim();
-  const err = document.getElementById('photoErr');
-  if (!photoB64 || !locRaw) {
-    err.textContent = 'Please upload a photo and enter your location.';
-    err.classList.add('show');
-    return;
-  }
-  err.classList.remove('show');
-  // Open as popup
-  document.getElementById('designChoiceOverlay').classList.add('open');
-}
-
-function closeDesignChoicePopup(e) {
-  if (e && e.target !== document.getElementById('designChoiceOverlay')) return;
-  document.getElementById('designChoiceOverlay').classList.remove('open');
-}
-
-function selectDesignMode(mode) {
-  designMode = mode;
-  document.getElementById('choice-auto').classList.toggle('selected', mode === 'auto');
-  document.getElementById('choice-manual').classList.toggle('selected', mode === 'manual');
-}
-
-function confirmDesignMode() {
-  document.getElementById('designChoiceOverlay').classList.remove('open');
-  if (designMode === 'manual') {
-    runPhotoManual();
-  } else {
-    runPhoto();
-  }
-}
-
-async function runPhotoManual() {
-  if (!photoB64) { alert('Please upload a photo first.'); return; }
-  const locRaw = document.getElementById('photoLoc').value.trim();
-  if (!locRaw) { document.getElementById('photoErr').textContent = 'Please enter your location.'; document.getElementById('photoErr').classList.add('show'); return; }
-
-  closePlantPopup(null);
-  setFlowPulse(null);
-  show('s-loading');
-  setLS(1);
-
-  try {
-    const loc = getLocStr('photoLoc');
-    const styleNames = getStyleNames('1');
-    const plantGuide1 = getStylePlantGuide('1');
-    const isHouseplants1 = Object.values(styleData['1']).some(s => s.name === 'Houseplants');
-
-    // Ask Claude for plant recommendations ONLY — no image generation
-    const txt = await claude([{role:'user', content:[
-      {type:'image', source:{type:'base64', media_type:'image/jpeg', data:photoB64}},
-      {type:'text', text:`Analyze this ${isHouseplants1 ? 'indoor/room' : 'garden'} photo. Location: ${loc}. Desired style: ${styleNames}.
-
-Return ONLY valid JSON with recommended plants (no image prompt needed):
-{"description":"1 sentence describing the garden style","plants":[{"name":"","latin":"","emoji":"🌿","role":"","warnings":[],"cm":85,"cr":"","care":{"w":"low","l":"full_sun","d":"easy","t":""}}]}
-
-Rules:
-- Recommend 5-7 plants suitable for ${styleNames} style in ${loc}
-- For warnings use ONLY: spiky, invasive_roots, toxic_humans, toxic_pets, high_water, deep_shade, invasive_spread, allergenic
-- cm = climate match 0-100 for ${loc}
-- ${isHouseplants1 ? 'ALL plants must be indoor houseplants' : 'All plants must suit the climate of '+loc}
-- ONLY use plants from this approved list: ${plantGuide1}
-- care.w=low|medium|high, care.l=full_sun|part_shade|full_shade|indirect, care.d=easy|moderate|expert`}
-    ]}]);
-
-    setLS(2);
-    const data = JSON.parse(txt.replace(/\`\`\`json|\`\`\`/g,'').trim());
-    setLS(3);
-
-    // Show original photo — no redesign
-    const mediaType = (photoDataUrl && photoDataUrl.startsWith('data:image/png')) ? 'image/png' : 'image/jpeg';
-    const dataUrl = (photoDataUrl && photoDataUrl.startsWith('data:')) ? photoDataUrl : 'data:' + mediaType + ';base64,' + photoB64;
-
-    show('s-result');
-    document.getElementById('beforeAfter').style.display = 'grid';
-    document.getElementById('singleImg').style.display = 'none';
-    document.getElementById('imgAfter').src = dataUrl;
-    document.getElementById('imgBefore') && (document.getElementById('imgBefore').src = dataUrl);
-    lastGeneratedImg = dataUrl;
-    lastGeneratedB64 = photoB64;
-    lastGeneratedMediaType = mediaType;
-    isPhotoMode = true;
-    document.getElementById('resultDesc').textContent = data.description || 'Tap the wand button on each plant to place it in your garden.';
-    showPlants(data.plants || []);
-
-  } catch(e) {
-    show('s-photo');
-    document.getElementById('photoErr').textContent = 'Error: ' + e.message;
-    document.getElementById('photoErr').classList.add('show');
-  }
-}
-
-function safeParseJSON(txt) {
-  let s = txt.replace(/```json/g, '').replace(/```/g, '').trim();
-  const start = s.indexOf('{');
-  const end = s.lastIndexOf('}');
-  if (start !== -1 && end !== -1 && end > start) s = s.slice(start, end + 1);
-  s = s.replace(/,(\s*[}\]])/g, '$1');
-  try { return JSON.parse(s); }
-  catch(e) {
-    console.error('JSON parse failed:', e.message, 'Raw:', s.slice(0, 200));
-    throw new Error('Could not parse AI response. Please try again.');
-  }
-}
-async function runPhoto(){
-  const loc=getLocStr('photoLoc');
-  const prefs=document.getElementById('photoPrefs').value.trim();
-  const err=document.getElementById('photoErr');
-  const locRaw=document.getElementById('photoLoc').value.trim();
-  if(!photoB64||!locRaw){err.textContent='Please upload a photo and enter your location.';err.classList.add('show');return;}
-  err.classList.remove('show');
-  closePlantPopup(null);
-  setFlowPulse(null);
-  show('s-loading');
-  const mustInclude = smartInclude1 ? getSelectedSmartNames() : [];
-  const mustStr = mustInclude.length>0 ? `You MUST include these plants: ${mustInclude.join(', ')}.` : '';
-  const specificStr = getSpecificPlantsStr('1');
-  try{
-    setLS(1);
-    const styleNames = getStyleNames('1');
-    const stylesDesc = getStylesStr('1');
-    const plantGuide1 = getStylePlantGuide('1');
-    const isHouseplants1 = Object.values(styleData['1']).some(s => s.name === 'Houseplants');
-    const imgPromptTemplate1 = isHouseplants1
-      ? `photorealistic indoor living space with ${styleNames} houseplants, same viewpoint as original photo, lush potted plants on shelves windowsills and floors, bright natural light, cozy interior, no outdoor elements${prefs?', '+prefs:''}`
-      : styleNames.toLowerCase().includes('balcony') ? `photorealistic balcony garden with colorful potted plants and container gardens, same balcony structure and railing, terracotta and ceramic pots with cascading flowers, hanging baskets, window boxes overflowing with geraniums and petunias, small potted herbs and dwarf citrus, same camera angle and viewpoint${prefs?', '+prefs:''}` : `photorealistic ${styleNames} garden redesign of the EXACT SAME garden in the uploaded photo. Keep identical: same camera angle, same background walls/fences/structures, same paths and hardscaping, same overall layout and proportions. Only change the plants to ${styleNames} style with ${stylesDesc}. Plants realistically scaled, wide garden view, golden hour lighting${prefs?', '+prefs:''}`;
-    const roleContext1 = isHouseplants1 ? 'location inside the home (e.g. windowsill, living room corner, shelf, bathroom)' : 'where it goes in the garden';
-    const txt=await claude([{role:'user',content:[
-      {type:'image',source:{type:'base64',media_type:'image/jpeg',data:photoB64}},
-      {type:'text',text:`Analyze this ${isHouseplants1 ? 'indoor/room' : 'garden'} photo. Location: ${loc}. Desired style: ${styleNames}. ${prefs?'Requested changes: '+prefs+'. ':''} ${mustStr}
-
-Return ONLY valid JSON (no markdown):
-{"description":"2 sentences about the redesigned ${isHouseplants1 ? 'interior with plants' : 'garden'}","prompt":"${imgPromptTemplate1}","placements":[{"name":"plant name","x":0.5,"y":0.6,"w":0.15,"h":0.2}],"plants":[{"name":"","latin":"","emoji":"🌿","role":"","warnings":[],"cm":85,"cr":"","care":{"w":"low","l":"full_sun","d":"easy","t":""}}]}
-placements: array of where each plant goes. x,y = center position (0-1), w,h = size (0-1). Place trees at y:0.4-0.6 center, shrubs at borders y:0.5-0.8.
-For warnings use ONLY: spiky, invasive_roots, toxic_humans, toxic_pets, high_water, deep_shade, invasive_spread, allergenic. Empty array [] if none apply.
-
-${specificStr ? "IMPORTANT: "+specificStr : ""} CRITICAL RULES:
-1. You MUST include EXACTLY the number of plants specified: ${stylesDesc}
-2. If it says "7 trees" you MUST put 7 trees in the plants array
-3. Only plants — NO furniture, benches, or non-plant items
-4. ${isHouseplants1 ? 'ALL plants MUST be true indoor houseplants that can thrive inside a home — NO outdoor garden plants' : 'All plants MUST be suitable for the climate of '+loc}
-5. ${mustStr || 'Recommend varied, interesting plants'}
-Plant fields: name=full name, latin=latin name, role=placement, warnings=array of: spiky/invasive_roots/toxic_humans/toxic_pets/high_water/deep_shade/invasive_spread/allergenic, cm=climate match 0-100 for ${loc}, cr=1 sentence why, care.w=low|medium|high, care.l=full_sun|part_shade|full_shade|indirect, care.d=easy|moderate|expert, care.t=short tip.
-PLANT SELECTION IS MANDATORY. ONLY use plants from this approved list:
-${plantGuide1}
-NEVER suggest plants outside these approved style lists.
-The plants array MUST match the exact counts specified above.`}
-    ]}]);
-    setLS(2);
-    const data=safeParseJSON(txt);
-    setLS(3);
-    // Inject actual plant names into the image prompt for accuracy
-    // Use SDXL Inpainting if placements provided, else fallback to OpenAI
-    const placements1 = data.placements || [];
-
-    const plantNames1 = (data.plants||[]).map(p=>p.name).filter(Boolean).join(', ');
-    const BOTANICAL = {
-      'lemon tree': 'Citrus limon tree, dense glossy dark green oval leaves, oval elongated bright yellow lemon fruits 8-10cm hanging from branches, NOT flowers NOT blossoms, actual yellow citrus fruits with visible dimpled skin',
-      'lemon': 'Citrus limon tree with glossy dark green oval leaves and oval bright yellow lemons (NOT flowers) hanging from branches',
-      'olive': 'Olea europaea with narrow silvery-grey leaves and small oval black or green olives',
-      'fig': 'Ficus carica with large deeply-lobed rough green leaves and pear-shaped purple-green figs',
-      'orange tree': 'Citrus sinensis tree with dense glossy dark green oval leaves, round smooth orange fruits 7-8cm diameter clearly visible hanging from branches, NOT flowers, NOT blossoms, actual spherical orange-colored citrus fruits',
-      'apple tree': 'Malus domestica with serrated green leaves and round red or green apples',
-    };
-    let botanicalNote = '';
-    const pLower = (data.prompt + plantNames1).toLowerCase();
-    for (const [key, desc] of Object.entries(BOTANICAL)) {
-      if (pLower.includes(key)) { botanicalNote = ' CRITICAL: ' + desc + '.'; break; }
-    }
-    // Add tree placement instruction if there are trees
-    const treeWords = ['tree','cypress','pine','palm','fig','olive','lemon','orange','pomegranate','apple','plum','cherry','maple','oak'];
-    const hasTree = plantNames1 && treeWords.some(t => plantNames1.toLowerCase().includes(t));
-    const treePlacement = hasTree ? ' Trees must be placed prominently in the center or middle ground of the garden, clearly visible and identifiable.' : '';
-    // Put plant names FIRST in the prompt so Stability AI prioritizes them
-    const finalPrompt1 = plantNames1
-      ? `ADD these specific plants visibly into the garden: ${plantNames1}. ${data.prompt}. The garden must prominently feature these exact plants: ${plantNames1}.` + botanicalNote + treePlacement + ' Each plant must be botanically accurate, clearly recognizable, and visible in the final image.'
-      : data.prompt + botanicalNote;
-    let imgUrl;
-    if (placements1.length > 0 && !isHouseplants1) {
-      // Use SDXL Inpainting for precise plant placement
-      try {
-        imgUrl = await inpaintWithSDXL(finalPrompt1, photoB64, placements1, 1024, 768);
-      } catch(e) {
-        console.warn('Inpainting failed, falling back to Stability:', e.message);
-        imgUrl = await stabilityImg2Img(finalPrompt1, photoB64, isHouseplants1);
-      }
-    } else {
-      imgUrl = await stabilityImg2Img(finalPrompt1, photoB64, isHouseplants1);
-    }
-    setLS(4);
-    closePlantPopup(null); show('s-result');
-    document.getElementById('beforeAfter').style.display='grid';
-    document.getElementById('singleImg').style.display='none';
-    lastGeneratedImg = imgUrl;
-    lastGeneratedB64 = imgUrl.startsWith('data:') ? imgUrl.split(',')[1] : null;
-    lastGeneratedMediaType = imgUrl.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
-    isPhotoMode = true;
-    document.getElementById('imgAfter').src=imgUrl;
-    document.getElementById('resultDesc').textContent=data.description;
-    const afterB64 = imgUrl.startsWith('data:') ? imgUrl.split(',')[1] : null;
-    showPlants(data.plants);
-  }catch(e){
-    show('s-photo');
-    document.getElementById('photoErr').textContent='Error: '+e.message;
-    document.getElementById('photoErr').classList.add('show');
-  }
-}
-
-async function runSketch(){
-  const w=document.getElementById('gW').value;
-  const l=document.getElementById('gL').value;
-  const loc=getLocStr('sketchLoc');
-  const shape=document.getElementById('gShape').value;
-  const sun=document.getElementById('gSun').value;
-  const prefs=document.getElementById('sketchPrefs').value.trim();
-  const err=document.getElementById('sketchErr');
-  const locRaw=document.getElementById('sketchLoc').value.trim();
-  if(!w||!l||!locRaw){err.textContent='Please enter dimensions and location.';err.classList.add('show');return;}
-  err.classList.remove('show');
-  closePlantPopup(null);
-  setFlowPulse(null);
-  show('s-loading');
-  const mustInclude = smartInclude2 ? getSelectedSmartNames() : [];
-  const mustStr = mustInclude.length>0 ? `You MUST include these plants: ${mustInclude.join(', ')}.` : '';
-  const specificStr = getSpecificPlantsStr('2');
-  try{
-    setLS(1);
-    const styleNames = getStyleNames('2');
-    const stylesDesc = getStylesStr('2');
-    const plantGuide2 = getStylePlantGuide('2');
-    const isHouseplants2 = Object.values(styleData['2']).some(s => s.name === 'Houseplants');
-    const imgPromptTemplate2 = isHouseplants2
-      ? `photorealistic cozy indoor living space ${w}x${l}m with ${styleNames} houseplants, lush potted plants arranged on shelves windowsills and floors, bright natural light through windows, interior design view, no outdoor elements${prefs?', '+prefs:''}`
-      : `aerial top-down view of a ${w}x${l}m ${styleNames} garden design with ${stylesDesc}, watercolor architectural illustration, lawn, flower beds, pathways, trees, detailed plant placement, colorful and lush`;
-    const roleContext2 = isHouseplants2 ? 'location inside the home (e.g. windowsill, living room corner, shelf, bathroom)' : 'location in garden';
-    const txt=await claude([{role:'user',content:`Design a ${isHouseplants2 ? styleNames+' indoor plant collection' : styleNames+' garden'}: ${w}m x ${l}m ${shape} in ${loc}. ${isHouseplants2 ? 'Light conditions' : 'Sun'}: ${sun}. ${prefs?'Preferences: '+prefs+'. ':''} ${mustStr}
-
-Return ONLY valid JSON (no markdown):
-{"description":"2 sentences about this design","prompt":"${imgPromptTemplate2}","plants":[{"name":"","latin":"","emoji":"🌿","role":"","warnings":[],"cm":85,"cr":"","care":{"w":"low","l":"full_sun","d":"easy","t":""}}]}
-For warnings use ONLY: spiky, invasive_roots, toxic_humans, toxic_pets, high_water, deep_shade, invasive_spread, allergenic. Empty array [] if none apply.
-
-${specificStr ? "IMPORTANT: "+specificStr : ""} CRITICAL RULES:
-1. You MUST include EXACTLY the number of plants specified: ${stylesDesc}
-2. If it says "7 trees" you MUST put 7 trees in the plants array
-3. Only plants — NO furniture or non-plant items
-4. ${isHouseplants2 ? 'ALL plants MUST be true indoor houseplants that thrive inside a home — NO outdoor garden plants whatsoever' : 'All suitable for '+styleNames+' style and '+loc+' climate'}
-5. ${mustStr || 'Recommend varied, interesting plants'}
-Plant fields: name=full name, latin=latin name, role=placement, warnings=array of: spiky/invasive_roots/toxic_humans/toxic_pets/high_water/deep_shade/invasive_spread/allergenic, cm=climate match 0-100 for ${loc}, cr=1 sentence why, care.w=low|medium|high, care.l=full_sun|part_shade|full_shade|indirect, care.d=easy|moderate|expert, care.t=short tip.
-PLANT SELECTION IS MANDATORY. ONLY use plants from this approved list:
-${plantGuide2}
-NEVER suggest plants outside these approved style lists.
-The plants array MUST match the exact counts specified above.`}]);
-    setLS(2);
-    const data=safeParseJSON(txt);
-    setLS(3);
-    const imgUrl=await replicate(data.prompt);
-    setLS(4);
-    closePlantPopup(null); show('s-result');
-    document.getElementById('beforeAfter').style.display='none';
-    document.getElementById('singleImg').style.display='block';
-    lastGeneratedImg = imgUrl;
-    lastGeneratedB64 = imgUrl.startsWith('data:') ? imgUrl.split(',')[1] : null;
-    isPhotoMode = false;
-    document.getElementById('imgSketch').src=imgUrl;
-    document.getElementById('resultDesc').textContent=data.description;
-    showPlants(data.plants);
-  }catch(e){
-    show('s-sketch');
-    document.getElementById('sketchErr').textContent='Error: '+e.message;
-    document.getElementById('sketchErr').classList.add('show');
-  }
-}
-</script>
-
-  <!-- Add plant modal -->
-  <div class="add-plant-modal-overlay" id="addPlantModalOverlay" onclick="if(event.target===this)closeAddPlantModal()">
-    <div class="add-plant-modal" id="addPlantModalBox">
-      <div id="apmStep1">
-        <p class="apm-title">🌱 Add plants to your garden</p>
-        <div class="apm-options">
-          <div class="apm-option" onclick="showApmList()">
-            <div class="apm-option-icon">📋</div>
-            <div>
-              <div class="apm-option-text">Choose from list</div>
-              <div class="apm-option-sub">Plants recommended for your style</div>
-            </div>
-          </div>
-          <div class="apm-option" onclick="showApmWrite()">
-            <div class="apm-option-icon">✏️</div>
-            <div>
-              <div class="apm-option-text">Tell me your wishes</div>
-              <div class="apm-option-sub">Describe what you want to add</div>
-            </div>
-          </div>
-        </div>
-        <button onclick="closeAddPlantModal()" style="width:100%;padding:9px;border-radius:10px;border:0.5px solid var(--border);background:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">Cancel</button>
-      </div>
-
-      <div id="apmStep2List" style="display:none">
-        <button class="apm-back" onclick="showApmStep1()">← Back</button>
-        <p class="apm-title">Choose plants to add</p>
-        <div class="apm-plant-list" id="apmPlantList" style=""></div>
-        <button class="apm-confirm" id="apmConfirmBtn" onclick="confirmApmList()" disabled>Add to garden ✨</button>
-        
-      </div>
-
-      <div id="apmStep2Write" style="display:none">
-        <button class="apm-back" onclick="showApmStep1()">← Back</button>
-        <p class="apm-title">What would you like to add?</p>
-        <textarea id="apmWishText" style="width:100%;min-height:90px;border-radius:10px;border:1px solid var(--border);padding:10px;font-size:13px;font-family:'DM Sans',sans-serif;resize:vertical;color:var(--text);background:var(--card)" placeholder="e.g. A lemon tree near the fence, some lavender along the path, colorful flowers in the corner…"></textarea>
-        <button class="apm-confirm" onclick="confirmApmWrite()" style="margin-top:12px">Apply to my garden ✨</button>
-        
-      </div>
-    </div>
-  </div>
-
-  <!-- Plant popup — always at top level, never inside a hidden screen -->
-  <div class="pc-popup-overlay" id="plantPopupOverlay" onclick="closePlantPopup(event)">
-    <div class="pc-popup" id="plantPopupBox">
-      <button class="pc-popup-close" onclick="closePlantPopup(null)">✕</button>
-      <div class="pc-popup-title" id="ppName"></div>
-      <div class="pc-popup-latin" id="ppLatin"></div>
-      <div class="pc-popup-section" id="ppClimateSection">
-        <div class="pc-popup-section-lbl">Climate match</div>
-        <div class="pc-climate-pct" id="ppClimatePct"></div>
-        <div class="pc-climate-bar"><div class="pc-climate-fill" id="ppClimateBar"></div></div>
-        <div class="pc-climate-reason" id="ppClimateReason"></div>
-      </div>
-      <div class="pc-popup-section" id="ppWarnSection">
-        <div class="pc-popup-section-lbl">Warnings</div>
-        <div id="ppWarnList"></div>
-      </div>
-      <div class="pc-popup-section" id="ppCareSection">
-        <div class="pc-popup-section-lbl">Care</div>
-        <div id="ppCareList"></div>
-      </div>
-      <div class="pc-popup-section" id="ppRoleSection">
-        <div class="pc-popup-section-lbl">Placement</div>
-        <div class="pc-popup-row" id="ppRole"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Small warnings-only popup -->
-  <div id="warnPopupOverlay" onclick="if(event.target===this)closeWarnPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10001;align-items:center;justify-content:center">
-    <div style="background:var(--card);border-radius:16px;padding:20px 18px;max-width:280px;width:88%;position:relative;box-shadow:0 6px 24px rgba(0,0,0,.18)">
-      <button onclick="closeWarnPopup()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);line-height:1">✕</button>
-      <div style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">⚠️ Warnings</div>
-      <div id="warnPopupName" style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px"></div>
-      <div id="warnPopupList" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-  </div>
-
-  <!-- Safe fallback error overlay (keeps iframe from going blank on AI failure) -->
-  <div id="gd-fatal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(18,53,31,.94);color:#fff;padding:24px;text-align:center;align-items:center;justify-content:center;font-family:Inter,system-ui,sans-serif">
-    <div style="max-width:340px">
-      <div style="font-size:42px;margin-bottom:12px">🌱</div>
-      <h2 style="margin:0 0 8px;font-size:20px;font-weight:700">Design couldn’t be generated</h2>
-      <p id="gd-fatal-msg" style="margin:0 0 18px;font-size:14px;opacity:.92;line-height:1.5"></p>
-      <button type="button" onclick="document.getElementById('gd-fatal').style.display='none'" style="height:44px;padding:0 24px;border:0;border-radius:999px;background:#fff;color:#0f3d2e;font-weight:700;cursor:pointer">Back</button>
-    </div>
-  </div>
-  <script>
-  (function(){
-    if(window.__gdFatalInit)return;window.__gdFatalInit=1;
-    function gdFatal(msg){
-      var el=document.getElementById('gd-fatal');
-      var m=document.getElementById('gd-fatal-msg');
-      var ld=document.getElementById('s-loading');
-      if(ld) ld.style.display='none';
-      if(m) m.textContent=msg||'Something went wrong while generating your design. Please try again.';
-      if(el) el.style.display='flex';
-    }
-    window.gdFatal=gdFatal;
-    window.addEventListener('unhandledrejection',function(e){
+      if(e&&e.preventDefault)e.preventDefault();
       gdFatal((e&&e.reason&&e.reason.message)||'AI generation failed.');
     });
     window.addEventListener('error',function(e){

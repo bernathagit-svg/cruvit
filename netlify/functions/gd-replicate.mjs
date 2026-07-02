@@ -11,6 +11,15 @@ export async function handler(event) {
     };
   }
 
+  const apiToken = process.env.REPLICATE_KEY || process.env.REPLICATE_API_TOKEN;
+  if (!apiToken) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: { message: 'Missing REPLICATE_KEY or REPLICATE_API_TOKEN server environment variable.' } })
+    };
+  }
+
   try {
     const body = JSON.parse(event.body);
     const { action, predictionId, prompt } = body;
@@ -33,7 +42,7 @@ export async function handler(event) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Token ' + process.env.REPLICATE_KEY
+          'Authorization': 'Token ' + apiToken
         },
         body: JSON.stringify(reqBody)
       });
@@ -50,7 +59,7 @@ export async function handler(event) {
 
     if (action === 'poll') {
       const response = await fetch('https://api.replicate.com/v1/predictions/' + predictionId, {
-        headers: { 'Authorization': 'Token ' + process.env.REPLICATE_KEY }
+        headers: { 'Authorization': 'Token ' + apiToken }
       });
       const data = await response.json();
       return {

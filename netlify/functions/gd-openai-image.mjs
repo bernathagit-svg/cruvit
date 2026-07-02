@@ -11,6 +11,15 @@ export async function handler(event) {
     };
   }
 
+  const apiKey = process.env.OPENAI_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: 'Missing OPENAI_KEY or OPENAI_API_KEY server environment variable.' })
+    };
+  }
+
   try {
     const { prompt, imageBase64 } = JSON.parse(event.body);
 
@@ -28,7 +37,7 @@ export async function handler(event) {
     const response = await fetch('https://api.openai.com/v1/images/edits', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + process.env.OPENAI_KEY
+        'Authorization': 'Bearer ' + apiKey
       },
       body: formData
     });
