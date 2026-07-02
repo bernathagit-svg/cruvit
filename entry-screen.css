@@ -628,7 +628,8 @@
 }
 
 .entry-tile-rec { grid-row: 1 / 3; grid-column: 1; }
-.entry-tile-design { grid-column: 2 / 4; grid-row: 1; }
+.entry-tile-design { grid-column: 2; grid-row: 1; }
+.entry-tile-identify { grid-column: 3; grid-row: 1; }
 .entry-tile-diag { grid-column: 2; grid-row: 2; }
 .entry-tile-shop { grid-column: 3; grid-row: 2; }
 
@@ -731,10 +732,11 @@
   }
 
   .entry-tile-design {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: auto;
   }
 
+  .entry-tile-identify { grid-column: 2; grid-row: auto; }
   .entry-tile-diag { grid-column: 1; grid-row: auto; }
   .entry-tile-shop { grid-column: 2; grid-row: auto; }
 }
@@ -762,7 +764,8 @@
   }
 
   .entry-tile-diag,
-  .entry-tile-shop {
+  .entry-tile-shop,
+  .entry-tile-identify {
     grid-column: 1;
   }
 }

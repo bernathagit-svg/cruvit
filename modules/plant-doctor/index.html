@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="google" content="notranslate" />
+<title>Cruvit – Plant Doctor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#1f6b3a;--green2:#2f7d49;--deep:#123b26;--muted:#5c7968;--cream:#f7f8ef;--glass:rgba(247,248,239,.72);--border:rgba(255,255,255,.52)}
+html,body{height:100%;font-family:'DM Sans',sans-serif;color:var(--deep);overflow:hidden;background:#eaf1e4}
+body.notranslate *{translate:no}
+.bg{position:fixed;inset:0;background:url('background.jpeg') center/cover no-repeat;z-index:0}
+.bg:before{content:'';position:absolute;inset:0;background:rgba(15,33,18,.40);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column}
+.hdr{height:70px;display:flex;align-items:center;gap:16px;padding:0 24px;background:rgba(248,249,242,.68);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.38)}
+.logo{height:42px;object-fit:contain}.sub{font-weight:600;color:#3d7c57;font-size:14px}.spacer{flex:1}
+.lang{min-width:168px;border:1px solid rgba(31,107,58,.18);background:rgba(255,255,255,.78);color:var(--deep);border-radius:14px;padding:11px 16px;font-weight:700;font-size:15px;outline:none;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.06)}
+.main{flex:1;overflow:auto;padding:36px 18px 42px;display:flex;justify-content:center;align-items:flex-start}.main::-webkit-scrollbar{width:7px}.main::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:10px}
+.card{width:min(760px,92vw);background:rgba(248,249,242,.80);border:1px solid var(--border);box-shadow:0 24px 70px rgba(0,0,0,.18);border-radius:38px;padding:34px 40px;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);text-align:center}
+.icon{width:260px;max-width:56vw;border-radius:42px;display:block;margin:0 auto 18px;filter:drop-shadow(0 12px 26px rgba(0,0,0,.15))}.title{font-size:31px;font-weight:800;color:#123b26;line-height:1.15;margin-bottom:10px}.desc{font-size:17px;color:#526f5e;line-height:1.45;margin:0 auto 24px;max-width:620px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:0 auto 18px}.btn{height:64px;border-radius:18px;border:1.5px solid rgba(31,107,58,.22);font-size:19px;font-weight:800;cursor:pointer;transition:.18s ease;display:flex;align-items:center;justify-content:center;gap:12px;font-family:'DM Sans',sans-serif}.btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(0,0,0,.10)}.btn.outline{background:rgba(255,255,255,.63);color:#1d5f35}.btn.primary{background:#216b3c;color:white;border-color:#216b3c}.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.preview{display:none;margin:0 auto 24px;position:relative}.preview.show{display:block}.preview img{width:100%;height:350px;object-fit:cover;border-radius:24px;border:2px solid rgba(255,255,255,.72);box-shadow:0 12px 34px rgba(0,0,0,.15)}.change{position:absolute;right:14px;bottom:14px;border:0;border-radius:14px;background:rgba(255,255,255,.88);padding:10px 16px;color:#2d6a3f;font-weight:700;cursor:pointer}
+.details{display:none;text-align:inherit}.details.show{display:block}.lbl{font-weight:800;color:#fff;margin:10px 0 8px;text-shadow:0 2px 6px rgba(0,0,0,.25);font-size:13px;letter-spacing:.04em;text-transform:uppercase}.notes{width:100%;height:76px;border:1px solid rgba(31,107,58,.17);border-radius:18px;padding:17px 18px;font:500 16px 'DM Sans';outline:none;resize:none;background:rgba(255,255,255,.88);color:#123b26;margin-bottom:18px}.diagnose{width:100%;height:66px;border-radius:22px;border:0;background:linear-gradient(135deg,#247340,#0f502a);color:white;font-size:22px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 16px 35px rgba(24,93,48,.23)}
+.err{display:none;margin:16px auto 0;background:rgba(255,255,255,.88);border:1px solid rgba(220,60,50,.25);color:#c43128;border-radius:14px;padding:12px 16px;max-width:640px}.err.show{display:block}.privacy{margin-top:18px;color:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:12px 18px;max-width:760px;text-align:center;background:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.loading{display:none;color:white;text-align:center;padding:70px 10px}.loading.show{display:block}.leaf{font-size:54px;animation:pulse 1.4s infinite ease-in-out}.load-title{font-family:'Cormorant Garamond',serif;font-size:34px;margin:12px}.load-sub{font-size:17px;opacity:.86}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.result{display:none;width:min(880px,94vw)}.result.show{display:block}.back{border:0;background:transparent;color:white;font-weight:700;margin-bottom:14px;cursor:pointer;font-size:16px}.diag-card,.list-card{background:rgba(248,249,242,.82);border:1px solid rgba(255,255,255,.55);border-radius:26px;padding:22px;margin-bottom:16px;backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.15)}.top{display:flex;gap:18px;align-items:flex-start}.thumb{width:110px;height:110px;border-radius:18px;object-fit:cover}.rtitle{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#123b26;line-height:1.15;margin-bottom:9px}.badge{display:inline-block;border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;margin-bottom:8px}.low{background:#e3f5e7;color:#267b45}.medium{background:#fff1d8;color:#b46300}.high{background:#fde1dc;color:#b8372e}.section-title{font-weight:900;color:#2a7044;font-size:15px;letter-spacing:.05em;margin:18px 0 8px;text-transform:uppercase}.para{font-size:16px;line-height:1.65;color:#244d37}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.tab{padding:16px;border-radius:18px;border:1px solid rgba(31,107,58,.16);background:rgba(255,255,255,.55);cursor:pointer;font-weight:800;color:#346947}.tab.active{background:rgba(255,255,255,.86);border-color:#2f7d49}.panel{display:none}.panel.active{display:block}.item{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.45);border:1px solid rgba(31,107,58,.12);border-radius:18px;padding:15px;margin-bottom:10px}.item-emoji{font-size:29px}.item h4{font-size:17px;margin-bottom:4px}.item p,.item li{font-size:15px;color:#4d725d;line-height:1.45}.newbtn{width:100%;height:54px;border-radius:18px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.55);font-weight:800;color:white;cursor:pointer;font-size:17px}
+.api-modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(10,28,16,.72);backdrop-filter:blur(6px);align-items:center;justify-content:center}
+.api-box{background:#f7f8ef;border-radius:28px;padding:36px 32px;max-width:440px;width:92vw;box-shadow:0 28px 70px rgba(0,0,0,.28);text-align:center}
+.api-box h3{font-size:22px;font-weight:900;color:#123b26;margin-bottom:10px}
+.api-box p{font-size:14px;color:#526f5e;line-height:1.55;margin-bottom:18px}
+.api-box p a{color:#2a7044;font-weight:700}
+.api-input{width:100%;padding:14px 16px;border:1.5px solid rgba(31,107,58,.25);border-radius:16px;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;background:#fff;color:#123b26}
+.api-save{width:100%;height:52px;border-radius:16px;border:0;background:linear-gradient(135deg,#247340,#0f502a);color:white;font-size:17px;font-weight:800;cursor:pointer}
+.api-hint{font-size:12px;color:#789b83;margin-top:12px}
+html[dir="rtl"] body,html[dir="rtl"] .main{text-align:right}html[dir="rtl"] .top{direction:rtl}html[dir="rtl"] .hdr{direction:rtl}html[dir="rtl"] .spacer{order:0}
+@media(max-width:680px){.hdr{height:64px;padding:0 12px}.logo{height:34px}.sub{display:none}.lang{min-width:140px;padding:9px 10px;font-size:13px}.main{padding:18px 10px 28px}.card{padding:24px 18px;border-radius:30px}.icon{width:190px}.title{font-size:24px}.desc{font-size:15px}.btn-row{grid-template-columns:1fr;gap:11px}.btn{height:58px}.preview img{height:280px}.top{flex-direction:column}.thumb{width:100%;height:190px}.tabs{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="notranslate">
+<div class="bg"></div>
+<div class="app">
+<header class="hdr">
+  <img class="logo" src="cruvit-logo.png" alt="Cruvit"><span class="sub" data-i="appName">Plant Doctor</span><div class="spacer"></div>
+  <select id="lang" class="lang"></select>
+</header>
+<main class="main">
+  <section id="uploadScreen">
+    <div id="uploadCard" class="card">
+      <img id="doctorIcon" class="icon" src="doctor-icon.png" alt="Plant Doctor">
+      <h1 class="title" data-i="uploadTitle">Upload a photo of your plant</h1>
+      <p class="desc" data-i="uploadSub">Take a clear photo of the affected leaves, stem, or roots</p>
+      <div class="btn-row">
+        <button class="btn outline" id="galleryBtn"><span>🖼️</span><span data-i="gallery">Gallery</span></button>
+        <button class="btn primary" id="cameraBtn"><span>📷</span><span data-i="camera">Camera</span></button>
+      </div>
+    </div>
+    <div id="preview" class="preview"><img id="previewImg" alt="preview"><button id="changeBtn" class="change" data-i="change">Change photo</button></div>
+    <div id="details" class="details"><div class="lbl" data-i="details">Add details (optional)</div><textarea id="notes" class="notes" data-ph="notesPh" placeholder="e.g. Yellow spots appeared 3 days ago..."></textarea><button id="diagnose" class="diagnose" disabled><span>🔬</span><span data-i="diagnose">Diagnose my plant</span></button></div>
+    <div id="err" class="err"></div>
+    <div class="privacy" data-i="privacy">We analyze your plant and help you get the right treatment. Private and secure.</div>
+    <input id="fileInput" type="file" accept="image/*" hidden><input id="camInput" type="file" accept="image/*" capture="environment" hidden>
+  </section>
+  <section id="loading" class="loading"><div class="leaf">🌿</div><h2 class="load-title" data-i="loadingTitle">Analyzing your plant...</h2><p class="load-sub" data-i="loadingSub">This may take 20–40 seconds</p></section>
+  <section id="result" class="result"><button class="back" id="backBtn" data-i="back">← New diagnosis</button><div id="resultHtml"></div><button class="newbtn" id="newBtn" data-i="newDiag">Diagnose another plant</button></section>
+</main>
+</div>
+<div id="apiModal" class="api-modal">
+  <div class="api-box">
+    <h3>🔑 Anthropic API Key Required</h3>
+    <p>This app calls the Claude AI directly from your browser.<br>Enter your Anthropic API key to get started.<br><a href="https://console.anthropic.com/settings/keys" target="_blank">Get your key at console.anthropic.com →</a></p>
+    <input id="apiKeyInput" class="api-input" type="password" placeholder="sk-ant-…" autocomplete="off" />
+    <button class="api-save" onclick="saveApiKey()">Save & Continue</button>
+    <div class="api-hint">Your key is stored only in your browser (localStorage) and never sent to any server except Anthropic.</div>
+  </div>
+</div>
+<script>
+const LANGS={en:'GB EN English',he:'IL HE עברית',nl:'NL NL Nederlands',fr:'FR FR Français',de:'DE DE Deutsch',es:'ES ES Español',it:'IT IT Italiano',pt:'PT PT Português',ru:'RU RU Русский',ar:'SA AR العربية',tr:'TR TR Türkçe',pl:'PL PL Polski',zh:'CN ZH 中文',ja:'JP JA 日本語',ko:'KR KO 한국어'};
+const L={
+ en:{appName:'Plant Doctor',uploadTitle:'Upload a photo of your plant',uploadSub:'Take a clear photo of the affected leaves, stem, or roots',gallery:'Gallery',camera:'Camera',change:'Change photo',details:'Add details (optional)',notesPh:'e.g. Yellow spots appeared 3 days ago, leaves are drooping...',diagnose:'Diagnose my plant',privacy:'We analyze your plant and help you get the right treatment. Private and secure.',loadingTitle:'Analyzing your plant...',loadingSub:'This may take 20–40 seconds',back:'← New diagnosis',newDiag:'Diagnose another plant',diagnosis:'Diagnosis',products:'Products',biological:'Biological',home:'Home remedy',severity_low:'Low severity',severity_medium:'Medium severity',severity_high:'High severity',uploadFirst:'Please upload a plant photo first.',aiMissing:'The AI diagnosis function was not found on Netlify. If you deployed by drag-and-drop, deploy through Netlify CLI or Git so netlify/functions/claude.js is published.',aiError:'AI diagnosis error'},
+ he:{appName:'רופא צמחים',uploadTitle:'העלי תמונה של הצמח שלך',uploadSub:'צלמי בבירור את העלים, הגבעול או השורשים הפגועים',gallery:'גלריה',camera:'מצלמה',change:'החלף תמונה',details:'הוסיפי פרטים (אופציונלי)',notesPh:'למשל: כתמים צהובים הופיעו לפני 3 ימים...',diagnose:'אבחן את הצמח שלי',privacy:'אנחנו מנתחים את הצמח שלך ועוזרים לך לקבל את הטיפול הנכון. פרטי ומאובטח.',loadingTitle:'מאבחן את הצמח שלך...',loadingSub:'זה עשוי לקחת 20–40 שניות',back:'← אבחון חדש',newDiag:'אבחן צמח נוסף',diagnosis:'אבחון',products:'מוצרים',biological:'ביולוגי',home:'טיפול ביתי',severity_low:'חומרה נמוכה',severity_medium:'חומרה בינונית',severity_high:'חומרה גבוהה',uploadFirst:'נא להעלות קודם תמונת צמח.',aiMissing:'פונקציית האבחון של Netlify לא נמצאה. אם העלית בגרירה ידנית, צריך לפרוס דרך Netlify CLI או Git כדי שפונקציות יעלו.',aiError:'שגיאת אבחון AI'},
+ nl:{appName:'Plantendokter',uploadTitle:'Upload een foto van je plant',uploadSub:'Maak een duidelijke foto van de aangetaste bladeren, stengel of wortels',gallery:'Galerij',camera:'Camera',change:'Foto wijzigen',details:'Voeg details toe (optioneel)',notesPh:'Bijv. gele vlekken verschenen 3 dagen geleden...',diagnose:'Diagnoseer mijn plant',privacy:'We analyseren je plant en helpen je de juiste behandeling te vinden. Privé en veilig.',loadingTitle:'Je plant wordt geanalyseerd...',loadingSub:'Dit kan 20–40 seconden duren',back:'← Nieuwe diagnose',newDiag:'Diagnoseer een andere plant',diagnosis:'Diagnose',products:'Producten',biological:'Biologisch',home:'Huismiddel',severity_low:'Lage ernst',severity_medium:'Gemiddelde ernst',severity_high:'Hoge ernst',uploadFirst:'Upload eerst een plantfoto.',aiMissing:'De Netlify AI-functie is niet gevonden. Deploy via Netlify CLI of Git zodat netlify/functions/claude.js wordt gepubliceerd.',aiError:'AI-diagnosefout'},
+ fr:{appName:'Docteur des plantes',uploadTitle:'Ajoutez une photo de votre plante',uploadSub:'Prenez une photo claire des feuilles, tiges ou racines touchées',gallery:'Galerie',camera:'Caméra',change:'Changer la photo',details:'Ajouter des détails (facultatif)',notesPh:'Ex. des taches jaunes sont apparues il y a 3 jours...',diagnose:'Diagnostiquer ma plante',privacy:'Nous analysons votre plante et vous aidons à trouver le bon traitement.',loadingTitle:'Analyse de votre plante...',loadingSub:'Cela peut prendre 20–40 secondes',back:'← Nouveau diagnostic',newDiag:'Diagnostiquer une autre plante',diagnosis:'Diagnostic',products:'Produits',biological:'Biologique',home:'Remède maison',severity_low:'Faible gravité',severity_medium:'Gravité moyenne',severity_high:'Gravité élevée',uploadFirst:'Veuillez d’abord ajouter une photo.',aiMissing:'La fonction IA Netlify est introuvable. Déployez via Netlify CLI ou Git.',aiError:'Erreur de diagnostic IA'},
+ de:{appName:'Pflanzendoktor',uploadTitle:'Lade ein Foto deiner Pflanze hoch',uploadSub:'Mache ein klares Foto der betroffenen Blätter, Stängel oder Wurzeln',gallery:'Galerie',camera:'Kamera',change:'Foto ändern',details:'Details hinzufügen (optional)',notesPh:'z. B. gelbe Flecken seit 3 Tagen...',diagnose:'Meine Pflanze diagnostizieren',privacy:'Wir analysieren deine Pflanze und helfen bei der richtigen Behandlung.',loadingTitle:'Pflanze wird analysiert...',loadingSub:'Dies kann 20–40 Sekunden dauern',back:'← Neue Diagnose',newDiag:'Weitere Pflanze diagnostizieren',diagnosis:'Diagnose',products:'Produkte',biological:'Biologisch',home:'Hausmittel',severity_low:'Geringer Schweregrad',severity_medium:'Mittlerer Schweregrad',severity_high:'Hoher Schweregrad',uploadFirst:'Bitte zuerst ein Pflanzenfoto hochladen.',aiMissing:'Die Netlify KI-Funktion wurde nicht gefunden. Bitte per Netlify CLI oder Git deployen.',aiError:'KI-Diagnosefehler'},
+ es:{appName:'Doctor de plantas',uploadTitle:'Sube una foto de tu planta',uploadSub:'Toma una foto clara de las hojas, tallo o raíces afectadas',gallery:'Galería',camera:'Cámara',change:'Cambiar foto',details:'Añadir detalles (opcional)',notesPh:'Ej. manchas amarillas aparecieron hace 3 días...',diagnose:'Diagnosticar mi planta',privacy:'Analizamos tu planta y te ayudamos con el tratamiento adecuado.',loadingTitle:'Analizando tu planta...',loadingSub:'Puede tardar 20–40 segundos',back:'← Nuevo diagnóstico',newDiag:'Diagnosticar otra planta',diagnosis:'Diagnóstico',products:'Productos',biological:'Biológico',home:'Remedio casero',severity_low:'Gravedad baja',severity_medium:'Gravedad media',severity_high:'Gravedad alta',uploadFirst:'Primero sube una foto.',aiMissing:'No se encontró la función de IA en Netlify. Despliega con Netlify CLI o Git.',aiError:'Error de diagnóstico IA'}
+};
+['it','pt','ru','ar','tr','pl','zh','ja','ko'].forEach(c=>L[c]=L.en);
+let lang=localStorage.getItem('pd_lang')||'en', dataUrl='', b64='', resultData=null;
+const $=id=>document.getElementById(id);
+function t(k){return (L[lang]&&L[lang][k])||L.en[k]||k}
+function setLang(v){lang=v;localStorage.setItem('pd_lang',lang);document.documentElement.lang=lang;document.documentElement.dir=(lang==='he'||lang==='ar')?'rtl':'ltr';document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.dataset.ph));$('lang').value=lang;if(resultData) renderResult(resultData)}
+function initLang(){Object.entries(LANGS).forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=v;$('lang').appendChild(o)});$('lang').addEventListener('change',e=>setLang(e.target.value));setLang(lang)}
+function choose(input){input.click()}
+function handleFile(f){if(!f)return;const r=new FileReader();r.onload=()=>{dataUrl=r.result;b64=String(dataUrl).split(',')[1];$('uploadCard').style.display='none';$('preview').classList.add('show');$('previewImg').src=dataUrl;$('details').classList.add('show');$('diagnose').disabled=false;$('err').classList.remove('show')};r.readAsDataURL(f)}
+function reset(){dataUrl='';b64='';resultData=null;$('fileInput').value='';$('camInput').value='';$('notes').value='';$('uploadCard').style.display='block';$('preview').classList.remove('show');$('details').classList.remove('show');$('diagnose').disabled=true;$('err').classList.remove('show');$('uploadScreen').style.display='block';$('loading').classList.remove('show');$('result').classList.remove('show')}
+function getApiKey(){return localStorage.getItem('cruvit_api_key')||'';}
+function setApiKey(k){localStorage.setItem('cruvit_api_key',k.trim());}
+async function callAI(messages,max_tokens=1700){
+  const r=await fetch('/.netlify/functions/pd-claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens,messages})});
+  if(!r.ok&&r.status===404)throw new Error(t('aiMissing'));
+  const text=await r.text();let d;try{d=JSON.parse(text)}catch{throw new Error('Non-JSON response from AI')};
+  if(!r.ok||d.error)throw new Error((d.error&&d.error.message)||(t('aiError')+' ('+r.status+')'));
+  return d.content?.[0]?.text||'';
+}
+function showApiKeyModal(){$('apiModal').style.display='flex';}
+function hideApiKeyModal(){$('apiModal').style.display='none';}
+function saveApiKey(){const k=$('apiKeyInput').value.trim();if(!k){alert('Please enter an API key.');return;}setApiKey(k);hideApiKeyModal();}
+function targetName(){return {en:'English',he:'Hebrew',nl:'Dutch',fr:'French',de:'German',es:'Spanish',it:'Italian',pt:'Portuguese',ru:'Russian',ar:'Arabic',tr:'Turkish',pl:'Polish',zh:'Chinese',ja:'Japanese',ko:'Korean'}[lang]||'English'}
+function parseJson(txt){let s=String(txt||'').replace(/```json|```/g,'').trim();try{return JSON.parse(s)}catch{}let a=s.indexOf('{'),b=s.lastIndexOf('}');if(a>=0&&b>a)return JSON.parse(s.slice(a,b+1));throw new Error('Invalid JSON from AI')}
+async function diagnose(){if(!b64){showErr(t('uploadFirst'));return}$('uploadScreen').style.display='none';$('loading').classList.add('show');$('result').classList.remove('show');const notes=$('notes').value.trim();const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high.`;
+try{const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]}]);resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show')}catch(e){$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(e.message)}}
+function showErr(m){$('err').textContent=m;$('err').classList.add('show')}
+function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}function sevText(s){return t('severity_'+(s||'low'))}
+function renderItems(arr){if(!arr||!arr.length)return '<div class="item"><p>—</p></div>';return arr.map(x=>typeof x==='string'?`<div class="item"><div class="item-emoji">🌿</div><p>${x}</p></div>`:`<div class="item"><div class="item-emoji">${x.emoji||'🌿'}</div><div><h4>${x.name||''}</h4><p>${x.desc||''}</p></div></div>`).join('')}
+function renderResult(d){$('resultHtml').innerHTML=`<div class="diag-card"><div class="top"><img class="thumb" src="${dataUrl}"><div><h2 class="rtitle">${d.problem_name||''}</h2><span class="badge ${sevClass(d.severity)}">${sevText(d.severity)}</span><div class="para">🌱 ${d.plant_name||''}</div></div></div><div class="section-title">🔍 ${t('diagnosis')}</div><p class="para">${d.diagnosis||''}</p></div><div class="tabs"><button class="tab active" onclick="tab('p1',this)">🛒 ${t('products')}</button><button class="tab" onclick="tab('p2',this)">🧬 ${t('biological')}</button><button class="tab" onclick="tab('p3',this)">🏠 ${t('home')}</button></div><div class="list-card panel active" id="p1">${renderItems(d.products)}</div><div class="list-card panel" id="p2">${renderItems(d.biological)}</div><div class="list-card panel" id="p3">${renderItems(d.home_remedy)}</div>`}
+window.tab=(id,btn)=>{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active')}
+$('galleryBtn').onclick=()=>$('fileInput').click();$('cameraBtn').onclick=()=>$('camInput').click();$('changeBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>handleFile(e.target.files[0]);$('camInput').onchange=e=>handleFile(e.target.files[0]);$('diagnose').onclick=diagnose;$('backBtn').onclick=reset;$('newBtn').onclick=reset;initLang();
+window.addEventListener('unhandledrejection',function(e){
+  var msg=(e&&e.reason&&e.reason.message)||'Diagnosis failed.';
+  try{$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(msg);}catch(_){}
+});
+</script>
+</body></html>

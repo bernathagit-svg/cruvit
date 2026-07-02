@@ -1,0 +1,76 @@
+/* Garden Design — parent host chrome for the isolated iframe overlay.
+   Only styles the parent-side container/iframe/back button.
+   No styles leak into the iframe (separate document). */
+
+#garden-design-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2300;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  background: #eef7e9;
+}
+
+#garden-design-root.gd-active {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+#garden-design-root .gd-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #eef7e9;
+}
+
+.app.gd-open .shell:not(.entry-wrap) {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#garden-design-root .gd-back {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  inset-inline-start: max(14px, env(safe-area-inset-left));
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px 0 14px;
+  border: 1px solid rgba(15, 61, 46, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 254, 249, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #0f3d2e;
+  font: 700 14px/1 Inter, system-ui, sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(15, 61, 46, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+#garden-design-root .gd-back:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 254, 249, 1);
+  box-shadow: 0 12px 30px rgba(15, 61, 46, 0.2);
+}
+
+#garden-design-root .gd-back:active {
+  transform: translateY(0);
+}
+
+#garden-design-root .gd-back .gd-back-arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+
+html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
+  transform: scaleX(-1);
+}

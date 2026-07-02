@@ -11,8 +11,11 @@
 <link rel="stylesheet" href="styles.css?v=20250633">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
-<link rel="stylesheet" href="entry-screen.css?v=20250663">
+<link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20250645">
+<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
+<link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
+<link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
 </head>
 <body>
 <div class="app entry-visible" id="appRoot">
@@ -88,10 +91,21 @@
         <button type="button" class="entry-tile entry-tile-design" data-entry-action="design">
           <span class="entry-tile-bg" aria-hidden="true"></span>
           <span class="entry-tile-content">
+            <span class="entry-tile-icon">🎨</span>
+            <span class="entry-tile-copy">
+              <b class="entry-action-title">Garden Design</b>
+              <span class="entry-action-desc" data-entry-desc="design">Plan your garden layout and beds</span>
+            </span>
+            <span class="entry-tile-go" aria-hidden="true">→</span>
+          </span>
+        </button>
+        <button type="button" class="entry-tile entry-tile-identify" data-entry-action="identify">
+          <span class="entry-tile-bg" aria-hidden="true"></span>
+          <span class="entry-tile-content">
             <span class="entry-tile-icon">📷</span>
             <span class="entry-tile-copy">
-              <b class="entry-action-title">Design · Scan Plants</b>
-              <span class="entry-action-desc" data-entry-desc="design">Plan your garden and identify plants from a photo</span>
+              <b class="entry-action-title">Identify Plants</b>
+              <span class="entry-action-desc" data-entry-desc="identify">Scan and identify any plant from a photo</span>
             </span>
             <span class="entry-tile-go" aria-hidden="true">→</span>
           </span>
@@ -372,6 +386,64 @@
 </div>
 <aside class="drawer" id="drawer"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h3>Cart</h3><button class="priority" onclick="toggleCart(false)">Close</button></div><div id="cartRows"></div><button class="btn main" style="width:100%;margin-top:8px" onclick="checkoutDemo()">Checkout</button></aside>
 <div id="plant-identifier-root"></div>
+<div id="garden-design-root" aria-hidden="true">
+  <button type="button" class="gd-back" onclick="closeGardenDesign()"><span class="gd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
+</div>
+<div id="plant-doctor-root" aria-hidden="true">
+  <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
+</div>
+<div id="smart-rec-root" aria-hidden="true">
+  <div class="sr-scene" aria-hidden="true"></div>
+  <div class="sr-scene-overlay" aria-hidden="true"></div>
+  <div class="sr-app-shell">
+    <header class="sr-module-header">
+      <button type="button" class="sr-back" onclick="closeSmartRecommendations()"><span class="sr-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
+      <div class="sr-brand-bar">
+        <div class="sr-brand-mark" aria-hidden="true">🌿</div>
+        <div class="sr-brand-copy">
+          <span class="sr-brand-kicker">Cruvit</span>
+          <h1 id="srTitle">Smart Recommendations</h1>
+        </div>
+      </div>
+    </header>
+    <div class="sr-app-panel">
+      <section class="sr-chat-pane" aria-label="Garden advisor chat">
+        <div class="sr-chat-pane-head">
+          <div class="sr-advisor-avatar" aria-hidden="true">🌿</div>
+          <div class="sr-advisor-meta">
+            <span class="sr-advisor-name" id="srAdvisorName">Cruvit Garden Advisor</span>
+            <span class="sr-advisor-role" id="srAdvisorRole">Climate-smart picks from the official library</span>
+          </div>
+        </div>
+        <div id="srChatThread" class="sr-chat-messages" aria-live="polite"></div>
+        <div class="sr-chat-composer">
+          <div id="srChipRow" class="sr-chip-row" role="group" aria-label="Plant filters"></div>
+          <div class="sr-composer-row">
+            <input class="field sr-composer-input" id="smartRecSearch" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Describe what you want…" disabled aria-disabled="true">
+            <button type="button" class="sr-composer-send" disabled aria-disabled="true" aria-label="Send"><span aria-hidden="true">↑</span></button>
+          </div>
+          <div class="sr-trust-badge">🌿 Real plant profile · care · warnings · shopping</div>
+        </div>
+      </section>
+      <section class="sr-results-pane" aria-label="Plant recommendations">
+        <div class="sr-results-pane-head">
+          <div class="sr-results-context">
+            <h2 id="srResultsTitle">Recommendations</h2>
+            <p id="srResultsClimate" class="sr-results-climate"></p>
+            <p id="srResultsSubtitle" class="sr-results-sub"></p>
+          </div>
+          <span id="srResultsCount" class="sr-results-count"></span>
+        </div>
+        <div id="srSelectedStrip" class="sr-selected-strip" hidden></div>
+        <div class="sr-tabs" role="tablist" aria-label="Recommendation views">
+          <button type="button" class="sr-tab active" data-sr-tab="photos" role="tab" aria-selected="true" onclick="setSmartRecView('photos')"><span class="sr-tab-ico" aria-hidden="true">📷</span><span id="srTabPhotos">Photos</span></button>
+          <button type="button" class="sr-tab" data-sr-tab="table" role="tab" aria-selected="false" onclick="setSmartRecView('table')"><span class="sr-tab-ico" aria-hidden="true">📋</span><span id="srTabTable">Table</span></button>
+        </div>
+        <div id="smartRecResults" class="sr-results-body"></div>
+      </section>
+    </div>
+  </div>
+</div>
 <script src="garden-modes.js?v=20250631a"></script>
 <script src="scripts/plant-identifier-loader.js?v=20250655"></script>
 <script>
@@ -554,6 +626,7 @@ let selectedDay=new Date().getDate();
 let openMenu=null;
 let showAllTasks=false;
 let currentPlantSetup={slug:null,source:'My Garden'};
+let addPlantSetupReturnTarget=null;
 let addPlantSearchState={source:null,query:'',results:[],liveProfile:null,loading:false};
 let calendarYear=new Date().getFullYear();
 function initCalendarFromToday(){
@@ -1876,12 +1949,14 @@ async function saveGardenLocation(loc){
     service.save(data);
     closeLocationModal();
     render();
+    try{if(typeof smartRecOnLocationUpdated==='function')smartRecOnLocationUpdated()}catch(_){}
     data.events.unshift(['Today','Garden location updated',`${data.gardenLocation.label} · ${data.climate}`]);
     service.save(data);
     return result;
   }catch(err){
     service.save(data);
     setLocationStatus(err.message||'Saved location, but weather could not be loaded.');
+    try{if(typeof smartRecOnLocationUpdated==='function')smartRecOnLocationUpdated()}catch(_){}
     throw err;
   }
 }
@@ -2510,10 +2585,16 @@ function openAddPlantModal(){
   renderAddOptions();
 }
 function closeAddPlantModal(){
+  const returnTarget=addPlantSetupReturnTarget;
+  addPlantSetupReturnTarget=null;
   resetScanSession();
   resetAddPlantSearchState();
   const modal=document.getElementById('addPlantModal');
   if(modal)modal.classList.remove('open');
+  if(returnTarget==='smart-rec'){
+    dismissEntryScreen();
+    if(typeof setSmartRecShellOpen==='function')setSmartRecShellOpen(true);
+  }
 }
 document.addEventListener('keydown',function(e){
   if(e.key!=='Escape')return;
@@ -2808,7 +2889,18 @@ async function enrichScanProfiles(profiles,seq,photo){
   if(isScanStale(seq)) return profiles;
   return profiles;
 }
-function scorePlantForSource(p,source){const t=(p.tags||[]).join(' ').toLowerCase(); if(source==='Smart Recommendations')return t.includes('mediterranean')||t.includes('low water')||t.includes('sun'); if(source==='Garden Design')return t.includes('tree')||t.includes('climber')||t.includes('flowering')||t.includes('mediterranean'); return true}
+function scorePlantForSource(p,source){
+  const t=(p.tags||[]).join(' ').toLowerCase();
+  const climate=String(data.climate||'').toLowerCase();
+  const pClimate=String(p.climate||'').toLowerCase();
+  if(source==='Smart Recommendations'){
+    const tagMatch=t.includes('mediterranean')||t.includes('low water')||t.includes('sun');
+    const climateMatch=!!climate&&(t.includes(climate)||pClimate.includes(climate)||(climate.includes('mediterranean')&&t.includes('mediterranean')));
+    return tagMatch||climateMatch;
+  }
+  if(source==='Garden Design')return t.includes('tree')||t.includes('climber')||t.includes('flowering')||t.includes('mediterranean');
+  return true;
+}
 function textForSearch(p){return [p.name,p.he,p.scientific,(p.aliases||[]).join(' '),(p.tags||[]).join(' '),p.sun,p.water,p.climate,p.guide].join(' ').toLowerCase()}
 
 function normalizeQuery(q){return String(q||'').trim().toLowerCase().replace(/[״"׳’`]/g,'').replace(/^עץ\s+/,'').replace(/\s+/g,' ')}
@@ -2972,17 +3064,28 @@ function plantResultThumb(p){
   }
   return `<span class="thumb thumb-pending" data-plant-thumb="${key}" data-plant-query="${escapeAttr(plantPhotoQuery(p))}"><span class="ico">${p.icon||'🌿'}</span></span>`;
 }
-function renderPlantResults(source,query=''){
-  const results=document.getElementById('plantResults');
+function renderPlantResults(source,query='',targetId='plantResults'){
+  if(typeof targetId!=='string')targetId='plantResults';
+  const results=document.getElementById(targetId);
   if(!results)return;
   const q=(query||'').trim();
   const seq=++plantSearchSeq;
+  const resultLimit=targetId==='smartRecResults'?12:8;
   const renderList=(plants,note='')=>{
-    const html=(plants||[]).filter(Boolean).slice(0,8).map(p=>plantResultButton(p,source)).join('');
+    const list=(plants||[]).filter(Boolean).slice(0,resultLimit);
+    if(targetId==='smartRecResults'){
+      renderSmartRecGrid(list,source,note);
+      return;
+    }
+    const html=list.map(p=>plantResultButton(p,source)).join('');
     results.innerHTML=html+(note?`<div class="plant-source-note">${note}</div>`:'');
     setTimeout(hydratePlantResultImages,0);
   };
   if(!q){
+    if(targetId==='smartRecResults'){
+      refreshSmartRecBrowse();
+      return;
+    }
     renderList(PLANT_LIBRARY.filter(p=>scorePlantForSource(p,source)).slice(0,8));
     return;
   }
@@ -3044,6 +3147,550 @@ function plantResultButton(p,source){
   const careLine=source==='Scan & Identify'?(p.scanSummary||scanResultSummary(p)):`${p.sun||''} · ${p.water||''}`;
   return `<div class="plant-result" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')">${plantResultThumb(p)}<span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')} · ${escapeHtml(careLine)}</small></span><button type="button" class="add-mini" onclick="event.stopPropagation();savePlantFromLibrary('${p.slug}','${source}')">Add</button></div>`;
 }
+function getSmartRecLang(){
+  return (typeof getEntryLang==='function'?getEntryLang():localStorage.getItem('cruvit_lang')||'en')==='he'?'he':'en';
+}
+function getSmartRecCopy(){
+  const he=getSmartRecLang()==='he';
+  return {
+    title:he?'המלצות חכמות':'Smart Recommendations',
+    advisorName:he?'יועץ הגינה של Cruvit':'Cruvit Garden Advisor',
+    advisorRole:he?'המלצות מותאמות אקלים מהספרייה הרשמית':'Climate-smart picks from the official library',
+    locationLabel:he?'מיקום הגינה':'Garden location',
+    climateLabel:he?'סוג אקלים':'Climate',
+    setLocationBtn:he?'הגדר מיקום':'Set location',
+    verified:he?'פרופילים מאומתים · חיפוש GBIF':'Verified profiles · GBIF-backed search',
+    searchPlaceholder:he?'חיפוש צמח, למשל אלון, אורן, פפאיה…':'Search any plant, e.g. oak, pine, papaya…',
+    trustBadge:he?'🌿 פרופיל צמח אמיתי · טיפול · אזהרות · קניות':'🌿 Real plant profile · care · warnings · shopping',
+    noResults:he?'לא נמצאו צמחים עדיין':'No plants found yet',
+    add:he?'הוסף':'Add',
+    tabPhotos:he?'תמונות':'Photos',
+    tabTable:he?'טבלה':'Table',
+    moduleKicker:'Cruvit',
+    tablePlant:he?'צמח':'Plant',
+    tableSun:he?'שמש':'Sun',
+    tableWater:he?'השקיה':'Water',
+    tableClimate:he?'אקלים':'Climate',
+    tableAction:he?'הוסף':'Add',
+    warnings:he?'אזהרות':'warnings',
+    advisorPrompt:he?'מה מתאים לך? בחר מסננים למטה:':'What are you looking for? Tap a filter below:',
+    advisorWelcome:he?'שלום! אני יועץ הגינה של Cruvit.':'Hi! I\'m your Cruvit garden advisor.',
+    locationConfirmAsk(loc,climate){
+      const cl=climate?` (${climate})`:'';
+      return he?`אני רואה שהגינה שלך ב${loc}${cl}. זה נכון?`:`I see your garden is in ${loc}${cl}. Is that correct?`;
+    },
+    locationMissingAsk:he?'איפה הגינה שלך? הגדר מיקום כדי שאוכל להתאים המלצות לאקלים המקומי.':'Where is your garden? Set your location so I can match plants to your local climate.',
+    locationConfirmYes:he?'כן, נכון':'Yes, that\'s correct',
+    locationChange:he?'שנה מיקום':'Change location',
+    depthPrompt:he?'כמה שאלות תרצה בתהליך ההמלצה?':'How detailed should the recommendation process be?',
+    depthOptionLabel(n){
+      if(n===3)return he?'מהיר · 3 שאלות':'Quick · 3 questions';
+      if(n===6)return he?'מאוזן · 6 שאלות':'Balanced · 6 questions';
+      return he?'מעמיק · 9 שאלות':'Deep · 9 questions';
+    },
+    depthAck(n){
+      return he?`מצוין. נתחיל ב-${n} שאלות קצרות.`:`Great. Let's start with ${n} short questions.`;
+    },
+    answersComplete:he?'מושלם. שמרתי את ההעדפות שלך.':"Perfect. I've saved your preferences.",
+    questionProgress(cur,total){
+      return he?`שאלה ${cur} מתוך ${total}`:`Question ${cur} of ${total}`;
+    },
+    shellComposerWaiting:he?'בחר תשובה למטה':'Choose an answer below',
+    resultsTitle:he?'מומלץ עבורך':'Recommended for you',
+    resultsMatching:he?'מתאים ל:':'Matching:',
+    resultsCount:n=>he?`${n} צמחים`:`${n} plants`,
+    selectedPicks:he?'בחירות מובילות':'Top picks',
+    advisorGreeting(loc,climate){
+      if(he){
+        const where=loc?` עבור ${loc}`:'';
+        const cl=climate?` (${climate})`:'';
+        return `שלום! אני יועץ הגינה של Cruvit${where}${cl}. אמליץ על צמחים מהספרייה המאומתת שלנו — מותאמים לאקלים ולגינה שלך.`;
+      }
+      const where=loc?` for ${loc}`:' for your garden';
+      const cl=climate?` (${climate} climate)`:'';
+      return `Hi! I'm your Cruvit garden advisor${where}${cl}. I'll suggest verified plants from our official library — matched to your climate and care preferences.`;
+    },
+    advisorResults(n,labels){
+      if(he){
+        if(!labels.length)return `הנה ${n} צמחים שמתאימים לאקלים שלך. אפשר לבחור מסננים כדי לצמצם.`;
+        return `מצאתי ${n} צמחים שמתאימים ל${labels.join(', ')}.`;
+      }
+      if(!labels.length)return `Here are ${n} plants suited to your climate. Add filters to narrow your picks.`;
+      return `I found ${n} plants matching ${labels.join(', ')}.`;
+    },
+    advisorSearch(q){
+      return he?`מחפש "${q}" בספריית הצמחים…`:`Searching the plant library for “${q}”…`;
+    },
+    shellChatPlaceholder:he?'שוחח עם יועץ הגינה כדי לקבל המלצות מותאמות מהספרייה הרשמית.':'Chat with the garden advisor to get tailored picks from the official library.',
+    shellResultsEmpty:he?'ענה ליועץ בצ\'אט כדי לראות צמחים מומלצים.':'Answer the advisor in chat to see recommended plants.',
+    shellComposerPlaceholder:he?'תאר מה אתה מחפש…':'Describe what you want…',
+    shellResultsTitle:he?'המלצות':'Recommendations'
+  };
+}
+function createSmartRecSession(){
+  return {step:'location',locationConfirmed:false,depth:null,answers:{},questionIndex:0,questionQueue:[],compiledFilters:null};
+}
+let smartRecSession=createSmartRecSession();
+function initSmartRecSession(){
+  smartRecSession=createSmartRecSession();
+  smartRecActiveChips=new Set();
+  smartRecHasInteracted=false;
+  normalizeGardenDataShape();
+  updateSmartRecResultsHeader([]);
+  renderSmartRecResultsEmpty();
+  smartRecBootMessages();
+  renderSmartRecComposerOptions();
+  const copy=getSmartRecCopy();
+  const input=document.getElementById('smartRecSearch');
+  if(input){input.value='';input.placeholder=copy.shellComposerWaiting;input.disabled=true;input.setAttribute('aria-disabled','true');}
+}
+let smartRecHasInteracted=false;
+function getSmartRecLocationSnapshot(){
+  normalizeGardenDataShape();
+  const loc=String(data.location||data.gardenLocation?.label||'').trim();
+  const climate=String(data.climate||data.gardenLocation?.climate||'').trim();
+  return {loc,climate,hasLoc:!!loc};
+}
+function smartRecBootMessages(){
+  const snap=getSmartRecLocationSnapshot();
+  smartRecMessages=[
+    {role:'advisor',kind:'greeting'},
+    {role:'advisor',kind:'location-ask',loc:snap.loc,climate:snap.climate,hasLoc:snap.hasLoc}
+  ];
+  renderSmartRecMessages();
+}
+function smartRecOnLocationUpdated(){
+  const root=document.getElementById('smart-rec-root');
+  if(!root||!root.classList.contains('sr-active'))return;
+  if(smartRecSession.locationConfirmed||smartRecSession.step!=='location')return;
+  const snap=getSmartRecLocationSnapshot();
+  smartRecMessages=smartRecMessages.filter(m=>m.kind!=='location-ask');
+  smartRecMessages.push({role:'advisor',kind:'location-ask',loc:snap.loc,climate:snap.climate,hasLoc:snap.hasLoc});
+  renderSmartRecMessages();
+  renderSmartRecComposerOptions();
+}
+function smartRecConfirmLocation(){
+  const snap=getSmartRecLocationSnapshot();
+  if(!snap.hasLoc)return;
+  const copy=getSmartRecCopy();
+  smartRecSession.locationConfirmed=true;
+  smartRecSession.step='depth';
+  smartRecMessages.push({role:'user',text:copy.locationConfirmYes});
+  smartRecMessages.push({role:'advisor',kind:'depth-prompt'});
+  renderSmartRecMessages();
+  renderSmartRecComposerOptions();
+}
+function smartRecChooseDepth(depth){
+  const n=depth===3||depth===6||depth===9?depth:null;
+  if(!n||smartRecSession.step!=='depth')return;
+  const copy=getSmartRecCopy();
+  smartRecSession.depth=n;
+  smartRecSession.answers={};
+  smartRecSession.questionIndex=0;
+  smartRecSession.questionQueue=getSmartRecQuestionQueue(n);
+  smartRecSession.step='questions';
+  smartRecMessages.push({role:'user',text:copy.depthOptionLabel(n)});
+  smartRecMessages.push({role:'advisor',kind:'depth-ack',depth:n});
+  smartRecPushCurrentQuestion();
+  renderSmartRecMessages();
+  renderSmartRecComposerOptions();
+  updateSmartRecResultsHeader([]);
+}
+function smartRecPushCurrentQuestion(){
+  const q=getSmartRecCurrentQuestion();
+  if(!q)return;
+  smartRecMessages.push({role:'advisor',kind:'question-ask',qId:q.id});
+}
+function smartRecSubmitAnswer(answerId){
+  if(smartRecSession.step!=='questions')return;
+  const q=getSmartRecCurrentQuestion();
+  if(!q||!q.options.some(o=>o.id===answerId))return;
+  smartRecSession.answers[q.id]=answerId;
+  smartRecMessages.push({role:'user',text:getSmartRecOptionLabel(q.id,answerId)});
+  smartRecSession.questionIndex++;
+  if(smartRecSession.questionIndex<smartRecSession.questionQueue.length){
+    smartRecPushCurrentQuestion();
+    renderSmartRecMessages();
+    renderSmartRecComposerOptions();
+    updateSmartRecResultsHeader([]);
+  }else{
+    finalizeSmartRecRecommendations();
+  }
+}
+function finalizeSmartRecRecommendations(){
+  const copy=getSmartRecCopy();
+  smartRecSession.compiledFilters=compileSmartRecSessionFilters(smartRecSession.answers);
+  smartRecSession.step='results';
+  smartRecMessages.push({role:'advisor',kind:'answers-complete'});
+  const plants=getSmartRecBrowsePlants();
+  const labels=smartRecSession.compiledFilters?.summaryLabels||[];
+  smartRecMessages.push({role:'advisor',kind:'results',text:copy.advisorResults(plants.length,labels),count:plants.length});
+  renderSmartRecMessages();
+  renderSmartRecComposerOptions();
+  refreshSmartRecBrowse();
+}
+function renderSmartRecMessages(){
+  const thread=document.getElementById('srChatThread');
+  if(!thread)return;
+  const copy=getSmartRecCopy();
+  const html=smartRecMessages.map(m=>{
+    if(m.role==='advisor'&&m.kind==='greeting'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${copy.advisorWelcome}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='location-ask'){
+      const body=m.hasLoc?copy.locationConfirmAsk(m.loc,m.climate):copy.locationMissingAsk;
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${body}</p>${!m.hasLoc?`<button type="button" class="sr-climate-cta" onclick="openLocationModal()">${copy.setLocationBtn}</button>`:''}<div class="sr-climate-inline"><span><b>${copy.locationLabel}:</b> ${m.hasLoc?escapeHtml(m.loc):'—'}</span><span><b>${copy.climateLabel}:</b> ${m.climate?escapeHtml(m.climate):'—'}</span></div><div class="sr-climate-note">${copy.verified}</div></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='depth-prompt'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${copy.depthPrompt}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='depth-ack'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${copy.depthAck(m.depth)}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='question-ask'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${escapeHtml(getSmartRecQuestionLabel(m.qId))}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='answers-complete'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${copy.answersComplete}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='prompt'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${copy.advisorPrompt}</p></div></div>`;
+    }
+    if(m.role==='user'){
+      return `<div class="sr-msg sr-msg-user"><div class="sr-msg-bubble"><p>${escapeHtml(m.text)}</p></div></div>`;
+    }
+    if(m.role==='advisor'&&m.kind==='results'){
+      return `<div class="sr-msg sr-msg-advisor"><div class="sr-msg-avatar" aria-hidden="true">🌿</div><div class="sr-msg-bubble"><p>${escapeHtml(m.text)}</p></div></div>`;
+    }
+    return '';
+  }).join('');
+  thread.innerHTML=html||`<div class="sr-chat-placeholder"><div class="sr-chat-placeholder-icon" aria-hidden="true">🌿</div><p>${copy.shellChatPlaceholder}</p></div>`;
+  thread.scrollTop=thread.scrollHeight;
+}
+function renderSmartRecResultsEmpty(){
+  const results=document.getElementById('smartRecResults');
+  if(!results)return;
+  const copy=getSmartRecCopy();
+  results.innerHTML=`<div class="sr-results-empty-state"><div class="sr-results-empty-icon" aria-hidden="true">🌱</div><p>${copy.shellResultsEmpty}</p></div>`;
+  const countEl=document.getElementById('srResultsCount');
+  if(countEl)countEl.textContent='';
+  const sub=document.getElementById('srResultsSubtitle');
+  if(sub)sub.textContent='';
+}
+function updateSmartRecResultsHeader(plants){
+  const copy=getSmartRecCopy();
+  const loc=String(data.location||data.gardenLocation?.label||'').trim();
+  const climate=String(data.climate||data.gardenLocation?.climate||'').trim();
+  const title=document.getElementById('srResultsTitle');
+  if(title){
+    title.textContent=smartRecSession.step==='results'?copy.resultsTitle:copy.shellResultsTitle;
+  }
+  const climateEl=document.getElementById('srResultsClimate');
+  if(climateEl){
+    climateEl.textContent=(loc||climate)
+      ?`${loc?`${copy.locationLabel}: ${loc}`:''}${loc&&climate?' · ':''}${climate?`${copy.climateLabel}: ${climate}`:''}`
+      :'';
+  }
+  const sub=document.getElementById('srResultsSubtitle');
+  if(sub){
+    if(smartRecSession.step==='questions'&&smartRecSession.questionQueue.length){
+      sub.textContent=copy.questionProgress(smartRecSession.questionIndex+1,smartRecSession.questionQueue.length);
+    }else if(smartRecSession.step==='results'){
+      const labels=smartRecSession.compiledFilters?.summaryLabels||[];
+      sub.textContent=labels.length?`${copy.resultsMatching} ${labels.join(' · ')}`:'';
+    }else if(smartRecSession.depth&&smartRecSession.step==='depth'){
+      sub.textContent=copy.depthOptionLabel(smartRecSession.depth);
+    }else{
+      sub.textContent='';
+    }
+  }
+  const countEl=document.getElementById('srResultsCount');
+  const list=(plants||[]).filter(Boolean);
+  if(countEl)countEl.textContent=list.length?copy.resultsCount(list.length):'';
+}
+const SMART_REC_DEPTH_QUESTIONS={3:['q2','q3','q5'],6:['q1','q2','q3','q4','q5','q6'],9:['q1','q2','q3','q4','q5','q6','q7','q8','q9']};
+const SMART_REC_QUESTION_DEFS=[
+  {id:'q1',labelEn:'Where will these plants live?',labelHe:'איפה יגדלו הצמחים?',options:[
+    {id:'balcony',labelEn:'Balcony / pots',labelHe:'מרפסת / עציצים'},
+    {id:'ground',labelEn:'In-ground garden',labelHe:'גינה בקרקע'},
+    {id:'indoor',labelEn:'Indoor / houseplants',labelHe:'בבית / צמחי בית'},
+    {id:'rooftop',labelEn:'Rooftop',labelHe:'גג'}
+  ]},
+  {id:'q2',labelEn:'How much sun does the spot get?',labelHe:'כמה שמש יש במקום?',options:[
+    {id:'full-sun',labelEn:'Full sun',labelHe:'שמש מלאה'},
+    {id:'partial-sun',labelEn:'Partial sun / shade',labelHe:'שמש חלקית / צל'},
+    {id:'shade',labelEn:'Mostly shade / indoor light',labelHe:'צל / אור ביתי'}
+  ]},
+  {id:'q3',labelEn:'How much care time do you want?',labelHe:'כמה זמן תחזוקה מתאים לך?',options:[
+    {id:'low-maintenance',labelEn:'Low maintenance',labelHe:'תחזוקה נמוכה'},
+    {id:'moderate',labelEn:'Moderate',labelHe:'בינוני'},
+    {id:'hands-on',labelEn:'I enjoy hands-on care',labelHe:'אוהב/ת להשקיע בטיפול'}
+  ]},
+  {id:'q4',labelEn:'Pet or child safety?',labelHe:'בטיחות לחיות מחמד או ילדים?',options:[
+    {id:'pet-safe',labelEn:'Must be pet-safe',labelHe:'חייב להיות בטוח לחיות'},
+    {id:'not-a-concern',labelEn:'Not a concern',labelHe:'לא רלוונטי'}
+  ]},
+  {id:'q5',labelEn:'Do you want edible or useful plants?',labelHe:'רוצה צמחים אכילים או שימושיים?',options:[
+    {id:'yes-edible',labelEn:'Yes — herbs, fruit, vegetables',labelHe:'כן — עשבי תיבול, פירות, ירקות'},
+    {id:'ornamental-only',labelEn:'Ornamental only',labelHe:'רק לנוי'},
+    {id:'either',labelEn:'Either is fine',labelHe:'גם וגם'}
+  ]},
+  {id:'q6',labelEn:'Flowers and color?',labelHe:'פרחים וצבע?',options:[
+    {id:'yes-flowering',labelEn:'Yes, flowering / colorful',labelHe:'כן, פורח / צבעוני'},
+    {id:'foliage',labelEn:'Foliage and structure',labelHe:'עלים ומבנה'},
+    {id:'no-preference',labelEn:'No preference',labelHe:'אין העדפה'}
+  ]},
+  {id:'q7',labelEn:'Water and drought tolerance?',labelHe:'השקיה וסובלנות ליובש?',options:[
+    {id:'drought',labelEn:'Drought tolerant / low water',labelHe:'סובלני ליובש / מעט מים'},
+    {id:'regular-water',labelEn:'Regular watering is fine',labelHe:'השקיה סדירה בסדר'},
+    {id:'no-preference',labelEn:'No preference',labelHe:'אין העדפה'}
+  ]},
+  {id:'q8',labelEn:'Preferred plant size?',labelHe:'גודל צמח מועדף?',options:[
+    {id:'compact',labelEn:'Compact / pots',labelHe:'קומפקטי / עציצים'},
+    {id:'medium',labelEn:'Medium shrubs',labelHe:'שיחים בינוניים'},
+    {id:'large',labelEn:'Larger trees / screening',labelHe:'עצים / גידור גבוה'},
+    {id:'no-preference',labelEn:'No preference',labelHe:'אין העדפה'}
+  ]},
+  {id:'q9',labelEn:'What is your main garden goal?',labelHe:'מה המטרה העיקרית שלך?',options:[
+    {id:'food-herbs',labelEn:'Food & herbs',labelHe:'אוכל ועשבי תיבול'},
+    {id:'privacy',labelEn:'Privacy / screening',labelHe:'פרטיות / גידור'},
+    {id:'shade',labelEn:'Shade',labelHe:'צל'},
+    {id:'wildlife',labelEn:'Wildlife / pollinators',labelHe:'טבע / דבורים ופרפרים'},
+    {id:'beauty',labelEn:'Beauty & fragrance',labelHe:'יופי וריח'}
+  ]}
+];
+function getSmartRecQuestionQueue(depth){
+  return [...(SMART_REC_DEPTH_QUESTIONS[depth]||[])];
+}
+function getSmartRecQuestionLabel(qId){
+  const q=SMART_REC_QUESTION_DEFS.find(x=>x.id===qId);
+  if(!q)return qId;
+  return getSmartRecLang()==='he'?q.labelHe:q.labelEn;
+}
+function getSmartRecOptionLabel(qId,optId){
+  const q=SMART_REC_QUESTION_DEFS.find(x=>x.id===qId);
+  const o=(q?.options||[]).find(x=>x.id===optId);
+  if(!o)return optId;
+  return getSmartRecLang()==='he'?o.labelHe:o.labelEn;
+}
+function getSmartRecCurrentQuestion(){
+  const qId=smartRecSession.questionQueue?.[smartRecSession.questionIndex];
+  if(!qId)return null;
+  return SMART_REC_QUESTION_DEFS.find(q=>q.id===qId)||null;
+}
+function smartRecPushChipFilter(matchers,labels,chipId,label){
+  const def=SMART_REC_CHIP_DEFS.find(c=>c.id===chipId);
+  if(def){matchers.push(p=>def.match(p));if(label)labels.push(label);}
+}
+function compileSmartRecSessionFilters(answers){
+  const matchers=[];
+  const labels=[];
+  const a=answers||{};
+  if(a.q1==='balcony'){
+    matchers.push(p=>{const t=textForSearch(p);return t.includes('container')||t.includes('pot')||t.includes('balcony')||!(p.tags||[]).some(x=>String(x).toLowerCase()==='tree');});
+    labels.push(getSmartRecOptionLabel('q1','balcony'));
+  }else if(a.q1==='indoor'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>/houseplant|indoor/i.test(String(x)))||t.includes('indoor')||t.includes('houseplant')||String(p.sun||'').toLowerCase().includes('indirect');});
+    labels.push(getSmartRecOptionLabel('q1','indoor'));
+  }else if(a.q1==='rooftop'){
+    smartRecPushChipFilter(matchers,labels,'drought',getSmartRecOptionLabel('q1','rooftop'));
+  }else if(a.q1==='ground'){
+    labels.push(getSmartRecOptionLabel('q1','ground'));
+  }
+  if(a.q2==='full-sun'){
+    smartRecPushChipFilter(matchers,labels,'full-sun',getSmartRecOptionLabel('q2','full-sun'));
+  }else if(a.q2==='partial-sun'){
+    matchers.push(p=>{const sun=String(p.sun||'').toLowerCase();return sun.includes('partial')||sun.includes('part')||(!sun.includes('full sun')&&sun.length>0);});
+    labels.push(getSmartRecOptionLabel('q2','partial-sun'));
+  }else if(a.q2==='shade'){
+    matchers.push(p=>{const sun=String(p.sun||'').toLowerCase();const t=textForSearch(p);return sun.includes('shade')||sun.includes('indirect')||t.includes('shade')||t.includes('indoor');});
+    labels.push(getSmartRecOptionLabel('q2','shade'));
+  }
+  if(a.q3==='low-maintenance'){
+    smartRecPushChipFilter(matchers,labels,'low-maintenance',getSmartRecOptionLabel('q3','low-maintenance'));
+  }
+  if(a.q4==='pet-safe'){
+    smartRecPushChipFilter(matchers,labels,'pet-safe',getSmartRecOptionLabel('q4','pet-safe'));
+  }
+  if(a.q5==='yes-edible'){
+    smartRecPushChipFilter(matchers,labels,'edible',getSmartRecOptionLabel('q5','yes-edible'));
+  }else if(a.q5==='ornamental-only'){
+    matchers.push(p=>!(p.tags||[]).some(t=>['fruit','herb','berry','citrus'].includes(String(t).toLowerCase())));
+    labels.push(getSmartRecOptionLabel('q5','ornamental-only'));
+  }
+  if(a.q6==='yes-flowering'){
+    smartRecPushChipFilter(matchers,labels,'flowering',getSmartRecOptionLabel('q6','yes-flowering'));
+  }else if(a.q6==='foliage'){
+    matchers.push(p=>!(p.tags||[]).some(t=>['flowering','color','fragrant'].includes(String(t).toLowerCase()))&&!String(p.growth||'').toLowerCase().includes('flower'));
+    labels.push(getSmartRecOptionLabel('q6','foliage'));
+  }
+  if(a.q7==='drought'){
+    smartRecPushChipFilter(matchers,labels,'drought',getSmartRecOptionLabel('q7','drought'));
+  }
+  if(a.q8==='compact'){
+    matchers.push(p=>{const t=textForSearch(p)+' '+String(p.size||'').toLowerCase();return t.includes('compact')||t.includes('small')||t.includes('pot')||!(p.tags||[]).some(x=>String(x).toLowerCase()==='tree');});
+    labels.push(getSmartRecOptionLabel('q8','compact'));
+  }else if(a.q8==='medium'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['shrub','bush','flowering'].includes(String(x).toLowerCase()))||t.includes('shrub')||t.includes('medium');});
+    labels.push(getSmartRecOptionLabel('q8','medium'));
+  }else if(a.q8==='large'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['tree','climber'].includes(String(x).toLowerCase()))||t.includes('tree')||t.includes('screen')||t.includes('large');});
+    labels.push(getSmartRecOptionLabel('q8','large'));
+  }
+  if(a.q9==='food-herbs'){
+    smartRecPushChipFilter(matchers,labels,'edible',getSmartRecOptionLabel('q9','food-herbs'));
+  }else if(a.q9==='privacy'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['tree','climber','hedge'].includes(String(x).toLowerCase()))||t.includes('screen')||t.includes('hedge')||t.includes('privacy');});
+    labels.push(getSmartRecOptionLabel('q9','privacy'));
+  }else if(a.q9==='shade'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>String(x).toLowerCase()==='tree')||t.includes('tree')||t.includes('shade');});
+    labels.push(getSmartRecOptionLabel('q9','shade'));
+  }else if(a.q9==='wildlife'){
+    matchers.push(p=>{const t=textForSearch(p);return (p.tags||[]).some(x=>['flowering','fragrant','color'].includes(String(x).toLowerCase()))||t.includes('pollinator')||t.includes('wildlife')||t.includes('nectar');});
+    labels.push(getSmartRecOptionLabel('q9','wildlife'));
+  }else if(a.q9==='beauty'){
+    smartRecPushChipFilter(matchers,labels,'flowering',getSmartRecOptionLabel('q9','beauty'));
+  }
+  const uniqueLabels=[];
+  labels.forEach(l=>{if(l&&!uniqueLabels.includes(l))uniqueLabels.push(l);});
+  return {matchers,summaryLabels:uniqueLabels};
+}
+const SMART_REC_CHIP_DEFS=[
+  {id:'low-maintenance',labelEn:'Low maintenance',labelHe:'תחזוקה נמוכה',match(p){const w=String(p.water||'').toLowerCase();const t=textForSearch(p);return w.includes('low')||w.includes('dry')||t.includes('drought tolerant')||t.includes('low water');}},
+  {id:'full-sun',labelEn:'Full sun',labelHe:'שמש מלאה',match(p){return String(p.sun||'').toLowerCase().includes('full sun')||(p.tags||[]).some(t=>String(t).toLowerCase()==='sun');}},
+  {id:'pet-safe',labelEn:'Pet safe',labelHe:'בטוח לחיות',match(p){const blob=(textForSearch(p)+' '+((p.warnings||[]).join(' '))).toLowerCase();if(blob.includes('toxic')||blob.includes('poison')||blob.includes('irritat'))return false;return !['cycas','azalea','camellia','monstera'].includes(p.slug);}},
+  {id:'edible',labelEn:'Edible plants',labelHe:'צמחים אכילים',match(p){return (p.tags||[]).some(t=>['fruit','herb','berry','citrus'].includes(String(t).toLowerCase()));}},
+  {id:'flowering',labelEn:'Flowering plants',labelHe:'צמחים פורחים',match(p){return (p.tags||[]).some(t=>['flowering','color','fragrant'].includes(String(t).toLowerCase()))||String(p.growth||'').toLowerCase().includes('flower');}},
+  {id:'drought',labelEn:'Drought tolerant',labelHe:'סובלני ליובש',match(p){const t=textForSearch(p);return t.includes('drought tolerant')||t.includes('low water')||String(p.water||'').toLowerCase().includes('low');}}
+];
+let smartRecActiveChips=new Set();
+let smartRecMessages=[];
+function getSmartRecChipLabel(id){
+  const def=SMART_REC_CHIP_DEFS.find(c=>c.id===id);
+  if(!def)return id;
+  return getSmartRecLang()==='he'?def.labelHe:def.labelEn;
+}
+function getSmartRecActiveChipLabels(){
+  return [...smartRecActiveChips].map(getSmartRecChipLabel);
+}
+function getSmartRecBrowsePlants(){
+  const base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,'Smart Recommendations'));
+  if(smartRecSession.step==='results'&&smartRecSession.compiledFilters){
+    const {matchers}=smartRecSession.compiledFilters;
+    if(!matchers.length)return base;
+    return base.filter(p=>matchers.every(fn=>fn(p)));
+  }
+  if(!smartRecActiveChips.size)return base;
+  return base.filter(p=>[...smartRecActiveChips].every(id=>{
+    const def=SMART_REC_CHIP_DEFS.find(c=>c.id===id);
+    return def?def.match(p):true;
+  }));
+}
+function renderSmartRecComposerOptions(){
+  const row=document.getElementById('srChipRow');
+  if(!row)return;
+  const copy=getSmartRecCopy();
+  let html='';
+  if(smartRecSession.step==='location'){
+    const snap=getSmartRecLocationSnapshot();
+    if(snap.hasLoc){
+      html=`<button type="button" class="sr-chip sr-chip-action" onclick="smartRecConfirmLocation()">${escapeHtml(copy.locationConfirmYes)}</button>`+
+        `<button type="button" class="sr-chip sr-chip-action" onclick="openLocationModal()">${escapeHtml(copy.locationChange)}</button>`;
+    }else{
+      html=`<button type="button" class="sr-chip sr-chip-action" onclick="openLocationModal()">${escapeHtml(copy.setLocationBtn)}</button>`;
+    }
+  }else if(smartRecSession.step==='depth'){
+    html=[3,6,9].map(n=>{
+      const label=copy.depthOptionLabel(n);
+      const active=smartRecSession.depth===n;
+      return `<button type="button" class="sr-chip sr-chip-depth ${active?'active':''}" data-depth="${n}" aria-pressed="${active?'true':'false'}" onclick="smartRecChooseDepth(${n})">${escapeHtml(label)}</button>`;
+    }).join('');
+  }else if(smartRecSession.step==='questions'){
+    const q=getSmartRecCurrentQuestion();
+    if(q){
+      html=q.options.map(o=>`<button type="button" class="sr-chip sr-chip-answer" onclick="smartRecSubmitAnswer('${o.id}')">${escapeHtml(getSmartRecOptionLabel(q.id,o.id))}</button>`).join('');
+    }
+  }
+  row.innerHTML=html;
+}
+function renderSmartRecChips(){
+  renderSmartRecComposerOptions();
+}
+function toggleSmartRecChip(_id){
+  /* Reserved for 3C — filter chips are not active in 3B */
+}
+function renderSmartRecSelectedStrip(plants){
+  const strip=document.getElementById('srSelectedStrip');
+  if(!strip)return;
+  const copy=getSmartRecCopy();
+  const picks=(plants||[]).slice(0,4);
+  if(!picks.length){strip.hidden=true;strip.innerHTML='';return;}
+  strip.hidden=false;
+  strip.innerHTML=`<div class="sr-selected-label">${copy.selectedPicks}</div><div class="sr-selected-row">${picks.map(p=>`<button type="button" class="sr-selected-pill" onclick="showPlantSetup('${p.slug}','Smart Recommendations')"><span class="sr-selected-ico">${p.icon||'🌿'}</span><span>${escapeHtml(p.name)}</span></button>`).join('')}</div>`;
+}
+function refreshSmartRecBrowse(){
+  if(smartRecSession.step!=='results'){
+    renderSmartRecResultsEmpty();
+    updateSmartRecResultsHeader([]);
+    return;
+  }
+  const plants=getSmartRecBrowsePlants().slice(0,12);
+  updateSmartRecResultsHeader(plants);
+  renderSmartRecGrid(plants,'Smart Recommendations');
+}
+function onSmartRecSearch(_query){
+  /* Phase 3 — text search via composer (not enabled in Phase 2) */
+}
+function smartRecTypeLabel(p){
+  const tags=(p.tags||[]).filter(t=>!['ai-profile','verified-profile','gbif-verified','scan-result'].includes(t));
+  return tags[0]||'';
+}
+function renderSmartRecPlantCard(p,source){
+  const copy=getSmartRecCopy();
+  const careLine=source==='Scan & Identify'?(p.scanSummary||scanResultSummary(p)):`${p.sun||''} · ${p.water||''}`;
+  const climateLine=p.climate||'';
+  const warnCount=(p.warnings||[]).length;
+  const typeLabel=smartRecTypeLabel(p);
+  return `<article class="sr-plant-card" role="button" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')"><div class="sr-plant-thumb">${plantResultThumb(p)}${p.icon?`<span class="sr-plant-emoji">${p.icon}</span>`:''}${typeLabel?`<span class="sr-plant-type">${escapeHtml(typeLabel)}</span>`:''}</div><div class="sr-plant-body"><h3 class="sr-plant-name">${escapeHtml(p.name)}</h3><p class="sr-plant-sci">${escapeHtml(p.scientific||'')}</p><p class="sr-plant-care">${escapeHtml(careLine)}</p>${climateLine?`<p class="sr-plant-climate">${escapeHtml(climateLine)}</p>`:''}${warnCount?`<span class="sr-plant-warn">${warnCount} ${copy.warnings}</span>`:''}</div><button type="button" class="sr-plant-add" onclick="event.stopPropagation();showPlantSetup('${p.slug}','${source}')">${copy.add}</button></article>`;
+}
+function renderSmartRecTable(plants,source){
+  const copy=getSmartRecCopy();
+  const list=(plants||[]).filter(Boolean);
+  if(!list.length)return `<div class="sr-empty">${copy.noResults}</div>`;
+  const rows=list.map(p=>{
+    const typeLabel=smartRecTypeLabel(p)||'—';
+    return `<tr class="sr-table-row" tabindex="0" onclick="showPlantSetup('${p.slug}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${p.slug}','${source}')"><td><div class="sr-table-plant"><span class="sr-table-thumb">${plantResultThumb(p)}</span><span><b>${escapeHtml(p.name)}</b><small>${escapeHtml(p.scientific||'')}</small></span></div></td><td>${escapeHtml(typeLabel)}</td><td>${escapeHtml(p.sun||'—')}</td><td>${escapeHtml(p.water||'—')}</td><td>${escapeHtml(p.climate||'—')}</td><td><button type="button" class="sr-table-add" onclick="event.stopPropagation();showPlantSetup('${p.slug}','${source}')">${copy.tableAction}</button></td></tr>`;
+  }).join('');
+  return `<div class="sr-table-scroll"><table class="sr-table"><thead><tr><th>${copy.tablePlant}</th><th>${copy.tabTable==='טבלה'?'סוג':'Type'}</th><th>${copy.tableSun}</th><th>${copy.tableWater}</th><th>${copy.tableClimate}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+let smartRecView='photos';
+function setSmartRecView(mode){
+  smartRecView=mode==='table'?'table':'photos';
+  const root=document.getElementById('smart-rec-root');
+  if(!root)return;
+  root.querySelectorAll('.sr-tab').forEach(btn=>{
+    const on=btn.getAttribute('data-sr-tab')===smartRecView;
+    btn.classList.toggle('active',on);
+    btn.setAttribute('aria-selected',on?'true':'false');
+  });
+  root.querySelectorAll('.sr-view').forEach(view=>{
+    view.classList.toggle('active',view.classList.contains('sr-view-'+smartRecView));
+  });
+}
+function renderSmartRecGrid(plants,source,note=''){
+  const host=document.getElementById('smartRecResults');
+  if(!host)return;
+  const copy=getSmartRecCopy();
+  const list=(plants||[]).filter(Boolean);
+  const countEl=document.getElementById('srResultsCount');
+  if(countEl)countEl.textContent=list.length?copy.resultsCount(list.length):'';
+  const gridHtml=list.length?list.map(p=>renderSmartRecPlantCard(p,source)).join(''):`<div class="sr-empty">${copy.noResults}</div>`;
+  const tableHtml=renderSmartRecTable(list,source);
+  host.innerHTML=(note?`<div class="sr-results-note">${note}</div>`:'')+
+    `<div class="sr-view sr-view-photos ${smartRecView==='photos'?'active':''}"><div class="sr-grid">${gridHtml}</div></div>`+
+    `<div class="sr-view sr-view-table ${smartRecView==='table'?'active':''}">${tableHtml}</div>`;
+  setTimeout(hydratePlantResultImages,0);
+}
 function escapeHtml(v){return String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function slugify(v){return String(v||'plant').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'plant'}
 function fetchWithTimeout(url,options={},ms=9000){
@@ -3098,12 +3745,18 @@ function normalizeApiPlant(d,requested){
 }
 function showPlantSetup(slug,source='My Garden'){
   const ref=PLANT_INDEX[slug]||scanProfileCache[slug]; if(!ref)return;
+  const srRoot=document.getElementById('smart-rec-root');
+  const fromSmartRecOverlay=!!(srRoot&&srRoot.classList.contains('sr-active'));
+  addPlantSetupReturnTarget=fromSmartRecOverlay?'smart-rec':null;
   currentPlantSetup={slug,source};
+  document.getElementById('addPlantModal')?.classList.add('open');
+  if(typeof setSmartRecShellOpen==='function')setSmartRecShellOpen(false);
   const img=displayPlantImage(ref)||ref.imageUrl||ref.image||'';
   const heroStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"`:'';
   document.getElementById('addPlantTitle').textContent='Add '+ref.name;
   document.getElementById('addPlantSubtitle').textContent='Choose how Cruvit should manage this plant in My Garden.';
-  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="openPlantChooser('${source}')">← Back</button><div class="plant-setup-card"><div class="plant-setup-hero"${heroStyle}><div class="plant-setup-badge">${escapeHtml(ref.name)}</div></div><div class="plant-setup-title"><div><b>${escapeHtml(ref.name)}</b><small>${escapeHtml(ref.scientific||'')} · ${escapeHtml(ref.sun||'')} · ${escapeHtml(ref.water||'')}</small></div><span>${ref.icon||'🌿'}</span></div><button class="btn main quick-add" onclick="commitPlantFromSetup()">Add to My Garden</button><div class="pref-box"><label class="pref-row"><input id="prefAutoTasks" type="checkbox" checked><span><b>Create automatic care tasks</b><span>Watering, checking, fertilizing or pruning tasks will be added to your calendar when relevant.</span></span></label><label class="pref-row"><input id="prefReminders" type="checkbox" checked><span><b>Receive reminders for this plant</b><span>Cruvit will include this plant in future task and notification preferences.</span></span></label></div><div class="plant-pref-note">You can change these preferences later from the ⋯ menu on the plant card.</div><div class="plant-setup-actions"><button class="btn main" onclick="commitPlantFromSetup()">Add to My Garden</button><button class="btn light" onclick="showPlantSetupGuide('${slug}')">Preview guide</button></div></div>`;
+  const backOnclick=fromSmartRecOverlay?'closeAddPlantModal()':`openPlantChooser('${source}')`;
+  document.getElementById('addPlantContent').innerHTML=`<button class="modal-back" onclick="${backOnclick}">← Back</button><div class="plant-setup-card"><div class="plant-setup-hero"${heroStyle}><div class="plant-setup-badge">${escapeHtml(ref.name)}</div></div><div class="plant-setup-title"><div><b>${escapeHtml(ref.name)}</b><small>${escapeHtml(ref.scientific||'')} · ${escapeHtml(ref.sun||'')} · ${escapeHtml(ref.water||'')}</small></div><span>${ref.icon||'🌿'}</span></div><button class="btn main quick-add" onclick="commitPlantFromSetup()">Add to My Garden</button><div class="pref-box"><label class="pref-row"><input id="prefAutoTasks" type="checkbox" checked><span><b>Create automatic care tasks</b><span>Watering, checking, fertilizing or pruning tasks will be added to your calendar when relevant.</span></span></label><label class="pref-row"><input id="prefReminders" type="checkbox" checked><span><b>Receive reminders for this plant</b><span>Cruvit will include this plant in future task and notification preferences.</span></span></label></div><div class="plant-pref-note">You can change these preferences later from the ⋯ menu on the plant card.</div><div class="plant-setup-actions"><button class="btn main" onclick="commitPlantFromSetup()">Add to My Garden</button><button class="btn light" onclick="showPlantSetupGuide('${slug}')">Preview guide</button></div></div>`;
 }
 function commitPlantFromSetup(){
   if(!currentPlantSetup||!currentPlantSetup.slug)return;
@@ -3114,6 +3767,8 @@ function commitPlantFromSetup(){
 function showPlantSetupGuide(slug){const ref=PLANT_INDEX[slug];if(!ref)return;const body=document.getElementById('addPlantContent');body.innerHTML+=`<div class="guide-block"><b>${escapeHtml(ref.scientific||ref.name)}</b><span>${escapeHtml(ref.guide||'Verified care information will appear here.')}</span></div>`}
 
 function safeUiAfterPlantAdd(){
+  addPlantSetupReturnTarget=null;
+  try{if(typeof setSmartRecShellOpen==='function')setSmartRecShellOpen(false)}catch(e){console.warn('Smart rec close failed',e)}
   try{syncHealthScore()}catch(e){console.warn('Health sync failed after add',e)}
   try{service.save(data)}catch(e){console.warn('Safe save failed',e)}
   try{closeAddPlantModal()}catch(e){console.warn('Close add modal failed',e)}
@@ -3313,11 +3968,13 @@ const ENTRY_COPY={
     trustClimate:'Climate-smart care',
     trustVerified:'Verified profiles',
     recommendations:'Smart Recommendations',
-    design:'Design · Scan Plants',
+    design:'Garden Design',
+    identify:'Identify Plants',
     diagnose:"What's Wrong With My Garden?",
     shop:'Shop',
     recDesc:'Climate-matched plants curated for your plot',
-    designDesc:'Plan beds and identify any plant from a photo',
+    designDesc:'Plan your garden layout and beds',
+    identifyDesc:'Scan and identify any plant from a photo',
     diagDesc:'Spot health issues, pests and care gaps',
     shopDesc:'Tools and products picked for your plants',
     skip:'Go to my garden dashboard →'
@@ -3334,11 +3991,13 @@ const ENTRY_COPY={
     trustVerified:'פרופילים מאומתים',
     diagDesc:'זיהוי בעיות בריאות, מזיקים ופערים בטיפול',
     recommendations:'המלצות חכמות',
-    design:'עיצוב · סריקת צמחים',
+    design:'עיצוב גינה',
+    identify:'זיהוי צמחים',
     diagnose:'מה לא בסדר בגינה?',
     shop:'חנות',
     recDesc:'צמחים מותאמים לאקלים ולגינה שלך',
-    designDesc:'תכנון גינה וזיהוי צמח מכל תמונה',
+    designDesc:'תכנון מבנה הגינה והערוגות',
+    identifyDesc:'סריקה וזיהוי כל צמח מתמונה',
     shopDesc:'כלים ומוצרים שנבחרו לצמחים שלך',
     skip:'ללוח הבקרה של הגינה →'
   }
@@ -3372,13 +4031,13 @@ function applyEntryScreenLang(lang){
   if(skip)skip.textContent=copy.skip||'';
   document.querySelectorAll('[data-entry-action]').forEach(btn=>{
     const key=btn.getAttribute('data-entry-action');
-    const map={recommendations:'recommendations',design:'design',diagnose:'diagnose',shop:'shop'};
+    const map={recommendations:'recommendations',design:'design',identify:'identify',diagnose:'diagnose',shop:'shop'};
     const title=btn.querySelector('.entry-action-title');
     if(map[key]&&copy[map[key]]&&title)title.textContent=copy[map[key]];
   });
   document.querySelectorAll('[data-entry-desc]').forEach(el=>{
     const key=el.getAttribute('data-entry-desc');
-    const descKey={recommendations:'recDesc',design:'designDesc',diagnose:'diagDesc',shop:'shopDesc'}[key];
+    const descKey={recommendations:'recDesc',design:'designDesc',identify:'identifyDesc',diagnose:'diagDesc',shop:'shopDesc'}[key];
     if(descKey&&copy[descKey])el.textContent=copy[descKey];
   });
   document.documentElement.lang=lang;
@@ -3405,6 +4064,9 @@ function goHome(){
     PlantIdentifier.closeHome();
     PlantIdentifier.closeScan();
   }
+  setGardenDesignShellOpen(false);
+  setPlantDoctorShellOpen(false);
+  setSmartRecShellOpen(false);
   toggleCart(false);
   closePlantPanel();
   showEntryScreen();
@@ -3415,11 +4077,113 @@ function openPlantIdentifierScan(){
   void openPlantIdentifierScanAsync();
 }
 
+/* ── Garden Design (isolated iframe module) ── */
+function setGardenDesignShellOpen(open){
+  const root=document.getElementById('garden-design-root');
+  const app=document.getElementById('appRoot');
+  if(root){root.classList.toggle('gd-active',!!open);root.setAttribute('aria-hidden',open?'false':'true');}
+  if(app) app.classList.toggle('gd-open',!!open);
+}
+
+function openGardenDesign(){
+  const root=document.getElementById('garden-design-root');
+  if(!root) return;
+  let frame=root.querySelector('iframe.gd-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='gd-frame';
+    frame.title='Garden Design Studio';
+    frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
+    frame.src='modules/garden-design/index.html?v=20250701';
+    root.appendChild(frame);
+  }
+  dismissEntryScreen();
+  setGardenDesignShellOpen(true);
+  scrollToPageTop('auto');
+}
+
+function closeGardenDesign(){
+  setGardenDesignShellOpen(false);
+  showEntryScreen();
+  scrollToPageTop('auto');
+}
+
+/* ── Plant Doctor (isolated iframe module) ── */
+function setPlantDoctorShellOpen(open){
+  const root=document.getElementById('plant-doctor-root');
+  const app=document.getElementById('appRoot');
+  if(root){root.classList.toggle('pd-active',!!open);root.setAttribute('aria-hidden',open?'false':'true');}
+  if(app) app.classList.toggle('pd-open',!!open);
+}
+
+function openPlantDoctor(){
+  const root=document.getElementById('plant-doctor-root');
+  if(!root) return;
+  let frame=root.querySelector('iframe.pd-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='pd-frame';
+    frame.title='Plant Doctor';
+    frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen');
+    frame.src='modules/plant-doctor/index.html?v=20250701';
+    root.appendChild(frame);
+  }
+  dismissEntryScreen();
+  setPlantDoctorShellOpen(true);
+  scrollToPageTop('auto');
+}
+
+function closePlantDoctor(){
+  setPlantDoctorShellOpen(false);
+  showEntryScreen();
+  scrollToPageTop('auto');
+}
+
 function setPlantIdentifierShellOpen(open){
   const root=document.getElementById('plant-identifier-root');
   const app=document.getElementById('appRoot');
   if(root) root.classList.toggle('pi-active',!!open);
   if(app) app.classList.toggle('pi-open',!!open);
+}
+
+/* ── Smart Recommendations (dedicated in-app screen; reuses the recommendation engine) ── */
+function setSmartRecShellOpen(open){
+  const root=document.getElementById('smart-rec-root');
+  const app=document.getElementById('appRoot');
+  if(root){root.classList.toggle('sr-active',!!open);root.setAttribute('aria-hidden',open?'false':'true');}
+  if(app) app.classList.toggle('sr-open',!!open);
+}
+
+function openSmartRecommendations(){
+  dismissEntryScreen();
+  setSmartRecShellOpen(true);
+  smartRecView='photos';
+  const copy=getSmartRecCopy();
+  const title=document.getElementById('srTitle');
+  if(title)title.textContent=copy.title;
+  const kicker=document.querySelector('#smart-rec-root .sr-brand-kicker');
+  if(kicker)kicker.textContent=copy.moduleKicker;
+  const advisorName=document.getElementById('srAdvisorName');
+  if(advisorName)advisorName.textContent=copy.advisorName;
+  const advisorRole=document.getElementById('srAdvisorRole');
+  if(advisorRole)advisorRole.textContent=copy.advisorRole;
+  const tabPhotos=document.getElementById('srTabPhotos');
+  if(tabPhotos)tabPhotos.textContent=copy.tabPhotos;
+  const tabTable=document.getElementById('srTabTable');
+  if(tabTable)tabTable.textContent=copy.tabTable;
+  const badge=document.querySelector('#smart-rec-root .sr-trust-badge');
+  if(badge)badge.textContent=copy.trustBadge;
+  setSmartRecView('photos');
+  initSmartRecSession();
+  scrollToPageTop('auto');
+  const srRoot=document.getElementById('smart-rec-root');
+  if(srRoot)srRoot.scrollTop=0;
+}
+
+function closeSmartRecommendations(){
+  setSmartRecShellOpen(false);
+  showEntryScreen();
+  scrollToPageTop('auto');
 }
 
 async function openPlantIdentifierScanAsync(){
@@ -3452,16 +4216,19 @@ function openGardenDashboardWithHealth(){
 
 function handleEntryAction(action){
   if(action==='design'){
+    openGardenDesign();
+    return;
+  }
+  if(action==='identify'){
     openPlantIdentifierScan();
     return;
   }
   if(action==='recommendations'){
-    dismissEntryScreen();
-    addPlantFromRecommendations();
+    openSmartRecommendations();
     return;
   }
   if(action==='diagnose'){
-    openGardenDashboardWithHealth();
+    openPlantDoctor();
     return;
   }
   if(action==='shop'){
