@@ -1216,9 +1216,14 @@ const GD_USE_OVERLAY_PLACEMENT = true;
 const GD_USE_PLANT_ASSETS = true;
 /** Phase 1E: remote CDN cutout URLs from manifest (status ready + cdnUrl). Off until Phase D CDN proof. */
 const GD_USE_REMOTE_PLANT_URLS = false;
+const GD_DEV_PLACEHOLDER_QUERY = /(?:^|[?&])gdSvgPlaceholders=1(?:&|$)/.test(window.location.search);
+const GD_IS_LOCAL_ASSET_DEV = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const GD_PLACEMENT_NOTE_DEFAULT = '📍 Placement preview on your original photo - drag plants to adjust position and size. This is not an AI-redesigned image.';
+const GD_PLACEMENT_NOTE_READY_ONLY = ' Showing plants with ready visual previews. Other recommended plants are listed below.';
 const GD_PLANT_ASSETS_BASE = 'assets/plants/';
 let gdPlantAssetsManifest = null;
 let gdPlantAssetsLoadPromise = null;
+let gdAllowSvgPlaceholders = GD_DEV_PLACEHOLDER_QUERY || GD_IS_LOCAL_ASSET_DEV;
 let basePhotoB64 = null, basePhotoDataUrl = null;
 let plantLayers = [];
 let selectedPlantLayerId = null;
@@ -1631,6 +1636,7 @@ function setOverlayPlacementUI(active) {
     selectedPlantLayerId = null;
     updateLayerToolbar();
   }
+  gdUpdatePlacementNote();
 }
 
 function finishPhotoOverlayResult(data) {
@@ -1658,6 +1664,7 @@ function finishPhotoOverlayResult(data) {
 
   plantLayers = buildPlantLayersFromAnalysis(data.plants, data.placements);
   selectedPlantLayerId = null;
+  gdAllowSvgPlaceholders = !!(data && data.localPreview) || GD_DEV_PLACEHOLDER_QUERY || GD_IS_LOCAL_ASSET_DEV;
   currentPlants = [];
   setOverlayPlacementUI(true);
   showPlants(data.plants || []);
@@ -1667,6 +1674,7 @@ function finishPhotoOverlayResult(data) {
   gdPrefetchPlantAssetsIfNeeded();
   const localNote = document.getElementById('gdLocalPreviewNote');
   if (localNote) localNote.style.display = data.localPreview ? 'block' : 'none';
+  gdUpdatePlacementNote();
 }
 
 function applyLayerDomTransform(layer, el) {
@@ -1765,6 +1773,18 @@ function gdVariantRemoteUrlEligible(variant) {
   return typeof url === 'string' && url.length > 0 && url.indexOf('https://') === 0;
 }
 
+function gdVariantLocalCutoutReady(variant) {
+  return !!(variant && variant.file && !variant.comingSoon);
+}
+
+function gdVariantHasReadyCutout(variant) {
+  return gdVariantRemoteUrlEligible(variant) || gdVariantLocalCutoutReady(variant);
+}
+
+function gdShouldRenderSvgPlaceholders() {
+  return !!gdAllowSvgPlaceholders;
+}
+
 function resolvePlantLayerAsset(layer, manifest) {
   const spriteType = gdResolveLayerSpriteType(layer);
   const defaults = (manifest && manifest.defaults) || {};
@@ -1776,6 +1796,7 @@ function resolvePlantLayerAsset(layer, manifest) {
     urlCandidates: [],
     anchor: anchor,
     baseWidthPx: null,
+    visualReady: false,
     status: null,
     thumbUrl: null,
     source: null,
@@ -1790,18 +1811,12 @@ function resolvePlantLayerAsset(layer, manifest) {
   const category = entry.category || spriteType;
   const urlCandidates = [];
   const variant = entry.variants && entry.variants[variantId];
+  const visualReady = gdVariantHasReadyCutout(variant);
   if (gdVariantRemoteUrlEligible(variant)) {
     urlCandidates.push(variant.cdnUrl);
   }
-  if (variant && variant.file && !variant.comingSoon) {
+  if (gdVariantLocalCutoutReady(variant)) {
     urlCandidates.push(GD_PLANT_ASSETS_BASE + variant.file);
-  }
-  if (entry.default) {
-    urlCandidates.push(GD_PLANT_ASSETS_BASE + entry.default);
-  }
-  const catPath = manifest.categoryFallbacks && manifest.categoryFallbacks[category];
-  if (catPath) {
-    urlCandidates.push(GD_PLANT_ASSETS_BASE + catPath);
   }
   return {
     spriteType: category,
@@ -1810,6 +1825,7 @@ function resolvePlantLayerAsset(layer, manifest) {
     urlCandidates: urlCandidates,
     anchor: entry.anchor || anchor,
     baseWidthPx: entry.baseWidthPx || null,
+    visualReady: visualReady,
     status: variant && variant.status ? variant.status : 'missing',
     thumbUrl: variant && variant.thumbUrl ? variant.thumbUrl : null,
     source: variant && variant.source ? variant.source : null,
@@ -1831,10 +1847,38 @@ function gdBuildSpriteSvgHtml(spriteType) {
   return '<div class="gd-plant-sprite-fallback">' + svg + '</div>';
 }
 
-function gdBuildPlantLayerVisualInner(layer) {
+function gdLayerHasReadyCutout(layer) {
+  if (!GD_USE_PLANT_ASSETS || !gdPlantAssetsManifest) return false;
+  return !!resolvePlantLayerAsset(layer, gdPlantAssetsManifest).visualReady;
+}
+
+function gdLayerShowsVisualPreview(layer) {
+  return !GD_USE_PLANT_ASSETS || gdShouldRenderSvgPlaceholders() || gdLayerHasReadyCutout(layer);
+}
+
+function gdUpdatePlacementNote() {
+  const note = document.getElementById('gdPlacementNote');
+  if (!note) return;
+  if (!overlayPlacementActive) {
+    note.style.display = 'none';
+    return;
+  }
+  note.style.display = 'block';
+  const hiddenCount = GD_USE_PLANT_ASSETS && !gdShouldRenderSvgPlaceholders()
+    ? plantLayers.filter(layer => !gdLayerHasReadyCutout(layer)).length
+    : 0;
+  note.textContent = hiddenCount > 0
+    ? GD_PLACEMENT_NOTE_DEFAULT + GD_PLACEMENT_NOTE_READY_ONLY
+    : GD_PLACEMENT_NOTE_DEFAULT;
+}
+
+function gdBuildPlantLayerVisualInner(layer, resolved) {
   const spriteType = gdResolveLayerSpriteType(layer);
-  if (GD_USE_PLANT_ASSETS && gdPlantAssetsManifest) {
-    const resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
+  if (GD_USE_PLANT_ASSETS) {
+    if (!resolved && gdPlantAssetsManifest) {
+      resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
+    }
+    if (resolved) {
     if (resolved.assetKey) layer.assetKey = resolved.assetKey;
     if (resolved.variantId) layer.variantId = resolved.variantId;
     if (resolved.spriteType) {
@@ -1845,6 +1889,8 @@ function gdBuildPlantLayerVisualInner(layer) {
       const urlsJson = gdEscAttr(JSON.stringify(resolved.urlCandidates));
       return '<img class="gd-plant-cutout" src="' + gdEscAttr(resolved.urlCandidates[0]) + '" alt="" style="visibility:hidden" data-gd-candidates="' + urlsJson + '" onload="this.style.visibility=\'visible\'" onerror="gdOnPlantCutoutError(this)"/>';
     }
+    }
+    if (!gdShouldRenderSvgPlaceholders()) return '';
   }
   return gdBuildSpriteSvgHtml(layer.spriteType || spriteType);
 }
@@ -1864,9 +1910,16 @@ function gdOnPlantCutoutError(img) {
     return;
   }
   const wrap = img.closest('.gd-plant-sprite-wrap');
+  const visual = img.closest('.gd-plant-visual');
   const layerEl = img.closest('.gd-plant-layer');
   const layer = layerEl && plantLayers.find(function(l) { return l.id === layerEl.dataset.layerId; });
   const spriteType = layer ? gdResolveLayerSpriteType(layer) : 'shrub';
+  if (!gdShouldRenderSvgPlaceholders()) {
+    if (wrap) wrap.innerHTML = '';
+    const shadow = visual && visual.querySelector('.gd-plant-shadow');
+    if (shadow) shadow.style.display = 'none';
+    return;
+  }
   if (wrap) wrap.innerHTML = gdBuildSpriteSvgHtml(spriteType);
 }
 
@@ -1878,9 +1931,17 @@ function gdBuildPlantLayerInnerHtml(layer) {
   const sizeClass = 'gd-plant-' + (layer.spriteType || spriteType);
   let wrapClass = 'gd-plant-sprite-wrap';
   let wrapStyle = '';
+  let resolved = null;
   if (GD_USE_PLANT_ASSETS && gdPlantAssetsManifest) {
-    const resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
+    resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
     if (resolved.assetKey) layer.assetKey = resolved.assetKey;
+    if (resolved.spriteType) {
+      layer.spriteType = resolved.spriteType;
+      layer.isTree = resolved.spriteType === 'tree';
+    }
+    if (!resolved.visualReady && !gdShouldRenderSvgPlaceholders()) {
+      return '<div class="gd-plant-visual ' + sizeClass + '" aria-hidden="true"></div>';
+    }
     if (resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length) {
       const entry = resolved.assetKey && gdPlantAssetsManifest.plants[resolved.assetKey];
       const variant = entry && entry.variants && entry.variants[resolved.variantId];
@@ -1889,14 +1950,20 @@ function gdBuildPlantLayerInnerHtml(layer) {
       wrapStyle = ' style="width:' + resolved.baseWidthPx + 'px;height:' + wrapH + 'px"';
       wrapClass += ' gd-plant-sprite-wrap--asset';
     }
+  } else if (GD_USE_PLANT_ASSETS && !gdShouldRenderSvgPlaceholders()) {
+    return '<div class="gd-plant-visual ' + sizeClass + '" aria-hidden="true"></div>';
   }
-  return '<div class="gd-plant-visual ' + sizeClass + '"><div class="' + wrapClass + '"' + wrapStyle + '>' + gdBuildPlantLayerVisualInner(layer) + '</div><div class="gd-plant-shadow"></div></div>';
+  return '<div class="gd-plant-visual ' + sizeClass + '"><div class="' + wrapClass + '"' + wrapStyle + '>' + gdBuildPlantLayerVisualInner(layer, resolved) + '</div><div class="gd-plant-shadow"></div></div>';
 }
 
 function renderPlantLayers() {
   const host = document.getElementById('plantLayersHost');
   if (!host || !overlayPlacementActive) return;
   host.innerHTML = '';
+  if (selectedPlantLayerId) {
+    const selected = plantLayers.find(l => l.id === selectedPlantLayerId);
+    if (selected && !gdLayerShowsVisualPreview(selected)) selectedPlantLayerId = null;
+  }
   plantLayers.slice().sort((a, b) => a.zIndex - b.zIndex).forEach(layer => {
     const el = document.createElement('div');
     el.className = 'gd-plant-layer' + (layer.id === selectedPlantLayerId ? ' selected' : '');
@@ -1906,6 +1973,7 @@ function renderPlantLayers() {
     el.addEventListener('pointerdown', e => onPlantLayerPointerDown(e, layer.id));
     host.appendChild(el);
   });
+  gdUpdatePlacementNote();
   updateLayerToolbar();
 }
 
@@ -2163,6 +2231,8 @@ function resetPlantLayerState() {
   if (host) host.innerHTML = '';
   const localNote = document.getElementById('gdLocalPreviewNote');
   if (localNote) localNote.style.display = 'none';
+  gdAllowSvgPlaceholders = GD_DEV_PLACEHOLDER_QUERY || GD_IS_LOCAL_ASSET_DEV;
+  gdUpdatePlacementNote();
 }
 
 // ── Show plants ──
