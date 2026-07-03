@@ -1214,6 +1214,8 @@ let photoB64 = null, photoDataUrl = null;
 const GD_USE_OVERLAY_PLACEMENT = true;
 /** Phase 1D-A: transparent plant cutouts from manifest. Default false until real assets ship (1D-B). */
 const GD_USE_PLANT_ASSETS = true;
+/** Phase 1E: remote CDN cutout URLs from manifest (status ready + cdnUrl). Off until Phase D CDN proof. */
+const GD_USE_REMOTE_PLANT_URLS = false;
 const GD_PLANT_ASSETS_BASE = 'assets/plants/';
 let gdPlantAssetsManifest = null;
 let gdPlantAssetsLoadPromise = null;
@@ -1716,6 +1718,15 @@ function gdMatchPlantAssetKey(layer, manifest) {
   return null;
 }
 
+/** Phase 1E: variant eligible for remote cdnUrl (manifest status ready + https URL). */
+function gdVariantRemoteUrlEligible(variant) {
+  if (!GD_USE_REMOTE_PLANT_URLS || !variant) return false;
+  const status = variant.status || 'missing';
+  if (status !== 'ready') return false;
+  const url = variant.cdnUrl;
+  return typeof url === 'string' && url.length > 0 && url.indexOf('https://') === 0;
+}
+
 function resolvePlantLayerAsset(layer, manifest) {
   const spriteType = gdResolveLayerSpriteType(layer);
   const defaults = (manifest && manifest.defaults) || {};
@@ -1726,7 +1737,11 @@ function resolvePlantLayerAsset(layer, manifest) {
     variantId: null,
     urlCandidates: [],
     anchor: anchor,
-    baseWidthPx: null
+    baseWidthPx: null,
+    status: null,
+    thumbUrl: null,
+    source: null,
+    license: null
   };
   if (!manifest || !GD_USE_PLANT_ASSETS) return base;
   const assetKey = gdMatchPlantAssetKey(layer, manifest);
@@ -1737,6 +1752,9 @@ function resolvePlantLayerAsset(layer, manifest) {
   const category = entry.category || spriteType;
   const urlCandidates = [];
   const variant = entry.variants && entry.variants[variantId];
+  if (gdVariantRemoteUrlEligible(variant)) {
+    urlCandidates.push(variant.cdnUrl);
+  }
   if (variant && variant.file && !variant.comingSoon) {
     urlCandidates.push(GD_PLANT_ASSETS_BASE + variant.file);
   }
@@ -1753,7 +1771,11 @@ function resolvePlantLayerAsset(layer, manifest) {
     variantId: variantId,
     urlCandidates: urlCandidates,
     anchor: entry.anchor || anchor,
-    baseWidthPx: entry.baseWidthPx || null
+    baseWidthPx: entry.baseWidthPx || null,
+    status: variant && variant.status ? variant.status : 'missing',
+    thumbUrl: variant && variant.thumbUrl ? variant.thumbUrl : null,
+    source: variant && variant.source ? variant.source : null,
+    license: variant && variant.license ? variant.license : null
   };
 }
 
