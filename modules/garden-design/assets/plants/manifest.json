@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "defaults": {
+    "season": "summer",
+    "age": "mature",
+    "anchor": { "x": 0.5, "y": 1.0 }
+  },
+  "categoryFallbacks": {
+    "tree": "_fallbacks/tree.png",
+    "shrub": "_fallbacks/shrub.png",
+    "herb": "_fallbacks/herb.png",
+    "flower": "_fallbacks/flower.png"
+  },
+  "plants": {
+    "olive-tree": {
+      "displayName": "Olive tree",
+      "latin": "Olea europaea",
+      "aliases": ["Olive", "Olive Tree"],
+      "category": "tree",
+      "defaultVariant": "summer-mature",
+      "default": "olive-tree/default.png",
+      "baseWidthPx": 128,
+      "variants": {
+        "summer-mature": {
+          "season": "summer",
+          "age": "mature",
+          "file": "olive-tree/variants/summer-mature.png",
+          "width": 512,
+          "height": 768,
+          "comingSoon": true
+        }
+      }
+    },
+    "rosemary": {
+      "displayName": "Rosemary",
+      "latin": "Salvia rosmarinus",
+      "aliases": ["Rosemary Bush"],
+      "category": "herb",
+      "defaultVariant": "summer-mature",
+      "default": "rosemary/default.png",
+      "baseWidthPx": 96,
+      "variants": {
+        "summer-mature": {
+          "season": "summer",
+          "age": "mature",
+          "file": "rosemary/variants/summer-mature.png",
+          "width": 384,
+          "height": 512,
+          "comingSoon": true
+        }
+      }
+    },
+    "lavender": {
+      "displayName": "Lavender",
+      "latin": "Lavandula angustifolia",
+      "aliases": ["English Lavender"],
+      "category": "flower",
+      "defaultVariant": "summer-mature",
+      "default": "lavender/default.png",
+      "baseWidthPx": 96,
+      "variants": {
+        "summer-mature": {
+          "season": "summer",
+          "age": "mature",
+          "file": "lavender/variants/summer-mature.png",
+          "width": 384,
+          "height": 512,
+          "comingSoon": true
+        }
+      }
+    },
+    "bougainvillea": {
+      "displayName": "Bougainvillea",
+      "latin": "Bougainvillea spectabilis",
+      "aliases": ["Bougainvillea Vine"],
+      "category": "flower",
+      "defaultVariant": "summer-mature",
+      "default": "bougainvillea/default.png",
+      "baseWidthPx": 112,
+      "variants": {
+        "summer-mature": {
+          "season": "summer",
+          "age": "mature",
+          "file": "bougainvillea/variants/summer-mature.png",
+          "width": 448,
+          "height": 640,
+          "comingSoon": true
+        }
+      }
+    },
+    "italian-cypress": {
+      "displayName": "Italian cypress",
+      "latin": "Cupressus sempervirens",
+      "aliases": ["Cypress", "Italian Cypress", "Mediterranean Cypress"],
+      "category": "tree",
+      "defaultVariant": "summer-mature",
+      "default": "italian-cypress/default.png",
+      "baseWidthPx": 112,
+      "variants": {
+        "summer-mature": {
+          "season": "summer",
+          "age": "mature",
+          "file": "italian-cypress/variants/summer-mature.png",
+          "width": 448,
+          "height": 896,
+          "comingSoon": true
+        }
+      }
+    }
+  }
+}
