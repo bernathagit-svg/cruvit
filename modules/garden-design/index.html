@@ -221,14 +221,21 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .gd-placement-note{background:rgba(61,138,80,.12);border:1px solid rgba(61,138,80,.35);border-radius:10px;padding:10px 14px;font-size:12px;color:#2d5a2d;margin-bottom:10px;line-height:1.55;font-weight:500}
 .gd-local-preview-note{background:rgba(255,193,7,.14);border:1px solid rgba(255,179,0,.45);border-radius:10px;padding:8px 12px;color:#5d4a00;font-size:11px;margin-bottom:10px;line-height:1.5}
 #plantLayersHost{position:absolute;inset:0;pointer-events:none;z-index:5}
-.gd-plant-layer{position:absolute;pointer-events:auto;cursor:grab;touch-action:none;transform-origin:50% 88%;will-change:left,top,transform;transition:filter .15s}
-.gd-plant-layer.selected{filter:drop-shadow(0 0 0 2px #3d8a50) drop-shadow(0 4px 14px rgba(61,138,80,.5))}
+.gd-plant-layer{position:absolute;pointer-events:auto;cursor:grab;touch-action:none;transform-origin:50% 100%;will-change:left,top,transform}
 .gd-plant-layer:active{cursor:grabbing}
-.gd-plant-visual{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none}
-.gd-plant-foliage{font-size:42px;line-height:1;filter:drop-shadow(2px 6px 8px rgba(0,0,0,.4));user-select:none}
-.gd-plant-tree .gd-plant-foliage{font-size:58px}
-.gd-plant-shrub .gd-plant-foliage{font-size:38px}
-.gd-plant-shadow{width:72%;height:10px;background:radial-gradient(ellipse,rgba(0,0,0,.38) 0%,transparent 72%);margin-top:-2px;border-radius:50%}
+.gd-plant-visual{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none}
+.gd-plant-sprite-wrap{position:relative;width:104px;height:136px;display:flex;align-items:flex-end;justify-content:center;background:none;border:none;border-radius:0;overflow:visible}
+.gd-plant-tree .gd-plant-sprite-wrap{width:128px;height:168px}
+.gd-plant-shrub .gd-plant-sprite-wrap{width:96px;height:124px}
+.gd-plant-herb .gd-plant-sprite-wrap{width:88px;height:112px}
+.gd-plant-flower .gd-plant-sprite-wrap{width:92px;height:118px}
+.gd-plant-sprite-fallback{width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0}
+.gd-sprite-svg{width:88%;max-height:94%;height:auto;display:block;pointer-events:none;user-select:none;filter:drop-shadow(0 5px 10px rgba(0,0,0,.32)) drop-shadow(0 2px 4px rgba(0,0,0,.2))}
+.gd-plant-tree .gd-sprite-svg{width:86%;max-height:92%}
+.gd-plant-shadow{width:58%;height:10px;background:radial-gradient(ellipse,rgba(0,0,0,.38) 0%,transparent 72%);margin-top:0;border-radius:50%;filter:blur(.5px);flex-shrink:0}
+.gd-plant-layer.selected .gd-sprite-svg{filter:drop-shadow(0 5px 10px rgba(0,0,0,.32)) drop-shadow(0 2px 4px rgba(0,0,0,.2)) drop-shadow(0 0 6px rgba(61,138,80,.55))}
+.gd-plant-select-outline{display:none}
+.gd-plant-handle{display:none}
 .gd-layer-toolbar{display:none;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px}
 .gd-layer-toolbar.visible{display:flex}
 .gd-layer-toolbar-name{font-weight:600;font-size:13px;flex:1;min-width:100px;color:var(--text)}
@@ -293,6 +300,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .apm-confirm:hover{background:#2d6a40}
 .apm-confirm:disabled{opacity:.5;cursor:not-allowed}
 .plant-card{background:var(--card);border:0.5px solid rgba(109,204,136,.22);border-radius:14px;min-width:290px;max-width:290px;display:flex;flex-direction:row;flex-shrink:0;transition:all .2s;overflow:hidden}
+.plant-card.gd-overlay-card{align-items:stretch;overflow:visible;min-height:148px}
 .plant-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(109,204,136,.18)}
 .plant-card.removed{opacity:.65;border-color:rgba(229,115,115,.5);background:rgba(229,115,115,.04)}
 .plant-card.removed .plant-name{text-decoration:line-through;color:var(--muted)}
@@ -309,11 +317,20 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .pc-care-tag.diff{background:#f3e5f5;color:#6a1b9a;border:0.5px solid rgba(106,27,154,.2)}
 .pc-divider{height:0.5px;background:rgba(109,204,136,.15);margin:0 -11px 8px}
 .pc-actions{display:flex;align-items:center;justify-content:space-between}
+.pc-body.gd-overlay-body{justify-content:flex-start;min-height:130px;padding-bottom:10px}
+.pc-body.gd-overlay-body .gd-qty-strip{margin-top:auto}
+.pc-body.gd-overlay-body .pc-actions{margin-top:6px;justify-content:flex-end}
+.gd-qty-strip{display:grid;grid-template-columns:36px minmax(24px,1fr) 36px;align-items:center;gap:8px;width:100%;margin:0;padding:5px 8px;box-sizing:border-box;background:rgba(109,204,136,.1);border:1.5px solid rgba(61,138,80,.45);border-radius:10px;flex-shrink:0;position:relative;z-index:2}
+.gd-qty-btn{width:36px;height:36px;min-width:36px;min-height:36px;border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;font-weight:700;font-family:inherit;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;flex-shrink:0;padding:0;box-sizing:border-box}
+.gd-qty-minus{background:#fff;color:#4a5d4a;border:1px solid rgba(109,204,136,.45)}
+.gd-qty-minus:hover{background:rgba(229,115,115,.12);color:#c62828;border-color:rgba(198,40,40,.4)}
+.gd-qty-plus{background:#3d8a50;color:#fff;border:1px solid #2d6a40;box-shadow:0 2px 6px rgba(61,138,80,.35)}
+.gd-qty-plus:hover{background:#2d6a40;color:#fff;box-shadow:0 3px 8px rgba(45,106,64,.45)}
+.gd-qty-num{text-align:center;font-size:15px;font-weight:700;color:var(--text);min-width:24px;line-height:1}
 .pc-qty{display:flex;align-items:center;gap:1px;border:0.5px solid var(--border);border-radius:20px;padding:1px 3px}
 .plant-qty-btn{width:24px;height:24px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:17px;line-height:1;transition:all .2s;border-radius:50%;font-weight:300}
 .plant-qty-btn:hover{background:rgba(109,204,136,.15);color:#2e7d32}
 .plant-qty-btn.minus:hover{background:rgba(229,115,115,.1);color:#e57373}
-.plant-qty-btn.plus:hover{background:rgba(109,204,136,.15);color:#2e7d32}
 .plant-qty-btn:disabled{opacity:.35;cursor:not-allowed}
 .pc-qty-n{font-size:12px;font-weight:500;color:var(--text);min-width:16px;text-align:center}
 .pc-icon-group{display:flex;gap:4px}
@@ -454,6 +471,9 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
   .pc-left-counter-n{font-size:22px !important}
   .pc-left-label{text-align:left !important;font-size:12px !important}
   .plant-card{min-width:240px !important;max-width:240px !important}
+  .plant-card.gd-overlay-card{min-height:142px !important}
+  .gd-qty-btn{min-width:34px !important;min-height:34px !important;width:34px !important;height:34px !important}
+  .gd-qty-strip{grid-template-columns:34px minmax(20px,1fr) 34px !important;padding:4px 6px !important}
   .pc-img-box{width:90px !important;height:110px !important}
   .add-to-smart-btn,.apply-removals-btn{font-size:12px;padding:10px}
 
@@ -1394,6 +1414,10 @@ function handlePhoto(e) {
 let currentPlants = [];
 let cartPlants = new Set(); // plant names in cart
 
+function isOverlayPlacementMode() {
+  return overlayPlacementActive && isPhotoMode;
+}
+
 function updateOverlay() {
   if (overlayPlacementActive) {
     ['plantsOverlay','plantsOverlaySketch'].forEach(id => {
@@ -1434,49 +1458,93 @@ function newPlantLayerId() {
   return 'pl_' + gdLayerIdCounter + '_' + Date.now();
 }
 
+function createPlantLayerFromPlant(p, x, y, zIndex) {
+  const spriteType = getPlantSpriteType(p);
+  return {
+    id: newPlantLayerId(),
+    name: p.name,
+    species: p.latin || '',
+    slug: latinToSlug(p.latin),
+    x: Math.min(0.96, Math.max(0.04, x)),
+    y: Math.min(0.96, Math.max(0.04, y)),
+    scale: spriteType === 'tree' ? 1.15 : 0.95,
+    rotation: 0,
+    zIndex,
+    emoji: p.emoji || '🌿',
+    isTree: spriteType === 'tree',
+    spriteType
+  };
+}
+
 function buildPlantLayersFromAnalysis(plants, placements) {
   plants = plants || [];
   placements = placements || [];
   const layers = [];
-  if (placements.length > 0) {
-    placements.forEach((pl, i) => {
-      const match = plants.find(p => p.name && pl.name && p.name.toLowerCase() === pl.name.toLowerCase())
-        || plants[i] || { name: pl.name || 'Plant', latin: '', emoji: '🌿' };
-      const name = match.name || pl.name || 'Plant';
-      const isTree = isTreePlant(name);
-      layers.push({
-        id: newPlantLayerId(),
-        name,
-        species: match.latin || '',
-        slug: latinToSlug(match.latin),
-        x: typeof pl.x === 'number' ? pl.x : 0.18 + (i % 4) * 0.2,
-        y: typeof pl.y === 'number' ? pl.y : 0.5 + Math.floor(i / 4) * 0.12,
-        scale: isTree ? 1.15 : 0.95,
-        rotation: 0,
-        zIndex: i + 1,
-        emoji: match.emoji || '🌿',
-        isTree
-      });
-    });
-  } else {
-    plants.forEach((p, i) => {
-      const isTree = isTreePlant(p.name);
-      layers.push({
-        id: newPlantLayerId(),
-        name: p.name,
-        species: p.latin || '',
-        slug: latinToSlug(p.latin),
-        x: 0.15 + (i % 4) * 0.2,
-        y: 0.48 + Math.floor(i / 4) * 0.14,
-        scale: isTree ? 1.15 : 0.95,
-        rotation: 0,
-        zIndex: i + 1,
-        emoji: p.emoji || '🌿',
-        isTree
-      });
-    });
-  }
+  let z = 1;
+  const placementsByName = {};
+  placements.forEach(pl => {
+    const k = (pl.name || '').toLowerCase().trim();
+    if (!k) return;
+    if (!placementsByName[k]) placementsByName[k] = [];
+    placementsByName[k].push(pl);
+  });
+  const usedPlacementIdx = {};
+
+  plants.forEach((p, i) => {
+    const k = (p.name || '').toLowerCase().trim();
+    const pool = k ? placementsByName[k] : null;
+    const pi = usedPlacementIdx[k] || 0;
+    let x = 0.15 + (i % 4) * 0.2;
+    let y = 0.48 + Math.floor(i / 4) * 0.14;
+    if (pool && pool[pi]) {
+      if (typeof pool[pi].x === 'number') x = pool[pi].x;
+      if (typeof pool[pi].y === 'number') y = pool[pi].y;
+      usedPlacementIdx[k] = pi + 1;
+    }
+    layers.push(createPlantLayerFromPlant(p, x, y, z++));
+  });
+
+  placements.forEach(pl => {
+    const k = (pl.name || '').toLowerCase().trim();
+    if (!k) return;
+    const have = layers.filter(l => l.name.toLowerCase() === k).length;
+    const pool = placementsByName[k] || [];
+    const need = pool.length;
+    if (have >= need) return;
+    const plant = plants.find(p => (p.name || '').toLowerCase() === k)
+      || { name: pl.name, latin: '', emoji: '🌿' };
+    for (let j = have; j < need; j++) {
+      const pos = pool[j] || pl;
+      const x = typeof pos.x === 'number' ? pos.x : 0.5;
+      const y = typeof pos.y === 'number' ? pos.y : 0.55;
+      layers.push(createPlantLayerFromPlant(plant, x, y, z++));
+    }
+  });
+
   return layers;
+}
+
+function syncPlantLayersWithPlants() {
+  if (!isOverlayPlacementMode()) return false;
+  let changed = false;
+  currentPlants.filter(p => p.active).forEach((plant, idx) => {
+    if (countLayersForPlant(plant) === 0) {
+      const x = 0.15 + (idx % 4) * 0.2;
+      const y = 0.48 + Math.floor(idx / 4) * 0.14;
+      plantLayers.push(createPlantLayerFromPlant(plant, x, y, plantLayers.length + 1));
+      changed = true;
+    }
+  });
+  const before = plantLayers.length;
+  plantLayers = plantLayers.filter(layer =>
+    currentPlants.some(p => p.active && plantMatchesLayer(p, layer))
+  );
+  if (plantLayers.length !== before) changed = true;
+  if (changed) {
+    renderPlantLayers();
+    renderPlantsDrawer();
+  }
+  return changed;
 }
 
 function setOverlayPlacementUI(active) {
@@ -1523,9 +1591,11 @@ function finishPhotoOverlayResult(data) {
   plantLayers = buildPlantLayersFromAnalysis(data.plants, data.placements);
   selectedPlantLayerId = null;
   currentPlants = [];
-  showPlants(data.plants || []);
   setOverlayPlacementUI(true);
+  showPlants(data.plants || []);
+  syncPlantLayersWithPlants();
   renderPlantLayers();
+  renderPlantsDrawer();
   const localNote = document.getElementById('gdLocalPreviewNote');
   if (localNote) localNote.style.display = data.localPreview ? 'block' : 'none';
 }
@@ -1535,7 +1605,50 @@ function applyLayerDomTransform(layer, el) {
   el.style.left = (layer.x * 100) + '%';
   el.style.top = (layer.y * 100) + '%';
   el.style.zIndex = layer.zIndex;
-  el.style.transform = 'translate(-50%, -88%) scale(' + layer.scale + ') rotate(' + layer.rotation + 'deg)';
+  el.style.transform = 'translate(-50%, -100%) scale(' + layer.scale + ') rotate(' + layer.rotation + 'deg)';
+}
+
+function gdEscAttr(s) {
+  return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function getPlantSpriteType(plantOrLayer) {
+  const name = (plantOrLayer.name || '').toLowerCase();
+  const latin = (plantOrLayer.species || plantOrLayer.latin || '').toLowerCase();
+  const text = name + ' ' + latin;
+  if (isTreePlant(name) || isTreePlant(latin)) return 'tree';
+  const flowers = ['rose', 'lavender', 'jasmine', 'marigold', 'tulip', 'daisy', 'geranium', 'bougainvillea', 'hibiscus', 'petunia', 'poppy', 'orchid', 'sunflower', 'lily', 'iris', 'violet', 'cyclamen', 'anemone', 'flower', 'bloom', 'blossom', 'daffodil', 'narcissus', 'camellia', 'magnolia', 'wisteria', 'peony', 'zinnia', 'cosmos', 'begonia'];
+  if (flowers.some(w => text.includes(w))) return 'flower';
+  const herbs = ['rosemary', 'thyme', 'sage', 'mint', 'basil', 'oregano', 'parsley', 'chive', 'lemongrass', 'fennel', 'dill', 'herb', 'grass', 'lawn', 'wheat', 'bamboo', 'fern', 'hosta', 'monstera', 'pothos', 'sedge', 'catmint', 'catnip', 'coriander', 'cilantro', 'tarragon', 'marjoram', 'chamomile', 'santolina'];
+  if (herbs.some(w => text.includes(w))) return 'herb';
+  return 'shrub';
+}
+
+function gdResolveLayerSpriteType(layer) {
+  return layer.spriteType || getPlantSpriteType(layer);
+}
+
+function gdBuildSpriteSvgHtml(spriteType) {
+  let svg = '';
+  if (spriteType === 'tree') {
+    svg = '<svg class="gd-sprite-svg" viewBox="0 0 80 100" aria-hidden="true"><path fill="#5d4037" d="M35 92 L35 64 Q38 58 40 58 Q42 58 45 64 L45 92 Z"/><path fill="#33691e" d="M40 14 C18 22 6 42 6 58 C6 70 16 76 26 72 C30 50 36 32 40 22 C44 32 50 50 54 72 C64 76 74 70 74 58 C74 42 62 22 40 14 Z"/><path fill="#43a047" d="M40 24 C28 30 18 44 16 58 C24 44 32 32 40 26 C48 32 56 44 64 58 C62 44 52 30 40 24 Z" opacity=".72"/><path fill="#2e7d32" d="M40 32 C32 38 24 50 22 62 C28 50 34 40 40 34 C46 40 52 50 58 62 C56 50 48 38 40 32 Z" opacity=".55"/></svg>';
+  } else if (spriteType === 'flower') {
+    svg = '<svg class="gd-sprite-svg" viewBox="0 0 80 100" aria-hidden="true"><path fill="#558b2f" d="M39 92 L39 56 Q40 54 41 56 L41 92 Z"/><path fill="#e91e63" d="M40 22 C32 24 26 30 24 38 C22 46 28 52 36 50 C34 42 36 34 40 28 C44 34 46 42 44 50 C52 52 58 46 56 38 C54 30 48 24 40 22 Z"/><path fill="#f48fb1" d="M28 36 C24 40 22 46 24 50 C28 46 30 40 34 36 C30 32 28 32 28 36 Z"/><path fill="#f48fb1" d="M52 36 C56 40 58 46 56 50 C52 46 50 40 46 36 C50 32 52 32 52 36 Z"/><path fill="#ffeb3b" d="M40 34 C36 34 34 38 36 42 C38 44 42 44 44 42 C46 38 44 34 40 34 Z"/></svg>';
+  } else if (spriteType === 'herb') {
+    svg = '<svg class="gd-sprite-svg" viewBox="0 0 80 100" aria-hidden="true"><path fill="#689f38" d="M16 92 C18 68 14 44 18 38 C22 58 24 78 26 92 Z"/><path fill="#7cb342" d="M26 92 C28 64 24 38 30 34 C34 56 36 76 38 92 Z"/><path fill="#558b2f" d="M36 92 C38 58 32 32 40 28 C46 54 48 74 50 92 Z"/><path fill="#7cb342" d="M48 92 C50 66 46 40 52 36 C56 58 58 78 60 92 Z"/><path fill="#689f38" d="M58 92 C60 70 56 46 62 40 C66 62 68 80 70 92 Z"/></svg>';
+  } else {
+    svg = '<svg class="gd-sprite-svg" viewBox="0 0 80 100" aria-hidden="true"><path fill="#2e7d32" d="M12 92 C14 70 18 52 28 44 C34 40 40 42 40 42 C40 42 46 40 52 44 C62 52 66 70 68 92 Z"/><path fill="#388e3c" d="M18 88 C20 68 26 54 34 48 C38 46 42 47 42 47 C42 47 46 46 50 48 C58 54 62 68 64 88 Z" opacity=".88"/><path fill="#43a047" d="M24 86 C26 70 32 58 38 54 C40 53 42 54 42 54 C42 54 44 53 46 54 C52 58 58 70 60 86 Z" opacity=".75"/><path fill="#33691e" d="M30 84 C32 72 36 64 40 62 C42 64 46 72 48 84 Z" opacity=".55"/></svg>';
+  }
+  return '<div class="gd-plant-sprite-fallback">' + svg + '</div>';
+}
+
+function gdBuildPlantLayerInnerHtml(layer) {
+  if (layer.imageUrl) delete layer.imageUrl;
+  const spriteType = gdResolveLayerSpriteType(layer);
+  layer.spriteType = spriteType;
+  layer.isTree = spriteType === 'tree';
+  const sizeClass = 'gd-plant-' + spriteType;
+  return '<div class="gd-plant-visual ' + sizeClass + '"><div class="gd-plant-sprite-wrap">' + gdBuildSpriteSvgHtml(spriteType) + '</div><div class="gd-plant-shadow"></div></div>';
 }
 
 function renderPlantLayers() {
@@ -1547,8 +1660,7 @@ function renderPlantLayers() {
     el.className = 'gd-plant-layer' + (layer.id === selectedPlantLayerId ? ' selected' : '');
     el.dataset.layerId = layer.id;
     applyLayerDomTransform(layer, el);
-    const sizeClass = layer.isTree ? 'gd-plant-tree' : 'gd-plant-shrub';
-    el.innerHTML = '<div class="gd-plant-visual ' + sizeClass + '"><div class="gd-plant-foliage" aria-hidden="true">' + (layer.emoji || '🌿') + '</div><div class="gd-plant-shadow"></div></div>';
+    el.innerHTML = gdBuildPlantLayerInnerHtml(layer);
     el.addEventListener('pointerdown', e => onPlantLayerPointerDown(e, layer.id));
     host.appendChild(el);
   });
@@ -1763,19 +1875,23 @@ function decrementPlantLayerQuantity(idx) {
 }
 
 function addPlantLayerAt(name, x, y, plantMeta) {
-  const isTree = isTreePlant(name);
+  const probe = { name, latin: plantMeta?.latin || '' };
+  const existing = plantLayers.filter(l => plantMatchesLayer(probe, l));
+  const template = existing.length ? existing[existing.length - 1] : null;
+  const spriteType = template?.spriteType || getPlantSpriteType(probe);
   plantLayers.push({
     id: newPlantLayerId(),
     name,
-    species: plantMeta?.latin || '',
-    slug: latinToSlug(plantMeta?.latin),
+    species: plantMeta?.latin || template?.species || '',
+    slug: latinToSlug(plantMeta?.latin || template?.species),
     x: Math.min(0.96, Math.max(0.04, x)),
     y: Math.min(0.96, Math.max(0.04, y)),
-    scale: isTree ? 1.15 : 0.95,
+    scale: spriteType === 'tree' ? 1.15 : 0.95,
     rotation: 0,
     zIndex: plantLayers.length + 1,
-    emoji: plantMeta?.emoji || '🌿',
-    isTree
+    emoji: plantMeta?.emoji || template?.emoji || '🌿',
+    isTree: spriteType === 'tree',
+    spriteType
   });
   selectedPlantLayerId = plantLayers[plantLayers.length - 1].id;
   renderPlantLayers();
@@ -1814,6 +1930,9 @@ function showPlants(plants) {
   renderPlantsDrawer();
   updateOverlay();
   loadPlantImages();
+  if (overlayPlacementActive && isPhotoMode) {
+    syncPlantLayersWithPlants();
+  }
   // Update counter
   const countEl = document.getElementById('plantsCount');
   if (countEl) {
@@ -2272,31 +2391,33 @@ function renderPlantsDrawer() {
       if (cd2 && diffMap[cd2]) careTagsHtml += `<span class="pc-care-tag diff">${diffMap[cd2]}</span>`;
     }
 
-    const overlayQty = overlayPlacementActive && isPhotoMode && p.active;
+    const overlayQty = isOverlayPlacementMode();
     const qty = overlayQty ? countLayersForPlant(p) : (p.active ? 1 : 0);
-    const qtyControls = overlayQty
-      ? `<div class="pc-qty">
-            <button type="button" class="plant-qty-btn minus" onclick="event.stopPropagation();decrementPlantLayerQuantity(${i})" aria-label="Remove one instance">−</button>
-            <span class="pc-qty-n">${qty}</span>
-            <button type="button" class="plant-qty-btn plus" onclick="event.stopPropagation();incrementPlantLayerQuantity(${i})" aria-label="Add another instance">+</button>
+    const overlayQtyStrip = overlayQty
+      ? `<div class="gd-qty-strip" role="group" aria-label="Quantity">
+            <button type="button" class="gd-qty-btn gd-qty-minus" onclick="event.stopPropagation();decrementPlantLayerQuantity(${i})" aria-label="Remove one">−</button>
+            <span class="gd-qty-num">${qty}</span>
+            <button type="button" class="gd-qty-btn gd-qty-plus" onclick="event.stopPropagation();incrementPlantLayerQuantity(${i})" aria-label="Add another">+</button>
           </div>`
-      : `<div class="pc-qty">
+      : '';
+    const legacyQty = overlayQty ? '' : `<div class="pc-qty">
             <button class="plant-qty-btn minus" onclick="togglePlant(${i})"
               style="${removed ? 'color:#4caf50;font-size:18px' : ''}">${removed ? '+' : '−'}</button>
             <span class="pc-qty-n" style="${removed ? 'color:#e57373' : ''}">${removed ? '0' : '1'}</span>
           </div>`;
 
     return `
-    <div class="plant-card${removed ? ' removed' : ''}">
+    <div class="plant-card${removed ? ' removed' : ''}${overlayQty ? ' gd-overlay-card' : ''}">
       <div class="pc-img-box" id="pimg-${i}">${imgContent}</div>
-      <div class="pc-body">
+      <div class="pc-body${overlayQty ? ' gd-overlay-body' : ''}">
         <p class="plant-name">${p.name}</p>
         ${p.latin ? `<p class="plant-latin">${p.latin}</p>` : ''}
         ${removed ? `<span class="pc-removed-tag">Marked for removal</span>` : ''}
         <div class="pc-care-tags">${careTagsHtml}</div>
         <div class="pc-divider"></div>
+        ${overlayQtyStrip}
         <div class="pc-actions">
-          ${qtyControls}
+          ${legacyQty}
           <div class="pc-icon-group">
             <button class="pc-icon-btn has-warn" onclick="event.stopPropagation();openWarnPopup(${i})" title="Warnings">⚠️</button>
             <button class="pc-icon-btn" onclick="event.stopPropagation();openPlantPopup(${i})" title="Plant details">🌱</button>
