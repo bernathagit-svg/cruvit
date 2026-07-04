@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700;800;900&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250633">
+<link rel="stylesheet" href="styles.css?v=20250704a">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
@@ -34,7 +34,6 @@
           <span id="entryBrandTag">My Garden OS</span>
         </div>
       </div>
-      <select class="entry-lang" id="entryLangSelect" aria-label="Language"></select>
     </header>
 
     <div class="entry-showcase">
@@ -441,6 +440,9 @@
       </section>
     </div>
   </div>
+</div>
+<div class="global-app-settings" id="globalAppSettings">
+  <select class="entry-lang app-lang-select" id="appLangSelect" aria-label="Language"></select>
 </div>
 <script src="garden-modes.js?v=20250631a"></script>
 <script src="scripts/plant-identifier-loader.js?v=20250655"></script>
@@ -5050,7 +5052,7 @@ function getEntryLang(){
   return getAppLanguage().languageCode;
 }
 
-function populateEntryLangSelect(select){
+function populateAppLangSelect(select){
   if(!select)return;
   select.innerHTML='';
   CRUVIT_LANGUAGES.forEach(l=>{
@@ -5059,6 +5061,20 @@ function populateEntryLangSelect(select){
     opt.textContent=l.languageCode.toUpperCase()+' '+l.nativeLabel;
     select.appendChild(opt);
   });
+}
+
+function initAppLanguageControl(){
+  const select=document.getElementById('appLangSelect');
+  if(!select)return;
+  populateAppLangSelect(select);
+  select.value=getAppLanguage().languageCode;
+  if(!select.dataset.gasBound){
+    select.dataset.gasBound='1';
+    select.addEventListener('change',()=>{
+      setAppLanguage(select.value);
+      onAppLanguageChanged();
+    });
+  }
 }
 
 function applyEntryScreenLang(langOverride){
@@ -5498,18 +5514,6 @@ function initPlantIdentifierModule(){
 }
 
 function initEntryScreen(){
-  const langSelect=document.getElementById('entryLangSelect');
-  if(langSelect){
-    populateEntryLangSelect(langSelect);
-    langSelect.value=getAppLanguage().languageCode;
-    if(!langSelect.dataset.gasBound){
-      langSelect.dataset.gasBound='1';
-      langSelect.addEventListener('change',()=>{
-        setAppLanguage(langSelect.value);
-        onAppLanguageChanged();
-      });
-    }
-  }
   applyEntryScreenLang();
   document.querySelectorAll('[data-entry-action]').forEach(btn=>{
     btn.addEventListener('click',()=>handleEntryAction(btn.getAttribute('data-entry-action')));
@@ -5530,6 +5534,7 @@ ensureGardenLocation();
 hookMainAppUserSync();
 syncGardenUserProfile();
 applyAppLanguageToDocument(getAppLanguage());
+initAppLanguageControl();
 initEntryScreen();
 loadPlantIdentifierScript()
   .then(()=>initPlantIdentifierModule())

@@ -140,6 +140,45 @@ button { cursor: pointer; }
   margin: 0 auto;
 }
 
+/* ── Global app settings (language; location later) ──
+   Lives on body (not #appRoot) so it stacks above module overlays
+   (#smart-rec-root, #garden-design-root, etc. are siblings of .app at z-index 2300). */
+.global-app-settings {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  inset-inline-end: max(12px, env(safe-area-inset-right));
+  z-index: 2360;
+  pointer-events: none;
+}
+
+.global-app-settings .app-lang-select {
+  pointer-events: auto;
+  max-width: min(172px, 44vw);
+  min-width: 0;
+}
+
+[dir="rtl"] .global-app-settings .app-lang-select {
+  background-position: left 14px center;
+  padding: 10px 16px 10px 38px;
+}
+
+@media (max-width: 760px) {
+  .global-app-settings {
+    top: max(10px, env(safe-area-inset-top));
+    inset-inline-end: max(10px, env(safe-area-inset-right));
+  }
+
+  .global-app-settings .app-lang-select {
+    max-width: min(148px, 40vw);
+    font-size: var(--text-xs);
+    padding: 8px 32px 8px 12px;
+  }
+
+  [dir="rtl"] .global-app-settings .app-lang-select {
+    padding: 8px 12px 8px 32px;
+  }
+}
+
 /* ── Top bar ── */
 .top {
   display: flex;
