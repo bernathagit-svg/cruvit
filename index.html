@@ -34,10 +34,7 @@
           <span id="entryBrandTag">My Garden OS</span>
         </div>
       </div>
-      <select class="entry-lang" id="entryLangSelect" aria-label="Language">
-        <option value="en">EN English</option>
-        <option value="he">HE עברית</option>
-      </select>
+      <select class="entry-lang" id="entryLangSelect" aria-label="Language"></select>
     </header>
 
     <div class="entry-showcase">
@@ -5050,11 +5047,23 @@ function resolveCopy(dict,languageCode,options){
 }
 
 function getEntryLang(){
-  return localStorage.getItem('cruvit_lang')||localStorage.getItem('cruvitLang')||'en';
+  return getAppLanguage().languageCode;
 }
 
-function applyEntryScreenLang(lang){
-  const copy=ENTRY_COPY[lang]||ENTRY_COPY.en;
+function populateEntryLangSelect(select){
+  if(!select)return;
+  select.innerHTML='';
+  CRUVIT_LANGUAGES.forEach(l=>{
+    const opt=document.createElement('option');
+    opt.value=l.languageCode;
+    opt.textContent=l.languageCode.toUpperCase()+' '+l.nativeLabel;
+    select.appendChild(opt);
+  });
+}
+
+function applyEntryScreenLang(langOverride){
+  const lang=langOverride!=null?normalizeLanguageCode(langOverride):getAppLanguage().languageCode;
+  const rc=(key)=>resolveCopy(ENTRY_COPY,lang,{key});
   const headline=document.getElementById('entryHeadline');
   const subhead=document.getElementById('entrySubhead');
   const skip=document.getElementById('entrySkipBtn');
@@ -5065,29 +5074,35 @@ function applyEntryScreenLang(lang){
   const trustHealth=document.getElementById('entryTrustHealth');
   const trustClimate=document.getElementById('entryTrustClimate');
   const trustVerified=document.getElementById('entryTrustVerified');
-  if(kicker)kicker.textContent=copy.kicker||'';
-  if(brandTag)brandTag.textContent=copy.brandTag||'My Garden OS';
-  if(menuLabel)menuLabel.textContent=copy.menuLabel||'';
-  if(sceneCaption)sceneCaption.textContent=copy.sceneCaption||'';
-  if(trustHealth)trustHealth.textContent=copy.trustHealth||'';
-  if(trustClimate)trustClimate.textContent=copy.trustClimate||'';
-  if(trustVerified)trustVerified.textContent=copy.trustVerified||'';
-  if(headline)headline.innerHTML=copy.headline||'';
-  if(subhead)subhead.textContent=copy.subhead||'';
-  if(skip)skip.textContent=copy.skip||'';
+  if(kicker)kicker.textContent=rc('kicker');
+  if(brandTag)brandTag.textContent=rc('brandTag')||'My Garden OS';
+  if(menuLabel)menuLabel.textContent=rc('menuLabel');
+  if(sceneCaption)sceneCaption.textContent=rc('sceneCaption');
+  if(trustHealth)trustHealth.textContent=rc('trustHealth');
+  if(trustClimate)trustClimate.textContent=rc('trustClimate');
+  if(trustVerified)trustVerified.textContent=rc('trustVerified');
+  if(headline)headline.innerHTML=rc('headline');
+  if(subhead)subhead.textContent=rc('subhead');
+  if(skip)skip.textContent=rc('skip');
   document.querySelectorAll('[data-entry-action]').forEach(btn=>{
     const key=btn.getAttribute('data-entry-action');
     const map={recommendations:'recommendations',design:'design',identify:'identify',diagnose:'diagnose',shop:'shop'};
     const title=btn.querySelector('.entry-action-title');
-    if(map[key]&&copy[map[key]]&&title)title.textContent=copy[map[key]];
+    const titleKey=map[key];
+    if(titleKey&&title)title.textContent=rc(titleKey);
   });
   document.querySelectorAll('[data-entry-desc]').forEach(el=>{
     const key=el.getAttribute('data-entry-desc');
     const descKey={recommendations:'recDesc',design:'designDesc',identify:'identifyDesc',diagnose:'diagDesc',shop:'shopDesc'}[key];
-    if(descKey&&copy[descKey])el.textContent=copy[descKey];
+    if(descKey)el.textContent=rc(descKey);
   });
-  document.documentElement.lang=lang;
-  document.documentElement.dir=lang==='he'?'rtl':'ltr';
+}
+
+function onAppLanguageChanged(){
+  applyEntryScreenLang();
+  if(typeof PlantIdentifier!=='undefined'&&typeof PlantIdentifier.init==='function'){
+    try{PlantIdentifier.init(plantIdentifierDeps());}catch(err){console.warn('Plant identifier lang refresh skipped:',err&&err.message?err.message:err);}
+  }
 }
 
 function dismissEntryScreen(){
@@ -5484,18 +5499,18 @@ function initPlantIdentifierModule(){
 
 function initEntryScreen(){
   const langSelect=document.getElementById('entryLangSelect');
-  const lang=getEntryLang();
   if(langSelect){
-    langSelect.value=lang==='he'?'he':'en';
-    langSelect.addEventListener('change',()=>{
-      const next=langSelect.value==='he'?'he':'en';
-      localStorage.setItem('cruvit_lang',next);
-      localStorage.setItem('cruvitLang',next);
-      applyEntryScreenLang(next);
-      if(typeof PlantIdentifier!=='undefined')PlantIdentifier.init(plantIdentifierDeps(next));
-    });
+    populateEntryLangSelect(langSelect);
+    langSelect.value=getAppLanguage().languageCode;
+    if(!langSelect.dataset.gasBound){
+      langSelect.dataset.gasBound='1';
+      langSelect.addEventListener('change',()=>{
+        setAppLanguage(langSelect.value);
+        onAppLanguageChanged();
+      });
+    }
   }
-  applyEntryScreenLang(lang);
+  applyEntryScreenLang();
   document.querySelectorAll('[data-entry-action]').forEach(btn=>{
     btn.addEventListener('click',()=>handleEntryAction(btn.getAttribute('data-entry-action')));
   });
@@ -5514,6 +5529,7 @@ document.addEventListener('click',function(e){
 ensureGardenLocation();
 hookMainAppUserSync();
 syncGardenUserProfile();
+applyAppLanguageToDocument(getAppLanguage());
 initEntryScreen();
 loadPlantIdentifierScript()
   .then(()=>initPlantIdentifierModule())
