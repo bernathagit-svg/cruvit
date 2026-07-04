@@ -4949,6 +4949,106 @@ const ENTRY_COPY={
   }
 };
 
+/* ── Global App Settings (GAS-1): language registry + getters ── */
+const CRUVIT_LANGUAGES=[
+  {languageCode:'en',languageLabel:'English',nativeLabel:'English',locale:'en-US',direction:'ltr',isDefault:true},
+  {languageCode:'he',languageLabel:'Hebrew',nativeLabel:'עברית',locale:'he-IL',direction:'rtl',isDefault:false},
+  {languageCode:'ar',languageLabel:'Arabic',nativeLabel:'العربية',locale:'ar-SA',direction:'rtl',isDefault:false},
+  {languageCode:'es',languageLabel:'Spanish',nativeLabel:'Español',locale:'es-ES',direction:'ltr',isDefault:false},
+  {languageCode:'fr',languageLabel:'French',nativeLabel:'Français',locale:'fr-FR',direction:'ltr',isDefault:false},
+  {languageCode:'de',languageLabel:'German',nativeLabel:'Deutsch',locale:'de-DE',direction:'ltr',isDefault:false},
+  {languageCode:'it',languageLabel:'Italian',nativeLabel:'Italiano',locale:'it-IT',direction:'ltr',isDefault:false},
+  {languageCode:'pt',languageLabel:'Portuguese',nativeLabel:'Português',locale:'pt-BR',direction:'ltr',isDefault:false},
+  {languageCode:'ru',languageLabel:'Russian',nativeLabel:'Русский',locale:'ru-RU',direction:'ltr',isDefault:false},
+  {languageCode:'zh',languageLabel:'Chinese',nativeLabel:'中文',locale:'zh-CN',direction:'ltr',isDefault:false},
+  {languageCode:'ja',languageLabel:'Japanese',nativeLabel:'日本語',locale:'ja-JP',direction:'ltr',isDefault:false},
+  {languageCode:'ko',languageLabel:'Korean',nativeLabel:'한국어',locale:'ko-KR',direction:'ltr',isDefault:false},
+  {languageCode:'hi',languageLabel:'Hindi',nativeLabel:'हिन्दी',locale:'hi-IN',direction:'ltr',isDefault:false},
+  {languageCode:'tr',languageLabel:'Turkish',nativeLabel:'Türkçe',locale:'tr-TR',direction:'ltr',isDefault:false},
+  {languageCode:'nl',languageLabel:'Dutch',nativeLabel:'Nederlands',locale:'nl-NL',direction:'ltr',isDefault:false},
+  {languageCode:'pl',languageLabel:'Polish',nativeLabel:'Polski',locale:'pl-PL',direction:'ltr',isDefault:false}
+];
+const CRUVIT_LANGUAGES_BY_CODE=Object.fromEntries(CRUVIT_LANGUAGES.map(l=>[l.languageCode,l]));
+const CRUVIT_DEFAULT_LANGUAGE=CRUVIT_LANGUAGES.find(l=>l.isDefault)||CRUVIT_LANGUAGES[0];
+const APP_LANG_KEYS={primary:'cruvit_lang',legacy:'cruvitLang',transitionalReadOnly:'pd_lang',updatedAt:'cruvit_lang_updated_at'};
+
+function normalizeLanguageCode(raw){
+  const base=String(raw||'').trim().toLowerCase().split('-')[0];
+  return CRUVIT_LANGUAGES_BY_CODE[base]?base:CRUVIT_DEFAULT_LANGUAGE.languageCode;
+}
+
+function readLegacyLanguageCode(){
+  const primary=localStorage.getItem(APP_LANG_KEYS.primary);
+  if(primary) return normalizeLanguageCode(primary);
+  const legacy=localStorage.getItem(APP_LANG_KEYS.legacy);
+  if(legacy) return normalizeLanguageCode(legacy);
+  const transitional=localStorage.getItem(APP_LANG_KEYS.transitionalReadOnly);
+  if(transitional) return normalizeLanguageCode(transitional);
+  return CRUVIT_DEFAULT_LANGUAGE.languageCode;
+}
+
+function buildAppLanguageRecord(code,updatedAt){
+  const languageCode=normalizeLanguageCode(code);
+  const base=CRUVIT_LANGUAGES_BY_CODE[languageCode]||CRUVIT_DEFAULT_LANGUAGE;
+  return {
+    languageCode:base.languageCode,
+    languageLabel:base.languageLabel,
+    nativeLabel:base.nativeLabel,
+    locale:base.locale,
+    direction:base.direction,
+    isDefault:!!base.isDefault,
+    updatedAt:updatedAt||null
+  };
+}
+
+function getAppLanguage(){
+  const updatedAt=localStorage.getItem(APP_LANG_KEYS.updatedAt);
+  return buildAppLanguageRecord(readLegacyLanguageCode(),updatedAt);
+}
+
+function applyAppLanguageToDocument(record){
+  const rec=record||getAppLanguage();
+  document.documentElement.lang=rec.languageCode;
+  document.documentElement.dir=rec.direction==='rtl'?'rtl':'ltr';
+}
+
+function setAppLanguage(languageCode){
+  const record=buildAppLanguageRecord(languageCode,new Date().toISOString());
+  localStorage.setItem(APP_LANG_KEYS.primary,record.languageCode);
+  localStorage.setItem(APP_LANG_KEYS.legacy,record.languageCode);
+  localStorage.setItem(APP_LANG_KEYS.updatedAt,record.updatedAt);
+  applyAppLanguageToDocument(record);
+  return record;
+}
+
+function resolveCopy(dict,languageCode,options){
+  const opts=options||{};
+  const fallbackChain=Array.isArray(opts.fallbackChain)?opts.fallbackChain:['en','he'];
+  const emptyFallback=opts.emptyFallback!=null?String(opts.emptyFallback):'';
+  const key=opts.key!=null?String(opts.key):null;
+  const dictSafe=dict&&typeof dict==='object'?dict:{};
+  const isPresent=(value)=>value!=null&&String(value).trim()!=='';
+  const resolveKey=(code,k)=>{
+    const bucket=dictSafe[code];
+    if(!bucket||typeof bucket!=='object') return null;
+    const value=bucket[k];
+    return isPresent(value)?String(value):null;
+  };
+  const codes=[normalizeLanguageCode(languageCode),...fallbackChain.map(normalizeLanguageCode)];
+  if(key){
+    for(const code of codes){
+      const value=resolveKey(code,key);
+      if(value!=null) return value;
+    }
+    return emptyFallback;
+  }
+  for(const code of codes){
+    const bucket=dictSafe[code];
+    if(bucket&&typeof bucket==='object'&&Object.keys(bucket).length) return bucket;
+  }
+  return {};
+}
+
 function getEntryLang(){
   return localStorage.getItem('cruvit_lang')||localStorage.getItem('cruvitLang')||'en';
 }
