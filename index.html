@@ -2245,17 +2245,26 @@ async function callGardenWeather(payload){
 
 async function refreshGardenWeather(){
   const loc=ensureGardenLocation();
-  let payload={mode:'forecast',label:loc.label,climate:loc.climate};
+  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||''};
   if(Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lon))){
     payload={...payload,lat:Number(loc.lat),lon:Number(loc.lon)};
   }else if(loc.label){
-    payload={mode:'forecast',query:loc.label};
+    payload={mode:'forecast',query:loc.label,country:loc.country||''};
   }else{
     throw new Error('Garden location is not set');
   }
   const result=await callGardenWeather(payload);
   if(result.location){
-    data.gardenLocation=Object.assign({},loc,result.location,{updatedAt:new Date().toISOString(),climate:loc.climate||result.location.climate});
+    const rl=result.location;
+    data.gardenLocation=Object.assign({},loc,{
+      label:rl.label||loc.label,
+      lat:Number.isFinite(Number(rl.lat))?Number(rl.lat):loc.lat,
+      lon:Number.isFinite(Number(rl.lon))?Number(rl.lon):loc.lon,
+      climate:loc.climate||rl.climate,
+      country:String(rl.country||loc.country||'').trim(),
+      timezone:String(rl.timezone||loc.timezone||'').trim(),
+      updatedAt:new Date().toISOString()
+    });
     data.location=data.gardenLocation.label;
     data.climate=data.gardenLocation.climate||data.climate;
   }
@@ -2456,6 +2465,138 @@ async function saveGardenLocation(loc){
     try{if(typeof smartRecOnLocationUpdated==='function')smartRecOnLocationUpdated()}catch(_){}
     throw err;
   }
+}
+
+/* ── Global App Settings (GAS-2A): location registry + getters ── */
+function deriveLabelParts(label){
+  const parts=String(label||'').split(',').map(s=>s.trim()).filter(Boolean);
+  return {
+    resolvedCity:parts[0]||String(label||'').trim(),
+    region:parts.length>=3?parts.slice(1,-1).join(', '):'',
+    countryFromLabel:parts.length>=2?parts[parts.length-1]:''
+  };
+}
+
+function enrichResolvedAppLocation(resolved,rawInput){
+  if(!resolved||typeof resolved!=='object') return resolved;
+  const derived=deriveLabelParts(resolved.label);
+  const out=Object.assign({},resolved,{
+    resolvedCity:String(resolved.resolvedCity||resolved.name||derived.resolvedCity||'').trim(),
+    region:String(resolved.region||derived.region||'').trim(),
+    country:String(resolved.country||derived.countryFromLabel||'').trim()
+  });
+  const ri=String(rawInput!=null?rawInput:resolved.rawInput||'').trim();
+  if(ri) out.rawInput=ri;
+  if(resolved.countryCode!=null&&String(resolved.countryCode).trim()) out.countryCode=String(resolved.countryCode).trim();
+  if(resolved.timezone!=null&&String(resolved.timezone).trim()) out.timezone=String(resolved.timezone).trim();
+  if(resolved.provider!=null&&String(resolved.provider).trim()) out.provider=String(resolved.provider).trim();
+  return out;
+}
+
+function buildAppLocationRecordFromGarden(loc){
+  const gl=loc&&typeof loc==='object'?loc:{};
+  const label=String(gl.label||'').trim();
+  const derived=deriveLabelParts(label);
+  const lat=Number(gl.lat);
+  const lon=Number(gl.lon);
+  const source=String(gl.source||'').trim()||'default';
+  return {
+    label,
+    rawInput:String(gl.rawInput||'').trim(),
+    resolvedCity:String(gl.resolvedCity||gl.name||derived.resolvedCity||'').trim(),
+    region:String(gl.region||derived.region||'').trim(),
+    country:String(gl.country||derived.countryFromLabel||'').trim(),
+    countryCode:String(gl.countryCode||'').trim(),
+    lat:Number.isFinite(lat)?lat:null,
+    lon:Number.isFinite(lon)?lon:null,
+    coordinates:{
+      lat:Number.isFinite(lat)?lat:null,
+      lon:Number.isFinite(lon)?lon:null
+    },
+    timezone:String(gl.timezone||'').trim(),
+    provider:String(gl.provider||'').trim(),
+    broadClimateLabel:String(gl.climate||data.climate||'').trim(),
+    derivedClimateProfile:null,
+    weatherSnapshot:data.weather&&typeof data.weather==='object'?Object.assign({},data.weather):null,
+    confirmationStatus:source==='default'?'default':'confirmed',
+    source,
+    updatedAt:gl.updatedAt||null
+  };
+}
+
+function getAppLocation(){
+  const record=buildAppLocationRecordFromGarden(ensureGardenLocation());
+  record.derivedClimateProfile=getAppClimateProfile();
+  return record;
+}
+
+async function setAppLocation(partial,options){
+  void options;
+  const incoming=partial&&typeof partial==='object'?partial:{};
+  const p=Object.keys(incoming).length?enrichResolvedAppLocation(incoming,incoming.rawInput):incoming;
+  const current=ensureGardenLocation();
+  const label=String(p.label||p.resolvedCity||p.rawInput||current.label||'').trim();
+  const derived=deriveLabelParts(label);
+  const climate=String(p.climate||p.broadClimateLabel||current.climate||'').trim();
+  const coords=p.coordinates&&typeof p.coordinates==='object'?p.coordinates:{};
+  const lat=p.lat!=null?p.lat:coords.lat;
+  const lon=p.lon!=null?p.lon:coords.lon;
+  const nextLat=Number.isFinite(Number(lat))?Number(lat):null;
+  const nextLon=Number.isFinite(Number(lon))?Number(lon):null;
+  const locationChanged=label!==String(current.label||'').trim()
+    ||(nextLat!=null&&nextLat!==Number(current.lat))
+    ||(nextLon!=null&&nextLon!==Number(current.lon));
+  const payload={
+    label:label||current.label,
+    climate:climate||current.climate,
+    rawInput:String(p.rawInput||current.rawInput||'').trim(),
+    resolvedCity:String(p.resolvedCity||p.name||current.resolvedCity||derived.resolvedCity||'').trim(),
+    region:String(p.region||current.region||derived.region||'').trim(),
+    country:String(p.country||current.country||derived.countryFromLabel||'').trim(),
+    countryCode:String(p.countryCode||current.countryCode||'').trim(),
+    timezone:String(p.timezone||current.timezone||'').trim(),
+    provider:String(p.provider||current.provider||'').trim(),
+    source:p.source!=null&&String(p.source).trim()
+      ?String(p.source).trim()
+      :(locationChanged?'manual':String(current.source||'').trim()||'manual')
+  };
+  if(nextLat!=null) payload.lat=nextLat;
+  if(nextLon!=null) payload.lon=nextLon;
+  return saveGardenLocation(payload);
+}
+
+async function clearAppLocation(){
+  const derived=deriveLabelParts(DEFAULT_GARDEN_LOCATION.label);
+  return setAppLocation({
+    label:DEFAULT_GARDEN_LOCATION.label,
+    climate:DEFAULT_GARDEN_LOCATION.climate,
+    lat:DEFAULT_GARDEN_LOCATION.lat,
+    lon:DEFAULT_GARDEN_LOCATION.lon,
+    rawInput:'',
+    resolvedCity:derived.resolvedCity,
+    region:'',
+    country:derived.countryFromLabel||'',
+    countryCode:'',
+    timezone:'',
+    provider:'',
+    source:'default'
+  });
+}
+
+async function resolveAppLocation(rawInput){
+  const q=String(rawInput||'').trim();
+  if(!q) return null;
+  const resolved=await resolveLocationFromQuery(q);
+  return enrichResolvedAppLocation(resolved,q);
+}
+
+async function refreshAppWeatherIfStale(){
+  return refreshGardenWeatherIfStale();
+}
+
+function onAppLocationChanged(){
+  if(typeof smartRecOnLocationUpdated!=='function') return;
+  try{smartRecOnLocationUpdated();}catch(err){console.warn('App location refresh hook skipped:',err&&err.message?err.message:err);}
 }
 
 function isWeatherTask(t){
@@ -3502,6 +3643,10 @@ function smartRecClimateProfile(){
   const drySeasonSignal=broadClimate==='mediterranean'||broadClimate==='arid'||alerts.includes('dry-heat');
   const humiditySignal=broadClimate==='tropical'?'high':(broadClimate==='subtropical'?'medium':((broadClimate==='mediterranean'||broadClimate==='arid')?'low':'medium'));
   return {locationLabel,climateLabel,broadClimate,alerts,forecastPeak,forecastLow,freezingRisk,extremeHeatRisk,alwaysHot,coolSeasonSignal,drySeasonSignal,humiditySignal};
+}
+
+function getAppClimateProfile(){
+  return smartRecClimateProfile();
 }
 
 function smartRecSunFit(meta,ctx){
