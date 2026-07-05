@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700;800;900&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250704a">
+<link rel="stylesheet" href="styles.css?v=20250705a">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
@@ -442,6 +442,19 @@
   </div>
 </div>
 <div class="global-app-settings" id="globalAppSettings">
+  <div class="app-loc-wrap" id="appLocWrap">
+    <button type="button" class="app-loc-chip" id="appLocChip" aria-haspopup="dialog" aria-expanded="false" aria-controls="appLocPopover">
+      <span id="appLocChipLabel">📍 Set location</span>
+    </button>
+    <div class="app-loc-popover hidden" id="appLocPopover" role="dialog" aria-label="Garden location">
+      <label class="app-loc-label" for="appLocInput">City or region</label>
+      <input class="field app-loc-input" id="appLocInput" autocomplete="off" placeholder="e.g. Paris, France">
+      <div class="app-loc-status" id="appLocStatus" aria-live="polite"></div>
+      <button type="button" class="btn main app-loc-btn" id="appLocApplyBtn">Use this location</button>
+      <button type="button" class="btn light app-loc-btn" id="appLocGeoBtn">Use my current location</button>
+      <button type="button" class="btn light app-loc-btn app-loc-reset" id="appLocResetBtn">Reset location</button>
+    </div>
+  </div>
   <select class="entry-lang app-lang-select" id="appLangSelect" aria-label="Language"></select>
 </div>
 <script src="garden-modes.js?v=20250631a"></script>
@@ -2455,14 +2468,14 @@ async function saveGardenLocation(loc){
     service.save(data);
     closeLocationModal();
     render();
-    try{if(typeof smartRecOnLocationUpdated==='function')smartRecOnLocationUpdated()}catch(_){}
+    onAppLocationChanged();
     data.events.unshift(['Today','Garden location updated',`${data.gardenLocation.label} · ${data.climate}`]);
     service.save(data);
     return result;
   }catch(err){
     service.save(data);
     setLocationStatus(err.message||'Saved location, but weather could not be loaded.');
-    try{if(typeof smartRecOnLocationUpdated==='function')smartRecOnLocationUpdated()}catch(_){}
+    onAppLocationChanged();
     throw err;
   }
 }
@@ -2595,8 +2608,173 @@ async function refreshAppWeatherIfStale(){
 }
 
 function onAppLocationChanged(){
+  renderAppLocationControl();
   if(typeof smartRecOnLocationUpdated!=='function') return;
   try{smartRecOnLocationUpdated();}catch(err){console.warn('App location refresh hook skipped:',err&&err.message?err.message:err);}
+}
+
+/* ── Global App Settings (GAS-2B): location control UI ── */
+function formatAppLocationChipLabel(){
+  const loc=getAppLocation();
+  if(loc.confirmationStatus==='default'&&loc.source==='default') return '📍 Set location';
+  const city=String(loc.resolvedCity||loc.label.split(',')[0]||'').trim();
+  const country=String(loc.country||'').trim();
+  const display=country?(city?`${city}, ${country}`:country):(city||loc.label||'Set location');
+  return `📍 ${display}`;
+}
+
+function setAppLocationPopoverStatus(text){
+  const el=document.getElementById('appLocStatus');
+  if(el) el.textContent=text||'';
+}
+
+function renderAppLocationControl(){
+  const labelEl=document.getElementById('appLocChipLabel');
+  if(labelEl) labelEl.textContent=formatAppLocationChipLabel();
+}
+
+function openAppLocationPopover(){
+  const pop=document.getElementById('appLocPopover');
+  const chip=document.getElementById('appLocChip');
+  const input=document.getElementById('appLocInput');
+  if(!pop||!chip) return;
+  pop.classList.remove('hidden');
+  chip.setAttribute('aria-expanded','true');
+  setAppLocationPopoverStatus('');
+  const loc=getAppLocation();
+  if(input){
+    input.value=String(loc.rawInput||loc.label||'').trim();
+    setTimeout(()=>{try{input.focus();input.select();}catch(_){}},0);
+  }
+}
+
+function closeAppLocationPopover(){
+  const pop=document.getElementById('appLocPopover');
+  const chip=document.getElementById('appLocChip');
+  if(pop) pop.classList.add('hidden');
+  if(chip) chip.setAttribute('aria-expanded','false');
+  setAppLocationPopoverStatus('');
+}
+
+function toggleAppLocationPopover(){
+  const pop=document.getElementById('appLocPopover');
+  if(!pop) return;
+  if(pop.classList.contains('hidden')) openAppLocationPopover();
+  else closeAppLocationPopover();
+}
+
+function setAppLocationControlsBusy(busy){
+  ['appLocApplyBtn','appLocGeoBtn','appLocResetBtn','appLocChip'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.disabled=!!busy;
+  });
+}
+
+async function applyAppLocationFromInput(){
+  const input=document.getElementById('appLocInput');
+  const q=String(input?.value||'').trim();
+  if(!q){setAppLocationPopoverStatus('Enter a city or region.');return}
+  setAppLocationControlsBusy(true);
+  setAppLocationPopoverStatus('Looking up location…');
+  try{
+    const resolved=await resolveAppLocation(q);
+    if(!resolved) throw new Error('Location not found.');
+    setAppLocationPopoverStatus('Saving location…');
+    await setAppLocation(resolved);
+    renderAppLocationControl();
+    closeAppLocationPopover();
+  }catch(err){
+    setAppLocationPopoverStatus(err?.message||'Could not save that location.');
+  }finally{
+    setAppLocationControlsBusy(false);
+  }
+}
+
+async function detectAppLocationFromBrowser(){
+  if(!navigator.geolocation) throw new Error('Location detection is not supported in this browser.');
+  let pos=null;
+  try{
+    pos=await requestGardenPosition({enableHighAccuracy:false,timeout:12000,maximumAge:300000});
+  }catch(firstErr){
+    try{
+      pos=await requestGardenPosition({enableHighAccuracy:true,timeout:18000,maximumAge:0});
+    }catch(secondErr){
+      const err=secondErr||firstErr;
+      if(err?.code===1) throw new Error('Location permission denied.');
+      if(err?.code===3) throw new Error('Location timed out. Try again or type your place manually.');
+      throw new Error('Could not detect GPS location.');
+    }
+  }
+  const lat=pos.coords.latitude;
+  const lon=pos.coords.longitude;
+  let resolved={lat,lon,source:'geolocation'};
+  try{
+    const result=await callGardenWeather({mode:'reverse',lat,lon});
+    resolved=Object.assign(resolved,result.location||{});
+  }catch(_){
+    resolved.label=`${lat.toFixed(4)}°, ${lon.toFixed(4)}°`;
+    resolved.climate=inferClientClimate(lat,lon);
+  }
+  return enrichResolvedAppLocation(resolved,resolved.label||'');
+}
+
+async function useAppCurrentLocation(){
+  setAppLocationControlsBusy(true);
+  setAppLocationPopoverStatus('Detecting your location…');
+  try{
+    const resolved=await detectAppLocationFromBrowser();
+    setAppLocationPopoverStatus('Saving location…');
+    await setAppLocation(Object.assign({},resolved,{source:'geolocation'}));
+    renderAppLocationControl();
+    closeAppLocationPopover();
+  }catch(err){
+    setAppLocationPopoverStatus(err?.message||'Could not detect your location.');
+  }finally{
+    setAppLocationControlsBusy(false);
+  }
+}
+
+async function resetAppLocationFromControl(){
+  setAppLocationControlsBusy(true);
+  setAppLocationPopoverStatus('Resetting location…');
+  try{
+    await clearAppLocation();
+    renderAppLocationControl();
+    closeAppLocationPopover();
+  }catch(err){
+    setAppLocationPopoverStatus(err?.message||'Could not reset location.');
+  }finally{
+    setAppLocationControlsBusy(false);
+  }
+}
+
+function initAppLocationControl(){
+  const chip=document.getElementById('appLocChip');
+  const applyBtn=document.getElementById('appLocApplyBtn');
+  const geoBtn=document.getElementById('appLocGeoBtn');
+  const resetBtn=document.getElementById('appLocResetBtn');
+  const input=document.getElementById('appLocInput');
+  if(!chip||chip.dataset.gasBound) return;
+  chip.dataset.gasBound='1';
+  renderAppLocationControl();
+  chip.addEventListener('click',e=>{
+    e.stopPropagation();
+    toggleAppLocationPopover();
+  });
+  applyBtn?.addEventListener('click',()=>{void applyAppLocationFromInput();});
+  geoBtn?.addEventListener('click',()=>{void useAppCurrentLocation();});
+  resetBtn?.addEventListener('click',()=>{void resetAppLocationFromControl();});
+  input?.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();void applyAppLocationFromInput();}
+    if(e.key==='Escape') closeAppLocationPopover();
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') closeAppLocationPopover();
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#appLocWrap')) return;
+    closeAppLocationPopover();
+  });
 }
 
 function isWeatherTask(t){
@@ -5680,6 +5858,7 @@ hookMainAppUserSync();
 syncGardenUserProfile();
 applyAppLanguageToDocument(getAppLanguage());
 initAppLanguageControl();
+initAppLocationControl();
 initEntryScreen();
 loadPlantIdentifierScript()
   .then(()=>initPlantIdentifierModule())

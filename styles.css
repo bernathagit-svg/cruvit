@@ -149,12 +149,101 @@ button { cursor: pointer; }
   inset-inline-end: max(12px, env(safe-area-inset-right));
   z-index: 2360;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: min(100vw - 24px, 420px);
 }
 
 .global-app-settings .app-lang-select {
   pointer-events: auto;
   max-width: min(172px, 44vw);
   min-width: 0;
+  flex: 0 1 auto;
+}
+
+.global-app-settings .app-loc-wrap {
+  position: relative;
+  pointer-events: auto;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.global-app-settings .app-loc-chip {
+  appearance: none;
+  border: 1px solid rgba(255, 254, 249, 0.65);
+  border-radius: var(--r-full);
+  background: rgba(255, 254, 249, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--forest);
+  font: 600 var(--text-sm)/var(--leading-snug) var(--font-sans);
+  padding: 10px 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(15, 61, 46, 0.08);
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  max-width: min(200px, 46vw);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.global-app-settings .app-loc-chip:hover:not(:disabled) {
+  background-color: rgba(255, 254, 249, 0.95);
+  border-color: var(--line-gold);
+  box-shadow: 0 8px 28px rgba(15, 61, 46, 0.12);
+  transform: translateY(-1px);
+}
+
+.global-app-settings .app-loc-chip:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.global-app-settings .app-loc-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  inset-inline-end: 0;
+  width: min(280px, 86vw);
+  padding: 14px;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(255, 254, 249, 0.72);
+  background: rgba(255, 254, 249, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 12px 36px rgba(15, 61, 46, 0.14);
+  z-index: 1;
+}
+
+.global-app-settings .app-loc-label {
+  display: block;
+  margin-bottom: 6px;
+  font: 600 var(--text-xs)/var(--leading-snug) var(--font-sans);
+  color: var(--forest);
+  opacity: 0.82;
+}
+
+.global-app-settings .app-loc-input {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.global-app-settings .app-loc-status {
+  min-height: 1.2em;
+  margin-bottom: 8px;
+  font: 500 var(--text-xs)/var(--leading-snug) var(--font-sans);
+  color: var(--forest);
+  opacity: 0.78;
+}
+
+.global-app-settings .app-loc-btn {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.global-app-settings .app-loc-reset {
+  opacity: 0.9;
 }
 
 [dir="rtl"] .global-app-settings .app-lang-select {
@@ -166,12 +255,20 @@ button { cursor: pointer; }
   .global-app-settings {
     top: max(10px, env(safe-area-inset-top));
     inset-inline-end: max(10px, env(safe-area-inset-right));
+    gap: 6px;
+    max-width: calc(100vw - 20px);
   }
 
   .global-app-settings .app-lang-select {
     max-width: min(148px, 40vw);
     font-size: var(--text-xs);
     padding: 8px 32px 8px 12px;
+  }
+
+  .global-app-settings .app-loc-chip {
+    max-width: min(168px, 42vw);
+    font-size: var(--text-xs);
+    padding: 8px 12px;
   }
 
   [dir="rtl"] .global-app-settings .app-lang-select {
