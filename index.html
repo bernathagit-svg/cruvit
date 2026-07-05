@@ -1121,9 +1121,96 @@ ensureRewardsState();
 // Image migration: old saved plants sometimes carried the generic garden background as imageUrl.
 // Remove it so the live plant image URL can be used.
 (data.plants||[]).forEach(p=>{if(/garden-bg\.jpg/i.test(String(p.imageUrl||p.photoUrl||''))){delete p.imageUrl; delete p.photoUrl;} if(p.meta && /garden-bg\.jpg/i.test(String(p.meta.imageUrl||p.meta.photoUrl||''))){delete p.meta.imageUrl; delete p.meta.photoUrl;}});
+
+/* ── Plant Data Foundation v1: additive profile + user-plant helpers ── */
+function deriveProfileSlug(plantOrProfile){
+  const p=plantOrProfile&&typeof plantOrProfile==='object'?plantOrProfile:{};
+  const meta=p.meta&&typeof p.meta==='object'?p.meta:null;
+  const slug=String(meta?.slug||p.slug||'').trim();
+  if(slug) return slug;
+  const name=String(p.name||meta?.name||p.commonName||p.common_name||'').trim();
+  return slugify(name||'plant');
+}
+
+function toPlantProfileV1(raw){
+  const src=raw&&typeof raw==='object'?raw:{};
+  const slug=deriveProfileSlug(src);
+  const name=String(src.name||src.commonName||src.common_name||'').trim();
+  const imageUrl=String(src.imageUrl||src.image||src.photoUrl||'').trim();
+  const scanUrl=String(src.scanPhotoUrl||'').trim();
+  const searchQuery=String(src.imageSearchQuery||'').trim();
+  const climateFitRaw=String(src.climateFit||src.climate_fit||src.scanClimateFit||'').trim().toLowerCase();
+  const climateFit=['high','medium','low','unknown'].includes(climateFitRaw)?climateFitRaw:(climateFitRaw?'unknown':undefined);
+  const taskTemplates=Array.isArray(src.tasks)?src.tasks.map(t=>{
+    if(t&&typeof t==='object'&&!Array.isArray(t)){
+      return {title:String(t.title||t[0]||''),icon:t.icon,offsetDays:t.offsetDays,note:t.note};
+    }
+    if(Array.isArray(t)) return {title:String(t[0]||''),icon:t[1],offsetDays:t[2],note:t[3]};
+    return {title:String(t||'')};
+  }).filter(t=>t.title):[];
+  const verification=src.verification&&typeof src.verification==='object'?Object.assign({},src.verification):{};
+  if(src.botanicalVerified!=null) verification.botanicalVerified=!!src.botanicalVerified;
+  if(src.engineVersion) verification.engineVersion=String(src.engineVersion);
+  if(src.identifySource) verification.source=String(src.identifySource);
+  return {
+    slug,
+    name:name||slug,
+    scientific:String(src.scientific||src.scientificName||src.scientific_name||'').trim(),
+    hebrewName:String(src.hebrewName||src.hebrew_name||src.he||'').trim(),
+    aliases:Array.isArray(src.aliases)?src.aliases.slice():[],
+    icon:String(src.icon||'').trim(),
+    image:{
+      url:imageUrl||undefined,
+      scanUrl:scanUrl||undefined,
+      searchQuery:searchQuery||undefined
+    },
+    sun:String(src.sun||src.light||(src.care&&src.care.light)||'').trim(),
+    water:String(src.water||src.watering||(src.care&&src.care.water)||'').trim(),
+    soil:String(src.soil||(src.care&&src.care.soil)||'').trim(),
+    growth:String(src.growth||'').trim(),
+    size:String(src.size||'').trim(),
+    season:String(src.season||src.seasonCare||(src.care&&src.care.season)||'').trim(),
+    pruning:String(src.pruning||(src.care&&src.care.pruning)||'').trim(),
+    fertilizer:String(src.fertilizer||(src.care&&src.care.fertilizer)||'').trim(),
+    climateLabel:String(src.climate||src.climateLabel||src.climate_zone||src.scanClimateZone||'').trim(),
+    climateFit,
+    guide:String(src.guide||src.careGuide||src.detailedGuide||'').trim(),
+    warnings:Array.isArray(src.warnings)?src.warnings.filter(Boolean).map(String):[],
+    products:Array.isArray(src.products)?src.products.map(x=>typeof x==='string'?x:(x?.name||x?.desc||'')).filter(Boolean):[],
+    taskTemplates,
+    tags:Array.isArray(src.tags)?src.tags.slice():[],
+    verification:Object.keys(verification).length?verification:undefined
+  };
+}
+
+function ensureUserPlantV1Fields(plant,options){
+  void options;
+  const p=plant&&typeof plant==='object'?plant:{};
+  if(!p.id) p.id='plant_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  if(!p.profileSlug) p.profileSlug=deriveProfileSlug(p);
+  if(!p.addedAt) p.addedAt=new Date().toISOString();
+  return p;
+}
+
+function getPlantProfile(slugOrPlant){
+  if(slugOrPlant==null||slugOrPlant==='') return null;
+  if(typeof slugOrPlant==='object'){
+    const slug=deriveProfileSlug(slugOrPlant);
+    const fromIndex=slug&&PLANT_INDEX[slug]?PLANT_INDEX[slug]:null;
+    const raw=fromIndex||(slugOrPlant.meta&&typeof slugOrPlant.meta==='object'?slugOrPlant.meta:slugOrPlant);
+    return toPlantProfileV1(raw);
+  }
+  const slug=String(slugOrPlant).trim();
+  if(!slug) return null;
+  const profile=PLANT_INDEX[slug]||PLANT_LIBRARY.find(p=>p.slug===slug)||null;
+  return profile?toPlantProfileV1(profile):null;
+}
+
 function normalizePlant(p){
-  if(Array.isArray(p)) return {name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓',source:p[3]||'My Garden',archived:false};
-  return Object.assign({name:'Plant',status:'Healthy',mark:'✓',source:'My Garden',archived:false},p||{});
+  let plant;
+  if(Array.isArray(p)) plant={name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓',source:p[3]||'My Garden',archived:false};
+  else plant=Object.assign({name:'Plant',status:'Healthy',mark:'✓',source:'My Garden',archived:false},p||{});
+  return ensureUserPlantV1Fields(plant);
 }
 data.plants=(data.plants||[]).map(normalizePlant);
 if(typeof data.score!=='number')data.score=87;
@@ -5067,6 +5154,10 @@ function buildPlantFromReference(ref,source,options){
   if(safeRef.scanPhotoUrl && source==='Scan & Identify') plant.photoUrl=safeRef.scanPhotoUrl;
   plant.meta=plant.meta||{};
   if(plant.imageUrl)plant.meta.imageUrl=plant.imageUrl;
+  plant.profileSlug=deriveProfileSlug(plant);
+  const nowIso=new Date().toISOString();
+  plant.addedAt=nowIso;
+  plant.updatedAt=nowIso;
   return plant;
 }
 function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,reminders:true}){
