@@ -1192,18 +1192,43 @@ function ensureUserPlantV1Fields(plant,options){
   return p;
 }
 
-function getPlantProfile(slugOrPlant){
+function resolvePlantProfileRaw(slugOrPlant){
   if(slugOrPlant==null||slugOrPlant==='') return null;
-  if(typeof slugOrPlant==='object'){
-    const slug=deriveProfileSlug(slugOrPlant);
-    const fromIndex=slug&&PLANT_INDEX[slug]?PLANT_INDEX[slug]:null;
-    const raw=fromIndex||(slugOrPlant.meta&&typeof slugOrPlant.meta==='object'?slugOrPlant.meta:slugOrPlant);
-    return toPlantProfileV1(raw);
+  const fromSlugKey=(slug)=>{
+    const key=String(slug||'').trim();
+    if(!key) return null;
+    return PLANT_INDEX[key]||PLANT_LIBRARY.find(p=>p.slug===key)||null;
+  };
+  if(typeof slugOrPlant==='string'){
+    const q=String(slugOrPlant).trim();
+    if(!q) return null;
+    return fromSlugKey(q)||findPlantByName(q)||null;
   }
-  const slug=String(slugOrPlant).trim();
-  if(!slug) return null;
-  const profile=PLANT_INDEX[slug]||PLANT_LIBRARY.find(p=>p.slug===slug)||null;
-  return profile?toPlantProfileV1(profile):null;
+  if(typeof slugOrPlant!=='object') return null;
+  const p=slugOrPlant;
+  const slugCandidates=[];
+  const pushSlug=(value)=>{
+    const key=String(value||'').trim();
+    if(key&&!slugCandidates.includes(key)) slugCandidates.push(key);
+  };
+  pushSlug(p.profileSlug);
+  if(p.meta&&typeof p.meta==='object') pushSlug(p.meta.slug);
+  pushSlug(p.slug);
+  pushSlug(deriveProfileSlug(p));
+  for(const slug of slugCandidates){
+    const hit=fromSlugKey(slug);
+    if(hit) return hit;
+  }
+  if(p.meta&&typeof p.meta==='object') return p.meta;
+  const match=findPlantByName(p.name||'');
+  if(match) return match;
+  return null;
+}
+
+function getPlantProfile(slugOrPlant){
+  const raw=resolvePlantProfileRaw(slugOrPlant);
+  if(!raw) return null;
+  return toPlantProfileV1(raw);
 }
 
 function normalizePlant(p){
@@ -1684,9 +1709,8 @@ function renderCalendar(){
 function selectCalendarDay(day){selectedDay=day;renderCalendar()}
 
 function plantMeta(p){
-  if(p&&p.meta)return enrichProfileWithQuality(p.meta,p.name||p.scientific||'');
-  const match=findPlantByName(p?.name||'');
-  if(match)return enrichProfileWithQuality(match,p?.name||'');
+  const raw=resolvePlantProfileRaw(p);
+  if(raw) return enrichProfileWithQuality(raw,p?.name||p?.scientific||'');
   const quality=careProfileForPlant(p?.name||p?.scientific||'');
   if(quality)return quality;
   return {sun:'Full sun to partial shade depending on species',water:'Water when the top soil begins to dry; adjust by heat, season and drainage',growth:'Growth habit depends on the exact species and cultivar',size:'Varies by species and pruning',climate:'Check local hardiness, heat and frost exposure before planting',season:'Create seasonal watering, feeding and pruning reminders after the plant is confirmed',warnings:['Exact care depends on species, variety and local conditions. Confirm the final ID before treatment or purchase.'],guide:'Cruvit could not verify a full species profile yet. Use the exact botanical name when possible, then confirm sun, watering, soil, pruning and climate suitability before planting.',products:['Compost','Mulch','Balanced fertilizer']};
@@ -5099,7 +5123,7 @@ function normalizeApiPlant(d,requested){
   return profile;
 }
 function showPlantSetup(slug,source='My Garden'){
-  const ref=PLANT_INDEX[slug]||scanProfileCache[slug]; if(!ref)return;
+  const ref=resolvePlantProfileRaw(slug)||scanProfileCache[slug]; if(!ref)return;
   const srRoot=document.getElementById('smart-rec-root');
   const fromSmartRecOverlay=!!(srRoot&&srRoot.classList.contains('sr-active'));
   addPlantSetupReturnTarget=fromSmartRecOverlay?'smart-rec':null;
@@ -5119,7 +5143,7 @@ function commitPlantFromSetup(){
   const rem=document.getElementById('prefReminders')?document.getElementById('prefReminders').checked:true;
   savePlantFromLibrary(currentPlantSetup.slug,currentPlantSetup.source,{autoTasks:auto,reminders:rem});
 }
-function showPlantSetupGuide(slug){const ref=PLANT_INDEX[slug];if(!ref)return;const body=document.getElementById('addPlantContent');body.innerHTML+=`<div class="guide-block"><b>${escapeHtml(ref.scientific||ref.name)}</b><span>${escapeHtml(ref.guide||'Verified care information will appear here.')}</span></div>`}
+function showPlantSetupGuide(slug){const ref=resolvePlantProfileRaw(slug)||scanProfileCache[slug];if(!ref)return;const body=document.getElementById('addPlantContent');body.innerHTML+=`<div class="guide-block"><b>${escapeHtml(ref.scientific||ref.name)}</b><span>${escapeHtml(ref.guide||'Verified care information will appear here.')}</span></div>`}
 
 function safeUiAfterPlantAdd(){
   addPlantSetupReturnTarget=null;
