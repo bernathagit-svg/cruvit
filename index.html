@@ -1253,11 +1253,263 @@ function buildClimateSuitabilitySnapshot(slugOrPlant){
   };
 }
 
+function climateSuitabilityV1Clamp(value,min,max){
+  return Math.max(min,Math.min(max,Math.round(Number(value)||0)));
+}
+
+function climateSuitabilityV1AddUnique(list,msg){
+  if(msg&&list&&!list.includes(msg)) list.push(msg);
+}
+
+function climateSuitabilityV1LevelFromScore(score,hasBlock){
+  if(hasBlock) return 'notRecommended';
+  if(score==null||!Number.isFinite(score)) return 'unknown';
+  if(score<35) return 'notRecommended';
+  if(score<55) return 'risky';
+  if(score<70) return 'possible';
+  if(score<85) return 'good';
+  return 'excellent';
+}
+
+function climateSuitabilityV1InferDataSource(snapshot){
+  if(snapshot?.hasStructuredMeta) return 'structured';
+  const fit=String(snapshot?.scanClimateFit||'').toLowerCase();
+  if(['high','medium','low'].includes(fit)) return 'scan';
+  if(String(snapshot?.catalogClimateLabel||'').trim()) return 'catalog-text';
+  return 'fallback';
+}
+
+function climateSuitabilityV1CatalogWeakMatch(catalogLabel,garden){
+  const cat=String(catalogLabel||'').toLowerCase();
+  const broad=String(garden?.broadClimate||'').toLowerCase();
+  const climate=String(garden?.climateLabel||'').toLowerCase();
+  if(!cat) return false;
+  if(broad&&cat.includes(broad.replace(/-/g,' '))) return true;
+  if(broad==='mediterranean'&&cat.includes('mediterranean')) return true;
+  if(broad==='temperate'&&cat.includes('temperate')) return true;
+  if(broad==='tropical'&&(cat.includes('tropical')||cat.includes('warm'))) return true;
+  if(climate&&cat.includes(climate.split(' ')[0])) return true;
+  return false;
+}
+
+function climateSuitabilityV1FromSnapshot(snapshot,options){
+  const opts=options&&typeof options==='object'?options:{};
+  const includeSnapshot=!!opts.includeSnapshot;
+  const indoorShelter=!!opts.indoorShelter;
+  const blendScanFit=opts.blendScanFit!==false;
+  const strictBlocks=opts.strictBlocks!==false;
+  const plant=snapshot?.plant||null;
+  const garden=snapshot?.garden||getAppClimateProfile();
+  const meta=snapshot?.plantMeta||null;
+  const catalogClimateLabel=String(snapshot?.catalogClimateLabel||'').trim();
+  const scanFitRaw=String(snapshot?.scanClimateFit||plant?.climateFit||'unknown').toLowerCase();
+  const scanClimateFit=['high','medium','low'].includes(scanFitRaw)?scanFitRaw:'unknown';
+  const hasStructuredMeta=!!meta;
+  const emptyResult={
+    engineVersion:'v1b',
+    plantSlug:'',
+    plantName:'',
+    score:null,
+    level:'unknown',
+    factors:{survival:null,thrive:null,heatCold:null,humidity:null,scanFit:null},
+    summary:'Plant profile not found.',
+    reasons:[],
+    warnings:[],
+    blocks:[],
+    dataSource:'fallback',
+    hasStructuredMeta:false,
+    scanClimateFit:'unknown'
+  };
+  if(!plant){
+    if(includeSnapshot) emptyResult.snapshot=snapshot;
+    return emptyResult;
+  }
+  const plantSlug=String(plant.slug||'').trim();
+  const plantName=String(plant.name||plantSlug||'Plant').trim();
+  const blocks=[];
+  const warnings=[];
+  const reasons=[];
+  let warningPenalty=0;
+  const addWarning=(msg,penalty=8)=>{climateSuitabilityV1AddUnique(warnings,msg);warningPenalty+=penalty;};
+  const addReason=(msg)=>{if(reasons.length<3) climateSuitabilityV1AddUnique(reasons,msg);};
+  const blockWith=(msg)=>{climateSuitabilityV1AddUnique(blocks,msg);};
+  let dataSource=climateSuitabilityV1InferDataSource(snapshot);
+  let survival;
+  let thrive;
+  let heatCold;
+  let humidity;
+  let scanFitFactor=null;
+  if(hasStructuredMeta){
+    survival=85;
+    thrive=80;
+    heatCold=80;
+    humidity=80;
+    const hotHumidStress=typeof smartRecClimateFeelsHotHumid==='function'?smartRecClimateFeelsHotHumid(garden):false;
+    const metaHasGroup=(groupId)=>typeof smartRecMetaHasGroup==='function'?smartRecMetaHasGroup(meta,groupId):(Array.isArray(meta?.groupIds)&&meta.groupIds.includes(groupId));
+    if(!indoorShelter&&meta.frostSensitivity==='high'&&garden.freezingRisk!=='low'){
+      blockWith('Frost risk is too high for this plant.');
+    }else if(!indoorShelter&&meta.frostSensitivity==='medium'&&garden.freezingRisk==='high'){
+      survival=Math.min(survival,25);
+      thrive=Math.min(thrive,20);
+      heatCold=Math.min(heatCold,20);
+      addWarning('Cold snaps may seriously reduce performance.');
+    }
+    if(meta.needsWinterChill&&garden.alwaysHot&&!garden.coolSeasonSignal){
+      thrive=Math.min(thrive,30);
+      addWarning('Reliable fruiting is unlikely without winter chill or a clear cool season.',12);
+    }
+    if(meta.hardBlockRules?.includes('needs-cooler-drier-winter-for-fruit')&&garden.alwaysHot&&!garden.coolSeasonSignal){
+      thrive=Math.min(thrive,30);
+      addWarning('Reliable fruiting is unlikely without a cooler, drier seasonal signal.',12);
+    }
+    if(meta.humidityTolerance==='low'&&garden.humiditySignal==='high'){
+      humidity=20;
+      thrive=Math.min(thrive,35);
+      addWarning('High humidity is a poor fit for this plant.',15);
+      if(meta.hardBlockRules?.includes('humid-heat-stress')&&garden.extremeHeatRisk!=='low'){
+        blockWith('Hot humid conditions make this a poor match.');
+      }
+    }else if(meta.humidityTolerance==='medium'&&garden.humiditySignal==='high'){
+      humidity=55;
+      addWarning('Humidity may reduce performance or increase disease pressure.',8);
+    }
+    if(garden.extremeHeatRisk==='high'&&meta.heatTolerance==='low'){
+      survival=Math.min(survival,35);
+      thrive=Math.min(thrive,20);
+      heatCold=Math.min(heatCold,20);
+      addWarning('Extreme heat is likely to cause stress here.',15);
+    }else if(garden.extremeHeatRisk!=='low'&&meta.heatTolerance==='medium'){
+      heatCold=Math.min(heatCold,55);
+      thrive=Math.min(thrive,60);
+    }
+    if(metaHasGroup('temperate-chill-fruit-tree')&&garden.alwaysHot&&!garden.coolSeasonSignal){
+      thrive=Math.min(thrive,30);
+      addWarning('Reliable fruiting is unlikely without winter chill or a clear cool season.',12);
+    }
+    if(metaHasGroup('humid-sensitive-mediterranean')&&hotHumidStress){
+      humidity=Math.min(humidity,garden.humiditySignal==='high'?20:45);
+      thrive=Math.min(thrive,garden.humiditySignal==='high'?35:55);
+      addWarning('Humid heat is a weak fit for this Mediterranean plant.',14);
+      if(meta.hardBlockRules?.includes('humid-heat-stress')&&garden.humiditySignal==='high'&&garden.extremeHeatRisk!=='low'){
+        blockWith('Hot humid conditions make this a poor match.');
+      }
+    }
+    if(metaHasGroup('warm-citrus-fruit-tree')&&!indoorShelter&&garden.freezingRisk==='medium'){
+      thrive=Math.min(thrive,55);
+      heatCold=Math.min(heatCold,50);
+      addWarning('Seasonal cold means citrus will need protection for reliable outdoor fruiting.',12);
+    }
+    if(metaHasGroup('tropical-frost-sensitive-fruit')&&!indoorShelter&&garden.freezingRisk==='medium'){
+      thrive=Math.min(thrive,35);
+      heatCold=Math.min(heatCold,30);
+      addWarning('Seasonal cold makes reliable outdoor fruiting unlikely here.',12);
+    }
+    if(metaHasGroup('frost-sensitive-ornamental')&&!indoorShelter&&garden.freezingRisk==='medium'){
+      thrive=Math.min(thrive,35);
+      heatCold=Math.min(heatCold,35);
+      addWarning('Seasonal cold makes this a risky outdoor ornamental here.',12);
+    }
+    if(metaHasGroup('cool-moist-berry')&&garden.alwaysHot){
+      thrive=Math.min(thrive,35);
+      addWarning('Hot exposed conditions are likely to reduce berry quality here.',12);
+    }
+    if(metaHasGroup('acid-soil-cool-moisture')&&garden.alwaysHot){
+      thrive=Math.min(thrive,35);
+      addWarning('Heat and dry exposure can quickly stress this acid-loving plant.',12);
+    }
+    if(metaHasGroup('tropical-shade-houseplant')&&!indoorShelter&&garden.freezingRisk!=='low'){
+      blockWith('This tropical foliage plant is better treated as an indoor or very sheltered plant here.');
+    }
+    if(metaHasGroup('warm-season-tender-herb')&&!indoorShelter&&garden.freezingRisk!=='low'){
+      thrive=Math.min(thrive,40);
+      addWarning('Cold weather makes this a seasonal rather than year-round outdoor herb here.',10);
+    }
+    if(meta.needsReview){
+      thrive=Math.min(thrive,75);
+      addWarning('Suitability uses conservative group-level rules. Check the exact species or cultivar before treating this as a top pick.',6);
+    }
+    if(meta.frostSensitivity==='low'&&garden.freezingRisk==='low') addReason('Low frost risk suits this plant.');
+    if(meta.heatTolerance==='high'&&garden.extremeHeatRisk!=='high') addReason('Heat tolerance matches current conditions.');
+    if(meta.humidityTolerance==='low'&&garden.humiditySignal==='low') addReason('Dry air suits this plant.');
+    if(garden.broadClimate==='mediterranean'&&metaHasGroup('humid-sensitive-mediterranean')) addReason('Mediterranean garden suits this plant\'s dry-season preference.');
+    if(meta.survivalVsThriveNotes&&thrive>=70) addReason(String(meta.survivalVsThriveNotes).slice(0,120));
+  }else{
+    survival=55;
+    thrive=55;
+    heatCold=55;
+    humidity=55;
+    if(climateSuitabilityV1CatalogWeakMatch(catalogClimateLabel,garden)){
+      survival=62;
+      thrive=60;
+      addReason('Catalog climate label suggests a reasonable location match.');
+    }
+  }
+  if(blendScanFit){
+    if(scanClimateFit==='high') scanFitFactor=90;
+    else if(scanClimateFit==='medium') scanFitFactor=65;
+    else if(scanClimateFit==='low'){
+      scanFitFactor=35;
+      addWarning('Photo or scan identification reported a weak climate match for this location.',10);
+    }
+  }
+  if(scanClimateFit==='high'&&!hasStructuredMeta) dataSource='scan';
+  if(scanClimateFit==='high') addReason('Photo identification reported a strong climate match.');
+  warningPenalty=Math.min(warningPenalty,40);
+  let score;
+  if(blocks.length&&strictBlocks){
+    score=0;
+  }else{
+    score=climateSuitabilityV1Clamp(
+      (survival*0.40)+
+      (thrive*0.30)+
+      (heatCold*0.15)+
+      (humidity*0.10)+
+      ((scanFitFactor!=null?scanFitFactor:70)*0.05)-
+      warningPenalty,
+      0,
+      100
+    );
+    if(scanClimateFit==='high'&&blendScanFit) score=Math.max(score,72);
+    if(scanClimateFit==='low'&&blendScanFit) score=Math.min(score,55);
+  }
+  const level=climateSuitabilityV1LevelFromScore(score,blocks.length>0&&strictBlocks);
+  let summary;
+  if(blocks.length) summary=blocks[0];
+  else if(warnings.length) summary=warnings[0];
+  else if(meta?.survivalVsThriveNotes) summary=String(meta.survivalVsThriveNotes).slice(0,160);
+  else if(catalogClimateLabel) summary=catalogClimateLabel;
+  else if(scanClimateFit==='high') summary='Strong climate match for your garden location.';
+  else if(scanClimateFit==='low') summary='Climate fit may be weak for your garden location.';
+  else summary='Climate fit looks reasonable for your garden location.';
+  const result={
+    engineVersion:'v1b',
+    plantSlug,
+    plantName,
+    score,
+    level,
+    factors:{survival,thrive,heatCold,humidity,scanFit:scanFitFactor},
+    summary,
+    reasons,
+    warnings:warnings.slice(0,5),
+    blocks,
+    dataSource,
+    hasStructuredMeta,
+    scanClimateFit
+  };
+  if(includeSnapshot) result.snapshot=snapshot;
+  return result;
+}
+
+function evaluateClimateSuitabilityV1(plantOrSlug,options){
+  return climateSuitabilityV1FromSnapshot(buildClimateSuitabilitySnapshot(plantOrSlug),options||{});
+}
+
 // Climate Suitability Engine v1: keep console-accessible after code merges.
 try{
   window.getGardenClimateProfile=getGardenClimateProfile;
   window.getPlantClimateMetadata=getPlantClimateMetadata;
   window.buildClimateSuitabilitySnapshot=buildClimateSuitabilitySnapshot;
+  window.evaluateClimateSuitabilityV1=evaluateClimateSuitabilityV1;
 }catch(e){}
 
 function normalizePlant(p){
