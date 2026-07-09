@@ -1231,6 +1231,35 @@ function getPlantProfile(slugOrPlant){
   return toPlantProfileV1(raw);
 }
 
+function getGardenClimateProfile(){
+  return getAppClimateProfile();
+}
+
+function getPlantClimateMetadata(slugOrPlant){
+  const raw=resolvePlantProfileRaw(slugOrPlant);
+  return raw?smartRecClimateMetaForPlant(raw):null;
+}
+
+function buildClimateSuitabilitySnapshot(slugOrPlant){
+  const plant=getPlantProfile(slugOrPlant);
+  const plantMeta=getPlantClimateMetadata(slugOrPlant);
+  return {
+    garden:getAppClimateProfile(),
+    plant,
+    plantMeta,
+    catalogClimateLabel:plant?.climateLabel||'',
+    scanClimateFit:plant?.climateFit||'unknown',
+    hasStructuredMeta:!!plantMeta
+  };
+}
+
+// Climate Suitability Engine v1: keep console-accessible after code merges.
+try{
+  window.getGardenClimateProfile=getGardenClimateProfile;
+  window.getPlantClimateMetadata=getPlantClimateMetadata;
+  window.buildClimateSuitabilitySnapshot=buildClimateSuitabilitySnapshot;
+}catch(e){}
+
 function normalizePlant(p){
   let plant;
   if(Array.isArray(p)) plant={name:p[0]||'Plant',status:p[1]||'Healthy',mark:p[2]||'✓',source:p[3]||'My Garden',archived:false};
@@ -4014,7 +4043,7 @@ function smartRecEvaluateSuitability(p){
       explanationText:'Broad catalog match; detailed climate scoring is not available for this plant yet.'
     };
   }
-  const climateProfile=smartRecClimateProfile();
+  const climateProfile=getAppClimateProfile();
   const ctx=smartRecCurrentContext();
   const warnings=[];
   let blocked=false;
