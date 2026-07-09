@@ -61,12 +61,12 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Climate Suitability Engine v1
-Status: **Next** — not started  
+### Climate Suitability Engine v1b
+Status: **Next** — read-only inspection / scoring layer planning  
 Priority: High  
-Scope: unify climate scoring reads; build on global location (`getAppClimateProfile`) + plant profiles (`getPlantProfile` / `resolvePlantProfileRaw`)  
+Scope: plan thin `evaluateClimateSuitabilityV1()` reusing garden profile + plant meta without SR session context; verify v1a snapshot helpers before scoring layer  
 Files involved: TBD after read-only inspection (`index.html` expected)  
-Rules: additive only; no Smart Rec scoring rewrite; no UI redesign; preserve approved My Garden baseline
+Rules: additive only; no Smart Rec scoring rewrite; no UI redesign; preserve approved My Garden baseline; build on v1a (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`)
 
 ---
 
@@ -95,6 +95,7 @@ Files: <list of files>
 | **GAS-2** Global Location Foundation + Control | Done (pushed) | `resolveAppLocation` / `setAppLocation` / `getAppLocation` / location chip + popover |
 | **Plant Data Foundation v1** | Done (pushed) | `PlantProfileV1` mapper, `UserPlantV1` fields (`id`, `profileSlug`, `addedAt`), `getPlantProfile()` — commit `cce3b60` |
 | **Plant Library Integration v1a** | Done (pushed) | `resolvePlantProfileRaw()` read bridge; `plantMeta()` / `getPlantProfile()` routed — commit `3c70c20` |
+| **Climate Suitability Engine v1a** | Done (pushed) | `getGardenClimateProfile()`, `getPlantClimateMetadata()`, `buildClimateSuitabilitySnapshot()` + `window` exports; SR garden read via `getAppClimateProfile()` — commit `a7f6df6` |
 
 ---
 
@@ -122,7 +123,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | | ↳ Global Location Foundation + Control | **Done** |
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
-| **4** | Climate Suitability Engine v1 | **Next** |
+| **4** | Climate Suitability Engine v1 | **Done (v1a)** — snapshot helpers (`a7f6df6`); **v1b next** |
 | **5** | Per-user Plant Library v1 | Planned |
 | **6** | Shared Plant Picker v1 | Planned |
 | **7** | Garden Photo / Media Library Foundation | Planned |
@@ -136,7 +137,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 
 ### Phase notes (brief)
 
-- **4 — Climate Suitability Engine v1:** unify climate scoring reads; build on global location + plant profiles.
+- **4 — Climate Suitability Engine v1:** v1a done — read-only snapshot helpers (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`). v1b next — scoring layer planning on top of garden profile + plant meta without rewriting SR rules.
 - **5 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global `PLANT_LIBRARY` mutations.
 - **6 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after library foundation is stable.
 - **7 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -152,7 +153,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Climate Suitability Engine v1 (next)
+- Climate Suitability Engine v1b (next)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -250,7 +251,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Climate Suitability Engine v1** — read-only inspection first: map existing climate/suitability reads (`getAppClimateProfile`, `smartRecClimateProfile`, `smartRecEvaluateSuitability`, scan climate fields); propose smallest additive patch to unify reads without changing Smart Rec scoring behavior.
+**Climate Suitability Engine v1b** — read-only inspection / scoring layer planning: map how v1a snapshot helpers (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`) can feed a thin `evaluateClimateSuitabilityV1()` for My Garden / Identifier display without SR session context or rewriting `smartRecEvaluateSuitability` rule blocks.
 
 > Always keep exactly ONE recommended next task here.
 > When that task is completed, replace it with the next highest priority task (Per-user Plant Library v1).
