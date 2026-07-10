@@ -61,14 +61,14 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Global Plant Catalog Foundation v1
-Status: **Next** — schema and compatibility planning (read-only inspection done)  
+### Global Plant Catalog Foundation v1b
+Status: **Next** — small curated seed catalog / first real plant batch  
 Priority: High  
-Scope: evolve transitional in-`index.html` `PLANT_LIBRARY` into a scalable global plant knowledge base so worldwide plants (e.g. Coconut, Papaya) are not limited by a small local list  
-Files involved: TBD (`data/plants.seed.json` + thin loader expected later; not a plant dump into `index.html`)  
-Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** dump thousands of plants into `index.html`; first step is **schema and compatibility planning**, not adding all plants manually
+Scope: populate `data/plants.seed.json` with a **small, curated** first batch of global plants (e.g. Coconut, Papaya) — not a huge dump; merge via existing `mergePlantCatalogItems()` when a safe loader lands  
+Files involved: `data/plants.seed.json`, `data/plant-catalog.schema.json` (schema done in v1a); optional thin loader later  
+Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** dump thousands of plants into `index.html`; inline `PLANT_LIBRARY` remains transitional and wins on slug conflicts
 
-**Catalog strategy note:** Current `PLANT_LIBRARY` inside `index.html` is **transitional**. The future catalog must support thousands of global plants, structured climate metadata, care data, warnings, aliases/translations, media assets, and future backend/API migration. Staged approach: **schema + compatibility → seed catalog → batch enrichment → on-demand missing plant profiles → backend/database migration**.
+**Catalog strategy note:** v1a delivered schema + legacy bridge (`catalogItemToLegacyFlat`, `mergePlantCatalogItems`). Schema prepares for **Environment Suitability** (plant vs location/climate), **Garden Compatibility** (plant vs existing garden plants), **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. Staged approach: **v1a schema + compatibility (done) → v1b curated seed batch → batch enrichment → on-demand missing profiles → backend/database migration**.
 
 ---
 
@@ -99,6 +99,7 @@ Files: <list of files>
 | **Plant Library Integration v1a** | Done (pushed) | `resolvePlantProfileRaw()` read bridge; `plantMeta()` / `getPlantProfile()` routed — commit `3c70c20` |
 | **Climate Suitability Engine v1a** | Done (pushed) | `getGardenClimateProfile()`, `getPlantClimateMetadata()`, `buildClimateSuitabilitySnapshot()` + `window` exports; SR garden read via `getAppClimateProfile()` — commit `a7f6df6` |
 | **Climate Suitability Engine v1b** | Done (pushed) | `evaluateClimateSuitabilityV1()` climate-only scoring layer on v1a snapshot; no SR session / UI / persistence — commit `c8a76bc` |
+| **Global Plant Catalog Foundation v1a** | Done (pushed) | `data/plants.seed.json` shell, `data/plant-catalog.schema.json` (Environment Suitability + Garden Compatibility extensibility), `catalogItemToLegacyFlat()` / `mergePlantCatalogItems()` legacy bridge; inline `PLANT_LIBRARY` transitional — commit `63b50c4` |
 
 ---
 
@@ -127,7 +128,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`) |
-| **5** | Global Plant Catalog Foundation v1 | **Next** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a done (`63b50c4`); **v1b next** (curated seed batch) |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -142,7 +143,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules.
-- **5 — Global Plant Catalog Foundation v1 (next):** scalable global knowledge base before deep Per-user Plant Library work. Current in-`index.html` `PLANT_LIBRARY` is transitional — Coconut/Papaya gaps showed the limit. Do **not** dump thousands of plants into `index.html`. First step: schema and compatibility planning (keep `resolvePlantProfileRaw` / `getPlantProfile` / `evaluateClimateSuitabilityV1` working). Then: seed catalog → batch enrichment → on-demand missing profiles → backend/API migration. Must support structured climate metadata, care data, warnings, aliases/translations, and media assets.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** `data/plants.seed.json` shell, `data/plant-catalog.schema.json`, legacy bridge helpers; inline `PLANT_LIBRARY` remains transitional. Schema prepares for **Environment Suitability**, **Garden Compatibility**, **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. **v1b next:** small curated seed catalog / first real plant batch — not a huge dump. Then: batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -158,7 +159,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Global Plant Catalog Foundation v1 (next)
+- Global Plant Catalog Foundation v1b (next — curated seed batch)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -256,10 +257,10 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Global Plant Catalog Foundation v1** — schema and compatibility planning first (not a manual plant dump). Treat current `PLANT_LIBRARY` in `index.html` as transitional; design for thousands of global plants with structured climate metadata, care data, warnings, aliases/translations, media assets, and future backend/API migration. Then seed catalog → batch enrichment → on-demand missing profiles. Do not dump thousands of plants into `index.html`.
+**Global Plant Catalog Foundation v1b** — add a **small curated seed catalog** / first real plant batch into `data/plants.seed.json` (e.g. Coconut, Papaya and other high-value gaps). Not a huge dump. Use `PlantCatalogItem` v1 shape per `data/plant-catalog.schema.json`; merge via `mergePlantCatalogItems()` when a safe loader is added. Schema already prepares for **Environment Suitability**, **Garden Compatibility**, **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. Inline `PLANT_LIBRARY` in `index.html` stays transitional.
 
 > Always keep exactly ONE recommended next task here.
-> When that task is completed, replace it with the next highest priority task (Per-user Plant Library v1).
+> When v1b is completed, replace with the next step (v1c loader/enrichment or Per-user Plant Library v1 per roadmap).
 
 ---
 
