@@ -461,6 +461,11 @@
 <script src="scripts/plant-identifier-loader.js?v=20250655"></script>
 <script>
 
+/*
+ * PLANT_LIBRARY — transitional inline bootstrap catalog.
+ * Future global plant data belongs in data/*.json and later backend/API/database.
+ * Do not create new isolated plant lists inside modules; merge via catalog helpers below.
+ */
 const PLANT_LIBRARY=[
  {slug:'lavender',name:'Lavender',he:'לבנדר',aliases:['lavender','lavandula','lavandula angustifolia','לבנדר','אזוביון'],scientific:'Lavandula angustifolia',icon:'🌿',status:'Healthy',mark:'✓',tags:['mediterranean','sun','low water','fragrant','לבנדר','אזוביון'],sun:'Full sun',water:'Low after established; avoid wet roots',growth:'Evergreen aromatic shrub',size:'40–70 cm',climate:'Excellent Mediterranean match',season:'Light prune after flowering',warnings:['Avoid overwatering and poorly drained soil','Can decline in humid, heavy soil','Needs strong sun for best flowering'],guide:'Lavender prefers full sun, excellent drainage and lean soil. Water young plants until established, then reduce irrigation. Prune lightly after flowering to keep it compact and prevent woody growth.',products:['Mediterranean soil mix','Pruning gloves','Drip irrigation emitter']},
  {slug:'lemon',name:'Lemon Tree',he:'עץ לימון',aliases:['lemon','lemon tree','citrus limon','לימון','עץ לימון'],scientific:'Citrus × limon',icon:'🍋',status:'Needs fertilizer',mark:'!',tags:['citrus','fruit','sun','fertilizer','לימון','עץ לימון'],sun:'Full sun',water:'Medium–high; deep watering, then allow drainage',growth:'Evergreen citrus tree',size:'2–4 m in home gardens',climate:'Warm climate match; protect young trees from frost',season:'Feed in active growth; reduce stress in heat waves',warnings:['Yellow leaves may indicate nutrient deficiency, pests or watering imbalance','Protect young trees from frost and strong wind','Avoid waterlogged soil'],guide:'Lemon trees need full sun, regular deep watering and citrus fertilizer during the growing season. Keep soil well drained. Check leaves for yellowing, scale, leaf miner and other stress signs.',products:['Citrus fertilizer','Organic compost','Neem oil']},
@@ -521,6 +526,81 @@ const PLANT_LIBRARY=[
 
 ];
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
+
+/* ── Global Plant Catalog Foundation v1a: legacy bridge (not loaded at startup) ── */
+function catalogItemToLegacyFlat(item){
+  const src=item&&typeof item==='object'?item:{};
+  const slug=String(src.slug||'').trim();
+  if(!slug) return null;
+  const names=src.names&&typeof src.names==='object'?src.names:{};
+  const care=src.care&&typeof src.care==='object'?src.care:{};
+  const media=src.media&&typeof src.media==='object'?src.media:{};
+  const careSchedule=src.careSchedule&&typeof src.careSchedule==='object'?src.careSchedule:{};
+  const name=String(names.en||names.default||'').trim()||slug;
+  const he=String(names.he||'').trim();
+  const tier=String(src.qualityTier||'').toLowerCase();
+  let mark='✓';
+  let status='';
+  if(tier==='needs_review'||tier==='low'||tier==='draft'){
+    mark='!';
+    status='Needs review';
+  }else if(tier==='verified'||tier==='high'){
+    mark='✓';
+    status='Catalog';
+  }
+  const flat={
+    slug,
+    name,
+    aliases:Array.isArray(src.aliases)?src.aliases.map(String).filter(Boolean):[],
+    scientific:String(src.scientific||'').trim(),
+    icon:String(src.icon||'🌿').trim(),
+    status,
+    mark,
+    tags:Array.isArray(src.tags)?src.tags.map(String).filter(Boolean):[],
+    sun:String(care.sun||care.light||'').trim(),
+    water:String(care.water||care.watering||'').trim(),
+    growth:String(care.growth||'').trim(),
+    size:String(care.size||'').trim(),
+    climate:String(src.climateLabel||'').trim(),
+    season:String(care.season||'').trim(),
+    warnings:Array.isArray(src.warnings)?src.warnings.map(String).filter(Boolean):[],
+    guide:String(care.guide||care.careGuide||'').trim(),
+    products:Array.isArray(src.products)?src.products.map(x=>typeof x==='string'?x:(x?.name||x?.desc||'')).filter(Boolean):[]
+  };
+  if(he) flat.he=he;
+  const imageUrl=String(media.primaryUrl||media.url||'').trim();
+  if(imageUrl) flat.imageUrl=imageUrl;
+  const searchQuery=String(media.searchQuery||'').trim();
+  if(searchQuery) flat.imageSearchQuery=searchQuery;
+  const tasks=Array.isArray(careSchedule.initialTasks)?careSchedule.initialTasks:
+    Array.isArray(careSchedule.tasks)?careSchedule.tasks:null;
+  if(tasks&&tasks.length) flat.tasks=tasks;
+  return flat;
+}
+
+function mergePlantCatalogItems(items){
+  const list=Array.isArray(items)?items:[];
+  const added=[];
+  const skipped=[];
+  list.forEach(item=>{
+    const flat=catalogItemToLegacyFlat(item);
+    if(!flat||!flat.slug){
+      skipped.push({slug:item?.slug||null,reason:'invalid'});
+      return;
+    }
+    if(PLANT_INDEX[flat.slug]){
+      skipped.push({slug:flat.slug,reason:'exists'});
+      return;
+    }
+    PLANT_LIBRARY.push(flat);
+    PLANT_INDEX[flat.slug]=flat;
+    added.push(flat.slug);
+  });
+  return {added,skipped};
+}
+
+window.catalogItemToLegacyFlat=catalogItemToLegacyFlat;
+window.mergePlantCatalogItems=mergePlantCatalogItems;
 
 function smartRecUniqueValues(values){
   return [...new Set((values||[]).flat().filter(Boolean))];

@@ -1,0 +1,480 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cruvit.app/schemas/plant-catalog/v1",
+  "title": "Cruvit Plant Catalog",
+  "description": "Global plant catalog container and PlantCatalogItem v1 definitions for Cruvit. Supports two future suitability layers: (1) Environment Suitability — plant vs user location/climate/environment; (2) Garden Compatibility — plant vs plants already in the user's garden.",
+  "definitions": {
+    "LocalizedNames": {
+      "type": "object",
+      "description": "Display names by locale key (BCP-47 or short code).",
+      "properties": {
+        "en": { "type": "string" },
+        "he": { "type": "string" },
+        "default": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "PlantTaxonomy": {
+      "type": "object",
+      "properties": {
+        "family": { "type": "string" },
+        "genus": { "type": "string" },
+        "species": { "type": "string" },
+        "cultivar": { "type": "string" },
+        "commonGroup": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCare": {
+      "type": "object",
+      "description": "Human-readable care fields mapped to legacy PLANT_LIBRARY flat keys.",
+      "properties": {
+        "sun": { "type": "string" },
+        "light": { "type": "string" },
+        "water": { "type": "string" },
+        "watering": { "type": "string" },
+        "growth": { "type": "string" },
+        "size": { "type": "string" },
+        "season": { "type": "string" },
+        "soil": { "type": "string" },
+        "pruning": { "type": "string" },
+        "fertilizer": { "type": "string" },
+        "guide": { "type": "string" },
+        "careGuide": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantClimateTraits": {
+      "type": "object",
+      "description": "Layer 1 (Environment Suitability) — structured climate/environment metadata for plant vs user location. Consumed by climate / Smart Rec engines.",
+      "properties": {
+        "heatTolerance": { "type": "string" },
+        "coldTolerance": { "type": "string" },
+        "frostSensitivity": { "type": "string" },
+        "humidityTolerance": { "type": "string" },
+        "waterNeeds": { "type": "string" },
+        "sunNeeds": { "type": "string" },
+        "drainageNeeds": { "type": "string" },
+        "needsWinterChill": { "type": "boolean" },
+        "needsDrySeason": { "type": "boolean" },
+        "floweringRequirements": { "type": "string" },
+        "fruitingRequirements": { "type": "string" },
+        "survivalVsThriveNotes": { "type": "string" },
+        "groupIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "warningFlags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "hardBlockRules": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantSoilCompatibility": {
+      "type": "object",
+      "description": "Soil requirements and location-fit notes (Layer 1 and/or neighbor context in Layer 2).",
+      "properties": {
+        "phRange": { "type": "string" },
+        "texture": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "drainage": { "type": "string" },
+        "salinityTolerance": { "type": "string" },
+        "organicMatter": { "type": "string" },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantWaterNeedsProfile": {
+      "type": "object",
+      "description": "Water needs for environment fit (Layer 1) or neighbor compatibility (Layer 2).",
+      "properties": {
+        "level": { "type": "string" },
+        "droughtTolerance": { "type": "string" },
+        "competesForWater": { "type": "boolean" },
+        "moistureLoving": { "type": "boolean" },
+        "incompatibleWithDryNeighbors": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantSunPlacementProfile": {
+      "type": "object",
+      "description": "Sun and placement needs for environment fit (Layer 1) or garden layout (Layer 2).",
+      "properties": {
+        "sunNeeds": { "type": "string" },
+        "shadeTolerance": { "type": "string" },
+        "competesForSun": { "type": "boolean" },
+        "understorySuitable": { "type": "boolean" },
+        "castsHeavyShade": { "type": "boolean" },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantEnvironmentSuitability": {
+      "type": "object",
+      "description": "Layer 1 — plant vs user location / climate / environment (future Environment Suitability engine). Top-level climateTraits/climateLabel remain supported for v1a compatibility.",
+      "properties": {
+        "climateTraits": { "$ref": "#/definitions/PlantClimateTraits" },
+        "climateLabel": { "type": "string" },
+        "soilCompatibility": { "$ref": "#/definitions/PlantSoilCompatibility" },
+        "waterNeeds": { "$ref": "#/definitions/PlantWaterNeedsProfile" },
+        "sunPlacement": { "$ref": "#/definitions/PlantSunPlacementProfile" },
+        "needsReview": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantSpacingProfile": {
+      "type": "object",
+      "description": "Spacing and mature size for garden layout (Layer 2).",
+      "properties": {
+        "matureSize": { "type": "string" },
+        "matureHeightM": { "type": "number" },
+        "matureSpreadM": { "type": "number" },
+        "minSpacingM": { "type": "number" },
+        "rowSpacingM": { "type": "number" },
+        "containerMinLiters": { "type": "number" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantRootBehaviorProfile": {
+      "type": "object",
+      "description": "Root behavior relevant to structures and neighboring plants (Layer 2).",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["fibrous", "taproot", "rhizome", "sucker", "shallow", "deep", "mixed", "unknown"]
+        },
+        "aggressiveness": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "invasive"]
+        },
+        "nearStructuresRisk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCompatibilityRef": {
+      "type": "object",
+      "description": "Reference to another catalog plant slug with optional compatibility notes.",
+      "properties": {
+        "slug": { "type": "string" },
+        "notes": { "type": "string" },
+        "strength": {
+          "type": "string",
+          "enum": ["weak", "moderate", "strong"]
+        }
+      },
+      "required": ["slug"],
+      "additionalProperties": true
+    },
+    "PlantCompanionRule": {
+      "type": "object",
+      "description": "Structured companion / conflict rule for Garden Compatibility scoring.",
+      "properties": {
+        "ruleId": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": ["benefit", "avoid", "neutral", "conditional"]
+        },
+        "targetSlugs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "targetTags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "distanceM": { "type": "number" },
+        "notes": { "type": "string" },
+        "confidence": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantPestDiseaseNotes": {
+      "type": "object",
+      "description": "Pest and disease relationships that may affect garden neighbors (Layer 2).",
+      "properties": {
+        "commonIssues": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "spreadsTo": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "attractsBeneficials": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantGrowthRiskFlags": {
+      "type": "object",
+      "description": "Invasive or aggressive growth flags (Layer 2).",
+      "properties": {
+        "invasive": { "type": "boolean" },
+        "aggressiveSpread": { "type": "boolean" },
+        "selfSeeding": { "type": "boolean" },
+        "suckering": { "type": "boolean" },
+        "allelopathic": { "type": "boolean" },
+        "regions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantAllelopathyNotes": {
+      "type": "object",
+      "description": "Allelopathy and chemical conflict notes between plants (Layer 2).",
+      "properties": {
+        "allelopathic": { "type": "boolean" },
+        "affectsSlugs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "conflictNotes": { "type": "string" },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantGardenCompatibility": {
+      "type": "object",
+      "description": "Layer 2 — plant vs plants already in the user's garden (future Garden Compatibility engine).",
+      "properties": {
+        "companionRules": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCompanionRule" }
+        },
+        "goodCompanions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCompatibilityRef" }
+        },
+        "benefitsNear": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCompatibilityRef" }
+        },
+        "avoidNear": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCompatibilityRef" }
+        },
+        "incompatibleWith": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCompatibilityRef" }
+        },
+        "spacing": { "$ref": "#/definitions/PlantSpacingProfile" },
+        "matureSize": {
+          "type": "string",
+          "description": "Shortcut human-readable mature size; prefer spacing.matureSize when structured."
+        },
+        "rootBehavior": { "$ref": "#/definitions/PlantRootBehaviorProfile" },
+        "waterNeedsCompatibility": { "$ref": "#/definitions/PlantWaterNeedsProfile" },
+        "sunPlacementCompatibility": { "$ref": "#/definitions/PlantSunPlacementProfile" },
+        "pestDisease": { "$ref": "#/definitions/PlantPestDiseaseNotes" },
+        "growthRiskFlags": { "$ref": "#/definitions/PlantGrowthRiskFlags" },
+        "soilCompatibility": {
+          "$ref": "#/definitions/PlantSoilCompatibility",
+          "description": "Neighbor/soil interaction context when relevant to existing garden plants."
+        },
+        "allelopathy": { "$ref": "#/definitions/PlantAllelopathyNotes" },
+        "conflictNotes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCatalogVerification": {
+      "type": "object",
+      "description": "Catalog curation and verification state.",
+      "properties": {
+        "needsReview": { "type": "boolean" },
+        "botanicalVerified": { "type": "boolean" },
+        "climateVerified": { "type": "boolean" },
+        "compatibilityVerified": { "type": "boolean" },
+        "engineVersion": { "type": "string" },
+        "reviewedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reviewNotes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "PlantMedia": {
+      "type": "object",
+      "description": "Catalog media assets and image discovery hints.",
+      "properties": {
+        "primaryUrl": { "type": "string", "format": "uri" },
+        "url": { "type": "string", "format": "uri" },
+        "searchQuery": { "type": "string" },
+        "alt": { "type": "string" },
+        "attribution": { "type": "string" },
+        "license": { "type": "string" },
+        "gallery": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "PlantCareTaskTemplate": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "icon": { "type": "string" },
+        "offsetDays": { "type": "number" },
+        "note": { "type": "string" }
+      },
+      "required": ["title"]
+    },
+    "PlantCareSchedule": {
+      "type": "object",
+      "description": "Structured care task templates for catalog-driven task generation.",
+      "properties": {
+        "initialTasks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCareTaskTemplate" }
+        },
+        "tasks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCareTaskTemplate" }
+        },
+        "seasonalNotes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCatalogProductRef": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "desc": { "type": "string" },
+        "sku": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCatalogSource": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string" },
+        "recordId": { "type": "string" },
+        "license": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": true
+    },
+    "PlantCatalogItem": {
+      "type": "object",
+      "description": "Canonical global catalog plant record (v1).",
+      "required": ["schemaVersion", "slug", "names"],
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "names": { "$ref": "#/definitions/LocalizedNames" },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "scientific": { "type": "string" },
+        "taxonomy": { "$ref": "#/definitions/PlantTaxonomy" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "icon": { "type": "string" },
+        "care": { "$ref": "#/definitions/PlantCare" },
+        "climateLabel": {
+          "type": "string",
+          "description": "Human-readable climate fit label (Layer 1; maps to legacy climate field)."
+        },
+        "climateTraits": {
+          "$ref": "#/definitions/PlantClimateTraits",
+          "description": "Layer 1 environment suitability sidecar (v1a top-level field)."
+        },
+        "environmentSuitability": {
+          "$ref": "#/definitions/PlantEnvironmentSuitability",
+          "description": "Optional grouped Layer 1 payload; climateTraits/climateLabel may also appear at top level."
+        },
+        "gardenCompatibility": {
+          "$ref": "#/definitions/PlantGardenCompatibility",
+          "description": "Layer 2 garden compatibility payload."
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              { "$ref": "#/definitions/PlantCatalogProductRef" }
+            ]
+          }
+        },
+        "media": { "$ref": "#/definitions/PlantMedia" },
+        "careSchedule": { "$ref": "#/definitions/PlantCareSchedule" },
+        "verification": { "$ref": "#/definitions/PlantCatalogVerification" },
+        "qualityTier": {
+          "type": "string",
+          "enum": ["draft", "needs_review", "verified", "high", "low"],
+          "description": "Editorial confidence tier for catalog curation."
+        },
+        "source": { "$ref": "#/definitions/PlantCatalogSource" },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PlantCatalogFile": {
+      "type": "object",
+      "required": ["schemaVersion", "plants"],
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "plants": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantCatalogItem" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/definitions/PlantCatalogFile" },
+    { "$ref": "#/definitions/PlantCatalogItem" }
+  ]
+}
