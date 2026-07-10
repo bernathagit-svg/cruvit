@@ -1,4 +1,1446 @@
-{
+﻿{
   "schemaVersion": 1,
-  "plants": []
+  "plants": [
+    {
+      "schemaVersion": 1,
+      "slug": "coconut",
+      "names": { "en": "Coconut Palm", "he": "דקל קוקוס" },
+      "aliases": ["coconut", "coconut palm", "cocos nucifera", "קוקוס", "דקל קוקוס"],
+      "scientific": "Cocos nucifera",
+      "icon": "🥥",
+      "tags": ["palm", "tropical", "fruit", "sun", "coastal"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high; deep watering in heat, excellent drainage",
+        "growth": "Tall tropical palm",
+        "size": "8–30 m depending on climate",
+        "season": "Year-round care in warm climates",
+        "guide": "Coconut palm needs tropical warmth, full sun, wind shelter and well-drained soil. Frost and cold winds quickly damage growth and fruiting."
+      },
+      "climateLabel": "Tropical coastal; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit", "hot-dry-palm"],
+        "hardBlockRules": ["no-small-container"],
+        "survivalVsThriveNotes": "Reliable growth and fruiting need frost-free tropical or subtropical conditions.",
+        "needsReview": true
+      },
+      "warnings": ["Very sensitive to frost and cold winds", "Needs large space at maturity", "Falling coconuts can be hazardous", "Not suited to small gardens long term"],
+      "media": { "searchQuery": "Cocos nucifera coconut palm" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Check drainage and wind exposure", "icon": "🌬️", "offsetDays": 0 },
+          { "title": "Deep water during dry heat", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large palm; 8 m+ height and wide frond spread" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "papaya",
+      "names": { "en": "Papaya", "he": "פפאיה" },
+      "aliases": ["papaya", "pawpaw tree", "carica papaya", "פפאיה", "עץ פפאיה"],
+      "scientific": "Carica papaya",
+      "icon": "🍈",
+      "tags": ["tropical", "fruit", "fast-growing", "edible", "sun"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high; consistent moisture, good drainage",
+        "growth": "Fast-growing soft-stemmed tree",
+        "size": "3–10 m",
+        "season": "Warm-season growth; frost ends outdoor season",
+        "guide": "Papaya needs frost-free warmth, full sun and well-drained soil. Cold or waterlogged roots quickly weaken plants and reduce fruiting."
+      },
+      "climateLabel": "Tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit"],
+        "survivalVsThriveNotes": "May survive brief cool periods in shelter, but reliable fruiting needs sustained tropical warmth.",
+        "needsReview": true
+      },
+      "warnings": ["Killed or set back by frost", "Soft trunk is easily damaged by wind", "Some varieties need separate male and female plants", "Not long-lived in cold or wet soils"],
+      "media": { "searchQuery": "Carica papaya papaya fruit tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Stake young stem if windy", "icon": "🌱", "offsetDays": 0 },
+          { "title": "Water regularly in dry heat", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Medium tree; 3–6 m typical in gardens" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "japanese-maple",
+      "names": { "en": "Japanese Maple", "he": "מייפל יפני" },
+      "aliases": ["japanese maple", "acer palmatum", "אדר יפני", "מייפל יפני", "עץ אדר"],
+      "scientific": "Acer palmatum",
+      "icon": "🍁",
+      "tags": ["ornamental", "deciduous", "shade", "acid-soil", "tree"],
+      "care": {
+        "sun": "Morning sun or dappled shade; protect from hot afternoon sun",
+        "water": "Medium; even moisture, avoid drought stress",
+        "growth": "Slow to moderate ornamental tree",
+        "size": "3–8 m depending on cultivar",
+        "season": "Spring–fall foliage; dormant in winter",
+        "guide": "Japanese maple prefers mild climates, acidic well-drained soil and protection from harsh afternoon sun and drying winds."
+      },
+      "climateLabel": "Temperate; mild summers preferred",
+      "climateTraits": {
+        "heatTolerance": "low",
+        "coldTolerance": "medium",
+        "frostSensitivity": "low",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "morning_sun_part_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["acid-soil-cool-moisture", "cool-season-shade"],
+        "survivalVsThriveNotes": "Can persist in warm gardens with shade and irrigation, but leaf quality declines in sustained heat and alkaline soil.",
+        "needsReview": true
+      },
+      "warnings": ["Scorches in hot dry full sun", "Prefers acidic soil; chlorosis common in alkaline sites", "Sensitive to root disturbance when transplanting", "Wind and late frost can damage new leaves"],
+      "media": { "searchQuery": "Acer palmatum Japanese maple tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Check soil pH and drainage", "icon": "🧪", "offsetDays": 0 },
+          { "title": "Mulch root zone; avoid dry heat stress", "icon": "🍂", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Small tree; 3–5 m typical spread" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "pineapple",
+      "names": { "en": "Pineapple", "he": "אננס" },
+      "aliases": ["pineapple", "ananas comosus", "אננס", "עץ אננס", "פרי אננס"],
+      "scientific": "Ananas comosus",
+      "icon": "🍍",
+      "tags": ["tropical", "fruit", "bromeliad", "sun", "container"],
+      "care": {
+        "sun": "Full sun to bright light",
+        "water": "Medium; allow soil to dry slightly between waterings",
+        "growth": "Rosette bromeliad; fruit from offset",
+        "size": "60–120 cm spread",
+        "season": "Warm-season growth; 18–24 months to fruit",
+        "guide": "Pineapple needs frost-free warmth, bright sun and sharp drainage. Overwatering and cold are the main causes of failure."
+      },
+      "climateLabel": "Tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit"],
+        "survivalVsThriveNotes": "Often grown in pots in subtropical climates; outdoor permanence needs reliable frost-free conditions.",
+        "needsReview": true
+      },
+      "warnings": ["Damaged below about 5 °C", "Slow to fruit; patience required", "Sharp leaf margins can irritate skin", "Rot risk if soil stays wet"],
+      "media": { "searchQuery": "Ananas comosus pineapple plant" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in well-drained mix", "icon": "🪴", "offsetDays": 0 },
+          { "title": "Water when top soil dries", "icon": "💧", "offsetDays": 10 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Rosette; ~1 m spread in ground or large pot" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "dragon-fruit",
+      "names": { "en": "Dragon Fruit", "he": "פיטאיה" },
+      "aliases": ["dragon fruit", "pitaya", "hylocereus", "פיטאיה", "פרי הדרקון"],
+      "scientific": "Hylocereus undatus",
+      "icon": "🐉",
+      "tags": ["tropical", "fruit", "climber", "cactus", "night-bloom"],
+      "care": {
+        "sun": "Full sun with some afternoon shade in extreme heat",
+        "water": "Low to medium; drought-tolerant when established",
+        "growth": "Climbing epiphytic cactus on support",
+        "size": "3–6 m on trellis or post",
+        "season": "Warm-season growth and flowering",
+        "guide": "Dragon fruit needs frost-free warmth, strong support, excellent drainage and pollination help on some varieties."
+      },
+      "climateLabel": "Subtropical–tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun_to_part_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit", "subtropical-fruiting-climber", "support-dependent-plant"],
+        "survivalVsThriveNotes": "Can grow in warm dry climates with irrigation, but fruiting needs warmth, support and often hand pollination.",
+        "needsReview": true
+      },
+      "warnings": ["Frost damages stems quickly", "Requires trellis, fence or post support", "Some varieties need cross-pollination", "Overwatering causes stem rot"],
+      "media": { "searchQuery": "Hylocereus undatus dragon fruit pitaya" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Install sturdy trellis or post", "icon": "🏗️", "offsetDays": 0 },
+          { "title": "Check drainage; water sparingly when cool", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Climber; 3–5 m on support structure" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "plumeria",
+      "names": { "en": "Plumeria", "he": "פלומריה" },
+      "aliases": ["plumeria", "frangipani", "אדנית", "פלומריה", "עץ אדנית"],
+      "scientific": "Plumeria rubra",
+      "icon": "🌸",
+      "tags": ["tropical", "ornamental", "fragrant", "deciduous", "sun"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium when dormant; moderate in active growth",
+        "growth": "Deciduous tropical shrub or small tree",
+        "size": "3–8 m",
+        "season": "Leafless in cool dry season; blooms in warmth",
+        "guide": "Plumeria needs warmth, full sun and excellent drainage. Wet cold soil during dormancy commonly causes rot."
+      },
+      "climateLabel": "Tropical–subtropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["frost-sensitive-ornamental", "warm-climate-ornamental"],
+        "survivalVsThriveNotes": "Can look excellent in warm sheltered gardens; even light frost can defoliate or damage branches.",
+        "needsReview": true
+      },
+      "warnings": ["Sap is irritating to skin and eyes", "Sensitive to frost and wet winter soil", "All parts toxic if ingested", "Slow to recover after cold damage"],
+      "media": { "searchQuery": "Plumeria rubra frangipani flower" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Ensure fast-draining soil", "icon": "🪴", "offsetDays": 0 },
+          { "title": "Reduce watering when leaves drop", "icon": "💧", "offsetDays": 21 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Small tree; 3–6 m with open branching" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "coffee",
+      "names": { "en": "Coffee", "he": "קפה" },
+      "aliases": ["coffee", "coffee arabica", "coffea", "עץ קפה", "קפה"],
+      "scientific": "Coffea arabica",
+      "icon": "☕",
+      "tags": ["tropical", "shrub", "shade", "fruit", "beverage"],
+      "care": {
+        "sun": "Bright filtered light or morning sun; shade from harsh afternoon sun",
+        "water": "Medium to high; consistent moisture, good drainage",
+        "growth": "Evergreen understory shrub",
+        "size": "2–5 m if unpruned",
+        "season": "Year-round in frost-free climates",
+        "guide": "Arabica coffee prefers mild frost-free conditions, dappled light, steady moisture and acidic well-drained soil."
+      },
+      "climateLabel": "Tropical highland; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "high",
+        "sunNeeds": "morning_sun_part_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["humid-subtropical-fruit-tree", "tropical-frost-sensitive-fruit"],
+        "survivalVsThriveNotes": "May grow in warm humid gardens with shade; reliable bean production needs stable mild temperatures without frost.",
+        "needsReview": true
+      },
+      "warnings": ["Frost kills or severely damages plants", "Dislikes alkaline or waterlogged soil", "Full hot sun can scorch leaves", "Indoor or sheltered placement often safer in marginal climates"],
+      "media": { "searchQuery": "Coffea arabica coffee plant shrub" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Place in bright shade or morning sun", "icon": "🌤️", "offsetDays": 0 },
+          { "title": "Keep soil evenly moist, not soggy", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Shrub; 2–4 m with regular pruning" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "kiwi",
+      "names": { "en": "Kiwi", "he": "קיווי" },
+      "aliases": ["kiwi", "kiwifruit", "actinidia deliciosa", "קיווי", "פרי קיווי"],
+      "scientific": "Actinidia deliciosa",
+      "icon": "🥝",
+      "tags": ["fruit", "vine", "climber", "deciduous", "support"],
+      "care": {
+        "sun": "Full sun with good air circulation",
+        "water": "Medium to high during fruit swell; good drainage",
+        "growth": "Vigorous deciduous fruiting vine",
+        "size": "4–9 m on strong trellis",
+        "season": "Dormant in winter; fruits in late summer–autumn",
+        "guide": "Kiwi needs a sturdy trellis, full sun, deep soil and winter chill for reliable flowering. Most varieties need male and female plants."
+      },
+      "climateLabel": "Temperate; needs winter chill",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "medium",
+        "frostSensitivity": "low",
+        "humidityTolerance": "medium",
+        "waterNeeds": "high",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["subtropical-fruiting-climber", "support-dependent-plant", "temperate-chill-fruit-tree"],
+        "survivalVsThriveNotes": "Vine may grow in mild warm sites, but reliable fruiting depends on adequate winter chill and cross-pollination.",
+        "needsReview": true
+      },
+      "warnings": ["Requires trellis or pergola support", "Needs separate male pollinator for most cultivars", "Insufficient chill reduces flowering and fruit", "Vigorous growth can overwhelm small spaces"],
+      "media": { "searchQuery": "Actinidia deliciosa kiwifruit vine" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Install strong trellis before planting", "icon": "🏗️", "offsetDays": 0 },
+          { "title": "Confirm pollination plan (male + female)", "icon": "🌸", "offsetDays": 3 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large vine; 4–8 m on trellis" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "rose",
+      "names": { "en": "Rose", "he": "ורד" },
+      "aliases": ["rose", "garden rose", "rosa", "ורד", "ורד גן"],
+      "scientific": "Rosa spp.",
+      "icon": "🌹",
+      "tags": ["ornamental", "flower", "shrub", "sun", "fragrant"],
+      "care": {
+        "sun": "Full sun; at least 6 hours direct light",
+        "water": "Medium; deep watering, avoid wet foliage overnight",
+        "growth": "Woody flowering shrub",
+        "size": "60 cm–2 m by type",
+        "season": "Repeat bloom in warm seasons; dormant in cold winters",
+        "guide": "Roses need sun, airflow, fertile well-drained soil and regular pruning. Humid stagnant conditions increase disease risk."
+      },
+      "climateLabel": "Temperate to warm; broadly adaptable",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "medium",
+        "frostSensitivity": "medium",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": true,
+        "groupIds": ["mediterranean-patio-flower", "warm-climate-ornamental"],
+        "survivalVsThriveNotes": "Many cultivars adapt widely, but best bloom and lower disease pressure come with sun, airflow and moderate humidity.",
+        "needsReview": true
+      },
+      "warnings": ["Thorns can cause injury", "Susceptible to black spot and aphids in humid shade", "Some cultivars struggle in extreme heat without care", "Petals and stems may irritate sensitive skin"],
+      "media": { "searchQuery": "Rosa garden rose shrub flower" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant with good air circulation", "icon": "🌬️", "offsetDays": 0 },
+          { "title": "Deep water at root zone", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Shrub; 1–1.5 m typical bush form" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "oak-tree",
+      "names": { "en": "Oak", "he": "אלון" },
+      "aliases": ["oak", "oak tree", "quercus", "אלון", "עץ אלון"],
+      "scientific": "Quercus spp.",
+      "icon": "🌳",
+      "tags": ["tree", "deciduous", "shade", "native", "long-lived"],
+      "care": {
+        "sun": "Full sun once established",
+        "water": "Low to medium; drought-tolerant when mature",
+        "growth": "Slow-growing long-lived shade tree",
+        "size": "15–30+ m at maturity",
+        "season": "Deciduous; spring leaf-out, autumn drop",
+        "guide": "Oaks need space, full sun and well-drained soil. Root zone disturbance and compacted soil limit establishment."
+      },
+      "climateLabel": "Temperate; species-dependent",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "high",
+        "frostSensitivity": "low",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": true,
+        "groupIds": ["adaptable-deciduous-fruit-tree"],
+        "survivalVsThriveNotes": "Many oaks are broadly hardy, but mature size and regional species suitability still need local verification.",
+        "needsReview": true
+      },
+      "warnings": ["Far too large for most small gardens", "Deep taproot makes transplanting difficult", "Acorns and leaf litter require management", "Species choice must match local climate"],
+      "media": { "searchQuery": "Quercus oak tree deciduous" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Confirm species suited to local climate", "icon": "📋", "offsetDays": 0 },
+          { "title": "Water deeply during first two dry seasons", "icon": "💧", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large tree; 15 m+ height and wide canopy" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "pine-tree",
+      "names": { "en": "Pine", "he": "אורן" },
+      "aliases": ["pine", "pine tree", "pinus", "אורן", "עץ אורן"],
+      "scientific": "Pinus spp.",
+      "icon": "🌲",
+      "tags": ["conifer", "evergreen", "tree", "sun", "resin"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium; drought-tolerant when established",
+        "growth": "Evergreen conifer; rate varies by species",
+        "size": "10–40+ m depending on species",
+        "season": "Evergreen year-round",
+        "guide": "Pines prefer full sun, well-drained soil and space for mature spread. Species selection is critical for climate fit."
+      },
+      "climateLabel": "Temperate to Mediterranean; species-dependent",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "high",
+        "frostSensitivity": "low",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["warm-dry-structural-shrub", "adaptable-deciduous-fruit-tree"],
+        "survivalVsThriveNotes": "Some pines tolerate heat and drought; others need cooler climates. Local species matching is essential.",
+        "needsReview": true
+      },
+      "warnings": ["Resin and needles can be messy near patios", "Many species outgrow residential lots", "Fire risk consideration in dry regions", "Wrong species choice leads to poor long-term health"],
+      "media": { "searchQuery": "Pinus pine tree evergreen conifer" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Match species to local climate", "icon": "📋", "offsetDays": 0 },
+          { "title": "Water during establishment in dry spells", "icon": "💧", "offsetDays": 10 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large conifer; 10–25 m typical for many species" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "cedar",
+      "names": { "en": "Cedar", "he": "ארז" },
+      "aliases": ["cedar", "cedar tree", "cedrus", "ארז", "עץ ארז"],
+      "scientific": "Cedrus libani",
+      "icon": "🌲",
+      "tags": ["conifer", "evergreen", "tree", "mediterranean", "shade"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium once established",
+        "growth": "Slow-growing majestic conifer",
+        "size": "15–35 m at maturity",
+        "season": "Evergreen year-round",
+        "guide": "True cedars need full sun, deep well-drained soil and room for a wide crown. They dislike wet heavy clay."
+      },
+      "climateLabel": "Mediterranean–mountain; mild winters",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "medium",
+        "frostSensitivity": "low",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["warm-dry-structural-shrub", "humid-sensitive-mediterranean"],
+        "survivalVsThriveNotes": "Lebanon cedar and relatives thrive in sunny dry-summer climates; sustained humidity and wet roots reduce vigor.",
+        "needsReview": true
+      },
+      "warnings": ["Requires very large space at maturity", "Not suitable for small urban gardens", "Heavy branches need structural clearance", "Slow growth means long wait for canopy"],
+      "media": { "searchQuery": "Cedrus libani cedar of Lebanon tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Confirm drainage before planting", "icon": "🧪", "offsetDays": 0 },
+          { "title": "Stake only if needed in windy site", "icon": "🌱", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large tree; 15 m+ with broad horizontal branches" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "cypress",
+      "names": { "en": "Cypress", "he": "ברוש" },
+      "aliases": ["cypress", "cupressus", "ברוש", "ברוש מצוי", "cypress tree"],
+      "scientific": "Cupressus sempervirens",
+      "icon": "🌲",
+      "tags": ["conifer", "evergreen", "tree", "mediterranean", "screen"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium; drought-tolerant when established",
+        "growth": "Upright or columnar evergreen conifer",
+        "size": "10–25 m depending on form",
+        "season": "Evergreen year-round",
+        "guide": "Mediterranean cypress tolerates heat and dry summers with good drainage. Tight spacing without airflow increases disease risk."
+      },
+      "climateLabel": "Mediterranean; heat and drought tolerant",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "medium",
+        "frostSensitivity": "medium",
+        "humidityTolerance": "low",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["humid-sensitive-mediterranean", "warm-dry-structural-shrub"],
+        "survivalVsThriveNotes": "Well suited to hot dry summers with drainage; prolonged humid heat and wet soil reduce performance.",
+        "needsReview": true
+      },
+      "warnings": ["Can outgrow narrow planting spaces", "Root competition near foundations needs planning", "Some regions report cypress canker in wet conditions", "Columnar forms still need height clearance"],
+      "media": { "searchQuery": "Cupressus sempervirens Mediterranean cypress" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Space for mature height and airflow", "icon": "📏", "offsetDays": 0 },
+          { "title": "Deep water during first summer", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Tall narrow tree; 10–20 m depending on cultivar" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "orchid",
+      "names": { "en": "Orchid", "he": "סחלב" },
+      "aliases": ["orchid", "phalaenopsis", "סחלב", "סחלב בית", "orchid flower"],
+      "scientific": "Phalaenopsis spp.",
+      "icon": "🌺",
+      "tags": ["houseplant", "flower", "tropical", "indoor", "epiphyte"],
+      "care": {
+        "sun": "Bright indirect light; no direct midday sun",
+        "water": "Medium; allow roots to approach dryness between waterings",
+        "growth": "Epiphytic flowering houseplant",
+        "size": "30–90 cm including flower spike",
+        "season": "Can bloom year-round indoors with stable conditions",
+        "guide": "Moth orchids need bright indirect light, warm stable temperatures, good airflow and careful watering to avoid root rot."
+      },
+      "climateLabel": "Tropical indoor; sheltered outdoor only in mild climates",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "bright_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-shade-houseplant"],
+        "survivalVsThriveNotes": "Best as indoor or greenhouse plant in most climates; outdoor use only in frost-free humid shade.",
+        "needsReview": true
+      },
+      "warnings": ["Overwatering is the most common failure", "Cold drafts and frost damage flowers and roots", "Direct sun burns leaves quickly", "Repotting timing and medium choice matter"],
+      "media": { "searchQuery": "Phalaenopsis moth orchid flower" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Check light is bright but indirect", "icon": "🌤️", "offsetDays": 0 },
+          { "title": "Water when roots turn silvery dry", "icon": "💧", "offsetDays": 10 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Compact plant; 30–60 cm foliage spread" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "tomato",
+      "names": { "en": "Tomato", "he": "עגבנייה" },
+      "aliases": ["tomato", "solanum lycopersicum", "עגבנייה", "עגבניית שרי", "tomato plant"],
+      "scientific": "Solanum lycopersicum",
+      "icon": "🍅",
+      "tags": ["vegetable", "annual", "sun", "edible", "warm-season"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high; consistent moisture, mulch helps",
+        "growth": "Warm-season annual vine or bush",
+        "size": "60 cm–2 m by type",
+        "season": "Plant after last frost; harvest in warm months",
+        "guide": "Tomatoes need full sun, steady moisture, support for indeterminate types and protection from early cold."
+      },
+      "climateLabel": "Warm-season annual; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "high",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb"],
+        "survivalVsThriveNotes": "Fruiting declines in extreme heat without care; plants die with frost.",
+        "needsReview": true
+      },
+      "warnings": ["Frost kills plants outright", "Irregular watering increases blossom-end rot risk", "Needs staking or cage for many varieties", "Susceptible to blight in humid stagnant air"],
+      "media": { "searchQuery": "Solanum lycopersicum tomato plant fruit" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Install stake or cage at planting", "icon": "🏗️", "offsetDays": 0 },
+          { "title": "Water consistently at soil level", "icon": "💧", "offsetDays": 3 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Bush or vine; 1–1.8 m with support" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "sweet-pepper",
+      "names": { "en": "Sweet Pepper", "he": "פלפל מתוק" },
+      "aliases": ["sweet pepper", "bell pepper", "capsicum", "פלפל", "פלפל מתוק"],
+      "scientific": "Capsicum annuum",
+      "icon": "🫑",
+      "tags": ["vegetable", "annual", "sun", "edible", "warm-season"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium; consistent moisture, avoid waterlogging",
+        "growth": "Warm-season annual bush",
+        "size": "45–90 cm",
+        "season": "Plant after frost; harvest in warm months",
+        "guide": "Sweet peppers need warmth, full sun and steady moisture. Cold soil and frost stop growth and fruit set."
+      },
+      "climateLabel": "Warm-season annual; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb"],
+        "survivalVsThriveNotes": "Needs sustained warm nights for reliable fruit; cool spring weather delays production.",
+        "needsReview": true
+      },
+      "warnings": ["Frost damages or kills plants", "Extreme heat can reduce fruit set", "Do not plant in cold wet soil", "Aphids common on tender new growth"],
+      "media": { "searchQuery": "Capsicum annuum bell pepper plant" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Wait for warm soil before planting", "icon": "🌡️", "offsetDays": 0 },
+          { "title": "Water evenly; avoid drought stress", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Bush; 60–90 cm wide" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "eggplant",
+      "names": { "en": "Eggplant", "he": "חציל" },
+      "aliases": ["eggplant", "aubergine", "solanum melongena", "חציל", "חצילון"],
+      "scientific": "Solanum melongena",
+      "icon": "🍆",
+      "tags": ["vegetable", "annual", "sun", "edible", "warm-season"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high; consistent moisture",
+        "growth": "Warm-season annual subshrub",
+        "size": "60–120 cm",
+        "season": "Plant after frost; harvest in hot months",
+        "guide": "Eggplant needs heat, full sun and fertile well-drained soil. Cool weather slows growth and reduces fruit quality."
+      },
+      "climateLabel": "Warm-season annual; heat-loving",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb"],
+        "survivalVsThriveNotes": "Performs best with sustained summer heat; cool nights below about 10 °C stall development.",
+        "needsReview": true
+      },
+      "warnings": ["Very sensitive to frost and cold soil", "Colorado potato beetle and aphids may appear", "Needs warmth for continuous harvest", "Heavy fruit loads may require staking"],
+      "media": { "searchQuery": "Solanum melongena eggplant aubergine" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in warmest sunny spot", "icon": "☀️", "offsetDays": 0 },
+          { "title": "Mulch to retain even soil moisture", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Subshrub; 80–120 cm tall" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "cucumber",
+      "names": { "en": "Cucumber", "he": "מלפפון" },
+      "aliases": ["cucumber", "cucumis sativus", "מלפפון", "מלפפון ירוק", "cucumber vine"],
+      "scientific": "Cucumis sativus",
+      "icon": "🥒",
+      "tags": ["vegetable", "annual", "vine", "sun", "warm-season"],
+      "care": {
+        "sun": "Full sun",
+        "water": "High; consistent moisture critical",
+        "growth": "Fast warm-season climbing vine",
+        "size": "1–3 m on trellis",
+        "season": "Plant after frost; harvest in warm months",
+        "guide": "Cucumbers need warmth, full sun, steady water and trellis support for cleaner fruit and airflow."
+      },
+      "climateLabel": "Warm-season annual; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "high",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb", "support-dependent-plant"],
+        "survivalVsThriveNotes": "Quick to fail in cold; fruit bitterness and pollination issues rise with heat stress and drought.",
+        "needsReview": true
+      },
+      "warnings": ["Frost kills vines immediately", "Powdery mildew in crowded humid plantings", "Needs pollination for most varieties", "Inconsistent watering causes bitter or misshapen fruit"],
+      "media": { "searchQuery": "Cucumis sativus cucumber vine vegetable" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Set up trellis or netting", "icon": "🏗️", "offsetDays": 0 },
+          { "title": "Water daily in hot dry weather", "icon": "💧", "offsetDays": 2 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Vine; 2–3 m on trellis" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "sunflower",
+      "names": { "en": "Sunflower", "he": "חמניה" },
+      "aliases": ["sunflower", "helianthus annuus", "חמניה", "חמניה ענקית", "sunflower plant"],
+      "scientific": "Helianthus annuus",
+      "icon": "🌻",
+      "tags": ["annual", "flower", "sun", "pollinator", "edible-seed"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium; drought-tolerant once established",
+        "growth": "Fast annual; single or branching forms",
+        "size": "1–3+ m depending on cultivar",
+        "season": "Warm-season sowing and bloom",
+        "guide": "Sunflowers need full sun, reasonably fertile soil and wind protection for tall types. Direct sow after soil warms."
+      },
+      "climateLabel": "Warm-season annual; full sun",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb"],
+        "survivalVsThriveNotes": "Easy in warm sunny sites; tall types need staking in wind.",
+        "needsReview": true
+      },
+      "warnings": ["Tall cultivars may need staking in wind", "Birds and squirrels eat ripening seed heads", "Frost ends the season", "Root disturbance limits transplant success"],
+      "media": { "searchQuery": "Helianthus annuus sunflower flower" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Sow or plant in full sun after frost", "icon": "☀️", "offsetDays": 0 },
+          { "title": "Stake tall varieties if windy", "icon": "🌱", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Annual; 1.5–3 m height for many cultivars" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "lemongrass",
+      "names": { "en": "Lemongrass", "he": "עשב לימון" },
+      "aliases": ["lemongrass", "cymbopogon citratus", "עשב לימון", "limon grass", "lemongrass herb"],
+      "scientific": "Cymbopogon citratus",
+      "icon": "🌿",
+      "tags": ["herb", "tropical", "culinary", "sun", "grass"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high in active growth",
+        "growth": "Clumping tropical grass",
+        "size": "90–150 cm",
+        "season": "Active in warm months; dies back with frost",
+        "guide": "Lemongrass needs heat, full sun and regular moisture. Treat as annual or container plant where frost occurs."
+      },
+      "climateLabel": "Tropical–subtropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb"],
+        "survivalVsThriveNotes": "Grows vigorously in frost-free warmth; overwinter indoors or accept annual replanting in cold climates.",
+        "needsReview": true
+      },
+      "warnings": ["Frost kills foliage to ground or entire plant", "Sharp leaf edges can cut skin", "Can spread into large clumps", "Container size limits vigor in cool climates"],
+      "media": { "searchQuery": "Cymbopogon citratus lemongrass herb" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in sunniest warm spot", "icon": "☀️", "offsetDays": 0 },
+          { "title": "Divide or trim old clumps in spring", "icon": "✂️", "offsetDays": 30 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Clump; 1–1.5 m tall and wide" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "ginger",
+      "names": { "en": "Ginger", "he": "זנגביל" },
+      "aliases": ["ginger", "zingiber officinale", "זנגביל", "ג'ינג'ר", "ginger root"],
+      "scientific": "Zingiber officinale",
+      "icon": "🫚",
+      "tags": ["herb", "tropical", "rhizome", "shade", "culinary"],
+      "care": {
+        "sun": "Partial shade to filtered light",
+        "water": "Medium to high; consistent moisture, rich soil",
+        "growth": "Upright tropical rhizome crop",
+        "size": "60–120 cm",
+        "season": "Warm-season growth; dormant in cool dry season",
+        "guide": "Ginger needs warmth, filtered light, steady moisture and loose organic soil. Frost damages rhizomes and foliage."
+      },
+      "climateLabel": "Tropical–subtropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "high",
+        "sunNeeds": "morning_sun_part_shade",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-season-tender-herb", "adaptable-moist-herb"],
+        "survivalVsThriveNotes": "Rhizomes develop best in long warm seasons; cool climates need pots or seasonal harvest before frost.",
+        "needsReview": true
+      },
+      "warnings": ["Frost damages or kills tops and rhizomes", "Rot in waterlogged soil", "Needs long frost-free season for sizable harvest", "Partial shade required; full hot sun scorches leaves"],
+      "media": { "searchQuery": "Zingiber officinale ginger rhizome plant" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant rhizome shallow in rich moist soil", "icon": "🪴", "offsetDays": 0 },
+          { "title": "Keep soil consistently moist in growth", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Upright clump; 80–120 cm" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "moringa",
+      "names": { "en": "Moringa", "he": "מורינגה" },
+      "aliases": ["moringa", "drumstick tree", "moringa oleifera", "מורינגה", "עץ מורינגה"],
+      "scientific": "Moringa oleifera",
+      "icon": "🌿",
+      "tags": ["tropical", "tree", "edible", "fast-growing", "drought-tolerant"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium once established",
+        "growth": "Fast-growing drought-tolerant tree",
+        "size": "3–12 m",
+        "season": "Year-round in frost-free climates",
+        "guide": "Moringa needs frost-free warmth, full sun and sharp drainage. It tolerates dry heat but grows fast with occasional deep watering."
+      },
+      "climateLabel": "Tropical–subtropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit", "warm-climate-ornamental"],
+        "survivalVsThriveNotes": "Can resprout after light frost in some sites, but reliable leaf and pod production need frost-free heat.",
+        "needsReview": true
+      },
+      "warnings": ["Hard frost kills or severely cuts back trees", "Very fast growth needs space and pruning", "Roots and pods used as food require proper preparation", "Can look weedy if not maintained"],
+      "media": { "searchQuery": "Moringa oleifera drumstick tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in full sun with drainage", "icon": "☀️", "offsetDays": 0 },
+          { "title": "Prune to manage height if needed", "icon": "✂️", "offsetDays": 60 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Small tree; 4–8 m with pruning" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "cherimoya",
+      "names": { "en": "Cherimoya", "he": "צ'רימויה" },
+      "aliases": ["cherimoya", "custard apple", "annona cherimola", "צ'רימויה", "annona"],
+      "scientific": "Annona cherimola",
+      "icon": "🍈",
+      "tags": ["subtropical", "fruit", "tree", "deciduous", "hand-pollination"],
+      "care": {
+        "sun": "Full sun to light afternoon shade in hot areas",
+        "water": "Medium; deep watering, avoid soggy soil",
+        "growth": "Deciduous subtropical fruit tree",
+        "size": "5–9 m",
+        "season": "Dormant in cool season; fruits in warm months",
+        "guide": "Cherimoya needs frost-free mild climates, good drainage and often hand pollination for reliable fruit in home gardens."
+      },
+      "climateLabel": "Subtropical highland; mild frost sensitivity",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun_to_part_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["humid-subtropical-fruit-tree", "tropical-frost-sensitive-fruit"],
+        "survivalVsThriveNotes": "Needs cool winters without hard freeze and warm frost-free summers; fruiting often needs pollination help.",
+        "needsReview": true
+      },
+      "warnings": ["Hard frost damages branches and fruit set", "Hand pollination often needed for fruit", "Sensitive to root disturbance", "Heat waves without irrigation stress trees"],
+      "media": { "searchQuery": "Annona cherimola cherimoya custard apple" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Check frost protection plan for winter", "icon": "🌡️", "offsetDays": 0 },
+          { "title": "Hand pollinate flowers if fruit fails", "icon": "🌸", "offsetDays": 30 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Medium tree; 5–7 m with spreading crown" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "starfruit",
+      "names": { "en": "Starfruit", "he": "קרמבולה" },
+      "aliases": ["starfruit", "carambola", "averrhoa carambola", "קרמבולה", "פרי כוכב"],
+      "scientific": "Averrhoa carambola",
+      "icon": "⭐",
+      "tags": ["tropical", "fruit", "tree", "sun", "evergreen"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high; consistent moisture, good drainage",
+        "growth": "Evergreen tropical fruit tree",
+        "size": "4–9 m",
+        "season": "Can fruit year-round in frost-free climates",
+        "guide": "Starfruit needs frost-free warmth, full sun and regular water. Kidney issues make fruit consumption unsafe for some people."
+      },
+      "climateLabel": "Tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit", "humid-subtropical-fruit-tree"],
+        "survivalVsThriveNotes": "Thrives in humid frost-free climates; brief cold snaps defoliate trees and reduce fruiting.",
+        "needsReview": true
+      },
+      "warnings": ["Unsafe for people with kidney problems", "Frost damages leaves and branches", "Wind can scar fruit on exposed sites", "Needs space for spreading canopy"],
+      "media": { "searchQuery": "Averrhoa carambola starfruit carambola" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in sheltered frost-free spot", "icon": "🌡️", "offsetDays": 0 },
+          { "title": "Water regularly during fruit development", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Small tree; 4–6 m typical" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "jackfruit",
+      "names": { "en": "Jackfruit", "he": "ג'קפירit" },
+      "aliases": ["jackfruit", "artocarpus heterophyllus", "ג'קפירit", "jack fruit", "פרי ג'קפירit"],
+      "scientific": "Artocarpus heterophyllus",
+      "icon": "🍈",
+      "tags": ["tropical", "fruit", "tree", "large", "evergreen"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Medium to high when young; moderate when established",
+        "growth": "Large evergreen tropical tree",
+        "size": "10–20 m",
+        "season": "Year-round in frost-free tropics",
+        "guide": "Jackfruit needs frost-free tropical warmth, full sun, deep soil and substantial space. Fruit are very heavy."
+      },
+      "climateLabel": "Tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-frost-sensitive-fruit", "humid-subtropical-fruit-tree"],
+        "survivalVsThriveNotes": "Only suitable where frost is rare and space is ample; home gardens often struggle with size and fruit weight.",
+        "needsReview": true
+      },
+      "warnings": ["Extremely large tree for most gardens", "Individual fruits can weigh many kilograms", "Frost kills or severely damages young trees", "Sticky latex when harvesting fruit"],
+      "media": { "searchQuery": "Artocarpus heterophyllus jackfruit tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Confirm long-term space before planting", "icon": "📏", "offsetDays": 0 },
+          { "title": "Support young trunk; protect from wind", "icon": "🌱", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Very large tree; 10 m+ height and spread" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "rambutan",
+      "names": { "en": "Rambutan", "he": "רמבוטן" },
+      "aliases": ["rambutan", "nephelium lappaceum", "רמבוטן", "rambutan fruit", "nephelium"],
+      "scientific": "Nephelium lappaceum",
+      "icon": "🔴",
+      "tags": ["tropical", "fruit", "tree", "humid", "evergreen"],
+      "care": {
+        "sun": "Full sun to partial shade when young",
+        "water": "High; consistent humidity and moisture",
+        "growth": "Evergreen tropical fruit tree",
+        "size": "12–25 m in ideal conditions",
+        "season": "Fruiting in warm humid seasons",
+        "guide": "Rambutan needs high humidity, frost-free warmth, regular water and protection from dry winds."
+      },
+      "climateLabel": "Humid tropical; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "high",
+        "sunNeeds": "full_sun_to_part_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["humid-subtropical-fruit-tree", "tropical-frost-sensitive-fruit"],
+        "survivalVsThriveNotes": "Narrow climate niche: humid tropics without frost; dry or cool climates rarely support reliable fruiting.",
+        "needsReview": true
+      },
+      "warnings": ["Will not fruit in dry or cool climates", "Frost is fatal or severely damaging", "Needs cross-pollination for best yields", "Large tree unsuitable for small plots"],
+      "media": { "searchQuery": "Nephelium lappaceum rambutan tropical fruit" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Maintain humidity and regular watering", "icon": "💧", "offsetDays": 0 },
+          { "title": "Mulch roots; protect from dry wind", "icon": "🌬️", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Large tree; 10–15 m in tropical gardens" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "pistachio",
+      "names": { "en": "Pistachio", "he": "פיסטוק" },
+      "aliases": ["pistachio", "pistacia vera", "פיסטוק", "עץ פיסטוק", "pistachio tree"],
+      "scientific": "Pistacia vera",
+      "icon": "🥜",
+      "tags": ["nut", "tree", "deciduous", "drought-tolerant", "orchard"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium; deep infrequent irrigation",
+        "growth": "Slow-growing deciduous nut tree",
+        "size": "6–10 m",
+        "season": "Dormant in winter; harvest in late summer–autumn",
+        "guide": "Pistachio needs hot dry summers, cold winters, excellent drainage and both male and female trees for nut production."
+      },
+      "climateLabel": "Hot dry summer; cold winter required",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "medium",
+        "frostSensitivity": "medium",
+        "humidityTolerance": "low",
+        "waterNeeds": "low",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["warm-dry-mediterranean-fruit", "temperate-chill-fruit-tree"],
+        "survivalVsThriveNotes": "Reliable nut production needs winter chill, hot dry ripening season and a compatible pollinator tree.",
+        "needsReview": true
+      },
+      "warnings": ["Requires male and female trees for nuts", "Insufficient winter chill prevents good crops", "Humid climates increase disease pressure", "Slow to bear; multi-year establishment"],
+      "media": { "searchQuery": "Pistacia vera pistachio nut tree" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plan pollinator pairing before planting", "icon": "🌸", "offsetDays": 0 },
+          { "title": "Avoid overwatering; ensure drainage", "icon": "💧", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Medium tree; 6–8 m at maturity" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "almond",
+      "names": { "en": "Almond", "he": "שקד" },
+      "aliases": ["almond", "prunus dulcis", "שקד", "עץ שקד", "almond tree"],
+      "scientific": "Prunus dulcis",
+      "icon": "🌸",
+      "tags": ["nut", "tree", "deciduous", "spring-bloom", "orchard"],
+      "care": {
+        "sun": "Full sun",
+        "water": "Low to medium; drought-tolerant when established",
+        "growth": "Deciduous nut tree",
+        "size": "4–8 m",
+        "season": "Blooms early spring; nuts mature in summer",
+        "guide": "Almonds need full sun, good drainage, winter chill and protection from late frost that can damage early blooms."
+      },
+      "climateLabel": "Mediterranean; winter chill needed",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "medium",
+        "frostSensitivity": "medium",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "full_sun",
+        "drainageNeeds": "high",
+        "needsWinterChill": true,
+        "groupIds": ["warm-dry-mediterranean-fruit", "temperate-chill-fruit-tree"],
+        "survivalVsThriveNotes": "Trees may grow in mild climates, but reliable nut set depends on adequate chill and dry ripening conditions.",
+        "needsReview": true
+      },
+      "warnings": ["Early bloom vulnerable to late frost", "Some varieties need cross-pollination", "Bitter almonds contain toxic compounds if mishandled", "Leaf curl and shot hole in wet springs"],
+      "media": { "searchQuery": "Prunus dulcis almond tree blossom" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Choose late-blooming cultivar if frost-prone", "icon": "🌡️", "offsetDays": 0 },
+          { "title": "Deep water during nut fill in dry spells", "icon": "💧", "offsetDays": 21 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Small tree; 4–6 m typical" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "zz-plant",
+      "names": { "en": "ZZ Plant", "he": "זamioculcas" },
+      "aliases": ["zz plant", "zamioculcas zamiifolia", "זamioculcas", "zz", "zanzibar gem"],
+      "scientific": "Zamioculcas zamiifolia",
+      "icon": "🌿",
+      "tags": ["houseplant", "succulent", "shade", "low-water", "indoor"],
+      "care": {
+        "sun": "Low to bright indirect light",
+        "water": "Low; allow soil to dry thoroughly between waterings",
+        "growth": "Slow rhizomatous evergreen houseplant",
+        "size": "60–120 cm",
+        "season": "Year-round indoors; slow growth",
+        "guide": "ZZ plant tolerates low light and infrequent watering. Overwatering causes rhizome rot; all parts are toxic if ingested."
+      },
+      "climateLabel": "Tropical indoor; low light tolerant",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "low",
+        "sunNeeds": "bright_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["dry-succulent-ornamental", "tropical-shade-houseplant", "pet-child-caution"],
+        "survivalVsThriveNotes": "Excellent indoor plant; outdoor use only in frost-free shade with sharp drainage.",
+        "needsReview": true
+      },
+      "warnings": ["All parts toxic to pets and humans if ingested", "Overwatering is the main killer", "Frost damages foliage outdoors", "Sap may irritate skin"],
+      "media": { "searchQuery": "Zamioculcas zamiifolia ZZ plant" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Use pot with drainage; avoid overwatering", "icon": "💧", "offsetDays": 0 },
+          { "title": "Wipe leaves for light dust buildup", "icon": "🧽", "offsetDays": 30 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Upright clump; 60–90 cm indoors" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "fiddle-leaf-fig",
+      "names": { "en": "Fiddle Leaf Fig", "he": "עץ כינור" },
+      "aliases": ["fiddle leaf fig", "ficus lyrata", "עץ פicus", "עץ כינור", "fiddle-leaf fig"],
+      "scientific": "Ficus lyrata",
+      "icon": "🪴",
+      "tags": ["houseplant", "tree", "indoor", "foliage", "bright-light"],
+      "care": {
+        "sun": "Bright indirect light; some morning sun OK",
+        "water": "Medium; water when top soil dries",
+        "growth": "Upright woody houseplant or patio tree",
+        "size": "1–3 m indoors; larger outdoors in tropics",
+        "season": "Year-round growth in stable warm conditions",
+        "guide": "Fiddle leaf fig needs bright stable light, careful watering and protection from drafts and cold. Leaf drop follows sudden changes."
+      },
+      "climateLabel": "Tropical indoor; bright indirect light",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "medium",
+        "waterNeeds": "medium",
+        "sunNeeds": "bright_shade",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["tropical-shade-houseplant"],
+        "survivalVsThriveNotes": "Best as indoor focal plant; outdoor only in frost-free bright shade with stable conditions.",
+        "needsReview": true
+      },
+      "warnings": ["Sensitive to cold drafts and relocation shock", "Overwatering causes root rot", "Sap irritating; toxic if ingested", "Large leaves collect dust; needs space"],
+      "media": { "searchQuery": "Ficus lyrata fiddle leaf fig houseplant" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Place in bright stable spot; avoid drafts", "icon": "🌤️", "offsetDays": 0 },
+          { "title": "Water when top 3–5 cm soil is dry", "icon": "💧", "offsetDays": 7 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Indoor tree; 1.5–2.5 m with time" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "snake-plant",
+      "names": { "en": "Snake Plant", "he": "לשון חמות" },
+      "aliases": ["snake plant", "sansevieria", "sansevieria trifasciata", "לשון חמות", "mother-in-law tongue"],
+      "scientific": "Dracaena trifasciata",
+      "icon": "🌱",
+      "tags": ["houseplant", "succulent", "low-water", "indoor", "hardy"],
+      "care": {
+        "sun": "Low to bright indirect light",
+        "water": "Low; allow soil to dry completely between waterings",
+        "growth": "Slow rhizomatous succulent rosettes",
+        "size": "30–120 cm depending on variety",
+        "season": "Year-round; very slow growth",
+        "guide": "Snake plant tolerates low light and drought. Overwatering and cold wet soil are the primary failure modes."
+      },
+      "climateLabel": "Indoor succulent; frost-sensitive",
+      "climateTraits": {
+        "heatTolerance": "high",
+        "coldTolerance": "low",
+        "frostSensitivity": "medium",
+        "humidityTolerance": "low",
+        "waterNeeds": "low",
+        "sunNeeds": "bright_shade",
+        "drainageNeeds": "high",
+        "needsWinterChill": false,
+        "groupIds": ["dry-succulent-ornamental", "tropical-shade-houseplant"],
+        "survivalVsThriveNotes": "Very forgiving indoors; outdoor planting only in frost-free dry shade.",
+        "needsReview": true
+      },
+      "warnings": ["Toxic to pets if chewed", "Overwatering causes rapid rot", "Cold wet soil damages roots", "Sharp leaf tips in tight walkways"],
+      "media": { "searchQuery": "Dracaena trifasciata snake plant sansevieria" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Plant in fast-draining mix", "icon": "🪴", "offsetDays": 0 },
+          { "title": "Wait until soil is fully dry to water", "icon": "💧", "offsetDays": 14 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Clump; 60–90 cm typical indoors" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    },
+    {
+      "schemaVersion": 1,
+      "slug": "areca-palm",
+      "names": { "en": "Areca Palm", "he": "דקל areca" },
+      "aliases": ["areca palm", "dypsis lutescens", "דקל areca", "butterfly palm", "golden cane palm"],
+      "scientific": "Dypsis lutescens",
+      "icon": "🌴",
+      "tags": ["palm", "houseplant", "tropical", "shade", "cluster"],
+      "care": {
+        "sun": "Bright indirect light; avoid harsh midday sun indoors",
+        "water": "Medium; keep evenly moist but not soggy",
+        "growth": "Clumping feather palm",
+        "size": "2–6 m outdoors; 1.5–2.5 m indoors",
+        "season": "Year-round in stable warmth",
+        "guide": "Areca palm needs bright indirect light, consistent moisture and humidity. Cold drafts and fluoride in tap water can brown tips."
+      },
+      "climateLabel": "Tropical; frost-sensitive palm",
+      "climateTraits": {
+        "heatTolerance": "medium",
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "humidityTolerance": "high",
+        "waterNeeds": "medium",
+        "sunNeeds": "bright_shade",
+        "drainageNeeds": "medium",
+        "needsWinterChill": false,
+        "groupIds": ["warm-climate-palm", "tropical-shade-houseplant"],
+        "survivalVsThriveNotes": "Popular indoor palm in bright rooms; outdoor use in frost-free humid shade only.",
+        "needsReview": true
+      },
+      "warnings": ["Frost damages fronds quickly", "Brown leaf tips from dry air or fluoride", "Needs space for multiple stems", "Spider mites in hot dry indoor air"],
+      "media": { "searchQuery": "Dypsis lutescens areca palm butterfly palm" },
+      "careSchedule": {
+        "initialTasks": [
+          { "title": "Provide bright indirect light and humidity", "icon": "💨", "offsetDays": 0 },
+          { "title": "Water when top soil begins to dry", "icon": "💧", "offsetDays": 5 }
+        ],
+        "needsReview": true
+      },
+      "gardenCompatibility": { "needsReview": true, "spacing": { "matureSize": "Clumping palm; 2–3 m indoors, wider outdoors" } },
+      "verification": { "needsReview": true },
+      "qualityTier": "needs_review",
+      "source": { "provider": "cruvit-seed-v1b" },
+      "updatedAt": "2026-07-10T12:00:00.000Z"
+    }
+  ]
 }
