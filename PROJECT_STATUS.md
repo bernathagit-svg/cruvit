@@ -109,7 +109,7 @@ Files: <list of files>
 
 Do not build isolated modules or jump to Garden Design redesign too early. The hard-to-copy value is **connected user garden data**:
 
-location · climate · personal plant library · photos · tasks · diagnosis · recommendations · design selections · wishlist · purchases
+location · climate · personal plant library · photos · tasks · diagnosis · recommendations · design selections · wishlist · purchases · **product outcome memory**
 
 Every roadmap phase should strengthen that shared garden data layer before expanding module-specific UI.
 
@@ -150,7 +150,82 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **9–10 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality.
 - **11 — Garden Design visual upgrade:** plant visuals only; not full Studio redesign.
 - **12 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
+- **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
+
+---
+
+# Product Commerce & Treatment Calendar Plan
+
+**Principle:** Products in CRUVIT must **not** be recommended randomly. Every product recommendation must be connected to:
+
+- a specific **plant** (`plantId` / `profileSlug`)
+- a specific **care need** / **`treatmentId`**
+- **correct timing** (purchase/preparation lead time before use window)
+- a **purchase/preparation task**
+- a **use/application task**
+- **outcome feedback** after use
+
+Schema foundation (committed `416fc78`): `PlantTreatmentDefinition`, linked `purchaseTaskId` / `useTaskId`, `purchaseLeadDays` / `leadDays`, `PlantTreatmentOutcomeFeedbackSpec`, and `onNegativeOutcome` placeholders in `data/plant-catalog.schema.json`. Runtime wiring is future work.
+
+## User Product Outcome Memory (planned)
+
+Per-user memory of how products performed — **not global**. A product that failed for one user may still be valid for others.
+
+### Negative outcome rule
+
+If a product was **not good** for a specific user, CRUVIT must **not** recommend that same product to that user again in the same or similar relevant context.
+
+**Track (per user):**
+
+| Field | Purpose |
+|-------|---------|
+| `userId` | Owner of the memory |
+| `productId` / `shopifyProductId` / `variantId` | Product identity |
+| `treatmentId` / `careNeed` | Linked care need |
+| `plantId` / `profileSlug` | Linked plant instance or profile |
+| plant group | When scope applies to a group |
+| condition / diagnosis | When Plant Doctor context applies |
+| `outcome` | `didNotHelp` · `worsened` · `badFit` · `userRejected` · `qualityIssue` |
+| reason / notes | Optional user or system note |
+| `doNotRecommendAgain` | `true` when exclusion applies |
+| `createdAt` / `updatedAt` | Audit |
+| `scope` | `same_plant` · `same_treatment` · `same_plant_group` · `user_global` (when appropriate) |
+
+**Recommendation rule:** Before showing a product, check the user's outcome/exclusion history. If the product is marked `doNotRecommendAgain` for that user and scope, **do not** show it as the main recommendation — suggest **alternative products for the same care need** instead.
+
+### Positive outcome rule
+
+If a product was marked **excellent/helpful** by a specific user, CRUVIT should **prefer** that product for that same user in future similar situations.
+
+**Track (per user):**
+
+| Field | Purpose |
+|-------|---------|
+| `outcome` | `excellent` · `helped` · `userPrefers` · `repeatRecommended` |
+| `helpedScore` / `satisfactionScore` | When available |
+| `repeatRecommendationPreferred` | `true` when user wants repeats |
+| related `productId` / `shopifyProductId` / `variantId` | Product identity |
+| related `treatmentId` / `careNeed` | Linked care need |
+| related `plantId` / `profileSlug` | Linked plant |
+| related plant group | Group scope |
+| related condition / diagnosis | Diagnosis context |
+| `createdAt` / `updatedAt` | Audit |
+| `scope` | `same_plant` · `same_treatment` · `same_plant_group` · `user_global` (when appropriate) |
+
+**Recommendation rule:** Before showing a product, check positive outcome history. If the product was previously excellent/helpful for this user and the current care need is similar, **increase its recommendation priority** for that user.
+
+### Safeguards (all product commerce)
+
+- Do **not** recommend products randomly.
+- Do **not** recommend a product if there is **no current care need** / active `treatmentId`.
+- Still respect **safety**, **timing**, **plant condition**, **environment**, **stock/availability**, and **user preferences**.
+- Do **not** fake reviews or product outcomes.
+- If **real reviews** exist → show ratings/comments.
+- If **no reviews** exist → show **“No user reviews yet”**.
+- If the user **does not want** the suggested product → offer **alternative products for the same care need**.
+
+**Implementation order (planned):** Treatment Calendar task runtime → outcome feedback capture on garden `data` → User Product Outcome Memory store → recommendation gate before Shop/care UI → Shopify Smart Connection (phase 13).
 
 ---
 
@@ -171,7 +246,7 @@ Legacy buckets retained for quick scanning. See numbered roadmap above for execu
 - Wishlist (Plant Library status/filter)
 
 ## Low
-- Shopify Smart Connection
+- Shopify Smart Connection (includes User Product Outcome Memory)
 - Garden Design Studio 2.0
 - AI Garden Coach
 
