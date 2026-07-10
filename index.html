@@ -599,8 +599,70 @@ function mergePlantCatalogItems(items){
   return {added,skipped};
 }
 
+/* ── Global Plant Catalog Foundation v1c: non-blocking seed loader ── */
+const plantCatalogSeedStatus={
+  status:'idle',
+  added:[],
+  skipped:[],
+  error:null,
+  loadedAt:null,
+  source:'data/plants.seed.json'
+};
+let plantCatalogSeedLoadPromise=null;
+
+function getPlantCatalogSeedStatus(){
+  return {
+    status:plantCatalogSeedStatus.status,
+    added:plantCatalogSeedStatus.added.slice(),
+    skipped:plantCatalogSeedStatus.skipped.slice(),
+    error:plantCatalogSeedStatus.error,
+    loadedAt:plantCatalogSeedStatus.loadedAt,
+    source:plantCatalogSeedStatus.source
+  };
+}
+
+async function loadPlantCatalogSeed(url){
+  const seedUrl=String(url||plantCatalogSeedStatus.source||'data/plants.seed.json').trim()||'data/plants.seed.json';
+  if(plantCatalogSeedStatus.status==='ready'){
+    return {ok:true,added:plantCatalogSeedStatus.added.slice(),skipped:plantCatalogSeedStatus.skipped.slice(),status:plantCatalogSeedStatus};
+  }
+  if(plantCatalogSeedStatus.status==='loading'&&plantCatalogSeedLoadPromise){
+    return plantCatalogSeedLoadPromise;
+  }
+  plantCatalogSeedStatus.status='loading';
+  plantCatalogSeedStatus.error=null;
+  plantCatalogSeedStatus.source=seedUrl;
+  plantCatalogSeedLoadPromise=(async()=>{
+    try{
+      const res=typeof fetchWithTimeout==='function'
+        ? await fetchWithTimeout(seedUrl,{},9000)
+        : await fetch(seedUrl);
+      if(!res.ok) throw new Error('Plant catalog seed fetch failed: HTTP '+res.status);
+      const json=await res.json();
+      if(!json||typeof json!=='object') throw new Error('Plant catalog seed invalid: root object');
+      if(json.schemaVersion!==1) throw new Error('Plant catalog seed invalid: schemaVersion');
+      if(!Array.isArray(json.plants)) throw new Error('Plant catalog seed invalid: plants array');
+      const mergeResult=mergePlantCatalogItems(json.plants);
+      plantCatalogSeedStatus.status='ready';
+      plantCatalogSeedStatus.added=mergeResult.added.slice();
+      plantCatalogSeedStatus.skipped=mergeResult.skipped.slice();
+      plantCatalogSeedStatus.loadedAt=new Date().toISOString();
+      plantCatalogSeedStatus.error=null;
+      return {ok:true,added:mergeResult.added,skipped:mergeResult.skipped,status:plantCatalogSeedStatus};
+    }catch(err){
+      plantCatalogSeedStatus.status='error';
+      plantCatalogSeedStatus.error=String(err&&(err.message||err)||'Plant catalog seed load failed');
+      return {ok:false,added:[],skipped:[],error:plantCatalogSeedStatus.error,status:plantCatalogSeedStatus};
+    }
+  })();
+  return plantCatalogSeedLoadPromise;
+}
+
 window.catalogItemToLegacyFlat=catalogItemToLegacyFlat;
 window.mergePlantCatalogItems=mergePlantCatalogItems;
+window.plantCatalogSeedStatus=plantCatalogSeedStatus;
+window.loadPlantCatalogSeed=loadPlantCatalogSeed;
+window.getPlantCatalogSeedStatus=getPlantCatalogSeedStatus;
 
 function smartRecUniqueValues(values){
   return [...new Set((values||[]).flat().filter(Boolean))];
@@ -6336,6 +6398,7 @@ applyAppLanguageToDocument(getAppLanguage());
 initAppLanguageControl();
 initAppLocationControl();
 initEntryScreen();
+loadPlantCatalogSeed().catch(err=>console.warn('Plant catalog seed preload skipped:',err&&err.message?err.message:err));
 loadPlantIdentifierScript()
   .then(()=>initPlantIdentifierModule())
   .catch(err=>console.warn('Plant identifier preload skipped:',err&&err.message?err.message:err));
