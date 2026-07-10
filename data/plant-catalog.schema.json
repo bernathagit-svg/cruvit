@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://cruvit.app/schemas/plant-catalog/v1",
   "title": "Cruvit Plant Catalog",
-  "description": "Global plant catalog container and PlantCatalogItem v1 definitions for Cruvit. Supports two future suitability layers: (1) Environment Suitability — plant vs user location/climate/environment; (2) Garden Compatibility — plant vs plants already in the user's garden.",
+  "description": "Global plant catalog container and PlantCatalogItem v1 definitions for Cruvit. Supports two future suitability layers: (1) Environment Suitability — plant vs user location/climate/environment; (2) Garden Compatibility — plant vs plants already in the user's garden. careSchedule also models Treatment Calendar templates: purchase/preparation tasks ahead of application tasks (e.g. leadDays ~30 before use), linked product requirements, and post-application outcome feedback placeholders.",
   "definitions": {
     "LocalizedNames": {
       "type": "object",
@@ -339,20 +339,198 @@
       },
       "additionalProperties": true
     },
+    "PlantCatalogProductRef": {
+      "type": "object",
+      "description": "Catalog or commerce product reference. Shopify IDs are placeholders until Shopify Smart Connection is wired.",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "Stable catalog product slug/id within Cruvit product knowledge."
+        },
+        "name": { "type": "string" },
+        "desc": { "type": "string" },
+        "sku": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "shopifyProductId": {
+          "type": "string",
+          "description": "Future Shopify product GID or numeric id placeholder."
+        },
+        "shopifyVariantId": {
+          "type": "string",
+          "description": "Future Shopify variant GID or numeric id placeholder."
+        },
+        "purchaseLeadDaysDefault": {
+          "type": "number",
+          "description": "Default days before the care window to schedule purchase/preparation (commonly ~30)."
+        },
+        "optional": { "type": "boolean" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantProductRequirement": {
+      "type": "object",
+      "description": "Product needed for a catalog treatment. Purchase tasks should be scheduled purchaseLeadDays before the linked use/application task.",
+      "properties": {
+        "requirementId": { "type": "string" },
+        "treatmentId": {
+          "type": "string",
+          "description": "Parent treatment this product supports."
+        },
+        "productRef": { "$ref": "#/definitions/PlantCatalogProductRef" },
+        "productId": {
+          "type": "string",
+          "description": "Shortcut reference to a catalog productId when productRef is not inlined."
+        },
+        "purchaseLeadDays": {
+          "type": "number",
+          "description": "Days before the use/application window to schedule purchase or preparation (default often 30)."
+        },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "required": ["requirementId"],
+      "additionalProperties": true
+    },
+    "PlantTreatmentNegativeOutcomeActions": {
+      "type": "object",
+      "description": "Catalog placeholder for follow-up logic when outcome feedback indicates the product did not help. Runtime engines may route to Plant Doctor, reschedule, environment review, or safer product alternatives.",
+      "properties": {
+        "considerDiagnosis": {
+          "type": "boolean",
+          "description": "Suggest Plant Doctor / diagnosis review when product outcome is negative."
+        },
+        "reconsiderTiming": {
+          "type": "boolean",
+          "description": "Re-evaluate whether the care window or lead time was wrong."
+        },
+        "reconsiderEnvironment": {
+          "type": "boolean",
+          "description": "Re-evaluate climate, placement, soil, or watering context."
+        },
+        "suggestSaferAlternative": {
+          "type": "boolean",
+          "description": "Offer a lower-risk product or treatment alternative."
+        },
+        "scheduleFollowUpCheck": {
+          "type": "boolean",
+          "description": "Schedule an observation or followUp task after negative feedback."
+        },
+        "followUpTaskCategory": {
+          "type": "string",
+          "enum": ["followUp", "observation", "general"]
+        },
+        "alternativeRequirementIds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional PlantProductRequirement.requirementId values for safer alternates."
+        },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "PlantTreatmentOutcomeFeedbackSpec": {
+      "type": "object",
+      "description": "Catalog placeholder for post-application outcome feedback (runtime user responses are stored in garden data, not the global catalog).",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "promptAfterDays": {
+          "type": "number",
+          "description": "Days after the use/application task to prompt for outcome feedback."
+        },
+        "collectProductHelped": { "type": "boolean" },
+        "collectPlantImproved": { "type": "boolean" },
+        "collectNegativeResult": { "type": "boolean" },
+        "collectAdjustRecommendations": { "type": "boolean" },
+        "adjustFutureRecommendations": {
+          "type": "boolean",
+          "description": "Whether feedback (especially negative) should influence future product and treatment suggestions."
+        },
+        "onNegativeOutcome": { "$ref": "#/definitions/PlantTreatmentNegativeOutcomeActions" },
+        "notes": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
     "PlantCareTaskTemplate": {
       "type": "object",
+      "description": "Care or commerce-linked task template. Use taskCategory purchase/preparation ahead of application; link pairs via linkedTaskId and leadDays.",
       "properties": {
+        "taskId": {
+          "type": "string",
+          "description": "Stable id within the plant careSchedule for linking purchase and use tasks."
+        },
+        "treatmentId": {
+          "type": "string",
+          "description": "Treatment this task belongs to (matches PlantTreatmentDefinition.treatmentId)."
+        },
+        "taskCategory": {
+          "type": "string",
+          "enum": ["purchase", "preparation", "application", "followUp", "observation", "general"],
+          "description": "Task type for scheduling and UI grouping."
+        },
+        "linkedTaskId": {
+          "type": "string",
+          "description": "Sibling task id — e.g. purchase task links to its use/application task, or vice versa."
+        },
+        "leadDays": {
+          "type": "number",
+          "description": "For purchase/preparation tasks: schedule this many days before the linked use/application task (commonly ~30)."
+        },
+        "productRequirementId": {
+          "type": "string",
+          "description": "Links to PlantProductRequirement.requirementId when a product must be acquired first."
+        },
         "title": { "type": "string" },
         "icon": { "type": "string" },
-        "offsetDays": { "type": "number" },
-        "note": { "type": "string" }
+        "offsetDays": {
+          "type": "number",
+          "description": "Days from anchor (e.g. plant added, season start, or linked task) when this task is due."
+        },
+        "note": { "type": "string" },
+        "needsReview": { "type": "boolean" }
       },
       "required": ["title"]
     },
+    "PlantTreatmentDefinition": {
+      "type": "object",
+      "description": "Catalog treatment / care need with optional product requirements and linked purchase + use task ids.",
+      "properties": {
+        "treatmentId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "productRequirements": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantProductRequirement" }
+        },
+        "defaultPurchaseLeadDays": {
+          "type": "number",
+          "description": "Default lead time before use window to schedule purchase/preparation (commonly 30)."
+        },
+        "purchaseTaskId": {
+          "type": "string",
+          "description": "taskId of the purchase or preparation task template."
+        },
+        "useTaskId": {
+          "type": "string",
+          "description": "taskId of the use/application task template at the care window."
+        },
+        "outcomeFeedback": { "$ref": "#/definitions/PlantTreatmentOutcomeFeedbackSpec" },
+        "seasonalWindow": { "type": "string" },
+        "needsReview": { "type": "boolean" }
+      },
+      "required": ["treatmentId"],
+      "additionalProperties": true
+    },
     "PlantCareSchedule": {
       "type": "object",
-      "description": "Structured care task templates for catalog-driven task generation.",
+      "description": "Structured care and Treatment Calendar templates for catalog-driven task generation. treatments[] defines care needs with product requirements; tasks carry taskCategory and linked purchase/use pairs with leadDays.",
       "properties": {
+        "treatments": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlantTreatmentDefinition" }
+        },
         "initialTasks": {
           "type": "array",
           "items": { "$ref": "#/definitions/PlantCareTaskTemplate" }
@@ -363,16 +541,6 @@
         },
         "seasonalNotes": { "type": "string" },
         "needsReview": { "type": "boolean" }
-      },
-      "additionalProperties": true
-    },
-    "PlantCatalogProductRef": {
-      "type": "object",
-      "properties": {
-        "name": { "type": "string" },
-        "desc": { "type": "string" },
-        "sku": { "type": "string" },
-        "url": { "type": "string", "format": "uri" }
       },
       "additionalProperties": true
     },
