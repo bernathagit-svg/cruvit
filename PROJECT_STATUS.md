@@ -61,12 +61,14 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Climate Suitability Engine v1b
-Status: **Next** — read-only inspection / scoring layer planning  
+### Global Plant Catalog Foundation v1
+Status: **Next** — schema and compatibility planning (read-only inspection done)  
 Priority: High  
-Scope: plan thin `evaluateClimateSuitabilityV1()` reusing garden profile + plant meta without SR session context; verify v1a snapshot helpers before scoring layer  
-Files involved: TBD after read-only inspection (`index.html` expected)  
-Rules: additive only; no Smart Rec scoring rewrite; no UI redesign; preserve approved My Garden baseline; build on v1a (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`)
+Scope: evolve transitional in-`index.html` `PLANT_LIBRARY` into a scalable global plant knowledge base so worldwide plants (e.g. Coconut, Papaya) are not limited by a small local list  
+Files involved: TBD (`data/plants.seed.json` + thin loader expected later; not a plant dump into `index.html`)  
+Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** dump thousands of plants into `index.html`; first step is **schema and compatibility planning**, not adding all plants manually
+
+**Catalog strategy note:** Current `PLANT_LIBRARY` inside `index.html` is **transitional**. The future catalog must support thousands of global plants, structured climate metadata, care data, warnings, aliases/translations, media assets, and future backend/API migration. Staged approach: **schema + compatibility → seed catalog → batch enrichment → on-demand missing plant profiles → backend/database migration**.
 
 ---
 
@@ -96,6 +98,7 @@ Files: <list of files>
 | **Plant Data Foundation v1** | Done (pushed) | `PlantProfileV1` mapper, `UserPlantV1` fields (`id`, `profileSlug`, `addedAt`), `getPlantProfile()` — commit `cce3b60` |
 | **Plant Library Integration v1a** | Done (pushed) | `resolvePlantProfileRaw()` read bridge; `plantMeta()` / `getPlantProfile()` routed — commit `3c70c20` |
 | **Climate Suitability Engine v1a** | Done (pushed) | `getGardenClimateProfile()`, `getPlantClimateMetadata()`, `buildClimateSuitabilitySnapshot()` + `window` exports; SR garden read via `getAppClimateProfile()` — commit `a7f6df6` |
+| **Climate Suitability Engine v1b** | Done (pushed) | `evaluateClimateSuitabilityV1()` climate-only scoring layer on v1a snapshot; no SR session / UI / persistence — commit `c8a76bc` |
 
 ---
 
@@ -123,28 +126,30 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | | ↳ Global Location Foundation + Control | **Done** |
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
-| **4** | Climate Suitability Engine v1 | **Done (v1a)** — snapshot helpers (`a7f6df6`); **v1b next** |
-| **5** | Per-user Plant Library v1 | Planned |
-| **6** | Shared Plant Picker v1 | Planned |
-| **7** | Garden Photo / Media Library Foundation | Planned |
-| **8** | Plant Identifier Integration | Planned |
-| **9** | Smart Recommendations Integration | Planned |
-| **10** | Garden Design Plant Visual Upgrade | Planned |
-| **11** | Wishlist as status/filter inside Plant Library | Planned — not a separate duplicate module |
-| **12** | Shopify Smart Connection | Planned |
-| **13** | Garden Design Studio 2.0 | Planned |
-| **14** | AI Garden Coach | Planned |
+| **4** | Climate Suitability Engine v1 | **Done (v1a + v1b)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`) |
+| **5** | Global Plant Catalog Foundation v1 | **Next** |
+| **6** | Per-user Plant Library v1 | Planned |
+| **7** | Shared Plant Picker v1 | Planned |
+| **8** | Garden Photo / Media Library Foundation | Planned |
+| **9** | Plant Identifier Integration | Planned |
+| **10** | Smart Recommendations Integration | Planned |
+| **11** | Garden Design Plant Visual Upgrade | Planned |
+| **12** | Wishlist as status/filter inside Plant Library | Planned — not a separate duplicate module |
+| **13** | Shopify Smart Connection | Planned |
+| **14** | Garden Design Studio 2.0 | Planned |
+| **15** | AI Garden Coach | Planned |
 
 ### Phase notes (brief)
 
-- **4 — Climate Suitability Engine v1:** v1a done — read-only snapshot helpers (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`). v1b next — scoring layer planning on top of garden profile + plant meta without rewriting SR rules.
-- **5 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global `PLANT_LIBRARY` mutations.
-- **6 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after library foundation is stable.
-- **7 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
-- **8–9 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality.
-- **10 — Garden Design visual upgrade:** plant visuals only; not full Studio redesign.
-- **11 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
-- **12–14 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
+- **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules.
+- **5 — Global Plant Catalog Foundation v1 (next):** scalable global knowledge base before deep Per-user Plant Library work. Current in-`index.html` `PLANT_LIBRARY` is transitional — Coconut/Papaya gaps showed the limit. Do **not** dump thousands of plants into `index.html`. First step: schema and compatibility planning (keep `resolvePlantProfileRaw` / `getPlantProfile` / `evaluateClimateSuitabilityV1` working). Then: seed catalog → batch enrichment → on-demand missing profiles → backend/API migration. Must support structured climate metadata, care data, warnings, aliases/translations, and media assets.
+- **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
+- **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
+- **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
+- **9–10 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality.
+- **11 — Garden Design visual upgrade:** plant visuals only; not full Studio redesign.
+- **12 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
+- **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
 
 ---
 
@@ -153,7 +158,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Climate Suitability Engine v1b (next)
+- Global Plant Catalog Foundation v1 (next)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -251,7 +256,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Climate Suitability Engine v1b** — read-only inspection / scoring layer planning: map how v1a snapshot helpers (`getGardenClimateProfile`, `getPlantClimateMetadata`, `buildClimateSuitabilitySnapshot`) can feed a thin `evaluateClimateSuitabilityV1()` for My Garden / Identifier display without SR session context or rewriting `smartRecEvaluateSuitability` rule blocks.
+**Global Plant Catalog Foundation v1** — schema and compatibility planning first (not a manual plant dump). Treat current `PLANT_LIBRARY` in `index.html` as transitional; design for thousands of global plants with structured climate metadata, care data, warnings, aliases/translations, media assets, and future backend/API migration. Then seed catalog → batch enrichment → on-demand missing profiles. Do not dump thousands of plants into `index.html`.
 
 > Always keep exactly ONE recommended next task here.
 > When that task is completed, replace it with the next highest priority task (Per-user Plant Library v1).
