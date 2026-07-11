@@ -575,6 +575,8 @@ function catalogItemToLegacyFlat(item){
   const tasks=Array.isArray(careSchedule.initialTasks)?careSchedule.initialTasks:
     Array.isArray(careSchedule.tasks)?careSchedule.tasks:null;
   if(tasks&&tasks.length) flat.tasks=tasks;
+  const climateTraits=src.climateTraits&&typeof src.climateTraits==='object'?src.climateTraits:null;
+  if(climateTraits) flat.climateTraits=climateTraits;
   return flat;
 }
 
@@ -1377,9 +1379,26 @@ function getGardenClimateProfile(){
   return getAppClimateProfile();
 }
 
+function climateMetaFromCatalogTraits(traits,scientific){
+  if(!traits||typeof traits!=='object') return null;
+  const groupIds=Array.isArray(traits.groupIds)?traits.groupIds:[];
+  const groupMeta=groupIds.map(groupId=>
+    smartRecMergeClimateMeta({groupIds:[groupId]},SMART_REC_CLIMATE_GROUPS[groupId]||null)
+  );
+  const merged=smartRecMergeClimateMeta(...groupMeta,traits);
+  const sci=String(scientific||'');
+  if(merged.needsReview||traits.needsReview===true||/\bspp\.?\b/i.test(sci)||/various/i.test(sci)){
+    return smartRecMergeClimateMeta(merged,{needsReview:true});
+  }
+  return merged;
+}
+
 function getPlantClimateMetadata(slugOrPlant){
   const raw=resolvePlantProfileRaw(slugOrPlant);
-  return raw?smartRecClimateMetaForPlant(raw):null;
+  if(!raw) return null;
+  const inlineMeta=smartRecClimateMetaForPlant(raw);
+  if(inlineMeta) return inlineMeta;
+  return climateMetaFromCatalogTraits(raw.climateTraits,raw.scientific);
 }
 
 function buildClimateSuitabilitySnapshot(slugOrPlant){
