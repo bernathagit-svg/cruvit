@@ -61,14 +61,16 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Global Plant Catalog Foundation v1b
-Status: **Next** — small curated seed catalog / first real plant batch  
+### Global Plant Catalog Foundation — climateTraits bridge (v1c-bridge)
+Status: **Next**  
 Priority: High  
-Scope: populate `data/plants.seed.json` with a **small, curated** first batch of global plants (e.g. Coconut, Papaya) — not a huge dump; merge via existing `mergePlantCatalogItems()` when a safe loader lands  
-Files involved: `data/plants.seed.json`, `data/plant-catalog.schema.json` (schema done in v1a); optional thin loader later  
-Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** dump thousands of plants into `index.html`; inline `PLANT_LIBRARY` remains transitional and wins on slug conflicts
+Scope: bridge seed catalog `climateTraits` into `getPlantClimateMetadata()` / structured climate scoring — **not done yet**  
+Files involved: `index.html` (climate read path); seed data already carries `climateTraits` in `data/plants.seed.json`  
+Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** rewrite Smart Recommendations scoring rules without explicit scope
 
-**Catalog strategy note:** v1a delivered schema + legacy bridge (`catalogItemToLegacyFlat`, `mergePlantCatalogItems`). Schema prepares for **Environment Suitability** (plant vs location/climate), **Garden Compatibility** (plant vs existing garden plants), **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. Staged approach: **v1a schema + compatibility (done) → v1b curated seed batch → batch enrichment → on-demand missing profiles → backend/database migration**.
+**Why next:** v1c-loader (`b6c4c39`) merges seed plants at runtime, but `getPlantClimateMetadata()` still reads inline `SMART_REC_CLIMATE_METADATA` only. Coconut currently resolves through **catalog-text fallback** (`evaluateClimateSuitabilityV1('coconut').dataSource: "catalog-text"`); full structured frost scoring requires this bridge step.
+
+**Catalog strategy note:** v1a schema + legacy bridge (done) → v1b curated seed batch (done) → v1c-loader (done) → **climateTraits bridge (next)** → batch enrichment → on-demand missing profiles → backend/database migration.
 
 ---
 
@@ -100,6 +102,8 @@ Files: <list of files>
 | **Climate Suitability Engine v1a** | Done (pushed) | `getGardenClimateProfile()`, `getPlantClimateMetadata()`, `buildClimateSuitabilitySnapshot()` + `window` exports; SR garden read via `getAppClimateProfile()` — commit `a7f6df6` |
 | **Climate Suitability Engine v1b** | Done (pushed) | `evaluateClimateSuitabilityV1()` climate-only scoring layer on v1a snapshot; no SR session / UI / persistence — commit `c8a76bc` |
 | **Global Plant Catalog Foundation v1a** | Done (pushed) | `data/plants.seed.json` shell, `data/plant-catalog.schema.json` (Environment Suitability + Garden Compatibility extensibility), `catalogItemToLegacyFlat()` / `mergePlantCatalogItems()` legacy bridge; inline `PLANT_LIBRARY` transitional — commit `63b50c4` |
+| **Global Plant Catalog Foundation v1b** | Done (pushed) | 32 curated plants in `data/plants.seed.json`; merge-ready seed batch — commit `1d540f0` |
+| **Global Plant Catalog Foundation v1c-loader** | Done (pushed) | Non-blocking async `loadPlantCatalogSeed()` for `data/plants.seed.json`; merges via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; startup not blocked — commit `b6c4c39` |
 
 ---
 
@@ -128,7 +132,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a done (`63b50c4`); **v1b next** (curated seed batch) |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a (`63b50c4`), v1b (`1d540f0`), **v1c-loader done (`b6c4c39`)**; **climateTraits bridge next** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -143,7 +147,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** `data/plants.seed.json` shell, `data/plant-catalog.schema.json`, legacy bridge helpers; inline `PLANT_LIBRARY` remains transitional. Schema prepares for **Environment Suitability**, **Garden Compatibility**, **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. **v1b next:** small curated seed catalog / first real plant batch — not a huge dump. Then: batch enrichment → on-demand missing profiles → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader — `loadPlantCatalogSeed()` fetches `data/plants.seed.json`, validates `schemaVersion`, merges seed plants via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; app startup is **not** blocked (fire-and-forget boot call, parallel to Plant Identifier preload). Exposes `window.plantCatalogSeedStatus`, `window.loadPlantCatalogSeed`, `window.getPlantCatalogSeedStatus`. **Runtime tests passed (local HTTP):** seed status `ready`; 32 plants added; `getPlantProfile('coconut')` → Coconut Palm; `getPlantProfile('papaya')` → Papaya; `PLANT_INDEX.lavender` unchanged; `evaluateClimateSuitabilityV1('coconut').level` → `possible` (not `unknown`); no console errors/warnings; My Garden / tasks dashboard renders. **Not done yet:** `climateTraits` bridge — coconut still uses catalog-text fallback; full structured frost scoring is the next step. Then: batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -234,7 +238,7 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Global Plant Catalog Foundation v1b (next — curated seed batch)
+- Global Plant Catalog climateTraits bridge (next — structured seed climate → `getPlantClimateMetadata()`)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -332,10 +336,10 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Global Plant Catalog Foundation v1b** — add a **small curated seed catalog** / first real plant batch into `data/plants.seed.json` (e.g. Coconut, Papaya and other high-value gaps). Not a huge dump. Use `PlantCatalogItem` v1 shape per `data/plant-catalog.schema.json`; merge via `mergePlantCatalogItems()` when a safe loader is added. Schema already prepares for **Environment Suitability**, **Garden Compatibility**, **careSchedule / Treatment Calendar**, **multi-state media**, and **future backend/API migration**. Inline `PLANT_LIBRARY` in `index.html` stays transitional.
+**Global Plant Catalog Foundation — climateTraits bridge (v1c-bridge)** — wire seed catalog `climateTraits` from merged catalog items into `getPlantClimateMetadata()` so structured climate scoring (e.g. frost tolerance for coconut) works without relying on catalog-text fallback alone. v1c-loader is done (`b6c4c39`): seed loads non-blocking, 32 plants merge at runtime, inline `PLANT_LIBRARY` remains fallback. Coconut currently resolves at `possible` via catalog-text; full structured scoring is the next step. Additive only; no Smart Rec scoring rewrite without explicit scope.
 
 > Always keep exactly ONE recommended next task here.
-> When v1b is completed, replace with the next step (v1c loader/enrichment or Per-user Plant Library v1 per roadmap).
+> When climateTraits bridge is completed, replace with the next catalog step (batch enrichment or Per-user Plant Library v1 per roadmap).
 
 ---
 
