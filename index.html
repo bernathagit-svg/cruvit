@@ -2868,7 +2868,10 @@ async function refreshGardenWeather(){
     data.location=data.gardenLocation.label;
     data.climate=data.gardenLocation.climate||data.climate;
   }
-  if(result.weather) data.weather=result.weather;
+  if(result.weather){
+    data.weather=result.weather;
+    delete data.weatherFetchError;
+  }
   return result;
 }
 
@@ -2881,7 +2884,10 @@ async function refreshGardenSession(){
     if(weatherIsStale()) await refreshGardenWeather();
     syncWeatherCareTasks();
     syncTasksWithPlants();
-  }catch(err){console.warn('Garden session refresh failed',err)}
+  }catch(err){
+    data.weatherFetchError=err?.message||'Weather fetch failed';
+    console.warn('Garden session refresh failed',err);
+  }
   service.save(data);
 }
 
@@ -2891,7 +2897,10 @@ async function refreshGardenWeatherIfStale(){
     await refreshGardenWeather();
     syncWeatherCareTasks();
     service.save(data);
-  }catch(err){console.warn('Weather refresh failed',err)}
+  }catch(err){
+    data.weatherFetchError=err?.message||'Weather fetch failed';
+    console.warn('Weather refresh failed',err);
+  }
 }
 
 function closeLocationModal(){
@@ -3060,6 +3069,7 @@ async function saveGardenLocation(loc){
     service.save(data);
     return result;
   }catch(err){
+    data.weatherFetchError=err?.message||'Weather fetch failed';
     service.save(data);
     setLocationStatus(err.message||'Saved location, but weather could not be loaded.');
     onAppLocationChanged();
@@ -4384,6 +4394,80 @@ function smartRecCurrentContext(){
   };
 }
 
+function broadClimateFromLabel(label){
+  const climateLabel=String(label||'').toLowerCase();
+  if(climateLabel.includes('cool temperate')) return 'cool-temperate';
+  if(climateLabel.includes('mediterranean')) return 'mediterranean';
+  if(climateLabel.includes('subtropical')) return 'subtropical';
+  if(climateLabel.includes('tropical')) return 'tropical';
+  if(climateLabel.includes('temperate')) return 'temperate';
+  if(climateLabel.includes('arid')||climateLabel.includes('desert')) return 'arid';
+  return 'unknown';
+}
+
+function weatherAgeMs(weather){
+  if(!weather?.fetchedAt) return null;
+  const t=new Date(weather.fetchedAt).getTime();
+  if(!Number.isFinite(t)) return null;
+  return Math.max(0,Date.now()-t);
+}
+
+function deriveLocationConfidence(loc){
+  const l=loc&&typeof loc==='object'?loc:{};
+  const source=String(l.source||'').trim().toLowerCase();
+  if(source==='default') return 'default';
+  const label=String(l.label||'').trim();
+  const lat=Number(l.lat);
+  const lon=Number(l.lon);
+  const hasCoords=Number.isFinite(lat)&&Number.isFinite(lon);
+  if(!label||!hasCoords) return 'low';
+  const country=String(l.country||'').trim();
+  if(source==='geolocation'||(hasCoords&&country)) return 'high';
+  return 'medium';
+}
+
+function deriveClimateConfidence(loc,broadClimate){
+  const stored=String(loc?.climate||data?.climate||'').trim();
+  if(!stored||broadClimate==='unknown') return 'low';
+  const source=String(loc?.source||'').trim().toLowerCase();
+  if(source==='default') return 'medium';
+  const lat=Number(loc?.lat);
+  const lon=Number(loc?.lon);
+  if(Number.isFinite(lat)&&Number.isFinite(lon)){
+    const inferredBroad=broadClimateFromLabel(inferClientClimate(lat,lon));
+    const storedBroad=broadClimateFromLabel(stored);
+    if(inferredBroad!=='unknown'&&storedBroad!=='unknown'&&inferredBroad!==storedBroad) return 'low';
+  }
+  return 'high';
+}
+
+function deriveWeatherStatus(weather){
+  const lastError=String(data?.weatherFetchError||'').trim();
+  if(lastError&&(!weather||typeof weather!=='object'||!weather.fetchedAt)) return 'failed';
+  if(!weather||typeof weather!=='object'||!weather.fetchedAt) return 'missing';
+  if(weatherIsStale()) return 'stale';
+  return 'fresh';
+}
+
+function deriveForecastFreezingRisk(alerts,forecastLow){
+  const alertList=Array.isArray(alerts)?alerts:[];
+  if(alertList.includes('frost')||(Number.isFinite(forecastLow)&&forecastLow<=0)) return 'high';
+  if(alertList.includes('cold-snap')||(Number.isFinite(forecastLow)&&forecastLow<=3)) return 'medium';
+  return 'low';
+}
+
+function buildClimateConfidenceNotes({locationConfidence,climateConfidence,weatherStatus}){
+  const notes=[];
+  if(locationConfidence==='default') notes.push('Using default garden location.');
+  else if(locationConfidence==='low') notes.push('Location confidence is low.');
+  if(climateConfidence==='low') notes.push('Climate label is unknown, broad, or may not match coordinates.');
+  else if(climateConfidence==='medium'&&locationConfidence==='default') notes.push('Climate label matches default location, but location is not user-confirmed.');
+  if(weatherStatus==='missing') notes.push('Weather data is missing.');
+  else if(weatherStatus==='stale') notes.push('Weather data is stale.');
+  else if(weatherStatus==='failed') notes.push('Weather fetch failed.');
+  return notes;
+}
+
 function smartRecClimateProfile(){
   const loc=ensureGardenLocation();
   const weather=data.weather||{};
@@ -4392,25 +4476,29 @@ function smartRecClimateProfile(){
   const alerts=Array.isArray(weather.alerts)?weather.alerts:[];
   const forecastPeak=Number.isFinite(Number(weather.forecastPeak))?Number(weather.forecastPeak):Number(weather.maxC||NaN);
   const forecastLow=Number.isFinite(Number(weather.forecastLow))?Number(weather.forecastLow):Number(weather.minC||NaN);
-  let broadClimate='unknown';
-  if(climateLabel.includes('cool temperate')) broadClimate='cool-temperate';
-  else if(climateLabel.includes('mediterranean')) broadClimate='mediterranean';
-  else if(climateLabel.includes('subtropical')) broadClimate='subtropical';
-  else if(climateLabel.includes('tropical')) broadClimate='tropical';
-  else if(climateLabel.includes('temperate')) broadClimate='temperate';
-  else if(climateLabel.includes('arid')||climateLabel.includes('desert')) broadClimate='arid';
+  const broadClimate=broadClimateFromLabel(loc.climate||data.climate||'');
   const structuralFreezingRisk=broadClimate==='cool-temperate'?'high'
     :(broadClimate==='temperate'?'medium':'low');
   let freezingRisk=structuralFreezingRisk;
   if(alerts.includes('frost')||(Number.isFinite(forecastLow)&&forecastLow<=0)) freezingRisk='high';
   else if(alerts.includes('cold-snap')||(Number.isFinite(forecastLow)&&forecastLow<=3)) freezingRisk=(freezingRisk==='high'?'high':'medium');
+  const forecastFreezingRisk=deriveForecastFreezingRisk(alerts,forecastLow);
   const extremeHeatRisk=(alerts.includes('heat-wave')||(Number.isFinite(forecastPeak)&&forecastPeak>=38))?'high'
     :((alerts.includes('dry-heat')||(Number.isFinite(forecastPeak)&&forecastPeak>=34))?'medium':'low');
   const alwaysHot=broadClimate==='tropical'||(Number.isFinite(forecastPeak)&&forecastPeak>=30&&Number.isFinite(forecastLow)&&forecastLow>=18);
   const coolSeasonSignal=broadClimate==='temperate'||broadClimate==='cool-temperate'||broadClimate==='mediterranean'||(Number.isFinite(forecastLow)&&forecastLow<=12);
   const drySeasonSignal=broadClimate==='mediterranean'||broadClimate==='arid'||alerts.includes('dry-heat');
   const humiditySignal=broadClimate==='tropical'?'high':(broadClimate==='subtropical'?'medium':((broadClimate==='mediterranean'||broadClimate==='arid')?'low':'medium'));
-  return {locationLabel,climateLabel,broadClimate,alerts,forecastPeak,forecastLow,freezingRisk,extremeHeatRisk,alwaysHot,coolSeasonSignal,drySeasonSignal,humiditySignal};
+  const locationConfidence=deriveLocationConfidence(loc);
+  const climateConfidence=deriveClimateConfidence(loc,broadClimate);
+  const weatherStatus=deriveWeatherStatus(weather);
+  const weatherAge=weatherAgeMs(weather);
+  const isFrostFreeGrowingClimate=climateSuitabilityV1IsFrostFreeGrowingClimate({broadClimate,freezingRisk});
+  const confidenceNotes=buildClimateConfidenceNotes({locationConfidence,climateConfidence,weatherStatus});
+  return {
+    locationLabel,climateLabel,broadClimate,alerts,forecastPeak,forecastLow,freezingRisk,extremeHeatRisk,alwaysHot,coolSeasonSignal,drySeasonSignal,humiditySignal,
+    structuralFreezingRisk,forecastFreezingRisk,isFrostFreeGrowingClimate,locationConfidence,climateConfidence,weatherStatus,weatherAgeMs:weatherAge,confidenceNotes
+  };
 }
 
 function getAppClimateProfile(){
