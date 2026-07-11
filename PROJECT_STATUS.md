@@ -61,16 +61,16 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Global Plant Catalog Foundation — climateTraits bridge (v1c-bridge)
-Status: **Next**  
+### Next catalog/climate phase — read-only planning (decision pending)
+Status: **Next — planning only; no implementation yet**  
 Priority: High  
-Scope: bridge seed catalog `climateTraits` into `getPlantClimateMetadata()` / structured climate scoring — **not done yet**  
-Files involved: `index.html` (climate read path); seed data already carries `climateTraits` in `data/plants.seed.json`  
-Rules: additive only; no UI redesign; preserve approved My Garden baseline; do **not** rewrite Smart Recommendations scoring rules without explicit scope
+Scope: choose the next **small** phase after v1d — **read-only inspection and plan only**; do not implement until explicitly approved  
 
-**Why next:** v1c-loader (`b6c4c39`) merges seed plants at runtime, but `getPlantClimateMetadata()` still reads inline `SMART_REC_CLIMATE_METADATA` only. Coconut currently resolves through **catalog-text fallback** (`evaluateClimateSuitabilityV1('coconut').dataSource: "catalog-text"`); full structured frost scoring requires this bridge step.
+**Option A — Climate Risk / Frost Scoring Refinement:** tighten `evaluateClimateSuitabilityV1()` frost/location/weather signals (e.g. coconut under Mediterranean default `freezingRisk: low` can still show `good`; stricter scoring is a later refinement).  
 
-**Catalog strategy note:** v1a schema + legacy bridge (done) → v1b curated seed batch (done) → v1c-loader (done) → **climateTraits bridge (next)** → batch enrichment → on-demand missing profiles → backend/database migration.
+**Option B — Smart Recommendations catalog climate bridge:** wire seed `climateTraits` into `smartRecClimateMetaForPlant()` so SR browse/sort/scoring uses structured catalog metadata for seed plants (currently unchanged — `smartRecClimateMetaForPlant()` still returns `null` for coconut).  
+
+**Catalog strategy note:** v1a schema + legacy bridge (done) → v1b curated seed batch (done) → v1c-loader (done) → **v1d climateTraits bridge (done, `61cdfed`)** → **next small phase (decision pending)** → batch enrichment → on-demand missing profiles → backend/database migration.
 
 ---
 
@@ -104,6 +104,7 @@ Files: <list of files>
 | **Global Plant Catalog Foundation v1a** | Done (pushed) | `data/plants.seed.json` shell, `data/plant-catalog.schema.json` (Environment Suitability + Garden Compatibility extensibility), `catalogItemToLegacyFlat()` / `mergePlantCatalogItems()` legacy bridge; inline `PLANT_LIBRARY` transitional — commit `63b50c4` |
 | **Global Plant Catalog Foundation v1b** | Done (pushed) | 32 curated plants in `data/plants.seed.json`; merge-ready seed batch — commit `1d540f0` |
 | **Global Plant Catalog Foundation v1c-loader** | Done (pushed) | Non-blocking async `loadPlantCatalogSeed()` for `data/plants.seed.json`; merges via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; startup not blocked — commit `b6c4c39` |
+| **Global Plant Catalog Foundation v1d** | Done (pushed) | climateTraits bridge — `catalogItemToLegacyFlat()` preserves seed `climateTraits`; `getPlantClimateMetadata()` uses `SMART_REC_CLIMATE_METADATA` first, then `climateMetaFromCatalogTraits()` for seed-loaded plants; inline lavender/olive/mango unchanged; coconut uses structured metadata — commit `61cdfed` |
 
 ---
 
@@ -132,7 +133,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a (`63b50c4`), v1b (`1d540f0`), **v1c-loader done (`b6c4c39`)**; **climateTraits bridge next** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a (`63b50c4`), v1b (`1d540f0`), v1c-loader (`b6c4c39`), **v1d climateTraits bridge done (`61cdfed`)**; next small phase = read-only planning (frost scoring refinement **or** SR catalog bridge) |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -147,7 +148,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader — `loadPlantCatalogSeed()` fetches `data/plants.seed.json`, validates `schemaVersion`, merges seed plants via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; app startup is **not** blocked (fire-and-forget boot call, parallel to Plant Identifier preload). Exposes `window.plantCatalogSeedStatus`, `window.loadPlantCatalogSeed`, `window.getPlantCatalogSeedStatus`. **Runtime tests passed (local HTTP):** seed status `ready`; 32 plants added; `getPlantProfile('coconut')` → Coconut Palm; `getPlantProfile('papaya')` → Papaya; `PLANT_INDEX.lavender` unchanged; `evaluateClimateSuitabilityV1('coconut').level` → `possible` (not `unknown`); no console errors/warnings; My Garden / tasks dashboard renders. **Not done yet:** `climateTraits` bridge — coconut still uses catalog-text fallback; full structured frost scoring is the next step. Then: batch enrichment → on-demand missing profiles → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader — `loadPlantCatalogSeed()` fetches `data/plants.seed.json`, validates `schemaVersion`, merges seed plants via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; app startup is **not** blocked. **v1d done (`61cdfed`):** climateTraits bridge — `catalogItemToLegacyFlat()` preserves seed `climateTraits` on flat catalog objects; `getPlantClimateMetadata()` uses existing `SMART_REC_CLIMATE_METADATA` first via `smartRecClimateMetaForPlant()`, then falls back to `climateMetaFromCatalogTraits()` for seed-loaded plants; inline plants (lavender, olive, mango) still use existing SMART_REC metadata; seed plants (coconut) use structured climate metadata instead of catalog-text fallback. **`smartRecClimateMetaForPlant()` unchanged** — Smart Recommendations browse/sort/scoring not wired to catalog traits yet. **Runtime tests passed (local HTTP):** seed status `ready`; coconut profile resolves; `getPlantClimateMetadata('coconut')` → `frostSensitivity: "high"`, `groupIds` include `tropical-frost-sensitive-fruit` and `hot-dry-palm`; `evaluateClimateSuitabilityV1('coconut')` → `dataSource: "structured"`, `hasStructuredMeta: true`; lavender/olive/mango still use SMART_REC metadata; no console errors; My Garden / tasks dashboard renders. **Note:** coconut can still show `good` under default Mediterranean `freezingRisk: low`; full stricter frost/location/weather scoring is a later refinement. **Next (planning only):** Climate Risk / Frost Scoring Refinement **or** Smart Recommendations catalog climate bridge — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -238,7 +239,7 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Global Plant Catalog climateTraits bridge (next — structured seed climate → `getPlantClimateMetadata()`)
+- Next catalog/climate phase — read-only planning (Climate Risk / Frost Scoring Refinement **or** Smart Recommendations catalog climate bridge; decision pending)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -336,10 +337,10 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Global Plant Catalog Foundation — climateTraits bridge (v1c-bridge)** — wire seed catalog `climateTraits` from merged catalog items into `getPlantClimateMetadata()` so structured climate scoring (e.g. frost tolerance for coconut) works without relying on catalog-text fallback alone. v1c-loader is done (`b6c4c39`): seed loads non-blocking, 32 plants merge at runtime, inline `PLANT_LIBRARY` remains fallback. Coconut currently resolves at `possible` via catalog-text; full structured scoring is the next step. Additive only; no Smart Rec scoring rewrite without explicit scope.
+**Read-only planning — next small catalog/climate phase (decision pending; do not implement yet).** v1d climateTraits bridge is done (`61cdfed`): seed `climateTraits` preserved on flat catalog objects; `getPlantClimateMetadata()` prefers `SMART_REC_CLIMATE_METADATA`, then catalog `climateTraits`; coconut uses structured suitability metadata; lavender/olive/mango unchanged; SR scoring path unchanged. **Choose one for read-only inspection next:** (A) **Climate Risk / Frost Scoring Refinement** — stricter frost/location/weather in `evaluateClimateSuitabilityV1()` (coconut may still show `good` when default Mediterranean `freezingRisk: low`); or (B) **Smart Recommendations catalog climate bridge** — wire catalog traits into `smartRecClimateMetaForPlant()` without changing browse/sort rules until approved.
 
 > Always keep exactly ONE recommended next task here.
-> When climateTraits bridge is completed, replace with the next catalog step (batch enrichment or Per-user Plant Library v1 per roadmap).
+> When the next phase is chosen and planned, replace with the approved implementation task.
 
 ---
 
