@@ -64,15 +64,15 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 ### Next phase — read-only planning (decision pending; no implementation yet)
 Status: **Next — planning only**  
 Priority: High  
-Scope: choose the next **small** phase after Climate Risk / Frost Scoring Refinement — **read-only inspection and plan only**; do not implement until explicitly approved  
+Scope: choose the next **small** phase after Smart Recommendations catalog climate bridge — **read-only inspection and plan only**; do not implement until explicitly approved  
 
-**Option A — Smart Recommendations catalog climate bridge:** wire seed `climateTraits` into `smartRecClimateMetaForPlant()` so SR browse/sort/scoring uses structured catalog metadata for seed plants (currently unchanged — `smartRecClimateMetaForPlant()` still returns `null` for coconut).  
+**Option A — Location/weather reliability refinement:** improve structural `freezingRisk` / seasonal signals in `smartRecClimateProfile()` (e.g. Mediterranean winter minima) without new external APIs — separate from suitability-only v1e rules and SR catalog bridge (done).  
 
-**Option B — Location/weather reliability refinement:** improve structural `freezingRisk` / seasonal signals in `smartRecClimateProfile()` (e.g. Mediterranean winter minima) without new external APIs — separate from suitability-only v1e rules.  
+**Option B — Product/Care Schedule runtime planning:** read-only plan for Treatment Calendar task runtime, purchase/use task linking, and outcome feedback on garden `data` (schema committed `416fc78`; runtime not wired).  
 
-**Option C — Product/Care Schedule runtime planning:** read-only plan for Treatment Calendar task runtime, purchase/use task linking, and outcome feedback on garden `data` (schema committed `416fc78`; runtime not wired).  
+**Option C — Catalog validation / import pipeline planning:** read-only plan for seed/catalog validation, import workflow, and quality-tier gates before larger batch enrichment.  
 
-**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → **Climate Risk / Frost Scoring Refinement (done, `4092627`)** → **next small phase (decision pending)** → batch enrichment → on-demand missing profiles → backend/database migration.
+**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → **Smart Recommendations catalog climate bridge (done, `deae8db`)** → **next small phase (decision pending)** → batch enrichment → on-demand missing profiles → backend/database migration.
 
 ---
 
@@ -108,6 +108,7 @@ Files: <list of files>
 | **Global Plant Catalog Foundation v1c-loader** | Done (pushed) | Non-blocking async `loadPlantCatalogSeed()` for `data/plants.seed.json`; merges via `mergePlantCatalogItems()`; inline `PLANT_LIBRARY` remains fallback; duplicate slugs skipped; startup not blocked — commit `b6c4c39` |
 | **Global Plant Catalog Foundation v1d** | Done (pushed) | climateTraits bridge — `catalogItemToLegacyFlat()` preserves seed `climateTraits`; `getPlantClimateMetadata()` uses `SMART_REC_CLIMATE_METADATA` first, then `climateMetaFromCatalogTraits()` for seed-loaded plants; inline lavender/olive/mango unchanged; coconut uses structured metadata — commit `61cdfed` |
 | **Climate Risk / Frost Scoring Refinement (v1e)** | Done (pushed) | Conservative frost scoring in `climateSuitabilityV1FromSnapshot()` — high frost-sensitive tropical/warm plants capped when garden is not clearly frost-free; `indoorShelter` lifts cap; SR/`smartRecClimateProfile()` unchanged — commit `4092627` |
+| **Smart Recommendations catalog climate bridge** | Done (pushed) | Parts A–C in `index.html` only — `smartRecClimateMetaForPlant()` falls back to catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking in `smartRecEvaluateSuitability()`; coconut/papaya/banana/mango borderline (not good/excellent) in default Mediterranean outdoor SR; lavender/olive unchanged and strong; no UI/copy/data/schema/module changes — commit `deae8db` |
 
 ---
 
@@ -136,7 +137,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring refinement done (`4092627`); next = read-only planning (SR catalog bridge **or** location/weather **or** Treatment Calendar runtime) |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring refinement done (`4092627`); SR catalog climate bridge done (`deae8db`); next = read-only planning (location/weather **or** Treatment Calendar runtime **or** catalog validation/import) |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -150,8 +151,8 @@ Ordered sequence. Do not skip ahead without explicit approval.
 
 ### Phase notes (brief)
 
-- **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` for default Mediterranean outdoor conditions; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in Mediterranean; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **`smartRecClimateProfile()` and `smartRecClimateMetaForPlant()` unchanged** — Smart Recommendations browse/sort/scoring untouched; no UI/modules/data/schema changes. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader. **v1d done (`61cdfed`):** climateTraits bridge — seed `climateTraits` on flat objects; `getPlantClimateMetadata()` prefers SMART_REC then catalog traits. **Next (planning only):** Smart Recommendations catalog climate bridge **or** location/weather reliability refinement **or** Product/Care Schedule runtime planning — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
+- **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` for default Mediterranean outdoor conditions; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in Mediterranean; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **`smartRecClimateProfile()` unchanged** — garden profile read path untouched. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader. **v1d done (`61cdfed`):** climateTraits bridge — seed `climateTraits` on flat objects; `getPlantClimateMetadata()` prefers SMART_REC then catalog traits. **SR catalog climate bridge done (`deae8db`):** Smart Recommendations now uses catalog `climateTraits` from seed-loaded plants when SMART_REC metadata is missing; SMART_REC metadata remains first priority for existing inline plants (lavender, olive unchanged and strong); frost parity + needsReview conservative ranking in `smartRecEvaluateSuitability()` — coconut, papaya, banana, and mango are borderline (not good/excellent) under default Mediterranean outdoor conditions; seed/catalog `needsReview` plants receive conservative ranking and should not outrank verified suitable plants; `ctx.indoorContext` softens frost cap like v1e `indoorShelter`; Smart Rec UI/copy unchanged; data files, schema, modules, Garden Design, Plant Doctor, Plant Identifier, and Shopify/cart unchanged. **Runtime tests passed:** `smartRecClimateMetaForPlant(PLANT_INDEX.coconut)` no longer null (frostSensitivity `high`, needsReview `true`); lavender still uses SMART_REC metadata; coconut/papaya/banana/mango borderline; lavender/olive `good`; `getSmartRecBrowsePlants().length` 53; Smart Rec UI renders normally; no console errors. **Next (planning only):** location/weather reliability refinement **or** Product/Care Schedule runtime planning **or** catalog validation/import pipeline planning — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -242,7 +243,7 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Next phase — read-only planning (Smart Recommendations catalog climate bridge **or** location/weather reliability **or** Product/Care Schedule runtime; decision pending)
+- Next phase — read-only planning (location/weather reliability **or** Product/Care Schedule runtime **or** catalog validation/import pipeline; decision pending)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -340,7 +341,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Read-only planning — choose next small phase (decision pending; do not implement yet).** Climate Risk / Frost Scoring Refinement is done (`4092627`): suitability engine treats high frost-sensitive tropical/warm plants conservatively when the garden is not clearly frost-free; coconut/papaya/banana/mango no longer `good` outdoors in default Mediterranean; lavender/olive remain `good`; `indoorShelter` lifts cap; SR scoring unchanged. **Choose one for read-only inspection next:** (A) **Smart Recommendations catalog climate bridge** — wire catalog traits into `smartRecClimateMetaForPlant()`; (B) **Location/weather reliability refinement** — structural frost/season signals in garden climate profile; (C) **Product/Care Schedule runtime planning** — Treatment Calendar task runtime + outcome feedback wiring plan.
+**Read-only planning — choose next small phase (decision pending; do not implement yet).** Smart Recommendations catalog climate bridge is done (`deae8db`): SR uses catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; coconut/papaya/banana/mango are borderline (not good/excellent) in default Mediterranean outdoor SR; lavender/olive remain `good`; seed/catalog `needsReview` plants rank conservatively; no UI/copy/data/schema/module changes. **Choose one for read-only inspection next:** (A) **Location/weather reliability refinement** — structural frost/season signals in garden climate profile; (B) **Product/Care Schedule runtime planning** — Treatment Calendar task runtime + outcome feedback wiring plan; (C) **Catalog validation / import pipeline planning** — seed validation, import workflow, and quality-tier gates.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
