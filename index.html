@@ -1453,6 +1453,28 @@ function climateSuitabilityV1CatalogWeakMatch(catalogLabel,garden){
   return false;
 }
 
+function climateSuitabilityV1IsFrostFreeGrowingClimate(garden){
+  const broad=String(garden?.broadClimate||'').toLowerCase();
+  const risk=String(garden?.freezingRisk||'').toLowerCase();
+  if(broad==='tropical') return risk!=='high';
+  if(broad==='subtropical') return risk==='low';
+  return false;
+}
+
+function climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelter,garden){
+  return !indoorShelter
+    &&!!meta
+    &&meta.frostSensitivity==='high'
+    &&!climateSuitabilityV1IsFrostFreeGrowingClimate(garden);
+}
+
+function climateSuitabilityV1IsWarmTropicalFrostSensitiveGroup(metaHasGroup){
+  return metaHasGroup('tropical-frost-sensitive-fruit')
+    ||metaHasGroup('frost-sensitive-ornamental')
+    ||metaHasGroup('warm-climate-palm')
+    ||metaHasGroup('hot-dry-palm');
+}
+
 function climateSuitabilityV1FromSnapshot(snapshot,options){
   const opts=options&&typeof options==='object'?options:{};
   const includeSnapshot=!!opts.includeSnapshot;
@@ -1500,13 +1522,13 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
   let heatCold;
   let humidity;
   let scanFitFactor=null;
+  const metaHasGroup=(groupId)=>meta&&(typeof smartRecMetaHasGroup==='function'?smartRecMetaHasGroup(meta,groupId):(Array.isArray(meta.groupIds)&&meta.groupIds.includes(groupId)));
   if(hasStructuredMeta){
     survival=85;
     thrive=80;
     heatCold=80;
     humidity=80;
     const hotHumidStress=typeof smartRecClimateFeelsHotHumid==='function'?smartRecClimateFeelsHotHumid(garden):false;
-    const metaHasGroup=(groupId)=>typeof smartRecMetaHasGroup==='function'?smartRecMetaHasGroup(meta,groupId):(Array.isArray(meta?.groupIds)&&meta.groupIds.includes(groupId));
     if(!indoorShelter&&meta.frostSensitivity==='high'&&garden.freezingRisk!=='low'){
       blockWith('Frost risk is too high for this plant.');
     }else if(!indoorShelter&&meta.frostSensitivity==='medium'&&garden.freezingRisk==='high'){
@@ -1585,6 +1607,13 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
       thrive=Math.min(thrive,40);
       addWarning('Cold weather makes this a seasonal rather than year-round outdoor herb here.',10);
     }
+    if(climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelter,garden)&&climateSuitabilityV1IsWarmTropicalFrostSensitiveGroup(metaHasGroup)){
+      survival=Math.min(survival,40);
+      thrive=Math.min(thrive,30);
+      heatCold=Math.min(heatCold,25);
+      addWarning('Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.',16);
+      addReason('High frost sensitivity in a non-frost-free garden climate.');
+    }
     if(meta.needsReview){
       thrive=Math.min(thrive,75);
       addWarning('Suitability uses conservative group-level rules. Check the exact species or cultivar before treating this as a top pick.',6);
@@ -1633,7 +1662,12 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
     if(scanClimateFit==='high'&&blendScanFit) score=Math.max(score,72);
     if(scanClimateFit==='low'&&blendScanFit) score=Math.min(score,55);
   }
-  const level=climateSuitabilityV1LevelFromScore(score,blocks.length>0&&strictBlocks);
+  let level=climateSuitabilityV1LevelFromScore(score,blocks.length>0&&strictBlocks);
+  if(climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelter,garden)&&!blocks.length){
+    const levelRank={excellent:4,good:3,possible:2,risky:1,notRecommended:0,unknown:0};
+    const frostCap=metaHasGroup('tropical-frost-sensitive-fruit')?'risky':'possible';
+    if((levelRank[level]||0)>(levelRank[frostCap]||0)) level=frostCap;
+  }
   let summary;
   if(blocks.length) summary=blocks[0];
   else if(warnings.length) summary=warnings[0];
