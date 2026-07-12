@@ -1509,6 +1509,25 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
   }
   const plantSlug=String(plant.slug||'').trim();
   const plantName=String(plant.name||plantSlug||'Plant').trim();
+  if(!hasTrustedAppLocation()){
+    const untrustedResult={
+      engineVersion:'v1b',
+      plantSlug,
+      plantName,
+      score:null,
+      level:'unknown',
+      factors:{survival:null,thrive:null,heatCold:null,humidity:null,scanFit:null},
+      summary:requireTrustedAppLocationReason(),
+      reasons:[],
+      warnings:['Location not confirmed.'],
+      blocks:[],
+      dataSource:'location_untrusted',
+      hasStructuredMeta:!!meta,
+      scanClimateFit
+    };
+    if(includeSnapshot) untrustedResult.snapshot=snapshot;
+    return untrustedResult;
+  }
   const blocks=[];
   const warnings=[];
   const reasons=[];
@@ -2881,7 +2900,7 @@ async function refreshGardenSession(){
   initCalendarFromToday();
   ensureGardenLocation();
   try{
-    if(weatherIsStale()) await refreshGardenWeather();
+    if(hasTrustedAppLocation()&&weatherIsStale()) await refreshGardenWeather();
     syncWeatherCareTasks();
     syncTasksWithPlants();
   }catch(err){
@@ -2892,6 +2911,7 @@ async function refreshGardenSession(){
 }
 
 async function refreshGardenWeatherIfStale(){
+  if(!hasTrustedAppLocation()) return;
   if(!weatherIsStale()) return;
   try{
     await refreshGardenWeather();
@@ -3138,6 +3158,19 @@ function getAppLocation(){
   const record=buildAppLocationRecordFromGarden(ensureGardenLocation());
   record.derivedClimateProfile=getAppClimateProfile();
   return record;
+}
+
+function requireTrustedAppLocationReason(){
+  return 'Set and confirm your garden location for climate-based recommendations.';
+}
+
+function hasTrustedAppLocation(){
+  const loc=getAppLocation();
+  if(loc.confirmationStatus!=='confirmed') return false;
+  if(String(loc.source||'').trim().toLowerCase()==='default') return false;
+  const conf=loc.derivedClimateProfile?.locationConfidence;
+  if(conf==='default') return false;
+  return true;
 }
 
 async function setAppLocation(partial,options){
@@ -3404,6 +3437,7 @@ function isHeatSensitivePlant(p){
   return /hydrangea|basil|mint|lettuce|container|pot|wilts|heat|afternoon shade|moist|high water|young|newly planted|עציץ|חום|הצל/i.test(blob);
 }
 function syncWeatherCareTasks(){
+  if(!hasTrustedAppLocation()) return;
   const w=data.weather;
   if(!w||!Array.isArray(w.alerts)) return;
   const plants=(data.plants||[]).filter(p=>!p.archived);
@@ -4568,6 +4602,19 @@ function smartRecClimateFeelsHotHumid(climateProfile){
 }
 
 function smartRecEvaluateSuitability(p){
+  if(!hasTrustedAppLocation()){
+    const reason=requireTrustedAppLocationReason();
+    return {
+      suitabilityScore:0,
+      recommendationLevel:'blocked',
+      survivalFit:0,
+      thriveFit:0,
+      floweringFit:0,
+      fruitingFit:0,
+      warnings:[reason,'Location not confirmed.'],
+      explanationText:reason
+    };
+  }
   const meta=smartRecClimateMetaForPlant(p);
   if(!meta){
     return {
@@ -5153,7 +5200,8 @@ function getSmartRecLocationSnapshot(){
   normalizeGardenDataShape();
   const loc=String(data.location||data.gardenLocation?.label||'').trim();
   const climate=String(data.climate||data.gardenLocation?.climate||'').trim();
-  return {loc,climate,hasLoc:!!loc};
+  const trusted=hasTrustedAppLocation();
+  return {loc,climate,hasLoc:trusted,hasFallbackOnly:!trusted&&!!loc};
 }
 function smartRecBootMessages(){
   const snap=getSmartRecLocationSnapshot();
@@ -5179,6 +5227,10 @@ function smartRecOnLocationUpdated(){
   renderSmartRecComposerOptions();
 }
 function smartRecConfirmLocation(){
+  if(!hasTrustedAppLocation()){
+    openLocationModal();
+    return;
+  }
   const snap=getSmartRecLocationSnapshot();
   if(!snap.hasLoc)return;
   const copy=getSmartRecCopy();
@@ -5534,6 +5586,7 @@ function getSmartRecActiveChipLabels(){
   return [...smartRecActiveChips].map(getSmartRecChipLabel);
 }
 function getSmartRecBrowsePlants(){
+  if(!hasTrustedAppLocation()) return [];
   const base=PLANT_LIBRARY.filter(p=>scorePlantForSource(p,'Smart Recommendations'));
   let filtered=base;
   if(smartRecSession.step==='results'&&smartRecSession.compiledFilters){

@@ -64,26 +64,26 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 ### Next phase — read-only planning (decision pending; no implementation yet)
 Status: **Next — planning only**  
 Priority: High  
-Scope: choose the next **small** phase after Location / Weather Reliability confidence metadata — **read-only inspection and plan only**; do not implement until explicitly approved  
+Scope: choose the next **small** phase after Location Reliability Enforcement — **read-only inspection and plan only**; do not implement until explicitly approved
 
-**Option A — Confidence-aware scoring wiring + user-confirmed location gating:** read-only plan for consuming `locationConfidence`, `climateConfidence`, and `weatherStatus` in suitability/SR engines — **never treat system/internal fallback location (e.g. Western Galilee) as trusted recommendation input**; gate or limit Smart Rec, suitability, climate-based care tasks, and product recommendations until the user has confirmed a saved location; conservative caps and reasons when inputs are default/stale/missing; no UI redesign in planning phase beyond location-confirm prompt requirements already defined in Location Reliability Plan below.  
+**Option A — Confidence-aware scoring refinements (beyond location gate):** read-only plan for consuming `climateConfidence` and `weatherStatus` (and related confidence notes) in suitability/SR engines — conservative caps and reasons when weather is stale/missing or climate confidence is low; location trust gating is already enforced (see Location Reliability Enforcement). No UI redesign in planning phase.
 
-**Option B — Product/Care Schedule runtime planning:** read-only plan for Treatment Calendar task runtime, purchase/use task linking, and outcome feedback on garden `data` (schema committed `416fc78`; runtime not wired).  
+**Option B — Product/Care Schedule runtime planning:** read-only plan for Treatment Calendar task runtime, purchase/use task linking, and outcome feedback on garden `data` (schema committed `416fc78`; runtime not wired). Product recommendations must still require a trusted user location per Location Reliability Plan.
 
 **Option C — Catalog validation / import pipeline planning:** read-only plan for seed/catalog validation, import workflow, and quality-tier gates before larger batch enrichment.  
 
-**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → Smart Recommendations catalog climate bridge (`deae8db`) → Location / Weather Reliability confidence metadata (`a94b3fa`) → **Location Reliability hard requirement (documented — see plan below; enforcement pending)** → next small phase (decision pending) → batch enrichment → on-demand missing profiles → backend/database migration.
+**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → Smart Recommendations catalog climate bridge (`deae8db`) → Location / Weather Reliability confidence metadata (`a94b3fa`) → **Location Reliability Enforcement (done — see plan below)** → next small phase (decision pending) → batch enrichment → on-demand missing profiles → backend/database migration.
 
 ---
 
 # Known Issues
 
 ### System default location used for recommendations (implementation gap)
-Description: `ensureGardenLocation()` still seeds `DEFAULT_GARDEN_LOCATION` (Western Galilee) when no user location exists; suitability, Smart Rec, and weather-care paths can run against this internal fallback today even though `locationConfidence: "default"` is now exposed.  
+Description: `ensureGardenLocation()` still seeds `DEFAULT_GARDEN_LOCATION` (Western Galilee) when no user location exists, but that fallback is **no longer trusted** for suitability, Smart Rec, or weather-care paths.
 Priority: High  
-Status: Open — documented requirement; wiring not yet implemented  
-Files: `index.html` (location + climate profile + SR + suitability + weather tasks)  
-Planned fix: Location Reliability Plan below — user-confirmed location gating in confidence-aware scoring wiring phase.
+Status: **Fixed** — Location Reliability Enforcement gates all recommendation and weather-care paths on `hasTrustedAppLocation()`; Western Galilee remains internal crash-prevention only
+Files: `index.html` (`hasTrustedAppLocation`, climate suitability, Smart Rec, weather tasks / refresh)
+Notes: Existing location UI and `DEFAULT_GARDEN_LOCATION` unchanged; see Location Reliability Plan / Enforcement below.
 
 <!--
 Template for each issue:
@@ -114,7 +114,8 @@ Files: <list of files>
 | **Global Plant Catalog Foundation v1d** | Done (pushed) | climateTraits bridge — `catalogItemToLegacyFlat()` preserves seed `climateTraits`; `getPlantClimateMetadata()` uses `SMART_REC_CLIMATE_METADATA` first, then `climateMetaFromCatalogTraits()` for seed-loaded plants; inline lavender/olive/mango unchanged; coconut uses structured metadata — commit `61cdfed` |
 | **Climate Risk / Frost Scoring Refinement (v1e)** | Done (pushed) | Conservative frost scoring in `climateSuitabilityV1FromSnapshot()` — high frost-sensitive tropical/warm plants capped when garden is not clearly frost-free; `indoorShelter` lifts cap; SR/`smartRecClimateProfile()` unchanged — commit `4092627` |
 | **Smart Recommendations catalog climate bridge** | Done (pushed) | Parts A–C in `index.html` only — `smartRecClimateMetaForPlant()` falls back to catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking in `smartRecEvaluateSuitability()`; coconut/papaya/banana/mango borderline (not good/excellent) when scored against unconfirmed internal fallback climate (Western Galilee — test/dev baseline only, not user default); lavender/olive unchanged and strong; no UI/copy/data/schema/module changes — commit `deae8db` |
-| **Location / Weather Reliability confidence metadata** | Done (pushed) | Additive reliability metadata on `smartRecClimateProfile()` / `getAppClimateProfile()` — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` tracked on fetch failure and cleared on success; scoring/SR/UI unchanged; modules/data/schema/`garden-weather.mjs` unchanged — commit `a94b3fa`. **Related (documented, not yet enforced):** Location Reliability Plan hard requirement — never silently use system fallback (Western Galilee) as trusted recommendation input; see dedicated section below. |
+| **Location / Weather Reliability confidence metadata** | Done (pushed) | Additive reliability metadata on `smartRecClimateProfile()` / `getAppClimateProfile()` — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` tracked on fetch failure and cleared on success; scoring/SR/UI unchanged at that commit; modules/data/schema/`garden-weather.mjs` unchanged — commit `a94b3fa`. |
+| **Location Reliability Enforcement** | Done (local; not committed yet) | Hard requirement enforced in `index.html` only — `hasTrustedAppLocation()` / `requireTrustedAppLocationReason()`; Western Galilee / `DEFAULT_GARDEN_LOCATION` remains crash-prevention fallback only (not trusted); climate suitability → `unknown` / `score: null` / `dataSource: location_untrusted` when untrusted; Smart Rec scoring blocked + browse empty until real location confirmed; weather care-task creation and weather refresh blocked until trusted; existing location UI/fallback unchanged; no modules/data/schema/styles/UI markup changes. Local runtime tests passed (default/untrusted, confirmed manual location, location reset); no console errors observed. |
 
 ---
 
@@ -146,31 +147,57 @@ Every roadmap phase should strengthen that shared garden data layer before expan
   2. **User-confirmed saved location** — the only location trusted for recommendations
 - Only a **user-confirmed saved location** may be treated as trusted for recommendations.
 
+### Trusted location criteria (enforced)
+
+`hasTrustedAppLocation()` returns true only when **all** of the following hold:
+
+- `confirmationStatus === 'confirmed'`
+- `source !== 'default'`
+- `locationConfidence !== 'default'`
+
+Western Galilee / `DEFAULT_GARDEN_LOCATION` may still be seeded by `ensureGardenLocation()` for crash prevention, but it is **not** a trusted user location and must not drive recommendations.
+
 ### If no confirmed user location exists
 
 - Do **not** give confident plant suitability recommendations.
 - Do **not** treat Western Galilee or any other generic fallback as the user's real location.
 - Smart Recommendations must be **gated, limited, or clearly marked** as requiring location confirmation.
 - Climate-based care tasks and product recommendations must **not** be generated confidently.
-- The app must **prompt the user to set/confirm location**.
+- The app must **prompt the user to set/confirm location** (existing location chip / modal / Smart Rec location step — no new UI).
+
+### Enforcement (implemented)
+
+| Area | Behavior when location is untrusted |
+|------|-------------------------------------|
+| Climate suitability | `level: 'unknown'`, `score: null`, `dataSource: 'location_untrusted'`, summary from `requireTrustedAppLocationReason()`, warning `"Location not confirmed."` |
+| Smart Rec scoring | `smartRecEvaluateSuitability()` → blocked / score `0` with location-required reason |
+| Smart Rec browse | `getSmartRecBrowsePlants()` returns `[]` (no trusted climate-ranked results from fallback) |
+| Smart Rec confirm | `smartRecConfirmLocation()` opens existing location modal; cannot confirm Western Galilee/default as real location |
+| Weather care tasks | `syncWeatherCareTasks()` returns without creating frost/heat/weather tasks from fallback |
+| Weather refresh | `refreshGardenSession()` / `refreshGardenWeatherIfStale()` fetch weather only when `hasTrustedAppLocation()` is true |
+| Fallback / UI | `ensureGardenLocation()` + `DEFAULT_GARDEN_LOCATION` kept for crash prevention; existing location UI unchanged |
+
+**Code scope:** Only `index.html` application code changed for enforcement. No modules, data files, schemas, styles, or UI markup changes.
+
+**Local runtime tests:** Passed for default/untrusted location, confirmed manual location (e.g. London), and location reset; dashboard still renders; no console errors observed.
 
 ### Implementation principle
 
 - A fallback location may exist only as an **internal technical/dev fallback** to prevent crashes.
 - It must be marked `locationConfidence: "default"` (or equivalent) and must **not** be used as trusted recommendation input.
-- Confidence metadata (`a94b3fa`) is the foundation; **confidence-aware scoring wiring** is the next planned step to enforce this rule in suitability, SR, care tasks, and product flows.
+- Confidence metadata (`a94b3fa`) plus Location Reliability Enforcement (above) cover the location-trust gate; further **confidence-aware scoring refinements** (e.g. stale weather / low `climateConfidence` caps) remain optional follow-on work. Product recommendation runtime is still unwired and must also respect trusted location when built.
 
-### Current state vs target (planning note)
+### Current state vs remaining work
 
-| Area | Current (`a94b3fa`) | Target |
-|------|---------------------|--------|
-| Climate profile | Exposes `locationConfidence: "default"` for unconfirmed fallback | Same — signal exists |
-| Suitability / SR scoring | Still runs on fallback location | Gate or conservative-only when not user-confirmed |
-| Smart Rec browse/sort | Not gated on confirmed location | Require confirmation or show limited/unranked results |
-| Weather care tasks | May sync from fallback weather | Skip confident climate tasks until location confirmed |
+| Area | Current (enforcement done) | Remaining |
+|------|----------------------------|-----------|
+| Climate profile | Exposes `locationConfidence: "default"` for unconfirmed fallback | — |
+| Suitability / SR scoring | Gated on `hasTrustedAppLocation()` | Optional caps for stale/low confidence weather/climate |
+| Smart Rec browse/sort | Empty / blocked until trusted location | — |
+| Weather care tasks / refresh | Skipped until trusted location | — |
 | Product recommendations | Not yet wired | No confident product recs without confirmed location + care need |
 
-**Status:** Requirement documented in this file; implementation **not started** (planning only). `GAS-2` location control exists, but **first-use location confirm + recommendation gating** per this plan is still required.
+**Status:** Hard requirement **enforced** in application code (`index.html`). Western Galilee remains internal fallback only. `GAS-2` location control + existing location UI unchanged. Further confidence-aware refinements and product-rec gating are separate follow-on work.
 
 ---
 
@@ -187,7 +214,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring refinement done (`4092627`); SR catalog climate bridge done (`deae8db`); location/weather confidence metadata done (`a94b3fa`); **Location Reliability hard requirement documented** (no silent Western Galilee for recommendations — enforcement pending); next = read-only planning (confidence-aware scoring + user-confirmed location gating **or** Treatment Calendar runtime **or** catalog validation/import) |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring refinement done (`4092627`); SR catalog climate bridge done (`deae8db`); location/weather confidence metadata done (`a94b3fa`); **Location Reliability Enforcement done** (trusted-location gate in `index.html`; Western Galilee crash-prevention only); next = read-only planning (confidence-aware scoring refinements **or** Treatment Calendar runtime **or** catalog validation/import) |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -202,7 +229,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader. **v1d done (`61cdfed`):** climateTraits bridge — seed `climateTraits` on flat objects; `getPlantClimateMetadata()` prefers SMART_REC then catalog traits. **SR catalog climate bridge done (`deae8db`):** Smart Recommendations uses catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking; coconut/papaya/banana/mango borderline when climate profile uses unconfirmed fallback (internal Western Galilee — **not** an endorsed user default); lavender/olive unchanged. **Location / Weather Reliability confidence metadata done (`a94b3fa`):** `smartRecClimateProfile()` / `getAppClimateProfile()` expose additive reliability metadata — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` set on weather fetch failure and cleared on success; default/unconfirmed location surfaced as `locationConfidence: "default"`. **Hard requirement (documented, not yet enforced):** never silently use system fallback (Western Galilee) as trusted recommendation input — see Location Reliability Plan. **Next (planning only):** confidence-aware scoring wiring + user-confirmed location gating **or** Product/Care Schedule runtime planning **or** catalog validation/import pipeline planning — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader. **v1d done (`61cdfed`):** climateTraits bridge — seed `climateTraits` on flat objects; `getPlantClimateMetadata()` prefers SMART_REC then catalog traits. **SR catalog climate bridge done (`deae8db`):** Smart Recommendations uses catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking; coconut/papaya/banana/mango borderline when climate profile uses unconfirmed fallback (internal Western Galilee — **not** an endorsed user default); lavender/olive unchanged. **Location / Weather Reliability confidence metadata done (`a94b3fa`):** `smartRecClimateProfile()` / `getAppClimateProfile()` expose additive reliability metadata — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` set on weather fetch failure and cleared on success; default/unconfirmed location surfaced as `locationConfidence: "default"`. **Location Reliability Enforcement done (`index.html` only):** `hasTrustedAppLocation()` requires `confirmationStatus === 'confirmed'`, `source !== 'default'`, and `locationConfidence !== 'default'`; Western Galilee / `DEFAULT_GARDEN_LOCATION` remains internal crash-prevention only (not trusted); untrusted suitability → `unknown` / `score: null` / `location_untrusted`; Smart Rec scoring/browse blocked until real location confirmed; weather care tasks and weather refresh blocked until trusted; existing location UI and fallback mechanisms unchanged; no modules/data/schema/styles/UI markup changes; local tests passed (default/untrusted, confirmed manual, reset); no console errors. **Next (planning only):** confidence-aware scoring refinements (stale/low climate/weather confidence) **or** Product/Care Schedule runtime planning **or** catalog validation/import pipeline planning — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -293,8 +320,7 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Next phase — read-only planning (confidence-aware scoring wiring + user-confirmed location gating **or** Product/Care Schedule runtime **or** catalog validation/import pipeline; decision pending)
-- Location Reliability Plan — enforce no silent system-default location for recommendations (see dedicated section)
+- Next phase — read-only planning (confidence-aware scoring refinements **or** Product/Care Schedule runtime **or** catalog validation/import pipeline; decision pending)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -392,7 +418,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Read-only planning — choose next small phase (decision pending; do not implement yet).** Location / Weather Reliability confidence metadata is done (`a94b3fa`): profile exposes reliability fields and marks unconfirmed fallback as `locationConfidence: "default"`. **Hard requirement now documented:** CRUVIT must never silently use system fallback (Western Galilee) as trusted input for suitability, Smart Rec, care tasks, or product recommendations — only user-confirmed saved location is trusted; see **Location Reliability Plan**. Scoring/SR gating **not implemented yet**. **Choose one for read-only inspection next:** (A) **Confidence-aware scoring wiring + user-confirmed location gating** — enforce Location Reliability Plan in suitability/SR/tasks/products; (B) **Product/Care Schedule runtime planning** — Treatment Calendar task runtime + outcome feedback wiring plan; (C) **Catalog validation / import pipeline planning** — seed validation, import workflow, and quality-tier gates.
+**Read-only planning — choose next small phase (decision pending; do not implement yet).** Location Reliability Enforcement is **done** in `index.html`: Western Galilee / `DEFAULT_GARDEN_LOCATION` is crash-prevention only; trusted location requires `confirmationStatus === 'confirmed'`, `source !== 'default'`, and `locationConfidence !== 'default'`; suitability, Smart Rec scoring/browse, and weather care/refresh are gated until the user confirms a real location (local tests passed). **Choose one for read-only inspection next:** (A) **Confidence-aware scoring refinements** — consume `climateConfidence` / `weatherStatus` for conservative caps when weather is stale or confidence is low (location trust already enforced); (B) **Product/Care Schedule runtime planning** — Treatment Calendar task runtime + outcome feedback wiring plan (must also require trusted location); (C) **Catalog validation / import pipeline planning** — seed validation, import workflow, and quality-tier gates.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
