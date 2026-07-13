@@ -78,7 +78,7 @@ Scope: **read-only inspection and plan only** for Smart Recommendations browse e
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog (not next):** confidence-aware scoring refinements (stale/low `climateConfidence` / `weatherStatus`); Product/Care Schedule runtime planning; existing Product Commerce plan.
+**Other backlog (not next):** confidence-aware scoring refinements (stale/low `climateConfidence` / `weatherStatus`); Product/Care Schedule runtime planning; existing Product Commerce plan; **Smart Recommendations filter-based UX** (locked decision — see Smart Recommendations UX Scope; chat remains until filter flow is verified; results table unchanged during filter phase).
 
 **Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → Smart Recommendations catalog climate bridge (`deae8db`) → Location / Weather Reliability confidence metadata (`a94b3fa`) → Location Reliability Enforcement (`17ed381`) → Plant Climate Data Coverage Audit → **Smart Rec missing-metadata safety patch (done)** → **A. SR browse eligibility planning (next)** → B–E accuracy tasks → batch enrichment → on-demand missing profiles → backend/database migration.
 
@@ -251,7 +251,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
-- **9–10 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality.
+- **9–10 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality. **Smart Recommendations UX Scope (locked):** future filter-based input replaces chat; filters only where structured data is reliable; **preserve current results table/columns/cards/ordering during filter redesign**; results-table redesign is a later separate phase; keep chat until filter flow is verified (additive/reversible).
 - **11 — Garden Design visual upgrade:** plant visuals only; not full Studio redesign.
 - **12 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
@@ -419,6 +419,55 @@ Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Me
 
 ---
 
+# Smart Recommendations UX Scope
+
+**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Current next work remains read-only planning for Smart Recommendations browse eligibility.
+
+### Input experience (future UX phase)
+
+The current **chat-based** Smart Recommendations input flow will be replaced in a future UX phase by a **filter-based** selection experience.
+
+The filter experience may include **only** filters supported by reliable structured data, such as:
+
+- plant type
+- indoor or outdoor
+- sun
+- water
+- verified user location and climate suitability
+- planting in soil or container
+- available size or space
+- maintenance level
+- flowering, fruit, shade, fragrance, or privacy goals
+- pet or child safety
+- compatibility with plants already in My Garden
+- indoor air-quality interest, using conservative evidence
+
+### Results display (preserve during filter redesign)
+
+During the filter-based input redesign, the **existing selected-plant results display must remain unchanged**.
+
+Preserve exactly during that phase:
+
+- the current results table
+- current result columns
+- current plant result presentation
+- current plant cards or result rows
+- current result ordering and actions, unless a logic fix is separately approved
+
+### Results-table redesign (separate later phase)
+
+Results-table redesign is a **separate later UX phase**, after:
+
+- browse eligibility is reliable
+- filter logic is stable
+- recommendation data is sufficiently complete
+
+### Migration rule
+
+Do **not** remove the existing chat implementation immediately. The future filter implementation must be **additive and reversible** until the filter flow is verified.
+
+---
+
 # Future Roadmap (priority buckets)
 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
@@ -435,6 +484,7 @@ Legacy buckets retained for quick scanning. See numbered roadmap above for execu
 - Garden Photo / Media Library Foundation
 - Plant Identifier Integration
 - Smart Recommendations Integration
+- Smart Recommendations filter-based UX (locked; after browse eligibility + stable filter logic; preserve current results table during input redesign — see UX Scope)
 - Garden Design Plant Visual Upgrade
 - Wishlist (Plant Library status/filter)
 
