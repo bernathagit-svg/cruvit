@@ -242,6 +242,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **13** | Shopify Smart Connection | Planned |
 | **14** | Garden Design Studio 2.0 | Planned |
 | **15** | AI Garden Coach | Planned |
+| **16** | Garden-Level Disease Intelligence | **Future** — documented requirement only; blocked on data foundations (see dedicated plan). Must not remain single-plant-only Plant Doctor. |
 
 ### Phase notes (brief)
 
@@ -255,6 +256,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **12 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
+- **16 — Garden-Level Disease Intelligence:** future only — see dedicated plan. Plant Doctor must evolve beyond single-plant diagnosis to garden-wide, individualized, confidence-aware disease/pest/environment reasoning. **Blocked** until canonical identity, per-user Plant Library, zones/positions, photo/symptom history, care/weather history, and multi-plant observation data exist. Do not schedule ahead of those foundations or ahead of current climate accuracy work.
 
 ---
 
@@ -332,6 +334,91 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 
 ---
 
+# Garden-Level Disease Intelligence Plan
+
+**Status:** Future roadmap requirement — **documented only**. Do **not** implement until required data foundations exist. Do **not** move this ahead of those foundations or ahead of the current next task (Smart Recommendations browse eligibility planning).
+
+**Principle:** Plant Doctor must **not** remain a single-plant diagnosis tool. When disease (or strong disease suspicion) is identified in one plant, CRUVIT must reason about the **whole garden** — connecting the case to My Garden, comparing other plants, distinguishing contagious vs environmental root causes, and producing **individualized**, confidence-aware actions for each plant.
+
+### When disease or strong suspicion is identified
+
+CRUVIT must:
+
+1. Connect the case to the **correct plant** in My Garden.
+2. Examine symptoms and history from **other plants and trees** in the same garden.
+3. Analyze whether the root cause is one (or more) of:
+   - contagious disease spread
+   - pest spread
+   - watering or drainage problems
+   - nutrient deficiency
+   - heat or cold stress
+   - chemical damage
+   - another garden-wide environmental pattern
+
+### Structured per-plant symptom matrix
+
+Analysis must use a structured per-plant symptom matrix containing, where available:
+
+- canonical plant identity
+- garden location or zone
+- symptoms
+- affected plant parts
+- severity
+- timing
+- recent photos and scans
+- care history
+- watering
+- soil and drainage
+- recent weather or season
+- neighboring plants
+- confidence
+
+### Individualized garden-wide recommendations
+
+If disease is detected or strongly suspected in one plant, the system must also generate individualized recommendations for the rest of the garden.
+
+For each other plant, determine:
+
+- whether it is a susceptible host
+- proximity to the affected plant
+- shared soil, irrigation, tools, insects, wind, water, or physical contact
+- whether it needs urgent inspection, preventive action, isolation, sanitation, watering changes, monitoring only, or no action
+
+Clearly separate:
+
+- actions for the confirmed or suspected **affected** plant
+- **preventive** actions for exposed plants
+- **monitoring-only** plants
+- plants with **no meaningful risk**
+
+### Recommendation quality rules
+
+Recommendations must be:
+
+- individualized per plant
+- risk-ranked
+- time-sensitive
+- confidence-aware
+- evidence-based
+- conservative when diagnosis confidence is low
+
+Do **not** recommend blanket treatment of the whole garden when the diagnosis is uncertain.
+
+### Required foundations before implementation
+
+Do not start Garden-Level Disease Intelligence until these foundations are in place:
+
+- canonical plant identity
+- reliable per-user Plant Library
+- garden map / zones / plant positions
+- per-plant photo and symptom history
+- care, watering, soil, weather, and treatment history
+- multi-plant observation data
+
+Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Media Library, garden zone/position data, and shared plant + climate graph wiring. Plant Doctor remains an external module with protected detection quality until a safe, additive integration plan is approved.
+
+---
+
 # Future Roadmap (priority buckets)
 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
@@ -355,6 +442,9 @@ Legacy buckets retained for quick scanning. See numbered roadmap above for execu
 - Shopify Smart Connection (includes User Product Outcome Memory)
 - Garden Design Studio 2.0
 - AI Garden Coach
+
+## Strategic future (foundation-gated)
+- Garden-Level Disease Intelligence — **strategically important, locked CRUVIT requirement**; implementation deferred until required foundations exist (canonical identity, per-user Plant Library, zones/positions, photo/symptom/care history, multi-plant observations). See dedicated plan. Not low priority — foundation-gated only.
 
 ---
 
@@ -431,6 +521,7 @@ Never rewrite a working external module immediately after importing it.
 - Detection logic, API behavior, result quality, and workflow must be preserved.
 - UI/UX may be redesigned later from approved Figma.
 - Data integration with the shared Cruvit plant database is allowed only with a safe, additive, reversible plan.
+- **Future direction:** Plant Doctor must not remain a single-plant diagnosis tool. Approved long-term requirements for garden-wide disease intelligence (symptom matrix, root-cause differentiation, individualized risk-ranked actions, no blanket treatment under low confidence) are recorded in **Garden-Level Disease Intelligence Plan**. Implementation waits on required data foundations.
 
 (Canonical process rule lives in `AGENTS.md` → "External module integration rule".)
 
