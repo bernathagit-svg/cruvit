@@ -4617,15 +4617,16 @@ function smartRecEvaluateSuitability(p){
   }
   const meta=smartRecClimateMetaForPlant(p);
   if(!meta){
+    const reason='Detailed climate data is unavailable for this plant, so it cannot yet be confidently recommended for your location.';
     return {
-      suitabilityScore:60,
-      recommendationLevel:'good',
-      survivalFit:60,
-      thriveFit:60,
-      floweringFit:60,
-      fruitingFit:60,
-      warnings:[],
-      explanationText:'Broad catalog match; detailed climate scoring is not available for this plant yet.'
+      suitabilityScore:50,
+      recommendationLevel:'borderline',
+      survivalFit:50,
+      thriveFit:50,
+      floweringFit:50,
+      fruitingFit:50,
+      warnings:[reason],
+      explanationText:reason
     };
   }
   const climateProfile=getAppClimateProfile();

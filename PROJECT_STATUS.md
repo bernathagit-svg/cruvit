@@ -61,18 +61,26 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Next phase — read-only planning (decision pending; no implementation yet)
-Status: **Next — planning only**  
-Priority: High  
-Scope: choose the next **small** phase after Location Reliability Enforcement — **read-only inspection and plan only**; do not implement until explicitly approved
+### Next phase — read-only planning for Smart Recommendations browse eligibility
+Status: **Next — planning only**
+Priority: High
+Scope: **read-only inspection and plan only** for Smart Recommendations browse eligibility / broad tag gate (`scorePlantForSource` for `'Smart Recommendations'`); do not implement until explicitly approved. Do not begin other accuracy tasks yet.
 
-**Option A — Confidence-aware scoring refinements (beyond location gate):** read-only plan for consuming `climateConfidence` and `weatherStatus` (and related confidence notes) in suitability/SR engines — conservative caps and reasons when weather is stale/missing or climate confidence is low; location trust gating is already enforced (see Location Reliability Enforcement). No UI redesign in planning phase.
+**Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
-**Option B — Product/Care Schedule runtime planning:** read-only plan for Treatment Calendar task runtime, purchase/use task linking, and outcome feedback on garden `data` (schema committed `416fc78`; runtime not wired). Product recommendations must still require a trusted user location per Location Reliability Plan.
+**Remaining climate accuracy tasks (ordered; do not skip ahead):**
 
-**Option C — Catalog validation / import pipeline planning:** read-only plan for seed/catalog validation, import workflow, and quality-tier gates before larger batch enrichment.  
+| # | Task | Status |
+|---|------|--------|
+| **A** | Smart Recommendations browse eligibility / broad tag gate | **Next — read-only planning** |
+| **B** | Canonical plant identities, aliases, and duplicate records | Planned |
+| **C** | Missing climate fields and reviewed catalog data | Planned |
+| **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
+| **E** | Global catalog validation in small plant batches | Planned |
 
-**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → Smart Recommendations catalog climate bridge (`deae8db`) → Location / Weather Reliability confidence metadata (`a94b3fa`) → **Location Reliability Enforcement (done — see plan below)** → next small phase (decision pending) → batch enrichment → on-demand missing profiles → backend/database migration.
+**Other backlog (not next):** confidence-aware scoring refinements (stale/low `climateConfidence` / `weatherStatus`); Product/Care Schedule runtime planning; existing Product Commerce plan.
+
+**Catalog / climate strategy note:** v1a → v1b → v1c-loader → v1d climateTraits bridge → Climate Risk / Frost Scoring Refinement (`4092627`) → Smart Recommendations catalog climate bridge (`deae8db`) → Location / Weather Reliability confidence metadata (`a94b3fa`) → Location Reliability Enforcement (`17ed381`) → Plant Climate Data Coverage Audit → **Smart Rec missing-metadata safety patch (done)** → **A. SR browse eligibility planning (next)** → B–E accuracy tasks → batch enrichment → on-demand missing profiles → backend/database migration.
 
 ---
 
@@ -80,10 +88,17 @@ Scope: choose the next **small** phase after Location Reliability Enforcement �
 
 ### System default location used for recommendations (implementation gap)
 Description: `ensureGardenLocation()` still seeds `DEFAULT_GARDEN_LOCATION` (Western Galilee) when no user location exists, but that fallback is **no longer trusted** for suitability, Smart Rec, or weather-care paths.
-Priority: High  
+Priority: High
 Status: **Fixed** — Location Reliability Enforcement gates all recommendation and weather-care paths on `hasTrustedAppLocation()`; Western Galilee remains internal crash-prevention only
 Files: `index.html` (`hasTrustedAppLocation`, climate suitability, Smart Rec, weather tasks / refresh)
 Notes: Existing location UI and `DEFAULT_GARDEN_LOCATION` unchanged; see Location Reliability Plan / Enforcement below.
+
+### Smart Rec null-meta scored as good (accuracy gap)
+Description: When `smartRecClimateMetaForPlant()` returned no structured metadata, `smartRecEvaluateSuitability()` previously returned `suitabilityScore: 60` and `recommendationLevel: 'good'`.
+Priority: High
+Status: **Fixed** — missing-metadata safety patch; trusted location + no meta now returns `suitabilityScore: 50`, `recommendationLevel: 'borderline'`, with explanation that detailed climate data is unavailable
+Files: `index.html` (`smartRecEvaluateSuitability` `!meta` branch only)
+Notes: Trusted-location gating, structured-metadata scoring, `climateSuitabilityV1FromSnapshot`, and `getSmartRecBrowsePlants` unchanged. Remaining accuracy work: browse tag gate (A), then B–E below.
 
 <!--
 Template for each issue:
@@ -115,7 +130,9 @@ Files: <list of files>
 | **Climate Risk / Frost Scoring Refinement (v1e)** | Done (pushed) | Conservative frost scoring in `climateSuitabilityV1FromSnapshot()` — high frost-sensitive tropical/warm plants capped when garden is not clearly frost-free; `indoorShelter` lifts cap; SR/`smartRecClimateProfile()` unchanged — commit `4092627` |
 | **Smart Recommendations catalog climate bridge** | Done (pushed) | Parts A–C in `index.html` only — `smartRecClimateMetaForPlant()` falls back to catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking in `smartRecEvaluateSuitability()`; coconut/papaya/banana/mango borderline (not good/excellent) when scored against unconfirmed internal fallback climate (Western Galilee — test/dev baseline only, not user default); lavender/olive unchanged and strong; no UI/copy/data/schema/module changes — commit `deae8db` |
 | **Location / Weather Reliability confidence metadata** | Done (pushed) | Additive reliability metadata on `smartRecClimateProfile()` / `getAppClimateProfile()` — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` tracked on fetch failure and cleared on success; scoring/SR/UI unchanged at that commit; modules/data/schema/`garden-weather.mjs` unchanged — commit `a94b3fa`. |
-| **Location Reliability Enforcement** | Done (local; not committed yet) | Hard requirement enforced in `index.html` only — `hasTrustedAppLocation()` / `requireTrustedAppLocationReason()`; Western Galilee / `DEFAULT_GARDEN_LOCATION` remains crash-prevention fallback only (not trusted); climate suitability → `unknown` / `score: null` / `dataSource: location_untrusted` when untrusted; Smart Rec scoring blocked + browse empty until real location confirmed; weather care-task creation and weather refresh blocked until trusted; existing location UI/fallback unchanged; no modules/data/schema/styles/UI markup changes. Local runtime tests passed (default/untrusted, confirmed manual location, location reset); no console errors observed. |
+| **Location Reliability Enforcement** | Done (pushed) | Hard requirement enforced in `index.html` only — `hasTrustedAppLocation()` / `requireTrustedAppLocationReason()`; Western Galilee / `DEFAULT_GARDEN_LOCATION` remains crash-prevention fallback only (not trusted); climate suitability → `unknown` / `score: null` / `dataSource: location_untrusted` when untrusted; Smart Rec scoring blocked + browse empty until real location confirmed; weather care-task creation and weather refresh blocked until trusted; existing location UI/fallback unchanged; no modules/data/schema/styles/UI markup changes. Local + production verification passed — commit `17ed381`. |
+| **Plant Climate Data Coverage Audit** | Done (read-only) | Read-only audit of catalogs/indexes/climate datasets used by CSE + Smart Rec + plant cards. Highest immediate risk: plants without structured climate metadata received `suitabilityScore: 60` / `recommendationLevel: 'good'`. Remaining accuracy backlog ordered A–E (browse gate → identities/duplicates → missing fields → survival/thrive/flower/fruit separation → small-batch catalog validation). |
+| **Smart Rec missing-metadata safety patch** | Done (local; not committed yet) | `smartRecEvaluateSuitability()` `!meta` branch only in `index.html`: trusted location + missing structured metadata → `suitabilityScore: 50`, `recommendationLevel: 'borderline'`, explanation that detailed climate data is unavailable and the plant cannot yet be confidently recommended. Trusted-location gating unchanged; structured-metadata scoring unchanged; `climateSuitabilityV1FromSnapshot` and `getSmartRecBrowsePlants` unchanged. Local tests passed (untrusted blocked; trusted+meta unchanged; trusted+no-meta conservative); no console errors. |
 
 ---
 
@@ -214,7 +231,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring refinement done (`4092627`); SR catalog climate bridge done (`deae8db`); location/weather confidence metadata done (`a94b3fa`); **Location Reliability Enforcement done** (trusted-location gate in `index.html`; Western Galilee crash-prevention only); next = read-only planning (confidence-aware scoring refinements **or** Treatment Calendar runtime **or** catalog validation/import) |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — v1a–v1d done; frost scoring / SR catalog bridge / location confidence metadata / Location Reliability Enforcement done (`17ed381`); Plant Climate Data Coverage Audit done; **Smart Rec missing-metadata safety patch done**; next = **read-only planning for Smart Recommendations browse eligibility** (accuracy task A); then B–E |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -229,7 +246,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a done (`63b50c4`):** schema shell + legacy bridge helpers. **v1b done (`1d540f0`):** 32 curated seed plants in `data/plants.seed.json`. **v1c-loader done (`b6c4c39`):** non-blocking async loader. **v1d done (`61cdfed`):** climateTraits bridge — seed `climateTraits` on flat objects; `getPlantClimateMetadata()` prefers SMART_REC then catalog traits. **SR catalog climate bridge done (`deae8db`):** Smart Recommendations uses catalog `climateTraits` when SMART_REC metadata is missing; SMART_REC remains first priority for inline plants; frost parity + needsReview conservative ranking; coconut/papaya/banana/mango borderline when climate profile uses unconfirmed fallback (internal Western Galilee — **not** an endorsed user default); lavender/olive unchanged. **Location / Weather Reliability confidence metadata done (`a94b3fa`):** `smartRecClimateProfile()` / `getAppClimateProfile()` expose additive reliability metadata — `structuralFreezingRisk`, `forecastFreezingRisk`, `isFrostFreeGrowingClimate`, `locationConfidence`, `climateConfidence`, `weatherStatus`, `weatherAgeMs`, `confidenceNotes`; `data.weatherFetchError` set on weather fetch failure and cleared on success; default/unconfirmed location surfaced as `locationConfidence: "default"`. **Location Reliability Enforcement done (`index.html` only):** `hasTrustedAppLocation()` requires `confirmationStatus === 'confirmed'`, `source !== 'default'`, and `locationConfidence !== 'default'`; Western Galilee / `DEFAULT_GARDEN_LOCATION` remains internal crash-prevention only (not trusted); untrusted suitability → `unknown` / `score: null` / `location_untrusted`; Smart Rec scoring/browse blocked until real location confirmed; weather care tasks and weather refresh blocked until trusted; existing location UI and fallback mechanisms unchanged; no modules/data/schema/styles/UI markup changes; local tests passed (default/untrusted, confirmed manual, reset); no console errors. **Next (planning only):** confidence-aware scoring refinements (stale/low climate/weather confidence) **or** Product/Care Schedule runtime planning **or** catalog validation/import pipeline planning — decision pending. Then: batch enrichment → on-demand missing profiles → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. **v1a–v1d, frost scoring, SR catalog climate bridge, location/weather confidence metadata, and Location Reliability Enforcement** are done (`17ed381`). **Plant Climate Data Coverage Audit done (read-only):** mapped catalogs/indexes/climate datasets; highest immediate risk was SR null-meta → `suitabilityScore: 60` / `recommendationLevel: 'good'`. **Smart Rec missing-metadata safety patch done (`index.html` only):** `smartRecEvaluateSuitability()` `!meta` branch now returns `suitabilityScore: 50`, `recommendationLevel: 'borderline'`, with explanation that detailed climate data is unavailable and the plant cannot yet be confidently recommended; trusted-location gating unchanged; structured-metadata scoring unchanged; `climateSuitabilityV1FromSnapshot` and `getSmartRecBrowsePlants` unchanged; local tests passed (untrusted / trusted+meta / trusted+no-meta); no console errors. **Remaining accuracy tasks (ordered):** (A) Smart Recommendations browse eligibility / broad tag gate; (B) canonical plant identities, aliases, and duplicate records; (C) missing climate fields and reviewed catalog data; (D) separate survival, thriving, flowering, and fruiting outcomes; (E) global catalog validation in small plant batches. **Next:** read-only planning for **A — Smart Recommendations browse eligibility**. Then B–E → batch enrichment → on-demand missing profiles → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -320,11 +337,14 @@ If a product was marked **excellent/helpful** by a specific user, CRUVIT should 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Next phase — read-only planning (confidence-aware scoring refinements **or** Product/Care Schedule runtime **or** catalog validation/import pipeline; decision pending)
+- Next — read-only planning for Smart Recommendations browse eligibility (accuracy task A)
+- Remaining climate accuracy tasks B–E (identities/duplicates; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
 ## Medium
+- Confidence-aware scoring refinements (stale/low climate/weather confidence; location trust already enforced)
+- Product/Care Schedule runtime planning
 - Garden Photo / Media Library Foundation
 - Plant Identifier Integration
 - Smart Recommendations Integration
@@ -418,7 +438,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Read-only planning — choose next small phase (decision pending; do not implement yet).** Location Reliability Enforcement is **done** in `index.html`: Western Galilee / `DEFAULT_GARDEN_LOCATION` is crash-prevention only; trusted location requires `confirmationStatus === 'confirmed'`, `source !== 'default'`, and `locationConfidence !== 'default'`; suitability, Smart Rec scoring/browse, and weather care/refresh are gated until the user confirms a real location (local tests passed). **Choose one for read-only inspection next:** (A) **Confidence-aware scoring refinements** — consume `climateConfidence` / `weatherStatus` for conservative caps when weather is stale or confidence is low (location trust already enforced); (B) **Product/Care Schedule runtime planning** — Treatment Calendar task runtime + outcome feedback wiring plan (must also require trusted location); (C) **Catalog validation / import pipeline planning** — seed validation, import workflow, and quality-tier gates.
+**Read-only planning for Smart Recommendations browse eligibility.** Do not implement yet. Plant Climate Data Coverage Audit is done; Smart Rec missing-metadata safety patch is done (`smartRecEvaluateSuitability()` `!meta` → `suitabilityScore: 50` / `recommendationLevel: 'borderline'` with unavailable-data explanation; trusted-location gating and structured-metadata scoring unchanged). **Plan only** how to fix the broad tag gate in `scorePlantForSource(..., 'Smart Recommendations')` (accuracy task A) — wrong inclusions (e.g. `sun`-only) and exclusions (e.g. shade plants / `low-water` vs `low water`) — without redesigning UI. Remaining ordered tasks after A: B identities/duplicates → C missing climate fields → D survival/thrive/flower/fruit separation → E small-batch catalog validation.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
