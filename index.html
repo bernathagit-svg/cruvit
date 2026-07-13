@@ -4341,9 +4341,7 @@ function scorePlantForSource(p,source){
   const climate=String(data.climate||'').toLowerCase();
   const pClimate=String(p.climate||'').toLowerCase();
   if(source==='Smart Recommendations'){
-    const tagMatch=t.includes('mediterranean')||t.includes('low water')||t.includes('sun');
-    const climateMatch=!!climate&&(t.includes(climate)||pClimate.includes(climate)||(climate.includes('mediterranean')&&t.includes('mediterranean')));
-    return tagMatch||climateMatch;
+    return !!smartRecClimateMetaForPlant(p);
   }
   if(source==='Garden Design')return t.includes('tree')||t.includes('climber')||t.includes('flowering')||t.includes('mediterranean');
   return true;
