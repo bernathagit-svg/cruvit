@@ -149,6 +149,29 @@
       },
       "additionalProperties": true
     },
+    "SmartRecTaxonomyToken": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Extensible kebab-case taxonomy token for Smart Recommendations filters. Canonical value lists live in product docs (PROJECT_STATUS Smart Recommendations UX Scope); new tokens may be added without schema rewrite. Free-text tags are not authoritative."
+    },
+    "SmartRecFilterTaxonomyMeta": {
+      "type": "object",
+      "description": "Optional confidence and review metadata for Smart Recommendations filter taxonomy assignments on a plant.",
+      "properties": {
+        "needsReview": {
+          "type": "boolean",
+          "description": "When true, taxonomy assignments should not drive confident filter recommendations until reviewed."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Editorial confidence for taxonomy assignments. Use needsReview for review/draft status — do not use draft as a confidence value."
+        },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
     "PlantRootBehaviorProfile": {
       "type": "object",
       "description": "Root behavior relevant to structures and neighboring plants (Layer 2).",
@@ -591,6 +614,39 @@
         "environmentSuitability": {
           "$ref": "#/definitions/PlantEnvironmentSuitability",
           "description": "Optional grouped Layer 1 payload; climateTraits/climateLabel may also appear at top level."
+        },
+        "growingEnvironments": {
+          "type": "array",
+          "description": "Optional Smart Recommendations growing environment / site-type tokens (multi-value). Empty array allowed. Canonical examples: indoor, balcony, rooftop-garden, patio-courtyard, private-garden-open-ground, greenhouse, windowsill, vertical-garden, community-garden, office-commercial. Not authoritative via free-text tags.",
+          "items": { "$ref": "#/definitions/SmartRecTaxonomyToken" },
+          "uniqueItems": true
+        },
+        "plantingMethods": {
+          "type": "array",
+          "description": "Optional Smart Recommendations planting method / container tokens (multi-value). Empty array allowed. Canonical examples: in-ground, pots-containers, raised-bed, planter-box, hanging-basket, green-wall, hydroponics, greenhouse-tunnel, pond-water-garden.",
+          "items": { "$ref": "#/definitions/SmartRecTaxonomyToken" },
+          "uniqueItems": true
+        },
+        "gardenStyles": {
+          "type": "array",
+          "description": "Optional Smart Recommendations garden style / ecosystem tokens (multi-value). Empty array allowed. Canonical examples: tropical, japanese, mediterranean, cottage, desert-xeriscape, modern-minimal, woodland-shade.",
+          "items": { "$ref": "#/definitions/SmartRecTaxonomyToken" },
+          "uniqueItems": true
+        },
+        "gardenPurposes": {
+          "type": "array",
+          "description": "Optional Smart Recommendations garden purpose / use tokens (multi-value). Empty array allowed. Canonical examples: vegetable-garden, herb-garden, edible-garden, fruit-garden-orchard, pollinator-garden, privacy, flowering, shade.",
+          "items": { "$ref": "#/definitions/SmartRecTaxonomyToken" },
+          "uniqueItems": true
+        },
+        "maintenanceLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Optional Smart Recommendations maintenance level."
+        },
+        "filterTaxonomyMeta": {
+          "$ref": "#/definitions/SmartRecFilterTaxonomyMeta",
+          "description": "Optional confidence/review metadata for the filter taxonomy fields above."
         },
         "gardenCompatibility": {
           "$ref": "#/definitions/PlantGardenCompatibility",
