@@ -484,9 +484,79 @@ These filters must eventually use structured catalog fields such as `gardenStyle
 
 Enable style/purpose filters **only** when catalog data is sufficiently reliable.
 
-**Hard gate:** confirmed-location climate suitability remains mandatory. A plant must **never** be recommended for style or purpose alone when it is unsuitable for the user's climate.
+### Growing environment / site type (locked requirement)
 
-The existing results table remains preserved during the future filter UX phase (see below).
+Structured growing-environment filters (examples):
+
+- indoor
+- balcony
+- rooftop garden
+- patio / courtyard
+- private garden in open ground
+- greenhouse
+- windowsill
+- vertical garden
+- community garden
+- office / commercial space
+
+A plant may belong to **multiple** growing environments.
+
+### Planting method / container type (locked requirement)
+
+Structured planting-method filters (examples):
+
+- in ground
+- pots / containers
+- raised bed
+- planter box
+- hanging basket
+- green wall
+- hydroponics
+- greenhouse / tunnel
+- pond / water garden
+
+A plant may belong to **multiple** planting methods.
+
+### Complementary advanced filters (locked requirement)
+
+Additional structured filters (examples):
+
+- sun exposure
+- wind exposure
+- irrigation availability
+- drainage
+- available space
+- maximum plant height and width
+- maintenance level
+- pot / container size
+- heat, cold, and frost suitability
+- pet and child toxicity
+- perennial or annual
+- growth speed
+
+### Initial visible filter groups
+
+On first release of the filter UX, show these groups in the primary filter surface:
+
+- growing environment
+- garden style
+- garden purpose
+- sun
+- water
+- maintenance
+
+All other supported filters should initially appear under **Advanced Filters**.
+
+### Architecture and rollout rules
+
+- The taxonomy must be **extensible through data or configuration**.
+- Adding a new environment, style, purpose, or planting method must **not** require rewriting the UI.
+- A plant may belong to multiple environments, planting methods, styles, and purposes.
+- Filters may be enabled **only** when reliable structured catalog data exists.
+- **Hard gate:** confirmed-location climate suitability remains mandatory. Style, purpose, or environment alone must **never** recommend a climate-unsuitable plant.
+- The existing Smart Recommendations **results table remains unchanged** during the filter UX phase.
+- Results-table redesign remains a **separate later task**.
+- The existing **chat flow remains available** until the filter flow is verified; migration must stay **additive and reversible**.
 
 ### Results display (preserve during filter redesign)
 
