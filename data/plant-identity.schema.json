@@ -79,6 +79,11 @@
           "allOf": [{ "$ref": "#/definitions/SlugToken" }],
           "description": "The single canonical slug all aliases/module keys should resolve to."
         },
+        "plantId": {
+          "type": "string",
+          "pattern": "^plt_[a-z0-9]{16}$",
+          "description": "Immutable opaque catalog-level plant identifier. Randomly authored in the central identity registry, never derived from slug, names, or scientific name, never reused, and never changed after assignment."
+        },
         "acceptedScientificName": {
           "type": "string",
           "minLength": 1,
