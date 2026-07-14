@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cruvit.app/schemas/plant-identity-registry/v1",
+  "title": "Cruvit Plant Identity Registry",
+  "description": "Data-only canonical identity registry for Cruvit plants. Documents known different-key identity mappings (variant slugs and cross-module keys) and separately records exact same-slug duplicate conflicts for a later merge-safe task. This registry is additive and reviewable. It does NOT rename, merge, or delete plant records, is NOT wired into runtime code, and must NOT be treated as resolving same-slug duplicates. Structure is extensible for a future stable plantId without relying on free-text tags.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "registryVersion", "canonicalIdentities", "duplicateConflicts"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "registryVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the registry data content."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional human-readable notes about this registry file as a whole."
+    },
+    "canonicalIdentities": {
+      "type": "array",
+      "description": "Verified different-key identity mappings. Each entry points one or more alias slugs and/or module-specific keys at a single canonical slug. Same-slug duplicates are NOT represented here.",
+      "items": { "$ref": "#/definitions/CanonicalIdentity" }
+    },
+    "duplicateConflicts": {
+      "type": "array",
+      "description": "Exact same-slug duplicate records. Documented only; not resolved by this registry.",
+      "items": { "$ref": "#/definitions/DuplicateConflict" }
+    }
+  },
+  "definitions": {
+    "SlugToken": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Kebab-case identity token (lowercase letters, digits, single hyphens)."
+    },
+    "ModuleKeys": {
+      "type": "object",
+      "description": "Module-specific identity keys grouped by source. Each source holds a unique-item array of kebab-case keys. Extend by adding new source properties to this schema (no free-text tags).",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "plantLibrary": {
+          "type": "array",
+          "description": "Keys in the inline index.html PLANT_LIBRARY slug namespace.",
+          "items": { "$ref": "#/definitions/SlugToken" },
+          "uniqueItems": true
+        },
+        "careQualityProfiles": {
+          "type": "array",
+          "description": "Keys in the index.html CARE_QUALITY_PROFILES namespace.",
+          "items": { "$ref": "#/definitions/SlugToken" },
+          "uniqueItems": true
+        },
+        "gardenDesignManifest": {
+          "type": "array",
+          "description": "Keys in modules/garden-design/assets/plants/manifest.json.",
+          "items": { "$ref": "#/definitions/SlugToken" },
+          "uniqueItems": true
+        },
+        "seed": {
+          "type": "array",
+          "description": "Slugs in data/plants.seed.json.",
+          "items": { "$ref": "#/definitions/SlugToken" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "CanonicalIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonicalSlug", "needsReview"],
+      "properties": {
+        "canonicalSlug": {
+          "allOf": [{ "$ref": "#/definitions/SlugToken" }],
+          "description": "The single canonical slug all aliases/module keys should resolve to."
+        },
+        "acceptedScientificName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Accepted scientific name, included only where reliable at species level. Omit for genus-level or ambiguous cases."
+        },
+        "aliasSlugs": {
+          "type": "array",
+          "description": "Alternate slugs (same slug namespace as canonicalSlug) that describe the same plant. Duplicate aliases within an entry are rejected.",
+          "items": { "$ref": "#/definitions/SlugToken" },
+          "uniqueItems": true
+        },
+        "moduleKeys": { "$ref": "#/definitions/ModuleKeys" },
+        "needsReview": {
+          "type": "boolean",
+          "description": "True when the mapping or its scientific name still needs editorial review."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional reviewer notes / provenance."
+        }
+      }
+    },
+    "ObservedRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "ref"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["plantLibrary", "careQualityProfiles", "gardenDesignManifest", "seed"],
+          "description": "Which source the observed record came from."
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable reference to the record (e.g. file path + approximate line, or key)."
+        },
+        "scientificName": {
+          "type": "string",
+          "description": "Scientific name exactly as observed on that record (may contain spelling variants)."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional observation notes."
+        }
+      }
+    },
+    "DuplicateConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "conflictType", "observedRecords", "needsReview", "resolutionStatus"],
+      "properties": {
+        "slug": {
+          "allOf": [{ "$ref": "#/definitions/SlugToken" }],
+          "description": "The shared slug used by two or more distinct records."
+        },
+        "conflictType": {
+          "type": "string",
+          "enum": ["duplicate-slug", "duplicate-slug-scientific-spelling-conflict"],
+          "description": "Nature of the same-slug conflict."
+        },
+        "observedRecords": {
+          "type": "array",
+          "minItems": 2,
+          "description": "The two or more distinct records sharing the slug.",
+          "items": { "$ref": "#/definitions/ObservedRecord" }
+        },
+        "recommendedCanonicalScientificName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Recommended accepted scientific name, when known. Non-binding until the later merge-safe task."
+        },
+        "conflictingScientificNamePresent": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A conflicting scientific name currently present in one of the records (e.g. a misspelling)."
+        },
+        "needsReview": {
+          "type": "boolean",
+          "description": "Always true for documented, unresolved conflicts."
+        },
+        "resolutionStatus": {
+          "type": "string",
+          "enum": ["pending"],
+          "description": "Only 'pending' is valid in this foundation task; conflicts are documented, not resolved."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Reviewer notes. Must make clear no correction/merge/deletion happens in this task."
+        }
+      }
+    }
+  }
+}

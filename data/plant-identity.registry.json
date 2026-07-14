@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "registryVersion": "1.0.0",
+  "notes": "Data-only Plant Identity Registry Foundation. Documents verified different-key identity mappings (variant slugs + cross-module keys) and separately records exact same-slug duplicate conflicts for a later merge-safe task. NOT wired into runtime. No plant records were renamed, merged, or deleted. Same-slug duplicates are documented, NOT resolved. Structure is extensible for a future stable plantId. Record references and line numbers are approximate provenance pointers captured during the read-only Canonical Identity Audit and must be re-verified before any cleanup.",
+  "canonicalIdentities": [
+    {
+      "canonicalSlug": "apple",
+      "acceptedScientificName": "Malus domestica",
+      "aliasSlugs": ["apple-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'apple-tree' is an alias of 'apple' (both Malus domestica)."
+    },
+    {
+      "canonicalSlug": "pear",
+      "acceptedScientificName": "Pyrus communis",
+      "aliasSlugs": ["pear-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'pear-tree' is an alias of 'pear' (both Pyrus communis)."
+    },
+    {
+      "canonicalSlug": "peach",
+      "acceptedScientificName": "Prunus persica",
+      "aliasSlugs": ["peach-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'peach-tree' is an alias of 'peach' (both Prunus persica)."
+    },
+    {
+      "canonicalSlug": "plum",
+      "aliasSlugs": ["plum-tree"],
+      "needsReview": true,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. Both records use genus-level 'Prunus spp.' (also Prunus domestica / Prunus salicina in aliases); acceptedScientificName omitted because it is not reliable at species level. Needs review before assigning a species."
+    },
+    {
+      "canonicalSlug": "fig",
+      "acceptedScientificName": "Ficus carica",
+      "aliasSlugs": ["fig-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'fig-tree' is an alias of 'fig' (both Ficus carica)."
+    },
+    {
+      "canonicalSlug": "grapevine",
+      "acceptedScientificName": "Vitis vinifera",
+      "aliasSlugs": ["grape-vine"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'grape-vine' is an alias of 'grapevine' (both Vitis vinifera)."
+    },
+    {
+      "canonicalSlug": "passionfruit",
+      "acceptedScientificName": "Passiflora edulis",
+      "aliasSlugs": ["passion-fruit"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'passion-fruit' is an alias of 'passionfruit' (both Passiflora edulis)."
+    },
+    {
+      "canonicalSlug": "mango",
+      "acceptedScientificName": "Mangifera indica",
+      "moduleKeys": {
+        "careQualityProfiles": ["mango-tree"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'mango-tree'; the inline PLANT_LIBRARY record uses slug 'mango'. Same species (Mangifera indica). No 'mango-tree' record exists in PLANT_LIBRARY."
+    },
+    {
+      "canonicalSlug": "lychee",
+      "acceptedScientificName": "Litchi chinensis",
+      "moduleKeys": {
+        "careQualityProfiles": ["lychee-tree"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'lychee-tree'; the inline PLANT_LIBRARY record uses slug 'lychee'. Same species (Litchi chinensis). No 'lychee-tree' record exists in PLANT_LIBRARY."
+    },
+    {
+      "canonicalSlug": "olive",
+      "acceptedScientificName": "Olea europaea",
+      "moduleKeys": {
+        "gardenDesignManifest": ["olive-tree"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. Garden Design manifest uses 'olive-tree'; the inline PLANT_LIBRARY record uses slug 'olive'. Same species (Olea europaea)."
+    },
+    {
+      "canonicalSlug": "cypress",
+      "acceptedScientificName": "Cupressus sempervirens",
+      "moduleKeys": {
+        "gardenDesignManifest": ["italian-cypress"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. Garden Design manifest uses 'italian-cypress'; data/plants.seed.json uses slug 'cypress'. Same species (Cupressus sempervirens)."
+    }
+  ],
+  "duplicateConflicts": [
+    {
+      "slug": "avocado",
+      "conflictType": "duplicate-slug",
+      "observedRecords": [
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 484)",
+          "scientificName": "Persea americana",
+          "notes": "he name 'עץ אבוקדו'. First occurrence in the array."
+        },
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 518)",
+          "scientificName": "Persea americana",
+          "notes": "he name 'אבוקדו'. Second occurrence; wins in PLANT_INDEX via Object.fromEntries (last-key-wins)."
+        }
+      ],
+      "recommendedCanonicalScientificName": "Persea americana",
+      "needsReview": true,
+      "resolutionStatus": "pending",
+      "notes": "Two distinct records share slug 'avocado'. Same species. Documented only. No record correction, merge, or deletion in this task."
+    },
+    {
+      "slug": "strawberry-guava",
+      "conflictType": "duplicate-slug-scientific-spelling-conflict",
+      "observedRecords": [
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 488)",
+          "scientificName": "Psidium cattleianum",
+          "notes": "Accepted spelling. First occurrence."
+        },
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 520)",
+          "scientificName": "Psidium cattleyanum",
+          "notes": "Conflicting spelling currently present. Second occurrence; wins in PLANT_INDEX via Object.fromEntries (last-key-wins)."
+        }
+      ],
+      "recommendedCanonicalScientificName": "Psidium cattleianum",
+      "conflictingScientificNamePresent": "Psidium cattleyanum",
+      "needsReview": true,
+      "resolutionStatus": "pending",
+      "notes": "Accepted spelling: Psidium cattleianum. Conflicting spelling currently present in a record: Psidium cattleyanum. Documented only. No record correction or deletion in this task."
+    },
+    {
+      "slug": "mulberry",
+      "conflictType": "duplicate-slug",
+      "observedRecords": [
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 489)",
+          "scientificName": "Morus spp.",
+          "notes": "he name 'עץ תות'. First occurrence."
+        },
+        {
+          "source": "plantLibrary",
+          "ref": "index.html PLANT_LIBRARY (~line 521)",
+          "scientificName": "Morus spp.",
+          "notes": "he name 'תות עץ'. Second occurrence; wins in PLANT_INDEX via Object.fromEntries (last-key-wins)."
+        }
+      ],
+      "recommendedCanonicalScientificName": "Morus spp.",
+      "needsReview": true,
+      "resolutionStatus": "pending",
+      "notes": "Two distinct records share slug 'mulberry'. Genus-level 'Morus spp.' only (species not reliably determined). Documented only. No record correction, merge, or deletion in this task."
+    }
+  ]
+}
