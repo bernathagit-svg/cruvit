@@ -329,6 +329,14 @@ foreach ($mk in $moduleKeyEntries) {
 if ($moduleMissing.Count -eq 0) { Pass 'every module key exists in its claimed source namespace (careQualityProfiles / gardenDesignManifest verified)' }
 else { Fail ("module key missing from source namespace: " + ($moduleMissing -join ', ')) }
 
+# full canonical coverage: every non-conflicted catalog identity is represented
+$aliasSetCoverage = [System.Collections.Generic.HashSet[string]]::new([string[]]@($aliasEntries.alias))
+$missingCoverage = @($catalogUnion | Where-Object {
+  -not $aliasSetCoverage.Contains($_) -and -not $conflictSlugSet.Contains($_) -and -not $canonSlugSet.Contains($_)
+})
+if ($missingCoverage.Count -eq 0) { Pass 'every non-conflicted canonical catalog identity is represented in the registry' }
+else { Fail ("canonical identities missing from registry (" + $missingCoverage.Count + "): " + (($missingCoverage | Sort-Object) -join ', ')) }
+
 # ---------------------------------------------------------------------------
 # 5. Schema consistency (top-level shape only)
 # ---------------------------------------------------------------------------

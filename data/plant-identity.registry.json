@@ -1,8 +1,23 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "1.0.0",
-  "notes": "Data-only Plant Identity Registry Foundation. Documents verified different-key identity mappings (variant slugs + cross-module keys) and separately records exact same-slug duplicate conflicts for a later merge-safe task. NOT wired into runtime. No plant records were renamed, merged, or deleted. Same-slug duplicates are documented, NOT resolved. Structure is extensible for a future stable plantId. Record references and line numbers are approximate provenance pointers captured during the read-only Canonical Identity Audit and must be re-verified before any cleanup.",
+  "registryVersion": "1.1.0",
+  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Now covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Same-slug duplicate conflicts (avocado, strawberry-guava, mulberry) remain documented and unresolved in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime. No plantId values assigned. No plant records were renamed, merged, or deleted. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
+    {
+      "canonicalSlug": "agapanthus",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Agapanthus spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "almond",
+      "acceptedScientificName": "Prunus dulcis",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "aloe-vera",
+      "acceptedScientificName": "Aloe vera",
+      "needsReview": false
+    },
     {
       "canonicalSlug": "apple",
       "acceptedScientificName": "Malus domestica",
@@ -11,24 +26,118 @@
       "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'apple-tree' is an alias of 'apple' (both Malus domestica)."
     },
     {
-      "canonicalSlug": "pear",
-      "acceptedScientificName": "Pyrus communis",
-      "aliasSlugs": ["pear-tree"],
-      "needsReview": false,
-      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'pear-tree' is an alias of 'pear' (both Pyrus communis)."
+      "canonicalSlug": "apricot",
+      "acceptedScientificName": "Prunus armeniaca",
+      "needsReview": false
     },
     {
-      "canonicalSlug": "peach",
-      "acceptedScientificName": "Prunus persica",
-      "aliasSlugs": ["peach-tree"],
-      "needsReview": false,
-      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'peach-tree' is an alias of 'peach' (both Prunus persica)."
+      "canonicalSlug": "areca-palm",
+      "acceptedScientificName": "Dypsis lutescens",
+      "needsReview": false
     },
     {
-      "canonicalSlug": "plum",
-      "aliasSlugs": ["plum-tree"],
+      "canonicalSlug": "azalea",
       "needsReview": true,
-      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. Both records use genus-level 'Prunus spp.' (also Prunus domestica / Prunus salicina in aliases); acceptedScientificName omitted because it is not reliable at species level. Needs review before assigning a species."
+      "notes": "Genus-level catalog scientific name (Rhododendron spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "banana",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Musa spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "basil",
+      "acceptedScientificName": "Ocimum basilicum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "black-eyed-susan-vine",
+      "acceptedScientificName": "Thunbergia alata",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "blueberry",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Vaccinium spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "needsReview": true,
+      "notes": "Inline catalog scientific is genus-level (Bougainvillea spp.); Garden Design manifest lists species 'Bougainvillea spectabilis'. acceptedScientificName omitted pending editorial reconciliation."
+    },
+    {
+      "canonicalSlug": "camellia",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Camellia spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "cedar",
+      "acceptedScientificName": "Cedrus libani",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "cherimoya",
+      "acceptedScientificName": "Annona cherimola",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "coconut",
+      "acceptedScientificName": "Cocos nucifera",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "coffee",
+      "acceptedScientificName": "Coffea arabica",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "cucumber",
+      "acceptedScientificName": "Cucumis sativus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "cycas",
+      "acceptedScientificName": "Cycas revoluta",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "cyclamen",
+      "acceptedScientificName": "Cyclamen persicum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "cypress",
+      "acceptedScientificName": "Cupressus sempervirens",
+      "moduleKeys": {
+        "gardenDesignManifest": ["italian-cypress"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. Garden Design manifest uses 'italian-cypress'; data/plants.seed.json uses slug 'cypress'. Same species (Cupressus sempervirens)."
+    },
+    {
+      "canonicalSlug": "date-palm",
+      "acceptedScientificName": "Phoenix dactylifera",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "dragon-fruit",
+      "acceptedScientificName": "Hylocereus undatus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "eggplant",
+      "acceptedScientificName": "Solanum melongena",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "ficus-benjamina",
+      "acceptedScientificName": "Ficus benjamina",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "fiddle-leaf-fig",
+      "acceptedScientificName": "Ficus lyrata",
+      "needsReview": false
     },
     {
       "canonicalSlug": "fig",
@@ -38,6 +147,16 @@
       "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'fig-tree' is an alias of 'fig' (both Ficus carica)."
     },
     {
+      "canonicalSlug": "geranium",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Pelargonium spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "ginger",
+      "acceptedScientificName": "Zingiber officinale",
+      "needsReview": false
+    },
+    {
       "canonicalSlug": "grapevine",
       "acceptedScientificName": "Vitis vinifera",
       "aliasSlugs": ["grape-vine"],
@@ -45,20 +164,54 @@
       "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'grape-vine' is an alias of 'grapevine' (both Vitis vinifera)."
     },
     {
-      "canonicalSlug": "passionfruit",
-      "acceptedScientificName": "Passiflora edulis",
-      "aliasSlugs": ["passion-fruit"],
-      "needsReview": false,
-      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'passion-fruit' is an alias of 'passionfruit' (both Passiflora edulis)."
+      "canonicalSlug": "guava",
+      "acceptedScientificName": "Psidium guajava",
+      "needsReview": false
     },
     {
-      "canonicalSlug": "mango",
-      "acceptedScientificName": "Mangifera indica",
-      "moduleKeys": {
-        "careQualityProfiles": ["mango-tree"]
-      },
-      "needsReview": false,
-      "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'mango-tree'; the inline PLANT_LIBRARY record uses slug 'mango'. Same species (Mangifera indica). No 'mango-tree' record exists in PLANT_LIBRARY."
+      "canonicalSlug": "hibiscus",
+      "acceptedScientificName": "Hibiscus rosa-sinensis",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "hydrangea",
+      "acceptedScientificName": "Hydrangea macrophylla",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "jackfruit",
+      "acceptedScientificName": "Artocarpus heterophyllus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "japanese-maple",
+      "acceptedScientificName": "Acer palmatum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "jasmine",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Jasminum spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "kiwi",
+      "acceptedScientificName": "Actinidia deliciosa",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "lavender",
+      "acceptedScientificName": "Lavandula angustifolia",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "lemon",
+      "acceptedScientificName": "Citrus × limon",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "lemongrass",
+      "acceptedScientificName": "Cymbopogon citratus",
+      "needsReview": false
     },
     {
       "canonicalSlug": "lychee",
@@ -70,6 +223,45 @@
       "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'lychee-tree'; the inline PLANT_LIBRARY record uses slug 'lychee'. Same species (Litchi chinensis). No 'lychee-tree' record exists in PLANT_LIBRARY."
     },
     {
+      "canonicalSlug": "mandarin",
+      "acceptedScientificName": "Citrus reticulata",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "mango",
+      "acceptedScientificName": "Mangifera indica",
+      "moduleKeys": {
+        "careQualityProfiles": ["mango-tree"]
+      },
+      "needsReview": false,
+      "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'mango-tree'; the inline PLANT_LIBRARY record uses slug 'mango'. Same species (Mangifera indica). No 'mango-tree' record exists in PLANT_LIBRARY."
+    },
+    {
+      "canonicalSlug": "melaleuca",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Melaleuca spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "mint",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Mentha spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "monstera",
+      "acceptedScientificName": "Monstera deliciosa",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "moringa",
+      "acceptedScientificName": "Moringa oleifera",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "oak-tree",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Quercus spp.); species not reliably determined. CARE_QUALITY_PROFILES key 'oak-tree' matches the canonical slug (no module-key bridge needed). acceptedScientificName omitted pending editorial review."
+    },
+    {
       "canonicalSlug": "olive",
       "acceptedScientificName": "Olea europaea",
       "moduleKeys": {
@@ -79,13 +271,139 @@
       "notes": "Cross-module key mapping. Garden Design manifest uses 'olive-tree'; the inline PLANT_LIBRARY record uses slug 'olive'. Same species (Olea europaea)."
     },
     {
-      "canonicalSlug": "cypress",
-      "acceptedScientificName": "Cupressus sempervirens",
-      "moduleKeys": {
-        "gardenDesignManifest": ["italian-cypress"]
-      },
+      "canonicalSlug": "orange",
+      "acceptedScientificName": "Citrus sinensis",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "orchid",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Phalaenopsis spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "papaya",
+      "acceptedScientificName": "Carica papaya",
       "needsReview": false,
-      "notes": "Cross-module key mapping. Garden Design manifest uses 'italian-cypress'; data/plants.seed.json uses slug 'cypress'. Same species (Cupressus sempervirens)."
+      "notes": "CARE_QUALITY_PROFILES key 'papaya' matches the canonical slug (no module-key bridge needed)."
+    },
+    {
+      "canonicalSlug": "passionfruit",
+      "acceptedScientificName": "Passiflora edulis",
+      "aliasSlugs": ["passion-fruit"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'passion-fruit' is an alias of 'passionfruit' (both Passiflora edulis)."
+    },
+    {
+      "canonicalSlug": "peach",
+      "acceptedScientificName": "Prunus persica",
+      "aliasSlugs": ["peach-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'peach-tree' is an alias of 'peach' (both Prunus persica)."
+    },
+    {
+      "canonicalSlug": "pear",
+      "acceptedScientificName": "Pyrus communis",
+      "aliasSlugs": ["pear-tree"],
+      "needsReview": false,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'pear-tree' is an alias of 'pear' (both Pyrus communis)."
+    },
+    {
+      "canonicalSlug": "pine-tree",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Pinus spp.); species not reliably determined. CARE_QUALITY_PROFILES key 'pine-tree' matches the canonical slug (no module-key bridge needed). acceptedScientificName omitted pending editorial review."
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "acceptedScientificName": "Ananas comosus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "pistachio",
+      "acceptedScientificName": "Pistacia vera",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "plum",
+      "aliasSlugs": ["plum-tree"],
+      "needsReview": true,
+      "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. Both records use genus-level 'Prunus spp.' (also Prunus domestica / Prunus salicina in aliases); acceptedScientificName omitted because it is not reliable at species level. Needs review before assigning a species."
+    },
+    {
+      "canonicalSlug": "plumeria",
+      "acceptedScientificName": "Plumeria rubra",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "acceptedScientificName": "Punica granatum",
+      "needsReview": false,
+      "notes": "CARE_QUALITY_PROFILES key 'pomegranate' matches the canonical slug (no module-key bridge needed)."
+    },
+    {
+      "canonicalSlug": "queen-palm",
+      "acceptedScientificName": "Syagrus romanzoffiana",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "rambutan",
+      "acceptedScientificName": "Nephelium lappaceum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "raspberry",
+      "acceptedScientificName": "Rubus idaeus",
+      "needsReview": false,
+      "notes": "Inline catalog is species-level Rubus idaeus; CARE_QUALITY_PROFILES lists 'Rubus idaeus / Rubus spp.' variant. CARE_QUALITY_PROFILES key 'raspberry' matches the canonical slug (no module-key bridge needed)."
+    },
+    {
+      "canonicalSlug": "rose",
+      "needsReview": true,
+      "notes": "Genus-level catalog scientific name (Rosa spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "rosemary",
+      "acceptedScientificName": "Salvia rosmarinus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "snake-plant",
+      "acceptedScientificName": "Dracaena trifasciata",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "starfruit",
+      "acceptedScientificName": "Averrhoa carambola",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "strelitzia",
+      "acceptedScientificName": "Strelitzia reginae",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "succulent",
+      "needsReview": true,
+      "notes": "Catalog record is a non-species group ('Various succulent species'), not a single canonical species. Needs editorial review before allocation."
+    },
+    {
+      "canonicalSlug": "sunflower",
+      "acceptedScientificName": "Helianthus annuus",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "sweet-pepper",
+      "acceptedScientificName": "Capsicum annuum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "tomato",
+      "acceptedScientificName": "Solanum lycopersicum",
+      "needsReview": false
+    },
+    {
+      "canonicalSlug": "zz-plant",
+      "acceptedScientificName": "Zamioculcas zamiifolia",
+      "needsReview": false
     }
   ],
   "duplicateConflicts": [
