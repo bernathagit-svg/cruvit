@@ -19,7 +19,17 @@
   Windows PowerShell 5.1 compatible. No external dependencies. No temp files.
   Identity is never inferred from array order (last-key-wins is treated as a risk,
   never as an identity rule).
+
+.PARAMETER ExpectedIdSlugs
+  Optional. When supplied (non-empty), the set of canonical entries carrying a
+  plantId must exactly equal this list of canonical slugs (used to verify a future
+  allocation pilot). When omitted, this optional check is skipped and the registry
+  must still validate with zero IDs.
 #>
+
+param(
+  [string[]]$ExpectedIdSlugs = @()
+)
 
 Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
@@ -306,6 +316,47 @@ if ($sg) {
 }
 
 # ---------------------------------------------------------------------------
+# 3b. plantId eligibility and placement (allocation guardrails)
+# ---------------------------------------------------------------------------
+Write-Head '3b. plantId eligibility and placement'
+
+# every plantId-bearing canonical entry must have needsReview:false
+$idNeedsReview = @($canon | Where-Object { ($_.PSObject.Properties.Name -contains 'plantId' -and $_.plantId) -and $_.needsReview })
+if ($idNeedsReview.Count -eq 0) { Pass 'every plantId-bearing canonical entry has needsReview:false' }
+else { Fail ("plantId assigned to needsReview:true entries: " + (($idNeedsReview | ForEach-Object { $_.canonicalSlug }) -join ', ')) }
+
+# needsReview:true entries must have no plantId (explicit)
+$reviewWithId = @($canon | Where-Object { $_.needsReview -and ($_.PSObject.Properties.Name -contains 'plantId' -and $_.plantId) })
+if ($reviewWithId.Count -eq 0) { Pass 'no needsReview:true entry carries a plantId' }
+else { Fail ("needsReview:true entries carrying a plantId: " + (($reviewWithId | ForEach-Object { $_.canonicalSlug }) -join ', ')) }
+
+# no plantId-bearing entry may be a duplicate-conflict slug
+$idConflict = @($canon | Where-Object { ($_.PSObject.Properties.Name -contains 'plantId' -and $_.plantId) -and $conflictSlugSet.Contains($_.canonicalSlug) })
+if ($idConflict.Count -eq 0) { Pass 'no plantId-bearing entry is a duplicate-conflict slug' }
+else { Fail ("plantId assigned to duplicate-conflict slug: " + (($idConflict | ForEach-Object { $_.canonicalSlug }) -join ', ')) }
+
+# alias arrays must contain no plantId-formatted tokens
+$aliasPlt = @($aliasEntries | Where-Object { $_.alias -match '^plt_[a-z0-9]{16}$' })
+if ($aliasPlt.Count -eq 0) { Pass 'no aliasSlug is a plantId-formatted token' }
+else { Fail ("aliasSlug looks like a plantId: " + (($aliasPlt | ForEach-Object { $_.alias }) -join ', ')) }
+
+# module-key arrays must contain no plantId-formatted tokens
+$modPlt = @($moduleKeyEntries | Where-Object { $_.key -match '^plt_[a-z0-9]{16}$' })
+if ($modPlt.Count -eq 0) { Pass 'no module key is a plantId-formatted token' }
+else { Fail ("module key looks like a plantId: " + (($modPlt | ForEach-Object { $_.key }) -join ', ')) }
+
+# plantId may occur only as a CanonicalIdentity property (never on conflicts / observedRecords)
+$conflictPlt = @($conflicts | Where-Object { $_.PSObject.Properties.Name -contains 'plantId' -and $_.plantId })
+$obsPlt = 0
+foreach ($c in $conflicts) {
+  foreach ($o in @($c.observedRecords)) {
+    if ($o.PSObject.Properties.Name -contains 'plantId' -and $o.plantId) { $obsPlt++ }
+  }
+}
+if ($conflictPlt.Count -eq 0 -and $obsPlt -eq 0) { Pass 'plantId occurs only as a CanonicalIdentity property' }
+else { Fail 'plantId found on a duplicateConflict or observedRecord (must occur only on CanonicalIdentity)' }
+
+# ---------------------------------------------------------------------------
 # 4. Referential consistency (registry -> catalog + modules)
 # ---------------------------------------------------------------------------
 Write-Head '4. Referential consistency'
@@ -399,6 +450,22 @@ Write-Host ("  genus-level / Various needing review         : {0}" -f $genusRevi
 Write-Host ("  identities blocked by duplicate conflicts    : {0}  ({1})" -f $blockedByConflict.Count, ($blockedByConflict -join ', '))
 Write-Host ''
 Write-Host ("  genus-level / Various (review) slugs: " + (($genusReview | Sort-Object) -join ', '))
+
+# ---------------------------------------------------------------------------
+# Optional: expected plantId coverage (only when -ExpectedIdSlugs supplied)
+# ---------------------------------------------------------------------------
+if (@($ExpectedIdSlugs).Count -gt 0) {
+  Write-Head 'Optional: expected plantId coverage'
+  $idBearing = @($canon | Where-Object { $_.PSObject.Properties.Name -contains 'plantId' -and $_.plantId } | ForEach-Object { $_.canonicalSlug })
+  $expected  = @($ExpectedIdSlugs | Sort-Object -Unique)
+  $missing   = @($expected | Where-Object { $_ -notin $idBearing })
+  $unexpected = @($idBearing | Where-Object { $_ -notin $expected })
+  if ($missing.Count -eq 0 -and $unexpected.Count -eq 0) {
+    Pass ("entries carrying plantId exactly equal the expected slug list ($($expected.Count) slugs)")
+  } else {
+    Fail ("expected-ID mismatch. missing: [" + ($missing -join ', ') + "] ; unexpected: [" + ($unexpected -join ', ') + "]")
+  }
+}
 
 # ---------------------------------------------------------------------------
 # Summary + exit code
