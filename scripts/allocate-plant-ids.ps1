@@ -240,7 +240,11 @@ if ($Apply) {
   }
   # Atomic write: temp file in same directory, then Move-Item -Force.
   $tmp = $registryPath + '.tmp'
-  Set-Content -LiteralPath $tmp -Value $newText -Encoding UTF8 -NoNewline
+  [System.IO.File]::WriteAllText(
+    $tmp,
+    $newText,
+    (New-Object System.Text.UTF8Encoding($false))
+  )
   Move-Item -LiteralPath $tmp -Destination $registryPath -Force
   Write-Host 'APPLY: registry updated atomically.' -ForegroundColor Yellow
   Write-Host ''

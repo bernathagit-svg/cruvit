@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "1.1.0",
-  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Now covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Same-slug duplicate conflicts (avocado, strawberry-guava, mulberry) remain documented and unresolved in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime. No plantId values assigned. No plant records were renamed, merged, or deleted. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
+  "registryVersion": "1.2.0",
+  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Now covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Same-slug duplicate conflicts (avocado, strawberry-guava, mulberry) remain documented and unresolved in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
     {
       "canonicalSlug": "agapanthus",
@@ -20,6 +20,7 @@
     },
     {
       "canonicalSlug": "apple",
+      "plantId": "plt_465b6lc4cnrarxaa",
       "acceptedScientificName": "Malus domestica",
       "aliasSlugs": ["apple-tree"],
       "needsReview": false,
@@ -82,6 +83,7 @@
     },
     {
       "canonicalSlug": "coconut",
+      "plantId": "plt_543r4o6ii0l9dv8v",
       "acceptedScientificName": "Cocos nucifera",
       "needsReview": false
     },
@@ -141,6 +143,7 @@
     },
     {
       "canonicalSlug": "fig",
+      "plantId": "plt_5ixjl9fmz1ii2rre",
       "acceptedScientificName": "Ficus carica",
       "aliasSlugs": ["fig-tree"],
       "needsReview": false,
@@ -185,6 +188,7 @@
     },
     {
       "canonicalSlug": "japanese-maple",
+      "plantId": "plt_q9mcjljtt3mofidz",
       "acceptedScientificName": "Acer palmatum",
       "needsReview": false
     },
@@ -200,11 +204,13 @@
     },
     {
       "canonicalSlug": "lavender",
+      "plantId": "plt_aupnyvawcflgjbyh",
       "acceptedScientificName": "Lavandula angustifolia",
       "needsReview": false
     },
     {
       "canonicalSlug": "lemon",
+      "plantId": "plt_g4kxc4o0421gq265",
       "acceptedScientificName": "Citrus × limon",
       "needsReview": false
     },
@@ -263,6 +269,7 @@
     },
     {
       "canonicalSlug": "olive",
+      "plantId": "plt_e1teyafat3k5i3ke",
       "acceptedScientificName": "Olea europaea",
       "moduleKeys": {
         "gardenDesignManifest": ["olive-tree"]
@@ -282,6 +289,7 @@
     },
     {
       "canonicalSlug": "papaya",
+      "plantId": "plt_2axx4a6g0uora04d",
       "acceptedScientificName": "Carica papaya",
       "needsReview": false,
       "notes": "CARE_QUALITY_PROFILES key 'papaya' matches the canonical slug (no module-key bridge needed)."
@@ -335,6 +343,7 @@
     },
     {
       "canonicalSlug": "pomegranate",
+      "plantId": "plt_y7yhzt7rbtxzdijy",
       "acceptedScientificName": "Punica granatum",
       "needsReview": false,
       "notes": "CARE_QUALITY_PROFILES key 'pomegranate' matches the canonical slug (no module-key bridge needed)."
