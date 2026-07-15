@@ -1336,7 +1336,7 @@ function ensureUserPlantV1Fields(plant,options){
   return p;
 }
 
-function resolvePlantProfileRaw(slugOrPlant){
+function resolvePlantProfileRawLegacy(slugOrPlant){
   if(slugOrPlant==null||slugOrPlant==='') return null;
   const fromSlugKey=(slug)=>{
     const key=String(slug||'').trim();
@@ -1367,6 +1367,21 @@ function resolvePlantProfileRaw(slugOrPlant){
   const match=findPlantByName(p.name||'');
   if(match) return match;
   return null;
+}
+// Thin public wrapper: legacy resolution stays authoritative and its return
+// value/object identity is returned UNCHANGED. When (and only when) the
+// developer-only shadow debug controller is explicitly enabled, an advisory
+// comparison is recorded in memory. Never awaits, never mutates, never throws
+// into callers, and calls the shadow adapter only while debug is enabled.
+function resolvePlantProfileRaw(slugOrPlant){
+  const legacyResult=resolvePlantProfileRawLegacy(slugOrPlant);
+  try{
+    const dbg=(typeof window!=='undefined')?window.CruvitIdentityShadowDebug:null;
+    if(dbg&&typeof dbg.isEnabled==='function'&&dbg.isEnabled()){
+      dbg.record(slugOrPlant,legacyResult);
+    }
+  }catch(_e){/* advisory only — never affect legacy resolution */}
+  return legacyResult;
 }
 
 function getPlantProfile(slugOrPlant){
