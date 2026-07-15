@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Plant Identity Resolver Tests (standalone, read-only)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 960px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .7; }
+  #summary { font-weight: 600; padding: 10px 14px; border-radius: 8px; margin: 12px 0; }
+  #summary.ok { background: #e7f6ec; color: #1c6b39; }
+  #summary.fail { background: #fdecec; color: #a01818; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid rgba(128,128,128,.25); vertical-align: top; }
+  td.status { font-weight: 600; white-space: nowrap; }
+  td.pass { color: #1c6b39; }
+  td.fail { color: #a01818; }
+  code { background: rgba(128,128,128,.15); padding: 1px 4px; border-radius: 4px; }
+  small { opacity: .7; }
+</style>
+</head>
+<body>
+  <h1>Plant Identity Resolver — standalone test harness</h1>
+  <p class="sub">Read-only. Loads <code>../data/plant-identity.registry.json</code> and
+  <code>../modules/identity/plant-identity-resolver.js</code>. No runtime wiring, no writes.</p>
+  <div id="summary">Running…</div>
+  <table id="results"><thead><tr><th>#</th><th>Test</th><th>Result</th><th>Detail</th></tr></thead><tbody></tbody></table>
+
+<script type="module">
+import { createPlantIdentityResolver, loadIdentityRegistry, resolvePlantIdentity, getIdentityResolverStatus }
+  from '../modules/identity/plant-identity-resolver.js';
+
+/* Shared, environment-agnostic test suite. Returns {results, summary}. */
+export function runResolverTests({ registryData, createPlantIdentityResolver, loadIdentityRegistry, resolvePlantIdentity }) {
+  const results = [];
+  const R = createPlantIdentityResolver(registryData);
+  const rec = (name, pass, detail) => results.push({ name, pass: !!pass, detail: detail || '' });
+  const eq = (a, b) => a === b;
+
+  const check = (name, res, exp) => {
+    const problems = [];
+    for (const k of Object.keys(exp)) {
+      if (k === 'conflictSlug') { if (!res.conflict || res.conflict.slug !== exp[k]) problems.push(`conflict.slug=${res.conflict && res.conflict.slug}≠${exp[k]}`); continue; }
+      if (!eq(res[k], exp[k])) problems.push(`${k}=${JSON.stringify(res[k])}≠${JSON.stringify(exp[k])}`);
+    }
+    rec(name, problems.length === 0, problems.length ? problems.join(', ') : `status=${res.status} plantId=${res.plantId} canon=${res.canonicalSlug} by=${res.matchedBy}`);
+  };
+
+  // 1. exact canonical slug WITH id
+  check('exact canonical slug with id (apple)', R.resolve('apple'),
+    { status: 'resolved_id', plantId: 'plt_465b6lc4cnrarxaa', canonicalSlug: 'apple', matchedBy: 'canonicalSlug', needsReview: false, confidence: 'exact' });
+  // 2. exact canonical slug WITHOUT id
+  check('exact canonical slug without id (almond)', R.resolve('almond'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'almond', needsReview: false });
+  // 3. apple-tree alias -> apple + id
+  check('alias apple-tree -> apple id', R.resolve('apple-tree'),
+    { status: 'resolved_id', plantId: 'plt_465b6lc4cnrarxaa', canonicalSlug: 'apple', matchedBy: 'aliasSlug' });
+  // 4. fig-tree alias -> fig + id
+  check('alias fig-tree -> fig id', R.resolve('fig-tree'),
+    { status: 'resolved_id', plantId: 'plt_5ixjl9fmz1ii2rre', canonicalSlug: 'fig', matchedBy: 'aliasSlug' });
+  // 5. mango-tree care key -> mango (no id)
+  check('care key mango-tree -> mango', R.resolve('mango-tree'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'mango', matchedBy: 'moduleKey', inputNamespace: 'careQualityProfiles' });
+  // 6. lychee-tree care key -> lychee (no id)
+  check('care key lychee-tree -> lychee', R.resolve('lychee-tree'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'lychee', matchedBy: 'moduleKey', inputNamespace: 'careQualityProfiles' });
+  // 7. olive-tree Garden Design key -> olive + id
+  check('GD key olive-tree -> olive id', R.resolve('olive-tree'),
+    { status: 'resolved_id', plantId: 'plt_e1teyafat3k5i3ke', canonicalSlug: 'olive', matchedBy: 'moduleKey', inputNamespace: 'gardenDesignManifest' });
+  // 8. italian-cypress Garden Design key -> cypress (no id)
+  check('GD key italian-cypress -> cypress', R.resolve('italian-cypress'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'cypress', matchedBy: 'moduleKey', inputNamespace: 'gardenDesignManifest' });
+  // 9. exact plantId lookup
+  check('exact plantId -> olive', R.resolve('plt_e1teyafat3k5i3ke'),
+    { status: 'resolved_id', plantId: 'plt_e1teyafat3k5i3ke', canonicalSlug: 'olive', matchedBy: 'plantId' });
+  // 10. needsReview identity (agapanthus)
+  check('needsReview agapanthus', R.resolve('agapanthus'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'agapanthus', needsReview: true });
+  // 11. avocado pending conflict
+  check('conflict avocado (slug)', R.resolve('avocado'),
+    { status: 'pending_conflict', plantId: null, canonicalSlug: null, conflictSlug: 'avocado', needsReview: true, confidence: 'exact' });
+  // 12. strawberry-guava pending conflict by slug
+  check('conflict strawberry-guava (slug)', R.resolve('strawberry-guava'),
+    { status: 'pending_conflict', plantId: null, canonicalSlug: null, conflictSlug: 'strawberry-guava' });
+  // 13. strawberry-guava accepted spelling
+  check('conflict strawberry-guava sci accepted (Psidium cattleianum)', R.resolve({ scientific: 'Psidium cattleianum' }),
+    { status: 'pending_conflict', conflictSlug: 'strawberry-guava' });
+  // 14. strawberry-guava conflicting spelling
+  check('conflict strawberry-guava sci conflicting (Psidium cattleyanum)', R.resolve({ scientific: 'Psidium cattleyanum' }),
+    { status: 'pending_conflict', conflictSlug: 'strawberry-guava' });
+  // 15. mulberry pending conflict
+  check('conflict mulberry (slug)', R.resolve('mulberry'),
+    { status: 'pending_conflict', conflictSlug: 'mulberry' });
+  // 16. unknown scanned plant (object + string)
+  check('provisional unknown object', R.resolve({ name: 'Dragon Tree', slug: 'dragon-tree' }),
+    { status: 'provisional', plantId: null, canonicalSlug: null });
+  check('provisional unknown scanned slug', R.resolve('dragon-tree'),
+    { status: 'provisional', plantId: null, canonicalSlug: null });
+  // 17. malformed / empty inputs -> unresolved, no throw
+  for (const [label, val] of [['null', null], ['empty string', ''], ['number 42', 42], ['empty object', {}]]) {
+    let res, threw = false;
+    try { res = R.resolve(val); } catch (e) { threw = true; }
+    rec('malformed input: ' + label, !threw && res && res.status === 'unresolved', threw ? 'threw' : `status=${res.status}`);
+  }
+  // 18a. invalid registry fixture -> degraded resolver
+  const bad = createPlantIdentityResolver({ nope: true });
+  const badRes = bad.resolve('apple');
+  rec('invalid registry fixture -> unresolved+warning', badRes.status === 'unresolved' && badRes.warnings.length > 0 && bad.getStats().valid === false,
+    `status=${badRes.status} valid=${bad.getStats().valid} warn=${badRes.warnings.join('|')}`);
+
+  // 19. object hint forms
+  check('object hint canonicalSlug', R.resolve({ canonicalSlug: 'apple' }), { status: 'resolved_id', canonicalSlug: 'apple', plantId: 'plt_465b6lc4cnrarxaa' });
+  check('object hint profileSlug alias', R.resolve({ profileSlug: 'fig-tree' }), { status: 'resolved_id', canonicalSlug: 'fig', matchedBy: 'aliasSlug' });
+  check('object hint plantId', R.resolve({ plantId: 'plt_q9mcjljtt3mofidz' }), { status: 'resolved_id', canonicalSlug: 'japanese-maple', matchedBy: 'plantId' });
+  // 20. scientific + common-name exact
+  check('scientific exact (Malus domestica) -> apple', R.resolve({ scientific: 'Malus domestica' }), { status: 'resolved_id', canonicalSlug: 'apple', matchedBy: 'scientificName', confidence: 'high' });
+  check('common-name token (Japanese Maple) -> japanese-maple', R.resolve('Japanese Maple'), { status: 'resolved_id', canonicalSlug: 'japanese-maple', matchedBy: 'commonName', confidence: 'medium' });
+
+  // 21. coverage counts
+  const stats = R.getStats();
+  rec('coverage: 74 canonical', stats.canonicalCount === 74, 'canonicalCount=' + stats.canonicalCount);
+  rec('coverage: 3 conflicts', stats.conflictCount === 3, 'conflictCount=' + stats.conflictCount);
+  rec('coverage: 9 plantId', stats.plantIdCount === 9, 'plantIdCount=' + stats.plantIdCount);
+
+  // 22. immutability / no mutation of input or registry
+  const beforeRegistry = JSON.stringify(registryData);
+  const inputObj = { canonicalSlug: 'apple', extra: 'keep' };
+  const r22 = R.resolve(inputObj);
+  let frozen = Object.isFrozen(r22);
+  let mutationBlocked = false;
+  try { r22.plantId = 'plt_hack'; mutationBlocked = (r22.plantId === 'plt_465b6lc4cnrarxaa'); } catch (e) { mutationBlocked = true; }
+  const inputUntouched = inputObj.extra === 'keep' && inputObj.canonicalSlug === 'apple';
+  const registryUntouched = JSON.stringify(registryData) === beforeRegistry;
+  rec('result frozen & input/registry unmutated', frozen && mutationBlocked && inputUntouched && registryUntouched,
+    `frozen=${frozen} mutationBlocked=${mutationBlocked} inputUntouched=${inputUntouched} registryUntouched=${registryUntouched}`);
+
+  const passed = results.filter(r => r.pass).length;
+  return { results, summary: { total: results.length, passed, failed: results.length - passed } };
+}
+
+/* Registry-load failure test (uses an injected failing fetch). */
+async function runLoaderFailureTest(loadIdentityRegistry, resolvePlantIdentity, getIdentityResolverStatus) {
+  const failFetch = async () => { throw new Error('simulated network failure'); };
+  const snap = await loadIdentityRegistry({ url: 'data:invalid', fetchImpl: failFetch });
+  const status = getIdentityResolverStatus();
+  const res = resolvePlantIdentity('apple');
+  const pass = snap.status === 'error' && status.status === 'error' && res.status === 'unresolved' && res.warnings.length > 0;
+  return { name: 'registry load failure -> status error + unresolved', pass, detail: `loadStatus=${snap.status} resolveStatus=${res.status}` };
+}
+
+/* Browser entry point: fetch registry, run suite, render. */
+(async () => {
+  const summaryEl = document.getElementById('summary');
+  const tbody = document.querySelector('#results tbody');
+  try {
+    const registryData = await fetch('../data/plant-identity.registry.json').then(r => r.json());
+    const { results, summary } = runResolverTests({ registryData, createPlantIdentityResolver, loadIdentityRegistry, resolvePlantIdentity });
+    const loaderResult = await runLoaderFailureTest(loadIdentityRegistry, resolvePlantIdentity, getIdentityResolverStatus);
+    results.push(loaderResult);
+    if (loaderResult.pass) summary.passed++; else summary.failed++;
+    summary.total++;
+
+    results.forEach((r, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${i + 1}</td><td>${r.name}</td>` +
+        `<td class="status ${r.pass ? 'pass' : 'fail'}">${r.pass ? 'PASS' : 'FAIL'}</td>` +
+        `<td><small>${r.detail}</small></td>`;
+      tbody.appendChild(tr);
+      console.log(`${r.pass ? 'PASS' : 'FAIL'} — ${r.name}${r.detail ? ' :: ' + r.detail : ''}`);
+    });
+    const ok = summary.failed === 0;
+    summaryEl.className = ok ? 'ok' : 'fail';
+    summaryEl.textContent = `${summary.passed}/${summary.total} passed, ${summary.failed} failed`;
+    console.log(`SUMMARY: ${summary.passed}/${summary.total} passed, ${summary.failed} failed`);
+    // Optional headless reporting hooks — INACTIVE during a normal browser
+    // opening. Both the local results beacon and auto-close require an explicit
+    // test-mode opt-in via a query flag (?report and/or ?autoclose). No remote
+    // host, analytics, credentials, or permanent endpoint: the beacon posts
+    // only to the same-origin, throwaway '/__result' sink used by the headless
+    // test runner.
+    try {
+      const params = new URLSearchParams(location.search);
+      const testMode = params.has('report') || params.has('autoclose');
+      if (testMode && navigator.sendBeacon) navigator.sendBeacon('/__result', JSON.stringify({ results, summary }));
+      if (testMode && params.has('autoclose')) setTimeout(() => window.close(), 100);
+    } catch (e) {}
+  } catch (err) {
+    summaryEl.className = 'fail';
+    summaryEl.textContent = 'Harness error: ' + (err && err.message || err);
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
