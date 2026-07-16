@@ -78,9 +78,29 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
   // 10. needsReview identity (agapanthus)
   check('needsReview agapanthus', R.resolve('agapanthus'),
     { status: 'resolved_canonical', plantId: null, canonicalSlug: 'agapanthus', needsReview: true });
-  // 11. avocado pending conflict
-  check('conflict avocado (slug)', R.resolve('avocado'),
-    { status: 'pending_conflict', plantId: null, canonicalSlug: null, conflictSlug: 'avocado', needsReview: true, confidence: 'exact' });
+  // 11. avocado identity-layer resolution (no plantId; catalog may still have duplicate rows)
+  check('avocado canonical slug → resolved_canonical', R.resolve('avocado'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'canonicalSlug', needsReview: false, confidence: 'exact', registryVersion: '1.4.0' });
+  check('avocado scientific Persea americana → avocado', R.resolve({ scientific: 'Persea americana' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'scientificName', confidence: 'high' });
+  check('avocado object canonicalSlug hint', R.resolve({ canonicalSlug: 'avocado' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'canonicalSlug' });
+  check('avocado object profileSlug hint', R.resolve({ profileSlug: 'avocado' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'canonicalSlug' });
+  rec('avocado does not return pending_conflict', R.resolve('avocado').status !== 'pending_conflict',
+    'status=' + R.resolve('avocado').status);
+  rec('avocado does not fabricate plantId', R.resolve('avocado').plantId === null && R.resolve({ scientific: 'Persea americana' }).plantId === null,
+    'slugPid=' + R.resolve('avocado').plantId + ' sciPid=' + R.resolve({ scientific: 'Persea americana' }).plantId);
+  {
+    const avoIn = { canonicalSlug: 'avocado', keep: true };
+    const beforeAvo = JSON.stringify(avoIn);
+    const avoRes = R.resolve(avoIn);
+    let avoMutBlocked = false;
+    try { avoRes.plantId = 'plt_hackavocado000'; avoMutBlocked = (avoRes.plantId === null); } catch (e) { avoMutBlocked = true; }
+    rec('avocado result frozen & input unmutated',
+      Object.isFrozen(avoRes) && avoMutBlocked && JSON.stringify(avoIn) === beforeAvo && avoRes.canonicalSlug === 'avocado',
+      'frozen=' + Object.isFrozen(avoRes) + ' mutBlocked=' + avoMutBlocked + ' inputUntouched=' + (JSON.stringify(avoIn) === beforeAvo));
+  }
   // 12. strawberry-guava pending conflict by slug
   check('conflict strawberry-guava (slug)', R.resolve('strawberry-guava'),
     { status: 'pending_conflict', plantId: null, canonicalSlug: null, conflictSlug: 'strawberry-guava' });
@@ -92,6 +112,8 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
     { status: 'pending_conflict', conflictSlug: 'strawberry-guava' });
   // 15. mulberry pending conflict
   check('conflict mulberry (slug)', R.resolve('mulberry'),
+    { status: 'pending_conflict', conflictSlug: 'mulberry' });
+  check('conflict mulberry scientific Morus spp.', R.resolve({ scientific: 'Morus spp.' }),
     { status: 'pending_conflict', conflictSlug: 'mulberry' });
   // 16. unknown scanned plant (object + string)
   check('provisional unknown object', R.resolve({ name: 'Dragon Tree', slug: 'dragon-tree' }),
@@ -120,10 +142,10 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
 
   // 21. coverage counts
   const stats = R.getStats();
-  rec('coverage: 74 canonical', stats.canonicalCount === 74, 'canonicalCount=' + stats.canonicalCount);
-  rec('coverage: 3 conflicts', stats.conflictCount === 3, 'conflictCount=' + stats.conflictCount);
+  rec('coverage: 75 canonical', stats.canonicalCount === 75, 'canonicalCount=' + stats.canonicalCount);
+  rec('coverage: 2 conflicts', stats.conflictCount === 2, 'conflictCount=' + stats.conflictCount);
   rec('coverage: 9 plantId', stats.plantIdCount === 9, 'plantIdCount=' + stats.plantIdCount);
-  rec('coverage: registryVersion 1.3.0', R.getRegistryVersion() === '1.3.0', 'version=' + R.getRegistryVersion());
+  rec('coverage: registryVersion 1.4.0', R.getRegistryVersion() === '1.4.0', 'version=' + R.getRegistryVersion());
   rec('localized stats: 2 identities / 2 locale blocks / 4 indexed names',
     stats.localizedIdentityCount === 2 && stats.localizedLocaleBlockCount === 2 && stats.localizedIndexedNameCount === 4,
     `id=${stats.localizedIdentityCount} blocks=${stats.localizedLocaleBlockCount} indexed=${stats.localizedIndexedNameCount}`);
@@ -131,7 +153,7 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
   // 21b. Hebrew localized-name pilot (real registry)
   check('Hebrew לבנדר → lavender resolved_id', R.resolve('לבנדר'), {
     status: 'resolved_id', plantId: 'plt_aupnyvawcflgjbyh', canonicalSlug: 'lavender',
-    matchedBy: 'localizedName', confidence: 'high', registryVersion: '1.3.0'
+    matchedBy: 'localizedName', confidence: 'high', registryVersion: '1.4.0'
   });
   check('Hebrew אזוביון → lavender', R.resolve('אזוביון'), {
     status: 'resolved_id', canonicalSlug: 'lavender', plantId: 'plt_aupnyvawcflgjbyh', matchedBy: 'localizedName'

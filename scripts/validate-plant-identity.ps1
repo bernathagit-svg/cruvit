@@ -340,13 +340,36 @@ if ($conflictAsCanon.Count -eq 0 -and $conflictAsAlias.Count -eq 0) {
   if ($conflictAsAlias.Count -gt 0) { Fail ("duplicate-conflict slug used as aliasSlug: " + ($conflictAsAlias -join ', ')) }
 }
 
-# the three known conflicts must remain quarantined + pending
-$required = @('avocado','strawberry-guava','mulberry')
+# remaining known conflicts must remain quarantined + pending
+$required = @('strawberry-guava','mulberry')
 foreach ($rc in $required) {
   $c = $conflicts | Where-Object { $_.slug -eq $rc }
   if (-not $c) { Fail "expected duplicate conflict missing: $rc"; continue }
   if ($c.resolutionStatus -eq 'pending') { Pass "$rc remains in duplicateConflicts with resolutionStatus=pending" }
   else { Fail "$rc resolutionStatus is '$($c.resolutionStatus)', expected 'pending'" }
+}
+
+# avocado identity-layer pilot: exactly one canonical, not conflicted, no plantId
+$avoConflict = @($conflicts | Where-Object { $_.slug -eq 'avocado' })
+if ($avoConflict.Count -eq 0) { Pass 'avocado is not present in duplicateConflicts' }
+else { Fail 'avocado still present in duplicateConflicts (must not be canonical and conflicted)' }
+
+$avoCanon = @($canon | Where-Object { $_.canonicalSlug -eq 'avocado' })
+if ($avoCanon.Count -eq 1) { Pass 'exactly one canonical avocado identity' }
+else { Fail "avocado canonical count is $($avoCanon.Count), expected 1" }
+
+if ($avoCanon.Count -eq 1) {
+  $avo = $avoCanon[0]
+  if ($avo.acceptedScientificName -eq 'Persea americana') { Pass 'avocado acceptedScientificName is Persea americana' }
+  else { Fail "avocado acceptedScientificName is '$($avo.acceptedScientificName)', expected 'Persea americana'" }
+  $avoHasId = ($avo.PSObject.Properties.Name -contains 'plantId' -and $avo.plantId)
+  if (-not $avoHasId) { Pass 'avocado has no plantId' }
+  else { Fail "avocado unexpectedly carries plantId '$($avo.plantId)'" }
+  if ($avoConflict.Count -gt 0 -and $avoCanon.Count -gt 0) {
+    Fail 'avocado appears simultaneously as canonical and conflicted'
+  } else {
+    Pass 'avocado is not simultaneously canonical and conflicted'
+  }
 }
 
 # strawberry-guava scientific spelling record

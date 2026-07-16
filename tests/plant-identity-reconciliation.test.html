@@ -21,6 +21,7 @@
   .s-KNOWN_LEGACY_BUG { color: #9a6b00; }
   .s-KNOWN_RESOLVER_GAP { color: #7a5cc0; }
   .s-EXPECTED_QUARANTINED_CONFLICT { color: #1f6f8b; }
+  .s-EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE { color: #0b6e4f; }
   .s-UNEXPECTED_FAILURE { color: #a01818; }
   code { background: rgba(128,128,128,.15); padding: 1px 4px; border-radius: 4px; }
   small { opacity: .7; }
@@ -50,6 +51,7 @@
     KNOWN_LEGACY_BUG: 'KNOWN_LEGACY_BUG',
     KNOWN_RESOLVER_GAP: 'KNOWN_RESOLVER_GAP',
     EXPECTED_QUARANTINED_CONFLICT: 'EXPECTED_QUARANTINED_CONFLICT',
+    EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE: 'EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE',
     UNEXPECTED_FAILURE: 'UNEXPECTED_FAILURE'
   };
   var results = [];          // { section, name, status, detail }
@@ -114,7 +116,8 @@
       ' &nbsp;|&nbsp; PASS ' + (counts.PASS || 0) +
       ', KNOWN_LEGACY_BUG ' + (counts.KNOWN_LEGACY_BUG || 0) +
       ', KNOWN_RESOLVER_GAP ' + (counts.KNOWN_RESOLVER_GAP || 0) +
-      ', EXPECTED_QUARANTINED_CONFLICT ' + (counts.EXPECTED_QUARANTINED_CONFLICT || 0);
+      ', EXPECTED_QUARANTINED_CONFLICT ' + (counts.EXPECTED_QUARANTINED_CONFLICT || 0) +
+      ', EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE ' + (counts.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE || 0);
 
     var host = document.getElementById('report');
     host.innerHTML = '';
@@ -159,7 +162,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. After localized-name resolver support: {profileSlug:"olive-tree"}=D shadow-only, {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=A agreement (no longer resolver-gap).');
+      'Object-form / localized / conflict / scan regression inputs. After avocado identity-layer pilot: {profileSlug:"olive-tree"}=D shadow-only, avocado / {meta:{slug:"avocado"}} / Persea americana = A agreement with EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (catalog still duplicated), {name:"לבנדר"} & {name:"זית"}=A agreement.');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -431,14 +434,21 @@
     inv.forEach(function (it) { try { shadow(it.value); W(it.value); L(it.value); } catch (e) { throwers.push(it.ns + '/' + it.key + ':' + e); } });
     expect('no input throws through shadow/wrapper/legacy', throwers.length === 0, throwers.slice(0, 5).join(' | '));
     function nsAtLeast(ns, n) { expect('namespace ' + ns + ' tested (>=' + n + ')', (nsCount[ns] || 0) >= n, 'count=' + (nsCount[ns] || 0)); }
-    nsAtLeast('canonicalSlug', 74); nsAtLeast('aliasSlug', 7);
+    nsAtLeast('canonicalSlug', 75); nsAtLeast('aliasSlug', 7);
     nsAtLeast('moduleKey:careQualityProfiles', 2); nsAtLeast('moduleKey:gardenDesignManifest', 2);
-    nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 3); nsAtLeast('conflictScientific', 3); nsAtLeast('gardenManifestKey', 5);
+    nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 2); nsAtLeast('conflictScientific', 3); nsAtLeast('gardenManifestKey', 5);
     expect('every canonicalSlug resolvable via shadow without throw',
       reg.canonicalIdentities.every(function (e) { try { shadow(e.canonicalSlug); return true; } catch (x) { return false; } }));
-    expect('registryVersion === 1.3.0', reg.registryVersion === '1.3.0', 'got ' + reg.registryVersion);
-    expect('canonical identities === 74', reg.canonicalIdentities.length === 74, 'got ' + reg.canonicalIdentities.length);
-    expect('duplicate conflicts === 3', reg.duplicateConflicts.length === 3, 'got ' + reg.duplicateConflicts.length);
+    expect('registryVersion === 1.4.0', reg.registryVersion === '1.4.0', 'got ' + reg.registryVersion);
+    expect('canonical identities === 75', reg.canonicalIdentities.length === 75, 'got ' + reg.canonicalIdentities.length);
+    expect('duplicate conflicts === 2', reg.duplicateConflicts.length === 2, 'got ' + reg.duplicateConflicts.length);
+    expect('avocado is exactly one canonical identity',
+      reg.canonicalIdentities.filter(function (e) { return e.canonicalSlug === 'avocado'; }).length === 1);
+    expect('avocado is not in duplicateConflicts',
+      reg.duplicateConflicts.every(function (c) { return c.slug !== 'avocado'; }));
+    expect('strawberry-guava and mulberry remain pending conflicts',
+      reg.duplicateConflicts.some(function (c) { return c.slug === 'strawberry-guava' && c.resolutionStatus === 'pending'; }) &&
+      reg.duplicateConflicts.some(function (c) { return c.slug === 'mulberry' && c.resolutionStatus === 'pending'; }));
     expect('allocated plantId entries === 9', plantIdEntries.length === 9, 'got ' + plantIdEntries.length);
 
     // ============================================================
@@ -569,7 +579,7 @@
       var inputBefore = jsonOf(input); var lr = L(input); var sh = shadow(input); var wr = W(input);
       var lslug = slugOfLegacy(lr);
       var shadowOk = sh && sh.status === 'resolved_id' && sh.canonicalSlug === expectSlug &&
-        sh.matchedBy === 'localizedName' && sh.plantId === expectPlantId && sh.registryVersion === '1.3.0';
+        sh.matchedBy === 'localizedName' && sh.plantId === expectPlantId && sh.registryVersion === '1.4.0';
       var legacyOk = lslug === expectSlug;
       var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
       expect(label, !!shadowOk && legacyOk && noMutation && identity,
@@ -599,9 +609,50 @@
     })();
 
     // ============================================================
-    // 6. EXPECTED QUARANTINED CONFLICT (kept)
+    // 6a. avocado identity resolved; catalog still duplicated (temporary)
     // ============================================================
-    sec('6. EXPECTED QUARANTINED CONFLICT');
+    sec('6a. EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (avocado)');
+    function pinResolvedCatalogDup(label, input) {
+      var inputBefore = jsonOf(input); var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
+      var shadowOk = sh && sh.status === 'resolved_canonical' && sh.canonicalSlug === 'avocado' &&
+        sh.plantId === null && sh.registryVersion === '1.4.0';
+      var legacyOk = !!lr && slugOfLegacy(lr) === 'avocado';
+      var noIdCopied = !lr || (lr.plantId === undefined && lr.canonicalSlug === undefined);
+      var noMutation = jsonOf(input) === inputBefore && jsonOf(lr) === lrBefore; var identity = wr === lr;
+      var advisory = shadowOk && legacyOk && wr === lr; // identity advisory; legacy authoritative
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE, label,
+        shadowOk && legacyOk && noIdCopied && noMutation && identity && advisory,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) +
+        ' pid=' + (sh && sh.plantId) + ' noIdCopied=' + noIdCopied + ' noMutation=' + noMutation + ' idOK=' + identity);
+    }
+    pinResolvedCatalogDup('avocado → resolved_canonical (catalog still duplicated)', 'avocado');
+    pinResolvedCatalogDup('{meta:{slug:"avocado"}} → resolved_canonical (catalog still duplicated)', { meta: { slug: 'avocado' } });
+    pinResolvedCatalogDup('scientific "Persea americana" → resolved_canonical (catalog still duplicated)', 'Persea americana');
+    (function () {
+      // PLANT_LIBRARY/PLANT_INDEX are script-local consts (not on window). Probe via public APIs:
+      // resolvePlantProfileRawLegacy('avocado') → PLANT_INDEX last-key-wins Record B;
+      // findPlantByName('avocado') → first-match Record A.
+      var indexAvo = typeof L === 'function' ? L('avocado') : null;
+      var findAvo = typeof cw.findPlantByName === 'function' ? cw.findPlantByName('avocado') : null;
+      var indexIsB = !!indexAvo && indexAvo.he === 'אבוקדו' && /Sensitive/i.test(String(indexAvo.status || ''));
+      var findIsA = !!findAvo && findAvo.he === 'עץ אבוקדו';
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'catalog asymmetry unchanged: PLANT_INDEX=Record B, findPlantByName=Record A (index.html untouched)',
+        indexIsB && findIsA && indexAvo !== findAvo,
+        'indexHe=' + (indexAvo && indexAvo.he) + ' findHe=' + (findAvo && findAvo.he) +
+        ' indexStatus=' + (indexAvo && indexAvo.status) + ' sameRef=' + (indexAvo === findAvo));
+      var shapeOk = indexAvo && findAvo &&
+        indexAvo.plantId === undefined && indexAvo.canonicalSlug === undefined &&
+        findAvo.plantId === undefined && findAvo.canonicalSlug === undefined;
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'neither avocado catalog path adds plantId/canonicalSlug to plant objects',
+        !!shapeOk, 'indexPid=' + (indexAvo && indexAvo.plantId) + ' findPid=' + (findAvo && findAvo.plantId));
+    })();
+
+    // ============================================================
+    // 6b. EXPECTED QUARANTINED CONFLICT (strawberry-guava + mulberry)
+    // ============================================================
+    sec('6b. EXPECTED QUARANTINED CONFLICT');
     function pinConflict(label, input, expectConflictSlug) {
       var inputBefore = jsonOf(input); var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
       var quarantined = sh && sh.status === 'pending_conflict' && sh.plantId === null && sh.canonicalSlug === null;
@@ -611,11 +662,8 @@
       labeled(STATUS.EXPECTED_QUARANTINED_CONFLICT, label, quarantined && conflictOk && noIdCopied && noMutation && identity,
         'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + ' conflict=' + (sh && sh.conflict && sh.conflict.slug) + ' noIdCopied=' + noIdCopied + ' noMutation=' + noMutation + ' idOK=' + identity);
     }
-    pinConflict('avocado → pending_conflict', 'avocado', 'avocado');
     pinConflict('strawberry-guava → pending_conflict', 'strawberry-guava', 'strawberry-guava');
     pinConflict('mulberry → pending_conflict', 'mulberry', 'mulberry');
-    pinConflict('{meta:{slug:"avocado"}} → pending_conflict (category G)', { meta: { slug: 'avocado' } }, 'avocado');
-    pinConflict('scientific "Persea americana" → pending_conflict', 'Persea americana', 'avocado');
     pinConflict('scientific "Psidium cattleianum" (accepted) → pending_conflict', 'Psidium cattleianum', 'strawberry-guava');
     pinConflict('scientific "Psidium cattleyanum" (conflicting) → pending_conflict', 'Psidium cattleyanum', 'strawberry-guava');
     pinConflict('scientific "Morus spp." → pending_conflict', 'Morus spp.', 'mulberry');
@@ -758,7 +806,9 @@
     function catOf(v) { return classifyInput(v, (typeof v === 'string' ? v : null)); }
     var cOlive = catOf({ profileSlug: 'olive-tree' }), cAvo = catOf({ meta: { slug: 'avocado' } }), cLav = catOf({ name: 'לבנדר' }), cZait = catOf({ name: 'זית' });
     expect('{profileSlug:"olive-tree"} → category D (shadow-only), no longer known-legacy-bug', cOlive.cat === 'D' && cOlive.knownLegacyBug === false, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
-    expect('{meta:{slug:"avocado"}} → category G (pending conflict)', cAvo.cat === 'G', 'cat=' + cAvo.cat);
+    expect('{meta:{slug:"avocado"}} → category A (identity resolved; catalog still duplicated)', cAvo.cat === 'A' && cAvo.canon === 'avocado', 'cat=' + cAvo.cat + ' canon=' + cAvo.canon);
+    expect('string avocado → category A resolved_canonical agreement', catOf('avocado').cat === 'A' && catOf('avocado').canon === 'avocado',
+      'cat=' + catOf('avocado').cat + ' canon=' + catOf('avocado').canon);
     expect('{name:"לבנדר"} → category A agreement, no resolver-gap', cLav.cat === 'A' && cLav.resolverGap === false, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
     expect('{name:"זית"} → category A agreement, no resolver-gap', cZait.cat === 'A' && cZait.resolverGap === false, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
     expect('pilot Hebrew names no longer contribute resolver-gap annotations',

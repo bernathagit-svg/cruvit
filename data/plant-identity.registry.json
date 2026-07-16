@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "1.3.0",
-  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Now covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Same-slug duplicate conflicts (avocado, strawberry-guava, mulberry) remain documented and unresolved in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
+  "registryVersion": "1.4.0",
+  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Avocado is resolved at the identity layer as a single canonical identity (Persea americana); the inline PLANT_LIBRARY still contains two descriptive avocado rows pending a separate catalog-deduplication task. Remaining same-slug duplicate conflicts (strawberry-guava, mulberry) stay in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime as authoritative. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted in the catalog. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
     {
       "canonicalSlug": "agapanthus",
@@ -35,6 +35,12 @@
       "canonicalSlug": "areca-palm",
       "acceptedScientificName": "Dypsis lutescens",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "avocado",
+      "acceptedScientificName": "Persea americana",
+      "needsReview": false,
+      "notes": "Identity-layer resolution of the former same-slug duplicateConflict. Species-level identity is Persea americana. Inline PLANT_LIBRARY still contains two descriptive rows sharing slug 'avocado'; catalog deduplication of those rows is a separate future task. This entry does not merge care, products, climate, guide, status, icon, mark, or UI-copy fields."
     },
     {
       "canonicalSlug": "azalea",
@@ -436,28 +442,6 @@
     }
   ],
   "duplicateConflicts": [
-    {
-      "slug": "avocado",
-      "conflictType": "duplicate-slug",
-      "observedRecords": [
-        {
-          "source": "plantLibrary",
-          "ref": "index.html PLANT_LIBRARY (~line 484)",
-          "scientificName": "Persea americana",
-          "notes": "he name 'עץ אבוקדו'. First occurrence in the array."
-        },
-        {
-          "source": "plantLibrary",
-          "ref": "index.html PLANT_LIBRARY (~line 518)",
-          "scientificName": "Persea americana",
-          "notes": "he name 'אבוקדו'. Second occurrence; wins in PLANT_INDEX via Object.fromEntries (last-key-wins)."
-        }
-      ],
-      "recommendedCanonicalScientificName": "Persea americana",
-      "needsReview": true,
-      "resolutionStatus": "pending",
-      "notes": "Two distinct records share slug 'avocado'. Same species. Documented only. No record correction, merge, or deletion in this task."
-    },
     {
       "slug": "strawberry-guava",
       "conflictType": "duplicate-slug-scientific-spelling-conflict",
