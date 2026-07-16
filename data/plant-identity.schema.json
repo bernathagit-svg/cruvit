@@ -70,6 +70,94 @@
         }
       }
     },
+    "LocalizedNameString": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A non-empty localized plant-name string. Must not be stored as an aliasSlug. Validator additionally rejects whitespace-only values after trim."
+    },
+    "LocalizedNameArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/LocalizedNameString" },
+      "description": "Optional bucket of localized name variants for one locale (aliases, historical, transliterations, misspellings, or deprecated)."
+    },
+    "LocalizedLocaleBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "confidence", "source", "needsReview"],
+      "description": "Identity-grade localized names for a single CRUVIT language code. Display names may still live in the catalog; this block is for canonical identity matching only.",
+      "properties": {
+        "primary": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/LocalizedNameString" },
+          "description": "Preferred exact-match name forms for this locale. At least one required."
+        },
+        "aliases": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNameArray" }],
+          "description": "Alternate common names for this locale (not slug tokens)."
+        },
+        "historical": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNameArray" }],
+          "description": "Historical or obsolete common names retained for exact matching."
+        },
+        "transliterations": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNameArray" }],
+          "description": "Explicit transliterations registered for this locale (never auto-generated at match time)."
+        },
+        "misspellings": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNameArray" }],
+          "description": "Common misspellings accepted only as exact registered variants."
+        },
+        "deprecated": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNameArray" }],
+          "description": "Deprecated localized forms retained for lookup; must not be used as the sole display name."
+        },
+        "script": {
+          "type": "string",
+          "pattern": "^[A-Z][a-z]{3}$",
+          "description": "Optional ISO 15924-style four-letter script code (e.g. Hebr, Arab, Latn, Hans)."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Editorial confidence in this locale block."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Provenance / verification source description for this locale block."
+        },
+        "needsReview": {
+          "type": "boolean",
+          "description": "True when this locale block still needs editorial review. When true, the containing canonical identity must also have needsReview:true."
+        }
+      }
+    },
+    "LocalizedNames": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional per-locale identity-grade localized names. Keys must be CRUVIT supported language codes only. Localized names must NOT be stored in aliasSlugs and must never carry a plantId.",
+      "properties": {
+        "en": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "he": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "ar": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "es": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "fr": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "de": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "it": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "pt": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "ru": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "zh": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "ja": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "ko": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "hi": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "tr": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "nl": { "$ref": "#/definitions/LocalizedLocaleBlock" },
+        "pl": { "$ref": "#/definitions/LocalizedLocaleBlock" }
+      }
+    },
     "CanonicalIdentity": {
       "type": "object",
       "additionalProperties": false,
@@ -96,6 +184,10 @@
           "uniqueItems": true
         },
         "moduleKeys": { "$ref": "#/definitions/ModuleKeys" },
+        "localizedNames": {
+          "allOf": [{ "$ref": "#/definitions/LocalizedNames" }],
+          "description": "Optional identity-grade localized plant names by CRUVIT language code. Absent by default; not required for registry validity."
+        },
         "needsReview": {
           "type": "boolean",
           "description": "True when the mapping or its scientific name still needs editorial review."

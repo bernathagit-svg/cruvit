@@ -25,10 +25,20 @@
   plantId must exactly equal this list of canonical slugs (used to verify a future
   allocation pilot). When omitted, this optional check is skipped and the registry
   must still validate with zero IDs.
+
+.PARAMETER RegistryPath
+  Optional. Override path to a registry JSON file (used only for local synthetic
+  fixture validation). Defaults to data/plant-identity.registry.json.
+
+.PARAMETER SchemaPath
+  Optional. Override path to the identity schema JSON file. Defaults to
+  data/plant-identity.schema.json.
 #>
 
 param(
-  [string[]]$ExpectedIdSlugs = @()
+  [string[]]$ExpectedIdSlugs = @(),
+  [string]$RegistryPath = '',
+  [string]$SchemaPath = ''
 )
 
 Set-StrictMode -Version 2.0
@@ -48,6 +58,8 @@ $paths = @{
   html     = Join-Path $repoRoot 'index.html'
   manifest = Join-Path $repoRoot 'modules/garden-design/assets/plants/manifest.json'
 }
+if (-not [string]::IsNullOrWhiteSpace($RegistryPath)) { $paths.registry = $RegistryPath }
+if (-not [string]::IsNullOrWhiteSpace($SchemaPath))   { $paths.schema   = $SchemaPath }
 
 # ---------------------------------------------------------------------------
 # Result tracking
@@ -91,6 +103,39 @@ function Test-GenusLevel([string]$sci) {
   if ([string]::IsNullOrWhiteSpace($sci)) { return $true }
   return ($sci -match '\bspp?\.' -or $sci -match '(?i)various')
 }
+
+# Validator-only localized-name normalization (does NOT change runtime resolver rules).
+# Preserves Hebrew/Arabic/Cyrillic/CJK/Hindi and other scripts; never slugifies or transliterates.
+function Normalize-LocalizedName([string]$raw) {
+  if ($null -eq $raw) { return '' }
+  $s = [string]$raw
+  # Unicode Form C
+  $s = $s.Normalize([Text.NormalizationForm]::FormC)
+  # Conservative quote / apostrophe folding (identity of match only)
+  $s = $s.Replace([char]0x2018, [char]0x27).Replace([char]0x2019, [char]0x27)  # ‘ ’
+  $s = $s.Replace([char]0x201B, [char]0x27).Replace([char]0x2032, [char]0x27)  # ‛ ′
+  $s = $s.Replace([char]0x05F3, [char]0x27)                                     # ׳ Hebrew geresh
+  $s = $s.Replace([char]0x201C, [char]0x22).Replace([char]0x201D, [char]0x22)  # “ ”
+  $s = $s.Replace([char]0x00B4, [char]0x27).Replace([char]0x0060, [char]0x27)  # ´ `
+  # Trim + collapse internal whitespace (any Unicode space separator / tab / newline)
+  $s = $s.Trim()
+  $s = [regex]::Replace($s, '\s+', ' ')
+  # Invariant case folding where applicable (scripts without case are unchanged)
+  $s = $s.ToLowerInvariant()
+  return $s
+}
+
+$script:SupportedLocales = @(
+  'en','he','ar','es','fr','de','it','pt','ru','zh','ja','ko','hi','tr','nl','pl'
+)
+$script:LocaleBucketNames = @('primary','aliases','historical','transliterations','misspellings','deprecated')
+$script:LocaleRequiredFields = @('primary','confidence','source','needsReview')
+$script:LocaleAllowedFields = @(
+  'primary','aliases','historical','transliterations','misspellings','deprecated',
+  'script','confidence','source','needsReview'
+)
+$script:ConfidenceValues = @('low','medium','high')
+$script:ScriptPattern = '^[A-Z][a-z]{3}$'
 
 Write-Host '=== Cruvit Plant Identity Registry - Cross-Entry Validator (read-only) ==='
 
@@ -357,6 +402,212 @@ if ($conflictPlt.Count -eq 0 -and $obsPlt -eq 0) { Pass 'plantId occurs only as 
 else { Fail 'plantId found on a duplicateConflict or observedRecord (must occur only on CanonicalIdentity)' }
 
 # ---------------------------------------------------------------------------
+# 3c. localizedNames foundation (optional; absent is valid)
+# ---------------------------------------------------------------------------
+Write-Head '3c. localizedNames foundation'
+
+$localizedEntryCount = 0
+$localizedLocaleBlockCount = 0
+$localizedStructuralErrors = New-Object System.Collections.Generic.List[string]
+$localizedIntraDupes = New-Object System.Collections.Generic.List[string]
+$localizedNeedsReviewGaps = New-Object System.Collections.Generic.List[string]
+$localizedPlantIdLeaks = New-Object System.Collections.Generic.List[string]
+# locale|norm -> list of canonicalSlug
+$localizedCrossMap = @{}
+
+foreach ($e in $canon) {
+  $slug = [string]$e.canonicalSlug
+  $hasLn = ($e.PSObject.Properties.Name -contains 'localizedNames')
+  if (-not $hasLn) { continue }
+  if ($null -eq $e.localizedNames) {
+    $localizedStructuralErrors.Add("$slug : localizedNames is null (omit the property instead)")
+    continue
+  }
+  # localizedNames must be a PSCustomObject / dictionary-like object, not an array/string
+  if ($e.localizedNames -is [System.Array] -or $e.localizedNames -is [string]) {
+    $localizedStructuralErrors.Add("$slug : localizedNames must be an object")
+    continue
+  }
+  $localizedEntryCount++
+  $ln = $e.localizedNames
+  foreach ($locProp in @($ln.PSObject.Properties)) {
+    $locale = [string]$locProp.Name
+    $block = $locProp.Value
+    if ($locale -notin $script:SupportedLocales) {
+      $localizedStructuralErrors.Add("$slug : unsupported locale key '$locale' (allowed: $($script:SupportedLocales -join ', '))")
+      continue
+    }
+    if ($null -eq $block -or $block -is [System.Array] -or $block -is [string]) {
+      $localizedStructuralErrors.Add("$slug /$locale : locale block must be an object")
+      continue
+    }
+    $localizedLocaleBlockCount++
+    $blockProps = @($block.PSObject.Properties.Name)
+
+    # no plantId on localized structures
+    if ($blockProps -contains 'plantId') {
+      $localizedPlantIdLeaks.Add("$slug /$locale : localized locale block contains plantId")
+    }
+
+    # unsupported properties
+    $unexpected = @($blockProps | Where-Object { $_ -notin $script:LocaleAllowedFields })
+    foreach ($u in $unexpected) {
+      $localizedStructuralErrors.Add("$slug /$locale : unsupported property '$u'")
+    }
+
+    # required fields
+    foreach ($req in $script:LocaleRequiredFields) {
+      if ($blockProps -notcontains $req) {
+        $localizedStructuralErrors.Add("$slug /$locale : missing required field '$req'")
+      }
+    }
+
+    # confidence
+    if ($blockProps -contains 'confidence') {
+      $conf = $block.confidence
+      if ($conf -isnot [string] -or $conf -notin $script:ConfidenceValues) {
+        $localizedStructuralErrors.Add("$slug /$locale : confidence must be one of: $($script:ConfidenceValues -join ', ')")
+      }
+    }
+
+    # source
+    if ($blockProps -contains 'source') {
+      if ($block.source -isnot [string] -or [string]::IsNullOrWhiteSpace([string]$block.source)) {
+        $localizedStructuralErrors.Add("$slug /$locale : source must be a non-empty string after trim")
+      }
+    }
+
+    # needsReview boolean + propagation
+    if ($blockProps -contains 'needsReview') {
+      if ($block.needsReview -isnot [bool]) {
+        $localizedStructuralErrors.Add("$slug /$locale : needsReview must be a boolean")
+      } elseif ($block.needsReview -eq $true -and -not $e.needsReview) {
+        $localizedNeedsReviewGaps.Add("$slug /$locale : localized needsReview:true requires canonical identity needsReview:true")
+      }
+    }
+
+    # script
+    if ($blockProps -contains 'script') {
+      $scr = $block.script
+      if ($scr -isnot [string] -or $scr -notmatch $script:ScriptPattern) {
+        $localizedStructuralErrors.Add("$slug /$locale : script must match $($script:ScriptPattern) when supplied")
+      }
+    }
+
+    # buckets: primary required non-empty; others optional arrays of non-empty strings.
+    # Note: Windows PowerShell 5.1 ConvertFrom-Json collapses single-element JSON arrays
+    # to a scalar string — accept that shape as a 1-item array; reject other types.
+    $seenNormInLocale = @{}  # norm -> bucket where first seen
+    foreach ($bucket in $script:LocaleBucketNames) {
+      if ($blockProps -notcontains $bucket) { continue }
+      $arr = $block.$bucket
+      if ($null -eq $arr) {
+        $localizedStructuralErrors.Add("$slug /$locale : '$bucket' must be an array")
+        continue
+      }
+      $items = $null
+      if ($arr -is [System.Array]) { $items = @($arr) }
+      elseif ($arr -is [string]) { $items = @([string]$arr) }
+      else {
+        $localizedStructuralErrors.Add("$slug /$locale : '$bucket' must be an array of strings")
+        continue
+      }
+      if ($bucket -eq 'primary' -and $items.Count -lt 1) {
+        $localizedStructuralErrors.Add("$slug /$locale : primary must contain at least one value")
+      }
+      foreach ($item in $items) {
+        if ($item -isnot [string]) {
+          $localizedStructuralErrors.Add("$slug /$locale : '$bucket' contains a non-string value")
+          continue
+        }
+        if ([string]::IsNullOrWhiteSpace($item)) {
+          $localizedStructuralErrors.Add("$slug /$locale : '$bucket' contains an empty/whitespace-only name")
+          continue
+        }
+        $norm = Normalize-LocalizedName $item
+        if ([string]::IsNullOrWhiteSpace($norm)) {
+          $localizedStructuralErrors.Add("$slug /$locale : '$bucket' name normalizes to empty")
+          continue
+        }
+        if ($seenNormInLocale.ContainsKey($norm)) {
+          $localizedIntraDupes.Add("$slug /$locale : duplicate normalized value '$norm' in '$bucket' (also in '$($seenNormInLocale[$norm])')")
+        } else {
+          $seenNormInLocale[$norm] = $bucket
+        }
+        $crossKey = "$locale|$norm"
+        if (-not $localizedCrossMap.ContainsKey($crossKey)) {
+          $localizedCrossMap[$crossKey] = New-Object System.Collections.Generic.List[string]
+        }
+        if (-not $localizedCrossMap[$crossKey].Contains($slug)) {
+          $localizedCrossMap[$crossKey].Add($slug)
+        }
+      }
+    }
+  }
+}
+
+# duplicateConflicts must never carry localizedNames (cannot resolve/bypass quarantine)
+$conflictLocalized = New-Object System.Collections.Generic.List[string]
+foreach ($c in $conflicts) {
+  if ($c.PSObject.Properties.Name -contains 'localizedNames') {
+    $conflictLocalized.Add([string]$c.slug)
+  }
+  # also reject plantId-shaped leaks already covered; check observedRecords for localizedNames
+  foreach ($o in @($c.observedRecords)) {
+    if ($o.PSObject.Properties.Name -contains 'localizedNames') {
+      $conflictLocalized.Add("$($c.slug)/observedRecord")
+    }
+    if ($o.PSObject.Properties.Name -contains 'plantId' -and $o.plantId) {
+      # already covered in 3b; keep localized section focused
+    }
+  }
+}
+
+# cross-identity collisions (same locale + same normalized name -> >1 canonical)
+$localizedCrossCollisions = @($localizedCrossMap.GetEnumerator() | Where-Object { $_.Value.Count -gt 1 } | ForEach-Object {
+  $parts = $_.Key -split '\|', 2
+  "locale=$($parts[0]) name='$($parts[1])' -> $($_.Value -join ', ')"
+})
+
+if ($localizedStructuralErrors.Count -eq 0) {
+  Pass "localizedNames structure valid when present ($localizedEntryCount identities, $localizedLocaleBlockCount locale blocks; absent is valid)"
+} else {
+  Fail ("localizedNames structural problems: " + ($localizedStructuralErrors -join '; '))
+}
+
+if ($localizedIntraDupes.Count -eq 0) {
+  Pass 'no duplicate normalized localized name within the same identity and locale across buckets'
+} else {
+  Fail ("intra-identity/locale localized duplicates: " + ($localizedIntraDupes -join '; '))
+}
+
+if ($localizedCrossCollisions.Count -eq 0) {
+  Pass 'no normalized localized name maps to two canonical identities in the same locale'
+} else {
+  Fail ("cross-identity same-locale localized collisions (future explicit ambiguity model required before these can be accepted): " + ($localizedCrossCollisions -join '; '))
+}
+
+if ($localizedNeedsReviewGaps.Count -eq 0) {
+  Pass 'localized needsReview:true always implies canonical identity needsReview:true'
+} else {
+  Fail ("localized needsReview propagation gaps: " + ($localizedNeedsReviewGaps -join '; '))
+}
+
+if ($conflictLocalized.Count -eq 0) {
+  Pass 'localizedNames never appears on duplicateConflicts (cannot resolve or bypass quarantine)'
+} else {
+  Fail ("localizedNames found on duplicateConflict entries: " + ($conflictLocalized -join ', '))
+}
+
+if ($localizedPlantIdLeaks.Count -eq 0) {
+  Pass 'localized-name structures never contain a plantId'
+} else {
+  Fail ("plantId leaked into localized-name structures: " + ($localizedPlantIdLeaks -join '; '))
+}
+
+Pass "localizedNames foundation ready (current localizedNames identity count: $localizedEntryCount)"
+
+# ---------------------------------------------------------------------------
 # 4. Referential consistency (registry -> catalog + modules)
 # ---------------------------------------------------------------------------
 Write-Head '4. Referential consistency'
@@ -448,6 +699,7 @@ Write-Host ("  canonical identities not yet in registry     : {0}  ({1} fully un
 Write-Host ("  species-level identities likely safe to alloc: {0}" -f $speciesSafe.Count)
 Write-Host ("  genus-level / Various needing review         : {0}" -f $genusReview.Count)
 Write-Host ("  identities blocked by duplicate conflicts    : {0}  ({1})" -f $blockedByConflict.Count, ($blockedByConflict -join ', '))
+Write-Host ("  localizedNames-bearing identities            : {0}" -f $localizedEntryCount)
 Write-Host ''
 Write-Host ("  genus-level / Various (review) slugs: " + (($genusReview | Sort-Object) -join ', '))
 
