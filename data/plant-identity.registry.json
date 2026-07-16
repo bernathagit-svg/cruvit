@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "1.2.0",
+  "registryVersion": "1.3.0",
   "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Now covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Same-slug duplicate conflicts (avocado, strawberry-guava, mulberry) remain documented and unresolved in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
     {
@@ -206,6 +206,16 @@
       "canonicalSlug": "lavender",
       "plantId": "plt_aupnyvawcflgjbyh",
       "acceptedScientificName": "Lavandula angustifolia",
+      "localizedNames": {
+        "he": {
+          "primary": ["לבנדר"],
+          "aliases": ["אזוביון"],
+          "script": "Hebr",
+          "confidence": "high",
+          "source": "verified-existing-cruvit-catalog",
+          "needsReview": false
+        }
+      },
       "needsReview": false
     },
     {
@@ -273,6 +283,16 @@
       "acceptedScientificName": "Olea europaea",
       "moduleKeys": {
         "gardenDesignManifest": ["olive-tree"]
+      },
+      "localizedNames": {
+        "he": {
+          "primary": ["עץ זית"],
+          "aliases": ["זית"],
+          "script": "Hebr",
+          "confidence": "high",
+          "source": "verified-existing-cruvit-catalog",
+          "needsReview": false
+        }
       },
       "needsReview": false,
       "notes": "Cross-module key mapping. Garden Design manifest uses 'olive-tree'; the inline PLANT_LIBRARY record uses slug 'olive'. Same species (Olea europaea)."
