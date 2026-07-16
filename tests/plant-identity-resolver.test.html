@@ -425,6 +425,311 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
       ' registryUntouched=' + (JSON.stringify(mutReg) === beforeReg));
   }
 
+  // 21c. scientific synonym foundation (synthetic registries + real-registry non-regression)
+  {
+    const src = (authority, verifiedAt, recordId) => {
+      const o = { authority, verifiedAt };
+      if (recordId != null) o.recordId = recordId;
+      return o;
+    };
+    const syn = (name, extras = {}) => Object.assign({
+      name,
+      relationship: 'synonym',
+      confidence: 'high',
+      needsReview: false,
+      sources: [src('powo', '2026-07-16', 'rec-1')]
+    }, extras);
+
+    const baseReg = (identities, conflicts = []) => ({
+      schemaVersion: 1,
+      registryVersion: '9.0.0',
+      canonicalIdentities: identities,
+      duplicateConflicts: conflicts
+    });
+
+    // Accepted name still resolves with matchedBy scientificName (NFC path regression)
+    const rAcc = createPlantIdentityResolver(baseReg([
+      { canonicalSlug: 'acc-plant', needsReview: false, acceptedScientificName: 'Malus domestica' }
+    ]));
+    const accRes = rAcc.resolve({ scientific: '  Malus   domestica ' });
+    rec('sci-syn: accepted name resolves matchedBy scientificName (NFC/whitespace regression)',
+      accRes.status === 'resolved_canonical' && accRes.canonicalSlug === 'acc-plant' &&
+      accRes.matchedBy === 'scientificName' && accRes.confidence === 'high' && accRes.plantId === null,
+      `status=${accRes.status} by=${accRes.matchedBy} canon=${accRes.canonicalSlug}`);
+
+    // High-confidence verified synonym
+    const rSyn = createPlantIdentityResolver(baseReg([
+      {
+        canonicalSlug: 'syn-plant', needsReview: false,
+        acceptedScientificName: 'Alpha acceptus',
+        scientificSynonyms: [syn('Alpha synonimus')]
+      }
+    ]));
+    const synRes = rSyn.resolve({ scientific: 'Alpha synonimus' });
+    rec('sci-syn: high synonym → resolved_canonical matchedBy scientificSynonym',
+      synRes.status === 'resolved_canonical' && synRes.canonicalSlug === 'syn-plant' &&
+      synRes.matchedBy === 'scientificSynonym' && synRes.inputNamespace === 'scientificSynonym' &&
+      synRes.confidence === 'high' && synRes.plantId === null && synRes.needsReview === false &&
+      synRes.registryVersion === '9.0.0' && Object.isFrozen(synRes),
+      `status=${synRes.status} by=${synRes.matchedBy} pid=${synRes.plantId}`);
+
+    // Existing plantId returned, never fabricated
+    const rId = createPlantIdentityResolver(baseReg([
+      {
+        canonicalSlug: 'id-plant', plantId: 'plt_synonympilot0001', needsReview: false,
+        acceptedScientificName: 'Idus plantus',
+        scientificSynonyms: [syn('Idus synonimus')]
+      }
+    ]));
+    const idRes = rId.resolve({ scientific: 'Idus synonimus' });
+    rec('sci-syn: synonym returns existing plantId only (resolved_id)',
+      idRes.status === 'resolved_id' && idRes.plantId === 'plt_synonympilot0001' &&
+      idRes.matchedBy === 'scientificSynonym' && idRes.canonicalSlug === 'id-plant',
+      `status=${idRes.status} pid=${idRes.plantId}`);
+
+    // Accepted name precedence over synonym lookup (same string registered as accepted on A wins as scientificName)
+    const rPrec = createPlantIdentityResolver(baseReg([
+      { canonicalSlug: 'first', needsReview: false, acceptedScientificName: 'Shared nameus' },
+      {
+        canonicalSlug: 'second', needsReview: false, acceptedScientificName: 'Secondus plantus',
+        scientificSynonyms: [syn('Other syn')]
+      }
+    ]));
+    const prec = rPrec.resolve({ scientific: 'Shared nameus' });
+    rec('sci-syn: accepted name match uses scientificName not scientificSynonym',
+      prec.matchedBy === 'scientificName' && prec.canonicalSlug === 'first',
+      `by=${prec.matchedBy} canon=${prec.canonicalSlug}`);
+
+    // Ambiguous: same synonym on two identities → non-resolving ambiguous
+    const rAmb = createPlantIdentityResolver(baseReg([
+      {
+        canonicalSlug: 'a1', needsReview: false, acceptedScientificName: 'Aaa aaa',
+        scientificSynonyms: [syn('Shared syn')]
+      },
+      {
+        canonicalSlug: 'a2', needsReview: false, acceptedScientificName: 'Bbb bbb',
+        scientificSynonyms: [syn('Shared syn', { sources: [src('wfo', '2026-07-16', 'x')] })]
+      }
+    ]));
+    const amb = rAmb.resolve({ scientific: 'Shared syn' });
+    rec('sci-syn: cross-identity synonym collision → ambiguous (no first-writer-wins)',
+      amb.status === 'ambiguous' && amb.canonicalSlug === null && amb.plantId === null &&
+      amb.matchedBy === 'scientificSynonym',
+      `status=${amb.status} canon=${amb.canonicalSlug} by=${amb.matchedBy}`);
+
+    // Synonym equal to another accepted → ambiguous / non-resolving
+    const rColl = createPlantIdentityResolver(baseReg([
+      { canonicalSlug: 'owner', needsReview: false, acceptedScientificName: 'Owned acceptus' },
+      {
+        canonicalSlug: 'other', needsReview: false, acceptedScientificName: 'Otherus plantus',
+        scientificSynonyms: [syn('Owned acceptus')]
+      }
+    ]));
+    const coll = rColl.resolve({ scientific: 'Owned acceptus' });
+    rec('sci-syn: synonym=other accepted resolves as accepted owner (scientificName), not via synonym',
+      coll.status === 'resolved_canonical' && coll.canonicalSlug === 'owner' && coll.matchedBy === 'scientificName',
+      `status=${coll.status} canon=${coll.canonicalSlug} by=${coll.matchedBy}`);
+    // And the colliding synonym must not also create a second path — stats show ambiguous or not indexed
+    const collStats = rColl.getStats();
+    rec('sci-syn: colliding synonym not actively indexed',
+      collStats.indexedScientificSynonymCount === 0,
+      'indexed=' + collStats.indexedScientificSynonymCount);
+
+    // Duplicate synonym on one identity → ambiguous
+    const rDup = createPlantIdentityResolver(baseReg([
+      {
+        canonicalSlug: 'dup', needsReview: false, acceptedScientificName: 'Dup acceptus',
+        scientificSynonyms: [syn('Dup syn'), syn('Dup syn', { sources: [src('ipni', '2026-01-01')] })]
+      }
+    ]));
+    const dup = rDup.resolve({ scientific: 'Dup syn' });
+    rec('sci-syn: duplicate synonym on one identity → ambiguous',
+      dup.status === 'ambiguous' && dup.matchedBy === 'scientificSynonym',
+      `status=${dup.status}`);
+
+    // Self-accepted synonym not indexed
+    const rSelf = createPlantIdentityResolver(baseReg([
+      {
+        canonicalSlug: 'self', needsReview: false, acceptedScientificName: 'Selfus plantus',
+        scientificSynonyms: [syn('Selfus plantus')]
+      }
+    ]));
+    const selfRes = rSelf.resolve({ scientific: 'Selfus plantus' });
+    rec('sci-syn: synonym=own accepted still matchedBy scientificName; synonym not required',
+      selfRes.matchedBy === 'scientificName' && selfRes.canonicalSlug === 'self' &&
+      rSelf.getStats().indexedScientificSynonymCount === 0,
+      `by=${selfRes.matchedBy} indexed=${rSelf.getStats().indexedScientificSynonymCount}`);
+
+    // Pending conflict short-circuits both spellings
+    const rConf = createPlantIdentityResolver(baseReg(
+      [{
+        canonicalSlug: 'safe', needsReview: false, acceptedScientificName: 'Safeus plantus',
+        scientificSynonyms: [syn('Conflictus nameus')]
+      }],
+      [{
+        slug: 'conflict-slug',
+        conflictType: 'duplicate-slug-scientific-spelling-conflict',
+        needsReview: true,
+        resolutionStatus: 'pending',
+        observedRecords: [
+          { source: 'plantLibrary', ref: 'a', scientificName: 'Conflictus nameus' },
+          { source: 'plantLibrary', ref: 'b', scientificName: 'Conflictus otherus' }
+        ]
+      }]
+    ));
+    const confRes = rConf.resolve({ scientific: 'Conflictus nameus' });
+    rec('sci-syn: pending-conflict scientific still short-circuits over synonym',
+      confRes.status === 'pending_conflict' && confRes.canonicalSlug === null,
+      `status=${confRes.status}`);
+
+    // medium / low / needsReview / identity needsReview not indexed
+    const rMed = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'med', needsReview: false, acceptedScientificName: 'Medus acceptus',
+      scientificSynonyms: [syn('Medus syn', { confidence: 'medium', needsReview: true })]
+    }]));
+    rec('sci-syn: medium-confidence synonym not indexed',
+      rMed.resolve({ scientific: 'Medus syn' }).status === 'provisional' &&
+      rMed.getStats().indexedScientificSynonymCount === 0 &&
+      rMed.getStats().reviewedButNotIndexedScientificSynonymCount >= 1,
+      'status=' + rMed.resolve({ scientific: 'Medus syn' }).status);
+
+    const rLow = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'low', needsReview: false, acceptedScientificName: 'Lowus acceptus',
+      scientificSynonyms: [syn('Lowus syn', { confidence: 'low', needsReview: true })]
+    }]));
+    rec('sci-syn: low-confidence synonym not indexed',
+      rLow.resolve({ scientific: 'Lowus syn' }).status === 'provisional' &&
+      rLow.getStats().indexedScientificSynonymCount === 0,
+      'indexed=' + rLow.getStats().indexedScientificSynonymCount);
+
+    const rRev = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'rev', needsReview: false, acceptedScientificName: 'Revus acceptus',
+      scientificSynonyms: [syn('Revus syn', { needsReview: true })]
+    }]));
+    rec('sci-syn: needsReview synonym not indexed',
+      rRev.resolve({ scientific: 'Revus syn' }).status === 'provisional',
+      'status=' + rRev.resolve({ scientific: 'Revus syn' }).status);
+
+    const rIdRev = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'idrev', needsReview: true, acceptedScientificName: 'Idrevus acceptus',
+      scientificSynonyms: [syn('Idrevus syn')]
+    }]));
+    rec('sci-syn: synonym on needsReview identity not indexed',
+      rIdRev.resolve({ scientific: 'Idrevus syn' }).status === 'provisional' &&
+      rIdRev.getStats().indexedScientificSynonymCount === 0,
+      'indexed=' + rIdRev.getStats().indexedScientificSynonymCount);
+
+    // Malformed sources do not resolve
+    const rBadSrc = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'bads', needsReview: false, acceptedScientificName: 'Badus acceptus',
+      scientificSynonyms: [{
+        name: 'Badus syn', relationship: 'synonym', confidence: 'high', needsReview: false,
+        sources: [{ authority: 'POWO', verifiedAt: '2026-07-16' }]
+      }]
+    }]));
+    rec('sci-syn: malformed source authority not indexed',
+      rBadSrc.resolve({ scientific: 'Badus syn' }).status === 'provisional',
+      'status=' + rBadSrc.resolve({ scientific: 'Badus syn' }).status);
+
+    // Author-bearing ≠ bare binomial
+    const rAuth = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'auth', needsReview: false, acceptedScientificName: 'Psidium cattleyanum',
+      scientificSynonyms: [syn('Psidium cattleianum')]
+    }]));
+    rec('sci-syn: author-bearing name ≠ bare binomial unless registered',
+      rAuth.resolve({ scientific: 'Psidium cattleyanum Sabine' }).status === 'provisional' &&
+      rAuth.resolve({ scientific: 'Psidium cattleyanum' }).matchedBy === 'scientificName' &&
+      rAuth.resolve({ scientific: 'Psidium cattleianum' }).matchedBy === 'scientificSynonym',
+      'author=' + rAuth.resolve({ scientific: 'Psidium cattleyanum Sabine' }).status);
+
+    // Hybrid × vs x not equated
+    const rHyb = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'hyb', needsReview: false, acceptedScientificName: 'Citrus × limon',
+      scientificSynonyms: [syn('Citrus syn')]
+    }]));
+    rec('sci-syn: hybrid × and x are not silently equated',
+      rHyb.resolve({ scientific: 'Citrus × limon' }).canonicalSlug === 'hyb' &&
+      rHyb.resolve({ scientific: 'Citrus x limon' }).status === 'provisional',
+      'times=' + rHyb.resolve({ scientific: 'Citrus × limon' }).status +
+      ' x=' + rHyb.resolve({ scientific: 'Citrus x limon' }).status);
+
+    // Near-miss / no substring / no fuzzy
+    rec('sci-syn: near-miss spelling does not resolve',
+      rSyn.resolve({ scientific: 'Alpha synonimuss' }).status === 'provisional',
+      'status=' + rSyn.resolve({ scientific: 'Alpha synonimuss' }).status);
+    rec('sci-syn: substring does not resolve',
+      rSyn.resolve({ scientific: 'Alpha' }).status === 'provisional',
+      'status=' + rSyn.resolve({ scientific: 'Alpha' }).status);
+
+    // Unicode NFC: composed vs decomposed e+acute should match if registered composed
+    const composed = 'Cafe\u00e9us plantus'; // Caféus with composed é
+    const decomposed = 'Cafe\u0065\u0301us plantus';
+    const rNfc = createPlantIdentityResolver(baseReg([{
+      canonicalSlug: 'nfc', needsReview: false, acceptedScientificName: composed
+    }]));
+    rec('sci-syn: Unicode NFC normalization matches composed/decomposed accepted name',
+      rNfc.resolve({ scientific: composed }).canonicalSlug === 'nfc' &&
+      rNfc.resolve({ scientific: decomposed }).canonicalSlug === 'nfc' &&
+      rNfc.resolve({ scientific: composed }).matchedBy === 'scientificName',
+      'composed=' + rNfc.resolve({ scientific: composed }).canonicalSlug +
+      ' decomposed=' + rNfc.resolve({ scientific: decomposed }).canonicalSlug);
+
+    // Stats accuracy on a clean one-synonym registry
+    const st = rSyn.getStats();
+    rec('sci-syn: stats — identity/entry/indexed counts; scientificCount excludes synonyms',
+      st.scientificSynonymIdentityCount === 1 && st.scientificSynonymEntryCount === 1 &&
+      st.indexedScientificSynonymCount === 1 && st.scientificCount === 1 &&
+      st.ambiguousScientificSynonymCount === 0 &&
+      typeof st.reviewedButNotIndexedScientificSynonymCount === 'number',
+      JSON.stringify({
+        id: st.scientificSynonymIdentityCount, ent: st.scientificSynonymEntryCount,
+        idx: st.indexedScientificSynonymCount, sci: st.scientificCount,
+        amb: st.ambiguousScientificSynonymCount, rev: st.reviewedButNotIndexedScientificSynonymCount
+      }));
+
+    // Mutation / freeze already covered; ensure synonym resolve does not mutate registry
+    const mutSynReg = baseReg([{
+      canonicalSlug: 'imut', needsReview: false, acceptedScientificName: 'Imut acceptus',
+      scientificSynonyms: [syn('Imut syn')]
+    }]);
+    const beforeMutSyn = JSON.stringify(mutSynReg);
+    const mutIn = { scientific: 'Imut syn', keep: 1 };
+    const beforeMutIn = JSON.stringify(mutIn);
+    const mutR = createPlantIdentityResolver(mutSynReg);
+    const mutOut = mutR.resolve(mutIn);
+    let mutBlocked = false;
+    try { mutOut.canonicalSlug = 'hack'; mutBlocked = (mutOut.canonicalSlug === 'imut'); } catch (e) { mutBlocked = true; }
+    rec('sci-syn: input/registry unmutated; result frozen',
+      JSON.stringify(mutSynReg) === beforeMutSyn && JSON.stringify(mutIn) === beforeMutIn &&
+      Object.isFrozen(mutOut) && mutBlocked,
+      'frozen=' + Object.isFrozen(mutOut));
+  }
+
+  // Real-registry synonym non-regression
+  {
+    const rs = R.getStats();
+    rec('real registry: zero scientific synonyms indexed/present',
+      rs.scientificSynonymIdentityCount === 0 && rs.scientificSynonymEntryCount === 0 &&
+      rs.indexedScientificSynonymCount === 0 && rs.ambiguousScientificSynonymCount === 0,
+      JSON.stringify({
+        id: rs.scientificSynonymIdentityCount, ent: rs.scientificSynonymEntryCount,
+        idx: rs.indexedScientificSynonymCount, amb: rs.ambiguousScientificSynonymCount
+      }));
+    rec('real registry: strawberry-guava still pending_conflict',
+      R.resolve('strawberry-guava').status === 'pending_conflict' &&
+      R.resolve({ scientific: 'Psidium cattleianum' }).status === 'pending_conflict' &&
+      R.resolve({ scientific: 'Psidium cattleyanum' }).status === 'pending_conflict',
+      'slug=' + R.resolve('strawberry-guava').status);
+    rec('real registry: mulberry still pending_conflict',
+      R.resolve('mulberry').status === 'pending_conflict',
+      'status=' + R.resolve('mulberry').status);
+    rec('real registry: avocado / Persea americana unchanged',
+      R.resolve('avocado').status === 'resolved_canonical' && R.resolve('avocado').plantId === null &&
+      R.resolve({ scientific: 'Persea americana' }).matchedBy === 'scientificName' &&
+      R.resolve({ scientific: 'Persea americana' }).canonicalSlug === 'avocado',
+      'by=' + R.resolve({ scientific: 'Persea americana' }).matchedBy);
+  }
+
   // 22. immutability / no mutation of input or registry
   const beforeRegistry = JSON.stringify(registryData);
   const inputObj = { canonicalSlug: 'apple', extra: 'keep' };

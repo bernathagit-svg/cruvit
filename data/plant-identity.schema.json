@@ -158,6 +158,63 @@
         "pl": { "$ref": "#/definitions/LocalizedLocaleBlock" }
       }
     },
+    "ScientificSynonymSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "verifiedAt"],
+      "description": "Controlled provenance reference for a scientific synonym. No URLs or free-form citation prose in this foundation.",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$",
+          "description": "Controlled lowercase source token (e.g. powo, wfo, ipni, tropicos)."
+        },
+        "recordId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional stable identifier within the authority (not a URL)."
+        },
+        "verifiedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+          "description": "Verification date as YYYY-MM-DD. Calendar validity is enforced by the cross-entry validator."
+        }
+      }
+    },
+    "ScientificSynonymEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "relationship", "confidence", "needsReview", "sources"],
+      "description": "Identity-grade scientific-name synonym (or future nomenclatural alternative). This first version permits relationship=synonym only; future versions may deliberately add orthographic_variant, historical_name, misapplied_name, or deprecated_name. Must never carry a plantId. Must never appear on duplicateConflict records.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Scientific name string exactly as registered for synonym matching. Distinct from acceptedScientificName."
+        },
+        "relationship": {
+          "type": "string",
+          "enum": ["synonym"],
+          "description": "Nomenclatural relationship to acceptedScientificName. Only 'synonym' is permitted in this foundation version."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Editorial confidence in the synonym relationship. Only high + needsReview=false (on a needsReview=false identity) is eligible for active resolver indexing."
+        },
+        "needsReview": {
+          "type": "boolean",
+          "description": "True when this synonym still needs editorial review. medium/low confidence must set needsReview=true."
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/definitions/ScientificSynonymSource" },
+          "description": "Non-empty provenance list. Duplicate source references within one synonym entry are invalid."
+        }
+      }
+    },
     "CanonicalIdentity": {
       "type": "object",
       "additionalProperties": false,
@@ -175,7 +232,13 @@
         "acceptedScientificName": {
           "type": "string",
           "minLength": 1,
-          "description": "Accepted scientific name, included only where reliable at species level. Omit for genus-level or ambiguous cases."
+          "description": "Accepted scientific name, included only where reliable at species level. Omit for genus-level or ambiguous cases. Remains the sole accepted-name field; not moved into scientificSynonyms."
+        },
+        "scientificSynonyms": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Optional scientific-name synonyms for this canonical identity. Omit the property when empty. Never store vernacular/common names or slug aliases here.",
+          "items": { "$ref": "#/definitions/ScientificSynonymEntry" }
         },
         "aliasSlugs": {
           "type": "array",

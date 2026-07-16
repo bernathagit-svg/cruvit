@@ -125,6 +125,35 @@ function Normalize-LocalizedName([string]$raw) {
   return $s
 }
 
+# Scientific-name normalization (aligned with resolver normalizeScientificName).
+function Normalize-ScientificName([string]$raw) {
+  if ($null -eq $raw) { return '' }
+  $s = [string]$raw
+  $s = $s.Normalize([Text.NormalizationForm]::FormC)
+  $s = $s.Replace([char]0x2018, [char]0x27).Replace([char]0x2019, [char]0x27)
+  $s = $s.Replace([char]0x201B, [char]0x27).Replace([char]0x2032, [char]0x27)
+  $s = $s.Replace([char]0x05F3, [char]0x27)
+  $s = $s.Replace([char]0x201C, [char]0x22).Replace([char]0x201D, [char]0x22)
+  $s = $s.Replace([char]0x00B4, [char]0x27).Replace([char]0x0060, [char]0x27)
+  $s = $s.Trim()
+  $s = [regex]::Replace($s, '\s+', ' ')
+  if ([string]::IsNullOrWhiteSpace($s)) { return '' }
+  return $s.ToLowerInvariant()
+}
+
+function Test-ValidCalendarDate([string]$ymd) {
+  if ($ymd -notmatch '^[0-9]{4}-[0-9]{2}-[0-9]{2}$') { return $false }
+  try {
+    $dt = [datetime]::ParseExact($ymd, 'yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture)
+    return ($dt.ToString('yyyy-MM-dd') -eq $ymd)
+  } catch {
+    return $false
+  }
+}
+
+$script:AuthorityPattern = '^[a-z][a-z0-9-]{0,62}$'
+$script:SynonymRelationships = @('synonym')
+
 $script:SupportedLocales = @(
   'en','he','ar','es','fr','de','it','pt','ru','zh','ja','ko','hi','tr','nl','pl'
 )
@@ -631,6 +660,431 @@ if ($localizedPlantIdLeaks.Count -eq 0) {
 Pass "localizedNames foundation ready (current localizedNames identity count: $localizedEntryCount)"
 
 # ---------------------------------------------------------------------------
+# 3d. scientificSynonyms foundation (optional; absent is valid)
+# Policy:
+#  - high + needsReview:false may be eligible for resolver indexing (resolver also
+#    requires identity needsReview:false and no collisions).
+#  - medium/low MUST set needsReview:true.
+#  - needsReview:false synonym on needsReview:true identity is REJECTED.
+#  - scientificSynonyms must never appear on duplicateConflicts.
+#  - never choose by array order; cross-identity collisions FAIL.
+# ---------------------------------------------------------------------------
+Write-Head '3d. scientificSynonyms foundation'
+
+$synonymStructuralErrors = New-Object System.Collections.Generic.List[string]
+$synonymIdentityCount = 0
+$synonymEntryCount = 0
+$synonymPlantIdLeaks = New-Object System.Collections.Generic.List[string]
+
+# Build accepted scientific map and conflict scientific set for collision checks
+$acceptedSciOwner = @{}   # norm -> list of canonicalSlug
+$conflictSciSet = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+foreach ($e in $canon) {
+  if ($e.PSObject.Properties.Name -contains 'acceptedScientificName' -and $e.acceptedScientificName) {
+    $n = Normalize-ScientificName ([string]$e.acceptedScientificName)
+    if ($n) {
+      if (-not $acceptedSciOwner.ContainsKey($n)) { $acceptedSciOwner[$n] = New-Object System.Collections.Generic.List[string] }
+      $acceptedSciOwner[$n].Add([string]$e.canonicalSlug)
+    }
+  }
+}
+foreach ($c in $conflicts) {
+  foreach ($o in @($c.observedRecords)) {
+    if ($o.PSObject.Properties.Name -contains 'scientificName' -and $o.scientificName) {
+      $n = Normalize-ScientificName ([string]$o.scientificName)
+      if ($n) { [void]$conflictSciSet.Add($n) }
+    }
+  }
+  if ($c.PSObject.Properties.Name -contains 'recommendedCanonicalScientificName' -and $c.recommendedCanonicalScientificName) {
+    $n = Normalize-ScientificName ([string]$c.recommendedCanonicalScientificName)
+    if ($n) { [void]$conflictSciSet.Add($n) }
+  }
+  if ($c.PSObject.Properties.Name -contains 'conflictingScientificNamePresent' -and $c.conflictingScientificNamePresent) {
+    $n = Normalize-ScientificName ([string]$c.conflictingScientificNamePresent)
+    if ($n) { [void]$conflictSciSet.Add($n) }
+  }
+}
+
+$synonymOwner = @{}  # norm -> list of canonicalSlug
+
+foreach ($e in $canon) {
+  $slug = [string]$e.canonicalSlug
+  $hasSyn = ($e.PSObject.Properties.Name -contains 'scientificSynonyms')
+  if (-not $hasSyn) { continue }
+  if ($null -eq $e.scientificSynonyms) {
+    $synonymStructuralErrors.Add("$slug : scientificSynonyms is null (omit the property instead)")
+    continue
+  }
+  if ($e.scientificSynonyms -isnot [System.Array]) {
+    $synonymStructuralErrors.Add("$slug : scientificSynonyms must be an array")
+    continue
+  }
+  if (@($e.scientificSynonyms).Count -eq 0) {
+    $synonymStructuralErrors.Add("$slug : scientificSynonyms must be omitted when empty")
+    continue
+  }
+  $synonymIdentityCount++
+  $seenOnIdentity = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  $ownAccepted = ''
+  if ($e.PSObject.Properties.Name -contains 'acceptedScientificName' -and $e.acceptedScientificName) {
+    $ownAccepted = Normalize-ScientificName ([string]$e.acceptedScientificName)
+  }
+  $identityNeedsReview = ($e.needsReview -eq $true)
+
+  foreach ($syn in @($e.scientificSynonyms)) {
+    $synonymEntryCount++
+    if ($null -eq $syn -or $syn -is [string] -or $syn -is [System.Array]) {
+      $synonymStructuralErrors.Add("$slug : synonym entry must be an object")
+      continue
+    }
+    foreach ($extra in @($syn.PSObject.Properties.Name)) {
+      if ($extra -notin @('name','relationship','confidence','needsReview','sources')) {
+        $synonymStructuralErrors.Add("$slug : unsupported synonym property '$extra'")
+      }
+      if ($extra -eq 'plantId') { $synonymPlantIdLeaks.Add("$slug/synonym") }
+    }
+    foreach ($req in @('name','relationship','confidence','needsReview','sources')) {
+      if ($syn.PSObject.Properties.Name -notcontains $req) {
+        $synonymStructuralErrors.Add("$slug : synonym missing required field '$req'")
+      }
+    }
+    $nameRaw = if ($syn.PSObject.Properties.Name -contains 'name') { [string]$syn.name } else { '' }
+    if ([string]::IsNullOrWhiteSpace($nameRaw)) {
+      $synonymStructuralErrors.Add("$slug : synonym name is blank")
+      continue
+    }
+    $norm = Normalize-ScientificName $nameRaw
+    if (-not $norm) {
+      $synonymStructuralErrors.Add("$slug : synonym name normalizes to empty")
+      continue
+    }
+    if (-not $seenOnIdentity.Add($norm)) {
+      $synonymStructuralErrors.Add("$slug : duplicate normalized synonym '$norm'")
+    }
+    if ($ownAccepted -and $norm -eq $ownAccepted) {
+      $synonymStructuralErrors.Add("$slug : synonym equals own acceptedScientificName")
+    }
+    $rel = if ($syn.PSObject.Properties.Name -contains 'relationship') { [string]$syn.relationship } else { '' }
+    if ($rel -notin $script:SynonymRelationships) {
+      $synonymStructuralErrors.Add("$slug : unknown/unsupported relationship '$rel'")
+    }
+    $conf = if ($syn.PSObject.Properties.Name -contains 'confidence') { [string]$syn.confidence } else { '' }
+    if ($conf -notin $script:ConfidenceValues) {
+      $synonymStructuralErrors.Add("$slug : unsupported confidence '$conf'")
+    }
+    $synNeedsReview = $false
+    if ($syn.PSObject.Properties.Name -contains 'needsReview') {
+      if ($syn.needsReview -isnot [bool] -and "$($syn.needsReview)" -notin @('True','False')) {
+        $synonymStructuralErrors.Add("$slug : synonym needsReview must be boolean")
+      }
+      $synNeedsReview = ($syn.needsReview -eq $true)
+    }
+    if ($conf -in @('low','medium') -and -not $synNeedsReview) {
+      $synonymStructuralErrors.Add("$slug : $conf confidence synonym must set needsReview:true")
+    }
+    if (-not $synNeedsReview -and $identityNeedsReview) {
+      $synonymStructuralErrors.Add("$slug : needsReview:false synonym is not allowed on needsReview:true identity")
+    }
+    if ($syn.PSObject.Properties.Name -notcontains 'sources' -or $null -eq $syn.sources -or $syn.sources -isnot [System.Array] -or @($syn.sources).Count -eq 0) {
+      $synonymStructuralErrors.Add("$slug : synonym sources must be a non-empty array")
+    } else {
+      $srcSeen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+      foreach ($src in @($syn.sources)) {
+        if ($null -eq $src -or $src -is [string] -or $src -is [System.Array]) {
+          $synonymStructuralErrors.Add("$slug : source entry must be an object")
+          continue
+        }
+        foreach ($sp in @($src.PSObject.Properties.Name)) {
+          if ($sp -notin @('authority','recordId','verifiedAt')) {
+            $synonymStructuralErrors.Add("$slug : unsupported source property '$sp'")
+          }
+          if ($sp -eq 'plantId') { $synonymPlantIdLeaks.Add("$slug/source") }
+        }
+        $auth = if ($src.PSObject.Properties.Name -contains 'authority') { [string]$src.authority } else { '' }
+        $vAt = if ($src.PSObject.Properties.Name -contains 'verifiedAt') { [string]$src.verifiedAt } else { '' }
+        if ($auth -notmatch $script:AuthorityPattern) {
+          $synonymStructuralErrors.Add("$slug : invalid source authority '$auth'")
+        }
+        if (-not (Test-ValidCalendarDate $vAt)) {
+          $synonymStructuralErrors.Add("$slug : invalid verifiedAt '$vAt'")
+        }
+        $rid = ''
+        if ($src.PSObject.Properties.Name -contains 'recordId') {
+          $rid = [string]$src.recordId
+          if ([string]::IsNullOrWhiteSpace($rid)) {
+            $synonymStructuralErrors.Add("$slug : recordId present but blank")
+          }
+        }
+        $srcKey = "$auth|$rid"
+        if (-not $srcSeen.Add($srcKey)) {
+          $synonymStructuralErrors.Add("$slug : duplicate source reference '$srcKey'")
+        }
+      }
+    }
+    if (-not $synonymOwner.ContainsKey($norm)) { $synonymOwner[$norm] = New-Object System.Collections.Generic.List[string] }
+    $synonymOwner[$norm].Add($slug)
+    if ($conflictSciSet.Contains($norm)) {
+      $synonymStructuralErrors.Add("$slug : synonym '$norm' overlaps a pending-conflict scientific name")
+    }
+  }
+}
+
+# Cross-identity synonym ↔ synonym and synonym ↔ accepted collisions
+foreach ($norm in @($synonymOwner.Keys)) {
+  $owners = @($synonymOwner[$norm] | Select-Object -Unique)
+  if ($owners.Count -gt 1) {
+    $synonymStructuralErrors.Add("cross-identity synonym collision '$norm' -> $($owners -join ', ')")
+  }
+  if ($acceptedSciOwner.ContainsKey($norm)) {
+    $accOwners = @($acceptedSciOwner[$norm] | Select-Object -Unique)
+    # A synonym may not equal any acceptedScientificName except as invalid self-dup (already flagged).
+    # Any accepted owner that is not exactly the sole synonym owner is a collision.
+    foreach ($ao in $accOwners) {
+      if ($owners.Count -ne 1 -or $ao -ne $owners[0]) {
+        $synonymStructuralErrors.Add("accepted/synonym collision '$norm' acceptedOwner=$ao synonymOwners=$($owners -join ',')")
+      }
+    }
+  }
+}
+
+# duplicateConflicts must never carry scientificSynonyms
+$conflictSyn = New-Object System.Collections.Generic.List[string]
+foreach ($c in $conflicts) {
+  if ($c.PSObject.Properties.Name -contains 'scientificSynonyms') {
+    $conflictSyn.Add([string]$c.slug)
+  }
+}
+
+if ($synonymStructuralErrors.Count -eq 0) {
+  Pass "scientificSynonyms structure valid when present ($synonymIdentityCount identities, $synonymEntryCount entries; absent is valid)"
+} else {
+  Fail ("scientificSynonyms structural/collision problems: " + ($synonymStructuralErrors -join '; '))
+}
+
+if ($conflictSyn.Count -eq 0) {
+  Pass 'scientificSynonyms never appears on duplicateConflicts'
+} else {
+  Fail ("scientificSynonyms found on duplicateConflict entries: " + ($conflictSyn -join ', '))
+}
+
+if ($synonymPlantIdLeaks.Count -eq 0) {
+  Pass 'scientific-synonym structures never contain a plantId'
+} else {
+  Fail ("plantId leaked into scientific-synonym structures: " + ($synonymPlantIdLeaks -join '; '))
+}
+
+if ($synonymIdentityCount -eq 0 -and $synonymEntryCount -eq 0) {
+  Pass 'real registry has zero scientificSynonyms entries (foundation-ready)'
+} else {
+  Pass "scientificSynonyms present on $synonymIdentityCount identities ($synonymEntryCount entries)"
+}
+
+# ---------------------------------------------------------------------------
+# 3e. scientificSynonyms synthetic fixtures (in-memory only; no registry writes)
+# ---------------------------------------------------------------------------
+Write-Head '3e. scientificSynonyms synthetic fixtures'
+
+function New-SynSource([string]$authority, [string]$verifiedAt, [string]$recordId = $null) {
+  $o = [ordered]@{ authority = $authority; verifiedAt = $verifiedAt }
+  if ($null -ne $recordId) { $o.recordId = $recordId }
+  return [pscustomobject]$o
+}
+function New-SynEntry([string]$name, [string]$relationship, [string]$confidence, [bool]$needsReview, $sources) {
+  return [pscustomobject]@{
+    name = $name
+    relationship = $relationship
+    confidence = $confidence
+    needsReview = $needsReview
+    sources = @($sources)
+  }
+}
+
+function Test-SynonymFixtureValidity($canonList, $conflictList) {
+  $errors = New-Object System.Collections.Generic.List[string]
+  $accepted = @{}
+  $conflictSet = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+  foreach ($e in @($canonList)) {
+    if ($e.PSObject.Properties.Name -contains 'acceptedScientificName' -and $e.acceptedScientificName) {
+      $n = Normalize-ScientificName ([string]$e.acceptedScientificName)
+      if ($n) {
+        if (-not $accepted.ContainsKey($n)) { $accepted[$n] = New-Object System.Collections.Generic.List[string] }
+        $accepted[$n].Add([string]$e.canonicalSlug)
+      }
+    }
+  }
+  foreach ($c in @($conflictList)) {
+    if ($null -eq $c -or $c -isnot [System.Management.Automation.PSObject]) { continue }
+    if ($c.PSObject.Properties.Name -contains 'observedRecords') {
+      foreach ($o in @($c.observedRecords)) {
+        if ($o -and ($o -is [System.Management.Automation.PSObject]) -and
+            ($o.PSObject.Properties.Name -contains 'scientificName') -and $o.scientificName) {
+          [void]$conflictSet.Add((Normalize-ScientificName ([string]$o.scientificName)))
+        }
+      }
+    }
+  }
+  $synOwner = @{}
+  foreach ($e in @($canonList)) {
+    if ($null -eq $e -or $e -isnot [System.Management.Automation.PSObject]) { continue }
+    $slug = [string]$e.canonicalSlug
+    if ($e.PSObject.Properties.Name -notcontains 'scientificSynonyms') { continue }
+    $ownAcc = ''
+    if ($e.PSObject.Properties.Name -contains 'acceptedScientificName' -and $e.acceptedScientificName) {
+      $ownAcc = Normalize-ScientificName ([string]$e.acceptedScientificName)
+    }
+    $idReview = ($e.needsReview -eq $true)
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($syn in @($e.scientificSynonyms)) {
+      if (-not $syn -or $syn -isnot [System.Management.Automation.PSObject] -or -not $syn.name) { $errors.Add('blank'); continue }
+      $norm = Normalize-ScientificName ([string]$syn.name)
+      if (-not $seen.Add($norm)) { $errors.Add('dup-self') }
+      if ($ownAcc -and $norm -eq $ownAcc) { $errors.Add('self-accepted') }
+      if ($syn.relationship -notin $script:SynonymRelationships) { $errors.Add('bad-rel') }
+      if ($syn.confidence -notin $script:ConfidenceValues) { $errors.Add('bad-conf') }
+      if ($syn.confidence -in @('low','medium') -and $syn.needsReview -ne $true) { $errors.Add('med-low-review') }
+      if ($syn.needsReview -eq $false -and $idReview) { $errors.Add('id-review') }
+      if (-not $syn.sources -or @($syn.sources).Count -eq 0) { $errors.Add('no-sources') }
+      else {
+        $sk = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+        foreach ($src in @($syn.sources)) {
+          if (-not $src -or $src -isnot [System.Management.Automation.PSObject]) { $errors.Add('bad-auth'); continue }
+          if ($src.authority -notmatch $script:AuthorityPattern) { $errors.Add('bad-auth') }
+          if (-not (Test-ValidCalendarDate ([string]$src.verifiedAt))) { $errors.Add('bad-date') }
+          $rid = if ($src.PSObject.Properties.Name -contains 'recordId') { [string]$src.recordId } else { '' }
+          if (-not $sk.Add("$($src.authority)|$rid")) { $errors.Add('dup-source') }
+        }
+      }
+      if ($conflictSet.Contains($norm)) { $errors.Add('conflict-overlap') }
+      if (-not $synOwner.ContainsKey($norm)) { $synOwner[$norm] = New-Object System.Collections.Generic.List[string] }
+      $synOwner[$norm].Add($slug)
+    }
+  }
+  foreach ($norm in @($synOwner.Keys)) {
+    $owners = @($synOwner[$norm] | Select-Object -Unique)
+    if ($owners.Count -gt 1) { $errors.Add('cross-syn') }
+    if ($accepted.ContainsKey($norm)) {
+      $accO = @($accepted[$norm] | Select-Object -Unique)
+      if ($accO[0] -ne $owners[0] -or $accO.Count -gt 1 -or $owners.Count -gt 1) { $errors.Add('acc-syn-collision') }
+    }
+  }
+  foreach ($c in @($conflictList)) {
+    if ($null -eq $c -or $c -isnot [System.Management.Automation.PSObject]) { continue }
+    if ($c.PSObject.Properties.Name -contains 'scientificSynonyms') { $errors.Add('syn-on-conflict') }
+  }
+  return [pscustomobject]@{
+    Ok = ($errors.Count -eq 0)
+    Errors = [string[]]@($errors)
+  }
+}
+
+# Positive: valid high synonym
+$posCanon = @(
+  [pscustomobject]@{
+    canonicalSlug = 'alpha-plant'
+    acceptedScientificName = 'Alpha acceptus'
+    needsReview = $false
+    scientificSynonyms = @(
+      (New-SynEntry 'Alpha synonimus' 'synonym' 'high' $false @(
+        (New-SynSource 'powo' '2026-07-16' 'urn-alpha-1')
+      ))
+    )
+  }
+)
+$posResult = Test-SynonymFixtureValidity $posCanon @()
+if ($posResult.Ok) { Pass 'synthetic positive: high-confidence synonym structure accepted' }
+else { Fail ("synthetic positive unexpectedly failed: " + ($posResult.Errors -join ',')) }
+
+# Negatives
+$negCases = @(
+  @{
+    name = 'self-accepted duplicate'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$false
+      scientificSynonyms=@((New-SynEntry 'Foo bar' 'synonym' 'high' $false @((New-SynSource 'wfo' '2026-01-01'))))
+    })
+    expect = 'self-accepted'
+  },
+  @{
+    name = 'cross-identity synonym collision'
+    canon = @(
+      [pscustomobject]@{ canonicalSlug='a'; acceptedScientificName='Aaa aaa'; needsReview=$false
+        scientificSynonyms=@((New-SynEntry 'Shared syn' 'synonym' 'high' $false @((New-SynSource 'ipni' '2026-01-01')))) },
+      [pscustomobject]@{ canonicalSlug='b'; acceptedScientificName='Bbb bbb'; needsReview=$false
+        scientificSynonyms=@((New-SynEntry 'Shared syn' 'synonym' 'high' $false @((New-SynSource 'ipni' '2026-01-02')))) }
+    )
+    expect = 'cross-syn'
+  },
+  @{
+    name = 'synonym equals other accepted'
+    canon = @(
+      [pscustomobject]@{ canonicalSlug='a'; acceptedScientificName='Other accepted'; needsReview=$false },
+      [pscustomobject]@{ canonicalSlug='b'; acceptedScientificName='Bee bee'; needsReview=$false
+        scientificSynonyms=@((New-SynEntry 'Other accepted' 'synonym' 'high' $false @((New-SynSource 'tropicos' '2026-01-01')))) }
+    )
+    expect = 'acc-syn-collision'
+  },
+  @{
+    name = 'medium without needsReview'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$false
+      scientificSynonyms=@((New-SynEntry 'Foo syn' 'synonym' 'medium' $false @((New-SynSource 'powo' '2026-01-01'))))
+    })
+    expect = 'med-low-review'
+  },
+  @{
+    name = 'false synonym on review identity'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$true
+      scientificSynonyms=@((New-SynEntry 'Foo syn' 'synonym' 'high' $false @((New-SynSource 'powo' '2026-01-01'))))
+    })
+    expect = 'id-review'
+  },
+  @{
+    name = 'bad date'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$false
+      scientificSynonyms=@((New-SynEntry 'Foo syn' 'synonym' 'high' $false @((New-SynSource 'powo' '2026-13-40'))))
+    })
+    expect = 'bad-date'
+  },
+  @{
+    name = 'unknown relationship'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$false
+      scientificSynonyms=@((New-SynEntry 'Foo syn' 'orthographic_variant' 'high' $false @((New-SynSource 'powo' '2026-01-01'))))
+    })
+    expect = 'bad-rel'
+  },
+  @{
+    name = 'conflict scientific overlap'
+    canon = @([pscustomobject]@{
+      canonicalSlug='a'; acceptedScientificName='Foo bar'; needsReview=$false
+      scientificSynonyms=@((New-SynEntry 'Conflictus nameus' 'synonym' 'high' $false @((New-SynSource 'powo' '2026-01-01'))))
+    })
+    conflicts = @([pscustomobject]@{
+      slug = 'conflict-slug'
+      conflictType = 'duplicate-slug'
+      needsReview = $true
+      resolutionStatus = 'pending'
+      observedRecords = @([pscustomobject]@{
+        source = 'plantLibrary'
+        ref = 'x'
+        scientificName = 'Conflictus nameus'
+      })
+    })
+    expect = 'conflict-overlap'
+  }
+)
+
+foreach ($case in $negCases) {
+  $cfl = if ($case.ContainsKey('conflicts')) { $case.conflicts } else { @() }
+  $result = Test-SynonymFixtureValidity $case.canon $cfl
+  $err = @($result.Errors)
+  if ($err -contains $case.expect) { Pass ("synthetic negative rejected: $($case.name)") }
+  else { Fail ("synthetic negative missed $($case.name); got=[$($err -join ',')] expected=$($case.expect)") }
+}
+
+# ---------------------------------------------------------------------------
 # 4. Referential consistency (registry -> catalog + modules)
 # ---------------------------------------------------------------------------
 Write-Head '4. Referential consistency'
@@ -723,6 +1177,8 @@ Write-Host ("  species-level identities likely safe to alloc: {0}" -f $speciesSa
 Write-Host ("  genus-level / Various needing review         : {0}" -f $genusReview.Count)
 Write-Host ("  identities blocked by duplicate conflicts    : {0}  ({1})" -f $blockedByConflict.Count, ($blockedByConflict -join ', '))
 Write-Host ("  localizedNames-bearing identities            : {0}" -f $localizedEntryCount)
+Write-Host ("  scientificSynonyms-bearing identities        : {0}" -f $synonymIdentityCount)
+Write-Host ("  scientificSynonyms entries                   : {0}" -f $synonymEntryCount)
 Write-Host ''
 Write-Host ("  genus-level / Various (review) slugs: " + (($genusReview | Sort-Object) -join ', '))
 

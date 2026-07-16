@@ -12,10 +12,11 @@
  *    allocates or fabricates a plantId, and is NOT imported by any runtime
  *    consumer (index.html / modules) in this foundation task.
  *  - Conservative matching only: exact plantId / slug / alias / module key /
- *    normalized scientific name / exact localized name (primary+aliases) /
- *    normalized common-name token. No substring or fuzzy matching. A pending
- *    duplicate-conflict slug is quarantined and returned as `pending_conflict`
- *    before localized or common-name fallbacks.
+ *    normalized accepted scientific name / scientific synonym /
+ *    exact localized name (primary+aliases) / normalized common-name token.
+ *    No substring or fuzzy matching. A pending duplicate-conflict slug is
+ *    quarantined and returned as `pending_conflict` before localized or
+ *    common-name fallbacks.
  *  - Does not depend on PLANT_LIBRARY array order or any index.html global.
  *
  * PUBLIC API
@@ -48,14 +49,59 @@ function isNonEmptyString(v) {
   return typeof v === 'string' && v.trim().length > 0;
 }
 
-/** Normalize a scientific / free-text value for exact comparison. */
-function normalizeText(v) {
-  return String(v == null ? '' : v)
-    .trim()
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ');
+/**
+ * Dedicated scientific-name normalizer for exact comparison.
+ * Rejects null/undefined/non-string/blank. Uses NFC (not NFKD stripping),
+ * conservative quote folding, trim, whitespace collapse, and locale-independent
+ * toLowerCase(). Does not slugify, transliterate, strip authors/ranks/cultivars,
+ * equate × with x, or perform fuzzy/substring matching.
+ */
+function normalizeScientificName(v) {
+  if (v == null || typeof v !== 'string') return '';
+  let s = v;
+  try { s = s.normalize('NFC'); } catch (_e) { /* keep raw */ }
+  s = s
+    .replace(/[\u2018\u2019\u201B\u2032\u05F3\u00B4\u0060]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"');
+  s = s.trim().replace(/\s+/g, ' ');
+  if (!s) return '';
+  return s.toLowerCase();
+}
+
+function isValidSynonymSource(src) {
+  if (!src || typeof src !== 'object' || Array.isArray(src)) return false;
+  if (!isNonEmptyString(src.authority)) return false;
+  if (!/^[a-z][a-z0-9-]{0,62}$/.test(src.authority)) return false;
+  if (!isNonEmptyString(src.verifiedAt)) return false;
+  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(src.verifiedAt)) return false;
+  if (src.recordId != null && (typeof src.recordId !== 'string' || !src.recordId.trim())) return false;
+  if (Object.prototype.hasOwnProperty.call(src, 'plantId')) return false;
+  return true;
+}
+
+function synonymSourcesValid(sources) {
+  if (!Array.isArray(sources) || sources.length === 0) return false;
+  const seen = new Set();
+  for (const src of sources) {
+    if (!isValidSynonymSource(src)) return false;
+    const key = src.authority + '\0' + (isNonEmptyString(src.recordId) ? src.recordId.trim() : '');
+    if (seen.has(key)) return false;
+    seen.add(key);
+  }
+  return true;
+}
+
+/** Active resolver indexing eligibility for a scientific synonym entry. */
+function isActivelyIndexableScientificSynonym(entry, synonym) {
+  if (!entry || entry.needsReview === true) return false;
+  if (!synonym || typeof synonym !== 'object' || Array.isArray(synonym)) return false;
+  if (synonym.relationship !== 'synonym') return false;
+  if (synonym.confidence !== 'high') return false;
+  if (synonym.needsReview !== false) return false;
+  if (!synonymSourcesValid(synonym.sources)) return false;
+  if (Object.prototype.hasOwnProperty.call(synonym, 'plantId')) return false;
+  const norm = normalizeScientificName(synonym.name);
+  return !!norm;
 }
 
 /** Derive a kebab slug token from free text (for exact common-name matching). */
@@ -162,6 +208,8 @@ function buildMaps(registry) {
   const byPlantId = new Map();       // plantId -> canonicalSlug
   const byScientific = new Map();    // normalized acceptedScientificName -> canonicalSlug
   const ambiguousScientific = new Set();
+  const byScientificSynonym = new Map(); // normalized synonym -> canonicalSlug (active index only)
+  const ambiguousScientificSynonym = new Set();
   const conflictBySlug = new Map();      // slug -> conflict entry
   const conflictByScientific = new Map();// normalized scientific -> conflict slug
   // localized: locale|norm -> Set(canonicalSlug); norm -> Set(canonicalSlug)
@@ -170,11 +218,38 @@ function buildMaps(registry) {
   let localizedIdentityCount = 0;
   let localizedLocaleBlockCount = 0;
   let localizedIndexedNameCount = 0;
+  let scientificSynonymIdentityCount = 0;
+  let scientificSynonymEntryCount = 0;
+  let reviewedButNotIndexedScientificSynonymCount = 0;
 
   function addLocalizedHit(map, key, slug) {
     let set = map.get(key);
     if (!set) { set = new Set(); map.set(key, set); }
     set.add(slug);
+  }
+
+  function markAmbiguousSynonym(norm) {
+    if (!norm) return;
+    ambiguousScientificSynonym.add(norm);
+    if (byScientificSynonym.has(norm)) byScientificSynonym.delete(norm);
+  }
+
+  function claimScientificSynonym(norm, slug) {
+    if (!norm || !slug) return false;
+    if (ambiguousScientificSynonym.has(norm)) return false;
+    // Never index over a pending-conflict scientific name (conflict short-circuit wins).
+    if (conflictByScientific.has(norm)) return false;
+    // Collision with any accepted scientific name (own or other): do not silently resolve.
+    if (byScientific.has(norm)) {
+      if (byScientific.get(norm) !== slug) markAmbiguousSynonym(norm);
+      return false;
+    }
+    if (byScientificSynonym.has(norm)) {
+      if (byScientificSynonym.get(norm) !== slug) markAmbiguousSynonym(norm);
+      return false;
+    }
+    byScientificSynonym.set(norm, slug);
+    return true;
   }
 
   for (const entry of registry.canonicalIdentities) {
@@ -193,9 +268,11 @@ function buildMaps(registry) {
       }
     }
     if (isNonEmptyString(entry.acceptedScientificName)) {
-      const key = normalizeText(entry.acceptedScientificName);
-      if (byScientific.has(key) && byScientific.get(key) !== slug) ambiguousScientific.add(key);
-      else byScientific.set(key, slug);
+      const key = normalizeScientificName(entry.acceptedScientificName);
+      if (key) {
+        if (byScientific.has(key) && byScientific.get(key) !== slug) ambiguousScientific.add(key);
+        else byScientific.set(key, slug);
+      }
     }
 
     // Optional localizedNames: index primary + aliases only (first-stage policy).
@@ -238,14 +315,50 @@ function buildMaps(registry) {
     }
     if (isNonEmptyString(conflict.recommendedCanonicalScientificName)) sciNames.push(conflict.recommendedCanonicalScientificName);
     if (isNonEmptyString(conflict.conflictingScientificNamePresent)) sciNames.push(conflict.conflictingScientificNamePresent);
-    for (const s of sciNames) conflictByScientific.set(normalizeText(s), conflict.slug);
+    for (const s of sciNames) {
+      const key = normalizeScientificName(s);
+      if (key) conflictByScientific.set(key, conflict.slug);
+    }
+  }
+
+  // Second pass: scientific synonyms (after accepted + conflict maps exist).
+  // Never choose by array order: collisions remove prior claims and mark ambiguous.
+  for (const entry of registry.canonicalIdentities) {
+    if (!entry || !isNonEmptyString(entry.canonicalSlug)) continue;
+    if (!Array.isArray(entry.scientificSynonyms) || entry.scientificSynonyms.length === 0) continue;
+    scientificSynonymIdentityCount++;
+    const slug = entry.canonicalSlug;
+    const seenOnIdentity = new Set();
+    for (const syn of entry.scientificSynonyms) {
+      scientificSynonymEntryCount++;
+      if (!syn || typeof syn !== 'object' || Array.isArray(syn)) continue;
+      const norm = normalizeScientificName(syn.name);
+      if (!norm) continue;
+      if (seenOnIdentity.has(norm)) {
+        markAmbiguousSynonym(norm);
+        continue;
+      }
+      seenOnIdentity.add(norm);
+      if (!isActivelyIndexableScientificSynonym(entry, syn)) {
+        // Structurally present but not eligible for active resolution.
+        if (syn.relationship === 'synonym') reviewedButNotIndexedScientificSynonymCount++;
+        continue;
+      }
+      if (!claimScientificSynonym(norm, slug) && !ambiguousScientificSynonym.has(norm)) {
+        reviewedButNotIndexedScientificSynonymCount++;
+      }
+    }
   }
 
   return {
     bySlug, byAlias, byModuleKey, byPlantId, byScientific, ambiguousScientific,
+    byScientificSynonym, ambiguousScientificSynonym,
     conflictBySlug, conflictByScientific,
     byLocalizedLocale, byLocalizedGlobal,
-    localizedIdentityCount, localizedLocaleBlockCount, localizedIndexedNameCount
+    localizedIdentityCount, localizedLocaleBlockCount, localizedIndexedNameCount,
+    scientificSynonymIdentityCount, scientificSynonymEntryCount,
+    indexedScientificSynonymCount: byScientificSynonym.size,
+    reviewedButNotIndexedScientificSynonymCount
   };
 }
 
@@ -270,7 +383,10 @@ export function createPlantIdentityResolver(registryData) {
         return Object.freeze({
           valid: false, errors: check.errors.slice(),
           canonicalCount: 0, conflictCount: 0, plantIdCount: 0, aliasCount: 0, moduleKeyCount: 0, scientificCount: 0,
-          localizedIdentityCount: 0, localizedLocaleBlockCount: 0, localizedIndexedNameCount: 0
+          localizedIdentityCount: 0, localizedLocaleBlockCount: 0, localizedIndexedNameCount: 0,
+          scientificSynonymIdentityCount: 0, scientificSynonymEntryCount: 0,
+          indexedScientificSynonymCount: 0, reviewedButNotIndexedScientificSynonymCount: 0,
+          ambiguousScientificSynonymCount: 0
         });
       },
       resolve(input) {
@@ -438,16 +554,39 @@ export function createPlantIdentityResolver(registryData) {
     }
 
     // E. exact normalized acceptedScientificName (conflict scientific short-circuits)
+    // E2. scientific synonym (only after accepted name miss)
     if (isNonEmptyString(scientificSig)) {
-      const sci = normalizeText(scientificSig);
-      if (maps.conflictByScientific.has(sci)) {
-        return conflictResult(maps.conflictBySlug.get(maps.conflictByScientific.get(sci)), 'scientificName', 'scientificName', input);
-      }
-      if (maps.ambiguousScientific.has(sci)) {
-        return makeResult({ status: 'ambiguous', matchedBy: 'scientificName', inputNamespace: 'scientificName', confidence: 'low', inputValue: input, warnings: ['ambiguous-scientific-name'], registryVersion });
-      }
-      if (maps.byScientific.has(sci)) {
-        return resolvedFromEntry(maps.bySlug.get(maps.byScientific.get(sci)), 'scientificName', 'scientificName', 'high', input);
+      const sci = normalizeScientificName(scientificSig);
+      if (sci) {
+        if (maps.conflictByScientific.has(sci)) {
+          return conflictResult(maps.conflictBySlug.get(maps.conflictByScientific.get(sci)), 'scientificName', 'scientificName', input);
+        }
+        if (maps.ambiguousScientific.has(sci)) {
+          return makeResult({ status: 'ambiguous', matchedBy: 'scientificName', inputNamespace: 'scientificName', confidence: 'low', inputValue: input, warnings: ['ambiguous-scientific-name'], registryVersion });
+        }
+        if (maps.byScientific.has(sci)) {
+          return resolvedFromEntry(maps.bySlug.get(maps.byScientific.get(sci)), 'scientificName', 'scientificName', 'high', input);
+        }
+        if (maps.ambiguousScientificSynonym.has(sci)) {
+          return makeResult({
+            status: 'ambiguous',
+            matchedBy: 'scientificSynonym',
+            inputNamespace: 'scientificSynonym',
+            confidence: 'low',
+            inputValue: input,
+            warnings: ['ambiguous-scientific-synonym'],
+            registryVersion
+          });
+        }
+        if (maps.byScientificSynonym.has(sci)) {
+          return resolvedFromEntry(
+            maps.bySlug.get(maps.byScientificSynonym.get(sci)),
+            'scientificSynonym',
+            'scientificSynonym',
+            'high',
+            input
+          );
+        }
       }
     }
 
@@ -489,7 +628,12 @@ export function createPlantIdentityResolver(registryData) {
         scientificCount: maps.byScientific.size,
         localizedIdentityCount: maps.localizedIdentityCount,
         localizedLocaleBlockCount: maps.localizedLocaleBlockCount,
-        localizedIndexedNameCount: maps.localizedIndexedNameCount
+        localizedIndexedNameCount: maps.localizedIndexedNameCount,
+        scientificSynonymIdentityCount: maps.scientificSynonymIdentityCount,
+        scientificSynonymEntryCount: maps.scientificSynonymEntryCount,
+        indexedScientificSynonymCount: maps.indexedScientificSynonymCount,
+        reviewedButNotIndexedScientificSynonymCount: maps.reviewedButNotIndexedScientificSynonymCount,
+        ambiguousScientificSynonymCount: maps.ambiguousScientificSynonym.size
       });
     }
   });
