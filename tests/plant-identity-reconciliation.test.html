@@ -159,7 +159,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. After the empty-query fix: {profileSlug:"olive-tree"}=D shadow-only (was F+known-legacy-bug), {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=E+resolver-gap.');
+      'Object-form / localized / conflict / scan regression inputs. After localized-name resolver support: {profileSlug:"olive-tree"}=D shadow-only, {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=A agreement (no longer resolver-gap).');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -436,7 +436,7 @@
     nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 3); nsAtLeast('conflictScientific', 3); nsAtLeast('gardenManifestKey', 5);
     expect('every canonicalSlug resolvable via shadow without throw',
       reg.canonicalIdentities.every(function (e) { try { shadow(e.canonicalSlug); return true; } catch (x) { return false; } }));
-    expect('registryVersion === 1.2.0', reg.registryVersion === '1.2.0', 'got ' + reg.registryVersion);
+    expect('registryVersion === 1.3.0', reg.registryVersion === '1.3.0', 'got ' + reg.registryVersion);
     expect('canonical identities === 74', reg.canonicalIdentities.length === 74, 'got ' + reg.canonicalIdentities.length);
     expect('duplicate conflicts === 3', reg.duplicateConflicts.length === 3, 'got ' + reg.duplicateConflicts.length);
     expect('allocated plantId entries === 9', plantIdEntries.length === 9, 'got ' + plantIdEntries.length);
@@ -562,18 +562,35 @@
     })();
 
     // ============================================================
-    // 5. KNOWN RESOLVER GAP (kept)
+    // 5. Localized Hebrew names (rebaselined — no longer resolver gaps)
     // ============================================================
-    sec('5. KNOWN RESOLVER GAP — localized (Hebrew) names');
-    function pinLocalized(label, input, expectLegacySlug) {
+    sec('5. localized Hebrew names — exact agreement (no longer KNOWN_RESOLVER_GAP)');
+    function pinLocalizedAgree(label, input, expectSlug, expectPlantId) {
       var inputBefore = jsonOf(input); var lr = L(input); var sh = shadow(input); var wr = W(input);
-      var lslug = slugOfLegacy(lr); var shadowProvisional = sh && (sh.status === 'provisional' || sh.status === 'unresolved');
-      var legacyOk = expectLegacySlug ? (lslug === expectLegacySlug) : true; var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
-      labeled(STATUS.KNOWN_RESOLVER_GAP, label, shadowProvisional && legacyOk && noMutation && identity,
-        'legacy=' + (lslug || 'null') + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
+      var lslug = slugOfLegacy(lr);
+      var shadowOk = sh && sh.status === 'resolved_id' && sh.canonicalSlug === expectSlug &&
+        sh.matchedBy === 'localizedName' && sh.plantId === expectPlantId && sh.registryVersion === '1.3.0';
+      var legacyOk = lslug === expectSlug;
+      var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      expect(label, !!shadowOk && legacyOk && noMutation && identity,
+        'legacy=' + (lslug || 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) + '/' + (sh && sh.plantId) +
+        ' by=' + (sh && sh.matchedBy) + ' noMutation=' + noMutation + ' idOK=' + identity);
     }
-    pinLocalized('{name:"לבנדר"} legacy=lavender, shadow=provisional (category E + gap)', { name: 'לבנדר' }, 'lavender');
-    pinLocalized('{name:"זית"} legacy=olive, shadow=provisional (category E + gap)', { name: 'זית' }, 'olive');
+    pinLocalizedAgree('{name:"לבנדר"} → legacy+shadow lavender (A agreement)', { name: 'לבנדר' }, 'lavender', 'plt_aupnyvawcflgjbyh');
+    pinLocalizedAgree('{name:"זית"} → legacy+shadow olive (A agreement)', { name: 'זית' }, 'olive', 'plt_e1teyafat3k5i3ke');
+    pinLocalizedAgree('"אזוביון" → lavender', 'אזוביון', 'lavender', 'plt_aupnyvawcflgjbyh');
+    pinLocalizedAgree('"עץ זית" → olive', 'עץ זית', 'olive', 'plt_e1teyafat3k5i3ke');
+    pinLocalizedAgree('{name:"לבנדר", locale:"he"} → lavender exact locale', { name: 'לבנדר', locale: 'he' }, 'lavender', 'plt_aupnyvawcflgjbyh');
+    pinLocalizedAgree('{name:"אזוביון"} locale-free unique → lavender', { name: 'אזוביון' }, 'lavender', 'plt_aupnyvawcflgjbyh');
+    (function () {
+      // legacy does not read localizedName — remains null; shadow resolves (category D); wrapper parity holds
+      var input = { localizedName: 'זית', language: 'he' }; var inputBefore = jsonOf(input);
+      var lr = L(input); var sh = shadow(input); var wr = W(input);
+      var shadowOk = sh && sh.status === 'resolved_id' && sh.canonicalSlug === 'olive' && sh.matchedBy === 'localizedName' && sh.plantId === 'plt_e1teyafat3k5i3ke';
+      expect('{localizedName:"זית", language:"he"} → shadow olive; legacy null (D); wrapper parity',
+        lr === null && shadowOk && wr === lr && jsonOf(input) === inputBefore,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) + ' idOK=' + (wr === lr));
+    })();
     (function () {
       var input = { name: 'צמח לא ידוע' }; var lr = L(input); var sh = shadow(input);
       var safe = (lr === null) && sh && (sh.status === 'provisional' || sh.status === 'unresolved');
@@ -742,8 +759,11 @@
     var cOlive = catOf({ profileSlug: 'olive-tree' }), cAvo = catOf({ meta: { slug: 'avocado' } }), cLav = catOf({ name: 'לבנדר' }), cZait = catOf({ name: 'זית' });
     expect('{profileSlug:"olive-tree"} → category D (shadow-only), no longer known-legacy-bug', cOlive.cat === 'D' && cOlive.knownLegacyBug === false, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
     expect('{meta:{slug:"avocado"}} → category G (pending conflict)', cAvo.cat === 'G', 'cat=' + cAvo.cat);
-    expect('{name:"לבנדר"} → category E + resolver-gap', cLav.cat === 'E' && cLav.resolverGap === true, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
-    expect('{name:"זית"} → category E + resolver-gap', cZait.cat === 'E' && cZait.resolverGap === true, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
+    expect('{name:"לבנדר"} → category A agreement, no resolver-gap', cLav.cat === 'A' && cLav.resolverGap === false, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
+    expect('{name:"זית"} → category A agreement, no resolver-gap', cZait.cat === 'A' && cZait.resolverGap === false, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
+    expect('pilot Hebrew names no longer contribute resolver-gap annotations',
+      cLav.resolverGap === false && cZait.resolverGap === false && catOf('אזוביון').resolverGap === false && catOf('עץ זית').resolverGap === false,
+      'lav=' + cLav.resolverGap + ' zait=' + cZait.resolverGap);
     // empty-query bug eliminated: no known-legacy-bug annotations, and differing-identity F drops to 0
     expect('combined differing-identity (F) count is 0 after fix', combinedTally.F === 0, 'combinedF=' + combinedTally.F);
     expect('no known-legacy-bug annotations remain (base/regression/combined)',

@@ -12,9 +12,10 @@
  *    allocates or fabricates a plantId, and is NOT imported by any runtime
  *    consumer (index.html / modules) in this foundation task.
  *  - Conservative matching only: exact plantId / slug / alias / module key /
- *    normalized scientific name / normalized common-name token. No substring
- *    or fuzzy matching. A pending duplicate-conflict slug is quarantined and
- *    returned as `pending_conflict` before any scientific/common-name fallback.
+ *    normalized scientific name / exact localized name (primary+aliases) /
+ *    normalized common-name token. No substring or fuzzy matching. A pending
+ *    duplicate-conflict slug is quarantined and returned as `pending_conflict`
+ *    before localized or common-name fallbacks.
  *  - Does not depend on PLANT_LIBRARY array order or any index.html global.
  *
  * PUBLIC API
@@ -65,6 +66,38 @@ function toSlugToken(v) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+/** CRUVIT supported language codes for localized identity matching. */
+const SUPPORTED_LOCALES = Object.freeze([
+  'en', 'he', 'ar', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'zh', 'ja', 'ko', 'hi', 'tr', 'nl', 'pl'
+]);
+const SUPPORTED_LOCALE_SET = new Set(SUPPORTED_LOCALES);
+
+/**
+ * Unicode-safe localized-name normalization (resolver-local).
+ * Preserves non-Latin scripts; never slugifies or transliterates.
+ */
+function normalizeLocalizedName(v) {
+  if (v == null) return '';
+  let s;
+  if (typeof v === 'string') s = v;
+  else if (typeof v === 'number' && Number.isFinite(v)) s = String(v);
+  else return '';
+  try { s = s.normalize('NFC'); } catch (_e) { /* keep raw */ }
+  // Conservative quote / apostrophe folding (aligned with the identity validator)
+  s = s
+    .replace(/[\u2018\u2019\u201B\u2032\u05F3\u00B4\u0060]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"');
+  s = s.trim().replace(/\s+/g, ' ');
+  // Locale-independent Unicode default case folding (not toLocaleLowerCase('en-US')
+  // or any selected locale — mirrors validator invariant folding; Hebrew/Arabic/CJK unchanged)
+  return s.toLowerCase();
+}
+
+function normalizeLocaleHint(v) {
+  if (!isNonEmptyString(v)) return null;
+  return String(v).trim().toLowerCase().split(/[-_]/)[0];
 }
 
 function deepFreeze(obj) {
@@ -131,6 +164,18 @@ function buildMaps(registry) {
   const ambiguousScientific = new Set();
   const conflictBySlug = new Map();      // slug -> conflict entry
   const conflictByScientific = new Map();// normalized scientific -> conflict slug
+  // localized: locale|norm -> Set(canonicalSlug); norm -> Set(canonicalSlug)
+  const byLocalizedLocale = new Map();
+  const byLocalizedGlobal = new Map();
+  let localizedIdentityCount = 0;
+  let localizedLocaleBlockCount = 0;
+  let localizedIndexedNameCount = 0;
+
+  function addLocalizedHit(map, key, slug) {
+    let set = map.get(key);
+    if (!set) { set = new Set(); map.set(key, set); }
+    set.add(slug);
+  }
 
   for (const entry of registry.canonicalIdentities) {
     if (!entry || !isNonEmptyString(entry.canonicalSlug)) continue;
@@ -152,11 +197,41 @@ function buildMaps(registry) {
       if (byScientific.has(key) && byScientific.get(key) !== slug) ambiguousScientific.add(key);
       else byScientific.set(key, slug);
     }
+
+    // Optional localizedNames: index primary + aliases only (first-stage policy).
+    // Malformed blocks are skipped safely; historical/transliterations/misspellings/deprecated are ignored.
+    const ln = entry.localizedNames;
+    if (ln && typeof ln === 'object' && !Array.isArray(ln)) {
+      let identityIndexed = false;
+      for (const locale of Object.keys(ln)) {
+        if (!SUPPORTED_LOCALE_SET.has(locale)) continue;
+        const block = ln[locale];
+        if (!block || typeof block !== 'object' || Array.isArray(block)) continue;
+        localizedLocaleBlockCount++;
+        for (const bucket of ['primary', 'aliases']) {
+          const arr = block[bucket];
+          if (arr == null) continue;
+          const items = Array.isArray(arr) ? arr : (typeof arr === 'string' ? [arr] : null);
+          if (!items) continue;
+          for (const raw of items) {
+            if (typeof raw !== 'string') continue;
+            const norm = normalizeLocalizedName(raw);
+            if (!norm) continue;
+            addLocalizedHit(byLocalizedLocale, locale + '|' + norm, slug);
+            addLocalizedHit(byLocalizedGlobal, norm, slug);
+            localizedIndexedNameCount++;
+            identityIndexed = true;
+          }
+        }
+      }
+      if (identityIndexed) localizedIdentityCount++;
+    }
   }
 
   for (const conflict of registry.duplicateConflicts) {
     if (!conflict || !isNonEmptyString(conflict.slug)) continue;
     conflictBySlug.set(conflict.slug, conflict);
+    // Localized names on conflicts are intentionally ignored (cannot resolve/bypass quarantine).
     const sciNames = [];
     if (Array.isArray(conflict.observedRecords)) {
       for (const rec of conflict.observedRecords) if (rec && isNonEmptyString(rec.scientificName)) sciNames.push(rec.scientificName);
@@ -166,7 +241,19 @@ function buildMaps(registry) {
     for (const s of sciNames) conflictByScientific.set(normalizeText(s), conflict.slug);
   }
 
-  return { bySlug, byAlias, byModuleKey, byPlantId, byScientific, ambiguousScientific, conflictBySlug, conflictByScientific };
+  return {
+    bySlug, byAlias, byModuleKey, byPlantId, byScientific, ambiguousScientific,
+    conflictBySlug, conflictByScientific,
+    byLocalizedLocale, byLocalizedGlobal,
+    localizedIdentityCount, localizedLocaleBlockCount, localizedIndexedNameCount
+  };
+}
+
+/** Resolve a Set of slugs to unique / ambiguous / miss. */
+function localizedHitFromSet(set) {
+  if (!set || set.size === 0) return { kind: 'miss' };
+  if (set.size === 1) return { kind: 'unique', slug: set.values().next().value };
+  return { kind: 'ambiguous' };
 }
 
 /* ───────────────────────── resolver factory ───────────────────────── */
@@ -180,7 +267,11 @@ export function createPlantIdentityResolver(registryData) {
       valid: false,
       getRegistryVersion() { return null; },
       getStats() {
-        return Object.freeze({ valid: false, errors: check.errors.slice(), canonicalCount: 0, conflictCount: 0, plantIdCount: 0, aliasCount: 0, moduleKeyCount: 0, scientificCount: 0 });
+        return Object.freeze({
+          valid: false, errors: check.errors.slice(),
+          canonicalCount: 0, conflictCount: 0, plantIdCount: 0, aliasCount: 0, moduleKeyCount: 0, scientificCount: 0,
+          localizedIdentityCount: 0, localizedLocaleBlockCount: 0, localizedIndexedNameCount: 0
+        });
       },
       resolve(input) {
         return makeResult({ status: 'unresolved', inputValue: input, warnings: [warning], registryVersion: null });
@@ -192,7 +283,7 @@ export function createPlantIdentityResolver(registryData) {
   const registryVersion = registry.registryVersion;
   const maps = buildMaps(registry);
 
-  function resolvedFromEntry(entry, matchedBy, inputNamespace, confidence, input) {
+  function resolvedFromEntry(entry, matchedBy, inputNamespace, confidence, input, extraWarnings) {
     const hasId = isNonEmptyString(entry.plantId);
     return makeResult({
       status: hasId ? 'resolved_id' : 'resolved_canonical',
@@ -202,6 +293,7 @@ export function createPlantIdentityResolver(registryData) {
       inputNamespace,
       needsReview: entry.needsReview === true,
       confidence,
+      warnings: Array.isArray(extraWarnings) ? extraWarnings : [],
       inputValue: input,
       registryVersion
     });
@@ -222,12 +314,76 @@ export function createPlantIdentityResolver(registryData) {
     });
   }
 
+  function ambiguousLocalized(input, warnings) {
+    return makeResult({
+      status: 'ambiguous',
+      plantId: null,
+      canonicalSlug: null,
+      matchedBy: 'localizedName',
+      inputNamespace: 'localizedName',
+      confidence: 'low',
+      warnings: ['ambiguous-localized-name'].concat(Array.isArray(warnings) ? warnings : []),
+      inputValue: input,
+      registryVersion
+    });
+  }
+
+  /**
+   * Exact localized-name match (primary + aliases only).
+   * Returns a result object, or null when no localized hit (caller continues).
+   */
+  function tryLocalizedResolve(text, localeHintRaw, input) {
+    const norm = normalizeLocalizedName(text);
+    if (!norm) return null;
+
+    const warnings = [];
+    const localeRaw = normalizeLocaleHint(localeHintRaw);
+    let locale = null;
+    if (localeRaw) {
+      if (SUPPORTED_LOCALE_SET.has(localeRaw)) locale = localeRaw;
+      else warnings.push('unsupported-locale:' + localeRaw);
+    }
+
+    if (locale) {
+      const localHit = localizedHitFromSet(maps.byLocalizedLocale.get(locale + '|' + norm));
+      if (localHit.kind === 'ambiguous') return ambiguousLocalized(input, warnings);
+      if (localHit.kind === 'unique') {
+        return resolvedFromEntry(
+          maps.bySlug.get(localHit.slug),
+          'localizedName',
+          'localizedName:' + locale,
+          'exact',
+          input,
+          warnings
+        );
+      }
+      // locale miss → unique-global only
+    }
+
+    const globalHit = localizedHitFromSet(maps.byLocalizedGlobal.get(norm));
+    if (globalHit.kind === 'ambiguous') return ambiguousLocalized(input, warnings);
+    if (globalHit.kind === 'unique') {
+      if (locale) warnings.push('locale-mismatch:supplied=' + locale);
+      return resolvedFromEntry(
+        maps.bySlug.get(globalHit.slug),
+        'localizedName',
+        'localizedName:unique-global',
+        'high',
+        input,
+        warnings
+      );
+    }
+    return null;
+  }
+
   function resolve(input) {
     // 1. Extract signals from string or object; anything else -> unresolved.
     let plantIdSig = null;
     const exactKeys = [];          // slug/alias/module candidates, in precedence order
     let scientificSig = null;
     let nameSig = null;
+    let localizedNameSig = null;
+    let localeHint = null;
     let hadSignal = false;
 
     const pushKey = (v) => { if (isNonEmptyString(v)) { exactKeys.push(v.trim()); hadSignal = true; } };
@@ -239,7 +395,8 @@ export function createPlantIdentityResolver(registryData) {
       if (PLANT_ID_PATTERN.test(s)) plantIdSig = s;
       exactKeys.push(s);
       scientificSig = s;   // a bare string may also be a scientific name
-      nameSig = s;         // ...or a common name
+      nameSig = s;         // ...or a common / localized name
+      localizedNameSig = s;
     } else if (input && typeof input === 'object') {
       if (isNonEmptyString(input.plantId)) { plantIdSig = input.plantId.trim(); hadSignal = true; }
       pushKey(input.canonicalSlug);
@@ -249,6 +406,9 @@ export function createPlantIdentityResolver(registryData) {
       if (isNonEmptyString(input.scientific)) { scientificSig = input.scientific; hadSignal = true; }
       else if (isNonEmptyString(input.scientificName)) { scientificSig = input.scientificName; hadSignal = true; }
       if (isNonEmptyString(input.name)) { nameSig = input.name; hadSignal = true; }
+      if (isNonEmptyString(input.localizedName)) { localizedNameSig = input.localizedName; hadSignal = true; }
+      if (isNonEmptyString(input.locale)) localeHint = input.locale;
+      else if (isNonEmptyString(input.language)) localeHint = input.language;
     } else {
       return makeResult({ status: 'unresolved', inputValue: input, warnings: ['unsupported-input-type'], registryVersion });
     }
@@ -291,7 +451,16 @@ export function createPlantIdentityResolver(registryData) {
       }
     }
 
-    // F. conservative exact common-name token (normalized to a slug token)
+    // F. exact localized name (primary + aliases), after scientific, before common-name token
+    const localizedTexts = [];
+    if (isNonEmptyString(localizedNameSig)) localizedTexts.push(localizedNameSig);
+    if (isNonEmptyString(nameSig) && nameSig !== localizedNameSig) localizedTexts.push(nameSig);
+    for (const text of localizedTexts) {
+      const locRes = tryLocalizedResolve(text, localeHint, input);
+      if (locRes) return locRes;
+    }
+
+    // G. conservative exact common-name token (normalized to a slug token)
     if (isNonEmptyString(nameSig)) {
       const token = toSlugToken(nameSig);
       if (token) {
@@ -317,7 +486,10 @@ export function createPlantIdentityResolver(registryData) {
         plantIdCount: maps.byPlantId.size,
         aliasCount: maps.byAlias.size,
         moduleKeyCount: maps.byModuleKey.size,
-        scientificCount: maps.byScientific.size
+        scientificCount: maps.byScientific.size,
+        localizedIdentityCount: maps.localizedIdentityCount,
+        localizedLocaleBlockCount: maps.localizedLocaleBlockCount,
+        localizedIndexedNameCount: maps.localizedIndexedNameCount
       });
     }
   });

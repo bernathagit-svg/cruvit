@@ -123,6 +123,285 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
   rec('coverage: 74 canonical', stats.canonicalCount === 74, 'canonicalCount=' + stats.canonicalCount);
   rec('coverage: 3 conflicts', stats.conflictCount === 3, 'conflictCount=' + stats.conflictCount);
   rec('coverage: 9 plantId', stats.plantIdCount === 9, 'plantIdCount=' + stats.plantIdCount);
+  rec('coverage: registryVersion 1.3.0', R.getRegistryVersion() === '1.3.0', 'version=' + R.getRegistryVersion());
+  rec('localized stats: 2 identities / 2 locale blocks / 4 indexed names',
+    stats.localizedIdentityCount === 2 && stats.localizedLocaleBlockCount === 2 && stats.localizedIndexedNameCount === 4,
+    `id=${stats.localizedIdentityCount} blocks=${stats.localizedLocaleBlockCount} indexed=${stats.localizedIndexedNameCount}`);
+
+  // 21b. Hebrew localized-name pilot (real registry)
+  check('Hebrew לבנדר → lavender resolved_id', R.resolve('לבנדר'), {
+    status: 'resolved_id', plantId: 'plt_aupnyvawcflgjbyh', canonicalSlug: 'lavender',
+    matchedBy: 'localizedName', confidence: 'high', registryVersion: '1.3.0'
+  });
+  check('Hebrew אזוביון → lavender', R.resolve('אזוביון'), {
+    status: 'resolved_id', canonicalSlug: 'lavender', plantId: 'plt_aupnyvawcflgjbyh', matchedBy: 'localizedName'
+  });
+  check('Hebrew עץ זית → olive resolved_id', R.resolve('עץ זית'), {
+    status: 'resolved_id', plantId: 'plt_e1teyafat3k5i3ke', canonicalSlug: 'olive', matchedBy: 'localizedName'
+  });
+  check('Hebrew זית → olive', R.resolve('זית'), {
+    status: 'resolved_id', canonicalSlug: 'olive', plantId: 'plt_e1teyafat3k5i3ke', matchedBy: 'localizedName'
+  });
+  check('whitespace-normalized Hebrew לבנדר', R.resolve('  לבנדר  '), {
+    status: 'resolved_id', canonicalSlug: 'lavender', matchedBy: 'localizedName'
+  });
+  check('{name:"לבנדר", locale:"he"} exact locale', R.resolve({ name: 'לבנדר', locale: 'he' }), {
+    status: 'resolved_id', canonicalSlug: 'lavender', matchedBy: 'localizedName',
+    inputNamespace: 'localizedName:he', confidence: 'exact'
+  });
+  check('{localizedName:"זית", language:"he"}', R.resolve({ localizedName: 'זית', language: 'he' }), {
+    status: 'resolved_id', canonicalSlug: 'olive', matchedBy: 'localizedName',
+    inputNamespace: 'localizedName:he', confidence: 'exact'
+  });
+  check('{name:"אזוביון"} without locale', R.resolve({ name: 'אזוביון' }), {
+    status: 'resolved_id', canonicalSlug: 'lavender', matchedBy: 'localizedName',
+    inputNamespace: 'localizedName:unique-global', confidence: 'high'
+  });
+  {
+    const wrong = R.resolve({ name: 'לבנדר', locale: 'en' });
+    rec('wrong locale with unique global exact match',
+      wrong.status === 'resolved_id' && wrong.canonicalSlug === 'lavender' && wrong.matchedBy === 'localizedName' &&
+      wrong.confidence === 'high' && wrong.inputNamespace === 'localizedName:unique-global' &&
+      wrong.warnings.some(w => String(w).startsWith('locale-mismatch:')),
+      `status=${wrong.status} ns=${wrong.inputNamespace} conf=${wrong.confidence} warn=${wrong.warnings.join('|')}`);
+  }
+  {
+    const unsup = R.resolve({ name: 'זית', locale: 'xx' });
+    rec('unsupported locale with unique global exact match',
+      unsup.status === 'resolved_id' && unsup.canonicalSlug === 'olive' && unsup.matchedBy === 'localizedName' &&
+      unsup.warnings.some(w => String(w).startsWith('unsupported-locale:')),
+      `status=${unsup.status} warn=${unsup.warnings.join('|')}`);
+  }
+  // precedence: scientific / alias / module still win over localized
+  check('scientific precedence unchanged (Malus domestica)', R.resolve({ scientific: 'Malus domestica', name: 'לבנדר' }), {
+    status: 'resolved_id', canonicalSlug: 'apple', matchedBy: 'scientificName'
+  });
+  check('aliasSlug precedence unchanged (apple-tree)', R.resolve({ profileSlug: 'apple-tree', name: 'לבנדר' }), {
+    status: 'resolved_id', canonicalSlug: 'apple', matchedBy: 'aliasSlug'
+  });
+  check('moduleKey precedence unchanged (olive-tree)', R.resolve({ slug: 'olive-tree', name: 'לבנדר' }), {
+    status: 'resolved_id', canonicalSlug: 'olive', matchedBy: 'moduleKey'
+  });
+  // malformed localized inputs do not throw
+  for (const [label, val] of [
+    ['localizedName nullish object', { localizedName: null, locale: 'he' }],
+    ['locale only', { locale: 'he' }],
+    ['empty localizedName', { localizedName: '   ', language: 'he' }]
+  ]) {
+    let res, threw = false;
+    try { res = R.resolve(val); } catch (e) { threw = true; }
+    rec('malformed localized input no-throw: ' + label, !threw && res && (res.status === 'unresolved' || res.status === 'provisional'),
+      threw ? 'threw' : `status=${res && res.status}`);
+  }
+
+  // 21c. synthetic localized registries
+  {
+    const amb = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'plant-a', needsReview: false, localizedNames: { he: { primary: ['שםמשותף'], confidence: 'high', source: 'syn', needsReview: false } } },
+        { canonicalSlug: 'plant-b', needsReview: false, localizedNames: { he: { primary: ['שםמשותף'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    const ar = amb.resolve({ name: 'שםמשותף', locale: 'he' });
+    rec('synthetic: same localized value → two identities is ambiguous',
+      ar.status === 'ambiguous' && ar.plantId === null && ar.canonicalSlug === null && ar.matchedBy === 'localizedName',
+      `status=${ar.status} canon=${ar.canonicalSlug}`);
+  }
+  {
+    const dup = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'solo', plantId: 'plt_abcdefghijklmnop', needsReview: false,
+          localizedNames: { he: { primary: ['כפול', 'כפול'], aliases: ['כפול'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    const dr = dup.resolve('כפול');
+    rec('synthetic: repeated value on same identity still resolves',
+      dr.status === 'resolved_id' && dr.canonicalSlug === 'solo' && dr.matchedBy === 'localizedName',
+      `status=${dr.status} canon=${dr.canonicalSlug}`);
+  }
+  {
+    const multi = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'shared', needsReview: false,
+          localizedNames: {
+            en: { primary: ['SharedName'], confidence: 'high', source: 'syn', needsReview: false },
+            fr: { primary: ['SharedName'], confidence: 'high', source: 'syn', needsReview: false }
+          } }
+      ],
+      duplicateConflicts: []
+    });
+    const mr = multi.resolve('SharedName');
+    rec('synthetic: same value in two locales → one canonical',
+      mr.status === 'resolved_canonical' && mr.canonicalSlug === 'shared' && mr.matchedBy === 'localizedName',
+      `status=${mr.status} canon=${mr.canonicalSlug}`);
+  }
+  {
+    const reserved = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'hist-only', needsReview: false,
+          localizedNames: { he: {
+            primary: ['ראשי'], historical: ['היסטורי'], transliterations: ['histori'],
+            misspellings: ['טעות'], deprecated: ['ישן'],
+            confidence: 'high', source: 'syn', needsReview: false
+          } } }
+      ],
+      duplicateConflicts: []
+    });
+    const ok = reserved.resolve('ראשי');
+    const skipHist = reserved.resolve('היסטורי');
+    const skipTr = reserved.resolve('histori');
+    const skipMis = reserved.resolve('טעות');
+    const skipDep = reserved.resolve('ישן');
+    rec('synthetic: historical/transliteration/misspelling/deprecated not indexed',
+      ok.status === 'resolved_canonical' && ok.canonicalSlug === 'hist-only' &&
+      skipHist.status === 'provisional' && skipTr.status === 'provisional' &&
+      skipMis.status === 'provisional' && skipDep.status === 'provisional',
+      `ok=${ok.status} hist=${skipHist.status} tr=${skipTr.status} mis=${skipMis.status} dep=${skipDep.status}`);
+  }
+  {
+    const nr = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'review-me', needsReview: true,
+          localizedNames: { he: { primary: ['לבדיקה'], confidence: 'low', source: 'syn', needsReview: true } } }
+      ],
+      duplicateConflicts: []
+    });
+    const nrr = nr.resolve('לבדיקה');
+    rec('synthetic: localized needsReview propagates; no fabricated plantId',
+      nrr.status === 'resolved_canonical' && nrr.canonicalSlug === 'review-me' && nrr.needsReview === true && nrr.plantId === null,
+      `status=${nrr.status} needsReview=${nrr.needsReview} plantId=${nrr.plantId}`);
+  }
+  {
+    const malformed = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'ok-plant', needsReview: false, acceptedScientificName: 'Okus plantus',
+          localizedNames: 'not-an-object' },
+        { canonicalSlug: 'ok-plant-2', needsReview: false,
+          localizedNames: { he: null, xx: { primary: ['bad-locale'] },
+            en: { primary: ['Good En'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    let threw = false; let r1, r2;
+    try { r1 = malformed.resolve('Good En'); r2 = malformed.resolve('bad-locale'); } catch (e) { threw = true; }
+    rec('synthetic: malformed localized blocks skipped without throw',
+      !threw && r1 && r1.status === 'resolved_canonical' && r1.canonicalSlug === 'ok-plant-2' &&
+      r2 && r2.status === 'provisional',
+      threw ? 'threw' : `r1=${r1 && r1.status}/${r1 && r1.canonicalSlug} r2=${r2 && r2.status}`);
+  }
+
+  // 21d. normalization consistency (locale-independent toLowerCase; script-preserving)
+  {
+    // Hebrew pilot unchanged after case-folding correction
+    check('norm: Hebrew לבנדר still lavender', R.resolve('לבנדר'), {
+      status: 'resolved_id', canonicalSlug: 'lavender', matchedBy: 'localizedName'
+    });
+    check('norm: Hebrew זית still olive', R.resolve('זית'), {
+      status: 'resolved_id', canonicalSlug: 'olive', matchedBy: 'localizedName'
+    });
+    // Ordinary Latin case folding remains exact
+    const latin = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'latin-case', needsReview: false,
+          localizedNames: { en: { primary: ['Garden Herb'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    check('norm: Latin case folding Garden Herb / GARDEN HERB', latin.resolve('GARDEN HERB'), {
+      status: 'resolved_canonical', canonicalSlug: 'latin-case', matchedBy: 'localizedName'
+    });
+    // Script preservation: Arabic, Cyrillic, CJK, Hindi, Hebrew remain matchable (not stripped)
+    const scripts = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'script-ar', needsReview: false,
+          localizedNames: { ar: { primary: ['زيتون'], confidence: 'high', source: 'syn', needsReview: false } } },
+        { canonicalSlug: 'script-ru', needsReview: false,
+          localizedNames: { ru: { primary: ['Лаванда'], confidence: 'high', source: 'syn', needsReview: false } } },
+        { canonicalSlug: 'script-zh', needsReview: false,
+          localizedNames: { zh: { primary: ['无花果'], confidence: 'high', source: 'syn', needsReview: false } } },
+        { canonicalSlug: 'script-hi', needsReview: false,
+          localizedNames: { hi: { primary: ['जैतून'], confidence: 'high', source: 'syn', needsReview: false } } },
+        { canonicalSlug: 'script-he', needsReview: false,
+          localizedNames: { he: { primary: ['בדיקה'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    check('norm: Arabic script preserved', scripts.resolve({ name: 'زيتون', locale: 'ar' }), {
+      status: 'resolved_canonical', canonicalSlug: 'script-ar', matchedBy: 'localizedName'
+    });
+    check('norm: Cyrillic script preserved', scripts.resolve({ name: 'Лаванда', locale: 'ru' }), {
+      status: 'resolved_canonical', canonicalSlug: 'script-ru', matchedBy: 'localizedName'
+    });
+    check('norm: CJK script preserved', scripts.resolve({ name: '无花果', locale: 'zh' }), {
+      status: 'resolved_canonical', canonicalSlug: 'script-zh', matchedBy: 'localizedName'
+    });
+    check('norm: Hindi script preserved', scripts.resolve({ name: 'जैतून', locale: 'hi' }), {
+      status: 'resolved_canonical', canonicalSlug: 'script-hi', matchedBy: 'localizedName'
+    });
+    check('norm: Hebrew script preserved (synthetic)', scripts.resolve({ name: 'בדיקה', locale: 'he' }), {
+      status: 'resolved_canonical', canonicalSlug: 'script-he', matchedBy: 'localizedName'
+    });
+    // Turkish dotted/dotless-I: locale-independent toLowerCase maps ASCII "I"→"i".
+    // Forced toLocaleLowerCase("tr") would map "I"→"ı" and miss a registered "i-test".
+    // This does NOT claim all Turkish case variants are equivalent — only that en-US/tr
+    // locale conversion is not forced.
+    const trCase = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'tr-case-probe', needsReview: false,
+          localizedNames: { tr: { primary: ['i-test'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    const trRes = trCase.resolve({ name: 'I-TEST', locale: 'tr' });
+    const trLocaleForced = typeof 'I'.toLocaleLowerCase === 'function' && 'I'.toLocaleLowerCase('tr') === 'ı';
+    rec('norm: Turkish I uses locale-independent lowercasing (I→i, not forced tr/en-US locale)',
+      trRes.status === 'resolved_canonical' && trRes.canonicalSlug === 'tr-case-probe' &&
+      trRes.matchedBy === 'localizedName' && trLocaleForced === true,
+      `status=${trRes.status} canon=${trRes.canonicalSlug} trLocaleI=${'I'.toLocaleLowerCase('tr')} defaultI=${'I'.toLowerCase()}`);
+    // Conceptual alignment with validator policy: NFC + trim + whitespace + quotes + toLowerCase
+    const quoteSyn = createPlantIdentityResolver({
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'quote-probe', needsReview: false,
+          localizedNames: { he: { primary: ["צמח'בדיקה"], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    });
+    // Hebrew geresh U+05F3 should fold to ASCII apostrophe like the validator
+    const qRes = quoteSyn.resolve('  צמח\u05F3בדיקה  ');
+    rec('norm: quote/whitespace policy aligns with validator (geresh→apostrophe, trim/collapse)',
+      qRes.status === 'resolved_canonical' && qRes.canonicalSlug === 'quote-probe',
+      `status=${qRes.status} canon=${qRes.canonicalSlug}`);
+    const mutReg = {
+      schemaVersion: 1, registryVersion: '9.9.9',
+      canonicalIdentities: [
+        { canonicalSlug: 'imut-probe', needsReview: false,
+          localizedNames: { ar: { primary: ['زيتون'], confidence: 'high', source: 'syn', needsReview: false } } }
+      ],
+      duplicateConflicts: []
+    };
+    const beforeReg = JSON.stringify(mutReg);
+    const mutIn = { name: 'زيتون', locale: 'ar', keep: 1 };
+    const beforeMut = JSON.stringify(mutIn);
+    const mutR = createPlantIdentityResolver(mutReg);
+    mutR.resolve(mutIn);
+    rec('norm: input and registry remain unmutated',
+      JSON.stringify(mutIn) === beforeMut && JSON.stringify(mutReg) === beforeReg &&
+      mutR.resolve({ name: 'زيتون', locale: 'ar' }).canonicalSlug === 'imut-probe',
+      'inputUntouched=' + (JSON.stringify(mutIn) === beforeMut) +
+      ' registryUntouched=' + (JSON.stringify(mutReg) === beforeReg));
+  }
 
   // 22. immutability / no mutation of input or registry
   const beforeRegistry = JSON.stringify(registryData);
@@ -131,10 +410,14 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
   let frozen = Object.isFrozen(r22);
   let mutationBlocked = false;
   try { r22.plantId = 'plt_hack'; mutationBlocked = (r22.plantId === 'plt_465b6lc4cnrarxaa'); } catch (e) { mutationBlocked = true; }
+  const heInput = { name: 'לבנדר', locale: 'he', keep: true };
+  const beforeHe = JSON.stringify(heInput);
+  const rHe = R.resolve(heInput);
+  const heUntouched = JSON.stringify(heInput) === beforeHe;
   const inputUntouched = inputObj.extra === 'keep' && inputObj.canonicalSlug === 'apple';
   const registryUntouched = JSON.stringify(registryData) === beforeRegistry;
-  rec('result frozen & input/registry unmutated', frozen && mutationBlocked && inputUntouched && registryUntouched,
-    `frozen=${frozen} mutationBlocked=${mutationBlocked} inputUntouched=${inputUntouched} registryUntouched=${registryUntouched}`);
+  rec('result frozen & input/registry unmutated', frozen && mutationBlocked && inputUntouched && registryUntouched && heUntouched && Object.isFrozen(rHe),
+    `frozen=${frozen} mutationBlocked=${mutationBlocked} inputUntouched=${inputUntouched} registryUntouched=${registryUntouched} heUntouched=${heUntouched}`);
 
   const passed = results.filter(r => r.pass).length;
   return { results, summary: { total: results.length, passed, failed: results.length - passed } };
