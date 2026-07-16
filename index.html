@@ -5901,7 +5901,7 @@ function savePlant(name,status='New',mark='✓',source='My Garden'){
   if(match){savePlantFromLibrary(match.slug,source);return}
   openPlantChooser(source||'Manual entry');setTimeout(()=>{const input=document.getElementById('plantSearchInput');if(input){input.value=name;renderPlantResults(source||'Manual entry',name)}},30);
 }
-function findPlantByName(name){const q=normalizeQuery(name);return PLANT_LIBRARY.find(p=>[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q||a.replace(/^עץ\s+/,'')===q))||PLANT_LIBRARY.find(p=>textForSearch(p).includes(q)||q.includes(normalizeQuery(p.name)))}
+function findPlantByName(name){const q=normalizeQuery(name);if(!q) return null;return PLANT_LIBRARY.find(p=>[p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery).some(a=>a===q||a.replace(/^עץ\s+/,'')===q))||PLANT_LIBRARY.find(p=>textForSearch(p).includes(q)||q.includes(normalizeQuery(p.name)))}
 function addPlantFromScan(){openPlantIdentifierScan()}
 function addPlantManual(){openPlantChooser('Manual entry')}
 function addPlantFromRecommendations(){openPlantChooser('Smart Recommendations')}

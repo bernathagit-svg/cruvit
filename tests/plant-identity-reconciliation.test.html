@@ -159,7 +159,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. {profileSlug:"olive-tree"}=F+known-legacy-bug, {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=E+resolver-gap.');
+      'Object-form / localized / conflict / scan regression inputs. After the empty-query fix: {profileSlug:"olive-tree"}=D shadow-only (was F+known-legacy-bug), {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=E+resolver-gap.');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -267,8 +267,12 @@
       else if (resolved && mBy === 'moduleKey') c = 'C';
       else if (resolved) c = 'A';
       else c = 'I';
-      // legacy empty-query bug: legacy returns lavender though the input is not lavender
-      var knownLegacyBug = (lslug === 'lavender') && (canon !== 'lavender') &&
+      // legacy empty-query bug: legacy incorrectly returns lavender while the shadow
+      // resolves a DIFFERENT canonical (a genuine differing-identity error, e.g.
+      // {profileSlug:"olive-tree"} → lavender/olive). A legitimate lavender match
+      // (e.g. Hebrew name "לבנדר") where the shadow stays provisional is a resolver
+      // GAP, not this bug, and must NOT be flagged here.
+      var knownLegacyBug = (lslug === 'lavender') && resolved && isStr(canon) && canon !== 'lavender' &&
         !(typeof v === 'string' && v === 'lavender');
       // resolver gap: legacy resolves a real plant but shadow stays provisional (e.g. localized name)
       var resolverGap = lFound && provisional && isStr(lslug);
@@ -438,29 +442,124 @@
     expect('allocated plantId entries === 9', plantIdEntries.length === 9, 'got ' + plantIdEntries.length);
 
     // ============================================================
-    // 4. KNOWN LEGACY BUG pins (kept)
+    // 4. FIXED empty-query behavior — was KNOWN LEGACY BUG, now PASS
+    //    (findPlantByName empty-query guard returns null; lavender no longer selected)
     // ============================================================
-    sec('4. KNOWN LEGACY BUG — empty-query / unknown-slug objects');
+    sec('4. empty-query fix — unknown-slug objects (rebaselined to PASS)');
+    // A. {profileSlug:"olive-tree"} — legacy null, shadow resolves olive (shadow-only PASS)
     (function () {
       var input = { profileSlug: 'olive-tree' }; var inputBefore = jsonOf(input);
-      var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
-      var legacyIsLavender = !!lr && slugOfLegacy(lr) === 'lavender';
+      var lr = L(input); var sh = shadow(input); var wr = W(input);
+      var legacyNull = lr === null;
       var shadowOlive = sh && sh.status === 'resolved_id' && sh.canonicalSlug === 'olive' && sh.plantId === 'plt_e1teyafat3k5i3ke';
-      var noMutation = jsonOf(input) === inputBefore && jsonOf(lr) === lrBefore; var identity = wr === lr;
-      labeled(STATUS.KNOWN_LEGACY_BUG, '{profileSlug:"olive-tree"} legacy=lavender, shadow=olive (category F + known bug)',
-        legacyIsLavender && shadowOlive && noMutation && identity,
-        'legacySlug=' + slugOfLegacy(lr) + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) + '/' + (sh && sh.plantId) + ' noMutation=' + noMutation + ' idOK=' + identity);
+      var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      expect('{profileSlug:"olive-tree"} → legacy null, shadow olive (shadow-only PASS, fix)',
+        legacyNull && shadowOlive && noMutation && identity,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) + '/' + (sh && sh.plantId) + ' noMutation=' + noMutation + ' idOK=' + identity);
     })();
-    function pinUnknownObject(label, input, expectLavender) {
+    // B/C. unknown profileSlug / direct slug with no usable name → legacy null, shadow provisional
+    function pinFixedUnknown(label, input) {
       var inputBefore = jsonOf(input); var lr = L(input); var wr = W(input); var sh = shadow(input);
-      var lslug = slugOfLegacy(lr); var isLavender = lslug === 'lavender'; var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
-      var baselineOk = (expectLavender ? isLavender : !isLavender) && noMutation && identity;
-      labeled(STATUS.KNOWN_LEGACY_BUG, label, baselineOk,
-        'legacyReturns=' + (lr ? lslug || '[meta-snapshot]' : 'null') + ' expectLavender=' + expectLavender + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
+      var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      var shadowProvisional = sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      expect(label, lr === null && shadowProvisional && noMutation && identity,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
     }
-    pinUnknownObject('{profileSlug:"unknown-profile-slug"} → first record (lavender)', { profileSlug: 'unknown-profile-slug' }, true);
-    pinUnknownObject('{slug:"unknown-direct-slug"} → first record (lavender)', { slug: 'unknown-direct-slug' }, true);
-    pinUnknownObject('{meta:{slug:"unknown-meta-slug"}} → meta snapshot (NOT lavender)', { meta: { slug: 'unknown-meta-slug' } }, false);
+    pinFixedUnknown('{profileSlug:"unknown-profile-slug"} → legacy null, shadow provisional (fix)', { profileSlug: 'unknown-profile-slug' });
+    pinFixedUnknown('{slug:"unknown-direct-slug"} → legacy null, shadow provisional (fix)', { slug: 'unknown-direct-slug' });
+    // D. unknown meta.slug → UNCHANGED meta-snapshot object (strict identity), shadow provisional
+    (function () {
+      var meta = { slug: 'unknown-meta-slug' }; var input = { meta: meta }; var inputBefore = jsonOf(input);
+      var lr = L(input); var sh = shadow(input); var wr = W(input);
+      var isMetaSnapshot = lr === meta; // strict identity: returns the exact meta object, not lavender
+      var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      var shadowProvisional = sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      expect('{meta:{slug:"unknown-meta-slug"}} → same meta snapshot object (unchanged), shadow provisional',
+        isMetaSnapshot && noMutation && identity && shadowProvisional,
+        'legacy=' + (lr === meta ? '[meta-snapshot ===input.meta]' : (lr ? slugOfLegacy(lr) : 'null')) + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
+    })();
+
+    // ============================================================
+    // 4b. DIRECT empty-query regression assertions (real findPlantByName)
+    // ============================================================
+    sec('4b. direct findPlantByName empty-query regression');
+    var FN = cw.findPlantByName;
+    expect('real findPlantByName present', typeof FN === 'function');
+    expect('findPlantByName("") === null', FN('') === null);
+    expect('findPlantByName("   ") === null', FN('   ') === null);
+    expect('findPlantByName(null) === null', FN(null) === null);
+    expect('findPlantByName(undefined) === null', FN(undefined) === null);
+    (function () {
+      // repeated empty calls must not mutate PLANT_LIBRARY (length via legacy record probe) or any object
+      var lenBefore = null; try { lenBefore = cw.PLANT_LIBRARY ? cw.PLANT_LIBRARY.length : null; } catch (e) {}
+      var lavenderBefore = jsonOf(L('lavender'));
+      for (var i = 0; i < 20; i++) { FN(''); FN('   '); FN(null); FN(undefined); }
+      var lenAfter = null; try { lenAfter = cw.PLANT_LIBRARY ? cw.PLANT_LIBRARY.length : null; } catch (e) {}
+      var lavenderAfter = jsonOf(L('lavender'));
+      // PLANT_LIBRARY is const-scoped (not on window) → lenBefore/After may be null; fall back to first-record stability
+      var libStable = (lenBefore === lenAfter);
+      expect('repeated empty calls do not mutate first catalog record', lavenderBefore === lavenderAfter && libStable,
+        'firstRecStable=' + (lavenderBefore === lavenderAfter) + ' libLen=' + lenBefore + '→' + lenAfter);
+    })();
+
+    // ============================================================
+    // 4c. legitimate matching preserved (strict object identity, non-empty q)
+    // ============================================================
+    sec('4c. legitimate matching preserved (empty guard must not affect non-empty queries)');
+    function pinLegit(name, expectedSlug) {
+      var r1 = FN(name); var r2 = FN(name);
+      var before = jsonOf(r1);
+      var lr = L(name); // string legacy path returns fromSlugKey||findPlantByName
+      var slugOk = r1 && r1.slug === expectedSlug;
+      var stableIdentity = r1 === r2; // deterministic same catalog object reference
+      var noMutation = jsonOf(r1) === before;
+      expect('findPlantByName("' + name + '") → ' + expectedSlug + ' (stable object identity)',
+        !!r1 && slugOk && stableIdentity && noMutation,
+        'slug=' + (r1 && r1.slug) + ' idStable=' + stableIdentity + ' noMutation=' + noMutation + ' legacyStr=' + (lr && (lr.slug || slugOfLegacy(lr))));
+    }
+    pinLegit('lavender', 'lavender');
+    pinLegit('Lavandula angustifolia', 'lavender');
+    pinLegit('לבנדר', 'lavender');
+    pinLegit('זית', 'olive');
+    pinLegit('fig', 'fig');
+    pinLegit('mint', 'mint');
+    pinLegit('rose', 'rose');
+    pinLegit('plum', 'plum');
+    pinLegit('olive', 'olive');
+    pinLegit('cypress', 'cypress');
+    pinLegit('italian-cypress', 'cypress');
+
+    // ============================================================
+    // 8. save-flow safety (resolution layer only; NO persistence performed)
+    //    We do not call save functions (that would write localStorage / mutate
+    //    data.plants). We verify the lookups that feed save/add paths behave
+    //    safely after the fix, and that no persistence side effect occurs.
+    // ============================================================
+    sec('8. save-flow safety (no persistence, no save executed)');
+    (function () {
+      var saveKey = 'cruvit_mg_v23_real_plant_profiles';
+      var lsSnapBefore = null, lsCountBefore = 0;
+      try { lsSnapBefore = cw.localStorage.getItem(saveKey); } catch (e) {}
+      try { lsCountBefore = cw.localStorage.length; } catch (e) {}
+      var threw = false, emptyNoLavender = false, unknownNull = false, knownRef = null, metaRef = null;
+      try {
+        emptyNoLavender = (FN('') === null);                       // empty-name lookup no longer returns lavender
+        unknownNull = (L({ profileSlug: 'unknown-xyz-none' }) === null); // unknown object w/o usable name → null
+        knownRef = L('lavender');                                  // known-plant add path still finds the record
+        metaRef = L({ meta: { slug: 'scan-zzz-1', name: 'Scanned' } }); // scan/meta snapshot still yields a ref
+      } catch (e) { threw = true; }
+      var lsSnapAfter = null, lsCountAfter = 0;
+      try { lsSnapAfter = cw.localStorage.getItem(saveKey); } catch (e) {}
+      try { lsCountAfter = cw.localStorage.length; } catch (e) {}
+      expect('empty-name lookup no longer returns lavender', emptyNoLavender);
+      expect('unknown object without usable name returns null', unknownNull);
+      expect('known-plant add path still resolves its catalog record', !!knownRef && knownRef.slug === 'lavender' && typeof knownRef.name === 'string');
+      expect('known-plant record shape unchanged (no plantId/canonicalSlug fields)', !!knownRef && knownRef.plantId === undefined && knownRef.canonicalSlug === undefined);
+      expect('scan/meta snapshot path still yields a saveable ref', !!metaRef && metaRef.slug === 'scan-zzz-1');
+      expect('no exception thrown by save-feeding lookups (save not blocked)', threw === false);
+      expect('save-flow probes performed no localStorage write (key + count unchanged)',
+        lsSnapAfter === lsSnapBefore && lsCountAfter === lsCountBefore, lsCountBefore + '→' + lsCountAfter);
+    })();
 
     // ============================================================
     // 5. KNOWN RESOLVER GAP (kept)
@@ -638,13 +737,18 @@
       'classified=' + combinedCats.length + ' union=' + unionMap.size);
     expect('base E/F/G apply to base inventory only (documented)', baseTally.E === 0 && baseTally.F === 0,
       'baseE=' + baseTally.E + ' baseF=' + baseTally.F + ' baseG=' + baseTally.G + ' | regE=' + regTally.E + ' regF=' + regTally.F + ' regG=' + regTally.G);
-    // explicit accounting of the four named inputs
+    // explicit accounting of the four named inputs (post empty-query fix)
     function catOf(v) { return classifyInput(v, (typeof v === 'string' ? v : null)); }
     var cOlive = catOf({ profileSlug: 'olive-tree' }), cAvo = catOf({ meta: { slug: 'avocado' } }), cLav = catOf({ name: 'לבנדר' }), cZait = catOf({ name: 'זית' });
-    expect('{profileSlug:"olive-tree"} → category F + known-legacy-bug', cOlive.cat === 'F' && cOlive.knownLegacyBug === true, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
+    expect('{profileSlug:"olive-tree"} → category D (shadow-only), no longer known-legacy-bug', cOlive.cat === 'D' && cOlive.knownLegacyBug === false, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
     expect('{meta:{slug:"avocado"}} → category G (pending conflict)', cAvo.cat === 'G', 'cat=' + cAvo.cat);
     expect('{name:"לבנדר"} → category E + resolver-gap', cLav.cat === 'E' && cLav.resolverGap === true, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
     expect('{name:"זית"} → category E + resolver-gap', cZait.cat === 'E' && cZait.resolverGap === true, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
+    // empty-query bug eliminated: no known-legacy-bug annotations, and differing-identity F drops to 0
+    expect('combined differing-identity (F) count is 0 after fix', combinedTally.F === 0, 'combinedF=' + combinedTally.F);
+    expect('no known-legacy-bug annotations remain (base/regression/combined)',
+      baseTally.knownLegacyBug === 0 && regTally.knownLegacyBug === 0 && combinedTally.knownLegacyBug === 0,
+      'base=' + baseTally.knownLegacyBug + ' reg=' + regTally.knownLegacyBug + ' combined=' + combinedTally.knownLegacyBug);
 
     // ============================================================
     // 11. needsReview clarification
