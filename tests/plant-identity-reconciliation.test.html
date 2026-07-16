@@ -162,7 +162,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. After avocado identity-layer pilot: {profileSlug:"olive-tree"}=D shadow-only, avocado / {meta:{slug:"avocado"}} / Persea americana = A agreement with EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (catalog still duplicated), {name:"לבנדר"} & {name:"זית"}=A agreement.');
+      'Object-form / localized / conflict / scan regression inputs. After avocado catalog dedupe: avocado lookup paths share one object; {profileSlug:"olive-tree"}=D; {name:"לבנדר"} & {name:"זית"}=A; strawberry-guava/mulberry remain quarantined.');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -609,44 +609,86 @@
     })();
 
     // ============================================================
-    // 6a. avocado identity resolved; catalog still duplicated (temporary)
+    // 6a. avocado catalog deduplicated — single shared object
     // ============================================================
-    sec('6a. EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (avocado)');
-    function pinResolvedCatalogDup(label, input) {
-      var inputBefore = jsonOf(input); var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
-      var shadowOk = sh && sh.status === 'resolved_canonical' && sh.canonicalSlug === 'avocado' &&
-        sh.plantId === null && sh.registryVersion === '1.4.0';
-      var legacyOk = !!lr && slugOfLegacy(lr) === 'avocado';
-      var noIdCopied = !lr || (lr.plantId === undefined && lr.canonicalSlug === undefined);
-      var noMutation = jsonOf(input) === inputBefore && jsonOf(lr) === lrBefore; var identity = wr === lr;
-      var advisory = shadowOk && legacyOk && wr === lr; // identity advisory; legacy authoritative
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE, label,
-        shadowOk && legacyOk && noIdCopied && noMutation && identity && advisory,
-        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) +
-        ' pid=' + (sh && sh.plantId) + ' noIdCopied=' + noIdCopied + ' noMutation=' + noMutation + ' idOK=' + identity);
-    }
-    pinResolvedCatalogDup('avocado → resolved_canonical (catalog still duplicated)', 'avocado');
-    pinResolvedCatalogDup('{meta:{slug:"avocado"}} → resolved_canonical (catalog still duplicated)', { meta: { slug: 'avocado' } });
-    pinResolvedCatalogDup('scientific "Persea americana" → resolved_canonical (catalog still duplicated)', 'Persea americana');
+    sec('6a. avocado catalog deduplicated (single PLANT_LIBRARY row)');
     (function () {
-      // PLANT_LIBRARY/PLANT_INDEX are script-local consts (not on window). Probe via public APIs:
-      // resolvePlantProfileRawLegacy('avocado') → PLANT_INDEX last-key-wins Record B;
-      // findPlantByName('avocado') → first-match Record A.
-      var indexAvo = typeof L === 'function' ? L('avocado') : null;
-      var findAvo = typeof cw.findPlantByName === 'function' ? cw.findPlantByName('avocado') : null;
-      var indexIsB = !!indexAvo && indexAvo.he === 'אבוקדו' && /Sensitive/i.test(String(indexAvo.status || ''));
-      var findIsA = !!findAvo && findAvo.he === 'עץ אבוקדו';
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'catalog asymmetry unchanged: PLANT_INDEX=Record B, findPlantByName=Record A (index.html untouched)',
-        indexIsB && findIsA && indexAvo !== findAvo,
-        'indexHe=' + (indexAvo && indexAvo.he) + ' findHe=' + (findAvo && findAvo.he) +
-        ' indexStatus=' + (indexAvo && indexAvo.status) + ' sameRef=' + (indexAvo === findAvo));
-      var shapeOk = indexAvo && findAvo &&
-        indexAvo.plantId === undefined && indexAvo.canonicalSlug === undefined &&
-        findAvo.plantId === undefined && findAvo.canonicalSlug === undefined;
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'neither avocado catalog path adds plantId/canonicalSlug to plant objects',
-        !!shapeOk, 'indexPid=' + (indexAvo && indexAvo.plantId) + ' findPid=' + (findAvo && findAvo.plantId));
+      var APPROVED_WARNINGS = [
+        'Very sensitive to poor drainage and root rot',
+        'Young trees are sensitive to frost and sunburn',
+        'Needs wind protection; brittle branches can break',
+        'Variety/pollination affects fruiting'
+      ];
+      var APPROVED_PRODUCTS = ['Mulch', 'Avocado/citrus fertilizer', 'Tree guard', 'Drip irrigation'];
+      var find = cw.findPlantByName;
+      var avo = L('avocado');
+      var wr = W('avocado');
+      var lookups = [
+        { label: 'legacy slug', ref: avo },
+        { label: 'wrapper slug', ref: wr },
+        { label: 'find avocado', ref: find('avocado') },
+        { label: 'find Avocado Tree', ref: find('Avocado Tree') },
+        { label: 'find Persea americana', ref: find('Persea americana') },
+        { label: 'find אבוקדו', ref: find('אבוקדו') },
+        { label: 'find עץ אבוקדו', ref: find('עץ אבוקדו') }
+      ];
+      var allSame = lookups.every(function (x) { return x.ref && x.ref === avo; });
+      expect('PLANT_INDEX/findPlantByName/legacy/wrapper avocado lookups share one object',
+        allSame && wr === avo,
+        lookups.map(function (x) { return x.label + '=' + (!!x.ref) + (x.ref === avo ? ':same' : ':diff'); }).join(' | '));
+      expect('surviving avocado he is אבוקדו', !!avo && avo.he === 'אבוקדו', 'he=' + (avo && avo.he));
+      expect('עץ אבוקדו remains an alias', !!avo && Array.isArray(avo.aliases) && avo.aliases.indexOf('עץ אבוקדו') >= 0 && avo.aliases.indexOf('אבוקדו') >= 0);
+      expect('status remains Sensitive fruit tree', !!avo && avo.status === 'Sensitive fruit tree');
+      expect('scientific remains Persea americana', !!avo && avo.scientific === 'Persea americana');
+      var tags = (avo && avo.tags) || [];
+      var subCount = tags.filter(function (t) { return t === 'subtropical'; }).length;
+      expect('tags include subtropical exactly once and keep B tags',
+        subCount === 1 && tags.indexOf('fruit') >= 0 && tags.indexOf('tree') >= 0 && tags.indexOf('sun') >= 0 && tags.indexOf('אבוקדו') >= 0,
+        'tags=' + JSON.stringify(tags));
+      expect('approved avocado warnings are exactly the four approved values in order',
+        !!avo && JSON.stringify(avo.warnings || []) === JSON.stringify(APPROVED_WARNINGS) &&
+        avo.warnings.length === 4 &&
+        avo.warnings.indexOf('Frost can damage trees') < 0 &&
+        avo.warnings.indexOf('Fruit set may require compatible flowering types for some varieties') < 0,
+        'warnings=' + JSON.stringify(avo && avo.warnings));
+      expect('products remain exactly Record B list (no Moisture meter)',
+        !!avo && JSON.stringify(avo.products || []) === JSON.stringify(APPROVED_PRODUCTS),
+        'products=' + JSON.stringify(avo && avo.products));
+      expect('no plantId/canonicalSlug on avocado catalog object',
+        !!avo && avo.plantId === undefined && avo.canonicalSlug === undefined);
+      // find===INDEX object identity is only possible with a single avocado array row
+      // (two rows would yield first-match ≠ last-key-wins).
+      expect('exactly one avocado catalog row (find===index object identity)', allSame);
+      var shAvo = shadow('avocado');
+      var shSci = shadow('Persea americana');
+      expect('shadow avocado → resolved_canonical plantId null v1.4.0',
+        shAvo && shAvo.status === 'resolved_canonical' && shAvo.canonicalSlug === 'avocado' &&
+        shAvo.plantId === null && shAvo.registryVersion === '1.4.0',
+        'status=' + (shAvo && shAvo.status) + ' pid=' + (shAvo && shAvo.plantId));
+      expect('shadow Persea americana → resolved_canonical avocado',
+        shSci && shSci.status === 'resolved_canonical' && shSci.canonicalSlug === 'avocado' && shSci.plantId === null);
+      // Isolated Add-Plant build (no garden mutation / no service.save)
+      var plantsBefore = (cw.data && cw.data.plants && cw.data.plants.length) || 0;
+      var lsBefore = cw.localStorage.length;
+      var built = typeof cw.buildPlantFromReference === 'function'
+        ? cw.buildPlantFromReference(avo, 'AuditProbe', { autoTasks: false, reminders: false })
+        : null;
+      var expectedKeys = ['addedAt','archived','id','imageUrl','mark','meta','name','prefs','profileSlug','scientific','source','status','updatedAt'];
+      var keysOk = built && expectedKeys.every(function (k) { return Object.prototype.hasOwnProperty.call(built, k); }) &&
+        Object.keys(built).sort().join(',') === expectedKeys.slice().sort().join(',');
+      expect('isolated Add build keeps approved keys / B-compatible shape',
+        !!built && keysOk && built.profileSlug === 'avocado' && built.status === 'Sensitive fruit tree' &&
+        built.scientific === 'Persea americana' && built.meta && built.meta.he === 'אבוקדו' &&
+        built.plantId === undefined && built.canonicalSlug === undefined &&
+        ((cw.data && cw.data.plants && cw.data.plants.length) || 0) === plantsBefore &&
+        cw.localStorage.length === lsBefore,
+        'keys=' + (built ? Object.keys(built).sort().join(',') : 'null') +
+        ' metaHe=' + (built && built.meta && built.meta.he) +
+        ' plantsDelta=' + ((((cw.data && cw.data.plants && cw.data.plants.length) || 0) - plantsBefore)) +
+        ' lsDelta=' + (cw.localStorage.length - lsBefore));
+      expect('{profileSlug:"avocado"} still resolves to avocado',
+        slugOfLegacy(L({ profileSlug: 'avocado' })) === 'avocado' &&
+        shadow({ profileSlug: 'avocado' }) && shadow({ profileSlug: 'avocado' }).canonicalSlug === 'avocado');
     })();
 
     // ============================================================
@@ -806,9 +848,11 @@
     function catOf(v) { return classifyInput(v, (typeof v === 'string' ? v : null)); }
     var cOlive = catOf({ profileSlug: 'olive-tree' }), cAvo = catOf({ meta: { slug: 'avocado' } }), cLav = catOf({ name: 'לבנדר' }), cZait = catOf({ name: 'זית' });
     expect('{profileSlug:"olive-tree"} → category D (shadow-only), no longer known-legacy-bug', cOlive.cat === 'D' && cOlive.knownLegacyBug === false, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
-    expect('{meta:{slug:"avocado"}} → category A (identity resolved; catalog still duplicated)', cAvo.cat === 'A' && cAvo.canon === 'avocado', 'cat=' + cAvo.cat + ' canon=' + cAvo.canon);
+    expect('{meta:{slug:"avocado"}} → category A (identity resolved; single catalog row)', cAvo.cat === 'A' && cAvo.canon === 'avocado', 'cat=' + cAvo.cat + ' canon=' + cAvo.canon);
     expect('string avocado → category A resolved_canonical agreement', catOf('avocado').cat === 'A' && catOf('avocado').canon === 'avocado',
       'cat=' + catOf('avocado').cat + ' canon=' + catOf('avocado').canon);
+    expect('EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE count is 0 after avocado dedupe',
+      (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length) === 0);
     expect('{name:"לבנדר"} → category A agreement, no resolver-gap', cLav.cat === 'A' && cLav.resolverGap === false, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
     expect('{name:"זית"} → category A agreement, no resolver-gap', cZait.cat === 'A' && cZait.resolverGap === false, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
     expect('pilot Hebrew names no longer contribute resolver-gap annotations',
