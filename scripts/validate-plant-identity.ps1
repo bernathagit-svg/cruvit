@@ -369,8 +369,8 @@ if ($conflictAsCanon.Count -eq 0 -and $conflictAsAlias.Count -eq 0) {
   if ($conflictAsAlias.Count -gt 0) { Fail ("duplicate-conflict slug used as aliasSlug: " + ($conflictAsAlias -join ', ')) }
 }
 
-# remaining known conflicts must remain quarantined + pending
-$required = @('strawberry-guava','mulberry')
+# remaining known conflicts must remain quarantined + pending (mulberry only after SG pilot)
+$required = @('mulberry')
 foreach ($rc in $required) {
   $c = $conflicts | Where-Object { $_.slug -eq $rc }
   if (-not $c) { Fail "expected duplicate conflict missing: $rc"; continue }
@@ -401,15 +401,78 @@ if ($avoCanon.Count -eq 1) {
   }
 }
 
-# strawberry-guava scientific spelling record
-$sg = $conflicts | Where-Object { $_.slug -eq 'strawberry-guava' }
-if ($sg) {
-  $acc = $sg.recommendedCanonicalScientificName
-  $con = $sg.conflictingScientificNamePresent
-  if ($acc -eq 'Psidium cattleianum') { Pass "strawberry-guava accepted spelling recorded: Psidium cattleianum" }
-  else { Fail "strawberry-guava accepted spelling is '$acc', expected 'Psidium cattleianum'" }
-  if ($con -eq 'Psidium cattleyanum') { Pass "strawberry-guava conflicting spelling recorded: Psidium cattleyanum" }
-  else { Fail "strawberry-guava conflicting spelling is '$con', expected 'Psidium cattleyanum'" }
+# strawberry-guava identity-layer pilot: exactly one canonical + verified synonym; not conflicted; no plantId
+$sgConflict = @($conflicts | Where-Object { $_.slug -eq 'strawberry-guava' })
+if ($sgConflict.Count -eq 0) { Pass 'strawberry-guava is absent from duplicateConflicts' }
+else { Fail 'strawberry-guava still present in duplicateConflicts (must not be canonical and conflicted)' }
+
+$sgCanon = @($canon | Where-Object { $_.canonicalSlug -eq 'strawberry-guava' })
+if ($sgCanon.Count -eq 1) { Pass 'exactly one canonical strawberry-guava identity' }
+else { Fail "strawberry-guava canonical count is $($sgCanon.Count), expected 1" }
+
+if ($sgCanon.Count -eq 1) {
+  $sg = $sgCanon[0]
+  if ($sg.acceptedScientificName -eq 'Psidium cattleyanum') {
+    Pass 'strawberry-guava acceptedScientificName is Psidium cattleyanum'
+  } else {
+    Fail "strawberry-guava acceptedScientificName is '$($sg.acceptedScientificName)', expected 'Psidium cattleyanum'"
+  }
+  $sgHasId = ($sg.PSObject.Properties.Name -contains 'plantId' -and $sg.plantId)
+  if (-not $sgHasId) { Pass 'strawberry-guava has no plantId' }
+  else { Fail "strawberry-guava unexpectedly carries plantId '$($sg.plantId)'" }
+  foreach ($banned in @('localizedNames', 'aliasSlugs', 'moduleKeys')) {
+    if ($sg.PSObject.Properties.Name -contains $banned) {
+      Fail "strawberry-guava pilot must not carry $banned"
+    } else {
+      Pass "strawberry-guava has no $banned"
+    }
+  }
+  if ($sg.needsReview -eq $false) { Pass 'strawberry-guava needsReview is false' }
+  else { Fail "strawberry-guava needsReview is '$($sg.needsReview)', expected false" }
+
+  $sgSyns = @()
+  if ($sg.PSObject.Properties.Name -contains 'scientificSynonyms') { $sgSyns = @($sg.scientificSynonyms) }
+  if ($sgSyns.Count -eq 1) { Pass 'strawberry-guava has exactly one scientific synonym' }
+  else { Fail "strawberry-guava scientificSynonyms count is $($sgSyns.Count), expected 1" }
+
+  if ($sgSyns.Count -eq 1) {
+    $syn = $sgSyns[0]
+    if ($syn.name -eq 'Psidium cattleianum') { Pass 'strawberry-guava synonym name is Psidium cattleianum' }
+    else { Fail "strawberry-guava synonym name is '$($syn.name)', expected 'Psidium cattleianum'" }
+    if ($syn.relationship -eq 'synonym') { Pass 'strawberry-guava synonym relationship is synonym' }
+    else { Fail "strawberry-guava synonym relationship is '$($syn.relationship)', expected 'synonym'" }
+    if ($syn.confidence -eq 'high') { Pass 'strawberry-guava synonym confidence is high' }
+    else { Fail "strawberry-guava synonym confidence is '$($syn.confidence)', expected 'high'" }
+    if ($syn.needsReview -eq $false) { Pass 'strawberry-guava synonym needsReview is false' }
+    else { Fail "strawberry-guava synonym needsReview is '$($syn.needsReview)', expected false" }
+
+    $srcs = @($syn.sources)
+    $wfo = @($srcs | Where-Object {
+      $_.authority -eq 'wfo' -and $_.recordId -eq 'wfo-0000284334' -and $_.verifiedAt -eq '2026-07-16'
+    })
+    $powo = @($srcs | Where-Object {
+      $_.authority -eq 'powo' -and $_.recordId -eq 'urn:lsid:ipni.org:names:600760-1' -and $_.verifiedAt -eq '2026-07-16'
+    })
+    if ($srcs.Count -eq 2 -and $wfo.Count -eq 1 -and $powo.Count -eq 1) {
+      Pass 'strawberry-guava synonym has both approved WFO and POWO source references'
+    } else {
+      Fail 'strawberry-guava synonym sources missing or altered (need exact WFO + POWO pair)'
+    }
+  }
+
+  if ($sgConflict.Count -gt 0 -and $sgCanon.Count -gt 0) {
+    Fail 'strawberry-guava appears simultaneously as canonical and conflicted'
+  } else {
+    Pass 'strawberry-guava is not simultaneously canonical and conflicted'
+  }
+}
+
+# guava remains a separate canonical species
+$guavaCanon = @($canon | Where-Object { $_.canonicalSlug -eq 'guava' })
+if ($guavaCanon.Count -eq 1 -and $guavaCanon[0].acceptedScientificName -eq 'Psidium guajava') {
+  Pass 'guava remains a separate canonical identity (Psidium guajava)'
+} else {
+  Fail 'guava canonical identity missing or acceptedScientificName is not Psidium guajava'
 }
 
 # ---------------------------------------------------------------------------
@@ -873,10 +936,10 @@ if ($synonymPlantIdLeaks.Count -eq 0) {
   Fail ("plantId leaked into scientific-synonym structures: " + ($synonymPlantIdLeaks -join '; '))
 }
 
-if ($synonymIdentityCount -eq 0 -and $synonymEntryCount -eq 0) {
-  Pass 'real registry has zero scientificSynonyms entries (foundation-ready)'
+if ($synonymIdentityCount -eq 1 -and $synonymEntryCount -eq 1) {
+  Pass 'real registry has exactly one scientificSynonyms identity/entry (strawberry-guava pilot)'
 } else {
-  Pass "scientificSynonyms present on $synonymIdentityCount identities ($synonymEntryCount entries)"
+  Fail "scientificSynonyms counts are identities=$synonymIdentityCount entries=$synonymEntryCount, expected 1/1"
 }
 
 # ---------------------------------------------------------------------------
@@ -1083,6 +1146,176 @@ foreach ($case in $negCases) {
   if ($err -contains $case.expect) { Pass ("synthetic negative rejected: $($case.name)") }
   else { Fail ("synthetic negative missed $($case.name); got=[$($err -join ',')] expected=$($case.expect)") }
 }
+
+# ---------------------------------------------------------------------------
+# 3f. strawberry-guava pilot shape fixtures (positive + negatives)
+# ---------------------------------------------------------------------------
+Write-Head '3f. strawberry-guava pilot shape fixtures'
+
+function Test-StrawberryGuavaPilotShape($entry, $conflictList) {
+  $errors = New-Object System.Collections.Generic.List[string]
+  if ($null -eq $entry -or $entry -isnot [System.Management.Automation.PSObject]) {
+    $errors.Add('missing-entry'); return [pscustomobject]@{ Ok = $false; Errors = [string[]]@($errors) }
+  }
+  if ([string]$entry.canonicalSlug -ne 'strawberry-guava') { $errors.Add('bad-slug') }
+  if ([string]$entry.acceptedScientificName -ne 'Psidium cattleyanum') { $errors.Add('bad-accepted') }
+  if ($entry.needsReview -ne $false) { $errors.Add('needs-review') }
+  if ($entry.PSObject.Properties.Name -contains 'plantId' -and $entry.plantId) { $errors.Add('has-plantId') }
+  foreach ($banned in @('localizedNames', 'aliasSlugs', 'moduleKeys')) {
+    if ($entry.PSObject.Properties.Name -contains $banned) { $errors.Add("has-$banned") }
+  }
+  $syns = @()
+  if ($entry.PSObject.Properties.Name -contains 'scientificSynonyms') { $syns = @($entry.scientificSynonyms) }
+  if ($syns.Count -eq 0) { $errors.Add('synonym-omitted') }
+  elseif ($syns.Count -ne 1) { $errors.Add('synonym-count') }
+  else {
+    $syn = $syns[0]
+    if ([string]$syn.name -ne 'Psidium cattleianum') { $errors.Add('bad-synonym') }
+    if ([string]$syn.relationship -ne 'synonym') { $errors.Add('bad-rel') }
+    if ([string]$syn.confidence -ne 'high') { $errors.Add('bad-conf') }
+    if ($syn.needsReview -ne $false) { $errors.Add('syn-needs-review') }
+    $srcs = @($syn.sources)
+    $wfoOk = @($srcs | Where-Object {
+      $_.authority -eq 'wfo' -and $_.recordId -eq 'wfo-0000284334' -and $_.verifiedAt -eq '2026-07-16'
+    }).Count -eq 1
+    $powoOk = @($srcs | Where-Object {
+      $_.authority -eq 'powo' -and $_.recordId -eq 'urn:lsid:ipni.org:names:600760-1' -and $_.verifiedAt -eq '2026-07-16'
+    }).Count -eq 1
+    if ($srcs.Count -ne 2 -or -not $wfoOk -or -not $powoOk) { $errors.Add('bad-sources') }
+    # reversed orientation: synonym spelling used as accepted
+    if ([string]$entry.acceptedScientificName -eq 'Psidium cattleianum' -and
+        [string]$syn.name -eq 'Psidium cattleyanum') {
+      $errors.Add('reversed-orientation')
+    }
+  }
+  $alsoConflict = @(@($conflictList) | Where-Object {
+    $_ -and ($_ -is [System.Management.Automation.PSObject]) -and
+    ($_.PSObject.Properties.Name -contains 'slug') -and $_.slug -eq 'strawberry-guava'
+  })
+  if ($alsoConflict.Count -gt 0) { $errors.Add('also-conflicted') }
+  return [pscustomobject]@{ Ok = ($errors.Count -eq 0); Errors = [string[]]@($errors) }
+}
+
+function New-SgPilotEntry([hashtable]$overrides = @{}) {
+  $syn = [pscustomobject]@{
+    name = 'Psidium cattleianum'
+    relationship = 'synonym'
+    confidence = 'high'
+    needsReview = $false
+    sources = @(
+      [pscustomobject]@{ authority = 'wfo'; recordId = 'wfo-0000284334'; verifiedAt = '2026-07-16' },
+      [pscustomobject]@{ authority = 'powo'; recordId = 'urn:lsid:ipni.org:names:600760-1'; verifiedAt = '2026-07-16' }
+    )
+  }
+  $entry = [pscustomobject]@{
+    canonicalSlug = 'strawberry-guava'
+    acceptedScientificName = 'Psidium cattleyanum'
+    scientificSynonyms = @($syn)
+    needsReview = $false
+  }
+  foreach ($k in $overrides.Keys) {
+    if ($k -eq 'scientificSynonyms') { $entry | Add-Member -NotePropertyName $k -NotePropertyValue $overrides[$k] -Force }
+    elseif ($k -eq 'removeSynonyms') {
+      $entry.PSObject.Properties.Remove('scientificSynonyms')
+    }
+    else { $entry | Add-Member -NotePropertyName $k -NotePropertyValue $overrides[$k] -Force }
+  }
+  return $entry
+}
+
+$emptyConflicts = @()
+$sgPos = Test-StrawberryGuavaPilotShape (New-SgPilotEntry) $emptyConflicts
+if ($sgPos.Ok) { Pass 'synthetic positive: strawberry-guava pilot shape accepted' }
+else { Fail ("synthetic positive SG pilot unexpectedly failed: " + ($sgPos.Errors -join ',')) }
+
+# Real registry entry must satisfy the same pilot shape
+if ($sgCanon.Count -eq 1) {
+  $sgRealShape = Test-StrawberryGuavaPilotShape $sgCanon[0] $conflicts
+  if ($sgRealShape.Ok) { Pass 'real strawberry-guava registry entry matches approved pilot shape' }
+  else { Fail ("real strawberry-guava pilot shape failed: " + ($sgRealShape.Errors -join ',')) }
+}
+
+$sgNegCases = @(
+  @{
+    name = 'accepted/synonym orientation reversed'
+    entry = (New-SgPilotEntry @{
+      acceptedScientificName = 'Psidium cattleianum'
+      scientificSynonyms = @([pscustomobject]@{
+        name = 'Psidium cattleyanum'
+        relationship = 'synonym'
+        confidence = 'high'
+        needsReview = $false
+        sources = @(
+          [pscustomobject]@{ authority = 'wfo'; recordId = 'wfo-0000284334'; verifiedAt = '2026-07-16' },
+          [pscustomobject]@{ authority = 'powo'; recordId = 'urn:lsid:ipni.org:names:600760-1'; verifiedAt = '2026-07-16' }
+        )
+      })
+    })
+    expect = 'reversed-orientation'
+  },
+  @{
+    name = 'synonym omitted'
+    entry = (New-SgPilotEntry @{ removeSynonyms = $true })
+    expect = 'synonym-omitted'
+  },
+  @{
+    name = 'sources removed'
+    entry = (New-SgPilotEntry @{
+      scientificSynonyms = @([pscustomobject]@{
+        name = 'Psidium cattleianum'
+        relationship = 'synonym'
+        confidence = 'high'
+        needsReview = $false
+        sources = @()
+      })
+    })
+    expect = 'bad-sources'
+  },
+  @{
+    name = 'sources altered incorrectly'
+    entry = (New-SgPilotEntry @{
+      scientificSynonyms = @([pscustomobject]@{
+        name = 'Psidium cattleianum'
+        relationship = 'synonym'
+        confidence = 'high'
+        needsReview = $false
+        sources = @(
+          [pscustomobject]@{ authority = 'wfo'; recordId = 'WRONG'; verifiedAt = '2026-07-16' },
+          [pscustomobject]@{ authority = 'powo'; recordId = 'urn:lsid:ipni.org:names:600760-1'; verifiedAt = '2026-07-16' }
+        )
+      })
+    })
+    expect = 'bad-sources'
+  },
+  @{
+    name = 'canonical and conflicted simultaneously'
+    entry = (New-SgPilotEntry)
+    conflicts = @([pscustomobject]@{
+      slug = 'strawberry-guava'
+      conflictType = 'duplicate-slug'
+      needsReview = $true
+      resolutionStatus = 'pending'
+    })
+    expect = 'also-conflicted'
+  },
+  @{
+    name = 'plantId added during pilot'
+    entry = (New-SgPilotEntry @{ plantId = 'plt_sg_pilot_forbidden' })
+    expect = 'has-plantId'
+  }
+)
+
+foreach ($case in $sgNegCases) {
+  $cfl = if ($case.ContainsKey('conflicts')) { @($case.conflicts) } else { $emptyConflicts }
+  $result = Test-StrawberryGuavaPilotShape $case.entry $cfl
+  $err = @($result.Errors)
+  if ($err -contains $case.expect) { Pass ("synthetic negative SG pilot rejected: $($case.name)") }
+  else { Fail ("synthetic negative SG pilot missed $($case.name); got=[$($err -join ',')] expected=$($case.expect)") }
+}
+
+# Also require registryVersion 1.5.0 for this pilot
+if ($registry.registryVersion -eq '1.5.0') { Pass 'registryVersion is 1.5.0 after strawberry-guava pilot' }
+else { Fail "registryVersion is '$($registry.registryVersion)', expected '1.5.0'" }
 
 # ---------------------------------------------------------------------------
 # 4. Referential consistency (registry -> catalog + modules)

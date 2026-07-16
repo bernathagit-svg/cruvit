@@ -162,7 +162,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. After avocado catalog dedupe: avocado lookup paths share one object; {profileSlug:"olive-tree"}=D; {name:"לבנדר"} & {name:"זית"}=A; strawberry-guava/mulberry remain quarantined.');
+      'Object-form / localized / conflict / scan regression inputs. After avocado catalog dedupe: avocado lookup paths share one object; strawberry-guava identity is resolved_canonical with temporary catalog duplication; mulberry remains quarantined; {profileSlug:"olive-tree"}=D; {name:"לבנדר"} & {name:"זית"}=A.');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -307,6 +307,9 @@
         if (e.moduleKeys) Object.keys(e.moduleKeys).forEach(function (nsk) { (e.moduleKeys[nsk] || []).forEach(function (mk) { b.add(mk, 'moduleKey:' + nsk); }); });
         if (isStr(e.plantId)) b.add(e.plantId, 'plantId');
         if (isStr(e.acceptedScientificName)) b.add(e.acceptedScientificName, 'scientificName');
+        (e.scientificSynonyms || []).forEach(function (syn) {
+          if (syn && isStr(syn.name)) b.add(syn.name, 'scientificSynonym');
+        });
       });
       reg.duplicateConflicts.forEach(function (c) {
         b.add(c.slug, 'conflictSlug');
@@ -434,20 +437,25 @@
     inv.forEach(function (it) { try { shadow(it.value); W(it.value); L(it.value); } catch (e) { throwers.push(it.ns + '/' + it.key + ':' + e); } });
     expect('no input throws through shadow/wrapper/legacy', throwers.length === 0, throwers.slice(0, 5).join(' | '));
     function nsAtLeast(ns, n) { expect('namespace ' + ns + ' tested (>=' + n + ')', (nsCount[ns] || 0) >= n, 'count=' + (nsCount[ns] || 0)); }
-    nsAtLeast('canonicalSlug', 75); nsAtLeast('aliasSlug', 7);
+    nsAtLeast('canonicalSlug', 76); nsAtLeast('aliasSlug', 7);
     nsAtLeast('moduleKey:careQualityProfiles', 2); nsAtLeast('moduleKey:gardenDesignManifest', 2);
-    nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 2); nsAtLeast('conflictScientific', 3); nsAtLeast('gardenManifestKey', 5);
+    nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 1); nsAtLeast('conflictScientific', 1); nsAtLeast('gardenManifestKey', 5);
+    nsAtLeast('scientificSynonym', 1);
     expect('every canonicalSlug resolvable via shadow without throw',
       reg.canonicalIdentities.every(function (e) { try { shadow(e.canonicalSlug); return true; } catch (x) { return false; } }));
-    expect('registryVersion === 1.4.0', reg.registryVersion === '1.4.0', 'got ' + reg.registryVersion);
-    expect('canonical identities === 75', reg.canonicalIdentities.length === 75, 'got ' + reg.canonicalIdentities.length);
-    expect('duplicate conflicts === 2', reg.duplicateConflicts.length === 2, 'got ' + reg.duplicateConflicts.length);
+    expect('registryVersion === 1.5.0', reg.registryVersion === '1.5.0', 'got ' + reg.registryVersion);
+    expect('canonical identities === 76', reg.canonicalIdentities.length === 76, 'got ' + reg.canonicalIdentities.length);
+    expect('duplicate conflicts === 1', reg.duplicateConflicts.length === 1, 'got ' + reg.duplicateConflicts.length);
     expect('avocado is exactly one canonical identity',
       reg.canonicalIdentities.filter(function (e) { return e.canonicalSlug === 'avocado'; }).length === 1);
     expect('avocado is not in duplicateConflicts',
       reg.duplicateConflicts.every(function (c) { return c.slug !== 'avocado'; }));
-    expect('strawberry-guava and mulberry remain pending conflicts',
-      reg.duplicateConflicts.some(function (c) { return c.slug === 'strawberry-guava' && c.resolutionStatus === 'pending'; }) &&
+    expect('strawberry-guava is exactly one canonical identity',
+      reg.canonicalIdentities.filter(function (e) { return e.canonicalSlug === 'strawberry-guava'; }).length === 1);
+    expect('strawberry-guava is absent from duplicateConflicts',
+      reg.duplicateConflicts.every(function (c) { return c.slug !== 'strawberry-guava'; }));
+    expect('mulberry remains the only pending conflict',
+      reg.duplicateConflicts.length === 1 &&
       reg.duplicateConflicts.some(function (c) { return c.slug === 'mulberry' && c.resolutionStatus === 'pending'; }));
     expect('allocated plantId entries === 9', plantIdEntries.length === 9, 'got ' + plantIdEntries.length);
 
@@ -579,7 +587,7 @@
       var inputBefore = jsonOf(input); var lr = L(input); var sh = shadow(input); var wr = W(input);
       var lslug = slugOfLegacy(lr);
       var shadowOk = sh && sh.status === 'resolved_id' && sh.canonicalSlug === expectSlug &&
-        sh.matchedBy === 'localizedName' && sh.plantId === expectPlantId && sh.registryVersion === '1.4.0';
+        sh.matchedBy === 'localizedName' && sh.plantId === expectPlantId && sh.registryVersion === '1.5.0';
       var legacyOk = lslug === expectSlug;
       var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
       expect(label, !!shadowOk && legacyOk && noMutation && identity,
@@ -661,9 +669,9 @@
       expect('exactly one avocado catalog row (find===index object identity)', allSame);
       var shAvo = shadow('avocado');
       var shSci = shadow('Persea americana');
-      expect('shadow avocado → resolved_canonical plantId null v1.4.0',
+      expect('shadow avocado → resolved_canonical plantId null v1.5.0',
         shAvo && shAvo.status === 'resolved_canonical' && shAvo.canonicalSlug === 'avocado' &&
-        shAvo.plantId === null && shAvo.registryVersion === '1.4.0',
+        shAvo.plantId === null && shAvo.registryVersion === '1.5.0',
         'status=' + (shAvo && shAvo.status) + ' pid=' + (shAvo && shAvo.plantId));
       expect('shadow Persea americana → resolved_canonical avocado',
         shSci && shSci.status === 'resolved_canonical' && shSci.canonicalSlug === 'avocado' && shSci.plantId === null);
@@ -692,9 +700,62 @@
     })();
 
     // ============================================================
-    // 6b. EXPECTED QUARANTINED CONFLICT (strawberry-guava + mulberry)
+    // 6b. strawberry-guava identity resolved + temporary catalog duplicate
     // ============================================================
-    sec('6b. EXPECTED QUARANTINED CONFLICT');
+    sec('6b. EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (strawberry-guava)');
+    (function () {
+      var find = cw.findPlantByName;
+      var recordB = L('strawberry-guava'); // PLANT_INDEX last-key-wins
+      var recordA = find('Psidium cattleianum'); // first PLANT_LIBRARY match
+      var recordBViaSci = find('Psidium cattleyanum');
+      var wrSlug = W('strawberry-guava');
+      var shSlug = shadow('strawberry-guava');
+      var shAcc = shadow('Psidium cattleyanum');
+      var shSyn = shadow('Psidium cattleianum');
+      var shGuava = shadow('guava');
+      var shGuavaSci = shadow('Psidium guajava');
+
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'shadow "strawberry-guava" → resolved_canonical / plantId null (catalog still duplicated)',
+        shSlug && shSlug.status === 'resolved_canonical' && shSlug.canonicalSlug === 'strawberry-guava' &&
+        shSlug.plantId === null && shSlug.matchedBy === 'canonicalSlug' && shSlug.registryVersion === '1.5.0',
+        'status=' + (shSlug && shSlug.status) + ' pid=' + (shSlug && shSlug.plantId));
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'shadow "Psidium cattleyanum" → resolved_canonical matchedBy scientificName',
+        shAcc && shAcc.status === 'resolved_canonical' && shAcc.canonicalSlug === 'strawberry-guava' &&
+        shAcc.plantId === null && shAcc.matchedBy === 'scientificName',
+        'by=' + (shAcc && shAcc.matchedBy) + ' canon=' + (shAcc && shAcc.canonicalSlug));
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'shadow "Psidium cattleianum" → resolved_canonical matchedBy scientificSynonym',
+        shSyn && shSyn.status === 'resolved_canonical' && shSyn.canonicalSlug === 'strawberry-guava' &&
+        shSyn.plantId === null && shSyn.matchedBy === 'scientificSynonym',
+        'by=' + (shSyn && shSyn.matchedBy) + ' canon=' + (shSyn && shSyn.canonicalSlug));
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'Record B (INDEX/Add/save) scientific is Psidium cattleyanum; Record A (find) is Psidium cattleianum',
+        !!recordB && !!recordA && recordA !== recordB &&
+        recordB.scientific === 'Psidium cattleyanum' && recordA.scientific === 'Psidium cattleianum' &&
+        !!recordBViaSci && recordBViaSci === recordB,
+        'B.sci=' + (recordB && recordB.scientific) + ' A.sci=' + (recordA && recordA.scientific) +
+        ' A!==B=' + (recordA !== recordB));
+      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
+        'legacy A/B path asymmetry unchanged: INDEX/save→B; find cattleianum→A; wrapper≡legacy; no identity fields persisted',
+        !!recordB && slugOfLegacy(recordB) === 'strawberry-guava' && wrSlug === recordB &&
+        recordB.plantId === undefined && recordB.canonicalSlug === undefined &&
+        recordA.plantId === undefined && recordA.canonicalSlug === undefined &&
+        W('strawberry-guava') === L('strawberry-guava') &&
+        find('Psidium cattleianum') === recordA && find('Psidium cattleianum') !== recordB,
+        'wrapperIdOK=' + (wrSlug === recordB) + ' findA=' + (find('Psidium cattleianum') === recordA));
+      expect('guava / Psidium guajava stays separate from strawberry-guava',
+        shGuava && shGuava.canonicalSlug === 'guava' && shGuavaSci && shGuavaSci.canonicalSlug === 'guava' &&
+        shSlug && shSlug.canonicalSlug === 'strawberry-guava' &&
+        slugOfLegacy(L('guava')) === 'guava',
+        'guava=' + (shGuava && shGuava.canonicalSlug) + ' sg=' + (shSlug && shSlug.canonicalSlug));
+    })();
+
+    // ============================================================
+    // 6c. EXPECTED QUARANTINED CONFLICT (mulberry only)
+    // ============================================================
+    sec('6c. EXPECTED QUARANTINED CONFLICT (mulberry only)');
     function pinConflict(label, input, expectConflictSlug) {
       var inputBefore = jsonOf(input); var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
       var quarantined = sh && sh.status === 'pending_conflict' && sh.plantId === null && sh.canonicalSlug === null;
@@ -704,10 +765,7 @@
       labeled(STATUS.EXPECTED_QUARANTINED_CONFLICT, label, quarantined && conflictOk && noIdCopied && noMutation && identity,
         'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + ' conflict=' + (sh && sh.conflict && sh.conflict.slug) + ' noIdCopied=' + noIdCopied + ' noMutation=' + noMutation + ' idOK=' + identity);
     }
-    pinConflict('strawberry-guava → pending_conflict', 'strawberry-guava', 'strawberry-guava');
     pinConflict('mulberry → pending_conflict', 'mulberry', 'mulberry');
-    pinConflict('scientific "Psidium cattleianum" (accepted) → pending_conflict', 'Psidium cattleianum', 'strawberry-guava');
-    pinConflict('scientific "Psidium cattleyanum" (conflicting) → pending_conflict', 'Psidium cattleyanum', 'strawberry-guava');
     pinConflict('scientific "Morus spp." → pending_conflict', 'Morus spp.', 'mulberry');
 
     // ============================================================
@@ -851,8 +909,15 @@
     expect('{meta:{slug:"avocado"}} → category A (identity resolved; single catalog row)', cAvo.cat === 'A' && cAvo.canon === 'avocado', 'cat=' + cAvo.cat + ' canon=' + cAvo.canon);
     expect('string avocado → category A resolved_canonical agreement', catOf('avocado').cat === 'A' && catOf('avocado').canon === 'avocado',
       'cat=' + catOf('avocado').cat + ' canon=' + catOf('avocado').canon);
-    expect('EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE count is 0 after avocado dedupe',
-      (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length) === 0);
+    expect('EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE covers temporary strawberry-guava catalog duplication',
+      (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length) === 5,
+      'count=' + (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length));
+    expect('EXPECTED_QUARANTINED_CONFLICT covers mulberry only',
+      (results.filter(function (r) { return r.status === STATUS.EXPECTED_QUARANTINED_CONFLICT; }).length) === 2 &&
+      results.filter(function (r) { return r.status === STATUS.EXPECTED_QUARANTINED_CONFLICT; }).every(function (r) {
+        return /mulberry|Morus/i.test(r.name);
+      }),
+      'quarantined=' + results.filter(function (r) { return r.status === STATUS.EXPECTED_QUARANTINED_CONFLICT; }).map(function (r) { return r.name; }).join(' | '));
     expect('{name:"לבנדר"} → category A agreement, no resolver-gap', cLav.cat === 'A' && cLav.resolverGap === false, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
     expect('{name:"זית"} → category A agreement, no resolver-gap', cZait.cat === 'A' && cZait.resolverGap === false, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
     expect('pilot Hebrew names no longer contribute resolver-gap annotations',

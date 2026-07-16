@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "registryVersion": "1.4.0",
-  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Avocado is resolved at the identity layer as a single canonical identity (Persea americana); the inline PLANT_LIBRARY still contains two descriptive avocado rows pending a separate catalog-deduplication task. Remaining same-slug duplicate conflicts (strawberry-guava, mulberry) stay in duplicateConflicts and are intentionally excluded from canonicalIdentities. NOT wired into runtime as authoritative. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted in the catalog. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
+  "registryVersion": "1.5.0",
+  "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Avocado is a single canonical identity (Persea americana). Strawberry-guava is a single canonical identity (accepted Psidium cattleyanum; scientific synonym Psidium cattleianum); the inline PLANT_LIBRARY still contains two descriptive strawberry-guava rows pending a separate catalog-deduplication task. Remaining same-slug duplicate conflict (mulberry) stays in duplicateConflicts. NOT wired into runtime as authoritative. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted in the catalog. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
     {
       "canonicalSlug": "agapanthus",
@@ -416,6 +416,32 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "strawberry-guava",
+      "acceptedScientificName": "Psidium cattleyanum",
+      "scientificSynonyms": [
+        {
+          "name": "Psidium cattleianum",
+          "relationship": "synonym",
+          "confidence": "high",
+          "needsReview": false,
+          "sources": [
+            {
+              "authority": "wfo",
+              "recordId": "wfo-0000284334",
+              "verifiedAt": "2026-07-16"
+            },
+            {
+              "authority": "powo",
+              "recordId": "urn:lsid:ipni.org:names:600760-1",
+              "verifiedAt": "2026-07-16"
+            }
+          ]
+        }
+      ],
+      "needsReview": false,
+      "notes": "Verified species-level identity. Psidium cattleyanum is the accepted scientific name and Psidium cattleianum is retained as a scientific synonym. Distinct from guava (Psidium guajava). The two inline strawberry-guava catalog rows remain duplicated for a separate catalog-deduplication phase."
+    },
+    {
       "canonicalSlug": "succulent",
       "needsReview": true,
       "notes": "Catalog record is a non-species group ('Various succulent species'), not a single canonical species. Needs editorial review before allocation."
@@ -442,29 +468,6 @@
     }
   ],
   "duplicateConflicts": [
-    {
-      "slug": "strawberry-guava",
-      "conflictType": "duplicate-slug-scientific-spelling-conflict",
-      "observedRecords": [
-        {
-          "source": "plantLibrary",
-          "ref": "index.html PLANT_LIBRARY (~line 488)",
-          "scientificName": "Psidium cattleianum",
-          "notes": "Accepted spelling. First occurrence."
-        },
-        {
-          "source": "plantLibrary",
-          "ref": "index.html PLANT_LIBRARY (~line 520)",
-          "scientificName": "Psidium cattleyanum",
-          "notes": "Conflicting spelling currently present. Second occurrence; wins in PLANT_INDEX via Object.fromEntries (last-key-wins)."
-        }
-      ],
-      "recommendedCanonicalScientificName": "Psidium cattleianum",
-      "conflictingScientificNamePresent": "Psidium cattleyanum",
-      "needsReview": true,
-      "resolutionStatus": "pending",
-      "notes": "Accepted spelling: Psidium cattleianum. Conflicting spelling currently present in a record: Psidium cattleyanum. Documented only. No record correction or deletion in this task."
-    },
     {
       "slug": "mulberry",
       "conflictType": "duplicate-slug",

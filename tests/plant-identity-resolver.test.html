@@ -80,7 +80,7 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
     { status: 'resolved_canonical', plantId: null, canonicalSlug: 'agapanthus', needsReview: true });
   // 11. avocado identity-layer resolution (no plantId; catalog may still have duplicate rows)
   check('avocado canonical slug → resolved_canonical', R.resolve('avocado'),
-    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'canonicalSlug', needsReview: false, confidence: 'exact', registryVersion: '1.4.0' });
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'canonicalSlug', needsReview: false, confidence: 'exact', registryVersion: '1.5.0' });
   check('avocado scientific Persea americana → avocado', R.resolve({ scientific: 'Persea americana' }),
     { status: 'resolved_canonical', plantId: null, canonicalSlug: 'avocado', matchedBy: 'scientificName', confidence: 'high' });
   check('avocado object canonicalSlug hint', R.resolve({ canonicalSlug: 'avocado' }),
@@ -101,15 +101,56 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
       Object.isFrozen(avoRes) && avoMutBlocked && JSON.stringify(avoIn) === beforeAvo && avoRes.canonicalSlug === 'avocado',
       'frozen=' + Object.isFrozen(avoRes) + ' mutBlocked=' + avoMutBlocked + ' inputUntouched=' + (JSON.stringify(avoIn) === beforeAvo));
   }
-  // 12. strawberry-guava pending conflict by slug
-  check('conflict strawberry-guava (slug)', R.resolve('strawberry-guava'),
-    { status: 'pending_conflict', plantId: null, canonicalSlug: null, conflictSlug: 'strawberry-guava' });
-  // 13. strawberry-guava accepted spelling
-  check('conflict strawberry-guava sci accepted (Psidium cattleianum)', R.resolve({ scientific: 'Psidium cattleianum' }),
-    { status: 'pending_conflict', conflictSlug: 'strawberry-guava' });
-  // 14. strawberry-guava conflicting spelling
-  check('conflict strawberry-guava sci conflicting (Psidium cattleyanum)', R.resolve({ scientific: 'Psidium cattleyanum' }),
-    { status: 'pending_conflict', conflictSlug: 'strawberry-guava' });
+  // 12. strawberry-guava canonical identity pilot (no plantId)
+  check('strawberry-guava slug → resolved_canonical', R.resolve('strawberry-guava'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'strawberry-guava', matchedBy: 'canonicalSlug', registryVersion: '1.5.0' });
+  // 13. strawberry-guava accepted scientific name
+  check('strawberry-guava accepted sci (Psidium cattleyanum)', R.resolve({ scientific: 'Psidium cattleyanum' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'strawberry-guava', matchedBy: 'scientificName' });
+  // 14. strawberry-guava verified scientific synonym
+  check('strawberry-guava synonym sci (Psidium cattleianum)', R.resolve({ scientific: 'Psidium cattleianum' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'strawberry-guava', matchedBy: 'scientificSynonym', inputNamespace: 'scientificSynonym', confidence: 'high' });
+  {
+    const sgSlug = R.resolve('strawberry-guava');
+    const sgAcc = R.resolve({ scientific: 'Psidium cattleyanum' });
+    const sgSyn = R.resolve({ scientific: 'Psidium cattleianum' });
+    rec('strawberry-guava three forms resolve to same canonical identity',
+      sgSlug.canonicalSlug === 'strawberry-guava' && sgAcc.canonicalSlug === 'strawberry-guava' &&
+      sgSyn.canonicalSlug === 'strawberry-guava' &&
+      sgSlug.plantId === null && sgAcc.plantId === null && sgSyn.plantId === null,
+      'slug=' + sgSlug.canonicalSlug + ' acc=' + sgAcc.matchedBy + ' syn=' + sgSyn.matchedBy);
+    const sgIn = { scientific: 'Psidium cattleianum', keep: true };
+    const beforeSg = JSON.stringify(sgIn);
+    const sgRes = R.resolve(sgIn);
+    let sgMutBlocked = false;
+    try { sgRes.plantId = 'plt_hacksg00000000'; sgMutBlocked = (sgRes.plantId === null); } catch (e) { sgMutBlocked = true; }
+    rec('strawberry-guava result frozen & input unmutated; no fabricated plantId',
+      Object.isFrozen(sgRes) && sgMutBlocked && JSON.stringify(sgIn) === beforeSg && sgRes.plantId === null,
+      'frozen=' + Object.isFrozen(sgRes) + ' mutBlocked=' + sgMutBlocked);
+  }
+  // 14b. guava remains a separate canonical species (no cross-resolution)
+  check('guava slug → guava only', R.resolve('guava'),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'guava', matchedBy: 'canonicalSlug' });
+  check('guava scientific Psidium guajava → guava only', R.resolve({ scientific: 'Psidium guajava' }),
+    { status: 'resolved_canonical', plantId: null, canonicalSlug: 'guava', matchedBy: 'scientificName' });
+  rec('no cross-resolution between guava and strawberry-guava',
+    R.resolve('guava').canonicalSlug === 'guava' &&
+    R.resolve({ scientific: 'Psidium guajava' }).canonicalSlug === 'guava' &&
+    R.resolve('strawberry-guava').canonicalSlug === 'strawberry-guava' &&
+    R.resolve({ scientific: 'Psidium cattleyanum' }).canonicalSlug === 'strawberry-guava' &&
+    R.resolve({ scientific: 'Psidium cattleianum' }).canonicalSlug === 'strawberry-guava' &&
+    R.resolve({ scientific: 'Psidium guajava' }).canonicalSlug !== 'strawberry-guava' &&
+    R.resolve({ scientific: 'Psidium cattleyanum' }).canonicalSlug !== 'guava',
+    'guava=' + R.resolve('guava').canonicalSlug + ' sg=' + R.resolve('strawberry-guava').canonicalSlug);
+  rec('near-miss Psidium spellings remain provisional/unresolved',
+    (function () {
+      const a = R.resolve({ scientific: 'Psidium cattleyanumx' });
+      const b = R.resolve({ scientific: 'Psidium cattleianumm' });
+      return (a.status === 'provisional' || a.status === 'unresolved') &&
+        (b.status === 'provisional' || b.status === 'unresolved') &&
+        a.canonicalSlug == null && b.canonicalSlug == null;
+    })(),
+    'nearMiss statuses checked');
   // 15. mulberry pending conflict
   check('conflict mulberry (slug)', R.resolve('mulberry'),
     { status: 'pending_conflict', conflictSlug: 'mulberry' });
@@ -142,10 +183,21 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
 
   // 21. coverage counts
   const stats = R.getStats();
-  rec('coverage: 75 canonical', stats.canonicalCount === 75, 'canonicalCount=' + stats.canonicalCount);
-  rec('coverage: 2 conflicts', stats.conflictCount === 2, 'conflictCount=' + stats.conflictCount);
+  rec('coverage: 76 canonical', stats.canonicalCount === 76, 'canonicalCount=' + stats.canonicalCount);
+  rec('coverage: 1 conflict', stats.conflictCount === 1, 'conflictCount=' + stats.conflictCount);
   rec('coverage: 9 plantId', stats.plantIdCount === 9, 'plantIdCount=' + stats.plantIdCount);
-  rec('coverage: registryVersion 1.4.0', R.getRegistryVersion() === '1.4.0', 'version=' + R.getRegistryVersion());
+  rec('coverage: registryVersion 1.5.0', R.getRegistryVersion() === '1.5.0', 'version=' + R.getRegistryVersion());
+  rec('coverage: scientific synonym stats 1/1/1/0/0',
+    stats.scientificSynonymIdentityCount === 1 && stats.scientificSynonymEntryCount === 1 &&
+    stats.indexedScientificSynonymCount === 1 &&
+    stats.reviewedButNotIndexedScientificSynonymCount === 0 &&
+    stats.ambiguousScientificSynonymCount === 0,
+    JSON.stringify({
+      id: stats.scientificSynonymIdentityCount, ent: stats.scientificSynonymEntryCount,
+      idx: stats.indexedScientificSynonymCount,
+      rev: stats.reviewedButNotIndexedScientificSynonymCount,
+      amb: stats.ambiguousScientificSynonymCount
+    }));
   rec('localized stats: 2 identities / 2 locale blocks / 4 indexed names',
     stats.localizedIdentityCount === 2 && stats.localizedLocaleBlockCount === 2 && stats.localizedIndexedNameCount === 4,
     `id=${stats.localizedIdentityCount} blocks=${stats.localizedLocaleBlockCount} indexed=${stats.localizedIndexedNameCount}`);
@@ -153,7 +205,7 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
   // 21b. Hebrew localized-name pilot (real registry)
   check('Hebrew לבנדר → lavender resolved_id', R.resolve('לבנדר'), {
     status: 'resolved_id', plantId: 'plt_aupnyvawcflgjbyh', canonicalSlug: 'lavender',
-    matchedBy: 'localizedName', confidence: 'high', registryVersion: '1.4.0'
+    matchedBy: 'localizedName', confidence: 'high', registryVersion: '1.5.0'
   });
   check('Hebrew אזוביון → lavender', R.resolve('אזוביון'), {
     status: 'resolved_id', canonicalSlug: 'lavender', plantId: 'plt_aupnyvawcflgjbyh', matchedBy: 'localizedName'
@@ -705,29 +757,41 @@ export function runResolverTests({ registryData, createPlantIdentityResolver, lo
       'frozen=' + Object.isFrozen(mutOut));
   }
 
-  // Real-registry synonym non-regression
+  // Real-registry synonym + strawberry-guava pilot non-regression
   {
     const rs = R.getStats();
-    rec('real registry: zero scientific synonyms indexed/present',
-      rs.scientificSynonymIdentityCount === 0 && rs.scientificSynonymEntryCount === 0 &&
-      rs.indexedScientificSynonymCount === 0 && rs.ambiguousScientificSynonymCount === 0,
+    rec('real registry: strawberry-guava scientific synonym indexed once',
+      rs.scientificSynonymIdentityCount === 1 && rs.scientificSynonymEntryCount === 1 &&
+      rs.indexedScientificSynonymCount === 1 && rs.ambiguousScientificSynonymCount === 0 &&
+      rs.reviewedButNotIndexedScientificSynonymCount === 0,
       JSON.stringify({
         id: rs.scientificSynonymIdentityCount, ent: rs.scientificSynonymEntryCount,
-        idx: rs.indexedScientificSynonymCount, amb: rs.ambiguousScientificSynonymCount
+        idx: rs.indexedScientificSynonymCount, amb: rs.ambiguousScientificSynonymCount,
+        rev: rs.reviewedButNotIndexedScientificSynonymCount
       }));
-    rec('real registry: strawberry-guava still pending_conflict',
-      R.resolve('strawberry-guava').status === 'pending_conflict' &&
-      R.resolve({ scientific: 'Psidium cattleianum' }).status === 'pending_conflict' &&
-      R.resolve({ scientific: 'Psidium cattleyanum' }).status === 'pending_conflict',
-      'slug=' + R.resolve('strawberry-guava').status);
+    rec('real registry: strawberry-guava resolved_canonical via slug/accepted/synonym',
+      R.resolve('strawberry-guava').status === 'resolved_canonical' &&
+      R.resolve('strawberry-guava').matchedBy === 'canonicalSlug' &&
+      R.resolve({ scientific: 'Psidium cattleyanum' }).matchedBy === 'scientificName' &&
+      R.resolve({ scientific: 'Psidium cattleianum' }).matchedBy === 'scientificSynonym' &&
+      R.resolve('strawberry-guava').plantId === null &&
+      R.resolve({ scientific: 'Psidium cattleianum' }).plantId === null,
+      'slug=' + R.resolve('strawberry-guava').status + ' synBy=' + R.resolve({ scientific: 'Psidium cattleianum' }).matchedBy);
     rec('real registry: mulberry still pending_conflict',
-      R.resolve('mulberry').status === 'pending_conflict',
+      R.resolve('mulberry').status === 'pending_conflict' &&
+      R.resolve({ scientific: 'Morus spp.' }).status === 'pending_conflict',
       'status=' + R.resolve('mulberry').status);
     rec('real registry: avocado / Persea americana unchanged',
       R.resolve('avocado').status === 'resolved_canonical' && R.resolve('avocado').plantId === null &&
       R.resolve({ scientific: 'Persea americana' }).matchedBy === 'scientificName' &&
       R.resolve({ scientific: 'Persea americana' }).canonicalSlug === 'avocado',
       'by=' + R.resolve({ scientific: 'Persea americana' }).matchedBy);
+    rec('real registry: guava remains separate from strawberry-guava',
+      R.resolve('guava').canonicalSlug === 'guava' &&
+      R.resolve({ scientific: 'Psidium guajava' }).canonicalSlug === 'guava' &&
+      R.resolve({ scientific: 'Psidium guajava' }).canonicalSlug !==
+        R.resolve({ scientific: 'Psidium cattleyanum' }).canonicalSlug,
+      'guava=' + R.resolve('guava').canonicalSlug);
   }
 
   // 22. immutability / no mutation of input or registry
