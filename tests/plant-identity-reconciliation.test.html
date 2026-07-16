@@ -162,7 +162,7 @@
     if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
       'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
     if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
-      'Object-form / localized / conflict / scan regression inputs. After avocado catalog dedupe: avocado lookup paths share one object; strawberry-guava identity is resolved_canonical with temporary catalog duplication; mulberry remains quarantined; {profileSlug:"olive-tree"}=D; {name:"לבנדר"} & {name:"זית"}=A.');
+      'Object-form / localized / conflict / scan regression inputs. After avocado + strawberry-guava catalog dedupe: avocado and strawberry-guava lookup paths each share one object; mulberry remains quarantined; {profileSlug:"olive-tree"}=D; {name:"לבנדר"} & {name:"זית"}=A.');
     if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
 
     if (extra.needsReview) {
@@ -700,56 +700,135 @@
     })();
 
     // ============================================================
-    // 6b. strawberry-guava identity resolved + temporary catalog duplicate
+    // 6b. strawberry-guava catalog deduplicated — single shared object
     // ============================================================
-    sec('6b. EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE (strawberry-guava)');
+    sec('6b. strawberry-guava catalog deduplicated (single PLANT_LIBRARY row)');
     (function () {
+      var APPROVED_ALIASES = ['strawberry guava', 'psidium cattleyanum', 'psidium cattleianum', 'cherry guava', 'גויאבה תותית'];
+      var APPROVED_TAGS = ['fruit', 'tree', 'shrub', 'sun', 'גויאבה תותית'];
+      var APPROVED_WARNINGS = [
+        'Can self-seed in some regions',
+        'Fruit drop can be messy',
+        'Watch for fruit fly in some areas',
+        'Needs space if allowed to grow',
+        'Needs pruning to prevent dense growth'
+      ];
+      var APPROVED_PRODUCTS = ['Fruit tree fertilizer', 'Mulch', 'Pruning shears', 'Fruit fly trap'];
       var find = cw.findPlantByName;
-      var recordB = L('strawberry-guava'); // PLANT_INDEX last-key-wins
-      var recordA = find('Psidium cattleianum'); // first PLANT_LIBRARY match
-      var recordBViaSci = find('Psidium cattleyanum');
-      var wrSlug = W('strawberry-guava');
+      var sg = L('strawberry-guava');
+      var wr = W('strawberry-guava');
+      var lib = cw.PLANT_LIBRARY || [];
+      var sgRows = lib.filter(function (p) { return p && p.slug === 'strawberry-guava'; });
+      var lookups = [
+        { label: 'legacy slug', ref: sg },
+        { label: 'wrapper slug', ref: wr },
+        { label: 'find strawberry guava', ref: find('strawberry guava') },
+        { label: 'find Strawberry Guava', ref: find('Strawberry Guava') },
+        { label: 'find cherry guava', ref: find('cherry guava') },
+        { label: 'find Psidium cattleyanum', ref: find('Psidium cattleyanum') },
+        { label: 'find Psidium cattleianum', ref: find('Psidium cattleianum') },
+        { label: 'find גויאבה תותית', ref: find('גויאבה תותית') }
+      ];
+      var allSame = lookups.every(function (x) { return x.ref && x.ref === sg; });
+      expect('exactly one strawberry-guava catalog row (or find===index object identity)',
+        (sgRows.length === 1 || (lib.length === 0 && allSame)) && allSame && wr === sg,
+        'libRows=' + sgRows.length + ' | ' + lookups.map(function (x) {
+          return x.label + '=' + (!!x.ref) + (x.ref === sg ? ':same' : ':diff');
+        }).join(' | '));
+      expect('surviving scientific is Psidium cattleyanum', !!sg && sg.scientific === 'Psidium cattleyanum');
+      expect('surviving status is Evergreen fruit shrub/tree', !!sg && sg.status === 'Evergreen fruit shrub/tree');
+      expect('surviving he is גויאבה תותית', !!sg && sg.he === 'גויאבה תותית');
+      expect('aliases match approved array exactly',
+        !!sg && JSON.stringify(sg.aliases || []) === JSON.stringify(APPROVED_ALIASES),
+        'aliases=' + JSON.stringify(sg && sg.aliases));
+      expect('tags match approved array exactly',
+        !!sg && JSON.stringify(sg.tags || []) === JSON.stringify(APPROVED_TAGS),
+        'tags=' + JSON.stringify(sg && sg.tags));
+      expect('generic גויאבה is not in strawberry-guava tags or aliases',
+        !!sg && (sg.tags || []).indexOf('גויאבה') < 0 && (sg.aliases || []).indexOf('גויאבה') < 0 &&
+        (sg.aliases || []).indexOf('guava') < 0);
+      expect('warnings match approved five values exactly',
+        !!sg && JSON.stringify(sg.warnings || []) === JSON.stringify(APPROVED_WARNINGS),
+        'warnings=' + JSON.stringify(sg && sg.warnings));
+      expect('products remain exactly Record B list (no Compost)',
+        !!sg && JSON.stringify(sg.products || []) === JSON.stringify(APPROVED_PRODUCTS) &&
+        (sg.products || []).indexOf('Compost') < 0,
+        'products=' + JSON.stringify(sg && sg.products));
+      expect('no plantId/canonicalSlug on strawberry-guava catalog object',
+        !!sg && sg.plantId === undefined && sg.canonicalSlug === undefined);
+      expect('wrapper≡legacy object identity for strawberry-guava', wr === sg && W('strawberry-guava') === L('strawberry-guava'));
+
       var shSlug = shadow('strawberry-guava');
       var shAcc = shadow('Psidium cattleyanum');
       var shSyn = shadow('Psidium cattleianum');
-      var shGuava = shadow('guava');
-      var shGuavaSci = shadow('Psidium guajava');
-
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'shadow "strawberry-guava" → resolved_canonical / plantId null (catalog still duplicated)',
+      expect('shadow strawberry-guava → resolved_canonical plantId null v1.5.0',
         shSlug && shSlug.status === 'resolved_canonical' && shSlug.canonicalSlug === 'strawberry-guava' &&
         shSlug.plantId === null && shSlug.matchedBy === 'canonicalSlug' && shSlug.registryVersion === '1.5.0',
         'status=' + (shSlug && shSlug.status) + ' pid=' + (shSlug && shSlug.plantId));
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'shadow "Psidium cattleyanum" → resolved_canonical matchedBy scientificName',
+      expect('shadow Psidium cattleyanum → scientificName',
         shAcc && shAcc.status === 'resolved_canonical' && shAcc.canonicalSlug === 'strawberry-guava' &&
-        shAcc.plantId === null && shAcc.matchedBy === 'scientificName',
-        'by=' + (shAcc && shAcc.matchedBy) + ' canon=' + (shAcc && shAcc.canonicalSlug));
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'shadow "Psidium cattleianum" → resolved_canonical matchedBy scientificSynonym',
+        shAcc.plantId === null && shAcc.matchedBy === 'scientificName');
+      expect('shadow Psidium cattleianum → scientificSynonym',
         shSyn && shSyn.status === 'resolved_canonical' && shSyn.canonicalSlug === 'strawberry-guava' &&
-        shSyn.plantId === null && shSyn.matchedBy === 'scientificSynonym',
-        'by=' + (shSyn && shSyn.matchedBy) + ' canon=' + (shSyn && shSyn.canonicalSlug));
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'Record B (INDEX/Add/save) scientific is Psidium cattleyanum; Record A (find) is Psidium cattleianum',
-        !!recordB && !!recordA && recordA !== recordB &&
-        recordB.scientific === 'Psidium cattleyanum' && recordA.scientific === 'Psidium cattleianum' &&
-        !!recordBViaSci && recordBViaSci === recordB,
-        'B.sci=' + (recordB && recordB.scientific) + ' A.sci=' + (recordA && recordA.scientific) +
-        ' A!==B=' + (recordA !== recordB));
-      labeled(STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE,
-        'legacy A/B path asymmetry unchanged: INDEX/save→B; find cattleianum→A; wrapper≡legacy; no identity fields persisted',
-        !!recordB && slugOfLegacy(recordB) === 'strawberry-guava' && wrSlug === recordB &&
-        recordB.plantId === undefined && recordB.canonicalSlug === undefined &&
-        recordA.plantId === undefined && recordA.canonicalSlug === undefined &&
-        W('strawberry-guava') === L('strawberry-guava') &&
-        find('Psidium cattleianum') === recordA && find('Psidium cattleianum') !== recordB,
-        'wrapperIdOK=' + (wrSlug === recordB) + ' findA=' + (find('Psidium cattleianum') === recordA));
+        shSyn.plantId === null && shSyn.matchedBy === 'scientificSynonym');
+
+      var shGuava = shadow('guava');
+      var shGuavaSci = shadow('Psidium guajava');
+      var guava = L('guava');
       expect('guava / Psidium guajava stays separate from strawberry-guava',
         shGuava && shGuava.canonicalSlug === 'guava' && shGuavaSci && shGuavaSci.canonicalSlug === 'guava' &&
-        shSlug && shSlug.canonicalSlug === 'strawberry-guava' &&
-        slugOfLegacy(L('guava')) === 'guava',
+        slugOfLegacy(guava) === 'guava' && guava !== sg && find('Psidium guajava') === guava &&
+        find('גויאבה') === guava,
         'guava=' + (shGuava && shGuava.canonicalSlug) + ' sg=' + (shSlug && shSlug.canonicalSlug));
+
+      // Smart Rec / chooser: local matches must not include two distinct SG objects
+      var localMatches = typeof cw.getLocalPlantMatches === 'function'
+        ? cw.getLocalPlantMatches('strawberry guava', 'My Garden')
+        : [];
+      var sgLocal = localMatches.filter(function (p) { return p && p.slug === 'strawberry-guava'; });
+      var sgLocalUnique = [];
+      sgLocal.forEach(function (p) { if (sgLocalUnique.indexOf(p) < 0) sgLocalUnique.push(p); });
+      expect('Smart Rec / chooser local matches have a single strawberry-guava object',
+        sgLocalUnique.length <= 1 && (sgLocalUnique.length === 0 || sgLocalUnique[0] === sg),
+        'sgLocal=' + sgLocal.length + ' unique=' + sgLocalUnique.length);
+
+      // invasive-caution / regional_review remains (via climate meta merge when available)
+      var srMeta = null;
+      try {
+        if (typeof cw.smartRecClimateMetaForPlant === 'function') srMeta = cw.smartRecClimateMetaForPlant(sg);
+        else if (typeof cw.enrichProfileWithQuality === 'function') srMeta = cw.enrichProfileWithQuality(sg, sg.name);
+      } catch (e) { srMeta = null; }
+      var flags = (srMeta && srMeta.warningFlags) || [];
+      expect('invasive-caution / regional_review behavior remains on strawberry-guava',
+        flags.indexOf('regional_review') >= 0 ||
+        (typeof cw.SMART_REC_PLANT_GROUP_ASSIGNMENTS === 'object' &&
+          Array.isArray(cw.SMART_REC_PLANT_GROUP_ASSIGNMENTS['strawberry-guava']) &&
+          cw.SMART_REC_PLANT_GROUP_ASSIGNMENTS['strawberry-guava'].indexOf('invasive-caution') >= 0),
+        'flags=' + JSON.stringify(flags));
+
+      var plantsBefore = (cw.data && cw.data.plants && cw.data.plants.length) || 0;
+      var lsBefore = cw.localStorage.length;
+      var built = typeof cw.buildPlantFromReference === 'function'
+        ? cw.buildPlantFromReference(sg, 'AuditProbe', { autoTasks: false, reminders: false })
+        : null;
+      var expectedKeys = ['addedAt','archived','id','imageUrl','mark','meta','name','prefs','profileSlug','scientific','source','status','updatedAt'];
+      var keysOk = built && expectedKeys.every(function (k) { return Object.prototype.hasOwnProperty.call(built, k); }) &&
+        Object.keys(built).sort().join(',') === expectedKeys.slice().sort().join(',');
+      expect('isolated Add build keeps approved keys / B-compatible shape',
+        !!built && keysOk && built.profileSlug === 'strawberry-guava' &&
+        built.status === 'Evergreen fruit shrub/tree' &&
+        built.scientific === 'Psidium cattleyanum' && built.meta && built.meta.he === 'גויאבה תותית' &&
+        built.plantId === undefined && built.canonicalSlug === undefined &&
+        ((cw.data && cw.data.plants && cw.data.plants.length) || 0) === plantsBefore &&
+        cw.localStorage.length === lsBefore,
+        'keys=' + (built ? Object.keys(built).sort().join(',') : 'null') +
+        ' metaHe=' + (built && built.meta && built.meta.he) +
+        ' plantsDelta=' + ((((cw.data && cw.data.plants && cw.data.plants.length) || 0) - plantsBefore)) +
+        ' lsDelta=' + (cw.localStorage.length - lsBefore));
+      expect('{profileSlug:"strawberry-guava"} still resolves to strawberry-guava',
+        slugOfLegacy(L({ profileSlug: 'strawberry-guava' })) === 'strawberry-guava' &&
+        shadow({ profileSlug: 'strawberry-guava' }) &&
+        shadow({ profileSlug: 'strawberry-guava' }).canonicalSlug === 'strawberry-guava');
     })();
 
     // ============================================================
@@ -909,8 +988,8 @@
     expect('{meta:{slug:"avocado"}} → category A (identity resolved; single catalog row)', cAvo.cat === 'A' && cAvo.canon === 'avocado', 'cat=' + cAvo.cat + ' canon=' + cAvo.canon);
     expect('string avocado → category A resolved_canonical agreement', catOf('avocado').cat === 'A' && catOf('avocado').canon === 'avocado',
       'cat=' + catOf('avocado').cat + ' canon=' + catOf('avocado').canon);
-    expect('EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE covers temporary strawberry-guava catalog duplication',
-      (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length) === 5,
+    expect('EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE count is 0 after strawberry-guava dedupe',
+      (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length) === 0,
       'count=' + (results.filter(function (r) { return r.status === STATUS.EXPECTED_RESOLVED_IDENTITY_CATALOG_DUPLICATE; }).length));
     expect('EXPECTED_QUARANTINED_CONFLICT covers mulberry only',
       (results.filter(function (r) { return r.status === STATUS.EXPECTED_QUARANTINED_CONFLICT; }).length) === 2 &&
