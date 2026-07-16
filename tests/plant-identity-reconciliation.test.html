@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Plant Identity Reconciliation Tests (standalone, read-only)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 14px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 20px; max-width: 1100px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 20px 0 6px; }
+  p.sub { margin: 0 0 14px; opacity: .7; }
+  #summary { font-weight: 600; padding: 10px 14px; border-radius: 8px; margin: 12px 0; }
+  #summary.ok { background: #e7f6ec; color: #1c6b39; }
+  #summary.fail { background: #fdecec; color: #a01818; }
+  #summary.run { background: #eef2f7; color: #33475b; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 8px; }
+  th, td { text-align: left; padding: 5px 9px; border-bottom: 1px solid rgba(128,128,128,.25); vertical-align: top; }
+  td.status { font-weight: 600; white-space: nowrap; }
+  .s-PASS { color: #1c6b39; }
+  .s-KNOWN_LEGACY_BUG { color: #9a6b00; }
+  .s-KNOWN_RESOLVER_GAP { color: #7a5cc0; }
+  .s-EXPECTED_QUARANTINED_CONFLICT { color: #1f6f8b; }
+  .s-UNEXPECTED_FAILURE { color: #a01818; }
+  code { background: rgba(128,128,128,.15); padding: 1px 4px; border-radius: 4px; }
+  small { opacity: .7; }
+  #frameWrap { position: absolute; left: -9999px; top: 0; width: 1200px; height: 900px; }
+  .counts span { display: inline-block; margin-right: 14px; }
+  .scope { border-left: 3px solid rgba(128,128,128,.35); padding-left: 10px; margin: 8px 0; }
+</style>
+</head>
+<body>
+  <h1>Plant Identity Reconciliation — standalone test harness</h1>
+  <p class="sub">Read-only. Loads the real <code>/index.html</code> runtime in a hidden iframe and drives the
+  real <code>resolvePlantProfileRaw</code>, <code>resolvePlantProfileRawLegacy</code>,
+  <code>CruvitIdentityShadow</code> and <code>CruvitIdentityShadowDebug</code>. It never reimplements legacy
+  logic, never writes localStorage, never mutates the DOM/UI, and never sends anything externally (a headless
+  reporting hook exists only under an explicit <code>?report</code> opt-in and targets a same-origin local endpoint).</p>
+  <div id="summary" class="run">Running…</div>
+  <div id="report"></div>
+  <div id="frameWrap"><iframe id="app" src="/index.html"></iframe></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---- test recorder ---------------------------------------------------------
+  var STATUS = {
+    PASS: 'PASS',
+    KNOWN_LEGACY_BUG: 'KNOWN_LEGACY_BUG',
+    KNOWN_RESOLVER_GAP: 'KNOWN_RESOLVER_GAP',
+    EXPECTED_QUARANTINED_CONFLICT: 'EXPECTED_QUARANTINED_CONFLICT',
+    UNEXPECTED_FAILURE: 'UNEXPECTED_FAILURE'
+  };
+  var results = [];          // { section, name, status, detail }
+  var section = 'general';
+  function sec(s) { section = s; }
+  function push(name, status, detail) { results.push({ section: section, name: name, status: status, detail: detail || '' }); }
+  function expect(name, cond, detail) { push(name, cond ? STATUS.PASS : STATUS.UNEXPECTED_FAILURE, detail); return !!cond; }
+  function labeled(label, name, matchesBaseline, detail) {
+    push(name, matchesBaseline ? label : STATUS.UNEXPECTED_FAILURE, detail); return !!matchesBaseline;
+  }
+  function isStr(v) { return typeof v === 'string' && v.trim().length > 0; }
+
+  // Stable, namespace-independent input identity (used for scope unions/diffs).
+  function inputSig(v) {
+    if (typeof v === 'string') return 's:' + v;
+    if (v && typeof v === 'object') {
+      var m = (v.meta && typeof v.meta === 'object') ? v.meta : {};
+      return 'o:' + JSON.stringify({
+        profileSlug: v.profileSlug || null, slug: v.slug || null, metaSlug: m.slug || null,
+        name: v.name || null, scientific: v.scientific || v.scientificName || null,
+        plantId: v.plantId || null, canonicalSlug: v.canonicalSlug || null
+      });
+    }
+    return 'x:' + String(v);
+  }
+
+  function finish(cw, extra) {
+    var counts = {};
+    Object.keys(STATUS).forEach(function (k) { counts[STATUS[k]] = 0; });
+    results.forEach(function (r) { counts[r.status] = (counts[r.status] || 0) + 1; });
+    var unexpected = counts[STATUS.UNEXPECTED_FAILURE] || 0;
+    render(counts, extra || {});
+    var summary = {
+      total: results.length, counts: counts, unexpected: unexpected,
+      reconciliation: extra && extra.reconciliation, scopes: extra && extra.scopes,
+      baseCategories: extra && extra.baseCategories, regressionCategories: extra && extra.regressionCategories,
+      combinedCategories: extra && extra.combinedCategories, needsReview: extra && extra.needsReview,
+      namespaces: extra && extra.namespaces, meta: extra && extra.meta
+    };
+    try { window.__RECON_DONE = true; window.__RECON_SUMMARY = summary; } catch (e) {}
+    try { document.title = (unexpected === 0 ? 'RECON PASS' : 'RECON FAIL(' + unexpected + ')') + ' — ' + results.length + ' tests'; } catch (e) {}
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.has('report')) {
+        var payload = JSON.stringify({ summary: summary, results: results });
+        if (navigator.sendBeacon) navigator.sendBeacon('/__result', payload);
+        else fetch('/__result', { method: 'POST', body: payload });
+      }
+      if (params.has('autoclose')) setTimeout(function () { try { window.close(); } catch (e) {} }, 200);
+    } catch (e) { /* reporting is best-effort and never affects tests */ }
+  }
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]; }); }
+  function span(label, val) { return '<span>' + label + ': <b>' + val + '</b></span>'; }
+
+  function render(counts, extra) {
+    var sumEl = document.getElementById('summary');
+    var unexpected = counts[STATUS.UNEXPECTED_FAILURE] || 0;
+    sumEl.className = unexpected === 0 ? 'ok' : 'fail';
+    sumEl.innerHTML = (unexpected === 0 ? 'ALL EXPECTED — 0 unexpected failures' : unexpected + ' UNEXPECTED FAILURE(S)') +
+      ' &nbsp;|&nbsp; total ' + results.length +
+      ' &nbsp;|&nbsp; PASS ' + (counts.PASS || 0) +
+      ', KNOWN_LEGACY_BUG ' + (counts.KNOWN_LEGACY_BUG || 0) +
+      ', KNOWN_RESOLVER_GAP ' + (counts.KNOWN_RESOLVER_GAP || 0) +
+      ', EXPECTED_QUARANTINED_CONFLICT ' + (counts.EXPECTED_QUARANTINED_CONFLICT || 0);
+
+    var host = document.getElementById('report');
+    host.innerHTML = '';
+    var h;
+
+    if (extra.reconciliation) {
+      var rc = extra.reconciliation, d = document.createElement('div'); d.className = 'scope';
+      var rows = rc.diff.map(function (x) {
+        return '<tr><td><code>' + esc(x.compositeKey) + '</code></td><td>' + esc(x.disposition) +
+          '</td><td>' + esc(x.representedBy || '') + '</td></tr>';
+      }).join('');
+      d.innerHTML = '<h2>1. Reconciliation — prior audit (173) vs permanent inventory (' + rc.currentCount + ')</h2>' +
+        '<div class="counts">' + span('prior-audit-style inventory', rc.priorCount) +
+        span('permanent inventory', rc.currentCount) + span('set difference (rows only in prior)', rc.diff.length) + '</div>' +
+        '<table><thead><tr><th>Composite row (prior only)</th><th>Disposition</th><th>Represented by</th></tr></thead><tbody>' +
+        rows + '</tbody></table>';
+      host.appendChild(d);
+    }
+
+    if (extra.scopes) {
+      var sc = extra.scopes, sd = document.createElement('div'); sd.className = 'counts';
+      sd.innerHTML = '<h2>2. Result scopes (labeled — never mixed)</h2>' +
+        span('A · repository-derived inventory rows', sc.baseRows) +
+        span('A · distinct inputs', sc.baseDistinct) +
+        span('B · targeted regression rows', sc.regressionRows) +
+        span('B · distinct inputs', sc.regressionDistinct) +
+        span('B · unique to regression (not in A)', sc.regressionOnly) +
+        span('C · combined UNIQUE inputs (A ∪ B)', sc.combinedDistinct);
+      host.appendChild(sd);
+    }
+
+    function catBlock(title, c, note) {
+      var el = document.createElement('div'); el.className = 'counts';
+      el.innerHTML = '<h2>' + title + '</h2>' + (note ? '<p class="sub">' + note + '</p>' : '') +
+        span('A exact canonical', c.A || 0) + span('B alias norm', c.B || 0) + span('C module-key norm', c.C || 0) +
+        span('D shadow-only', c.D || 0) + span('E legacy-only', c.E || 0) + span('F differing identity', c.F || 0) +
+        span('G pending conflict', c.G || 0) + span('I provisional/unresolved', c.I || 0) +
+        (c.knownLegacyBug != null ? span('known-legacy-bug (annotation)', c.knownLegacyBug) : '') +
+        (c.resolverGap != null ? span('resolver-gap (annotation)', c.resolverGap) : '');
+      host.appendChild(el);
+    }
+    if (extra.baseCategories) catBlock('3a. Base repository inventory categories (A–I)', extra.baseCategories,
+      'These A–I values describe ONLY the ' + (extra.scopes ? extra.scopes.baseRows : '') + '-row repository inventory. In particular E/F/G here exclude object-form regression cases, which live in scope B.');
+    if (extra.regressionCategories) catBlock('3b. Targeted regression categories (scope B)', extra.regressionCategories,
+      'Object-form / localized / conflict / scan regression inputs. {profileSlug:"olive-tree"}=F+known-legacy-bug, {meta:{slug:"avocado"}}=G, {name:"לבנדר"} & {name:"זית"}=E+resolver-gap.');
+    if (extra.combinedCategories) catBlock('3c. Combined categories (A ∪ B, each input classified exactly once)', extra.combinedCategories, null);
+
+    if (extra.needsReview) {
+      var nr = extra.needsReview, nd = document.createElement('div'); nd.className = 'scope';
+      var bd = Object.keys(nr.rowBreakdownByNs).map(function (k) { return '<tr><td>' + esc(k) + '</td><td>' + nr.rowBreakdownByNs[k] + '</td></tr>'; }).join('');
+      nd.innerHTML = '<h2>4. needsReview clarification</h2>' +
+        '<div class="counts">' + span('distinct canonical identities with needsReview:true', nr.distinctCount) +
+        span('tested inventory rows resolving to a needsReview identity', nr.testedRows) +
+        span('distinct needsReview identities reached by tested rows', nr.distinctReachedCount) + '</div>' +
+        '<p class="sub">The 16 is the number of distinct identities; the tested-row figure is larger only because one identity is reached through several namespaces (canonical slug, alias, module key, manifest key, object form).</p>' +
+        '<p><b>16 distinct needsReview identities:</b> <code>' + esc(nr.distinctList.join(', ')) + '</code></p>' +
+        '<table><thead><tr><th>Namespace</th><th>needsReview rows</th></tr></thead><tbody>' + bd + '</tbody></table>';
+      host.appendChild(nd);
+    }
+
+    if (extra.namespaces) {
+      var nsd = document.createElement('div'); nsd.className = 'counts';
+      var html = '<h2>5. Namespace coverage</h2>';
+      Object.keys(extra.namespaces).forEach(function (k) { html += span(k, extra.namespaces[k]); });
+      nsd.innerHTML = html; host.appendChild(nsd);
+    }
+
+    var bySec = {};
+    results.forEach(function (r) { (bySec[r.section] = bySec[r.section] || []).push(r); });
+    Object.keys(bySec).forEach(function (s) {
+      h = document.createElement('h2'); h.textContent = s; host.appendChild(h);
+      var t = document.createElement('table');
+      t.innerHTML = '<thead><tr><th>#</th><th>Test</th><th>Result</th><th>Detail</th></tr></thead>';
+      var tb = document.createElement('tbody');
+      bySec[s].forEach(function (r, i) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + (i + 1) + '</td><td>' + esc(r.name) + '</td>' +
+          '<td class="status s-' + r.status + '">' + r.status + '</td><td><small>' + esc(r.detail) + '</small></td>';
+        tb.appendChild(tr);
+      });
+      t.appendChild(tb); host.appendChild(t);
+    });
+  }
+
+  async function fetchJson(u) { var r = await fetch(u); return r.json(); }
+
+  // ---- boot ------------------------------------------------------------------
+  var frame = document.getElementById('app');
+  var start = Date.now();
+  frame.addEventListener('load', function () {
+    var cw = frame.contentWindow;
+    var poll = setInterval(function () {
+      var shadowReady = false, seedReady = false, debugPresent = false;
+      try { shadowReady = cw.CruvitIdentityShadow && cw.CruvitIdentityShadow.status().status === 'ready'; } catch (e) {}
+      try { seedReady = cw.getPlantCatalogSeedStatus && ['ready', 'error'].indexOf(cw.getPlantCatalogSeedStatus().status) >= 0; } catch (e) {}
+      try { debugPresent = !!cw.CruvitIdentityShadowDebug; } catch (e) {}
+      if ((!shadowReady || !seedReady || !debugPresent) && Date.now() - start < 25000) return;
+      clearInterval(poll);
+      run(cw, shadowReady, seedReady, debugPresent).then(function (extra) { finish(cw, extra); },
+        function (e) { push('harness execution', STATUS.UNEXPECTED_FAILURE, 'threw: ' + (e && e.message || e)); finish(cw, {}); });
+    }, 200);
+  });
+
+  // ---- the suite -------------------------------------------------------------
+  async function run(cw, shadowReady, seedReady, debugPresent) {
+    var meta = {};
+    var L = cw.resolvePlantProfileRawLegacy;
+    var W = cw.resolvePlantProfileRaw;
+    var A = cw.CruvitIdentityShadow;
+    var D = cw.CruvitIdentityShadowDebug;
+    function shadow(x) { try { return A.get(x); } catch (e) { return { status: 'THREW', error: String(e) }; } }
+    function slugOfLegacy(r) { return r && (r.slug || (r.meta && r.meta.slug)) || null; }
+    function jsonOf(v) { try { return JSON.stringify(v); } catch (e) { return '[unstringifiable]'; } }
+
+    sec('0. environment');
+    expect('real legacy resolver present', typeof L === 'function');
+    expect('real wrapper resolvePlantProfileRaw present', typeof W === 'function');
+    expect('CruvitIdentityShadow present + ready', shadowReady && A && typeof A.get === 'function', 'status=' + (A && A.status && A.status().status));
+    expect('plant catalog seed ready', seedReady, 'seedStatus=' + (cw.getPlantCatalogSeedStatus && cw.getPlantCatalogSeedStatus().status));
+    expect('CruvitIdentityShadowDebug present', debugPresent);
+    expect('debug disabled by default on fresh load', D && D.isEnabled() === false);
+
+    var reg = await fetchJson('/data/plant-identity.registry.json');
+    var manifest = await fetchJson('/modules/garden-design/assets/plants/manifest.json');
+    meta.registryVersion = A.version();
+
+    // ============================================================
+    // Deterministic classifier — one category per input value.
+    // ============================================================
+    function classifyInput(v, keyHint) {
+      var lr = L(v); var sh = shadow(v);
+      var lFound = !!lr; var lslug = slugOfLegacy(lr);
+      var st = sh && isStr(sh.status) ? sh.status : 'unavailable';
+      var canon = sh && sh.canonicalSlug; var mBy = sh && sh.matchedBy;
+      var resolved = (st === 'resolved_id' || st === 'resolved_canonical');
+      var provisional = (st === 'provisional' || st === 'unresolved' || st === 'ambiguous');
+      var agrees = null;
+      if (st === 'pending_conflict') agrees = false;
+      else if (resolved && isStr(canon) && isStr(lslug)) {
+        if (canon === lslug) agrees = true;
+        else if ((mBy === 'aliasSlug' || mBy === 'moduleKey') && keyHint === lslug) agrees = true;
+        else agrees = false;
+      }
+      var c;
+      if (st === 'pending_conflict') c = 'G';
+      else if (resolved && lFound && agrees === false) c = 'F';
+      else if (lFound && provisional) c = 'E';
+      else if (resolved && !lFound) c = 'D';
+      else if (resolved && mBy === 'aliasSlug') c = 'B';
+      else if (resolved && mBy === 'moduleKey') c = 'C';
+      else if (resolved) c = 'A';
+      else c = 'I';
+      // legacy empty-query bug: legacy returns lavender though the input is not lavender
+      var knownLegacyBug = (lslug === 'lavender') && (canon !== 'lavender') &&
+        !(typeof v === 'string' && v === 'lavender');
+      // resolver gap: legacy resolves a real plant but shadow stays provisional (e.g. localized name)
+      var resolverGap = lFound && provisional && isStr(lslug);
+      return { cat: c, knownLegacyBug: knownLegacyBug, resolverGap: resolverGap, st: st, canon: canon, lslug: lslug, needsReview: sh && sh.needsReview === true };
+    }
+    function tally(cats) {
+      var t = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, I: 0, knownLegacyBug: 0, resolverGap: 0 };
+      cats.forEach(function (r) { t[r.cat] = (t[r.cat] || 0) + 1; if (r.knownLegacyBug) t.knownLegacyBug++; if (r.resolverGap) t.resolverGap++; });
+      return t;
+    }
+
+    // ============================================================
+    // Inventory builders (machine-derived; faithful to prior audit)
+    // ============================================================
+    function makeInv() {
+      var inv = [], seen = new Set(), nsCount = {};
+      function add(value, ns, key) {
+        var k = ns + '::' + (key != null ? key : (typeof value === 'string' ? value : JSON.stringify(value)));
+        if (seen.has(k)) return; seen.add(k);
+        nsCount[ns] = (nsCount[ns] || 0) + 1;
+        inv.push({ value: value, ns: ns, key: key != null ? key : (typeof value === 'string' ? value : '[obj]'), compositeKey: k });
+      }
+      return { inv: inv, add: add, nsCount: nsCount, keys: seen };
+    }
+    function addRegistryDerived(b) {
+      reg.canonicalIdentities.forEach(function (e) {
+        b.add(e.canonicalSlug, 'canonicalSlug');
+        (e.aliasSlugs || []).forEach(function (a) { b.add(a, 'aliasSlug'); });
+        if (e.moduleKeys) Object.keys(e.moduleKeys).forEach(function (nsk) { (e.moduleKeys[nsk] || []).forEach(function (mk) { b.add(mk, 'moduleKey:' + nsk); }); });
+        if (isStr(e.plantId)) b.add(e.plantId, 'plantId');
+        if (isStr(e.acceptedScientificName)) b.add(e.acceptedScientificName, 'scientificName');
+      });
+      reg.duplicateConflicts.forEach(function (c) {
+        b.add(c.slug, 'conflictSlug');
+        if (isStr(c.recommendedCanonicalScientificName)) b.add(c.recommendedCanonicalScientificName, 'conflictScientific');
+        if (isStr(c.conflictingScientificNamePresent)) b.add(c.conflictingScientificNamePresent, 'conflictScientific');
+        (c.observedRecords || []).forEach(function (r) { if (isStr(r.scientificName)) b.add(r.scientificName, 'conflictScientific'); });
+      });
+    }
+
+    // PRIOR audit inventory — replicates the (now-deleted) audit probe exactly,
+    // including const-scoped globals that are undefined on window (→ 0 rows).
+    function buildPriorInv() {
+      var b = makeInv();
+      addRegistryDerived(b);
+      (cw.PLANT_LIBRARY || []).forEach(function (p) { b.add(p.slug, 'legacySlug'); });
+      if (cw.CARE_QUALITY_PROFILES) Object.keys(cw.CARE_QUALITY_PROFILES).forEach(function (k) { b.add(k, 'careKey'); });
+      if (manifest && manifest.plants) Object.keys(manifest.plants).forEach(function (k) { b.add(k, 'gardenManifestKey'); });
+      b.add({ profileSlug: 'apple' }, 'obj-profileSlug', 'profileSlug:apple');
+      b.add({ profileSlug: 'olive-tree' }, 'obj-profileSlug', 'profileSlug:olive-tree');
+      b.add({ meta: { slug: 'olive' } }, 'obj-meta.slug', 'meta.slug:olive');
+      b.add({ meta: { slug: 'avocado' } }, 'obj-meta.slug', 'meta.slug:avocado');
+      b.add({ slug: 'coconut' }, 'obj-slug', 'slug:coconut');
+      b.add({ name: 'Mystery Plant', slug: 'scan-xyz-123', scientific: 'Unknownus plantus' }, 'scan-unknown', 'scan:unknown-xyz');
+      b.add({ meta: { slug: 'scan-abc-999', name: 'Scanned Thing' } }, 'scan-meta', 'scan:meta-abc');
+      b.add({ name: 'לבנדר' }, 'localized-name', 'he:lavender');
+      b.add({ name: 'צמח לא ידוע' }, 'localized-name', 'he:unknown');
+      return b;
+    }
+    // CURRENT permanent base inventory — registry-derived + manifest + 3 representative objects.
+    function buildBaseInv() {
+      var b = makeInv();
+      addRegistryDerived(b);
+      if (cw.CARE_QUALITY_PROFILES) Object.keys(cw.CARE_QUALITY_PROFILES).forEach(function (k) { b.add(k, 'careKey'); });
+      if (manifest && manifest.plants) Object.keys(manifest.plants).forEach(function (k) { b.add(k, 'gardenManifestKey'); });
+      b.add({ profileSlug: 'apple' }, 'obj-profileSlug', 'profileSlug:apple');
+      b.add({ meta: { slug: 'olive' } }, 'obj-meta.slug', 'meta.slug:olive');
+      b.add({ slug: 'coconut' }, 'obj-slug', 'slug:coconut');
+      return b;
+    }
+
+    var prior = buildPriorInv();
+    var base = buildBaseInv();
+    var inv = base.inv;              // scope A rows
+    var nsCount = base.nsCount;
+    meta.inventoryCount = inv.length;
+
+    // ============================================================
+    // Scope B — targeted regression inputs (sections 4-8)
+    // ============================================================
+    var plantIdEntries = reg.canonicalIdentities.filter(function (e) { return isStr(e.plantId); });
+    var regressionInputs = [
+      // section 4 — empty-query legacy bug
+      { v: { profileSlug: 'olive-tree' }, tag: 's4' },
+      { v: { profileSlug: 'unknown-profile-slug' }, tag: 's4' },
+      { v: { slug: 'unknown-direct-slug' }, tag: 's4' },
+      { v: { meta: { slug: 'unknown-meta-slug' } }, tag: 's4' },
+      // section 5 — localized names
+      { v: { name: 'לבנדר' }, tag: 's5' }, { v: { name: 'זית' }, tag: 's5' }, { v: { name: 'צמח לא ידוע' }, tag: 's5' },
+      // section 6 — conflict quarantine
+      { v: 'avocado', tag: 's6' }, { v: 'strawberry-guava', tag: 's6' }, { v: 'mulberry', tag: 's6' },
+      { v: { meta: { slug: 'avocado' } }, tag: 's6' }, { v: 'Persea americana', tag: 's6' },
+      { v: 'Psidium cattleianum', tag: 's6' }, { v: 'Psidium cattleyanum', tag: 's6' }, { v: 'Morus spp.', tag: 's6' },
+      // section 7 — safe normalization
+      { v: 'apple-tree', tag: 's7' }, { v: 'fig-tree', tag: 's7' }, { v: 'grape-vine', tag: 's7' },
+      { v: 'passion-fruit', tag: 's7' }, { v: 'peach-tree', tag: 's7' }, { v: 'pear-tree', tag: 's7' }, { v: 'plum-tree', tag: 's7' },
+      { v: 'lychee-tree', tag: 's7' }, { v: 'mango-tree', tag: 's7' }, { v: 'olive-tree', tag: 's7' }, { v: 'italian-cypress', tag: 's7' },
+      // section 8 — shadow-only / legacy-only / scan
+      { v: 'olive-tree', tag: 's8', dupOk: true },
+      { v: { meta: { slug: 'scan-abc-999', name: 'Scanned Thing' } }, tag: 's8' },
+      { v: { name: 'Mystery Plant', slug: 'scan-xyz-123', scientific: 'Unknownus plantus' }, tag: 's8' }
+    ];
+    plantIdEntries.forEach(function (e) { regressionInputs.push({ v: e.plantId, tag: 's8' }); });
+
+    // ============================================================
+    // 1. RECONCILIATION — machine-derived 173 vs current
+    // ============================================================
+    sec('1. reconciliation (173 vs permanent inventory)');
+    expect('prior-audit-style inventory rebuilds to exactly 173 rows', prior.inv.length === 173, 'got ' + prior.inv.length);
+    expect('permanent base inventory is 167 rows', base.inv.length === 167, 'got ' + base.inv.length);
+    // set difference by composite key (rows present in prior, absent in current)
+    var baseKeySet = base.keys;
+    var diffRows = prior.inv.filter(function (r) { return !baseKeySet.has(r.compositeKey); });
+    expect('set difference is exactly 6 rows', diffRows.length === 6, 'got ' + diffRows.length + ': ' + diffRows.map(function (r) { return r.compositeKey; }).join(' | '));
+    // also confirm current has no rows absent from prior (current ⊆ prior semantically)
+    var priorKeySet = prior.keys;
+    var currentExtra = base.inv.filter(function (r) { return !priorKeySet.has(r.compositeKey); });
+    expect('permanent inventory introduces no rows absent from prior audit', currentExtra.length === 0,
+      currentExtra.map(function (r) { return r.compositeKey; }).join(' | '));
+    // classify disposition of each diff row: represented by a targeted regression test?
+    var regSigSet = new Set(regressionInputs.map(function (x) { return inputSig(x.v); }));
+    var diffReport = diffRows.map(function (r) {
+      var represented = regSigSet.has(inputSig(r.value));
+      return { compositeKey: r.compositeKey, sig: inputSig(r.value),
+        disposition: represented ? 'deduplicated → moved to targeted regression' : 'MISSING (accidentally omitted)',
+        representedBy: represented ? 'scope B' : '' };
+    });
+    expect('all 6 differing rows are represented by targeted regression (none accidentally omitted)',
+      diffReport.every(function (x) { return x.representedBy === 'scope B'; }),
+      diffReport.map(function (x) { return x.compositeKey + '=' + x.disposition; }).join(' | '));
+
+    // ============================================================
+    // 2. SCOPES — A / B / C
+    // ============================================================
+    sec('2. result scopes');
+    var baseSigs = new Set(inv.map(function (it) { return inputSig(it.value); }));
+    var regSigs = new Set(regressionInputs.map(function (x) { return inputSig(x.v); }));
+    var regOnly = 0; regSigs.forEach(function (s) { if (!baseSigs.has(s)) regOnly++; });
+    var unionSigs = new Set(); baseSigs.forEach(function (s) { unionSigs.add(s); }); regSigs.forEach(function (s) { unionSigs.add(s); });
+    var scopes = {
+      baseRows: inv.length, baseDistinct: baseSigs.size,
+      regressionRows: regressionInputs.length, regressionDistinct: regSigs.size, regressionOnly: regOnly,
+      combinedDistinct: unionSigs.size
+    };
+    expect('scope A rows = 167', scopes.baseRows === 167, '' + scopes.baseRows);
+    expect('scope B distinct inputs reported', scopes.regressionDistinct > 0, '' + scopes.regressionDistinct);
+    expect('scope C combined-unique = |A distinct ∪ B distinct|', scopes.combinedDistinct === unionSigs.size &&
+      scopes.combinedDistinct >= scopes.baseDistinct && scopes.combinedDistinct >= scopes.regressionDistinct,
+      'A=' + scopes.baseDistinct + ' B=' + scopes.regressionDistinct + ' Bonly=' + regOnly + ' C=' + scopes.combinedDistinct);
+
+    // ============================================================
+    // 3. namespace coverage (kept)
+    // ============================================================
+    sec('3. namespace coverage');
+    var throwers = [];
+    inv.forEach(function (it) { try { shadow(it.value); W(it.value); L(it.value); } catch (e) { throwers.push(it.ns + '/' + it.key + ':' + e); } });
+    expect('no input throws through shadow/wrapper/legacy', throwers.length === 0, throwers.slice(0, 5).join(' | '));
+    function nsAtLeast(ns, n) { expect('namespace ' + ns + ' tested (>=' + n + ')', (nsCount[ns] || 0) >= n, 'count=' + (nsCount[ns] || 0)); }
+    nsAtLeast('canonicalSlug', 74); nsAtLeast('aliasSlug', 7);
+    nsAtLeast('moduleKey:careQualityProfiles', 2); nsAtLeast('moduleKey:gardenDesignManifest', 2);
+    nsAtLeast('plantId', 9); nsAtLeast('conflictSlug', 3); nsAtLeast('conflictScientific', 3); nsAtLeast('gardenManifestKey', 5);
+    expect('every canonicalSlug resolvable via shadow without throw',
+      reg.canonicalIdentities.every(function (e) { try { shadow(e.canonicalSlug); return true; } catch (x) { return false; } }));
+    expect('registryVersion === 1.2.0', reg.registryVersion === '1.2.0', 'got ' + reg.registryVersion);
+    expect('canonical identities === 74', reg.canonicalIdentities.length === 74, 'got ' + reg.canonicalIdentities.length);
+    expect('duplicate conflicts === 3', reg.duplicateConflicts.length === 3, 'got ' + reg.duplicateConflicts.length);
+    expect('allocated plantId entries === 9', plantIdEntries.length === 9, 'got ' + plantIdEntries.length);
+
+    // ============================================================
+    // 4. KNOWN LEGACY BUG pins (kept)
+    // ============================================================
+    sec('4. KNOWN LEGACY BUG — empty-query / unknown-slug objects');
+    (function () {
+      var input = { profileSlug: 'olive-tree' }; var inputBefore = jsonOf(input);
+      var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
+      var legacyIsLavender = !!lr && slugOfLegacy(lr) === 'lavender';
+      var shadowOlive = sh && sh.status === 'resolved_id' && sh.canonicalSlug === 'olive' && sh.plantId === 'plt_e1teyafat3k5i3ke';
+      var noMutation = jsonOf(input) === inputBefore && jsonOf(lr) === lrBefore; var identity = wr === lr;
+      labeled(STATUS.KNOWN_LEGACY_BUG, '{profileSlug:"olive-tree"} legacy=lavender, shadow=olive (category F + known bug)',
+        legacyIsLavender && shadowOlive && noMutation && identity,
+        'legacySlug=' + slugOfLegacy(lr) + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug) + '/' + (sh && sh.plantId) + ' noMutation=' + noMutation + ' idOK=' + identity);
+    })();
+    function pinUnknownObject(label, input, expectLavender) {
+      var inputBefore = jsonOf(input); var lr = L(input); var wr = W(input); var sh = shadow(input);
+      var lslug = slugOfLegacy(lr); var isLavender = lslug === 'lavender'; var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      var baselineOk = (expectLavender ? isLavender : !isLavender) && noMutation && identity;
+      labeled(STATUS.KNOWN_LEGACY_BUG, label, baselineOk,
+        'legacyReturns=' + (lr ? lslug || '[meta-snapshot]' : 'null') + ' expectLavender=' + expectLavender + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
+    }
+    pinUnknownObject('{profileSlug:"unknown-profile-slug"} → first record (lavender)', { profileSlug: 'unknown-profile-slug' }, true);
+    pinUnknownObject('{slug:"unknown-direct-slug"} → first record (lavender)', { slug: 'unknown-direct-slug' }, true);
+    pinUnknownObject('{meta:{slug:"unknown-meta-slug"}} → meta snapshot (NOT lavender)', { meta: { slug: 'unknown-meta-slug' } }, false);
+
+    // ============================================================
+    // 5. KNOWN RESOLVER GAP (kept)
+    // ============================================================
+    sec('5. KNOWN RESOLVER GAP — localized (Hebrew) names');
+    function pinLocalized(label, input, expectLegacySlug) {
+      var inputBefore = jsonOf(input); var lr = L(input); var sh = shadow(input); var wr = W(input);
+      var lslug = slugOfLegacy(lr); var shadowProvisional = sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      var legacyOk = expectLegacySlug ? (lslug === expectLegacySlug) : true; var noMutation = jsonOf(input) === inputBefore; var identity = wr === lr;
+      labeled(STATUS.KNOWN_RESOLVER_GAP, label, shadowProvisional && legacyOk && noMutation && identity,
+        'legacy=' + (lslug || 'null') + ' shadow=' + (sh && sh.status) + ' noMutation=' + noMutation + ' idOK=' + identity);
+    }
+    pinLocalized('{name:"לבנדר"} legacy=lavender, shadow=provisional (category E + gap)', { name: 'לבנדר' }, 'lavender');
+    pinLocalized('{name:"זית"} legacy=olive, shadow=provisional (category E + gap)', { name: 'זית' }, 'olive');
+    (function () {
+      var input = { name: 'צמח לא ידוע' }; var lr = L(input); var sh = shadow(input);
+      var safe = (lr === null) && sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      labeled(STATUS.PASS, '{name:"צמח לא ידוע"} unknown → legacy null, shadow provisional/unresolved', safe,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status));
+    })();
+
+    // ============================================================
+    // 6. EXPECTED QUARANTINED CONFLICT (kept)
+    // ============================================================
+    sec('6. EXPECTED QUARANTINED CONFLICT');
+    function pinConflict(label, input, expectConflictSlug) {
+      var inputBefore = jsonOf(input); var lr = L(input); var lrBefore = jsonOf(lr); var sh = shadow(input); var wr = W(input);
+      var quarantined = sh && sh.status === 'pending_conflict' && sh.plantId === null && sh.canonicalSlug === null;
+      var conflictOk = !expectConflictSlug || (sh && sh.conflict && sh.conflict.slug === expectConflictSlug);
+      var noIdCopied = !lr || (lr.plantId === undefined && lr.canonicalSlug === undefined);
+      var noMutation = jsonOf(input) === inputBefore && jsonOf(lr) === lrBefore; var identity = wr === lr;
+      labeled(STATUS.EXPECTED_QUARANTINED_CONFLICT, label, quarantined && conflictOk && noIdCopied && noMutation && identity,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + ' conflict=' + (sh && sh.conflict && sh.conflict.slug) + ' noIdCopied=' + noIdCopied + ' noMutation=' + noMutation + ' idOK=' + identity);
+    }
+    pinConflict('avocado → pending_conflict', 'avocado', 'avocado');
+    pinConflict('strawberry-guava → pending_conflict', 'strawberry-guava', 'strawberry-guava');
+    pinConflict('mulberry → pending_conflict', 'mulberry', 'mulberry');
+    pinConflict('{meta:{slug:"avocado"}} → pending_conflict (category G)', { meta: { slug: 'avocado' } }, 'avocado');
+    pinConflict('scientific "Persea americana" → pending_conflict', 'Persea americana', 'avocado');
+    pinConflict('scientific "Psidium cattleianum" (accepted) → pending_conflict', 'Psidium cattleianum', 'strawberry-guava');
+    pinConflict('scientific "Psidium cattleyanum" (conflicting) → pending_conflict', 'Psidium cattleyanum', 'strawberry-guava');
+    pinConflict('scientific "Morus spp." → pending_conflict', 'Morus spp.', 'mulberry');
+
+    // ============================================================
+    // 7. safe normalization (kept)
+    // ============================================================
+    sec('7. safe alias + module-key normalization');
+    function pinNorm(label, input, expCanon, expBy, expPid) {
+      var sh = shadow(input);
+      var ok = sh && (sh.status === 'resolved_id' || sh.status === 'resolved_canonical') && sh.canonicalSlug === expCanon && sh.matchedBy === expBy && ((expPid === undefined) ? true : (sh.plantId === expPid));
+      expect(label, ok, 'canon=' + (sh && sh.canonicalSlug) + ' by=' + (sh && sh.matchedBy) + ' pid=' + (sh && sh.plantId) + ' status=' + (sh && sh.status));
+    }
+    pinNorm('alias apple-tree → apple (id)', 'apple-tree', 'apple', 'aliasSlug', 'plt_465b6lc4cnrarxaa');
+    pinNorm('alias fig-tree → fig (id)', 'fig-tree', 'fig', 'aliasSlug', 'plt_5ixjl9fmz1ii2rre');
+    pinNorm('alias grape-vine → grapevine', 'grape-vine', 'grapevine', 'aliasSlug', null);
+    pinNorm('alias passion-fruit → passionfruit', 'passion-fruit', 'passionfruit', 'aliasSlug', null);
+    pinNorm('alias peach-tree → peach', 'peach-tree', 'peach', 'aliasSlug', null);
+    pinNorm('alias pear-tree → pear', 'pear-tree', 'pear', 'aliasSlug', null);
+    pinNorm('alias plum-tree → plum', 'plum-tree', 'plum', 'aliasSlug', null);
+    pinNorm('module lychee-tree → lychee', 'lychee-tree', 'lychee', 'moduleKey', null);
+    pinNorm('module mango-tree → mango', 'mango-tree', 'mango', 'moduleKey', null);
+    pinNorm('module olive-tree → olive (id)', 'olive-tree', 'olive', 'moduleKey', 'plt_e1teyafat3k5i3ke');
+    pinNorm('module italian-cypress → cypress', 'italian-cypress', 'cypress', 'moduleKey', null);
+
+    // ============================================================
+    // 8. shadow-only / legacy-only + scan (kept + scan-unknown added)
+    // ============================================================
+    sec('8. shadow-only and legacy-only differences');
+    plantIdEntries.forEach(function (e) {
+      var sh = shadow(e.plantId); var lr = L(e.plantId);
+      var ok = (lr === null) && sh && sh.status === 'resolved_id' && sh.canonicalSlug === e.canonicalSlug && sh.plantId === e.plantId;
+      expect('plantId ' + e.canonicalSlug + ' → legacy null, shadow resolved_id', ok, 'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + '/' + (sh && sh.canonicalSlug));
+    });
+    (function () {
+      var lr = L('olive-tree'); var sh = shadow('olive-tree');
+      labeled(STATUS.PASS, 'string "olive-tree" → legacy null, shadow olive (shadow-only)', lr === null && sh && sh.canonicalSlug === 'olive', 'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status));
+    })();
+    (function () {
+      var input = { meta: { slug: 'scan-abc-999', name: 'Scanned Thing' } }; var lr = L(input); var sh = shadow(input);
+      var safe = lr && slugOfLegacy(lr) === 'scan-abc-999' && sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      labeled(STATUS.PASS, 'scan/meta snapshot unknown → legacy meta snapshot, shadow provisional (safe)', safe, 'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status));
+    })();
+    (function () {
+      var input = { name: 'Mystery Plant', slug: 'scan-xyz-123', scientific: 'Unknownus plantus' };
+      var inputBefore = jsonOf(input); var lr = L(input); var sh = shadow(input); var wr = W(input);
+      var shadowSafe = sh && (sh.status === 'provisional' || sh.status === 'unresolved');
+      var identity = wr === lr; var noMutation = jsonOf(input) === inputBefore;
+      labeled(STATUS.PASS, 'scan-unknown {slug:"scan-xyz-123"} → shadow provisional/unresolved (safe)', shadowSafe && identity && noMutation,
+        'legacy=' + (lr ? slugOfLegacy(lr) : 'null') + ' shadow=' + (sh && sh.status) + ' idOK=' + identity + ' noMutation=' + noMutation);
+    })();
+
+    // ============================================================
+    // 9. legacy parity + mutation/persistence/network protection (kept)
+    // ============================================================
+    sec('9. legacy parity, mutation, persistence, network protection');
+    var net = { fetch: 0, beacon: 0, xhrOpen: 0 };
+    var origFetch = cw.fetch;
+    try { cw.fetch = function () { net.fetch++; return origFetch.apply(this, arguments); }; } catch (e) {}
+    var origBeacon = cw.navigator && cw.navigator.sendBeacon ? cw.navigator.sendBeacon.bind(cw.navigator) : null;
+    try { if (origBeacon) cw.navigator.sendBeacon = function () { net.beacon++; return origBeacon.apply(cw.navigator, arguments); }; } catch (e) {}
+    var origXhrOpen = cw.XMLHttpRequest && cw.XMLHttpRequest.prototype.open;
+    try { if (origXhrOpen) cw.XMLHttpRequest.prototype.open = function () { net.xhrOpen++; return origXhrOpen.apply(this, arguments); }; } catch (e) {}
+
+    var lsBefore = null, lsKey = 'cruvit_mg_v23_real_plant_profiles';
+    try { lsBefore = cw.localStorage.getItem(lsKey); } catch (e) {}
+    var lsLenBefore = 0; try { lsLenBefore = cw.localStorage.length; } catch (e) {}
+    var domBefore = 0; try { domBefore = cw.document.body ? cw.document.body.getElementsByTagName('*').length : 0; } catch (e) {}
+
+    var allInputs = inv.map(function (it) { return it.value; }).concat(regressionInputs.map(function (x) { return x.v; }));
+    var parityFails = [], mutFails = [], idFieldFails = [];
+    allInputs.forEach(function (value, i) {
+      var before = jsonOf(value); var lr = L(value); var lrBefore = jsonOf(lr); var wr = W(value);
+      if (wr !== lr) parityFails.push('#' + i);
+      if (jsonOf(value) !== before) mutFails.push('input#' + i);
+      if (jsonOf(lr) !== lrBefore) mutFails.push('legacy#' + i);
+      if (lr && (lr.plantId !== undefined || lr.canonicalSlug !== undefined)) idFieldFails.push('#' + i);
+    });
+    expect('resolvePlantProfileRaw(x) === resolvePlantProfileRawLegacy(x) for every input', parityFails.length === 0, parityFails.slice(0, 8).join(', '));
+    expect('no input or legacy object mutated by resolution', mutFails.length === 0, mutFails.slice(0, 8).join(', '));
+    expect('no plantId/canonicalSlug copied onto runtime/legacy objects', idFieldFails.length === 0, idFieldFails.slice(0, 8).join(', '));
+
+    D.disable(); D.clear(); D.enable();
+    for (var i = 0; i < 6; i++) W('apple');
+    var dedupeLen = D.snapshot().length;
+    D.clear(); for (var n = 0; n < 60; n++) W('zzz-none-' + n);
+    var bufMax = D.snapshot().length;
+    D.clear(); var afterClear = D.snapshot().length;
+    D.disable(); var enAfterDisable = D.isEnabled();
+    W('apple'); var recAfterDisable = D.snapshot().length;
+    D.clear();
+    expect('debug buffer dedupe (6×apple → 1)', dedupeLen === 1, 'len=' + dedupeLen);
+    expect('debug buffer bounded to 50', bufMax === 50, 'len=' + bufMax);
+    expect('debug clear empties buffer', afterClear === 0);
+    expect('debug disable stops recording', enAfterDisable === false && recAfterDisable === 0);
+
+    expect('no network fetch during resolution', net.fetch === 0, 'fetch=' + net.fetch);
+    expect('no sendBeacon during resolution', net.beacon === 0, 'beacon=' + net.beacon);
+    expect('no XHR open during resolution', net.xhrOpen === 0, 'xhrOpen=' + net.xhrOpen);
+    var lsAfter = null; try { lsAfter = cw.localStorage.getItem(lsKey); } catch (e) {}
+    var lsLenAfter = 0; try { lsLenAfter = cw.localStorage.length; } catch (e) {}
+    expect('localStorage saved-garden key unchanged', lsAfter === lsBefore);
+    expect('localStorage entry count unchanged', lsLenAfter === lsLenBefore, lsLenBefore + '→' + lsLenAfter);
+    var domAfter = 0; try { domAfter = cw.document.body ? cw.document.body.getElementsByTagName('*').length : 0; } catch (e) {}
+    expect('no DOM/UI node count change during resolution', domAfter === domBefore, domBefore + '→' + domAfter);
+
+    try { cw.fetch = origFetch; } catch (e) {}
+    try { if (origBeacon) cw.navigator.sendBeacon = origBeacon; } catch (e) {}
+    try { if (origXhrOpen) cw.XMLHttpRequest.prototype.open = origXhrOpen; } catch (e) {}
+
+    // ============================================================
+    // 10. category classification — base / regression / combined
+    // ============================================================
+    sec('10. category classification (scoped)');
+    var baseCats = inv.map(function (it) { return classifyInput(it.value, it.key); });
+    var baseTally = tally(baseCats);
+    // needsReview / provisional overlays for base (kept, informational)
+    var baseNeedsReviewRows = baseCats.filter(function (r) { return r.needsReview; }).length;
+    var baseProvisional = baseCats.filter(function (r) { return r.cat === 'I' || (r.st === 'provisional' || r.st === 'unresolved' || r.st === 'ambiguous'); }).length;
+    baseTally.needsReviewRows = baseNeedsReviewRows; baseTally.provisional = baseProvisional;
+
+    var regCats = regressionInputs.map(function (x) {
+      var keyHint = (typeof x.v === 'string') ? x.v : null;
+      return classifyInput(x.v, keyHint);
+    });
+    var regTally = tally(regCats);
+
+    // combined: classify each DISTINCT union input exactly once
+    var unionMap = new Map();
+    inv.forEach(function (it) { if (!unionMap.has(inputSig(it.value))) unionMap.set(inputSig(it.value), { v: it.value, key: it.key }); });
+    regressionInputs.forEach(function (x) { if (!unionMap.has(inputSig(x.v))) unionMap.set(inputSig(x.v), { v: x.v, key: (typeof x.v === 'string' ? x.v : null) }); });
+    var combinedCats = [];
+    unionMap.forEach(function (o) { combinedCats.push(classifyInput(o.v, o.key)); });
+    var combinedTally = tally(combinedCats);
+    expect('every combined-union input classified exactly once', combinedCats.length === unionMap.size && combinedCats.every(function (r) { return isStr(r.cat); }),
+      'classified=' + combinedCats.length + ' union=' + unionMap.size);
+    expect('base E/F/G apply to base inventory only (documented)', baseTally.E === 0 && baseTally.F === 0,
+      'baseE=' + baseTally.E + ' baseF=' + baseTally.F + ' baseG=' + baseTally.G + ' | regE=' + regTally.E + ' regF=' + regTally.F + ' regG=' + regTally.G);
+    // explicit accounting of the four named inputs
+    function catOf(v) { return classifyInput(v, (typeof v === 'string' ? v : null)); }
+    var cOlive = catOf({ profileSlug: 'olive-tree' }), cAvo = catOf({ meta: { slug: 'avocado' } }), cLav = catOf({ name: 'לבנדר' }), cZait = catOf({ name: 'זית' });
+    expect('{profileSlug:"olive-tree"} → category F + known-legacy-bug', cOlive.cat === 'F' && cOlive.knownLegacyBug === true, 'cat=' + cOlive.cat + ' bug=' + cOlive.knownLegacyBug);
+    expect('{meta:{slug:"avocado"}} → category G (pending conflict)', cAvo.cat === 'G', 'cat=' + cAvo.cat);
+    expect('{name:"לבנדר"} → category E + resolver-gap', cLav.cat === 'E' && cLav.resolverGap === true, 'cat=' + cLav.cat + ' gap=' + cLav.resolverGap);
+    expect('{name:"זית"} → category E + resolver-gap', cZait.cat === 'E' && cZait.resolverGap === true, 'cat=' + cZait.cat + ' gap=' + cZait.resolverGap);
+
+    // ============================================================
+    // 11. needsReview clarification
+    // ============================================================
+    sec('11. needsReview clarification');
+    var EXPECTED_REVIEW = ['agapanthus', 'azalea', 'banana', 'blueberry', 'bougainvillea', 'camellia', 'geranium', 'jasmine',
+      'melaleuca', 'mint', 'oak-tree', 'orchid', 'pine-tree', 'plum', 'rose', 'succulent'];
+    var registryReview = reg.canonicalIdentities.filter(function (e) { return e.needsReview === true; }).map(function (e) { return e.canonicalSlug; }).sort();
+    expect('exactly 16 distinct canonical identities have needsReview:true', registryReview.length === 16, 'got ' + registryReview.length);
+    expect('needsReview identity set equals the expected 16', jsonOf(registryReview) === jsonOf(EXPECTED_REVIEW.slice().sort()),
+      'got ' + registryReview.join(','));
+    // tested rows resolving to a needsReview identity, with namespace breakdown
+    var reviewSet = new Set(registryReview);
+    var testedReviewRows = 0, rowBreakdownByNs = {}, reachedDistinct = new Set();
+    inv.forEach(function (it) {
+      var sh = shadow(it.value);
+      if (sh && sh.needsReview === true) {
+        testedReviewRows++;
+        rowBreakdownByNs[it.ns] = (rowBreakdownByNs[it.ns] || 0) + 1;
+        if (isStr(sh.canonicalSlug)) reachedDistinct.add(sh.canonicalSlug);
+      }
+    });
+    expect('tested needsReview rows all resolve to one of the 16 identities',
+      Array.from(reachedDistinct).every(function (s) { return reviewSet.has(s); }),
+      'reached=' + Array.from(reachedDistinct).sort().join(','));
+    expect('distinct needsReview identities reached by tested rows <= 16', reachedDistinct.size <= 16, 'reached=' + reachedDistinct.size);
+    push('tested needsReview rows counted (not distinct identities)', STATUS.PASS,
+      'testedRows=' + testedReviewRows + ' distinctReached=' + reachedDistinct.size + ' distinctInRegistry=16');
+
+    return {
+      reconciliation: { priorCount: prior.inv.length, currentCount: base.inv.length, diff: diffReport },
+      scopes: scopes,
+      baseCategories: baseTally, regressionCategories: regTally, combinedCategories: combinedTally,
+      needsReview: {
+        distinctCount: registryReview.length, distinctList: registryReview,
+        testedRows: testedReviewRows, distinctReachedCount: reachedDistinct.size, rowBreakdownByNs: rowBreakdownByNs
+      },
+      namespaces: nsCount, meta: meta
+    };
+  }
+})();
+</script>
+</body>
+</html>
