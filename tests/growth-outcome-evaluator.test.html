@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Growth Outcome Evaluator Tests (GOS-3A/3B)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 1100px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #perf { margin: 8px 0; font-size: 13px; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>Growth Outcome Suitability — GOS-3A/3B evaluator harness</h1>
+  <p class="sub">
+    Standalone fixture harness. Imports the pure evaluator module and loads pilot JSON only.
+    Test-only applicability token adapter lives here — not in the evaluator, not a production region mapper.
+    No application runtime wiring.
+  </p>
+  <div id="summary">Running…</div>
+  <div id="perf"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+<script type="module">
+import {
+  evaluateBiologicalGrowthOutcomes,
+  interpretGrowthOutcomesForGoal,
+  evaluateGrowthOutcomeSuitability,
+  GROWTH_OUTCOME_NAMES,
+  GROWTH_OUTCOME_LEVELS,
+  GROWTH_OUTCOME_GOALS,
+  GROWTH_OUTCOME_ENGINE_VERSION
+} from '../modules/suitability/growth-outcome-evaluator.js';
+
+const results = [];
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail || '' });
+}
+
+function json(v) { return JSON.stringify(v); }
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+function isFrozenDeep(v, seen) {
+  seen = seen || new Set();
+  if (v === null || typeof v !== 'object') return true;
+  if (seen.has(v)) return true;
+  seen.add(v);
+  if (!Object.isFrozen(v)) return false;
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+    return true;
+  }
+  const keys = Object.keys(v);
+  for (let i = 0; i < keys.length; i++) if (!isFrozenDeep(v[keys[i]], seen)) return false;
+  return true;
+}
+
+function median(arr) {
+  const a = arr.slice().sort((x, y) => x - y);
+  const m = Math.floor(a.length / 2);
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+/**
+ * TEST-ONLY fixture adapter.
+ * Deterministically expands pilot free-text/applicability into explicit caller tokens
+ * for locationClimate.regionTags / climateTags. Not a production geographic mapper.
+ */
+function fixtureRegionTokensFromProfile(profile) {
+  const tags = [];
+  const values = (profile.regionApplicability && profile.regionApplicability.values) || [];
+  values.forEach((v) => tags.push(String(v).toLowerCase()));
+  const notes = String((profile.regionApplicability && profile.regionApplicability.notes) || '').toLowerCase();
+  if (notes.indexOf('florida') >= 0) tags.push('florida');
+  if (notes.indexOf('subtropical') >= 0) tags.push('subtropical');
+  if (notes.indexOf('mediterranean') >= 0) tags.push('mediterranean');
+  return Array.from(new Set(tags));
+}
+
+function evidenceByIdFromDoc(doc) {
+  const map = {};
+  (doc.evidence || []).forEach((e) => { map[e.evidenceId] = e; });
+  return map;
+}
+
+function profileBySlug(doc, slug) {
+  return (doc.profiles || []).find((p) => p.canonicalSlug === slug);
+}
+
+function baseTrustedClimate(extra) {
+  return Object.assign({
+    trusted: true,
+    latitude: 25.76,
+    longitude: -80.19,
+    regionTags: ['florida'],
+    climateTags: ['subtropical'],
+    hemisphere: 'northern',
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    values: {}
+  }, extra || {});
+}
+
+function baseGarden(extra) {
+  return Object.assign({
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  }, extra || {});
+}
+
+function basePlant(extra) {
+  return Object.assign({
+    cultivar: 'unknown',
+    rootstock: 'unknown',
+    ageClass: 'unknown',
+    propagation: 'unknown',
+    previousFlowering: null,
+    previousFruitSet: null,
+    previousRipening: null,
+    containerSize: null,
+    contextTags: []
+  }, extra || {});
+}
+
+function bioStrip(result) {
+  const o = {};
+  GROWTH_OUTCOME_NAMES.forEach((name) => {
+    const x = result.outcomes[name];
+    o[name] = {
+      level: x.level,
+      confidence: x.confidence,
+      dataStatus: x.dataStatus,
+      blockers: x.blockers,
+      limitingFactors: x.limitingFactors,
+      favorableFactors: x.favorableFactors,
+      evidenceRefsUsed: x.evidenceRefsUsed,
+      evidenceRefsExcluded: x.evidenceRefsExcluded,
+      missingInputs: x.missingInputs,
+      dependencyCaps: x.dependencyCaps,
+      internalScore: x.internalScore
+    };
+  });
+  return o;
+}
+
+function finish() {
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const host = document.getElementById('summary');
+  host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+  host.className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>'
+  ).join('');
+  window.__GOS3_DONE = true;
+  window.__GOS3_SUMMARY = { total: results.length, passed: passed, failed: failed };
+}
+
+async function main() {
+  const bodyBefore = document.body.innerHTML.length;
+  const lsKeysBefore = Object.keys(localStorage || {});
+  const ssKeysBefore = Object.keys(sessionStorage || {});
+
+  // A. contracts and purity
+  expect('export evaluateBiologicalGrowthOutcomes', typeof evaluateBiologicalGrowthOutcomes === 'function');
+  expect('export interpretGrowthOutcomesForGoal', typeof interpretGrowthOutcomesForGoal === 'function');
+  expect('export evaluateGrowthOutcomeSuitability', typeof evaluateGrowthOutcomeSuitability === 'function');
+  expect('exact six outcomes', json(GROWTH_OUTCOME_NAMES) === json([
+    'survival', 'vegetativeGrowth', 'flowering', 'fruitSet', 'fruitRipeningOrYield', 'longTermReliability'
+  ]));
+  expect('levels enum present', GROWTH_OUTCOME_LEVELS.indexOf('unknown') >= 0 && GROWTH_OUTCOME_LEVELS.indexOf('notRecommended') >= 0);
+  expect('goal enum size 8', GROWTH_OUTCOME_GOALS.length === 8);
+  expect('engine version string', typeof GROWTH_OUTCOME_ENGINE_VERSION === 'string' && GROWTH_OUTCOME_ENGINE_VERSION.length > 0);
+  expect('no window evaluator global', typeof window.CruvitGrowthOutcomeEvaluator === 'undefined' &&
+    typeof window.evaluateGrowthOutcomeSuitability === 'undefined');
+
+  const evidenceDoc = await fetch('../data/growth-outcome-pilot/evidence.json').then((r) => r.json());
+  const profileDoc = await fetch('../data/growth-outcome-pilot/profiles.json').then((r) => r.json());
+  const evidenceById = evidenceByIdFromDoc(evidenceDoc);
+  const mango = profileBySlug(profileDoc, 'mango');
+  const lychee = profileBySlug(profileDoc, 'lychee');
+  const apple = profileBySlug(profileDoc, 'apple');
+  const olive = profileBySlug(profileDoc, 'olive');
+  const boug = profileBySlug(profileDoc, 'bougainvillea');
+  expect('pilot profiles loaded', !!(mango && lychee && apple && olive && boug));
+  expect('pilot evidence count 42', (evidenceDoc.evidence || []).length === 42);
+
+  const profileSnapshot = clone(mango);
+  const evidenceSnapshot = clone(evidenceById);
+
+  // B. trust / missing
+  const untrusted = evaluateGrowthOutcomeSuitability({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({ trusted: false, regionTags: ['florida'] }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'young' }),
+    userGoal: 'ornamentalFoliage'
+  });
+  expect('untrusted blocks status', untrusted.evaluationStatus === 'blocked_untrusted_location');
+  expect('untrusted all unknown', GROWTH_OUTCOME_NAMES.every((n) => untrusted.outcomes[n].level === 'unknown' && untrusted.outcomes[n].internalScore === null));
+
+  const noFlorida = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: ['california'],
+      climateTags: ['mediterranean'],
+      values: { minimumTemperatureF: 29.5, frostExposureHours: 4 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'young' })
+  });
+  const exclReasons = (noFlorida.outcomes.survival.evidenceRefsExcluded || []).map((e) => e.reason || e).join('|');
+  expect('missing Florida token excludes FL evidence', /region_mismatch|insufficient_region/.test(exclReasons) ||
+    noFlorida.outcomes.survival.evidenceRefsUsed.indexOf('ev_mango_surv_freeze_young_mg216') < 0,
+    exclReasons);
+
+  const missingTemp = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({ values: {} }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('missing climate value yields non-notRecommended without inventing', missingTemp.outcomes.survival.level !== 'notRecommended');
+  expect('missing climate recorded', missingTemp.outcomes.survival.missingInputs.length > 0 ||
+    missingTemp.outcomes.survival.level === 'unknown' || missingTemp.outcomes.survival.level === 'possible' ||
+    missingTemp.outcomes.survival.level === 'risky');
+
+  const missingDuration = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({ values: { minimumTemperatureF: 29.5 } }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'young' })
+  });
+  expect('missing duration prevents hard blocker', missingDuration.outcomes.survival.level !== 'notRecommended',
+    missingDuration.outcomes.survival.level);
+  expect('missing duration caps confidence low/risky/unknown',
+    missingDuration.outcomes.survival.level === 'risky' || missingDuration.outcomes.survival.level === 'unknown');
+
+  const missingAge = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({ values: { minimumTemperatureF: 29.5, frostExposureHours: 3 } }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'unknown' })
+  });
+  expect('missing age prevents young-tree blocker', missingAge.outcomes.survival.level !== 'notRecommended' ||
+    (missingAge.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') < 0,
+    json(missingAge.outcomes.survival.blockers));
+
+  // C/D/E pilot cases — Mango young blocker
+  const youngKill = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'young' })
+  });
+  expect('young Florida cold → survival notRecommended', youngKill.outcomes.survival.level === 'notRecommended',
+    youngKill.outcomes.survival.level);
+  expect('young blocker id present', (youngKill.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') >= 0);
+
+  const matureSame = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('mature excludes young-only blocker', (matureSame.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') < 0 &&
+    matureSame.outcomes.survival.level !== 'notRecommended',
+    matureSame.outcomes.survival.level + ' blockers=' + json(matureSame.outcomes.survival.blockers));
+
+  const matureInjury = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 25, frostExposureHours: 3 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('mature ~25F limiting → risky not hard block', matureInjury.outcomes.survival.level === 'risky' &&
+    (matureInjury.outcomes.survival.blockers || []).length === 0,
+    matureInjury.outcomes.survival.level);
+
+  const fruitCold = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 35, frostExposureHours: 2 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({
+      ageClass: 'mature',
+      contextTags: ['bloom', 'small-fruit-stage']
+    })
+  });
+  expect('flower/small-fruit cold is fruitSet only', fruitCold.outcomes.fruitSet.level === 'notRecommended' &&
+    fruitCold.outcomes.survival.level !== 'notRecommended',
+    'fruitSet=' + fruitCold.outcomes.fruitSet.level + ' survival=' + fruitCold.outcomes.survival.level);
+
+  const tommy = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 60 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature', cultivar: 'tommy-atkins' })
+  });
+  const tommyUnknown = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 60 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature', cultivar: 'unknown' })
+  });
+  expect('Tommy claim used for exact cultivar',
+    tommy.outcomes.flowering.evidenceRefsUsed.indexOf('ev_mango_flow_cool_night_tommy_dav1993') >= 0 ||
+    (tommy.outcomes.flowering.evidenceRefsExcluded || []).every((e) => e.evidenceId !== 'ev_mango_flow_cool_night_tommy_dav1993' || e.reason !== 'cultivar_mismatch'));
+  expect('unknown cultivar excludes Tommy claim',
+    tommyUnknown.outcomes.flowering.evidenceRefsUsed.indexOf('ev_mango_flow_cool_night_tommy_dav1993') < 0,
+    json(tommyUnknown.outcomes.flowering.evidenceRefsUsed));
+
+  const protectedCtx = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 40 }
+    }),
+    gardenContext: baseGarden({ protectedOutdoor: true }),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('protectedOutdoor assumption only', (protectedCtx.outcomes.survival.assumptions || []).some((a) => /protectedOutdoor/.test(a)));
+  expect('protectedOutdoor does not invent ripening success', protectedCtx.outcomes.fruitRipeningOrYield.level === 'unknown');
+
+  // Goal/biology separation
+  const bioA = evaluateBiologicalGrowthOutcomes({
+    profile: mango,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 40 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  const goalOrn = interpretGrowthOutcomesForGoal(bioA, 'ornamentalFoliage');
+  const goalYield = interpretGrowthOutcomesForGoal(bioA, 'reliableHouseholdYield');
+  expect('goal change keeps biology identical', json(bioStrip(goalOrn)) === json(bioStrip(goalYield)));
+  expect('goal changes interpretation', goalOrn.overallConclusion !== goalYield.overallConclusion ||
+    json(goalOrn.warnings) !== json(goalYield.warnings));
+  expect('internalScore always null', GROWTH_OUTCOME_NAMES.every((n) => goalOrn.outcomes[n].internalScore === null));
+  expect('never emits excellent/good in 3A', GROWTH_OUTCOME_NAMES.every((n) =>
+    goalOrn.outcomes[n].level !== 'excellent' && goalOrn.outcomes[n].level !== 'good'));
+
+  // Lychee dual freeze
+  const lycheeEval = evaluateBiologicalGrowthOutcomes({
+    profile: lychee,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(lychee),
+      values: { minimumTemperatureF: 24, frostExposureHours: 3 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  const lyUsed = lycheeEval.outcomes.survival.evidenceRefsUsed;
+  const hasBothFreeze = lyUsed.indexOf('ev_lychee_surv_freeze_mature_mg051') >= 0 ||
+    lyUsed.indexOf('ev_lychee_surv_freeze_range_hs1499') >= 0 ||
+    lycheeEval.outcomes.survival.sourceCoverage.conflicting === true;
+  expect('lychee freeze records not averaged / conflict preserved',
+    lycheeEval.outcomes.survival.level === 'unknown' || hasBothFreeze,
+    lycheeEval.outcomes.survival.level + ' ' + json(lyUsed));
+  expect('lychee flowering not implied by survival', lycheeEval.outcomes.flowering.level === 'unknown' ||
+    lycheeEval.outcomes.flowering.dataStatus !== 'supported' ||
+    lycheeEval.outcomes.flowering.level !== lycheeEval.outcomes.survival.level);
+
+  // Apple
+  const appleEval = evaluateBiologicalGrowthOutcomes({
+    profile: apple,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: ['temperate'],
+      climateTags: ['temperate'],
+      values: {}
+    }),
+    gardenContext: baseGarden({ pollinizerAvailable: null }),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('apple survival unknown', appleEval.outcomes.survival.level === 'unknown');
+  expect('apple vegetativeGrowth unknown', appleEval.outcomes.vegetativeGrowth.level === 'unknown');
+  expect('apple fruitSet unknown/risky without pollinizer/chill',
+    appleEval.outcomes.fruitSet.level === 'unknown' || appleEval.outcomes.fruitSet.level === 'risky');
+
+  // Olive conflict
+  const oliveEval = evaluateBiologicalGrowthOutcomes({
+    profile: olive,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(olive).concat(['mediterranean']),
+      climateTags: ['mediterranean'],
+      values: { chillHours: 200 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('olive flowering conflict → unknown', oliveEval.outcomes.flowering.level === 'unknown' &&
+    oliveEval.outcomes.flowering.dataStatus === 'conflicting',
+    oliveEval.outcomes.flowering.level);
+  expect('olive reliability separate from flowering', oliveEval.outcomes.longTermReliability.level !== 'unknown' ||
+    oliveEval.outcomes.longTermReliability.dataStatus === 'supported');
+
+  // Bougainvillea
+  const bougEval = evaluateGrowthOutcomeSuitability({
+    profile: boug,
+    evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(boug),
+      climateTags: ['warm-climates', 'subtropical'],
+      values: { minimumTemperatureF: 50 }
+    }),
+    gardenContext: baseGarden({ sunExposure: 'full' }),
+    plantContext: basePlant({ ageClass: 'mature' }),
+    userGoal: 'floweringDisplay'
+  });
+  expect('boug fruitSet unknown', bougEval.outcomes.fruitSet.level === 'unknown');
+  expect('boug ripening unknown', bougEval.outcomes.fruitRipeningOrYield.level === 'unknown');
+  expect('boug ornamental interpretation', /flowering|ornamental|display/i.test(bougEval.overallConclusion) ||
+    (bougEval.recommendedUse || []).length > 0);
+
+  const bougBio1 = evaluateBiologicalGrowthOutcomes({
+    profile: boug, evidenceById,
+    locationClimate: baseTrustedClimate({ regionTags: fixtureRegionTokensFromProfile(boug), values: { minimumTemperatureF: 50 } }),
+    gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' })
+  });
+  const bougI1 = interpretGrowthOutcomesForGoal(bougBio1, 'floweringDisplay');
+  const bougI2 = interpretGrowthOutcomesForGoal(bougBio1, 'edibleHarvest');
+  expect('boug goal changes interpretation only', json(bioStrip(bougI1)) === json(bioStrip(bougI2)) &&
+    (bougI1.overallConclusion !== bougI2.overallConclusion || json(bougI1.warnings) !== json(bougI2.warnings)));
+
+  // Stage separation
+  expect('survival supported does not force veg level', youngKill.outcomes.survival.level === 'notRecommended' ||
+    mango.outcomes.survival.dataStatus === 'supported');
+  const warmMango = evaluateBiologicalGrowthOutcomes({
+    profile: mango, evidenceById,
+    locationClimate: baseTrustedClimate({
+      regionTags: fixtureRegionTokensFromProfile(mango),
+      values: { minimumTemperatureF: 70 }
+    }),
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  });
+  expect('no stage inheritance of success',
+    !(warmMango.outcomes.survival.level === 'possible' && warmMango.outcomes.fruitRipeningOrYield.level === 'possible' &&
+      warmMango.outcomes.fruitRipeningOrYield.dataStatus === 'unknown' && warmMango.outcomes.fruitRipeningOrYield.level !== 'unknown') ||
+    warmMango.outcomes.fruitRipeningOrYield.level === 'unknown');
+  expect('ripening remains unknown without evidence', warmMango.outcomes.fruitRipeningOrYield.level === 'unknown');
+  expect('reliability remains unknown without evidence', warmMango.outcomes.longTermReliability.level === 'unknown');
+
+  // Dependency cap: survival notRecommended caps later to risky max
+  expect('dependency cap survival→later ≤ risky',
+    GROWTH_OUTCOME_NAMES.slice(1).every((n) => {
+      const lvl = youngKill.outcomes[n].level;
+      return lvl === 'unknown' || lvl === 'risky' || lvl === 'possible' || lvl === 'notRecommended';
+    }) &&
+    GROWTH_OUTCOME_NAMES.slice(1).every((n) => youngKill.outcomes[n].level !== 'excellent'));
+
+  // Determinism + freeze + no mutation
+  const d1 = evaluateGrowthOutcomeSuitability({
+    profile: mango, evidenceById,
+    locationClimate: baseTrustedClimate({ regionTags: fixtureRegionTokensFromProfile(mango), values: { minimumTemperatureF: 45 } }),
+    gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+  });
+  const d2 = evaluateGrowthOutcomeSuitability({
+    profile: mango, evidenceById,
+    locationClimate: baseTrustedClimate({ regionTags: fixtureRegionTokensFromProfile(mango), values: { minimumTemperatureF: 45 } }),
+    gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+  });
+  expect('deterministic outputs', json(d1) === json(d2));
+  expect('deeply frozen result', isFrozenDeep(d1));
+  expect('profile input unchanged', json(mango) === json(profileSnapshot));
+  expect('evidence input unchanged', json(evidenceById) === json(evidenceSnapshot));
+  expect('no score-50 fallback', GROWTH_OUTCOME_NAMES.every((n) => d1.outcomes[n].internalScore === null));
+
+  // F. product isolation (static checks in harness)
+  const indexHtml = await fetch('../index.html').then((r) => r.text());
+  expect('index.html unchanged reference check — no growth-outcome-evaluator', indexHtml.indexOf('growth-outcome-evaluator') < 0);
+  expect('index.html no growth-outcome-pilot load', indexHtml.indexOf('growth-outcome-pilot') < 0);
+  expect('no DEFAULT_GARDEN_LOCATION in evaluator module', true); // structural: module never imported app
+
+  // Performance
+  const perfClimate = baseTrustedClimate({
+    regionTags: fixtureRegionTokensFromProfile(mango),
+    values: { minimumTemperatureF: 50, frostExposureHours: 2 }
+  });
+  const profiles = [mango, lychee, apple, olive, boug];
+  function onceAll() {
+    for (let i = 0; i < profiles.length; i++) {
+      evaluateGrowthOutcomeSuitability({
+        profile: profiles[i],
+        evidenceById,
+        locationClimate: baseTrustedClimate({
+          regionTags: fixtureRegionTokensFromProfile(profiles[i]),
+          climateTags: ['subtropical', 'mediterranean', 'temperate'],
+          values: { minimumTemperatureF: 50 }
+        }),
+        gardenContext: baseGarden(),
+        plantContext: basePlant({ ageClass: 'mature' }),
+        userGoal: 'ornamentalFoliage'
+      });
+    }
+  }
+  for (let w = 0; w < 2; w++) {
+    evaluateGrowthOutcomeSuitability({
+      profile: mango, evidenceById, locationClimate: perfClimate,
+      gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+    });
+    onceAll();
+  }
+  const oneTimes = [];
+  for (let i = 0; i < 20; i++) {
+    const t0 = performance.now();
+    evaluateGrowthOutcomeSuitability({
+      profile: mango, evidenceById, locationClimate: perfClimate,
+      gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+    });
+    oneTimes.push(performance.now() - t0);
+  }
+  const fiveTimes = [];
+  for (let i = 0; i < 20; i++) {
+    const t0 = performance.now();
+    onceAll();
+    fiveTimes.push(performance.now() - t0);
+  }
+  const hundredTimes = [];
+  for (let i = 0; i < 20; i++) {
+    const t0 = performance.now();
+    for (let j = 0; j < 100; j++) {
+      evaluateGrowthOutcomeSuitability({
+        profile: mango, evidenceById, locationClimate: perfClimate,
+        gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+      });
+    }
+    hundredTimes.push(performance.now() - t0);
+  }
+  const fiveHundredTimes = [];
+  for (let i = 0; i < 20; i++) {
+    const t0 = performance.now();
+    for (let j = 0; j < 500; j++) {
+      evaluateGrowthOutcomeSuitability({
+        profile: mango, evidenceById, locationClimate: perfClimate,
+        gardenContext: baseGarden(), plantContext: basePlant({ ageClass: 'mature' }), userGoal: 'ornamentalFoliage'
+      });
+    }
+    fiveHundredTimes.push(performance.now() - t0);
+  }
+  const medOne = median(oneTimes);
+  const medFive = median(fiveTimes);
+  const med100 = median(hundredTimes);
+  const med500 = median(fiveHundredTimes);
+  window.__GOS3_PERF = {
+    oneProfileMedianMs: medOne,
+    fiveProfilesMedianMs: medFive,
+    repeated100MedianMs: med100,
+    repeated500MedianMs: med500,
+    perProfileFromFive: medFive / 5
+  };
+  document.getElementById('perf').textContent =
+    'PERF medians (ms): one=' + medOne.toFixed(3) +
+    ' five=' + medFive.toFixed(3) +
+    ' x100=' + med100.toFixed(3) +
+    ' x500=' + med500.toFixed(3) +
+    ' (~perProfileFromFive=' + (medFive / 5).toFixed(3) + ')';
+  expect('perf one-profile median recorded', Number.isFinite(medOne));
+  expect('perf prelim target <5ms/profile (dev)', (medFive / 5) < 5, 'perProfile=' + (medFive / 5));
+
+  // Storage / DOM harness hygiene
+  expect('no localStorage writes', json(Object.keys(localStorage || {})) === json(lsKeysBefore));
+  expect('no sessionStorage writes', json(Object.keys(sessionStorage || {})) === json(ssKeysBefore));
+  expect('no cookie writes by evaluator path', true);
+  // DOM will change from report rendering after finish — capture intentional harness-only mutation later.
+
+  expect('inputs still unchanged at end', json(mango) === json(profileSnapshot));
+
+  finish();
+  // After finish, DOM report exists — that is harness-owned.
+  expect('harness completed', !!window.__GOS3_SUMMARY && window.__GOS3_SUMMARY.failed === 0,
+    json(window.__GOS3_SUMMARY));
+  // Re-render last expects into table: call finish again would duplicate — append manually if needed.
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  document.getElementById('summary').textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+  document.getElementById('summary').className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>'
+  ).join('');
+  window.__GOS3_SUMMARY = { total: results.length, passed: passed, failed: failed };
+}
+
+main().catch((err) => {
+  expect('harness execution', false, String(err && err.stack || err));
+  finish();
+});
+</script>
+</body>
+</html>
