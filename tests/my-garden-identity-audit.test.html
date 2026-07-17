@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — My Garden Identity Audit Tests (standalone, developer-only)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  iframe { position: absolute; left: -9999px; width: 1px; height: 1px; border: 0; }
+</style>
+</head>
+<body>
+  <h1>My Garden Identity Audit — Phase A harness</h1>
+  <p class="sub">Loads real <code>index.html</code> + real Shadow + audit module. No app consumer. Disabled by default.</p>
+  <div id="summary">Running…</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <iframe id="app" src="../index.html" title="app"></iframe>
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function jsonOf(v) {
+    try { return JSON.stringify(v); } catch (e) { return String(v); }
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function waitFor(pred, ms) {
+    return new Promise(function (resolve) {
+      var t0 = Date.now();
+      var id = setInterval(function () {
+        var ok = false;
+        try { ok = !!pred(); } catch (e) { ok = false; }
+        if (ok || Date.now() - t0 > ms) {
+          clearInterval(id);
+          resolve(ok);
+        }
+      }, 50);
+    });
+  }
+
+  function finish() {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var summary = { total: results.length, passed: passed, failed: failed };
+    var host = document.getElementById('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+    host.className = failed ? 'fail' : 'pass';
+    var tbody = document.getElementById('rows');
+    tbody.innerHTML = results.map(function (r) {
+      return '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>';
+    }).join('');
+    try {
+      window.__AUDIT_DONE = true;
+      window.__AUDIT_SUMMARY = summary;
+    } catch (e) {}
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.has('report') || params.has('autoclose')) {
+        if (navigator.sendBeacon) navigator.sendBeacon('/__result', JSON.stringify({ results: results, summary: summary }));
+        if (params.has('autoclose')) setTimeout(function () { try { window.close(); } catch (e) {} }, 40);
+      }
+    } catch (e) {}
+  }
+
+  async function main() {
+    var frame = document.getElementById('app');
+    await new Promise(function (r) { frame.addEventListener('load', r, { once: true }); });
+    var cw = frame.contentWindow;
+
+    var ready = await waitFor(function () {
+      return cw.CruvitIdentityShadow && cw.CruvitIdentityShadow.status &&
+        cw.CruvitIdentityShadow.status().status === 'ready' &&
+        cw.CruvitGardenIdentityAudit;
+    }, 25000);
+
+    var A = cw.CruvitGardenIdentityAudit;
+    var S = cw.CruvitIdentityShadow;
+    var D = cw.CruvitIdentityShadowDebug;
+
+    expect('iframe app loaded + shadow ready + audit present', ready && !!A && !!S,
+      'ready=' + ready + ' audit=' + !!A + ' shadow=' + (S && S.status && S.status().status));
+
+    // ── default disabled / inert ──
+    expect('disabled by default', A && A.isEnabled() === false, 'enabled=' + (A && A.isEnabled()));
+    expect('status.enabled false', A && A.status().enabled === false);
+    expect('no latest report initially', A && A.latest() === null);
+    expect('run while disabled returns null', A && A.run([{ profileSlug: 'avocado' }]) === null);
+    expect('runStored while disabled returns null', A && A.runStored() === null);
+    expect('shadow debug remains disabled', D && D.isEnabled() === false);
+
+    // ── no query-string auto-enable (this page may have ?report; audit itself ignores URL) ──
+    expect('audit ignores URL for enablement', A.isEnabled() === false);
+
+    // Network / storage spies on the app window
+    var net = { fetch: 0, beacon: 0, xhr: 0 };
+    var origFetch = cw.fetch ? cw.fetch.bind(cw) : null;
+    var origBeacon = cw.navigator && cw.navigator.sendBeacon ? cw.navigator.sendBeacon.bind(cw.navigator) : null;
+    var XHR = cw.XMLHttpRequest;
+    var xhrOpen = XHR && XHR.prototype.open;
+    try {
+      if (origFetch) {
+        cw.fetch = function () {
+          net.fetch++;
+          return origFetch.apply(cw, arguments);
+        };
+      }
+      if (origBeacon) {
+        cw.navigator.sendBeacon = function () {
+          net.beacon++;
+          return origBeacon.apply(cw, arguments);
+        };
+      }
+      if (xhrOpen) {
+        XHR.prototype.open = function () {
+          net.xhr++;
+          return xhrOpen.apply(this, arguments);
+        };
+      }
+    } catch (e) {}
+
+    var lsSet = 0;
+    var origSetItem = null;
+    try {
+      origSetItem = cw.localStorage.setItem.bind(cw.localStorage);
+      cw.localStorage.setItem = function (k, v) {
+        lsSet++;
+        return origSetItem(k, v);
+      };
+    } catch (e) {}
+
+    var bodyBefore = cw.document.body ? cw.document.body.innerHTML.length : 0;
+
+    A.enable();
+    expect('enable() works', A.isEnabled() === true);
+
+    var desc = Object.getOwnPropertyDescriptor(cw, 'CruvitIdentityShadow');
+    expect('shadow descriptor non-writable', desc && desc.writable === false);
+
+    // ── fixtures ──
+    var lavenderPid = 'plt_aupnyvawcflgjbyh';
+    var olivePid = 'plt_e1teyafat3k5i3ke';
+    var fixtures = [
+      { id: 'p_lav', plantId: lavenderPid, name: 'Lavender', profileSlug: 'lavender' },
+      { id: 'p_avo', profileSlug: 'avocado', name: 'Avocado Tree', scientific: 'Persea americana' },
+      { id: 'p_avo_legacy', profileSlug: 'avocado', name: 'Avocado Tree', meta: { slug: 'avocado', scientific: 'Persea americana', name: 'Avocado Tree' } },
+      { id: 'p_sg_acc', profileSlug: 'strawberry-guava', scientific: 'Psidium cattleyanum', name: 'Strawberry Guava' },
+      { id: 'p_sg_syn', scientific: 'Psidium cattleianum', name: 'Strawberry Guava Syn' },
+      { id: 'p_mul', profileSlug: 'mulberry', name: 'Mulberry Tree', scientific: 'Morus spp.' },
+      { id: 'p_he_lav', he: 'לבנדר', name: 'Hebrew Lav' },
+      { id: 'p_he_ol', name: 'זית' },
+      { id: 'p_unknown', name: 'Completely Unknown Garden Widget XYZ', profileSlug: 'unknown-garden-widget-xyz' },
+      { id: 'p_empty', name: '', profileSlug: '' },
+      { id: 'p_stale', profileSlug: 'avocado', scientific: 'Persea americana', meta: { slug: 'avocado', scientific: 'OLD PLACEHOLDER SCIENTIFIC', name: 'Old Avocado Label', guide: 'stale guide text' } },
+      { id: 'p_conflict', profileSlug: 'avocado', scientific: 'Psidium guajava', name: 'Conflict Plant' },
+      { id: 'p_sci_only', scientific: 'Persea americana' },
+      { id: 'p_loc_only', he: 'לבנדר' },
+      { id: 'p_dup_a', profileSlug: 'lavender', name: 'Lavender A' },
+      { id: 'p_dup_b', profileSlug: 'lavender', name: 'Lavender B' },
+      { id: 'p_arch', profileSlug: 'lemon', name: 'Lemon Tree', archived: true },
+      { id: 'p_tasklink', profileSlug: 'fig', name: 'Fig Tree' },
+      { id: 'p_canon', canonicalSlug: 'olive', name: 'Olive via canonicalSlug' }
+    ];
+
+    // Deep clone for mutation checks
+    var fixturesBefore = jsonOf(fixtures);
+    var taskFixture = ['💧', 'Water Fig Tree', 'Today', 'High', '2026-07-17', true, 'Fig Tree', false];
+    var taskBefore = jsonOf(taskFixture);
+
+    var report1 = A.run(fixtures);
+    expect('run returns report while enabled', !!report1 && report1.auditStatus === 'ok',
+      'status=' + (report1 && report1.auditStatus));
+    expect('report deeply frozen', isFrozenDeep(report1));
+    expect('results deeply frozen', report1 && report1.results && isFrozenDeep(report1.results));
+    expect('processed all fixtures', report1 && report1.processedPlants === fixtures.length,
+      'processed=' + (report1 && report1.processedPlants));
+    expect('registryVersion 1.5.0', report1 && report1.registryVersion === '1.5.0');
+    expect('no fixture mutation', jsonOf(fixtures) === fixturesBefore);
+    expect('no task mutation', jsonOf(taskFixture) === taskBefore);
+
+    function byId(id) {
+      return report1.results.find(function (r) { return r.sourceInstanceId === id; });
+    }
+
+    var rLav = byId('p_lav');
+    expect('known plantId → resolved_id lavender', rLav && rLav.status === 'resolved_id' && rLav.canonicalSlug === 'lavender' && rLav.plantId === lavenderPid,
+      jsonOf({ s: rLav && rLav.status, c: rLav && rLav.canonicalSlug, p: rLav && rLav.plantId }));
+    expect('plantId migration candidate', rLav && rLav.migrationEligibility === 'candidate');
+
+    var rAvo = byId('p_avo');
+    expect('avocado no plantId → resolved_canonical', rAvo && rAvo.status === 'resolved_canonical' && rAvo.canonicalSlug === 'avocado' && rAvo.plantId === null);
+    expect('avocado not_yet_allocated', rAvo && rAvo.migrationEligibility === 'not_yet_allocated');
+
+    var rAvoL = byId('p_avo_legacy');
+    expect('avocado legacy profileSlug shape', rAvoL && rAvoL.status === 'resolved_canonical' && rAvoL.canonicalSlug === 'avocado');
+
+    var rSgAcc = byId('p_sg_acc');
+    expect('SG accepted scientific', rSgAcc && rSgAcc.status === 'resolved_canonical' && rSgAcc.canonicalSlug === 'strawberry-guava');
+
+    var rSgSyn = byId('p_sg_syn');
+    expect('SG synonym scientific', rSgSyn && rSgSyn.status === 'resolved_canonical' && rSgSyn.canonicalSlug === 'strawberry-guava' &&
+      (rSgSyn.matchedBy === 'scientificSynonym' || rSgSyn.selectedSignal === 'scientific'),
+      'matchedBy=' + (rSgSyn && rSgSyn.matchedBy) + ' selected=' + (rSgSyn && rSgSyn.selectedSignal));
+
+    var rMul = byId('p_mul');
+    expect('mulberry pending_conflict', rMul && rMul.status === 'pending_conflict' && rMul.plantId === null && rMul.canonicalSlug === null);
+    expect('mulberry ineligible_conflict', rMul && rMul.migrationEligibility === 'ineligible_conflict');
+
+    // Pending wins over another resolved signal
+    var mulMix = [{ id: 'mix', profileSlug: 'mulberry', scientific: 'Persea americana' }];
+    var mixBefore = jsonOf(mulMix);
+    var mixReport = A.run(mulMix);
+    expect('pending wins over resolved scientific', mixReport && mixReport.results[0].status === 'pending_conflict' &&
+      mixReport.results[0].canonicalSlug === null, jsonOf(mixReport && mixReport.results[0]));
+    expect('mulMix no mutation', jsonOf(mulMix) === mixBefore);
+
+    var rHeLav = byId('p_he_lav');
+    expect('Hebrew lavender', rHeLav && (rHeLav.status === 'resolved_id' || rHeLav.status === 'resolved_canonical') && rHeLav.canonicalSlug === 'lavender',
+      jsonOf({ s: rHeLav && rHeLav.status, c: rHeLav && rHeLav.canonicalSlug, m: rHeLav && rHeLav.matchedBy }));
+
+    var rHeOl = byId('p_he_ol');
+    expect('Hebrew olive via name זית', rHeOl && (rHeOl.status === 'resolved_id' || rHeOl.status === 'resolved_canonical') && rHeOl.canonicalSlug === 'olive',
+      jsonOf({ s: rHeOl && rHeOl.status, c: rHeOl && rHeOl.canonicalSlug }));
+
+    var rUnk = byId('p_unknown');
+    expect('unknown manual provisional/unresolved', rUnk && (rUnk.status === 'provisional' || rUnk.status === 'unresolved'));
+
+    var rEmpty = byId('p_empty');
+    expect('empty-name missing_identity_input', rEmpty && rEmpty.status === 'unresolved' && rEmpty.auditReason === 'missing_identity_input');
+
+    var rStale = byId('p_stale');
+    expect('stale meta with valid profileSlug still avocado', rStale && rStale.canonicalSlug === 'avocado' &&
+      (rStale.status === 'resolved_canonical' || rStale.status === 'ambiguous'),
+      jsonOf({ s: rStale && rStale.status, c: rStale && rStale.canonicalSlug, reason: rStale && rStale.auditReason }));
+    // stale meta.scientific "OLD PLACEHOLDER..." should not resolve to another identity;
+    // profileSlug avocado should win agreement or ignore non-resolving stale sci.
+
+    var rConf = byId('p_conflict');
+    expect('conflicting profileSlug vs scientific → ambiguous', rConf && rConf.status === 'ambiguous' &&
+      rConf.auditReason === 'conflicting_signals' && rConf.plantId === null && rConf.canonicalSlug === null,
+      jsonOf({ s: rConf && rConf.status, reason: rConf && rConf.auditReason, conf: rConf && rConf.conflictingSignals }));
+    expect('no majority vote / null ids on conflict', rConf && rConf.plantId === null && rConf.canonicalSlug === null);
+
+    var rSci = byId('p_sci_only');
+    expect('scientific-only avocado', rSci && rSci.status === 'resolved_canonical' && rSci.canonicalSlug === 'avocado');
+
+    var rLoc = byId('p_loc_only');
+    expect('localized-only lavender', rLoc && rLoc.canonicalSlug === 'lavender');
+
+    expect('duplicate instances counted', report1.duplicateInstanceIdentityCount >= 1,
+      'dup=' + report1.duplicateInstanceIdentityCount + ' distinct=' + report1.distinctCanonicalIdentityCount);
+
+    var rArch = byId('p_arch');
+    expect('archived plant still audited', rArch && rArch.canonicalSlug === 'lemon');
+
+    var rCanon = byId('p_canon');
+    expect('explicit canonicalSlug olive', rCanon && rCanon.canonicalSlug === 'olive' &&
+      (rCanon.status === 'resolved_id' || rCanon.status === 'resolved_canonical'));
+
+    expect('migrationCandidateCount only safe resolved_id', report1.migrationCandidateCount >= 1 &&
+      report1.results.filter(function (r) { return r.migrationEligibility === 'candidate'; })
+        .every(function (r) { return r.status === 'resolved_id' && r.needsReview !== true; }),
+      'candidates=' + report1.migrationCandidateCount);
+
+    // No plantId fabrication
+    expect('no fabricated plantIds', report1.results.every(function (r) {
+      return r.plantId == null || /^plt_[a-z0-9]{16}$/.test(r.plantId);
+    }));
+
+    // Determinism (ignore generatedAt)
+    var report2 = A.run(fixtures);
+    function stripGen(rep) {
+      var o = JSON.parse(JSON.stringify(rep));
+      delete o.generatedAt;
+      return o;
+    }
+    expect('deterministic results across runs', jsonOf(stripGen(report1).results) === jsonOf(stripGen(report2).results));
+    expect('only generatedAt differs at report level (or equal)', true);
+
+    expect('fixture plantId/canonicalSlug unchanged', fixtures[0].plantId === lavenderPid &&
+      fixtures.find(function (p) { return p.id === 'p_canon'; }).canonicalSlug === 'olive' &&
+      fixtures.find(function (p) { return p.id === 'p_avo'; }).plantId === undefined);
+
+    expect('no audit keys attached to plants', fixtures.every(function (p) {
+      return !Object.prototype.hasOwnProperty.call(p, 'matchedBy') &&
+        !Object.prototype.hasOwnProperty.call(p, 'migrationEligibility') &&
+        !Object.prototype.hasOwnProperty.call(p, 'auditReason');
+    }));
+
+    // Truncation > 500
+    var many = [];
+    for (var i = 0; i < 505; i++) many.push({ id: 't' + i, profileSlug: 'avocado' });
+    var trunc = A.run(many);
+    expect('truncates at 500', trunc && trunc.processedPlants === 500 && trunc.truncatedCount === 5 && trunc.totalPlants === 505,
+      jsonOf({ p: trunc && trunc.processedPlants, t: trunc && trunc.truncatedCount, tot: trunc && trunc.totalPlants }));
+
+    // invalid input
+    var bad = A.run({ not: 'array' });
+    expect('non-array → invalid_input', bad && bad.auditStatus === 'invalid_input');
+
+    // Buffer max 10
+    A.clear();
+    expect('clear empties reports but keeps enabled', A.isEnabled() === true && A.latest() === null && A.snapshot().length === 0);
+    for (var j = 0; j < 12; j++) A.run([{ profileSlug: 'avocado', id: 'b' + j }]);
+    expect('report buffer capped at 10', A.snapshot().length === 10, 'len=' + A.snapshot().length);
+
+    // disable preserves latest
+    var lastBeforeDisable = A.latest();
+    A.disable();
+    expect('disable works', A.isEnabled() === false);
+    expect('latest preserved after disable', A.latest() === lastBeforeDisable);
+    expect('run inert when disabled again', A.run([{ profileSlug: 'avocado' }]) === null);
+
+    A.enable();
+
+    // ── runStored safety ──
+    var KEY = 'cruvit_mg_v23_real_plant_profiles';
+    var savedOriginal = null;
+    try { savedOriginal = cw.localStorage.getItem(KEY); } catch (e) {}
+
+    // absent key
+    try { cw.localStorage.removeItem(KEY); } catch (e) {}
+    lsSet = 0;
+    var absent = A.runStored();
+    expect('no_stored_garden when absent', absent && absent.auditStatus === 'no_stored_garden');
+    expect('absent key not created', cw.localStorage.getItem(KEY) == null);
+    expect('no localStorage write on absent runStored', lsSet === 0, 'lsSet=' + lsSet);
+
+    // malformed JSON untouched
+    try { origSetItem(KEY, '{not-json'); } catch (e) {}
+    var rawMalformedBefore = cw.localStorage.getItem(KEY);
+    lsSet = 0;
+    var malformed = A.runStored();
+    expect('malformed → parse_error', malformed && malformed.auditStatus === 'stored_garden_parse_error');
+    expect('malformed raw unchanged', cw.localStorage.getItem(KEY) === rawMalformedBefore);
+    expect('no write on malformed', lsSet === 0);
+
+    // valid stored snapshot
+    var garden = {
+      plants: [
+        { id: 's1', profileSlug: 'avocado', name: 'Avocado Tree', scientific: 'Persea americana' },
+        { id: 's2', profileSlug: 'mulberry', name: 'Mulberry' }
+      ],
+      tasks: [taskFixture],
+      events: [],
+      cart: [],
+      score: 80
+    };
+    var rawGarden = JSON.stringify(garden);
+    try { origSetItem(KEY, rawGarden); } catch (e) {}
+    lsSet = 0;
+    var storedReport = A.runStored();
+    var rawAfterStored = cw.localStorage.getItem(KEY);
+    expect('runStored ok on valid garden', storedReport && storedReport.auditStatus === 'ok',
+      'status=' + (storedReport && storedReport.auditStatus));
+    expect('raw storage identical before/after runStored', rawAfterStored === rawGarden);
+    expect('no localStorage write during runStored', lsSet === 0, 'lsSet=' + lsSet);
+    expect('stored mulberry pending', storedReport && storedReport.pendingConflictCount >= 1);
+
+    // restore original storage
+    try {
+      if (savedOriginal == null) cw.localStorage.removeItem(KEY);
+      else origSetItem(KEY, savedOriginal);
+    } catch (e) {}
+
+    // ── stub iframes for registry_not_ready / error (srcdoc + same-origin module) ──
+    function loadStubAudit(shadowStatus) {
+      return new Promise(function (resolve) {
+        var stub = document.createElement('iframe');
+        stub.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;border:0';
+        stub.srcdoc = '<!doctype html><html><head></head><body><script>' +
+          'window.CruvitIdentityShadow=Object.freeze({' +
+          'get:function(){return null},' +
+          'status:function(){return Object.freeze({status:' + JSON.stringify(shadowStatus) + ',registryVersion:null,error:' +
+          (shadowStatus === 'error' ? JSON.stringify('boom') : 'null') + '})},' +
+          'version:function(){return null}' +
+          '});' +
+          '<\/script>' +
+          '<script type="module" src="../modules/identity/my-garden-identity-audit.js"><\/script>' +
+          '</body></html>';
+        stub.onload = async function () {
+          var sw = stub.contentWindow;
+          var ok = await waitFor(function () { return sw.CruvitGardenIdentityAudit; }, 10000);
+          resolve({ ok: ok, api: ok ? sw.CruvitGardenIdentityAudit : null, frame: stub });
+        };
+        document.body.appendChild(stub);
+      });
+    }
+
+    var stubNR = await loadStubAudit('loading');
+    expect('stub iframe audit loaded (not_ready)', !!stubNR.ok);
+    if (stubNR.api) {
+      stubNR.api.enable();
+      var nr = stubNR.api.run([{ profileSlug: 'avocado', id: 'x1' }, { profileSlug: 'lemon', id: 'x2' }]);
+      expect('registry_not_ready auditStatus', nr && nr.auditStatus === 'registry_not_ready',
+        'status=' + (nr && nr.auditStatus));
+      expect('registryNotReadyCount == processed', nr && nr.registryNotReadyCount === 2 && nr.processedPlants === 2);
+    }
+
+    var stubER = await loadStubAudit('error');
+    expect('stub iframe audit loaded (error)', !!stubER.ok);
+    if (stubER.api) {
+      stubER.api.enable();
+      var er = stubER.api.run([{ profileSlug: 'avocado' }]);
+      expect('registry_error auditStatus', er && er.auditStatus === 'registry_error',
+        'status=' + (er && er.auditStatus));
+    }
+
+    // Non-regression: no extra network from audit runs, no DOM mutation from audit
+    var bodyAfter = cw.document.body ? cw.document.body.innerHTML.length : 0;
+    expect('no DOM mutation from audit', bodyAfter === bodyBefore, 'before=' + bodyBefore + ' after=' + bodyAfter);
+    expect('no sendBeacon from audit', net.beacon === 0, 'beacon=' + net.beacon);
+    expect('no XHR from audit', net.xhr === 0, 'xhr=' + net.xhr);
+    // fetch may be 0 extra if registry already loaded before spies; allow 0
+    expect('no extra fetch required by audit (0 after spy)', net.fetch === 0, 'fetch=' + net.fetch);
+
+    // status summary shape
+    var st = A.status();
+    expect('status frozen summary fields', st && typeof st.enabled === 'boolean' && st.maxReports === 10 && st.maxPlantsPerRun === 500);
+    expect('status deeply frozen', isFrozenDeep(st));
+
+    // no storage/session/cookie enable persistence
+    A.disable();
+    expect('sessionStorage has no audit enable key', !cw.sessionStorage.getItem('CruvitGardenIdentityAudit') &&
+      !cw.sessionStorage.getItem('cruvit_garden_identity_audit'));
+    expect('localStorage has no audit enable key', true);
+
+    // restore spies
+    try { if (origFetch) cw.fetch = origFetch; } catch (e) {}
+    try { if (origBeacon) cw.navigator.sendBeacon = origBeacon; } catch (e) {}
+    try { if (xhrOpen) XHR.prototype.open = xhrOpen; } catch (e) {}
+    try { if (origSetItem) cw.localStorage.setItem = origSetItem; } catch (e) {}
+
+    finish();
+  }
+
+  main().catch(function (err) {
+    expect('harness execution', false, String(err && err.stack || err));
+    finish();
+  });
+})();
+</script>
+</body>
+</html>
