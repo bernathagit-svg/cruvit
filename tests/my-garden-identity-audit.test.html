@@ -122,16 +122,45 @@
     // ── no query-string auto-enable (this page may have ?report; audit itself ignores URL) ──
     expect('audit ignores URL for enablement', A.isEnabled() === false);
 
-    // Network / storage spies on the app window
-    var net = { fetch: 0, beacon: 0, xhr: 0 };
+    // Network / storage spies on the app window.
+    // Counters are cumulative; audit no-network proof uses before/after deltas
+    // around the explicit synchronous A.run(fixtures) window only (see below).
+    var net = { fetch: 0, beacon: 0, xhr: 0, websocket: 0, registry: 0 };
     var origFetch = cw.fetch ? cw.fetch.bind(cw) : null;
     var origBeacon = cw.navigator && cw.navigator.sendBeacon ? cw.navigator.sendBeacon.bind(cw.navigator) : null;
     var XHR = cw.XMLHttpRequest;
     var xhrOpen = XHR && XHR.prototype.open;
+    var OrigWS = cw.WebSocket;
+    function netSnapshot() {
+      return {
+        fetch: net.fetch,
+        beacon: net.beacon,
+        xhr: net.xhr,
+        websocket: net.websocket,
+        registry: net.registry
+      };
+    }
+    function netDelta(before, after) {
+      return {
+        fetch: after.fetch - before.fetch,
+        beacon: after.beacon - before.beacon,
+        xhr: after.xhr - before.xhr,
+        websocket: after.websocket - before.websocket,
+        registry: after.registry - before.registry
+      };
+    }
+    function registryUrl(input) {
+      var url = '';
+      if (typeof input === 'string') url = input;
+      else if (input && typeof input.url === 'string') url = input.url;
+      else url = String(input || '');
+      return url.indexOf('plant-identity.registry') >= 0;
+    }
     try {
       if (origFetch) {
-        cw.fetch = function () {
+        cw.fetch = function (input) {
           net.fetch++;
+          if (registryUrl(input)) net.registry++;
           return origFetch.apply(cw, arguments);
         };
       }
@@ -142,10 +171,19 @@
         };
       }
       if (xhrOpen) {
-        XHR.prototype.open = function () {
+        XHR.prototype.open = function (method, url) {
           net.xhr++;
+          if (registryUrl(url)) net.registry++;
           return xhrOpen.apply(this, arguments);
         };
+      }
+      if (OrigWS) {
+        cw.WebSocket = function (url, protocols) {
+          net.websocket++;
+          if (arguments.length > 1) return new OrigWS(url, protocols);
+          return new OrigWS(url);
+        };
+        cw.WebSocket.prototype = OrigWS.prototype;
       }
     } catch (e) {}
 
@@ -197,7 +235,22 @@
     var taskFixture = ['💧', 'Water Fig Tree', 'Today', 'High', '2026-07-17', true, 'Fig Tree', false];
     var taskBefore = jsonOf(taskFixture);
 
+    // Attribute network only to the explicit synchronous audit run window.
+    // Unrelated My Garden demo fetches outside this window must not fail the harness.
+    var netBeforeRun = netSnapshot();
     var report1 = A.run(fixtures);
+    var auditRunNetDelta = netDelta(netBeforeRun, netSnapshot());
+    expect('audit run fetch delta = 0', auditRunNetDelta.fetch === 0,
+      'fetchΔ=' + auditRunNetDelta.fetch);
+    expect('audit run XHR delta = 0', auditRunNetDelta.xhr === 0,
+      'xhrΔ=' + auditRunNetDelta.xhr);
+    expect('audit run beacon delta = 0', auditRunNetDelta.beacon === 0,
+      'beaconΔ=' + auditRunNetDelta.beacon);
+    expect('audit run WebSocket delta = 0', auditRunNetDelta.websocket === 0,
+      'websocketΔ=' + auditRunNetDelta.websocket);
+    expect('audit run registry-request delta = 0', auditRunNetDelta.registry === 0,
+      'registryΔ=' + auditRunNetDelta.registry);
+
     expect('run returns report while enabled', !!report1 && report1.auditStatus === 'ok',
       'status=' + (report1 && report1.auditStatus));
     expect('report deeply frozen', isFrozenDeep(report1));
@@ -436,13 +489,9 @@
         'status=' + (er && er.auditStatus));
     }
 
-    // Non-regression: no extra network from audit runs, no DOM mutation from audit
+    // Non-regression: no DOM mutation from audit (network proven via audit-run deltas above)
     var bodyAfter = cw.document.body ? cw.document.body.innerHTML.length : 0;
     expect('no DOM mutation from audit', bodyAfter === bodyBefore, 'before=' + bodyBefore + ' after=' + bodyAfter);
-    expect('no sendBeacon from audit', net.beacon === 0, 'beacon=' + net.beacon);
-    expect('no XHR from audit', net.xhr === 0, 'xhr=' + net.xhr);
-    // fetch may be 0 extra if registry already loaded before spies; allow 0
-    expect('no extra fetch required by audit (0 after spy)', net.fetch === 0, 'fetch=' + net.fetch);
 
     // status summary shape
     var st = A.status();
@@ -459,6 +508,7 @@
     try { if (origFetch) cw.fetch = origFetch; } catch (e) {}
     try { if (origBeacon) cw.navigator.sendBeacon = origBeacon; } catch (e) {}
     try { if (xhrOpen) XHR.prototype.open = xhrOpen; } catch (e) {}
+    try { if (OrigWS) cw.WebSocket = OrigWS; } catch (e) {}
     try { if (origSetItem) cw.localStorage.setItem = origSetItem; } catch (e) {}
 
     finish();
