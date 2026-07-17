@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Growth Outcome Schema Contract Tests (GOS-1)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Growth Outcome Suitability — GOS-1 schema contract harness</h1>
+  <p class="sub">Loads local schema JSON only. Synthetic fixtures. No evaluator, no plant pilot data, no storage writes.</p>
+  <div id="summary">Running…</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+<script>
+(function () {
+  'use strict';
+
+  var SIX = [
+    'survival',
+    'vegetativeGrowth',
+    'flowering',
+    'fruitSet',
+    'fruitRipeningOrYield',
+    'longTermReliability'
+  ];
+  var FORBIDDEN = ['score', 'level', 'goalFit', 'recommendedUse', 'overallConclusion', 'suitabilityScore'];
+  var WEAK_SOURCES = { nursery_commercial: 1, grower_observation: 1 };
+
+  var results = [];
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function deepFreeze(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return v;
+    if (seen.has(v)) return v;
+    seen.add(v);
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) deepFreeze(v[i], seen);
+    } else {
+      Object.keys(v).forEach(function (k) { deepFreeze(v[k], seen); });
+    }
+    return Object.freeze(v);
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function validDate(ymd) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(ymd || ''))) return false;
+    var p = String(ymd).split('-').map(Number);
+    var d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+    return d.getUTCFullYear() === p[0] && (d.getUTCMonth() + 1) === p[1] && d.getUTCDate() === p[2];
+  }
+
+  function unknownApplicability() {
+    return { status: 'unknown' };
+  }
+
+  function unknownOutcome(note) {
+    return {
+      dataStatus: 'unknown',
+      confidence: 'none',
+      needsReview: true,
+      requirements: [],
+      hardBlockers: [],
+      limitingFactors: [],
+      favorableFactors: [],
+      assumptions: [],
+      explicitUnknowns: [note],
+      evidenceRefs: []
+    };
+  }
+
+  function minimalUnknownProfile() {
+    var outcomes = {};
+    SIX.forEach(function (o) {
+      outcomes[o] = unknownOutcome('No reviewed evidence for ' + o + ' in GOS-1 synthetic fixture.');
+    });
+    return {
+      schemaVersion: 1,
+      profileVersion: '0.0.1',
+      engineContractVersion: '1.0.0',
+      canonicalSlug: 'synthetic-gos-plant',
+      scientificName: 'Syntheticus gosensis',
+      taxonomyApplicability: unknownApplicability(),
+      cultivarApplicability: unknownApplicability(),
+      regionApplicability: unknownApplicability(),
+      hemisphereApplicability: unknownApplicability(),
+      environmentApplicability: unknownApplicability(),
+      legacyClimateTraitsCoverage: 'environment_only',
+      outcomes: outcomes,
+      evidenceRefs: [],
+      needsReview: true,
+      dataVersion: '0.0.1'
+    };
+  }
+
+  function supportedSurvivalProfile() {
+    var p = minimalUnknownProfile();
+    var ev = 'ev_syn_survival_frost_001';
+    p.canonicalSlug = 'synthetic-gos-supported';
+    p.needsReview = false;
+    p.evidenceRefs = [ev];
+    p.outcomes.survival = {
+      dataStatus: 'supported',
+      confidence: 'medium',
+      needsReview: false,
+      requirements: [{
+        ruleId: 'syn_frost_exposure_rule',
+        factorKey: 'frost_sensitivity',
+        factorCategory: 'frost_exposure',
+        operator: 'eq',
+        value: 'high',
+        effect: 'limiting',
+        confidence: 'medium',
+        needsReview: false,
+        evidenceRefs: [ev]
+      }],
+      hardBlockers: [],
+      limitingFactors: ['frost_exposure'],
+      favorableFactors: [],
+      assumptions: ['Species-level fixture only; cultivar unknown.'],
+      explicitUnknowns: [],
+      evidenceRefs: [ev]
+    };
+    return p;
+  }
+
+  function evidenceClaim(overrides) {
+    var c = {
+      evidenceId: 'ev_syn_survival_frost_001',
+      schemaVersion: 1,
+      claimVersion: '0.0.1',
+      outcome: 'survival',
+      factorKey: 'frost_sensitivity',
+      claimType: 'qualitative_requirement',
+      qualitativeClaim: {
+        statement: 'Synthetic frost sensitivity claim for contract testing only.',
+        factorKey: 'frost_sensitivity'
+      },
+      source: {
+        authority: 'synthetic-authority',
+        recordId: 'SYN-001',
+        sourceType: 'expert_review',
+        title: 'Synthetic GOS-1 contract fixture',
+        verifiedAt: '2026-07-17'
+      },
+      evidenceStrength: 'moderate',
+      confidence: 'medium',
+      needsReview: false,
+      verifiedAt: '2026-07-17',
+      regionApplicability: unknownApplicability(),
+      cultivarApplicability: unknownApplicability(),
+      environmentApplicability: unknownApplicability(),
+      hemisphereApplicability: unknownApplicability()
+    };
+    Object.keys(overrides || {}).forEach(function (k) { c[k] = overrides[k]; });
+    return c;
+  }
+
+  function validateOutcomeBlock(block, outcomeName) {
+    var problems = [];
+    if (!block) {
+      problems.push('missing');
+      return problems;
+    }
+    FORBIDDEN.forEach(function (f) {
+      if (Object.prototype.hasOwnProperty.call(block, f)) problems.push('forbidden:' + f);
+    });
+    if (block.dataStatus === 'supported' && (!block.evidenceRefs || !block.evidenceRefs.length)) {
+      problems.push('supported_without_evidence');
+    }
+    if (block.dataStatus === 'unknown') {
+      if (!block.explicitUnknowns || !block.explicitUnknowns.length) problems.push('unknown_without_explicit');
+      if (block.confidence === 'high') problems.push('unknown_high_confidence');
+    }
+    if (block.dataStatus === 'conflicting') {
+      var hasReason = !!(block.conflictReason && String(block.conflictReason).trim());
+      var hasRefs = !!(block.conflictEvidenceRefs && block.conflictEvidenceRefs.length);
+      if (!hasReason && !hasRefs) problems.push('conflicting_without_metadata');
+    }
+    return problems;
+  }
+
+  function validateProfile(profile) {
+    var problems = [];
+    FORBIDDEN.forEach(function (f) {
+      if (Object.prototype.hasOwnProperty.call(profile, f)) problems.push('forbidden:' + f);
+    });
+    SIX.forEach(function (o) {
+      if (!profile.outcomes || !profile.outcomes[o]) problems.push('missing:' + o);
+      else {
+        validateOutcomeBlock(profile.outcomes[o], o).forEach(function (p) {
+          problems.push(o + ':' + p);
+        });
+      }
+    });
+    if (profile.outcomes) {
+      Object.keys(profile.outcomes).forEach(function (k) {
+        if (SIX.indexOf(k) < 0) problems.push('extra:' + k);
+      });
+    }
+    var cov = profile.legacyClimateTraitsCoverage;
+    if (cov !== 'none' && cov !== 'environment_only') problems.push('bad_legacy_coverage');
+    return problems;
+  }
+
+  function validateEvidence(claim) {
+    var problems = [];
+    if (!claim.evidenceId) problems.push('empty_evidenceId');
+    if (SIX.indexOf(claim.outcome) < 0) problems.push('invalid_outcome');
+    if (!validDate(claim.verifiedAt)) problems.push('invalid_date');
+    if (!claim.source || !claim.source.authority) problems.push('missing_authority');
+    var hasRecord = !!(claim.source && claim.source.recordId);
+    var hasPub = !!(claim.source && claim.source.publicationId);
+    if (!hasRecord && !hasPub) problems.push('missing_record_or_publication');
+    if (!claim.quantitativeClaim && !claim.qualitativeClaim) problems.push('missing_claim_body');
+    if (claim.source && WEAK_SOURCES[claim.source.sourceType] && claim.evidenceStrength === 'strong') {
+      problems.push('weak_source_strong_strength');
+    }
+    FORBIDDEN.forEach(function (f) {
+      if (Object.prototype.hasOwnProperty.call(claim, f)) problems.push('forbidden:' + f);
+    });
+    return problems;
+  }
+
+  function finish(extra) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var summary = { total: results.length, passed: passed, failed: failed };
+    var host = document.getElementById('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+    host.className = failed ? 'fail' : 'pass';
+    var tbody = document.getElementById('rows');
+    tbody.innerHTML = results.map(function (r) {
+      return '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>';
+    }).join('');
+    try {
+      window.__GOS_SCHEMA_DONE = true;
+      window.__GOS_SCHEMA_SUMMARY = summary;
+      window.__GOS_SCHEMA_FIXTURES = extra && extra.fixtures ? extra.fixtures : null;
+    } catch (e) {}
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.has('report') || params.has('autoclose')) {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/__result', JSON.stringify({ results: results, summary: summary }));
+        }
+        if (params.has('autoclose')) setTimeout(function () { try { window.close(); } catch (e) {} }, 40);
+      }
+    } catch (e) {}
+  }
+
+  async function main() {
+    var harnessRoot = document.body;
+    var allowedNodeIds = { summary: 1, rows: 1 };
+    var storageWrites = 0;
+    var lsSet = localStorage.setItem.bind(localStorage);
+    var ssSet = sessionStorage.setItem.bind(sessionStorage);
+    localStorage.setItem = function () { storageWrites++; return lsSet.apply(localStorage, arguments); };
+    sessionStorage.setItem = function () { storageWrites++; return ssSet.apply(sessionStorage, arguments); };
+
+    var netWrites = 0;
+    var origFetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      var method = (init && init.method) ? String(init.method).toUpperCase() : 'GET';
+      if (method !== 'GET' && method !== 'HEAD') netWrites++;
+      return origFetch(input, init);
+    };
+
+    var profileSchema = null;
+    var evidenceSchema = null;
+    try {
+      var pr = await origFetch('../data/growth-outcome.schema.json', { cache: 'no-store' });
+      var er = await origFetch('../data/growth-outcome-evidence.schema.json', { cache: 'no-store' });
+      expect('profile schema HTTP ok', pr.ok, 'status=' + pr.status);
+      expect('evidence schema HTTP ok', er.ok, 'status=' + er.status);
+      profileSchema = await pr.json();
+      evidenceSchema = await er.json();
+      expect('schema files load', !!profileSchema && !!evidenceSchema);
+      expect('profile schema loads as object', !!profileSchema && typeof profileSchema === 'object');
+      expect('evidence schema loads as object', !!evidenceSchema && typeof evidenceSchema === 'object');
+    } catch (e) {
+      expect('schema files load', false, String(e && e.message || e));
+      localStorage.setItem = lsSet;
+      sessionStorage.setItem = ssSet;
+      window.fetch = origFetch;
+      finish();
+      return;
+    }
+
+    expect('profile schema draft-07', String(profileSchema.$schema || '').indexOf('draft-07') >= 0);
+    expect('evidence schema draft-07', String(evidenceSchema.$schema || '').indexOf('draft-07') >= 0);
+    expect('profile OutcomeName has 6', profileSchema.definitions.OutcomeName.enum.length === 6);
+    expect('evidence OutcomeName has 6', evidenceSchema.definitions.OutcomeName.enum.length === 6);
+    expect('outcome names identical',
+      JSON.stringify(profileSchema.definitions.OutcomeName.enum) === JSON.stringify(SIX) &&
+      JSON.stringify(evidenceSchema.definitions.OutcomeName.enum) === JSON.stringify(SIX));
+    expect('fruitSet and fruitRipeningOrYield separate',
+      SIX.indexOf('fruitSet') >= 0 && SIX.indexOf('fruitRipeningOrYield') >= 0 &&
+      SIX.indexOf('fruitSet') !== SIX.indexOf('fruitRipeningOrYield'));
+    expect('legacyClimateTraitsCoverage includes environment_only',
+      profileSchema.definitions.GrowthOutcomeProfile.properties.legacyClimateTraitsCoverage.enum.indexOf('environment_only') >= 0);
+    expect('legacyClimateTraitsCoverage does not claim complete',
+      profileSchema.definitions.GrowthOutcomeProfile.properties.legacyClimateTraitsCoverage.enum.indexOf('complete') < 0);
+    expect('GrowthOutcomeProfile additionalProperties false',
+      profileSchema.definitions.GrowthOutcomeProfile.additionalProperties === false);
+    expect('OutcomeBlock additionalProperties false',
+      profileSchema.definitions.OutcomeBlock.additionalProperties === false);
+    expect('EvidenceClaim additionalProperties false',
+      evidenceSchema.definitions.EvidenceClaim.additionalProperties === false);
+
+    FORBIDDEN.forEach(function (f) {
+      expect('profile schema forbids ' + f,
+        !Object.prototype.hasOwnProperty.call(profileSchema.definitions.GrowthOutcomeProfile.properties, f));
+      expect('outcome schema forbids ' + f,
+        !Object.prototype.hasOwnProperty.call(profileSchema.definitions.OutcomeBlock.properties, f));
+      expect('evidence schema forbids ' + f,
+        !Object.prototype.hasOwnProperty.call(evidenceSchema.definitions.EvidenceClaim.properties, f));
+    });
+
+    expect('goal-model boundary documented',
+      String(profileSchema.description || '').indexOf('must not rewrite the six biological estimates') >= 0);
+    expect('v1b fallback documented',
+      String(profileSchema.description || '').indexOf('Climate Suitability Engine v1b') >= 0);
+    expect('URL-alone insufficiency documented',
+      String(evidenceSchema.description || '').indexOf('URL alone is never sufficient') >= 0);
+
+    var unknownProfile = deepFreeze(minimalUnknownProfile());
+    var supportedProfile = deepFreeze(supportedSurvivalProfile());
+    var goodClaim = deepFreeze(evidenceClaim());
+    var conflictA = deepFreeze(evidenceClaim({
+      evidenceId: 'ev_syn_conflict_a',
+      claimType: 'conflicting_report',
+      conflictsWith: ['ev_syn_conflict_b'],
+      qualitativeClaim: { statement: 'Synthetic conflict side A.', factorKey: 'frost_sensitivity' }
+    }));
+    var conflictB = deepFreeze(evidenceClaim({
+      evidenceId: 'ev_syn_conflict_b',
+      claimType: 'conflicting_report',
+      conflictsWith: ['ev_syn_conflict_a'],
+      qualitativeClaim: { statement: 'Synthetic conflict side B.', factorKey: 'frost_sensitivity' }
+    }));
+
+    expect('exposed fixtures deeply frozen',
+      isFrozenDeep(unknownProfile) && isFrozenDeep(supportedProfile) && isFrozenDeep(goodClaim));
+
+    var uProblems = validateProfile(unknownProfile);
+    expect('valid minimal explicit-unknown profile', uProblems.length === 0, uProblems.join(','));
+    expect('unknown flowering explicit', unknownProfile.outcomes.flowering.dataStatus === 'unknown');
+    expect('unknown fruitSet explicit', unknownProfile.outcomes.fruitSet.dataStatus === 'unknown');
+    expect('unknown fruitRipeningOrYield explicit', unknownProfile.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('unknown longTermReliability explicit', unknownProfile.outcomes.longTermReliability.dataStatus === 'unknown');
+
+    var sProblems = validateProfile(supportedProfile);
+    expect('valid structured supported profile', sProblems.length === 0, sProblems.join(','));
+    expect('all six outcomes required on supported profile', SIX.every(function (o) { return !!supportedProfile.outcomes[o]; }));
+    expect('survival support does not imply flowering support',
+      supportedProfile.outcomes.survival.dataStatus === 'supported' &&
+      supportedProfile.outcomes.flowering.dataStatus === 'unknown');
+    expect('region unknown accepted', supportedProfile.regionApplicability.status === 'unknown');
+    expect('cultivar unknown accepted', supportedProfile.cultivarApplicability.status === 'unknown');
+    expect('environment applicability accepted', supportedProfile.environmentApplicability.status === 'unknown');
+    expect('legacyClimateTraitsCoverage environment_only',
+      supportedProfile.legacyClimateTraitsCoverage === 'environment_only');
+
+    expect('valid evidence claim', validateEvidence(goodClaim).length === 0, validateEvidence(goodClaim).join(','));
+    expect('contradictory evidence representation accepted',
+      validateEvidence(conflictA).length === 0 &&
+      validateEvidence(conflictB).length === 0 &&
+      conflictA.conflictsWith[0] === 'ev_syn_conflict_b');
+
+    var conflictingOutcome = {
+      dataStatus: 'conflicting',
+      confidence: 'low',
+      needsReview: true,
+      requirements: [],
+      hardBlockers: [],
+      limitingFactors: [],
+      favorableFactors: [],
+      assumptions: [],
+      explicitUnknowns: ['Sources disagree on frost tolerance.'],
+      evidenceRefs: ['ev_syn_conflict_a', 'ev_syn_conflict_b'],
+      conflictReason: 'Synthetic opposing frost claims retained without overwrite.',
+      conflictEvidenceRefs: ['ev_syn_conflict_a', 'ev_syn_conflict_b']
+    };
+    expect('conflicting outcome accepted', validateOutcomeBlock(conflictingOutcome, 'survival').length === 0);
+
+    var supportedNoEv = minimalUnknownProfile();
+    supportedNoEv.outcomes.survival = {
+      dataStatus: 'supported', confidence: 'medium', needsReview: false,
+      requirements: [], hardBlockers: [], limitingFactors: [], favorableFactors: [],
+      assumptions: [], explicitUnknowns: [], evidenceRefs: []
+    };
+    expect('supported without evidenceRefs rejected',
+      validateOutcomeBlock(supportedNoEv.outcomes.survival, 'survival').indexOf('supported_without_evidence') >= 0);
+
+    var highUnknown = minimalUnknownProfile();
+    highUnknown.outcomes.flowering.confidence = 'high';
+    expect('high confidence with unknown dataStatus rejected',
+      validateOutcomeBlock(highUnknown.outcomes.flowering, 'flowering').indexOf('unknown_high_confidence') >= 0);
+
+    expect('invalid outcome name rejected',
+      validateEvidence(evidenceClaim({ outcome: 'blooming' })).indexOf('invalid_outcome') >= 0);
+    expect('invalid date rejected',
+      validateEvidence(evidenceClaim({ verifiedAt: '2026-13-40' })).indexOf('invalid_date') >= 0);
+    expect('missing source authority rejected',
+      validateEvidence(evidenceClaim({
+        source: { authority: '', recordId: 'X', sourceType: 'expert_review' }
+      })).indexOf('missing_authority') >= 0);
+    expect('missing source record/publication ID rejected',
+      validateEvidence(evidenceClaim({
+        source: { authority: 'synthetic-authority', sourceType: 'expert_review', url: 'https://example.invalid/only' }
+      })).indexOf('missing_record_or_publication') >= 0);
+    expect('weak nursery cannot be strong',
+      validateEvidence(evidenceClaim({
+        source: { authority: 'nursery-x', recordId: 'N-1', sourceType: 'nursery_commercial', verifiedAt: '2026-07-17' },
+        evidenceStrength: 'strong'
+      })).indexOf('weak_source_strong_strength') >= 0);
+
+    var withScore = minimalUnknownProfile();
+    withScore.score = 50;
+    expect('no score field allowed in canonical profile',
+      validateProfile(withScore).indexOf('forbidden:score') >= 0);
+    var withLevel = minimalUnknownProfile();
+    withLevel.level = 'good';
+    expect('no level field allowed in canonical profile',
+      validateProfile(withLevel).indexOf('forbidden:level') >= 0);
+    var withGoal = minimalUnknownProfile();
+    withGoal.goalFit = 'ornamental';
+    expect('no goalFit field allowed in canonical profile',
+      validateProfile(withGoal).indexOf('forbidden:goalFit') >= 0);
+    var withUse = minimalUnknownProfile();
+    withUse.recommendedUse = 'foliage';
+    expect('no recommendedUse field allowed in canonical profile',
+      validateProfile(withUse).indexOf('forbidden:recommendedUse') >= 0);
+
+    var missingLater = minimalUnknownProfile();
+    delete missingLater.outcomes.fruitRipeningOrYield;
+    expect('all six outcomes required (missing later stage rejected)',
+      validateProfile(missingLater).indexOf('missing:fruitRipeningOrYield') >= 0);
+
+    var a1 = validateProfile(supportedProfile);
+    var a2 = validateProfile(supportedProfile);
+    expect('deterministic validation', JSON.stringify(a1) === JSON.stringify(a2));
+
+    expect('no storage writes', storageWrites === 0, 'writes=' + storageWrites);
+    expect('no non-GET network writes', netWrites === 0, 'writes=' + netWrites);
+
+    var extraNodes = [];
+    Array.prototype.forEach.call(harnessRoot.querySelectorAll('[id]'), function (el) {
+      if (!allowedNodeIds[el.id] && el.tagName !== 'SCRIPT') extraNodes.push(el.id);
+    });
+    expect('no DOM mutation outside harness report',
+      !!document.getElementById('summary') &&
+      !!document.getElementById('rows') &&
+      extraNodes.length === 0,
+      'extra=' + extraNodes.join(','));
+
+    localStorage.setItem = lsSet;
+    sessionStorage.setItem = ssSet;
+    window.fetch = origFetch;
+
+    finish({
+      fixtures: deepFreeze({
+        unknownProfile: unknownProfile,
+        supportedProfile: supportedProfile,
+        goodClaim: goodClaim
+      })
+    });
+  }
+
+  main().catch(function (e) {
+    expect('harness runtime', false, String(e && e.message || e));
+    finish();
+  });
+})();
+</script>
+</body>
+</html>

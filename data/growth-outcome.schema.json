@@ -1,0 +1,332 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cruvit.app/schemas/growth-outcome-profile/v1",
+  "title": "Cruvit Growth Outcome Suitability Profile Contract",
+  "description": "GOS-1 biological outcome profile contract. Describes source-backed biological requirements and evidence references for six growth outcomes. Does NOT store computed user-location scores, evaluator levels, goalFit, recommendedUse, or overallConclusion. User goals (ornamental foliage, flowering display, edible harvest, reliable household yield, experimental growing, protected growing, low maintenance, container growing) belong to a future evaluator interpretation layer and must not rewrite the six biological estimates. Plants without a Growth Outcome profile remain valid and continue to use Climate Suitability Engine v1b unchanged. legacyClimateTraitsCoverage=environment_only means existing climateTraits describe coarse environment fit only and must never be treated as complete Growth Outcome evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "engineContractVersion", "dataVersion", "profiles"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Contract schema major version. Increment only with breaking shape changes."
+    },
+    "engineContractVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the evaluator contract this profile data is authored against. Profiles do not embed evaluator outputs."
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the profile dataset content in this file."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional human-readable notes about this profile document as a whole."
+    },
+    "profiles": {
+      "type": "array",
+      "description": "Zero or more Growth Outcome profiles. Empty array is valid. Absence of a plant from this list means no GOS profile yet.",
+      "items": { "$ref": "#/definitions/GrowthOutcomeProfile" }
+    }
+  },
+  "definitions": {
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Calendar date as YYYY-MM-DD. Calendar validity is enforced by the contract validator."
+    },
+    "SlugToken": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Kebab-case identity token."
+    },
+    "PlantId": {
+      "type": "string",
+      "pattern": "^plt_[a-z0-9]{16}$",
+      "description": "Optional opaque plantId from the canonical identity registry. Advisory linkage only; not required for GOS-1."
+    },
+    "EvidenceId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_-]{2,127}$",
+      "description": "Stable non-empty evidence identifier referencing a record in the evidence dataset."
+    },
+    "OutcomeName": {
+      "type": "string",
+      "enum": [
+        "survival",
+        "vegetativeGrowth",
+        "flowering",
+        "fruitSet",
+        "fruitRipeningOrYield",
+        "longTermReliability"
+      ],
+      "description": "Exact six biological outcome names. fruitSet and fruitRipeningOrYield remain distinct."
+    },
+    "DataStatus": {
+      "type": "string",
+      "enum": ["unknown", "partial", "supported", "conflicting"],
+      "description": "Evidence completeness for one outcome. unknown is first-class and must not inherit earlier-stage support."
+    },
+    "Confidence": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high"],
+      "description": "Editorial/evidence confidence for one outcome. Separate from suitability scores. high is invalid when dataStatus is unknown."
+    },
+    "ApplicabilityScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Applicability may be unknown. Unknown does not imply universal applicability.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "specified", "not_applicable"],
+          "description": "unknown = not yet constrained; specified = listed values apply; not_applicable = dimension does not apply."
+        },
+        "values": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "When status=specified, non-empty controlled tokens (regions, cultivars, hemispheres, environments)."
+        },
+        "notes": { "type": "string" }
+      },
+      "required": ["status"]
+    },
+    "FactorCategory": {
+      "type": "string",
+      "enum": [
+        "minimum_temperature",
+        "frost_exposure",
+        "heat_accumulation",
+        "growing_season_length",
+        "winter_chill",
+        "flowering_induction",
+        "flowering_temperature",
+        "pollination",
+        "humidity",
+        "rain_or_wind_during_flowering",
+        "fruit_set_conditions",
+        "ripening_heat",
+        "dry_season_requirement",
+        "juvenile_period",
+        "alternate_bearing",
+        "growing_environment",
+        "other"
+      ],
+      "description": "Governed factor categories for structured requirement rules. Extensible only by deliberate schema revision."
+    },
+    "RequirementEffect": {
+      "type": "string",
+      "enum": ["hard_blocker", "limiting", "favorable", "informational"]
+    },
+    "RequirementOperator": {
+      "type": "string",
+      "enum": ["eq", "neq", "lt", "lte", "gt", "gte", "between", "in", "exists", "not_exists", "unknown"]
+    },
+    "RequirementRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ruleId", "factorKey", "factorCategory", "operator", "effect", "confidence", "needsReview"],
+      "description": "Structured biological requirement rule. No botanical thresholds are authored in GOS-1; this defines shape only.",
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+        },
+        "factorKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]{1,63}$",
+          "description": "Stable factor key within the factorCategory namespace."
+        },
+        "factorCategory": { "$ref": "#/definitions/FactorCategory" },
+        "operator": { "$ref": "#/definitions/RequirementOperator" },
+        "value": {
+          "description": "Scalar comparison value when applicable. Type depends on factor; may be number, string, or boolean."
+        },
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unit when quantitative (e.g. celsius, chill_hours, days). Omit when not applicable."
+        },
+        "effect": { "$ref": "#/definitions/RequirementEffect" },
+        "applicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceId" },
+          "uniqueItems": true
+        },
+        "confidence": { "$ref": "#/definitions/Confidence" },
+        "needsReview": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "OutcomeBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataStatus",
+        "confidence",
+        "needsReview",
+        "requirements",
+        "hardBlockers",
+        "limitingFactors",
+        "favorableFactors",
+        "assumptions",
+        "explicitUnknowns",
+        "evidenceRefs"
+      ],
+      "description": "One biological outcome. Later stages must not inherit support from earlier stages. supported requires non-empty evidenceRefs. conflicting requires conflictReason and/or conflictEvidenceRefs. high confidence is invalid when dataStatus is unknown. Computed fields (score, level, goalFit, recommendedUse, overallConclusion, suitabilityScore) are forbidden.",
+      "properties": {
+        "dataStatus": { "$ref": "#/definitions/DataStatus" },
+        "confidence": { "$ref": "#/definitions/Confidence" },
+        "needsReview": { "type": "boolean" },
+        "requirements": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RequirementRule" }
+        },
+        "hardBlockers": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "limitingFactors": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "favorableFactors": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "explicitUnknowns": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Explicit unknown dimensions for this outcome. Required non-empty when dataStatus is unknown."
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceId" },
+          "uniqueItems": true,
+          "description": "Evidence IDs for THIS outcome only. Survival evidence must not satisfy flowering/fruit/reliability requirements."
+        },
+        "conflictReason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Required when dataStatus=conflicting unless conflictEvidenceRefs is non-empty."
+        },
+        "conflictEvidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceId" },
+          "uniqueItems": true,
+          "description": "Evidence IDs that conflict for this outcome. Preserved rather than overwritten."
+        },
+        "applicabilityNotes": { "type": "string" }
+      }
+    },
+    "OutcomesObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "survival",
+        "vegetativeGrowth",
+        "flowering",
+        "fruitSet",
+        "fruitRipeningOrYield",
+        "longTermReliability"
+      ],
+      "properties": {
+        "survival": { "$ref": "#/definitions/OutcomeBlock" },
+        "vegetativeGrowth": { "$ref": "#/definitions/OutcomeBlock" },
+        "flowering": { "$ref": "#/definitions/OutcomeBlock" },
+        "fruitSet": { "$ref": "#/definitions/OutcomeBlock" },
+        "fruitRipeningOrYield": { "$ref": "#/definitions/OutcomeBlock" },
+        "longTermReliability": { "$ref": "#/definitions/OutcomeBlock" }
+      }
+    },
+    "GrowthOutcomeProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "profileVersion",
+        "engineContractVersion",
+        "canonicalSlug",
+        "scientificName",
+        "taxonomyApplicability",
+        "cultivarApplicability",
+        "regionApplicability",
+        "hemisphereApplicability",
+        "environmentApplicability",
+        "legacyClimateTraitsCoverage",
+        "outcomes",
+        "evidenceRefs",
+        "needsReview",
+        "dataVersion"
+      ],
+      "description": "Biological Growth Outcome profile for one canonical plant identity. No computed evaluator outputs. No user-goal storage. No mango or other botanical thresholds in GOS-1.",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "profileVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Semantic version of this profile's authored content."
+        },
+        "engineContractVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "canonicalSlug": { "$ref": "#/definitions/SlugToken" },
+        "plantId": { "$ref": "#/definitions/PlantId" },
+        "scientificName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Scientific name string for human review and linkage. Identity resolution remains separately governed."
+        },
+        "taxonomyApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "cultivarApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "regionApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "hemisphereApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "environmentApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "legacyClimateTraitsCoverage": {
+          "type": "string",
+          "enum": ["none", "environment_only"],
+          "description": "none = no reliance on legacy climateTraits. environment_only = legacy climateTraits may describe coarse environment fit only and MUST NOT be treated as complete Growth Outcome evidence for flowering, fruit set, ripening, or reliability."
+        },
+        "outcomes": { "$ref": "#/definitions/OutcomesObject" },
+        "evidenceRefs": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceId" },
+          "uniqueItems": true,
+          "description": "Union of evidence IDs referenced by this profile. Per-outcome evidenceRefs remain authoritative for stage support."
+        },
+        "needsReview": { "type": "boolean" },
+        "reviewedAt": { "$ref": "#/definitions/IsoDate" },
+        "dataVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cruvit.app/schemas/growth-outcome-evidence/v1",
+  "title": "Cruvit Growth Outcome Suitability Evidence Contract",
+  "description": "GOS-1 versioned evidence claims for Growth Outcome Suitability. Evidence is stored separately from plant profiles. Claims may support survival, vegetativeGrowth, flowering, fruitSet, fruitRipeningOrYield, or longTermReliability — using exactly those six outcome names. A URL alone is never sufficient source metadata. Confidence is separate from suitability. Computed location scores, evaluator levels, goalFit, recommendedUse, and overallConclusion must not appear. Contradictory evidence is preserved via conflictsWith rather than overwritten. No consensus algorithm is defined in GOS-1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "dataVersion", "evidence"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "dataVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the evidence dataset content in this file."
+    },
+    "notes": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Zero or more evidence claims. Empty array is valid. Duplicate evidenceId values are invalid.",
+      "items": { "$ref": "#/definitions/EvidenceClaim" }
+    }
+  },
+  "definitions": {
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Calendar date as YYYY-MM-DD. Calendar validity is enforced by the contract validator."
+    },
+    "EvidenceId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_-]{2,127}$"
+    },
+    "OutcomeName": {
+      "type": "string",
+      "enum": [
+        "survival",
+        "vegetativeGrowth",
+        "flowering",
+        "fruitSet",
+        "fruitRipeningOrYield",
+        "longTermReliability"
+      ],
+      "description": "Must match the six outcome names in growth-outcome.schema.json exactly. fruitSet and fruitRipeningOrYield remain distinct."
+    },
+    "Confidence": {
+      "type": "string",
+      "enum": ["none", "low", "medium", "high"],
+      "description": "Claim confidence. Separate from suitability scores or recommendation levels."
+    },
+    "EvidenceStrength": {
+      "type": "string",
+      "enum": ["weak", "moderate", "strong"],
+      "description": "Conservative evidence strength. Nursery/commercial sourceType cannot be strong without a stronger non-commercial sourceType classification."
+    },
+    "ClaimType": {
+      "type": "string",
+      "enum": [
+        "quantitative_threshold",
+        "qualitative_requirement",
+        "regional_observation",
+        "cultivar_observation",
+        "controlled_study",
+        "review",
+        "conflicting_report"
+      ]
+    },
+    "SourceType": {
+      "type": "string",
+      "enum": [
+        "peer_reviewed",
+        "extension_service",
+        "government_agronomy",
+        "herbarium_or_flora",
+        "controlled_trial",
+        "expert_review",
+        "nursery_commercial",
+        "grower_observation",
+        "other"
+      ],
+      "description": "Source classification. nursery_commercial and grower_observation are weak by default and cannot claim evidenceStrength=strong."
+    },
+    "ApplicabilityScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "specified", "not_applicable"]
+        },
+        "values": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "EvidenceSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "sourceType"],
+      "description": "Structured source metadata. Requires authority plus recordId and/or publicationId. A URL alone is never sufficient.",
+      "properties": {
+        "authority": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,62}$",
+          "description": "Controlled lowercase authority token (e.g. powo, usda-ars, extension-ucanr)."
+        },
+        "recordId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable record identifier within the authority (not a URL)."
+        },
+        "publicationId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable publication identifier (DOI, ISBN, report number, etc.). Not a bare URL."
+        },
+        "sourceType": { "$ref": "#/definitions/SourceType" },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publicationYear": {
+          "type": "integer",
+          "minimum": 1500,
+          "maximum": 2100
+        },
+        "url": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional URL. Never sufficient alone; authority + recordId/publicationId remain required."
+        },
+        "accessedAt": { "$ref": "#/definitions/IsoDate" },
+        "verifiedAt": { "$ref": "#/definitions/IsoDate" }
+      }
+    },
+    "QuantitativeClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factorKey"],
+      "properties": {
+        "factorKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]{1,63}$"
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["eq", "neq", "lt", "lte", "gt", "gte", "between"]
+        },
+        "value": {},
+        "range": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "unit": { "type": "string", "minLength": 1 }
+      }
+    },
+    "QualitativeClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement"],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Qualitative requirement or observation text. Not automatically treated as verified structured evidence without strength/confidence review."
+        },
+        "factorKey": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,63}$"
+        }
+      }
+    },
+    "EvidenceClaim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceId",
+        "schemaVersion",
+        "claimVersion",
+        "outcome",
+        "factorKey",
+        "claimType",
+        "source",
+        "evidenceStrength",
+        "confidence",
+        "needsReview",
+        "verifiedAt",
+        "regionApplicability",
+        "cultivarApplicability",
+        "environmentApplicability",
+        "hemisphereApplicability"
+      ],
+      "description": "One versioned evidence claim for exactly one outcome. Must include quantitativeClaim and/or qualitativeClaim. Must not store computed suitability scores.",
+      "properties": {
+        "evidenceId": { "$ref": "#/definitions/EvidenceId" },
+        "schemaVersion": {
+          "type": "integer",
+          "const": 1
+        },
+        "claimVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "outcome": { "$ref": "#/definitions/OutcomeName" },
+        "factorKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]{1,63}$"
+        },
+        "claimType": { "$ref": "#/definitions/ClaimType" },
+        "quantitativeClaim": { "$ref": "#/definitions/QuantitativeClaim" },
+        "qualitativeClaim": { "$ref": "#/definitions/QualitativeClaim" },
+        "source": { "$ref": "#/definitions/EvidenceSource" },
+        "evidenceStrength": { "$ref": "#/definitions/EvidenceStrength" },
+        "confidence": { "$ref": "#/definitions/Confidence" },
+        "needsReview": { "type": "boolean" },
+        "verifiedAt": { "$ref": "#/definitions/IsoDate" },
+        "reviewedAt": { "$ref": "#/definitions/IsoDate" },
+        "regionApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "cultivarApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "environmentApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "hemisphereApplicability": { "$ref": "#/definitions/ApplicabilityScope" },
+        "conflictsWith": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceId" },
+          "uniqueItems": true,
+          "description": "Other evidenceId values this claim conflicts with. Preserved; not overwritten by consensus."
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}
