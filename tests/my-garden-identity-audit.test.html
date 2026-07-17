@@ -101,15 +101,77 @@
     var ready = await waitFor(function () {
       return cw.CruvitIdentityShadow && cw.CruvitIdentityShadow.status &&
         cw.CruvitIdentityShadow.status().status === 'ready' &&
-        cw.CruvitGardenIdentityAudit;
+        cw.CruvitGardenIdentityAudit &&
+        cw.CruvitGardenPlantIdentityConsult;
     }, 25000);
 
     var A = cw.CruvitGardenIdentityAudit;
     var S = cw.CruvitIdentityShadow;
     var D = cw.CruvitIdentityShadowDebug;
+    var C = cw.CruvitGardenPlantIdentityConsult;
 
     expect('iframe app loaded + shadow ready + audit present', ready && !!A && !!S,
       'ready=' + ready + ' audit=' + !!A + ' shadow=' + (S && S.status && S.status().status));
+
+    // ── shared pure consultation extraction ──
+    expect('shared consult API present', !!C && typeof C.resolveGardenPlantIdentityReadOnly === 'function' &&
+      typeof C.collectGardenPlantIdentitySignals === 'function' &&
+      typeof C.buildGardenPlantIdentityFingerprintInput === 'function');
+    expect('shared consult API frozen', !!C && Object.isFrozen(C));
+    expect('shared signal field order', C && jsonOf(C.GARDEN_IDENTITY_SIGNAL_FIELDS) === jsonOf([
+      'plantId', 'canonicalSlug', 'profileSlug', 'meta.slug', 'slug',
+      'scientific', 'meta.scientific', 'he', 'meta.he', 'name', 'meta.name'
+    ]));
+    expect('audit remains disabled before shared consult checks', A && A.isEnabled() === false);
+
+    function stripConsultNoise(r) {
+      if (!r) return r;
+      var o = JSON.parse(JSON.stringify(r));
+      return o;
+    }
+    function consultParity(plant, label) {
+      var before = jsonOf(plant);
+      var metaBefore = plant.meta ? jsonOf(plant.meta) : null;
+      var shared = C.resolveGardenPlantIdentityReadOnly(plant, S);
+      expect('shared consult frozen (' + label + ')', isFrozenDeep(shared));
+      expect('shared consult no plant mutation (' + label + ')', jsonOf(plant) === before);
+      expect('shared consult no meta mutation (' + label + ')',
+        metaBefore == null ? plant.meta == null : jsonOf(plant.meta) === metaBefore);
+      var shared2 = C.resolveGardenPlantIdentityReadOnly(plant, S);
+      expect('shared consult deterministic (' + label + ')', jsonOf(stripConsultNoise(shared)) === jsonOf(stripConsultNoise(shared2)));
+      var fp = C.buildGardenPlantIdentityFingerprintInput(plant);
+      expect('fingerprint frozen + matches inputSignalsUsed (' + label + ')',
+        isFrozenDeep(fp) && jsonOf(fp) === jsonOf(shared.inputSignalsUsed));
+      return shared;
+    }
+
+    var sharedMul = consultParity({ id: 'ext_mul', profileSlug: 'mulberry', name: 'Mulberry Tree', scientific: 'Morus spp.' }, 'mulberry');
+    expect('shared mulberry pending_conflict', sharedMul && sharedMul.status === 'pending_conflict' &&
+      sharedMul.plantId == null && sharedMul.canonicalSlug == null);
+
+    var sharedConf = consultParity({ id: 'ext_conf', profileSlug: 'avocado', scientific: 'Psidium guajava', name: 'Conflict' }, 'conflict');
+    expect('shared conflict ambiguous/conflicting_signals', sharedConf && sharedConf.status === 'ambiguous' &&
+      sharedConf.auditReason === 'conflicting_signals' && sharedConf.plantId == null && sharedConf.canonicalSlug == null);
+
+    var sharedSgAcc = consultParity({ id: 'ext_sg_a', scientific: 'Psidium cattleyanum', name: 'SG Acc' }, 'sg-accepted');
+    expect('shared SG accepted → strawberry-guava', sharedSgAcc && sharedSgAcc.canonicalSlug === 'strawberry-guava');
+
+    var sharedSgSyn = consultParity({ id: 'ext_sg_s', scientific: 'Psidium cattleianum', name: 'SG Syn' }, 'sg-synonym');
+    expect('shared SG synonym → strawberry-guava', sharedSgSyn && sharedSgSyn.canonicalSlug === 'strawberry-guava' &&
+      (sharedSgSyn.matchedBy === 'scientificSynonym' || sharedSgSyn.selectedSignal === 'scientific'));
+
+    var sharedHeLav = consultParity({ id: 'ext_he_l', he: 'לבנדר', name: 'Hebrew Lav' }, 'he-lavender');
+    expect('shared Hebrew lavender', sharedHeLav && sharedHeLav.canonicalSlug === 'lavender');
+
+    var sharedHeOl = consultParity({ id: 'ext_he_o', name: 'זית' }, 'he-olive');
+    expect('shared Hebrew olive', sharedHeOl && sharedHeOl.canonicalSlug === 'olive');
+
+    var sharedEmpty = consultParity({ id: 'ext_empty', name: '', profileSlug: '' }, 'empty');
+    expect('shared missing identity input', sharedEmpty && sharedEmpty.status === 'unresolved' &&
+      sharedEmpty.auditReason === 'missing_identity_input');
+
+    // Shared consult vs audit report parity (audit still disabled until enable below)
+    expect('shared consult does not enable audit', A.isEnabled() === false);
 
     // ── default disabled / inert ──
     expect('disabled by default', A && A.isEnabled() === false, 'enabled=' + (A && A.isEnabled()));
@@ -264,6 +326,37 @@
     function byId(id) {
       return report1.results.find(function (r) { return r.sourceInstanceId === id; });
     }
+
+    // Shared module is the single consultation source used by the audit
+    (function assertAuditSharedParity() {
+      var samples = ['p_lav', 'p_avo', 'p_mul', 'p_conflict', 'p_sg_syn', 'p_empty'];
+      var ok = true;
+      var detail = [];
+      for (var si = 0; si < samples.length; si++) {
+        var id = samples[si];
+        var plant = fixtures.find(function (p) { return p.id === id; });
+        var fromAudit = byId(id);
+        var fromShared = C.resolveGardenPlantIdentityReadOnly(plant, S);
+        var a = jsonOf({
+          status: fromAudit && fromAudit.status,
+          reason: fromAudit && fromAudit.auditReason,
+          slug: fromAudit && fromAudit.canonicalSlug,
+          pid: fromAudit && fromAudit.plantId,
+          matchedBy: fromAudit && fromAudit.matchedBy,
+          mig: fromAudit && fromAudit.migrationEligibility
+        });
+        var b = jsonOf({
+          status: fromShared && fromShared.status,
+          reason: fromShared && fromShared.auditReason,
+          slug: fromShared && fromShared.canonicalSlug,
+          pid: fromShared && fromShared.plantId,
+          matchedBy: fromShared && fromShared.matchedBy,
+          mig: fromShared && fromShared.migrationEligibility
+        });
+        if (a !== b) { ok = false; detail.push(id + ':' + a + ' vs ' + b); }
+      }
+      expect('audit results match shared consult (samples)', ok, detail.join(' | '));
+    })();
 
     var rLav = byId('p_lav');
     expect('known plantId → resolved_id lavender', rLav && rLav.status === 'resolved_id' && rLav.canonicalSlug === 'lavender' && rLav.plantId === lavenderPid,
