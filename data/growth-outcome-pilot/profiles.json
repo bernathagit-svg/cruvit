@@ -1,0 +1,1679 @@
+{
+    "dataVersion":  "0.1.0",
+    "schemaVersion":  1,
+    "engineContractVersion":  "1.0.0",
+    "profiles":  [
+                     {
+                         "schemaVersion":  1,
+                         "profileVersion":  "0.1.0",
+                         "engineContractVersion":  "1.0.0",
+                         "canonicalSlug":  "mango",
+                         "scientificName":  "Mangifera indica",
+                         "taxonomyApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "mangifera-indica"
+                                                                  ],
+                                                       "notes":  "Species-level Mangifera indica."
+                                                   },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar often unknown; dormancy and disease ratings are cultivar-dependent."
+                                                   },
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "subtropical"
+                                                                ],
+                                                     "notes":  "Pilot quantitative claims are Florida/subtropical-limited unless a claim says otherwise."
+                                                 },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Primary pilot sources are Northern Hemisphere Florida/subtropical research and extension."
+                                                     },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard; container and protected-wall effects are garden-context unknowns."
+                                                      },
+                         "legacyClimateTraitsCoverage":  "environment_only",
+                         "outcomes":  {
+                                          "survival":  {
+                                                           "dataStatus":  "supported",
+                                                           "confidence":  "medium",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "mango_surv_mature_freeze_injury",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "eq",
+                                                                                    "effect":  "limiting",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_mango_surv_freeze_mature_mg216"
+                                                                                                     ],
+                                                                                    "value":  25,
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "Locked effect correction: mature-tree ~25 F for a few hours causes injury while tree survives â€” limiting, not hard_blocker. Florida-only.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida subtropical home landscape only."
+                                                                                                      }
+                                                                                },
+                                                                                {
+                                                                                    "ruleId":  "mango_surv_young_freeze_kill",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "between",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_mango_surv_freeze_young_mg216"
+                                                                                                     ],
+                                                                                    "range":  {
+                                                                                                  "min":  29,
+                                                                                                  "max":  30
+                                                                                              },
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "Young trees may be killed. GardenPlant age required. Florida-only.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "young-tree"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida; young-tree age is GardenPlant input."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+                                                                                   "frost_exposure_mature_injury_florida",
+                                                                                   "frost_exposure_young_kill_florida",
+                                                                                   "no_cold_acclimation_florida"
+                                                                               ],
+                                                           "favorableFactors":  [
+                                                                                    "protected_microclimate_may_extend_survival_range_florida"
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Florida quantitative freeze values are not global mango thresholds.",
+                                                                               "Protected location observation does not prove yield."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Exact freeze event duration curves outside source wording.",
+                                                                                    "Non-Florida cultivar cold response."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_mango_surv_freeze_mature_mg216",
+                                                                                "ev_mango_surv_freeze_young_mg216",
+                                                                                "ev_mango_surv_no_acclimate_mg216",
+                                                                                "ev_mango_surv_protected_location_mg216"
+                                                                            ],
+                                                           "applicabilityNotes":  "Florida / subtropical home-landscape limited."
+                                                       },
+                                          "vegetativeGrowth":  {
+                                                                   "dataStatus":  "partial",
+                                                                   "confidence":  "low",
+                                                                   "needsReview":  true,
+                                                                   "requirements":  [
+                                                                                        {
+                                                                                            "ruleId":  "mango_veg_opt_temp_fl",
+                                                                                            "factorKey":  "optimum_growing_temperature",
+                                                                                            "factorCategory":  "heat_accumulation",
+                                                                                            "operator":  "between",
+                                                                                            "effect":  "favorable",
+                                                                                            "confidence":  "medium",
+                                                                                            "needsReview":  true,
+                                                                                            "evidenceRefs":  [
+                                                                                                                 "ev_mango_veg_opt_temp_hs1499"
+                                                                                                             ],
+                                                                                            "range":  {
+                                                                                                          "min":  75,
+                                                                                                          "max":  86
+                                                                                                      },
+                                                                                            "unit":  "fahrenheit",
+                                                                                            "notes":  "Florida HS1499 Table 10; not worldwide optimum.",
+                                                                                            "applicability":  {
+                                                                                                                  "status":  "specified",
+                                                                                                                  "values":  [
+                                                                                                                                 "florida"
+                                                                                                                             ],
+                                                                                                                  "notes":  "Florida guidance."
+                                                                                                              }
+                                                                                        },
+                                                                                        {
+                                                                                            "ruleId":  "mango_veg_heat_fl",
+                                                                                            "factorKey":  "heat_damage",
+                                                                                            "factorCategory":  "heat_accumulation",
+                                                                                            "operator":  "gt",
+                                                                                            "effect":  "limiting",
+                                                                                            "confidence":  "medium",
+                                                                                            "needsReview":  true,
+                                                                                            "evidenceRefs":  [
+                                                                                                                 "ev_mango_veg_heat_hs1499"
+                                                                                                             ],
+                                                                                            "value":  104,
+                                                                                            "unit":  "fahrenheit",
+                                                                                            "notes":  "Florida HS1499 Table 10.",
+                                                                                            "applicability":  {
+                                                                                                                  "status":  "specified",
+                                                                                                                  "values":  [
+                                                                                                                                 "florida"
+                                                                                                                             ],
+                                                                                                                  "notes":  "Florida guidance."
+                                                                                                              }
+                                                                                        }
+                                                                                    ],
+                                                                   "hardBlockers":  [
+
+                                                                                    ],
+                                                                   "limitingFactors":  [
+                                                                                           "heat_above_104f_florida"
+                                                                                       ],
+                                                                   "favorableFactors":  [
+                                                                                            "optimum_75_to_86f_florida"
+                                                                                        ],
+                                                                   "assumptions":  [
+                                                                                       "Vegetative flushing regime differs from cool-night floral induction (conservative interpretation)."
+                                                                                   ],
+                                                                   "explicitUnknowns":  [
+                                                                                            "Global vegetative optima.",
+                                                                                            "Container versus ground performance."
+                                                                                        ],
+                                                                   "evidenceRefs":  [
+                                                                                        "ev_mango_veg_opt_temp_hs1499",
+                                                                                        "ev_mango_veg_heat_hs1499",
+                                                                                        "ev_mango_veg_vs_flower_regime"
+                                                                                    ]
+                                                               },
+                                          "flowering":  {
+                                                            "dataStatus":  "partial",
+                                                            "confidence":  "low",
+                                                            "needsReview":  true,
+                                                            "requirements":  [
+                                                                                 {
+                                                                                     "ruleId":  "mango_flow_tommy_cool_night",
+                                                                                     "factorKey":  "flowering_induction_night_temperature",
+                                                                                     "factorCategory":  "flowering_induction",
+                                                                                     "operator":  "lte",
+                                                                                     "effect":  "favorable",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_mango_flow_cool_night_tommy_dav1993"
+                                                                                                      ],
+                                                                                     "value":  65,
+                                                                                     "unit":  "fahrenheit",
+                                                                                     "notes":  "Tommy Atkins subtropical night threshold only; not species-wide chill hours.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "tommy-atkins",
+                                                                                                                          "subtropical"
+                                                                                                                      ],
+                                                                                                           "notes":  "Cultivar Tommy Atkins; subtropical."
+                                                                                                       }
+                                                                                 },
+                                                                                 {
+                                                                                     "ruleId":  "mango_flow_cultivar_dormancy",
+                                                                                     "factorKey":  "dormancy_months",
+                                                                                     "factorCategory":  "winter_chill",
+                                                                                     "operator":  "between",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_mango_flow_cultivar_dormancy_hs1499"
+                                                                                                      ],
+                                                                                     "range":  {
+                                                                                                   "min":  1,
+                                                                                                   "max":  4
+                                                                                               },
+                                                                                     "unit":  "months",
+                                                                                     "notes":  "Cultivar-specific dormancy lengths in Florida guidance.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "florida",
+                                                                                                                          "keitt",
+                                                                                                                          "tommy-atkins",
+                                                                                                                          "edwards",
+                                                                                                                          "haden"
+                                                                                                                      ],
+                                                                                                           "notes":  "Named cultivars; Florida."
+                                                                                                       }
+                                                                                 }
+                                                                             ],
+                                                            "hardBlockers":  [
+
+                                                                             ],
+                                                            "limitingFactors":  [
+                                                                                    "insufficient_cultivar_dormancy_florida",
+                                                                                    "warm_nights_may_favor_vegetative_over_floral"
+                                                                                ],
+                                                            "favorableFactors":  [
+                                                                                     "cool_night_induction_subtropical_tommy_atkins"
+                                                                                 ],
+                                                            "assumptions":  [
+                                                                                "Tropical or managed flowering systems may not follow the same cool-night sole mechanism; global flowering mechanism remains uncertain.",
+                                                                                "Cultivar unknown prevents high-confidence flowering prediction."
+                                                                            ],
+                                                            "explicitUnknowns":  [
+                                                                                     "Global mango chill-hour model.",
+                                                                                     "Non-Tommy Atkins numeric night thresholds.",
+                                                                                     "Tropical production flowering schedules."
+                                                                                 ],
+                                                            "evidenceRefs":  [
+                                                                                 "ev_mango_flow_cool_night_tommy_dav1993",
+                                                                                 "ev_mango_flow_cultivar_dormancy_hs1499"
+                                                                             ],
+                                                            "applicabilityNotes":  "Subtropical and cultivar-limited; do not promote to global species flowering rule."
+                                                        },
+                                          "fruitSet":  {
+                                                           "dataStatus":  "partial",
+                                                           "confidence":  "low",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "mango_set_flower_cold",
+                                                                                    "factorKey":  "flowering_temperature",
+                                                                                    "factorCategory":  "flowering_temperature",
+                                                                                    "operator":  "lt",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_mango_set_flower_cold_mg216"
+                                                                                                     ],
+                                                                                    "value":  40,
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "Hard blocker for fruitSet only under bloom/small-fruit exposure; not whole-tree survival.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "bloom",
+                                                                                                                         "small-fruit-stage"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida; flowers and small fruits."
+                                                                                                      }
+                                                                                },
+                                                                                {
+                                                                                    "ruleId":  "mango_set_disease_weather",
+                                                                                    "factorKey":  "rain_or_humidity_during_bloom",
+                                                                                    "factorCategory":  "rain_or_wind_during_flowering",
+                                                                                    "operator":  "exists",
+                                                                                    "effect":  "limiting",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_mango_set_anthracnose_mildew_mg216"
+                                                                                                     ],
+                                                                                    "notes":  "Anthracnose/mildew and wet bloom weather limit set in Florida.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida humid subtropical bloom."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+                                                                                "flower_and_small_fruit_cold_damage_below_40f_florida"
+                                                                            ],
+                                                           "limitingFactors":  [
+                                                                                   "low_fruit_per_panicle_florida",
+                                                                                   "anthracnose_powdery_mildew_during_bloom_florida",
+                                                                                   "bloom_period_chill_homestead_example"
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Mostly staminate flowers; flowering is not the same as set.",
+                                                                               "Garden pollinator activity and past set history are GardenPlant/garden-context facts."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Global fruit-set rates.",
+                                                                                    "Cultivar anthracnose matrix as scored reliability."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_mango_set_low_conversion_mg216",
+                                                                                "ev_mango_set_flower_cold_mg216",
+                                                                                "ev_mango_set_anthracnose_mildew_mg216",
+                                                                                "ev_mango_set_sex_ratio_mg216",
+                                                                                "ev_mango_set_bloom_chill_hs1499"
+                                                                            ]
+                                                       },
+                                          "fruitRipeningOrYield":  {
+                                                                       "dataStatus":  "unknown",
+                                                                       "confidence":  "none",
+                                                                       "needsReview":  true,
+                                                                       "requirements":  [
+                                                                                            {
+                                                                                                "ruleId":  "mango_yield_dev_days",
+                                                                                                "factorKey":  "flower_to_maturity_days",
+                                                                                                "factorCategory":  "growing_season_length",
+                                                                                                "operator":  "between",
+                                                                                                "effect":  "informational",
+                                                                                                "confidence":  "medium",
+                                                                                                "needsReview":  true,
+                                                                                                "evidenceRefs":  [
+                                                                                                                     "ev_mango_yield_dev_days_mg216"
+                                                                                                                 ],
+                                                                                                "range":  {
+                                                                                                              "min":  100,
+                                                                                                              "max":  150
+                                                                                                          },
+                                                                                                "unit":  "days",
+                                                                                                "notes":  "Duration only; not a reliable-yield score.",
+                                                                                                "applicability":  {
+                                                                                                                      "status":  "specified",
+                                                                                                                      "values":  [
+                                                                                                                                     "florida"
+                                                                                                                                 ],
+                                                                                                                      "notes":  "Florida."
+                                                                                                                  }
+                                                                                            },
+                                                                                            {
+                                                                                                "ruleId":  "mango_yield_juvenile_grafted",
+                                                                                                "factorKey":  "juvenile_period_years",
+                                                                                                "factorCategory":  "juvenile_period",
+                                                                                                "operator":  "between",
+                                                                                                "effect":  "limiting",
+                                                                                                "confidence":  "medium",
+                                                                                                "needsReview":  false,
+                                                                                                "evidenceRefs":  [
+                                                                                                                     "ev_mango_yield_graft_juvenile_mg216"
+                                                                                                                 ],
+                                                                                                "range":  {
+                                                                                                              "min":  3,
+                                                                                                              "max":  5
+                                                                                                          },
+                                                                                                "unit":  "years",
+                                                                                                "notes":  "Grafted trees; GardenPlant graft/age inputs required.",
+                                                                                                "applicability":  {
+                                                                                                                      "status":  "specified",
+                                                                                                                      "values":  [
+                                                                                                                                     "grafted"
+                                                                                                                                 ],
+                                                                                                                      "notes":  "Grafted trees only."
+                                                                                                                  }
+                                                                                            }
+                                                                                        ],
+                                                                       "hardBlockers":  [
+
+                                                                                        ],
+                                                                       "limitingFactors":  [
+                                                                                               "juvenile_period_grafted_3_to_5_years"
+                                                                                           ],
+                                                                       "favorableFactors":  [
+
+                                                                                            ],
+                                                                       "assumptions":  [
+                                                                                           "Florida home-tree bushel averages were HOLD and are not entered as scored yield.",
+                                                                                           "Actual ripening success and yield history are GardenPlant/care outcomes, not canonical evidence."
+                                                                                       ],
+                                                                       "explicitUnknowns":  [
+                                                                                                "Reliable household yield.",
+                                                                                                "Multi-year yield distribution outside Florida.",
+                                                                                                "Container yield evidence."
+                                                                                            ],
+                                                                       "evidenceRefs":  [
+                                                                                            "ev_mango_yield_dev_days_mg216",
+                                                                                            "ev_mango_yield_graft_juvenile_mg216"
+                                                                                        ]
+                                                                   },
+                                          "longTermReliability":  {
+                                                                      "dataStatus":  "unknown",
+                                                                      "confidence":  "none",
+                                                                      "needsReview":  true,
+                                                                      "requirements":  [
+
+                                                                                       ],
+                                                                      "hardBlockers":  [
+
+                                                                                       ],
+                                                                      "limitingFactors":  [
+
+                                                                                          ],
+                                                                      "favorableFactors":  [
+
+                                                                                           ],
+                                                                      "assumptions":  [
+                                                                                          "Freeze recurrence, bloom weather, and anthracnose/mildew limit multi-year reliability in Florida sources.",
+                                                                                          "Unknown cultivar prevents high-confidence reliability."
+                                                                                      ],
+                                                                      "explicitUnknowns":  [
+                                                                                               "Reliable multi-year household yield.",
+                                                                                               "Mediterranean or global mango reliability.",
+                                                                                               "Past successful ripening/yield history (GardenPlant)."
+                                                                                           ],
+                                                                      "evidenceRefs":  [
+                                                                                           "ev_mango_rel_weather_disease_partial",
+                                                                                           "ev_mango_rel_cultivar_unknown"
+                                                                                       ]
+                                                                  }
+                                      },
+                         "evidenceRefs":  [
+                                              "ev_mango_surv_freeze_mature_mg216",
+                                              "ev_mango_surv_freeze_young_mg216",
+                                              "ev_mango_surv_no_acclimate_mg216",
+                                              "ev_mango_surv_protected_location_mg216",
+                                              "ev_mango_veg_opt_temp_hs1499",
+                                              "ev_mango_veg_heat_hs1499",
+                                              "ev_mango_veg_vs_flower_regime",
+                                              "ev_mango_flow_cool_night_tommy_dav1993",
+                                              "ev_mango_flow_cultivar_dormancy_hs1499",
+                                              "ev_mango_set_low_conversion_mg216",
+                                              "ev_mango_set_flower_cold_mg216",
+                                              "ev_mango_set_anthracnose_mildew_mg216",
+                                              "ev_mango_set_sex_ratio_mg216",
+                                              "ev_mango_set_bloom_chill_hs1499",
+                                              "ev_mango_yield_dev_days_mg216",
+                                              "ev_mango_yield_graft_juvenile_mg216",
+                                              "ev_mango_rel_weather_disease_partial",
+                                              "ev_mango_rel_cultivar_unknown"
+                                          ],
+                         "needsReview":  true,
+                         "dataVersion":  "0.1.0",
+                         "notes":  "GOS-2B mango pilot. No global yield conclusion. No survival-to-yield inheritance. No evaluator outputs."
+                     },
+                     {
+                         "schemaVersion":  1,
+                         "profileVersion":  "0.1.0",
+                         "engineContractVersion":  "1.0.0",
+                         "canonicalSlug":  "lychee",
+                         "scientificName":  "Litchi chinensis",
+                         "taxonomyApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "litchi-chinensis"
+                                                                  ],
+                                                       "notes":  "Species-level Litchi chinensis."
+                                                   },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar affects bearing regularity; unknown by default."
+                                                   },
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "subtropical"
+                                                                ],
+                                                     "notes":  "Pilot claims are Florida/subtropical-limited."
+                                                 },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Primary pilot sources Northern Hemisphere Florida extension."
+                                                     },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape."
+                                                      },
+                         "legacyClimateTraitsCoverage":  "environment_only",
+                         "outcomes":  {
+                                          "survival":  {
+                                                           "dataStatus":  "supported",
+                                                           "confidence":  "medium",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "lychee_surv_young_freeze",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "between",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_lychee_surv_freeze_young_mg051"
+                                                                                                     ],
+                                                                                    "range":  {
+                                                                                                  "min":  28,
+                                                                                                  "max":  32
+                                                                                              },
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "Young trees; Florida coastal.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "south-florida-coastal",
+                                                                                                                         "young-tree"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida coastal; GardenPlant age."
+                                                                                                      }
+                                                                                },
+                                                                                {
+                                                                                    "ruleId":  "lychee_surv_mature_mg051",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "between",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_lychee_surv_freeze_mature_mg051"
+                                                                                                     ],
+                                                                                    "range":  {
+                                                                                                  "min":  24,
+                                                                                                  "max":  25
+                                                                                              },
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "MG051 mature/large-tree narrative; several hours. Distinct from HS1499 table range.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "south-florida-coastal",
+                                                                                                                         "mature-tree"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida coastal mature trees."
+                                                                                                      }
+                                                                                },
+                                                                                {
+                                                                                    "ruleId":  "lychee_surv_mature_hs1499",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "between",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_lychee_surv_freeze_range_hs1499"
+                                                                                                     ],
+                                                                                    "range":  {
+                                                                                                  "min":  21,
+                                                                                                  "max":  28
+                                                                                              },
+                                                                                    "unit":  "fahrenheit",
+                                                                                    "notes":  "HS1499 Table 8 range; do not average with MG051.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "mature-tree"
+                                                                                                                     ],
+                                                                                                          "notes":  "Florida table range."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+                                                                                "young_tree_freeze_damage_28_to_32f_florida",
+                                                                                "mature_tree_severe_freeze_mg051_24_to_25f",
+                                                                                "mature_tree_freeze_range_hs1499_21_to_28f"
+                                                                            ],
+                                                           "limitingFactors":  [
+
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "MG051 and HS1499 mature freeze figures are preserved as distinct conflicting ranges, not averaged."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Global lychee lethal threshold.",
+                                                                                    "Exact minutes of exposure outside source wording."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_lychee_surv_freeze_young_mg051",
+                                                                                "ev_lychee_surv_freeze_mature_mg051",
+                                                                                "ev_lychee_surv_freeze_range_hs1499"
+                                                                            ],
+                                                           "applicabilityNotes":  "Dual freeze records retained with conflictsWith in evidence."
+                                                       },
+                                          "vegetativeGrowth":  {
+                                                                   "dataStatus":  "partial",
+                                                                   "confidence":  "low",
+                                                                   "needsReview":  true,
+                                                                   "requirements":  [
+
+                                                                                    ],
+                                                                   "hardBlockers":  [
+
+                                                                                    ],
+                                                                   "limitingFactors":  [
+                                                                                           "warm_winter_vegetative_flush_without_flower_miami_dade"
+                                                                                       ],
+                                                                   "favorableFactors":  [
+
+                                                                                        ],
+                                                                   "assumptions":  [
+                                                                                       "Repeated vegetative flush in warm SE Florida winters can occur without reliable flowering."
+                                                                                   ],
+                                                                   "explicitUnknowns":  [
+                                                                                            "Vegetative success outside SE Florida warming context."
+                                                                                        ],
+                                                                   "evidenceRefs":  [
+                                                                                        "ev_lychee_veg_flush_warm_hs1499"
+                                                                                    ]
+                                                               },
+                                          "flowering":  {
+                                                            "dataStatus":  "partial",
+                                                            "confidence":  "low",
+                                                            "needsReview":  true,
+                                                            "requirements":  [
+                                                                                 {
+                                                                                     "ruleId":  "lychee_flow_dormancy",
+                                                                                     "factorKey":  "dormancy_months",
+                                                                                     "factorCategory":  "winter_chill",
+                                                                                     "operator":  "between",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_lychee_flow_dormancy_hs1499"
+                                                                                                      ],
+                                                                                     "range":  {
+                                                                                                   "min":  2,
+                                                                                                   "max":  5
+                                                                                               },
+                                                                                     "unit":  "months",
+                                                                                     "notes":  "Florida subtropical dormancy need.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "florida",
+                                                                                                                          "subtropical"
+                                                                                                                      ],
+                                                                                                           "notes":  "Florida subtropical."
+                                                                                                       }
+                                                                                 },
+                                                                                 {
+                                                                                     "ruleId":  "lychee_flow_chill_comment",
+                                                                                     "factorKey":  "chilling_temperature",
+                                                                                     "factorCategory":  "winter_chill",
+                                                                                     "operator":  "lte",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_lychee_flow_chill_comment_hs1499"
+                                                                                                      ],
+                                                                                     "value":  59,
+                                                                                     "unit":  "fahrenheit",
+                                                                                     "notes":  "Table 8 comment; not a global hour model.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "florida"
+                                                                                                                      ],
+                                                                                                           "notes":  "Florida guide comment."
+                                                                                                       }
+                                                                                 }
+                                                                             ],
+                                                            "hardBlockers":  [
+
+                                                                             ],
+                                                            "limitingFactors":  [
+                                                                                    "insufficient_cool_dormancy",
+                                                                                    "tropical_sea_level_unsatisfactory_fruiting"
+                                                                                ],
+                                                            "favorableFactors":  [
+
+                                                                                 ],
+                                                            "assumptions":  [
+                                                                                "Best climates are subtropical with cool dry nonfreezing winters; tropical sea-level fruiting is unsatisfactory per MG051."
+                                                                            ],
+                                                            "explicitUnknowns":  [
+                                                                                     "Global lychee chill-hour model.",
+                                                                                     "Mauritius Homestead hour-yield study (HOLD; not entered)."
+                                                                                 ],
+                                                            "evidenceRefs":  [
+                                                                                 "ev_lychee_flow_dormancy_hs1499",
+                                                                                 "ev_lychee_flow_chill_comment_hs1499",
+                                                                                 "ev_lychee_flow_not_tropical_sealevel_mg051"
+                                                                             ]
+                                                        },
+                                          "fruitSet":  {
+                                                           "dataStatus":  "partial",
+                                                           "confidence":  "low",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+                                                                                   "low_rh_or_high_temperature_may_reduce_set"
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Quantitative RH/temperature set thresholds are not invented from descriptive wording."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Exact RH and temperature numeric thresholds for set."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_lychee_set_rh_heat_hs1499"
+                                                                            ]
+                                                       },
+                                          "fruitRipeningOrYield":  {
+                                                                       "dataStatus":  "unknown",
+                                                                       "confidence":  "none",
+                                                                       "needsReview":  true,
+                                                                       "requirements":  [
+
+                                                                                        ],
+                                                                       "hardBlockers":  [
+
+                                                                                        ],
+                                                                       "limitingFactors":  [
+
+                                                                                           ],
+                                                                       "favorableFactors":  [
+
+                                                                                            ],
+                                                                       "assumptions":  [
+
+                                                                                       ],
+                                                                       "explicitUnknowns":  [
+                                                                                                "Reliable multi-year yield.",
+                                                                                                "Mauritius cultivar Homestead chill-yield correlation (HOLD; not entered).",
+                                                                                                "Past ripening/yield history (GardenPlant)."
+                                                                                            ],
+                                                                       "evidenceRefs":  [
+
+                                                                                        ]
+                                                                   },
+                                          "longTermReliability":  {
+                                                                      "dataStatus":  "partial",
+                                                                      "confidence":  "low",
+                                                                      "needsReview":  true,
+                                                                      "requirements":  [
+
+                                                                                       ],
+                                                                      "hardBlockers":  [
+
+                                                                                       ],
+                                                                      "limitingFactors":  [
+                                                                                              "unreliable_bearing_cultivar_dependent_florida"
+                                                                                          ],
+                                                                      "favorableFactors":  [
+
+                                                                                           ],
+                                                                      "assumptions":  [
+                                                                                          "Bearing habit differs by cultivar (e.g., Brewster vs Mauritius) in Florida sources."
+                                                                                      ],
+                                                                      "explicitUnknowns":  [
+                                                                                               "Global reliability outside Florida cultivar observations."
+                                                                                           ],
+                                                                      "evidenceRefs":  [
+                                                                                           "ev_lychee_rel_unreliable_bearing_mg051"
+                                                                                       ]
+                                                                  }
+                                      },
+                         "evidenceRefs":  [
+                                              "ev_lychee_surv_freeze_young_mg051",
+                                              "ev_lychee_surv_freeze_mature_mg051",
+                                              "ev_lychee_surv_freeze_range_hs1499",
+                                              "ev_lychee_veg_flush_warm_hs1499",
+                                              "ev_lychee_flow_dormancy_hs1499",
+                                              "ev_lychee_flow_chill_comment_hs1499",
+                                              "ev_lychee_flow_not_tropical_sealevel_mg051",
+                                              "ev_lychee_set_rh_heat_hs1499",
+                                              "ev_lychee_rel_unreliable_bearing_mg051"
+                                          ],
+                         "needsReview":  true,
+                         "dataVersion":  "0.1.0",
+                         "notes":  "GOS-2B lychee pilot. Dual freeze ranges preserved. No global chill-hour model."
+                     },
+                     {
+                         "schemaVersion":  1,
+                         "profileVersion":  "0.1.0",
+                         "engineContractVersion":  "1.0.0",
+                         "canonicalSlug":  "apple",
+                         "plantId":  "plt_465b6lc4cnrarxaa",
+                         "scientificName":  "Malus domestica",
+                         "taxonomyApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "malus-domestica"
+                                                                  ],
+                                                       "notes":  "Species-level Malus domestica."
+                                                   },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Chill hours and pollination class are cultivar-specific."
+                                                   },
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "temperate",
+                                                                    "california"
+                                                                ],
+                                                     "notes":  "Pilot flowering/set claims from UC ANR 8261 regional guidance."
+                                                 },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Primary pilot source Northern Hemisphere California extension."
+                                                     },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-garden"
+                                                                     ],
+                                                          "notes":  "Outdoor home garden."
+                                                      },
+                         "legacyClimateTraitsCoverage":  "environment_only",
+                         "outcomes":  {
+                                          "survival":  {
+                                                           "dataStatus":  "unknown",
+                                                           "confidence":  "none",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Species/cultivar winter hardiness numeric thresholds for this pilot.",
+                                                                                    "Rootstock effects."
+                                                                                ],
+                                                           "evidenceRefs":  [
+
+                                                                            ]
+                                                       },
+                                          "vegetativeGrowth":  {
+                                                                   "dataStatus":  "unknown",
+                                                                   "confidence":  "none",
+                                                                   "needsReview":  true,
+                                                                   "requirements":  [
+
+                                                                                    ],
+                                                                   "hardBlockers":  [
+
+                                                                                    ],
+                                                                   "limitingFactors":  [
+
+                                                                                       ],
+                                                                   "favorableFactors":  [
+
+                                                                                        ],
+                                                                   "assumptions":  [
+
+                                                                                   ],
+                                                                   "explicitUnknowns":  [
+                                                                                            "Whether mismatched chill allows vegetative growth while flowering fails (proposed claim rejected/held; not entered)."
+                                                                                        ],
+                                                                   "evidenceRefs":  [
+
+                                                                                    ]
+                                                               },
+                                          "flowering":  {
+                                                            "dataStatus":  "partial",
+                                                            "confidence":  "low",
+                                                            "needsReview":  true,
+                                                            "requirements":  [
+                                                                                 {
+                                                                                     "ruleId":  "apple_flow_needs_chill",
+                                                                                     "factorKey":  "winter_chill",
+                                                                                     "factorCategory":  "winter_chill",
+                                                                                     "operator":  "exists",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_apple_flow_needs_chill_ucanr8261"
+                                                                                                      ],
+                                                                                     "notes":  "Qualitative temperate chill need; no single species hour threshold.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "temperate",
+                                                                                                                          "california"
+                                                                                                                      ],
+                                                                                                           "notes":  "Temperate; UC ANR 8261 regional context."
+                                                                                                       }
+                                                                                 }
+                                                                             ],
+                                                            "hardBlockers":  [
+
+                                                                             ],
+                                                            "limitingFactors":  [
+                                                                                    "insufficient_winter_chill_for_cultivar"
+                                                                                ],
+                                                            "favorableFactors":  [
+
+                                                                                 ],
+                                                            "assumptions":  [
+                                                                                "Cultivar-specific chill hours from the 8261 table are weak (nursery-catalog composite) and must not become one species threshold.",
+                                                                                "Cultivar chill value is a cultivar-record input."
+                                                                            ],
+                                                            "explicitUnknowns":  [
+                                                                                     "One-number global apple chill requirement.",
+                                                                                     "Exact Dynamic/Utah model conversion."
+                                                                                 ],
+                                                            "evidenceRefs":  [
+                                                                                 "ev_apple_flow_needs_chill_ucanr8261",
+                                                                                 "ev_apple_flow_cultivar_chill_table_ucanr8261"
+                                                                             ]
+                                                        },
+                                          "fruitSet":  {
+                                                           "dataStatus":  "partial",
+                                                           "confidence":  "low",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "apple_set_cross_pollination",
+                                                                                    "factorKey":  "pollination",
+                                                                                    "factorCategory":  "pollination",
+                                                                                    "operator":  "exists",
+                                                                                    "effect":  "limiting",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_apple_set_cross_pollination_ucanr8261"
+                                                                                                     ],
+                                                                                    "notes":  "Most cultivars need cross-pollination; pollinizer is garden-context.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "cultivar-fertility-class"
+                                                                                                                     ],
+                                                                                                          "notes":  "Depends on cultivar fertility class."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+                                                                                   "missing_compatible_pollinizer"
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Pollinizer availability and bloom overlap are garden-context facts, not stored in canonical evidence."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Self-fertile cultivar exceptions matrix as complete scored set."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_apple_set_cross_pollination_ucanr8261"
+                                                                            ]
+                                                       },
+                                          "fruitRipeningOrYield":  {
+                                                                       "dataStatus":  "unknown",
+                                                                       "confidence":  "none",
+                                                                       "needsReview":  true,
+                                                                       "requirements":  [
+
+                                                                                        ],
+                                                                       "hardBlockers":  [
+
+                                                                                        ],
+                                                                       "limitingFactors":  [
+
+                                                                                           ],
+                                                                       "favorableFactors":  [
+
+                                                                                            ],
+                                                                       "assumptions":  [
+
+                                                                                       ],
+                                                                       "explicitUnknowns":  [
+                                                                                                "Heat units / season length after bloom for reliable ripening.",
+                                                                                                "Past ripening/yield history (GardenPlant)."
+                                                                                            ],
+                                                                       "evidenceRefs":  [
+
+                                                                                        ]
+                                                                   },
+                                          "longTermReliability":  {
+                                                                      "dataStatus":  "partial",
+                                                                      "confidence":  "low",
+                                                                      "needsReview":  true,
+                                                                      "requirements":  [
+
+                                                                                       ],
+                                                                      "hardBlockers":  [
+
+                                                                                       ],
+                                                                      "limitingFactors":  [
+                                                                                              "wrong_chill_cultivar_chronic_crop_risk"
+                                                                                          ],
+                                                                      "favorableFactors":  [
+
+                                                                                           ],
+                                                                      "assumptions":  [
+                                                                                          "Conservative interpretation: unmet cultivar chill creates chronic crop-reliability risk."
+                                                                                      ],
+                                                                      "explicitUnknowns":  [
+                                                                                               "Multi-year yield distributions by cultivar and region."
+                                                                                           ],
+                                                                      "evidenceRefs":  [
+                                                                                           "ev_apple_rel_wrong_chill_cultivar"
+                                                                                       ]
+                                                                  }
+                                      },
+                         "evidenceRefs":  [
+                                              "ev_apple_flow_needs_chill_ucanr8261",
+                                              "ev_apple_flow_cultivar_chill_table_ucanr8261",
+                                              "ev_apple_set_cross_pollination_ucanr8261",
+                                              "ev_apple_rel_wrong_chill_cultivar"
+                                          ],
+                         "needsReview":  true,
+                         "dataVersion":  "0.1.0",
+                         "notes":  "GOS-2B apple pilot. No one-number global chill requirement. plantId from registry only."
+                     },
+                     {
+                         "schemaVersion":  1,
+                         "profileVersion":  "0.1.0",
+                         "engineContractVersion":  "1.0.0",
+                         "canonicalSlug":  "olive",
+                         "plantId":  "plt_e1teyafat3k5i3ke",
+                         "scientificName":  "Olea europaea",
+                         "taxonomyApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "olea-europaea"
+                                                                  ],
+                                                       "notes":  "Species-level Olea europaea."
+                                                   },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Flowering chill response is cultivar-dependent (Manzanillo vs Ascolano in Hartmann 1975)."
+                                                   },
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "mediterranean",
+                                                                    "california"
+                                                                ],
+                                                     "notes":  "Pilot claims from CA/Mediterranean olive research and UC IPM."
+                                                 },
+                         "hemisphereApplicability":  {
+                                                         "status":  "unknown",
+                                                         "notes":  "Olive bands exist in both hemispheres; pilot sources are CA-centered."
+                                                     },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard / landscape fruiting context."
+                                                      },
+                         "legacyClimateTraitsCoverage":  "environment_only",
+                         "outcomes":  {
+                                          "survival":  {
+                                                           "dataStatus":  "partial",
+                                                           "confidence":  "low",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "olive_surv_lethal_minus10c",
+                                                                                    "factorKey":  "lethal_minimum_temperature",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "lte",
+                                                                                    "effect":  "hard_blocker",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_olive_surv_lethal_minus10c_hartmann1975"
+                                                                                                     ],
+                                                                                    "value":  "-10",
+                                                                                    "unit":  "celsius",
+                                                                                    "notes":  "About -10 C lethal minimum in Hartmann 1975 framing.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "mediterranean-olive-bands"
+                                                                                                                     ],
+                                                                                                          "notes":  "Mediterranean olive production bands context."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+                                                                                "lethal_cold_about_minus_10c"
+                                                                            ],
+                                                           "limitingFactors":  [
+
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Cultivar hardiness detail is incomplete."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Exact cultivar frost hardiness matrix."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_olive_surv_lethal_minus10c_hartmann1975"
+                                                                            ]
+                                                       },
+                                          "vegetativeGrowth":  {
+                                                                   "dataStatus":  "partial",
+                                                                   "confidence":  "low",
+                                                                   "needsReview":  true,
+                                                                   "requirements":  [
+
+                                                                                    ],
+                                                                   "hardBlockers":  [
+
+                                                                                    ],
+                                                                   "limitingFactors":  [
+
+                                                                                       ],
+                                                                   "favorableFactors":  [
+                                                                                            "thinning_improves_shoot_growth_for_next_bloom"
+                                                                                        ],
+                                                                   "assumptions":  [
+                                                                                       "UC IPM notes thinning allows better shoot growth and increased next-year bloom."
+                                                                                   ],
+                                                                   "explicitUnknowns":  [
+                                                                                            "Quantitative vegetative growth temperature optima for this pilot."
+                                                                                        ],
+                                                                   "evidenceRefs":  [
+                                                                                        "ev_olive_veg_thinning_next_bloom_ucipm"
+                                                                                    ]
+                                                               },
+                                          "flowering":  {
+                                                            "dataStatus":  "conflicting",
+                                                            "confidence":  "low",
+                                                            "needsReview":  true,
+                                                            "requirements":  [
+                                                                                 {
+                                                                                     "ruleId":  "olive_flow_chill_regimes_cultivar_limited",
+                                                                                     "factorKey":  "chilling_regime_days",
+                                                                                     "factorCategory":  "winter_chill",
+                                                                                     "operator":  "between",
+                                                                                     "effect":  "favorable",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  true,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_olive_flow_chill_regimes_hartmann1975"
+                                                                                                      ],
+                                                                                     "range":  {
+                                                                                                   "min":  70,
+                                                                                                   "max":  80
+                                                                                               },
+                                                                                     "unit":  "days",
+                                                                                     "notes":  "Controlled 2-15 C sine-wave regime; Manzanillo/Ascolano limited; not a universal species chill-hour rule.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "manzanillo",
+                                                                                                                          "ascolano",
+                                                                                                                          "controlled-environment"
+                                                                                                                      ],
+                                                                                                           "notes":  "Cultivar- and study-limited."
+                                                                                                       }
+                                                                                 }
+                                                                             ],
+                                                            "hardBlockers":  [
+
+                                                                             ],
+                                                            "limitingFactors":  [
+                                                                                    "unmet_cultivar_specific_chilling_pattern"
+                                                                                ],
+                                                            "favorableFactors":  [
+                                                                                     "controlled_2_to_15c_sine_wave_70_to_80_days_for_studied_cultivars"
+                                                                                 ],
+                                                            "assumptions":  [
+                                                                                "Species-level single chill threshold is unsafe given within-source cultivar differences and Central Valley chill-crop non-correlation."
+                                                                            ],
+                                                            "explicitUnknowns":  [
+                                                                                     "Arbequina-specific modern chill claims (HOLD; not entered).",
+                                                                                     "Universal species chill hours."
+                                                                                 ],
+                                                            "evidenceRefs":  [
+                                                                                 "ev_olive_flow_chill_regimes_hartmann1975"
+                                                                             ],
+                                                            "conflictReason":  "Hartmann and Whisler 1975 show cultivar-dependent flowering responses to chilling regimes (Ascolano produced inflorescences under a wider range of temperature patterns than Manzanillo) and report no correlation over seven years between Central Valley winter chilling amount and subsequent crop size. A single species-wide olive chill threshold is therefore unsafe; flowering remains conflicting at species level while cultivar-limited controlled regimes are retained as evidence.",
+                                                            "applicabilityNotes":  "Conflicting uses conflictReason from verified Hartmann 1975 cultivar findings only; no excluded evidence IDs referenced."
+                                                        },
+                                          "fruitSet":  {
+                                                           "dataStatus":  "unknown",
+                                                           "confidence":  "none",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Bloom-weather fruit-set thresholds for this pilot.",
+                                                                                    "Past fruit set (GardenPlant)."
+                                                                                ],
+                                                           "evidenceRefs":  [
+
+                                                                            ]
+                                                       },
+                                          "fruitRipeningOrYield":  {
+                                                                       "dataStatus":  "unknown",
+                                                                       "confidence":  "none",
+                                                                       "needsReview":  true,
+                                                                       "requirements":  [
+
+                                                                                        ],
+                                                                       "hardBlockers":  [
+
+                                                                                        ],
+                                                                       "limitingFactors":  [
+
+                                                                                           ],
+                                                                       "favorableFactors":  [
+
+                                                                                            ],
+                                                                       "assumptions":  [
+
+                                                                                       ],
+                                                                       "explicitUnknowns":  [
+                                                                                                "Ripening/yield reliability beyond alternate-bearing qualitative statement.",
+                                                                                                "Past yield history (GardenPlant)."
+                                                                                            ],
+                                                                       "evidenceRefs":  [
+
+                                                                                        ]
+                                                                   },
+                                          "longTermReliability":  {
+                                                                      "dataStatus":  "supported",
+                                                                      "confidence":  "medium",
+                                                                      "needsReview":  false,
+                                                                      "requirements":  [
+
+                                                                                       ],
+                                                                      "hardBlockers":  [
+
+                                                                                       ],
+                                                                      "limitingFactors":  [
+                                                                                              "alternate_bearing_heavy_then_light_crop"
+                                                                                          ],
+                                                                      "favorableFactors":  [
+
+                                                                                           ],
+                                                                      "assumptions":  [
+                                                                                          "Alternate bearing is a normal multi-year reliability limiter under UC IPM olive guidance."
+                                                                                      ],
+                                                                      "explicitUnknowns":  [
+                                                                                               "Cultivar-specific alternate-bearing intensity matrix."
+                                                                                           ],
+                                                                      "evidenceRefs":  [
+                                                                                           "ev_olive_rel_alternate_bearing_ucipm"
+                                                                                       ]
+                                                                  }
+                                      },
+                         "evidenceRefs":  [
+                                              "ev_olive_surv_lethal_minus10c_hartmann1975",
+                                              "ev_olive_flow_chill_regimes_hartmann1975",
+                                              "ev_olive_veg_thinning_next_bloom_ucipm",
+                                              "ev_olive_rel_alternate_bearing_ucipm"
+                                          ],
+                         "needsReview":  true,
+                         "dataVersion":  "0.1.0",
+                         "notes":  "GOS-2B olive pilot. Flowering dataStatus=conflicting via Hartmann 1975 conflictReason only. No global chill threshold. plantId from registry only."
+                     },
+                     {
+                         "schemaVersion":  1,
+                         "profileVersion":  "0.1.0",
+                         "engineContractVersion":  "1.0.0",
+                         "canonicalSlug":  "bougainvillea",
+                         "scientificName":  "Bougainvillea spp.",
+                         "taxonomyApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "bougainvillea-genus"
+                                                                  ],
+                                                       "notes":  "Genus-level pilot representation only. Not a fully resolved species identity; registry needsReview remains true."
+                                                   },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Many cultivars; flowering regularity is cultivar-dependent."
+                                                   },
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm-climate production/landscape guide scope."
+                                                 },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Primary pilot source Florida extension."
+                                                     },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "container",
+                                                                         "landscape"
+                                                                     ],
+                                                          "notes":  "Landscape, container, and production contexts in EP130."
+                                                      },
+                         "legacyClimateTraitsCoverage":  "environment_only",
+                         "outcomes":  {
+                                          "survival":  {
+                                                           "dataStatus":  "partial",
+                                                           "confidence":  "low",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+                                                                                {
+                                                                                    "ruleId":  "boug_surv_frost_limiting",
+                                                                                    "factorKey":  "frost_exposure",
+                                                                                    "factorCategory":  "frost_exposure",
+                                                                                    "operator":  "exists",
+                                                                                    "effect":  "limiting",
+                                                                                    "confidence":  "medium",
+                                                                                    "needsReview":  true,
+                                                                                    "evidenceRefs":  [
+                                                                                                         "ev_boug_surv_frost_ep130"
+                                                                                                     ],
+                                                                                    "notes":  "Locked effect correction: frost sensitivity / zones 9b-10 encoded as limiting, not hard_blocker.",
+                                                                                    "applicability":  {
+                                                                                                          "status":  "specified",
+                                                                                                          "values":  [
+                                                                                                                         "florida",
+                                                                                                                         "warm-climates",
+                                                                                                                         "usda-zones-9b-10"
+                                                                                                                     ],
+                                                                                                          "notes":  "Warm-climate guide; genus-level."
+                                                                                                      }
+                                                                                }
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+                                                                                   "frost_sensitivity_zones_9b_10_warm_climate_guide"
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+                                                                               "Genus-level identity; species not fully resolved."
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Species-resolved hardiness.",
+                                                                                    "Exact lethal temperatures beyond guide wording."
+                                                                                ],
+                                                           "evidenceRefs":  [
+                                                                                "ev_boug_surv_frost_ep130"
+                                                                            ]
+                                                       },
+                                          "vegetativeGrowth":  {
+                                                                   "dataStatus":  "partial",
+                                                                   "confidence":  "low",
+                                                                   "needsReview":  true,
+                                                                   "requirements":  [
+                                                                                        {
+                                                                                            "ruleId":  "boug_veg_warm_temps",
+                                                                                            "factorKey":  "night_temperature_minimum",
+                                                                                            "factorCategory":  "heat_accumulation",
+                                                                                            "operator":  "gte",
+                                                                                            "effect":  "favorable",
+                                                                                            "confidence":  "medium",
+                                                                                            "needsReview":  true,
+                                                                                            "evidenceRefs":  [
+                                                                                                                 "ev_boug_veg_temp_ep130"
+                                                                                                             ],
+                                                                                            "value":  65,
+                                                                                            "unit":  "fahrenheit",
+                                                                                            "notes":  "Production temperatures; not universal wild-species limits.",
+                                                                                            "applicability":  {
+                                                                                                                  "status":  "specified",
+                                                                                                                  "values":  [
+                                                                                                                                 "florida",
+                                                                                                                                 "warm-climates",
+                                                                                                                                 "production"
+                                                                                                                             ],
+                                                                                                                  "notes":  "Warm climate production guide."
+                                                                                                              }
+                                                                                        }
+                                                                                    ],
+                                                                   "hardBlockers":  [
+
+                                                                                    ],
+                                                                   "limitingFactors":  [
+                                                                                           "cool_temperatures_delay_growth_scheduling"
+                                                                                       ],
+                                                                   "favorableFactors":  [
+                                                                                            "warm_day_and_night_production_temperatures"
+                                                                                        ],
+                                                                   "assumptions":  [
+
+                                                                                   ],
+                                                                   "explicitUnknowns":  [
+                                                                                            "Universal wild-species temperature limits."
+                                                                                        ],
+                                                                   "evidenceRefs":  [
+                                                                                        "ev_boug_veg_temp_ep130"
+                                                                                    ]
+                                                               },
+                                          "flowering":  {
+                                                            "dataStatus":  "supported",
+                                                            "confidence":  "medium",
+                                                            "needsReview":  false,
+                                                            "requirements":  [
+                                                                                 {
+                                                                                     "ruleId":  "boug_flow_full_sun",
+                                                                                     "factorKey":  "light_foot_candles",
+                                                                                     "factorCategory":  "other",
+                                                                                     "operator":  "gte",
+                                                                                     "effect":  "favorable",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  false,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_boug_flow_full_sun_ep130"
+                                                                                                      ],
+                                                                                     "value":  4000,
+                                                                                     "unit":  "foot_candles",
+                                                                                     "notes":  "Full sun / high light for flowering display.",
+                                                                                     "applicability":  {
+                                                                                                           "status":  "specified",
+                                                                                                           "values":  [
+                                                                                                                          "full-sun"
+                                                                                                                      ],
+                                                                                                           "notes":  "Full sun context."
+                                                                                                       }
+                                                                                 },
+                                                                                 {
+                                                                                     "ruleId":  "boug_flow_new_growth",
+                                                                                     "factorKey":  "flowering_on_new_growth",
+                                                                                     "factorCategory":  "flowering_induction",
+                                                                                     "operator":  "exists",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  false,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_boug_flow_new_growth_ep130"
+                                                                                                      ],
+                                                                                     "notes":  "Blooms only on new growth."
+                                                                                 },
+                                                                                 {
+                                                                                     "ruleId":  "boug_flow_excess_fert",
+                                                                                     "factorKey":  "fertilization_balance",
+                                                                                     "factorCategory":  "other",
+                                                                                     "operator":  "exists",
+                                                                                     "effect":  "limiting",
+                                                                                     "confidence":  "medium",
+                                                                                     "needsReview":  false,
+                                                                                     "evidenceRefs":  [
+                                                                                                          "ev_boug_flow_excess_fert_inhibits_ep130"
+                                                                                                      ],
+                                                                                     "notes":  "Excess fertilizer adds growth but inhibits blooming."
+                                                                                 }
+                                                                             ],
+                                                            "hardBlockers":  [
+
+                                                                             ],
+                                                            "limitingFactors":  [
+                                                                                    "insufficient_light",
+                                                                                    "lack_of_new_growth",
+                                                                                    "excess_fertilizer_inhibits_bloom"
+                                                                                ],
+                                                            "favorableFactors":  [
+                                                                                     "full_sun_or_ge_4000_fc",
+                                                                                     "mild_drought_may_induce_bloom"
+                                                                                 ],
+                                                            "assumptions":  [
+                                                                                "Drought induction is care-sensitive; excess drying causes leaf drop.",
+                                                                                "Edible-fruit goals are outside this biological flowering-display evidence."
+                                                                            ],
+                                                            "explicitUnknowns":  [
+                                                                                     "Edible fruit biology (not researched for pilot)."
+                                                                                 ],
+                                                            "evidenceRefs":  [
+                                                                                 "ev_boug_flow_full_sun_ep130",
+                                                                                 "ev_boug_flow_new_growth_ep130",
+                                                                                 "ev_boug_flow_drought_induce_ep130",
+                                                                                 "ev_boug_flow_excess_fert_inhibits_ep130"
+                                                                             ]
+                                                        },
+                                          "fruitSet":  {
+                                                           "dataStatus":  "unknown",
+                                                           "confidence":  "none",
+                                                           "needsReview":  true,
+                                                           "requirements":  [
+
+                                                                            ],
+                                                           "hardBlockers":  [
+
+                                                                            ],
+                                                           "limitingFactors":  [
+
+                                                                               ],
+                                                           "favorableFactors":  [
+
+                                                                                ],
+                                                           "assumptions":  [
+
+                                                                           ],
+                                                           "explicitUnknowns":  [
+                                                                                    "Edible fruit set biology was not researched for this pilot.",
+                                                                                    "Bougainvillea is represented here for flowering-display biology, not edible-fruit recommendation."
+                                                                                ],
+                                                           "evidenceRefs":  [
+
+                                                                            ]
+                                                       },
+                                          "fruitRipeningOrYield":  {
+                                                                       "dataStatus":  "unknown",
+                                                                       "confidence":  "none",
+                                                                       "needsReview":  true,
+                                                                       "requirements":  [
+
+                                                                                        ],
+                                                                       "hardBlockers":  [
+
+                                                                                        ],
+                                                                       "limitingFactors":  [
+
+                                                                                           ],
+                                                                       "favorableFactors":  [
+
+                                                                                            ],
+                                                                       "assumptions":  [
+
+                                                                                       ],
+                                                                       "explicitUnknowns":  [
+                                                                                                "Edible fruit ripening/yield biology was not researched for this pilot.",
+                                                                                                "Not an edible-fruit recommendation in this pilot evidence set."
+                                                                                            ],
+                                                                       "evidenceRefs":  [
+
+                                                                                        ]
+                                                                   },
+                                          "longTermReliability":  {
+                                                                      "dataStatus":  "partial",
+                                                                      "confidence":  "low",
+                                                                      "needsReview":  true,
+                                                                      "requirements":  [
+
+                                                                                       ],
+                                                                      "hardBlockers":  [
+
+                                                                                       ],
+                                                                      "limitingFactors":  [
+                                                                                              "irregular_flowering_cultivar_dependent"
+                                                                                          ],
+                                                                      "favorableFactors":  [
+
+                                                                                           ],
+                                                                      "assumptions":  [
+                                                                                          "Irregular flowering is a common concern; cultivar choice matters."
+                                                                                      ],
+                                                                      "explicitUnknowns":  [
+                                                                                               "Long-term landscape performance outside production guide scope."
+                                                                                           ],
+                                                                      "evidenceRefs":  [
+                                                                                           "ev_boug_rel_irregular_flowering_ep130"
+                                                                                       ]
+                                                                  }
+                                      },
+                         "evidenceRefs":  [
+                                              "ev_boug_surv_frost_ep130",
+                                              "ev_boug_veg_temp_ep130",
+                                              "ev_boug_flow_full_sun_ep130",
+                                              "ev_boug_flow_new_growth_ep130",
+                                              "ev_boug_flow_drought_induce_ep130",
+                                              "ev_boug_flow_excess_fert_inhibits_ep130",
+                                              "ev_boug_rel_irregular_flowering_ep130"
+                                          ],
+                         "needsReview":  true,
+                         "dataVersion":  "0.1.0",
+                         "notes":  "GOS-2B bougainvillea pilot. Genus-level scientificName Bougainvillea spp. FruitSet and fruitRipeningOrYield remain unknown. No edible-fruit conclusion."
+                     }
+                 ],
+    "notes":  "GOS-2B Mango-led Growth Outcome Suitability pilot profiles (5). No evaluator outputs. No runtime loading. Florida and cultivar limits must not be globally promoted."
+}

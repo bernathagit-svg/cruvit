@@ -1,0 +1,2507 @@
+{
+    "dataVersion":  "0.1.0",
+    "schemaVersion":  1,
+    "evidence":  [
+                     {
+                         "evidenceId":  "ev_mango_surv_freeze_mature_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "frost_exposure",
+                                                   "operator":  "eq",
+                                                   "value":  25,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Mature mango trees can withstand air temperatures as low as 25 F (-3.9 C) for a few hours with injury to leaves and small branches.",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Crane, Wasielewski, Balerdi, Maguire. Support: Climate section. Profile requirement effect: limiting (survival with injury), not hard_blocker. Florida-limited."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_surv_freeze_young_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor; young-tree age is a GardenPlant instance fact, not stored here."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "frost_exposure",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  29,
+                                                                 "max":  30
+                                                             },
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Young mango trees may be killed at 29 F to 30 F (-1.7 C to -1.1 C).",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Climate section. Profile requirement effect: hard_blocker for young trees. Event-duration uncertainty retained. needsReview true."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_surv_no_acclimate_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "florida-varieties-class"
+                                                                  ],
+                                                       "notes":  "Florida observation of little variety cold-resistance difference."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Mango trees do not appear to acclimate to cold temperatures, and no significant difference in cold resistance among mango varieties or types has been observed in Florida.",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Climate section. Informational species/FL baseline."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_surv_protected_location_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "growing_environment",
+                         "claimType":  "regional_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "merritt-island",
+                                                                    "lake-okeechobee-shore"
+                                                                ],
+                                                     "notes":  "Protected locations as far north as Merritt Island and Lake Okeechobee shorelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "protected-microclimate"
+                                                                     ],
+                                                          "notes":  "Protected landscape position; quantitative protection lift unknown."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Mango trees are grown in protected locations as far north as Merritt Island and along the southeast and southwest shoreline of Lake Okeechobee.",
+                                                  "factorKey":  "growing_environment"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Climate section. Survival/site observation only; does not prove reliable yield."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_veg_opt_temp_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "optimum_growing_temperature",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "optimum_growing_temperature",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  75,
+                                                                 "max":  86
+                                                             },
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Optimum growing temperature range for mango is 75-86 F (HS1499 Table 10).",
+                                                  "factorKey":  "optimum_growing_temperature"
+                                              },
+                         "notes":  "Authors: Crane, Schaffer, Her, Bayabil, Wasielewski, Fraisse. Support: Table 10 Mango. Florida guidance table; not a worldwide optimum."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_veg_heat_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "heat_damage",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "heat_damage",
+                                                   "operator":  "gt",
+                                                   "value":  104,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Heat damage range for mango is greater than 104 F (HS1499 Table 10).",
+                                                  "factorKey":  "heat_damage"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Table 10. Florida-limited."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_veg_vs_flower_regime",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "flowering_induction",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "ctahr-uh",
+                                        "sourceType":  "expert_review",
+                                        "title":  "Floral Manipulation in Mangos (Proceedings: Conference on Mango in Hawaii, March 9-11 1993)",
+                                        "publicationYear":  1993,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HITAHR_04-06-93",
+                                        "publicationId":  "HITAHR_04-06-93",
+                                        "url":  "https://www.ctahr.hawaii.edu/oc/freepubs/pdf/HITAHR_04-06-93.pdf"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "subtropical"
+                                                                ],
+                                                     "notes":  "Subtropical applicability."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Warm humid optimal-growth conditions favor vegetative shoots, while cool inductive nights favor generative morphogenesis; vegetative flushing and floral induction are not the same temperature regime.",
+                                                  "factorKey":  "flowering_induction"
+                                              },
+                         "notes":  "Conservative interpretation based on Davenport CTAHR flowering model narrative. Not a quantitative threshold. Authors: Tom Davenport. Proceedings HITAHR_04-06-93; no DOI."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_flow_cool_night_tommy_dav1993",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "flowering_induction",
+                         "claimType":  "controlled_study",
+                         "source":  {
+                                        "authority":  "ctahr-uh",
+                                        "sourceType":  "expert_review",
+                                        "title":  "Floral Manipulation in Mangos (Proceedings: Conference on Mango in Hawaii, March 9-11 1993)",
+                                        "publicationYear":  1993,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HITAHR_04-06-93",
+                                        "publicationId":  "HITAHR_04-06-93",
+                                        "url":  "https://www.ctahr.hawaii.edu/oc/freepubs/pdf/HITAHR_04-06-93.pdf"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "subtropical"
+                                                                ],
+                                                     "notes":  "Subtropical applicability."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "tommy-atkins"
+                                                                  ],
+                                                       "notes":  "Tommy Atkins threshold; other cultivars likely differ."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "controlled-environment"
+                                                                     ],
+                                                          "notes":  "Field narrative and controlled-environment research context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "flowering_induction_night_temperature",
+                                                   "operator":  "lte",
+                                                   "value":  65,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "The threshold temperature to induce flowering of Tommy Atkins appears to be about 65 F; chilling temperatures need only occur at night.",
+                                                  "factorKey":  "flowering_induction"
+                                              },
+                         "notes":  "Authors: Tom Davenport. Support: Floral Manipulation in Mangos, CTAHR proceedings pp.54+. Must not be entered as species-wide chill hours. needsReview true (proceedings; no DOI)."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_flow_cultivar_dormancy_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "cultivar_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "keitt",
+                                                                      "tommy-atkins",
+                                                                      "edwards",
+                                                                      "haden"
+                                                                  ],
+                                                       "notes":  "Keitt and Tommy Atkins ~2-4 months dormancy; Edwards and Haden ~1-2 months."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "dormancy_months",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  1,
+                                                                 "max":  4
+                                                             },
+                                                   "unit":  "months"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Keitt and Tommy Atkins mango trees require a longer dormancy period (two to four months) to flower well compared with Edwards and Haden (approximately one to two months).",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Temperatures for Flowering section. Cultivar record required for scoring."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_set_low_conversion_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "fruit_set_conversion",
+                         "claimType":  "regional_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "florida-varieties-class"
+                                                                  ],
+                                                       "notes":  "Most Florida varieties average."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "fruit_per_panicle",
+                                                   "operator":  "lt",
+                                                   "value":  1,
+                                                   "unit":  "fruit_per_panicle"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Most mango varieties in Florida produce an average of less than one fruit per panicle.",
+                                                  "factorKey":  "fruit_set_conversion"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Production (Crop Yields). Florida average observation, not a global set rate."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_set_flower_cold_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "flowering_temperature",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "bloom",
+                                                                         "small-fruit-stage"
+                                                                     ],
+                                                          "notes":  "Applies to flowers and small fruits during bloom/early fruit; not mature-tree survival."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "flowering_temperature",
+                                                   "operator":  "lt",
+                                                   "value":  40,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Flowers and small fruits may be damaged or killed if the temperature falls below 40 F (4.4 C) for a few hours.",
+                                                  "factorKey":  "flowering_temperature"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Climate section. Profile effect: hard_blocker for fruitSet under limited bloom/small-fruit exposure only."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_set_anthracnose_mildew_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "rain_or_humidity_during_bloom",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Anthracnose susceptibility varies by cultivar (MG216 Table 1 ratings)."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "humid-subtropical-bloom"
+                                                                     ],
+                                                          "notes":  "Humid/rainy bloom weather increases disease pressure."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Anthracnose, powdery mildew, and low temperatures during bloom generally reduce fruit set and are the most limiting factors to mango production in Florida; dry weather preceding and during bloom is considered optimal.",
+                                                  "factorKey":  "rain_or_humidity_during_bloom"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Production and Diseases sections."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_set_sex_ratio_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "flower_sex_ratio",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "unknown",
+                                                     "notes":  "General mango description in FL extension text."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "The majority of mango flowers are staminate (male) and the remainder are perfect (bisexual); flowering presence alone does not equal fruit set.",
+                                                  "factorKey":  "flower_sex_ratio"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Inflorescence (Flowers) section. Informational stage-separation claim."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_set_bloom_chill_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "flowering_temperature",
+                         "claimType":  "regional_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "homestead",
+                                                                    "southeast-florida"
+                                                                ],
+                                                     "notes":  "Homestead / southeast Florida bloom-event observation."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "flowering_temperature",
+                                                   "operator":  "lt",
+                                                   "value":  45,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Chilling temperatures below about 45 F during the mango flowering period in Homestead in 2022 resulted in a drastically reduced fruit set and harvest.",
+                                                  "factorKey":  "flowering_temperature"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Freezing Temperatures paragraph. Single-region example; needsReview true."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_yield_dev_days_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitRipeningOrYield",
+                         "factorKey":  "flower_to_maturity_days",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "most-varieties"
+                                                                  ],
+                                                       "notes":  "Most varieties; Florida maturity calendar context."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "flower_to_maturity_days",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  100,
+                                                                 "max":  150
+                                                             },
+                                                   "unit":  "days"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "The period of development from flowering to fruit maturity is 100 to 150 days.",
+                                                  "factorKey":  "flower_to_maturity_days"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Production. Duration evidence only; not a reliable-yield score."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_yield_graft_juvenile_mg216",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitRipeningOrYield",
+                         "factorKey":  "juvenile_period",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "grafted"
+                                                                  ],
+                                                       "notes":  "Grafted trees; seedling juvenility differs and is not claimed here."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "juvenile_period_years",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  3,
+                                                                 "max":  5
+                                                             },
+                                                   "unit":  "years"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Grafted mango trees will begin to bear 3 to 5 years after planting.",
+                                                  "factorKey":  "juvenile_period"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Production. Grafted vs seed-grown is a GardenPlant instance fact."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_rel_weather_disease_partial",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "multi_year_limiters",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Mango Growing in the Florida Home Landscape: HS2 MG216, Rev. 5 2017",
+                                        "publicationYear":  2017,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS2/MG216",
+                                        "publicationId":  "10.32473/edis-mg216-2006",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG216"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Multi-year reliable household mango yield in Florida is limited by freeze recurrence, bloom weather, and anthracnose or powdery mildew; survival or vegetative growth alone does not establish reliability.",
+                                                  "factorKey":  "multi_year_limiters"
+                                              },
+                         "notes":  "Conservative interpretation synthesizing MG216 production/disease limiters and HS1499 freeze/bloom risk context. Not a quantitative reliability score."
+                     },
+                     {
+                         "evidenceId":  "ev_mango_rel_cultivar_unknown",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "cultivar_unknown",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "unknown-cultivar"
+                                                                  ],
+                                                       "notes":  "Unknown cultivar blocks high-confidence reliability because dormancy length differs by cultivar."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Because mango dormancy length required for good flowering differs by cultivar, unknown cultivar prevents high-confidence long-term flowering and yield reliability estimates.",
+                                                  "factorKey":  "cultivar_unknown"
+                                              },
+                         "notes":  "Conservative interpretation from HS1499 cultivar dormancy differences. Explicit unknown when cultivar is unspecified."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_surv_freeze_young_mg051",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Lychee Growing in the Florida Home Landscape: HS6 MG051",
+                                        "publicationYear":  2005,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS6/MG051",
+                                        "publicationId":  "10.32473/edis-mg051-2005",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG051"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "south-florida-coastal"
+                                                                ],
+                                                     "notes":  "Southern Florida coastal planting guidance."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "frost_exposure",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  28,
+                                                                 "max":  32
+                                                             },
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Young lychee trees are damaged at temperatures of 28 to 32 F (-2 to 0 C).",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Crane, Balerdi, Maguire. Support: Climate section. Florida coastal guidance."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_surv_freeze_mature_mg051",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Lychee Growing in the Florida Home Landscape: HS6 MG051",
+                                        "publicationYear":  2005,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS6/MG051",
+                                        "publicationId":  "10.32473/edis-mg051-2005",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG051"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "south-florida-coastal"
+                                                                ],
+                                                     "notes":  "Southern Florida coastal planting guidance."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "frost_exposure",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  24,
+                                                                 "max":  25
+                                                             },
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Temperatures down to 24 to 25 F (-3 to -4 C) cause extensive damage or death to large lychee trees if exposed for several hours.",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "conflictsWith":  [
+                                               "ev_lychee_surv_freeze_range_hs1499"
+                                           ],
+                         "notes":  "Authors: Crane et al. Support: Climate section. Distinct from HS1499 table range; do not average."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_surv_freeze_range_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "frost_exposure",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  21,
+                                                                 "max":  28
+                                                             },
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Freeze damage range for mature lychee trees is 21-28 F (HS1499 Table 8).",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "conflictsWith":  [
+                                               "ev_lychee_surv_freeze_mature_mg051"
+                                           ],
+                         "notes":  "Authors: Crane et al. Support: Table 8 Lychee. Distinct range framing from MG051 narrative; preserve both; do not average."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_veg_flush_warm_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "vegetative_flush_without_flower",
+                         "claimType":  "regional_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "miami-dade",
+                                                                    "southeast-florida"
+                                                                ],
+                                                     "notes":  "Southeast Florida / Miami-Dade observation context."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Because of a generally warmer climate, lychee now rarely flowers or fruits well in Miami-Dade County, and trees repeatedly flush vegetatively because shoot growth is not suppressed by cool temperatures.",
+                                                  "factorKey":  "vegetative_flush_without_flower"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Temperatures for Flowering. Core vegetative-flush versus flowering-induction stage split."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_flow_dormancy_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "dormancy_months",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  2,
+                                                                 "max":  5
+                                                             },
+                                                   "unit":  "months"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Lychee needs a long period of dormancy (two to five months) to flower and fruit well and also requires exposure to cool temperatures (upper 40s to lower 60s F) just before or during panicle emergence.",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Temperatures for Flowering. Florida subtropical; not a global hour model."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_flow_chill_comment_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "chilling_temperature",
+                                                   "operator":  "lte",
+                                                   "value":  59,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Lychee tree requires a dormant period and exposure to chilling temperatures (i.e., less than or equal to 59 F) to flower well; temperatures greater than or equal to 68 F reduce chilling requirement usefulness.",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Table 8 Comments. Florida guide comment; needsReview true; not a global chill-hour model."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_flow_not_tropical_sealevel_mg051",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "flowering_induction",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Lychee Growing in the Florida Home Landscape: HS6 MG051",
+                                        "publicationYear":  2005,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS6/MG051",
+                                        "publicationId":  "10.32473/edis-mg051-2005",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG051"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "subtropical",
+                                                                    "mediterranean-type"
+                                                                ],
+                                                     "notes":  "Best adapted to warm to cool subtropical areas; unreliable at tropical sea level."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "cool_dry_winter_months",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  3,
+                                                                 "max":  5
+                                                             },
+                                                   "unit":  "months"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Lychee does not fruit satisfactorily at sea level in tropical climates and is best adapted to warm to cool subtropical areas with a dry, cold (but nonfreezing) winter period lasting 3 to 5 months.",
+                                                  "factorKey":  "flowering_induction"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Climate section."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_set_rh_heat_hs1499",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "fruit_set_conditions",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Quick Guide to Environmental Factors Impacting Subtropical and Tropical Fruit Crops in Florida: HS1499, 2 2026",
+                                        "publicationYear":  2026,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS1499",
+                                        "publicationId":  "10.32473/edis-hs1499-2026",
+                                        "url":  "https://ask.ifas.ufl.edu/publication/HS1499"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Low relative humidity and/or high temperatures may reduce fruit set and the number of female flowers; late-season flowers may not set fruit and/or set fruit that develops properly.",
+                                                  "factorKey":  "fruit_set_conditions"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Table 8 Comments. Qualitative; no invented RH numeric threshold."
+                     },
+                     {
+                         "evidenceId":  "ev_lychee_rel_unreliable_bearing_mg051",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "alternate_bearing",
+                         "claimType":  "cultivar_observation",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Lychee Growing in the Florida Home Landscape: HS6 MG051",
+                                        "publicationYear":  2005,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "HS6/MG051",
+                                        "publicationId":  "10.32473/edis-mg051-2005",
+                                        "url":  "https://edis.ifas.ufl.edu/publication/MG051"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "florida-subtropical-home-landscape"
+                                                                ],
+                                                     "notes":  "Florida / subtropical home-landscape guidance only; not a global species threshold."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "brewster",
+                                                                      "mauritius"
+                                                                  ],
+                                                       "notes":  "Brewster often good crop about 1 year in 3 or 4; Mauritius more regular with alternating good yields."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Unreliable bearing is the major constraint to lychee production; cultivars vary greatly in bearing habit.",
+                                                  "factorKey":  "alternate_bearing"
+                                              },
+                         "notes":  "Authors: Crane et al. Support: Production (Crop Yields). Florida cultivar observations."
+                     },
+                     {
+                         "evidenceId":  "ev_apple_flow_needs_chill_ucanr8261",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-ucanr",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Selecting Fruit, Nut, and Berry Crops for Home Gardens in San Mateo and San Francisco Counties",
+                                        "publicationYear":  2007,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-8261",
+                                        "publicationId":  "10.3733/ucanr.8261",
+                                        "url":  "https://doi.org/10.3733/ucanr.8261"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california",
+                                                                    "san-mateo-san-francisco-counties",
+                                                                    "temperate"
+                                                                ],
+                                                     "notes":  "UC ANR Publication 8261 regional home-garden guidance; temperate-zone crop chill concept."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-garden"
+                                                                     ],
+                                                          "notes":  "Home garden outdoor planting."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Temperate zone crops, including apple, generally require a period of cold temperature during winter (chill hours between 32 and 45 F) for successful flower and fruit development; insufficient chill can delay or extend bloom and reduce fruit set and/or quality.",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Authors per DOI record: Jones, Costello. Qualitative species need only; no single species hour threshold."
+                     },
+                     {
+                         "evidenceId":  "ev_apple_flow_cultivar_chill_table_ucanr8261",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "cultivar_observation",
+                         "source":  {
+                                        "authority":  "extension-ucanr",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Selecting Fruit, Nut, and Berry Crops for Home Gardens in San Mateo and San Francisco Counties",
+                                        "publicationYear":  2007,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-8261",
+                                        "publicationId":  "10.3733/ucanr.8261",
+                                        "url":  "https://doi.org/10.3733/ucanr.8261"
+                                    },
+                         "evidenceStrength":  "weak",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california",
+                                                                    "san-mateo-san-francisco-counties"
+                                                                ],
+                                                     "notes":  "Publication regional scope."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "cultivar-specific"
+                                                                  ],
+                                                       "notes":  "Named cultivar chill values required; table includes wide apple band and cultivar examples. Table notes nursery-catalog data sources."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-garden"
+                                                                     ],
+                                                          "notes":  "Home garden."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "chill_hours",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  100,
+                                                                 "max":  1800
+                                                             },
+                                                   "unit":  "chill_hours"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Apple chill requirement varies widely by cultivar; the publication crop/variety table shows a broad apple chill band and cultivar-specific values rather than one species threshold.",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Weak strength: table cites nursery catalogs. Assumption/cultivarApplicability only; do not encode as one species structured threshold."
+                     },
+                     {
+                         "evidenceId":  "ev_apple_set_cross_pollination_ucanr8261",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "fruitSet",
+                         "factorKey":  "pollination",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-ucanr",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Selecting Fruit, Nut, and Berry Crops for Home Gardens in San Mateo and San Francisco Counties",
+                                        "publicationYear":  2007,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-8261",
+                                        "publicationId":  "10.3733/ucanr.8261",
+                                        "url":  "https://doi.org/10.3733/ucanr.8261"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california",
+                                                                    "san-mateo-san-francisco-counties"
+                                                                ],
+                                                     "notes":  "Publication regional scope."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "cultivar-fertility-class"
+                                                                  ],
+                                                       "notes":  "Most apples need cross-pollination; some partially self-fruitful; sterile-pollen cultivars exist."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-garden"
+                                                                     ],
+                                                          "notes":  "Pollinizer availability is a garden-context fact, not stored here."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Most apples require cross-pollination; some varieties such as Golden Delicious and Yellow Newtown are partially self-fruitful; others such as Gravenstein and Winesap have sterile pollen.",
+                                                  "factorKey":  "pollination"
+                                              },
+                         "notes":  "Authors: Jones, Costello. GardenPlant/garden pollinizer context required for evaluation."
+                     },
+                     {
+                         "evidenceId":  "ev_apple_rel_wrong_chill_cultivar",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-ucanr",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Selecting Fruit, Nut, and Berry Crops for Home Gardens in San Mateo and San Francisco Counties",
+                                        "publicationYear":  2007,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-8261",
+                                        "publicationId":  "10.3733/ucanr.8261",
+                                        "url":  "https://doi.org/10.3733/ucanr.8261"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "temperate",
+                                                                    "california"
+                                                                ],
+                                                     "notes":  "Temperate sites where cultivar chill may be unmet."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "cultivar-x-site"
+                                                                  ],
+                                                       "notes":  "Cultivar chill requirement versus site chill accumulation."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "When a cultivar chill requirement is not met at the planting site, insufficient chill consequences (delayed or extended bloom and reduced fruit set/quality) create chronic crop-reliability risk.",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Conservative interpretation from UC ANR 8261 insufficient-chill consequences. Not a new quantitative threshold."
+                     },
+                     {
+                         "evidenceId":  "ev_olive_surv_lethal_minus10c_hartmann1975",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "ashs",
+                                        "sourceType":  "peer_reviewed",
+                                        "title":  "Flower Production in Olive as Influenced by Various Chilling Temperature Regimes",
+                                        "publicationYear":  1975,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "jashs.100.6.670",
+                                        "publicationId":  "10.21273/jashs.100.6.670",
+                                        "url":  "https://journals.ashs.org/jashs/view/journals/jashs/100/6/article-p670.xml"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "mediterranean-olive-bands",
+                                                                    "latitude-30-to-45"
+                                                                ],
+                                                     "notes":  "Commercial olive bands about 30 to 45 latitude except where colder than about -10 C."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "unknown",
+                                                         "notes":  "Both hemispheres possible for olive bands; study materials California."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "lethal_minimum_temperature",
+                                                   "operator":  "lte",
+                                                   "value":  "-10",
+                                                   "unit":  "celsius"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Most commercial olive production is confined to bands between about 30 and 45 latitudes, except in areas where temperatures fall below about -10 C, the lethal minimum temperature for olives.",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Hartmann, Whisler. J. Amer. Soc. Hort. Sci. 100(6):670-674. DOI 10.21273/jashs.100.6.670."
+                     },
+                     {
+                         "evidenceId":  "ev_olive_flow_chill_regimes_hartmann1975",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "winter_chill",
+                         "claimType":  "controlled_study",
+                         "source":  {
+                                        "authority":  "ashs",
+                                        "sourceType":  "peer_reviewed",
+                                        "title":  "Flower Production in Olive as Influenced by Various Chilling Temperature Regimes",
+                                        "publicationYear":  1975,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "jashs.100.6.670",
+                                        "publicationId":  "10.21273/jashs.100.6.670",
+                                        "url":  "https://journals.ashs.org/jashs/view/journals/jashs/100/6/article-p670.xml"
+                                    },
+                         "evidenceStrength":  "strong",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california",
+                                                                    "controlled-environment",
+                                                                    "mediterranean-like-winter"
+                                                                ],
+                                                     "notes":  "Container-grown controlled chilling study; California materials."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "manzanillo",
+                                                                      "ascolano"
+                                                                  ],
+                                                       "notes":  "Results reported for Manzanillo and Ascolano; Ascolano flowered under a wider temperature-pattern range than Manzanillo."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "container",
+                                                                         "controlled-environment"
+                                                                     ],
+                                                          "notes":  "Container-grown trees under controlled regimes."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "chilling_regime_days",
+                                                   "operator":  "between",
+                                                   "range":  {
+                                                                 "min":  70,
+                                                                 "max":  80
+                                                             },
+                                                   "unit":  "days"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Optimum inflorescence production under controlled conditions occurred after exposure for 70 to 80 days to a diurnal sine-wave temperature pattern with a 2 C minimum and 15 C maximum; constant 12.5 C was also effective; continuous 7 C or continuously high temperatures above 15 C failed to cause inflorescence formation. Cultivar response differed (Ascolano wider than Manzanillo).",
+                                                  "factorKey":  "winter_chill"
+                                              },
+                         "notes":  "Authors: Hartmann, Whisler 1975. Not a universal species chill-hour rule. Within-source cultivar pattern differences and Central Valley chill-crop non-correlation support conflicting flowering status."
+                     },
+                     {
+                         "evidenceId":  "ev_olive_veg_thinning_next_bloom_ucipm",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "alternate_bearing",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "uc-ipm",
+                                        "sourceType":  "government_agronomy",
+                                        "title":  "Fruit Spray Thinning / Olive / UC IPM Pest Management Guidelines (UC ANR Publication 3452)",
+                                        "publicationYear":  2014,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-3452-olive-fruit-spray-thinning",
+                                        "publicationId":  "UCANR-3452",
+                                        "url":  "https://ipm.ucanr.edu/agriculture/olive/fruit-spray-thinning/"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california"
+                                                                ],
+                                                     "notes":  "UC IPM olive production guidance."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard"
+                                                                     ],
+                                                          "notes":  "Orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Fruit thinning allows for better shoot growth, which results in increased bloom and crop load the following year.",
+                                                  "factorKey":  "alternate_bearing"
+                                              },
+                         "notes":  "UC ANR Publication 3452 Olive PMG, Fruit Spray Thinning section (text updated 03/14)."
+                     },
+                     {
+                         "evidenceId":  "ev_olive_rel_alternate_bearing_ucipm",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "alternate_bearing",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "uc-ipm",
+                                        "sourceType":  "government_agronomy",
+                                        "title":  "Fruit Spray Thinning / Olive / UC IPM Pest Management Guidelines (UC ANR Publication 3452)",
+                                        "publicationYear":  2014,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "UCANR-3452-olive-fruit-spray-thinning",
+                                        "publicationId":  "UCANR-3452",
+                                        "url":  "https://ipm.ucanr.edu/agriculture/olive/fruit-spray-thinning/"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "california"
+                                                                ],
+                                                     "notes":  "UC IPM olive production guidance."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Cultivar unspecified unless noted; do not treat as all-cultivar universal."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "orchard",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor orchard or home landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Olive trees are alternate bearing: under normal conditions, they produce heavy crops one year and a light one the next.",
+                                                  "factorKey":  "alternate_bearing"
+                                              },
+                         "notes":  "UC ANR Publication 3452 Olive PMG, Fruit Spray Thinning. Core long-term reliability mechanism."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_surv_frost_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "survival",
+                         "factorKey":  "frost_exposure",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates",
+                                                                    "usda-zones-9b-10"
+                                                                ],
+                                                     "notes":  "Warm-climate production/landscape guide; frost-sensitive; hardy about zones 9b and 10."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot; many cultivars exist."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "container",
+                                                                         "landscape"
+                                                                     ],
+                                                          "notes":  "Landscape, container, or hanging-basket contexts in guide."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Bougainvillea is frost-sensitive and hardy in zones 9b and 10; in frost-prone areas plant in a protected location or cover in case of frost.",
+                                                  "factorKey":  "frost_exposure"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Profile requirement effect: limiting (regional frost/protection limitation), not hard_blocker for USDA zone membership."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_veg_temp_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "vegetativeGrowth",
+                         "factorKey":  "production_temperature",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "greenhouse",
+                                                                         "nursery",
+                                                                         "container",
+                                                                         "outdoor"
+                                                                     ],
+                                                          "notes":  "Production temperatures; cool temps delay crop scheduling."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "night_temperature_minimum",
+                                                   "operator":  "gte",
+                                                   "value":  65,
+                                                   "unit":  "fahrenheit"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Temperatures should be maintained somewhat high: a minimum of 65 F at night and 75 to 95 F during the day; crop scheduling will be delayed at cool temperatures.",
+                                                  "factorKey":  "production_temperature"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Production Temperatures. Not universal wild-species limits."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_flow_full_sun_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "light_requirement",
+                         "claimType":  "quantitative_threshold",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "greenhouse",
+                                                                         "outdoor",
+                                                                         "full-sun"
+                                                                     ],
+                                                          "notes":  "Full sun / high light."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "quantitativeClaim":  {
+                                                   "factorKey":  "light_foot_candles",
+                                                   "operator":  "gte",
+                                                   "value":  4000,
+                                                   "unit":  "foot_candles"
+                                               },
+                         "qualitativeClaim":  {
+                                                  "statement":  "As a tropical plant, Bougainvillea requires full sun, or a light level of at least 4000 foot-candles.",
+                                                  "factorKey":  "light_requirement"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Light Levels."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_flow_new_growth_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "flowering_induction",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "outdoor",
+                                                                         "home-landscape"
+                                                                     ],
+                                                          "notes":  "Outdoor home landscape / orchard context."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Blooms occur only on new growth, so new growth on plants is vital to the achievement of flowering.",
+                                                  "factorKey":  "flowering_induction"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Photoperiod/Flowering."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_flow_drought_induce_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "dry_season_requirement",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "container",
+                                                                         "outdoor",
+                                                                         "production"
+                                                                     ],
+                                                          "notes":  "Care-sensitive drought induction; excess drying causes leaf drop."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Drought stress can also stimulate flowering even with long daylight exposure; growers frequently allow plants to dry just to the point of wilting to induce flowering, but excessive drying can cause leaf drop and dormancy.",
+                                                  "factorKey":  "dry_season_requirement"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Photoperiod/Flowering."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_flow_excess_fert_inhibits_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "flowering",
+                         "factorKey":  "fertilization_balance",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "medium",
+                         "needsReview":  false,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "unknown",
+                                                       "notes":  "Genus-level pilot."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "container",
+                                                                         "nursery",
+                                                                         "landscape"
+                                                                     ],
+                                                          "notes":  "Fertilization regime during production/landscape care."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Nitrogen and phosphate are critical to flowering, but do not overfertilize; too much fertilizer will add growth but will inhibit blooming.",
+                                                  "factorKey":  "fertilization_balance"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Fertilization."
+                     },
+                     {
+                         "evidenceId":  "ev_boug_rel_irregular_flowering_ep130",
+                         "schemaVersion":  1,
+                         "claimVersion":  "0.1.0",
+                         "outcome":  "longTermReliability",
+                         "factorKey":  "flowering_regularity",
+                         "claimType":  "qualitative_requirement",
+                         "source":  {
+                                        "authority":  "extension-uf-ifas",
+                                        "sourceType":  "extension_service",
+                                        "title":  "Warm Climate Production Guidelines for Bougainvillea: ENH 874 EP130",
+                                        "publicationYear":  2002,
+                                        "verifiedAt":  "2026-07-17",
+                                        "recordId":  "EP130/ENH874",
+                                        "publicationId":  "10.32473/edis-ep130-2002",
+                                        "url":  "https://journals.flvc.org/edis/article/view/108305"
+                                    },
+                         "evidenceStrength":  "moderate",
+                         "confidence":  "low",
+                         "needsReview":  true,
+                         "verifiedAt":  "2026-07-17",
+                         "regionApplicability":  {
+                                                     "status":  "specified",
+                                                     "values":  [
+                                                                    "florida",
+                                                                    "warm-climates"
+                                                                ],
+                                                     "notes":  "Warm climate production guidelines."
+                                                 },
+                         "cultivarApplicability":  {
+                                                       "status":  "specified",
+                                                       "values":  [
+                                                                      "cultivar-dependent"
+                                                                  ],
+                                                       "notes":  "Variety choice can help irregular flowering."
+                                                   },
+                         "environmentApplicability":  {
+                                                          "status":  "specified",
+                                                          "values":  [
+                                                                         "container",
+                                                                         "nursery",
+                                                                         "landscape"
+                                                                     ],
+                                                          "notes":  "Production and landscape."
+                                                      },
+                         "hemisphereApplicability":  {
+                                                         "status":  "specified",
+                                                         "values":  [
+                                                                        "northern"
+                                                                    ],
+                                                         "notes":  "Northern Hemisphere source context."
+                                                     },
+                         "qualitativeClaim":  {
+                                                  "statement":  "Irregular flowering is a major concern for growers; variety choice can be extremely helpful in remedying this problem.",
+                                                  "factorKey":  "flowering_regularity"
+                                              },
+                         "notes":  "Authors: Schoellhorn, Alvarez. Support: Common Problems. Genus-level pilot needsReview."
+                     }
+                 ],
+    "notes":  "GOS-2B Mango-led pilot evidence allowlist only (42 claims). Florida and cultivar applicability must not be promoted to global thresholds. No evaluator outputs. verifiedAt 2026-07-17."
+}

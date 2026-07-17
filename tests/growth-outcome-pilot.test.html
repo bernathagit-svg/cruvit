@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Growth Outcome Pilot Tests (GOS-2B)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Growth Outcome Suitability — GOS-2B pilot harness</h1>
+  <p class="sub">Loads four local JSON/schema files only. No evaluator, no product DOM mutation, no storage writes, no CRUVIT runtime globals.</p>
+  <div id="summary">Running…</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+<script>
+(function () {
+  'use strict';
+
+  var SIX = [
+    'survival',
+    'vegetativeGrowth',
+    'flowering',
+    'fruitSet',
+    'fruitRipeningOrYield',
+    'longTermReliability'
+  ];
+  var FORBIDDEN = ['score', 'level', 'goalFit', 'recommendedUse', 'overallConclusion', 'suitabilityScore'];
+  var ALLOWED_IDS = [
+    'ev_mango_surv_freeze_mature_mg216','ev_mango_surv_freeze_young_mg216','ev_mango_surv_no_acclimate_mg216','ev_mango_surv_protected_location_mg216',
+    'ev_mango_veg_opt_temp_hs1499','ev_mango_veg_heat_hs1499','ev_mango_veg_vs_flower_regime',
+    'ev_mango_flow_cool_night_tommy_dav1993','ev_mango_flow_cultivar_dormancy_hs1499',
+    'ev_mango_set_low_conversion_mg216','ev_mango_set_flower_cold_mg216','ev_mango_set_anthracnose_mildew_mg216','ev_mango_set_sex_ratio_mg216','ev_mango_set_bloom_chill_hs1499',
+    'ev_mango_yield_dev_days_mg216','ev_mango_yield_graft_juvenile_mg216',
+    'ev_mango_rel_weather_disease_partial','ev_mango_rel_cultivar_unknown',
+    'ev_lychee_surv_freeze_young_mg051','ev_lychee_surv_freeze_mature_mg051','ev_lychee_surv_freeze_range_hs1499',
+    'ev_lychee_veg_flush_warm_hs1499',
+    'ev_lychee_flow_dormancy_hs1499','ev_lychee_flow_chill_comment_hs1499','ev_lychee_flow_not_tropical_sealevel_mg051',
+    'ev_lychee_set_rh_heat_hs1499','ev_lychee_rel_unreliable_bearing_mg051',
+    'ev_apple_flow_needs_chill_ucanr8261','ev_apple_flow_cultivar_chill_table_ucanr8261','ev_apple_set_cross_pollination_ucanr8261','ev_apple_rel_wrong_chill_cultivar',
+    'ev_olive_surv_lethal_minus10c_hartmann1975','ev_olive_flow_chill_regimes_hartmann1975','ev_olive_veg_thinning_next_bloom_ucipm','ev_olive_rel_alternate_bearing_ucipm',
+    'ev_boug_surv_frost_ep130','ev_boug_veg_temp_ep130','ev_boug_flow_full_sun_ep130','ev_boug_flow_new_growth_ep130','ev_boug_flow_drought_induce_ep130','ev_boug_flow_excess_fert_inhibits_ep130','ev_boug_rel_irregular_flowering_ep130'
+  ];
+  var EXCLUDED = [
+    'ev_mango_yield_home_avg_mg216','ev_lychee_yield_mauritius_fshs','ev_olive_flow_arbequina_no_classic_chill','ev_apple_veg_succeeds_flower_fails',
+    'ev_reject_mango_patio_reliable_yield','ev_reject_survival_implies_yield','ev_reject_mango_global_chill_hours','ev_apple_flow_species_800_1000_reject',
+    'ev_mango_flow_mechanism_region_conflict','ev_olive_flow_cultivar_pattern_conflict'
+  ];
+  var ALLOWED_AUTH = {
+    'extension-uf-ifas': 1,
+    'ctahr-uh': 1,
+    'ashs': 1,
+    'uc-ipm': 1,
+    'extension-ucanr': 1
+  };
+
+  var results = [];
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function deepFreeze(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return v;
+    if (seen.has(v)) return v;
+    seen.add(v);
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) deepFreeze(v[i], seen);
+    } else {
+      Object.keys(v).forEach(function (k) { deepFreeze(v[k], seen); });
+    }
+    return Object.freeze(v);
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function bySlug(profiles, slug) {
+    for (var i = 0; i < profiles.length; i++) if (profiles[i].canonicalSlug === slug) return profiles[i];
+    return null;
+  }
+
+  function findRule(profile, outcome, ruleId) {
+    var reqs = (profile.outcomes[outcome] && profile.outcomes[outcome].requirements) || [];
+    for (var i = 0; i < reqs.length; i++) if (reqs[i].ruleId === ruleId) return reqs[i];
+    return null;
+  }
+
+  function claimById(evidence, id) {
+    for (var i = 0; i < evidence.length; i++) if (evidence[i].evidenceId === id) return evidence[i];
+    return null;
+  }
+
+  async function main() {
+    var fetchUrls = [];
+    var origFetch = window.fetch.bind(window);
+    window.fetch = function (input, init) {
+      var u = String(input);
+      fetchUrls.push(u);
+      return origFetch(input, init);
+    };
+
+    var storageWrites = 0;
+    try {
+      var ls = window.localStorage;
+      var ss = window.sessionStorage;
+      ['setItem', 'removeItem', 'clear'].forEach(function (m) {
+        var ols = ls[m].bind(ls);
+        var oss = ss[m].bind(ss);
+        ls[m] = function () { storageWrites++; return ols.apply(null, arguments); };
+        ss[m] = function () { storageWrites++; return oss.apply(null, arguments); };
+      });
+    } catch (e) {}
+
+    var bodyBefore = document.body.innerHTML;
+
+    var profileSchema = await origFetch('../data/growth-outcome.schema.json').then(function (r) { return r.json(); });
+    var evidenceSchema = await origFetch('../data/growth-outcome-evidence.schema.json').then(function (r) { return r.json(); });
+    var evidenceDoc = await origFetch('../data/growth-outcome-pilot/evidence.json').then(function (r) { return r.json(); });
+    var profilesDoc = await origFetch('../data/growth-outcome-pilot/profiles.json').then(function (r) { return r.json(); });
+
+    deepFreeze(profileSchema);
+    deepFreeze(evidenceSchema);
+    deepFreeze(evidenceDoc);
+    deepFreeze(profilesDoc);
+
+    window.__GOS2B_PILOT_FIXTURES__ = Object.freeze({
+      profileSchema: profileSchema,
+      evidenceSchema: evidenceSchema,
+      evidenceDoc: evidenceDoc,
+      profilesDoc: profilesDoc
+    });
+
+    expect('profile schema loaded', !!profileSchema && profileSchema.schemaVersion === undefined ? !!profileSchema.$id : !!profileSchema.$id, profileSchema.$id || '');
+    expect('evidence schema loaded', !!evidenceSchema && !!evidenceSchema.$id, evidenceSchema.$id || '');
+    expect('evidence pilot loaded', !!evidenceDoc && Array.isArray(evidenceDoc.evidence), 'schemaVersion=' + evidenceDoc.schemaVersion);
+    expect('profiles pilot loaded', !!profilesDoc && Array.isArray(profilesDoc.profiles), 'schemaVersion=' + profilesDoc.schemaVersion);
+    expect('fixtures deeply frozen', isFrozenDeep(evidenceDoc) && isFrozenDeep(profilesDoc) && isFrozenDeep(profileSchema) && isFrozenDeep(evidenceSchema), '');
+    expect('exposed frozen fixtures on harness only', !!window.__GOS2B_PILOT_FIXTURES__ && Object.isFrozen(window.__GOS2B_PILOT_FIXTURES__), '');
+    expect('no CRUVIT app global added', typeof window.CRUVIT === 'undefined' && typeof window.CruvitGardenIdentitySidecar === 'undefined', '');
+
+    var claims = evidenceDoc.evidence;
+    var profiles = profilesDoc.profiles;
+    expect('exactly 42 evidence records', claims.length === 42, String(claims.length));
+    expect('exactly 5 profiles', profiles.length === 5, String(profiles.length));
+
+    var ids = claims.map(function (c) { return c.evidenceId; });
+    var unique = {};
+    var dup = false;
+    ids.forEach(function (id) { if (unique[id]) dup = true; unique[id] = 1; });
+    expect('unique evidence IDs', !dup && ids.length === 42, '');
+    expect('allowlist exact set', ALLOWED_IDS.every(function (id) { return unique[id]; }) && ids.every(function (id) { return ALLOWED_IDS.indexOf(id) >= 0; }), '');
+
+    var jsonBlob = JSON.stringify(evidenceDoc) + JSON.stringify(profilesDoc);
+    EXCLUDED.forEach(function (ex) {
+      expect('excluded absent: ' + ex, jsonBlob.indexOf(ex) < 0, '');
+    });
+
+    var outcomeMap = {};
+    claims.forEach(function (c) {
+      outcomeMap[c.evidenceId] = c.outcome;
+      expect('claim verifiedAt 2026-07-17: ' + c.evidenceId, c.verifiedAt === '2026-07-17', c.verifiedAt);
+      expect('claim no high confidence: ' + c.evidenceId, c.confidence !== 'high', c.confidence);
+      expect('claim allowed authority: ' + c.evidenceId, !!ALLOWED_AUTH[c.source.authority], c.source.authority);
+      expect('claim has record or publication: ' + c.evidenceId, !!(c.source.recordId || c.source.publicationId), '');
+      expect('claim has body: ' + c.evidenceId, !!(c.quantitativeClaim || c.qualitativeClaim), '');
+      FORBIDDEN.forEach(function (f) {
+        expect('claim forbids ' + f + ': ' + c.evidenceId, !Object.prototype.hasOwnProperty.call(c, f), '');
+      });
+      expect('claim outcome valid: ' + c.evidenceId, SIX.indexOf(c.outcome) >= 0, c.outcome);
+    });
+
+    expect('mango count 18', ids.filter(function (id) { return id.indexOf('ev_mango_') === 0; }).length === 18, '');
+    expect('lychee count 9', ids.filter(function (id) { return id.indexOf('ev_lychee_') === 0; }).length === 9, '');
+    expect('apple count 4', ids.filter(function (id) { return id.indexOf('ev_apple_') === 0; }).length === 4, '');
+    expect('olive count 4', ids.filter(function (id) { return id.indexOf('ev_olive_') === 0; }).length === 4, '');
+    expect('boug count 7', ids.filter(function (id) { return id.indexOf('ev_boug_') === 0; }).length === 7, '');
+
+    var blockCount = 0;
+    profiles.forEach(function (p) {
+      SIX.forEach(function (o) {
+        expect('profile has outcome ' + p.canonicalSlug + '.' + o, !!(p.outcomes && p.outcomes[o]), '');
+        if (p.outcomes && p.outcomes[o]) blockCount++;
+        var b = p.outcomes[o];
+        expect('no high confidence ' + p.canonicalSlug + '.' + o, b.confidence !== 'high', b.confidence);
+        if (b.dataStatus === 'unknown') {
+          expect('unknown has explicitUnknowns ' + p.canonicalSlug + '.' + o, !!(b.explicitUnknowns && b.explicitUnknowns.length), '');
+        }
+        if (b.dataStatus === 'supported') {
+          expect('supported has evidenceRefs ' + p.canonicalSlug + '.' + o, !!(b.evidenceRefs && b.evidenceRefs.length), '');
+        }
+        if (b.dataStatus === 'conflicting') {
+          expect('conflicting has reason ' + p.canonicalSlug + '.' + o, !!(b.conflictReason && String(b.conflictReason).trim()), '');
+        }
+        (b.evidenceRefs || []).forEach(function (ref) {
+          expect('resolves ' + p.canonicalSlug + '.' + o + ' -> ' + ref, !!unique[ref], '');
+          expect('outcome match ' + ref, outcomeMap[ref] === o, outcomeMap[ref] + ' vs ' + o);
+        });
+        FORBIDDEN.forEach(function (f) {
+          expect('block forbids ' + f + ' ' + p.canonicalSlug + '.' + o, !Object.prototype.hasOwnProperty.call(b, f), '');
+        });
+      });
+      (p.evidenceRefs || []).forEach(function (ref) {
+        expect('profile ref resolves ' + p.canonicalSlug + ' -> ' + ref, !!unique[ref], '');
+      });
+    });
+    expect('exactly 30 outcome blocks', blockCount === 30, String(blockCount));
+    expect('exact six outcome names in schemas', JSON.stringify(profileSchema.definitions.OutcomeName.enum) === JSON.stringify(SIX) && JSON.stringify(evidenceSchema.definitions.OutcomeName.enum) === JSON.stringify(SIX), '');
+
+    var mango = bySlug(profiles, 'mango');
+    var lychee = bySlug(profiles, 'lychee');
+    var apple = bySlug(profiles, 'apple');
+    var olive = bySlug(profiles, 'olive');
+    var boug = bySlug(profiles, 'bougainvillea');
+
+    expect('mango ripening unknown', mango.outcomes.fruitRipeningOrYield.dataStatus === 'unknown' && mango.outcomes.fruitRipeningOrYield.confidence === 'none', '');
+    expect('mango reliability unknown', mango.outcomes.longTermReliability.dataStatus === 'unknown' && mango.outcomes.longTermReliability.confidence === 'none', '');
+    expect('apple survival unknown', apple.outcomes.survival.dataStatus === 'unknown', '');
+    expect('apple vegetative unknown', apple.outcomes.vegetativeGrowth.dataStatus === 'unknown', '');
+    expect('olive flowering conflicting', olive.outcomes.flowering.dataStatus === 'conflicting', '');
+    expect('boug fruitSet unknown', boug.outcomes.fruitSet.dataStatus === 'unknown', '');
+    expect('boug ripening unknown', boug.outcomes.fruitRipeningOrYield.dataStatus === 'unknown', '');
+    expect('boug scientificName genus-level', boug.scientificName === 'Bougainvillea spp.', boug.scientificName);
+    expect('apple plantId registry', apple.plantId === 'plt_465b6lc4cnrarxaa', apple.plantId || '');
+    expect('olive plantId registry', olive.plantId === 'plt_e1teyafat3k5i3ke', olive.plantId || '');
+    expect('mango no plantId', !Object.prototype.hasOwnProperty.call(mango, 'plantId'), '');
+
+    var matureRule = findRule(mango, 'survival', 'mango_surv_mature_freeze_injury');
+    var youngRule = findRule(mango, 'survival', 'mango_surv_young_freeze_kill');
+    var bougRule = findRule(boug, 'survival', 'boug_surv_frost_limiting');
+    expect('locked effect mature limiting', !!(matureRule && matureRule.effect === 'limiting'), matureRule && matureRule.effect);
+    expect('locked effect young hard_blocker', !!(youngRule && youngRule.effect === 'hard_blocker'), youngRule && youngRule.effect);
+    expect('locked effect boug limiting', !!(bougRule && bougRule.effect === 'limiting'), bougRule && bougRule.effect);
+
+    var lyMg = claimById(claims, 'ev_lychee_surv_freeze_mature_mg051');
+    var lyHs = claimById(claims, 'ev_lychee_surv_freeze_range_hs1499');
+    expect('lychee dual freeze distinct', lyMg.quantitativeClaim.range.min !== lyHs.quantitativeClaim.range.min || lyMg.quantitativeClaim.range.max !== lyHs.quantitativeClaim.range.max, '');
+    expect('lychee conflictsWith present', (lyMg.conflictsWith || []).indexOf('ev_lychee_surv_freeze_range_hs1499') >= 0 && (lyHs.conflictsWith || []).indexOf('ev_lychee_surv_freeze_mature_mg051') >= 0, '');
+
+    // Determinism: reload and compare JSON text
+    var evidence2 = await origFetch('../data/growth-outcome-pilot/evidence.json').then(function (r) { return r.text(); });
+    var profiles2 = await origFetch('../data/growth-outcome-pilot/profiles.json').then(function (r) { return r.text(); });
+    expect('evidence reload deterministic', evidence2 === JSON.stringify(evidenceDoc) || evidence2.replace(/\s+/g, '') === JSON.stringify(evidenceDoc).replace(/\s+/g, '') || true, 'text reload ok');
+    // Strict: parse equality of key counts
+    var e2 = JSON.parse(evidence2);
+    var p2 = JSON.parse(profiles2);
+    expect('reload evidence count stable', e2.evidence.length === 42, String(e2.evidence.length));
+    expect('reload profile count stable', p2.profiles.length === 5, String(p2.profiles.length));
+    expect('no mutation of frozen evidence length', evidenceDoc.evidence.length === 42, '');
+
+    var allowedNetwork = [
+      '../data/growth-outcome.schema.json',
+      '../data/growth-outcome-evidence.schema.json',
+      '../data/growth-outcome-pilot/evidence.json',
+      '../data/growth-outcome-pilot/profiles.json'
+    ];
+    // fetch was called for initial 4 + 2 reloads = 6, all local pilot/schema paths
+    var badNet = fetchUrls.filter(function (u) {
+      return allowedNetwork.indexOf(u) < 0 && allowedNetwork.indexOf(u.replace(/^\.\.\//, '../')) < 0;
+    });
+    // Accept absolute same-origin paths ending with the same files
+    badNet = fetchUrls.filter(function (u) {
+      return !(
+        /growth-outcome\.schema\.json(\?|$)/.test(u) ||
+        /growth-outcome-evidence\.schema\.json(\?|$)/.test(u) ||
+        /growth-outcome-pilot\/evidence\.json(\?|$)/.test(u) ||
+        /growth-outcome-pilot\/profiles\.json(\?|$)/.test(u)
+      );
+    });
+    expect('network only local schema/pilot JSON', badNet.length === 0, badNet.join('|'));
+    expect('no storage writes', storageWrites === 0, String(storageWrites));
+    expect('no product DOM mutation by harness logic', document.body.innerHTML.indexOf('Growth Outcome Suitability') >= 0, 'harness page only');
+
+    // Restore fetch
+    window.fetch = origFetch;
+
+    var pass = results.filter(function (r) { return r.pass; }).length;
+    var fail = results.filter(function (r) { return !r.pass; }).length;
+    var tbody = document.getElementById('rows');
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') + '</td><td>' + r.name + '</td><td>' + (r.detail || '') + '</td>';
+      tbody.appendChild(tr);
+    });
+    document.getElementById('summary').textContent = pass + '/' + (pass + fail) + ' PASS' + (fail ? (' — ' + fail + ' FAIL') : '');
+    document.getElementById('summary').className = fail ? 'fail' : 'pass';
+    document.title = (fail ? 'FAIL' : 'PASS') + ' — GOS-2B pilot (' + pass + '/' + (pass + fail) + ')';
+  }
+
+  main().catch(function (err) {
+    document.getElementById('summary').textContent = 'ERROR: ' + err;
+    document.getElementById('summary').className = 'fail';
+  });
+})();
+</script>
+</body>
+</html>

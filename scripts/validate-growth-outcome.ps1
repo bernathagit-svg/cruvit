@@ -525,7 +525,13 @@ try {
   Assert-True (-not (Test-Path -LiteralPath $ePath)) 'evidence temp file removed'
 
   Write-Head '5. Scope safeguards'
-  Assert-True (-not (Test-Path -LiteralPath (Join-Path $repoRoot 'data/growth-outcome-pilot'))) 'no growth-outcome-pilot directory created'
+  # GOS-2B may create a pilot data directory. GOS-1 stays synthetic-fixture-only via $paths above.
+  $pathValues = @($paths.Values | ForEach-Object { [string]$_ })
+  $touchesPilotData = $false
+  foreach ($pv in $pathValues) {
+    if ($pv -like '*growth-outcome-pilot*') { $touchesPilotData = $true }
+  }
+  Assert-True (-not $touchesPilotData) 'GOS-1 remains synthetic-only (paths do not include pilot data files)'
   Assert-True ($profileText -notmatch '(?i)mangifera') 'profile schema has no mango botanical data'
   Assert-True ($evidenceText -notmatch '(?i)mangifera') 'evidence schema has no mango botanical data'
 
