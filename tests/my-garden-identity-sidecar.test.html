@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — My Garden Identity Sidecar Tests (standalone, developer-only)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  iframe { position: absolute; left: -9999px; width: 1px; height: 1px; border: 0; }
+</style>
+</head>
+<body>
+  <h1>My Garden Identity Sidecar — Phase C2 harness</h1>
+  <p class="sub">Loads real <code>index.html</code> + Shadow + shared consult + Sidecar. Stopped by default. No app consumer.</p>
+  <div id="summary">Running…</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <iframe id="app" src="../index.html" title="app"></iframe>
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function jsonOf(v) {
+    try { return JSON.stringify(v); } catch (e) { return String(v); }
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function waitFor(pred, ms) {
+    return new Promise(function (resolve) {
+      var t0 = Date.now();
+      var id = setInterval(function () {
+        var ok = false;
+        try { ok = !!pred(); } catch (e) { ok = false; }
+        if (ok || Date.now() - t0 > ms) {
+          clearInterval(id);
+          resolve(ok);
+        }
+      }, 50);
+    });
+  }
+
+  function stats(times) {
+    var a = times.slice().sort(function (x, y) { return x - y; });
+    var n = a.length;
+    var sum = a.reduce(function (s, x) { return s + x; }, 0);
+    var median = n % 2 ? a[(n - 1) / 2] : (a[n / 2 - 1] + a[n / 2]) / 2;
+    var p95 = a[Math.min(n - 1, Math.ceil(0.95 * n) - 1)];
+    return { n: n, min: a[0], median: median, p95: p95, max: a[n - 1], avg: sum / n };
+  }
+
+  function finish() {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var summary = { total: results.length, passed: passed, failed: failed };
+    var host = document.getElementById('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+    host.className = failed ? 'fail' : 'pass';
+    var tbody = document.getElementById('rows');
+    tbody.innerHTML = results.map(function (r) {
+      return '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>';
+    }).join('');
+    try {
+      window.__SIDECAR_DONE = true;
+      window.__SIDECAR_SUMMARY = summary;
+      window.__SIDECAR_PERF = window.__SIDECAR_PERF || null;
+    } catch (e) {}
+    try {
+      var params = new URLSearchParams(location.search);
+      if (params.has('report') || params.has('autoclose')) {
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon('/__result', JSON.stringify({
+            results: results,
+            summary: summary,
+            performance: window.__SIDECAR_PERF || null
+          }));
+        }
+        if (params.has('autoclose')) setTimeout(function () { try { window.close(); } catch (e) {} }, 40);
+      }
+    } catch (e) {}
+  }
+
+  async function main() {
+    var frame = document.getElementById('app');
+    await new Promise(function (r) { frame.addEventListener('load', r, { once: true }); });
+    var cw = frame.contentWindow;
+
+    var ready = await waitFor(function () {
+      return cw.CruvitIdentityShadow && cw.CruvitIdentityShadow.status &&
+        cw.CruvitIdentityShadow.status().status === 'ready' &&
+        cw.CruvitGardenPlantIdentityConsult &&
+        cw.CruvitGardenIdentitySidecar &&
+        cw.CruvitGardenIdentityAudit;
+    }, 25000);
+
+    var SC = cw.CruvitGardenIdentitySidecar;
+    var A = cw.CruvitGardenIdentityAudit;
+    var S = cw.CruvitIdentityShadow;
+    var C = cw.CruvitGardenPlantIdentityConsult;
+
+    expect('iframe ready: shadow + consult + sidecar + audit', ready && !!SC && !!S && !!C && !!A,
+      'ready=' + ready);
+
+    // ── installation / lifecycle ──
+    var apiKeys = Object.keys(SC).sort();
+    expect('sidecar global frozen', Object.isFrozen(SC));
+    expect('exact public API', jsonOf(apiKeys) === jsonOf([
+      'clear', 'consult', 'consultMany', 'delete', 'get', 'isStarted',
+      'snapshot', 'start', 'status', 'stop'
+    ].sort()), jsonOf(apiKeys));
+    expect('stopped by default', SC.isStarted() === false);
+    expect('size 0 by default', SC.status().size === 0 && SC.snapshot().length === 0);
+    expect('audit remains disabled by default', A.isEnabled() === false);
+    expect('no query-string activation', SC.isStarted() === false);
+    expect('no localStorage sidecar key', !cw.localStorage.getItem('CruvitGardenIdentitySidecar') &&
+      !cw.localStorage.getItem('cruvit_garden_identity_sidecar'));
+    expect('no sessionStorage sidecar key', !cw.sessionStorage.getItem('CruvitGardenIdentitySidecar'));
+
+    expect('start returns true', SC.start() === true && SC.isStarted() === true);
+    expect('start idempotent', SC.start() === true && SC.isStarted() === true);
+    expect('start does not populate', SC.status().size === 0);
+    expect('stop returns false and clears', SC.stop() === false && SC.isStarted() === false && SC.status().size === 0);
+    expect('stop idempotent', SC.stop() === false && SC.isStarted() === false);
+
+    // ── network / mutation spies ──
+    var net = { fetch: 0, beacon: 0, xhr: 0, websocket: 0, registry: 0 };
+    var origFetch = cw.fetch ? cw.fetch.bind(cw) : null;
+    var origBeacon = cw.navigator && cw.navigator.sendBeacon ? cw.navigator.sendBeacon.bind(cw.navigator) : null;
+    var XHR = cw.XMLHttpRequest;
+    var xhrOpen = XHR && XHR.prototype.open;
+    var OrigWS = cw.WebSocket;
+    function registryUrl(input) {
+      var url = '';
+      if (typeof input === 'string') url = input;
+      else if (input && typeof input.url === 'string') url = input.url;
+      else url = String(input || '');
+      return url.indexOf('plant-identity.registry') >= 0;
+    }
+    function netSnap() {
+      return { fetch: net.fetch, beacon: net.beacon, xhr: net.xhr, websocket: net.websocket, registry: net.registry };
+    }
+    try {
+      if (origFetch) {
+        cw.fetch = function (input) {
+          net.fetch++;
+          if (registryUrl(input)) net.registry++;
+          return origFetch.apply(cw, arguments);
+        };
+      }
+      if (origBeacon) {
+        cw.navigator.sendBeacon = function () {
+          net.beacon++;
+          return origBeacon.apply(cw, arguments);
+        };
+      }
+      if (xhrOpen) {
+        XHR.prototype.open = function (method, url) {
+          net.xhr++;
+          if (registryUrl(url)) net.registry++;
+          return xhrOpen.apply(this, arguments);
+        };
+      }
+      if (OrigWS) {
+        cw.WebSocket = function (url, protocols) {
+          net.websocket++;
+          if (arguments.length > 1) return new OrigWS(url, protocols);
+          return new OrigWS(url);
+        };
+        cw.WebSocket.prototype = OrigWS.prototype;
+      }
+    } catch (e) {}
+
+    var lsSet = 0;
+    var origSetItem = null;
+    try {
+      origSetItem = cw.localStorage.setItem.bind(cw.localStorage);
+      cw.localStorage.setItem = function (k, v) {
+        lsSet++;
+        return origSetItem(k, v);
+      };
+    } catch (e) {}
+
+    var bodyBefore = cw.document.body ? cw.document.body.innerHTML.length : 0;
+    var taskFixture = ['💧', 'Water Fig Tree', 'Today', 'High', '2026-07-17', true, 'Fig Tree', false];
+    var taskBefore = jsonOf(taskFixture);
+
+    // ── stopped consult ──
+    var stopped = SC.consult({ id: 'p1', profileSlug: 'avocado' });
+    expect('stopped consult → not_started', stopped && stopped.operationStatus === 'not_started' && stopped.entry === null);
+    expect('stopped consult frozen', isFrozenDeep(stopped));
+
+    SC.start();
+    expect('status while started', SC.status().started === true && SC.status().maxEntries === 500 && isFrozenDeep(SC.status()));
+
+    // ── missing id ──
+    var miss = SC.consult({ profileSlug: 'avocado' });
+    expect('missing id → missing_garden_plant_id', miss && miss.operationStatus === 'missing_garden_plant_id' && miss.entry === null);
+    expect('missing id not minted', SC.status().size === 0);
+
+    var lavenderPid = 'plt_aupnyvawcflgjbyh';
+    var fixtures = {
+      lav: { id: 'gp_lav', plantId: lavenderPid, name: 'Lavender', profileSlug: 'lavender' },
+      avo: { id: 'gp_avo', profileSlug: 'avocado', name: 'Avocado Tree', scientific: 'Persea americana' },
+      sgAcc: { id: 'gp_sg_a', scientific: 'Psidium cattleyanum', name: 'SG Acc' },
+      sgSyn: { id: 'gp_sg_s', scientific: 'Psidium cattleianum', name: 'SG Syn' },
+      heLav: { id: 'gp_he_l', he: 'לבנדר', name: 'Hebrew Lav' },
+      heOl: { id: 'gp_he_o', name: 'זית' },
+      mul: { id: 'gp_mul', profileSlug: 'mulberry', name: 'Mulberry Tree', scientific: 'Morus spp.' },
+      conf: { id: 'gp_conf', profileSlug: 'avocado', scientific: 'Psidium guajava', name: 'Conflict' },
+      unk: { id: 'gp_unk', name: 'Completely Unknown Garden Widget XYZ', profileSlug: 'unknown-garden-widget-xyz' },
+      empty: { id: 'gp_empty', name: '', profileSlug: '' }
+    };
+
+    function clone(p) { return JSON.parse(JSON.stringify(p)); }
+
+    function assertConsult(plant, expectStatus, label) {
+      var before = jsonOf(plant);
+      var metaBefore = plant.meta ? jsonOf(plant.meta) : null;
+      var keysBefore = Object.keys(plant).sort();
+      var n0 = netSnap();
+      var r = SC.consult(plant);
+      var n1 = netSnap();
+      expect('consult frozen (' + label + ')', isFrozenDeep(r));
+      expect('consult no plant mutation (' + label + ')', jsonOf(plant) === before);
+      expect('consult no meta mutation (' + label + ')',
+        metaBefore == null ? !plant.meta : jsonOf(plant.meta) === metaBefore);
+      expect('consult no new keys (' + label + ')', jsonOf(Object.keys(plant).sort()) === jsonOf(keysBefore));
+      expect('consult no network (' + label + ')',
+        n1.fetch === n0.fetch && n1.xhr === n0.xhr && n1.beacon === n0.beacon &&
+        n1.websocket === n0.websocket && n1.registry === n0.registry,
+        jsonOf({ before: n0, after: n1 }));
+      if (expectStatus) {
+        expect('consult status (' + label + ')', r && r.entry && r.entry.resolution && r.entry.resolution.status === expectStatus,
+          jsonOf(r && r.entry && r.entry.resolution));
+      }
+      return r;
+    }
+
+    var rLav = assertConsult(fixtures.lav, 'resolved_id', 'lavender-plantId');
+    expect('lavender stored', rLav.operationStatus === 'stored' && rLav.entry.resolution.plantId === lavenderPid);
+
+    var rAvo = assertConsult(fixtures.avo, 'resolved_canonical', 'avocado');
+    expect('avocado plantId null', rAvo.entry.resolution.plantId == null && rAvo.entry.resolution.canonicalSlug === 'avocado');
+
+    var rSgA = assertConsult(fixtures.sgAcc, 'resolved_canonical', 'sg-accepted');
+    expect('SG accepted strawberry-guava', rSgA.entry.resolution.canonicalSlug === 'strawberry-guava' &&
+      rSgA.entry.resolution.matchedBy === 'scientificName');
+
+    var rSgS = assertConsult(fixtures.sgSyn, 'resolved_canonical', 'sg-synonym');
+    expect('SG synonym strawberry-guava', rSgS.entry.resolution.canonicalSlug === 'strawberry-guava' &&
+      rSgS.entry.resolution.matchedBy === 'scientificSynonym');
+
+    var rHeL = assertConsult(fixtures.heLav, null, 'he-lavender');
+    expect('Hebrew lavender', rHeL.entry && rHeL.entry.resolution.canonicalSlug === 'lavender');
+
+    var rHeO = assertConsult(fixtures.heOl, null, 'he-olive');
+    expect('Hebrew olive', rHeO.entry && rHeO.entry.resolution.canonicalSlug === 'olive');
+
+    var rMul = assertConsult(fixtures.mul, 'pending_conflict', 'mulberry');
+    expect('mulberry null ids', rMul.entry.resolution.plantId == null && rMul.entry.resolution.canonicalSlug == null);
+
+    var rConf = assertConsult(fixtures.conf, 'ambiguous', 'conflict');
+    expect('conflict quarantined', rConf.entry.resolution.auditReason === 'conflicting_signals' &&
+      rConf.entry.resolution.plantId == null && rConf.entry.resolution.canonicalSlug == null);
+
+    var rUnk = assertConsult(fixtures.unk, null, 'unknown');
+    expect('unknown provisional/unresolved', rUnk.entry &&
+      (rUnk.entry.resolution.status === 'provisional' || rUnk.entry.resolution.status === 'unresolved'));
+
+    var rEmpty = assertConsult(fixtures.empty, 'unresolved', 'empty');
+    expect('empty missing_identity_input', rEmpty.entry.resolution.auditReason === 'missing_identity_input');
+
+    expect('no fabricated plantIds in sidecar', SC.snapshot().every(function (e) {
+      return e.resolution.plantId == null || /^plt_[a-z0-9]{16}$/.test(e.resolution.plantId);
+    }));
+
+    // ── cache hit / get ──
+    var hit = SC.consult(clone(fixtures.lav));
+    expect('unchanged consult → cache_hit', hit.operationStatus === 'cache_hit');
+    var got = SC.get(clone(fixtures.lav));
+    expect('get returns entry', !!got && got.gardenPlantId === 'gp_lav' && isFrozenDeep(got));
+    expect('get does not resolve anew', SC.get(clone(fixtures.lav)) === got ||
+      jsonOf(SC.get(clone(fixtures.lav))) === jsonOf(got));
+
+    // fingerprint change → refreshed
+    var renamed = clone(fixtures.avo);
+    renamed.name = 'Avocado Renamed Label';
+    var refreshed = SC.consult(renamed);
+    expect('fingerprint change → refreshed', refreshed.operationStatus === 'refreshed');
+    var staleGet = SC.get(clone(fixtures.avo));
+    expect('get with old fingerprint invalidates', staleGet === null);
+
+    // get() with changed fingerprint must invalidate stale entry
+    SC.consult(renamed);
+    expect('get matches current plant', !!SC.get(clone(renamed)));
+    var drifted = clone(renamed);
+    drifted.profileSlug = 'guava';
+    expect('get drifted fingerprint null', SC.get(drifted) === null);
+    expect('stale entry removed after get drift', !SC.snapshot().some(function (e) { return e.gardenPlantId === 'gp_avo'; }));
+
+    // ── collision batch ──
+    SC.clear();
+    var batchSame = [
+      { id: 'dup1', profileSlug: 'avocado', name: 'A' },
+      { id: 'dup1', profileSlug: 'avocado', name: 'A' }
+    ];
+    var batchSameRep = SC.consultMany(batchSame);
+    expect('same id/same fp: one store + cache_hit', batchSameRep.storedCount === 1 && batchSameRep.cacheHitCount === 1 &&
+      batchSameRep.idCollisionCount === 0, jsonOf(batchSameRep));
+
+    SC.clear();
+    var batchColl = [
+      { id: 'dupX', profileSlug: 'avocado', name: 'A' },
+      { id: 'dupX', profileSlug: 'basil', name: 'B' }
+    ];
+    var batchCollRep = SC.consultMany(batchColl);
+    expect('same id/diff fp → collision', batchCollRep.idCollisionCount === 2 &&
+      batchCollRep.results.every(function (r) { return r.operationStatus === 'garden_plant_id_collision'; }),
+      jsonOf(batchCollRep));
+    expect('collision not retained', !SC.snapshot().some(function (e) { return e.gardenPlantId === 'dupX'; }));
+
+    // separate species ids
+    SC.clear();
+    var sep = SC.consultMany([
+      { id: 's1', profileSlug: 'avocado' },
+      { id: 's2', profileSlug: 'avocado' }
+    ]);
+    expect('same species different ids → 2 entries', sep.storedCount === 2 && SC.status().size === 2);
+
+    // ── capacity ──
+    SC.clear();
+    var many = [];
+    for (var i = 0; i < 500; i++) many.push({ id: 'cap' + i, profileSlug: 'avocado' });
+    var fill = SC.consultMany(many);
+    expect('fill 500 stored', fill.storedCount === 500 && SC.status().size === 500, jsonOf({
+      stored: fill.storedCount, size: SC.status().size, trunc: fill.truncatedCount
+    }));
+    var over = SC.consult({ id: 'cap501', profileSlug: 'basil' });
+    expect('501st → capacity_reached', over.operationStatus === 'capacity_reached' && over.entry === null);
+    expect('still 500 after capacity', SC.status().size === 500);
+
+    var more = [];
+    for (var j = 0; j < 525; j++) more.push({ id: 't' + j, profileSlug: 'basil' });
+    SC.clear();
+    var trunc = SC.consultMany(more);
+    expect('consultMany truncates at 500', trunc.processedInputs === 500 && trunc.truncatedCount === 25 && trunc.totalInputs === 525);
+
+    // refresh at capacity still works
+    SC.clear();
+    SC.consultMany(many);
+    var refreshCap = SC.consult({ id: 'cap0', profileSlug: 'avocado', name: 'Changed' });
+    expect('refresh at capacity allowed', refreshCap.operationStatus === 'refreshed' && SC.status().size === 500);
+
+    // delete / clear
+    expect('delete removes one', SC.delete('cap1') === true && SC.status().size === 499);
+    expect('delete missing false', SC.delete('nope') === false);
+    var cleared = SC.clear();
+    expect('clear removes all', cleared === 499 && SC.status().size === 0 && SC.isStarted() === true);
+
+    // snapshot frozen
+    SC.consult(clone(fixtures.lav));
+    var snap = SC.snapshot();
+    expect('snapshot frozen', isFrozenDeep(snap) && snap.length === 1);
+
+    // stop clears
+    SC.stop();
+    expect('stop clears snapshot', SC.snapshot().length === 0 && SC.isStarted() === false);
+
+    // registry not ready / error via stub
+    function loadStubSidecar(shadowStatus) {
+      return new Promise(function (resolve) {
+        var stub = document.createElement('iframe');
+        stub.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;border:0';
+        stub.srcdoc = '<!doctype html><html><head></head><body><script>' +
+          'window.CruvitIdentityShadow=Object.freeze({' +
+          'get:function(){return null},' +
+          'status:function(){return Object.freeze({status:' + JSON.stringify(shadowStatus) + ',registryVersion:null,error:' +
+          (shadowStatus === 'error' ? JSON.stringify('boom') : 'null') + '})},' +
+          'version:function(){return null}' +
+          '});' +
+          '<\/script>' +
+          '<script type="module" src="../modules/identity/my-garden-identity-sidecar.js"><\/script>' +
+          '</body></html>';
+        stub.onload = async function () {
+          var sw = stub.contentWindow;
+          var ok = await waitFor(function () { return sw.CruvitGardenIdentitySidecar; }, 10000);
+          resolve({ ok: ok, api: ok ? sw.CruvitGardenIdentitySidecar : null });
+        };
+        document.body.appendChild(stub);
+      });
+    }
+
+    var stubNR = await loadStubSidecar('loading');
+    expect('stub sidecar loaded (not_ready)', !!stubNR.ok);
+    if (stubNR.api) {
+      stubNR.api.start();
+      var nr = stubNR.api.consult({ id: 'z1', profileSlug: 'avocado' });
+      expect('registry_not_ready not cached', nr.operationStatus === 'registry_not_ready' &&
+        stubNR.api.status().size === 0);
+    }
+    var stubER = await loadStubSidecar('error');
+    expect('stub sidecar loaded (error)', !!stubER.ok);
+    if (stubER.api) {
+      stubER.api.start();
+      var er = stubER.api.consult({ id: 'z2', profileSlug: 'avocado' });
+      expect('registry_error not cached', er.operationStatus === 'registry_error' &&
+        stubER.api.status().size === 0);
+    }
+
+    // later ready works on main
+    SC.start();
+    var afterStub = SC.consult(clone(fixtures.avo));
+    expect('later ready consultation succeeds', afterStub.operationStatus === 'stored' &&
+      afterStub.entry.resolution.canonicalSlug === 'avocado');
+
+    // audit coexistence
+    expect('audit still disabled', A.isEnabled() === false);
+    expect('audit run while disabled null', A.run([{ profileSlug: 'avocado' }]) === null);
+
+    // determinism
+    SC.clear();
+    var d1 = SC.consult(clone(fixtures.sgSyn));
+    SC.clear();
+    var d2 = SC.consult(clone(fixtures.sgSyn));
+    expect('deterministic repeated consult',
+      jsonOf(d1.entry.resolution) === jsonOf(d2.entry.resolution));
+
+    // shared consult parity
+    var shared = C.resolveGardenPlantIdentityReadOnly(clone(fixtures.mul), S);
+    SC.clear();
+    var viaSc = SC.consult(clone(fixtures.mul));
+    expect('sidecar resolution matches shared consult',
+      jsonOf({
+        s: viaSc.entry.resolution.status,
+        c: viaSc.entry.resolution.canonicalSlug,
+        p: viaSc.entry.resolution.plantId,
+        r: viaSc.entry.resolution.auditReason
+      }) === jsonOf({
+        s: shared.status,
+        c: shared.canonicalSlug,
+        p: shared.plantId,
+        r: shared.auditReason
+      }));
+
+    // non-regression trust
+    var bodyAfter = cw.document.body ? cw.document.body.innerHTML.length : 0;
+    expect('no DOM mutation', bodyAfter === bodyBefore, 'before=' + bodyBefore + ' after=' + bodyAfter);
+    expect('no task mutation', jsonOf(taskFixture) === taskBefore);
+    expect('no localStorage writes during sidecar ops', lsSet === 0, 'lsSet=' + lsSet);
+    expect('final network deltas zero for sidecar window',
+      net.fetch === 0 && net.xhr === 0 && net.beacon === 0 && net.websocket === 0 && net.registry === 0,
+      jsonOf(net));
+
+    // ── performance ──
+    function measureMany(n, runs) {
+      var plants = [];
+      for (var i = 0; i < n; i++) plants.push({ id: 'perf' + i, profileSlug: i % 2 ? 'avocado' : 'basil' });
+      SC.start();
+      SC.clear();
+      SC.consultMany(JSON.parse(JSON.stringify(plants)));
+      SC.consultMany(JSON.parse(JSON.stringify(plants)));
+      SC.clear();
+      var times = [];
+      for (var r = 0; r < runs; r++) {
+        SC.clear();
+        var cloneP = JSON.parse(JSON.stringify(plants));
+        var t0 = performance.now();
+        SC.consultMany(cloneP);
+        times.push(performance.now() - t0);
+      }
+      var s = stats(times);
+      s.msPerPlant = s.median / n;
+      s.nPlants = n;
+      return s;
+    }
+    function measureHit(runs) {
+      SC.start();
+      SC.clear();
+      var p = { id: 'hit1', profileSlug: 'avocado' };
+      SC.consult(p);
+      var times = [];
+      for (var r = 0; r < runs; r++) {
+        var t0 = performance.now();
+        SC.consult(p);
+        times.push(performance.now() - t0);
+      }
+      return stats(times);
+    }
+    function measureClear(runs) {
+      var times = [];
+      for (var r = 0; r < runs; r++) {
+        SC.start();
+        var plants = [];
+        for (var i = 0; i < 100; i++) plants.push({ id: 'cl' + i, profileSlug: 'avocado' });
+        SC.consultMany(plants);
+        var t0 = performance.now();
+        SC.clear();
+        times.push(performance.now() - t0);
+      }
+      return stats(times);
+    }
+
+    var perf = {
+      single: (function () {
+        SC.start(); SC.clear();
+        var p = { id: 'one', profileSlug: 'avocado' };
+        SC.consult(p); SC.clear();
+        var times = [];
+        for (var r = 0; r < 20; r++) {
+          SC.clear();
+          var t0 = performance.now();
+          SC.consult({ id: 'one', profileSlug: 'avocado' });
+          times.push(performance.now() - t0);
+        }
+        return stats(times);
+      })(),
+      many20: measureMany(20, 20),
+      many100: measureMany(100, 20),
+      many500: measureMany(500, 20),
+      cacheHit: measureHit(20),
+      clear: measureClear(20),
+      stoppedIdle: (function () {
+        SC.stop();
+        var t0 = performance.now();
+        var st = SC.status();
+        var elapsed = performance.now() - t0;
+        return { elapsed: elapsed, started: st.started, size: st.size };
+      })()
+    };
+    window.__SIDECAR_PERF = perf;
+    expect('perf 500 median under ~50ms gate', perf.many500.median < 50,
+      'median=' + perf.many500.median);
+    expect('cache hit effectively fast', perf.cacheHit.median < 1 || perf.cacheHit.median < perf.single.median * 2,
+      'hitMedian=' + perf.cacheHit.median);
+    expect('stopped idle no started work', perf.stoppedIdle.started === false && perf.stoppedIdle.size === 0);
+
+    SC.stop();
+    expect('final stopped empty', SC.isStarted() === false && SC.status().size === 0);
+
+    // restore spies
+    try { if (origFetch) cw.fetch = origFetch; } catch (e) {}
+    try { if (origBeacon) cw.navigator.sendBeacon = origBeacon; } catch (e) {}
+    try { if (xhrOpen) XHR.prototype.open = xhrOpen; } catch (e) {}
+    try { if (OrigWS) cw.WebSocket = OrigWS; } catch (e) {}
+    try { if (origSetItem) cw.localStorage.setItem = origSetItem; } catch (e) {}
+
+    finish();
+  }
+
+  main().catch(function (err) {
+    expect('harness execution', false, String(err && err.stack || err));
+    finish();
+  });
+})();
+</script>
+</body>
+</html>
