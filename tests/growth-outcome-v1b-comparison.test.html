@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cruvit — GOS-3C0 v1b comparison feasibility</title>
+<title>Cruvit — GOS-3C1 v1b comparison matrix</title>
 <style>
   :root { color-scheme: light dark; }
   body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 1180px; }
@@ -19,10 +19,10 @@
 </style>
 </head>
 <body>
-  <h1>Growth Outcome Suitability — GOS-3C0 feasibility harness</h1>
+  <h1>Growth Outcome Suitability — GOS-3C1 comparison matrix harness</h1>
   <p class="sub">
     Test-only. Parent loads GOS evaluator + pilot JSON. Real <code>index.html</code> iframe invokes live
-    <code>evaluateClimateSuitabilityV1</code>. No v1b copy, no production export, no Sidecar wait, no full fixture matrix.
+    <code>evaluateClimateSuitabilityV1</code>. No v1b copy, no production export, no Sidecar wait, no score bridge.
   </p>
   <div id="summary">Running…</div>
   <div id="report"></div>
@@ -47,7 +47,10 @@ const FIXTURE_IDS = Object.freeze([
   'trusted_warm_mango_mature_ornamental',
   'trusted_warm_mango_mature_reliable_yield',
   'florida_young_mango_cold',
-  'florida_mature_mango_same_cold'
+  'florida_mature_mango_same_cold',
+  'lychee_florida_mature_freeze_conflict_preserved',
+  'florida_bougainvillea_mature_flowering_display',
+  'florida_mature_mango_bloom_fruitset_cold'
 ]);
 
 const ALLOWED_CATEGORIES = Object.freeze([
@@ -58,6 +61,99 @@ const ALLOWED_CATEGORIES = Object.freeze([
   'different_question_not_conflict',
   'unresolved_due_missing_input'
 ]);
+
+/** Test-local fixture config. expectedPrimaryCategory is assertion-only — never read by classifyComparison. */
+const FIXTURE_DEFS = Object.freeze({
+  lychee_florida_mature_freeze_conflict_preserved: Object.freeze({
+    catalogSlug: 'lychee',
+    locationPack: 'florida',
+    weatherKind: 'florida_cold',
+    regionTags: Object.freeze(['florida', 'subtropical']),
+    climateTags: Object.freeze(['subtropical', 'florida']),
+    latitude: 25.4687,
+    longitude: -80.4776,
+    values: Object.freeze({ minimumTemperatureF: 29.5, frostExposureHours: 3 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze([]),
+    sunExposure: 'full',
+    userGoal: 'ornamentalFoliage',
+    broadClimate: 'subtropical',
+    freezingRisk: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'gos_preserves_unknown'
+  }),
+  florida_bougainvillea_mature_flowering_display: Object.freeze({
+    catalogSlug: 'bougainvillea',
+    locationPack: 'warm',
+    weatherKind: 'warm',
+    regionTags: Object.freeze(['florida', 'warm-climates']),
+    climateTags: Object.freeze(['tropical', 'subtropical']),
+    latitude: 25.7617,
+    longitude: -80.1918,
+    values: Object.freeze({ minimumTemperatureF: 50, frostExposureHours: 0 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze([]),
+    sunExposure: 'full',
+    userGoal: 'floweringDisplay',
+    broadClimate: 'tropical',
+    freezingRisk: 'low',
+    structuralFreezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'gos_preserves_unknown'
+  }),
+  florida_mature_mango_bloom_fruitset_cold: Object.freeze({
+    catalogSlug: 'mango',
+    locationPack: 'florida',
+    weatherKind: 'florida_cold',
+    regionTags: Object.freeze(['florida', 'subtropical']),
+    climateTags: Object.freeze(['subtropical', 'florida']),
+    latitude: 25.4687,
+    longitude: -80.4776,
+    values: Object.freeze({ minimumTemperatureF: 35, frostExposureHours: 2 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze(['bloom', 'small-fruit-stage']),
+    sunExposure: 'full',
+    userGoal: 'ornamentalFoliage',
+    broadClimate: 'subtropical',
+    freezingRisk: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'blocker_scope_difference'
+  })
+});
+
+function fixtureDef(fixtureId) {
+  return FIXTURE_DEFS[fixtureId] || null;
+}
+
+function fixtureCatalogSlug(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  return def ? def.catalogSlug : 'mango';
+}
+
+function fixtureWeatherKind(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  if (def && def.weatherKind) return def.weatherKind;
+  return (fixtureId.indexOf('florida_') === 0) ? 'florida_cold' : 'warm';
+}
+
+function fixtureLocationPack(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  if (def && def.locationPack) return def.locationPack;
+  if (fixtureId === 'untrusted_location_mango') return 'untrusted';
+  if (fixtureId.indexOf('florida_') === 0) return 'florida';
+  return 'warm';
+}
 
 const results = [];
 const reportLines = [];
@@ -218,6 +314,7 @@ function normalizeV1b(raw) {
 
 function normalizeGosOutcome(o) {
   const x = o || {};
+  const sc = x.sourceCoverage && typeof x.sourceCoverage === 'object' ? x.sourceCoverage : null;
   return {
     level: x.level,
     confidence: x.confidence,
@@ -234,7 +331,10 @@ function normalizeGosOutcome(o) {
     }).sort((a, b) => stableStringify(a).localeCompare(stableStringify(b))),
     missingInputs: (x.missingInputs || []).slice().sort(),
     dependencyCaps: (x.dependencyCaps || []).slice().sort(),
-    internalScore: x.internalScore
+    internalScore: x.internalScore,
+    sourceCoverage: {
+      conflicting: !!(sc && sc.conflicting)
+    }
   };
 }
 
@@ -284,6 +384,28 @@ function classifyComparison(fixtureId, v1bN, gosN, gosBioN) {
   } else {
     trustedLocationParity = 'both_trusted';
     broadSurvivalDirection = 'incomparable';
+
+    // Generic stage-scoped reproductive blocker (fact-based; before unknown preservation).
+    const survivalLevel = gosBioN.outcomes.survival.level;
+    const survivalBlockers = gosBioN.outcomes.survival.blockers || [];
+    const reproductiveNames = ['flowering', 'fruitSet', 'fruitRipeningOrYield'];
+    let stageScopedReproductiveBlocker = false;
+    for (let ri = 0; ri < reproductiveNames.length; ri++) {
+      const rBlockers = gosBioN.outcomes[reproductiveNames[ri]].blockers || [];
+      if (!rBlockers.length) continue;
+      if (survivalLevel === 'notRecommended') continue;
+      const hasDistinct = rBlockers.some((b) => survivalBlockers.indexOf(b) < 0);
+      if (hasDistinct) {
+        stageScopedReproductiveBlocker = true;
+        break;
+      }
+    }
+    if (stageScopedReproductiveBlocker) {
+      categories.push('blocker_scope_difference');
+      blockerDifference = 'scope';
+      notableDifferences.push('gos_reproductive_blocker_absent_from_survival');
+    }
+
     const laterUnknown = ['flowering', 'fruitSet', 'fruitRipeningOrYield', 'longTermReliability']
       .some((n) => gosBioN.outcomes[n].level === 'unknown');
     if (laterUnknown && v1bN.level !== 'unknown' && v1bN.score != null) {
@@ -511,8 +633,8 @@ async function ensureTrustedFlorida(cw) {
   return cw.hasTrustedAppLocation() === true;
 }
 
-function runGosForFixture(fixtureId, mango, evidenceById) {
-  const regionTags = fixtureRegionTokensFromProfile(mango);
+function runGosForFixture(fixtureId, profile, evidenceById) {
+  const regionTags = fixtureRegionTokensFromProfile(profile);
   const baseGarden = {
     growingSystem: 'ground',
     protectedOutdoor: false,
@@ -536,14 +658,14 @@ function runGosForFixture(fixtureId, mango, evidenceById) {
     const plantContext = { cultivar: 'unknown', ageClass: 'unknown', propagation: 'unknown', contextTags: [] };
     const t0 = performance.now();
     const biological = evaluateBiologicalGrowthOutcomes({
-      profile: mango,
+      profile: profile,
       evidenceById: evidenceById,
       locationClimate: locationClimate,
       gardenContext: baseGarden,
       plantContext: plantContext
     });
     const full = evaluateGrowthOutcomeSuitability({
-      profile: mango,
+      profile: profile,
       evidenceById: evidenceById,
       locationClimate: locationClimate,
       gardenContext: baseGarden,
@@ -579,14 +701,14 @@ function runGosForFixture(fixtureId, mango, evidenceById) {
       : 'ornamentalFoliage';
     const t0 = performance.now();
     const biological = evaluateBiologicalGrowthOutcomes({
-      profile: mango,
+      profile: profile,
       evidenceById: evidenceById,
       locationClimate: locationClimate,
       gardenContext: baseGarden,
       plantContext: plantContext
     });
     const full = evaluateGrowthOutcomeSuitability({
-      profile: mango,
+      profile: profile,
       evidenceById: evidenceById,
       locationClimate: locationClimate,
       gardenContext: baseGarden,
@@ -608,41 +730,102 @@ function runGosForFixture(fixtureId, mango, evidenceById) {
     };
   }
 
-  // Florida cold fixtures D/E
+  // Florida cold fixtures D/E (GOS-3C0) — exact prior behavior
+  if (fixtureId === 'florida_young_mango_cold' || fixtureId === 'florida_mature_mango_same_cold') {
+    const locationClimate = {
+      trusted: true,
+      latitude: 25.4687,
+      longitude: -80.4776,
+      regionTags: ['florida', 'subtropical'],
+      climateTags: ['subtropical', 'florida'],
+      hemisphere: 'northern',
+      locationConfidence: 'high',
+      climateConfidence: 'medium',
+      structuralFreezingRisk: 'medium',
+      isFrostFreeGrowingClimate: false,
+      values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+    };
+    const plantContext = {
+      cultivar: 'unknown',
+      ageClass: fixtureId === 'florida_young_mango_cold' ? 'young' : 'mature',
+      propagation: 'unknown',
+      contextTags: []
+    };
+    const t0 = performance.now();
+    const biological = evaluateBiologicalGrowthOutcomes({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext
+    });
+    const full = evaluateGrowthOutcomeSuitability({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext,
+      userGoal: 'ornamentalFoliage'
+    });
+    perfSamples.gosInvokeMs.push(performance.now() - t0);
+    return {
+      full: full,
+      biological: biological,
+      locationContext: {
+        trusted: true,
+        broadClimate: 'subtropical',
+        freezingRisk: 'medium',
+        regionTags: ['florida', 'subtropical'],
+        notes: fixtureId
+      },
+      inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: baseGarden, plantContext: plantContext }
+    };
+  }
+
+  // GOS-3C1 config-driven Florida-aligned fixtures
+  const def = fixtureDef(fixtureId);
+  if (!def) throw new Error('Unknown comparison fixture: ' + fixtureId);
+  const gardenContext = {
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: def.sunExposure || 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  };
   const locationClimate = {
     trusted: true,
-    latitude: 25.4687,
-    longitude: -80.4776,
-    regionTags: ['florida', 'subtropical'],
-    climateTags: ['subtropical', 'florida'],
+    latitude: def.latitude,
+    longitude: def.longitude,
+    regionTags: def.regionTags.slice(),
+    climateTags: def.climateTags.slice(),
     hemisphere: 'northern',
-    locationConfidence: 'high',
-    climateConfidence: 'medium',
-    structuralFreezingRisk: 'medium',
-    isFrostFreeGrowingClimate: false,
-    values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+    locationConfidence: def.locationConfidence,
+    climateConfidence: def.climateConfidence,
+    structuralFreezingRisk: def.structuralFreezingRisk,
+    isFrostFreeGrowingClimate: def.isFrostFreeGrowingClimate,
+    values: Object.assign({}, def.values)
   };
   const plantContext = {
-    cultivar: 'unknown',
-    ageClass: fixtureId === 'florida_young_mango_cold' ? 'young' : 'mature',
+    cultivar: def.cultivar,
+    ageClass: def.ageClass,
     propagation: 'unknown',
-    contextTags: []
+    contextTags: def.plantContextTags.slice()
   };
   const t0 = performance.now();
   const biological = evaluateBiologicalGrowthOutcomes({
-    profile: mango,
+    profile: profile,
     evidenceById: evidenceById,
     locationClimate: locationClimate,
-    gardenContext: baseGarden,
+    gardenContext: gardenContext,
     plantContext: plantContext
   });
   const full = evaluateGrowthOutcomeSuitability({
-    profile: mango,
+    profile: profile,
     evidenceById: evidenceById,
     locationClimate: locationClimate,
-    gardenContext: baseGarden,
+    gardenContext: gardenContext,
     plantContext: plantContext,
-    userGoal: 'ornamentalFoliage'
+    userGoal: def.userGoal
   });
   perfSamples.gosInvokeMs.push(performance.now() - t0);
   return {
@@ -650,17 +833,19 @@ function runGosForFixture(fixtureId, mango, evidenceById) {
     biological: biological,
     locationContext: {
       trusted: true,
-      broadClimate: 'subtropical',
-      freezingRisk: 'medium',
-      regionTags: ['florida', 'subtropical'],
+      broadClimate: def.broadClimate,
+      freezingRisk: def.freezingRisk,
+      regionTags: def.regionTags.slice().sort(),
       notes: fixtureId
     },
-    inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: baseGarden, plantContext: plantContext }
+    inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: gardenContext, plantContext: plantContext }
   };
 }
 
-async function runSingleComparison(fixtureId, mango, evidenceById, profileDoc, evidenceDoc) {
-  const weatherKind = (fixtureId.indexOf('florida_') === 0) ? 'florida_cold' : 'warm';
+async function runSingleComparison(fixtureId, profile, evidenceById, profileDoc, evidenceDoc) {
+  const weatherKind = fixtureWeatherKind(fixtureId);
+  const locationPack = fixtureLocationPack(fixtureId);
+  const catalogSlug = fixtureCatalogSlug(fixtureId);
   let iframe = null;
   const tComp0 = performance.now();
   try {
@@ -670,14 +855,14 @@ async function runSingleComparison(fixtureId, mango, evidenceById, profileDoc, e
     expect('iframe bootstrap resources exclude GOS (' + fixtureId + ')', ready.resourceHits.length === 0,
       ready.resourceHits.join(',') || 'none');
 
-    if (fixtureId === 'untrusted_location_mango') {
+    if (locationPack === 'untrusted') {
       const untrusted = await ensureUntrusted(cw);
       expect('untrusted gate for ' + fixtureId, untrusted, 'hasTrusted=' + cw.hasTrustedAppLocation());
       const loc = cw.getAppLocation();
       expect('DEFAULT/Western Galilee not trusted', cw.hasTrustedAppLocation() === false
         && (String(loc.source || '').toLowerCase() === 'default' || loc.confirmationStatus === 'default'),
         'source=' + loc.source + ' status=' + loc.confirmationStatus);
-    } else if (fixtureId.indexOf('florida_') === 0) {
+    } else if (locationPack === 'florida') {
       const trusted = await ensureTrustedFlorida(cw);
       expect('trusted Florida location for ' + fixtureId, trusted);
     } else {
@@ -686,12 +871,12 @@ async function runSingleComparison(fixtureId, mango, evidenceById, profileDoc, e
     }
 
     const tV0 = performance.now();
-    const v1bRaw = cw.evaluateClimateSuitabilityV1('mango', { indoorShelter: false });
+    const v1bRaw = cw.evaluateClimateSuitabilityV1(catalogSlug, { indoorShelter: false });
     perfSamples.v1bInvokeMs.push(performance.now() - tV0);
     const v1bN = normalizeV1b(v1bRaw);
 
     const inputSnapshot = {};
-    const gosPack = runGosForFixture(fixtureId, mango, evidenceById);
+    const gosPack = runGosForFixture(fixtureId, profile, evidenceById);
     inputSnapshot.before = stableStringify(gosPack.inputsFrozenCheck);
     const gosN = normalizeGos(gosPack.full, gosPack.biological);
     const gosBioN = normalizeGos(gosPack.biological, gosPack.biological);
@@ -709,15 +894,15 @@ async function runSingleComparison(fixtureId, mango, evidenceById, profileDoc, e
     const meta = {
       gosEngineVersion: GROWTH_OUTCOME_ENGINE_VERSION,
       v1bEngineVersion: 'v1b',
-      profileVersion: mango.profileVersion || null,
+      profileVersion: profile.profileVersion || null,
       evidenceDataVersion: evidenceDoc.dataVersion || null,
       profilesSchemaVersion: profileDoc.schemaVersion || null,
-      fixtureVersion: 'gos-3c0-0.1.0'
+      fixtureVersion: 'gos-3c1-0.1.0'
     };
     const plantIdentity = {
-      canonicalSlug: 'mango',
-      catalogSlug: 'mango',
-      plantId: mango.plantId || null
+      canonicalSlug: catalogSlug,
+      catalogSlug: catalogSlug,
+      plantId: profile.plantId || null
     };
     const comparisonObj = buildComparisonObject(
       fixtureId, plantIdentity, gosPack.locationContext, v1bN, gosN, gosBioN, meta
@@ -801,13 +986,15 @@ function finish(okLabel) {
   ).join('');
   document.getElementById('report').textContent = reportLines.join('\n');
   window.__GOS3C0_DONE = true;
+  window.__GOS3C1_DONE = true;
   window.__GOS3C0_SUMMARY = {
     total: results.length,
     passed: passed,
     failed: failed,
     ready: failed === 0,
-    recommendation: failed === 0 ? 'READY_FOR_FULL_GOS_3C' : 'NOT_READY'
+    recommendation: failed === 0 ? 'GOS_3C1_COMPLETE' : 'NOT_READY'
   };
+  window.__GOS3C1_SUMMARY = window.__GOS3C0_SUMMARY;
   window.__GOS3C0_PERF = {
     iframeBootstrapMedianMs: median(perfSamples.iframeBootstrapMs),
     v1bInvokeMedianMs: median(perfSamples.v1bInvokeMs),
@@ -815,6 +1002,22 @@ function finish(okLabel) {
     comparisonMedianMs: median(perfSamples.comparisonMs)
   };
   window.__GOS3C0_REPORT = reportLines.slice();
+  // Optional test-runner sink (same-origin only; no-op when unused).
+  try {
+    const params = new URLSearchParams(String(location.search || ''));
+    if (params.get('report') === '1') {
+      fetch('/__gos3c1_result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary: window.__GOS3C1_SUMMARY,
+          perf: window.__GOS3C0_PERF,
+          report: reportLines.slice(),
+          failedNames: results.filter((r) => !r.pass).map((r) => r.name + ' :: ' + r.detail)
+        })
+      }).catch(function () {});
+    }
+  } catch (e) {}
 }
 
 async function main() {
@@ -831,7 +1034,16 @@ async function main() {
     const profileDoc = await fetch('../data/growth-outcome-pilot/profiles.json').then((r) => r.json());
     const evidenceById = evidenceByIdFromDoc(evidenceDoc);
     const mango = profileBySlug(profileDoc, 'mango');
+    const lychee = profileBySlug(profileDoc, 'lychee');
+    const bougainvillea = profileBySlug(profileDoc, 'bougainvillea');
     expect('pilot mango profile loaded in parent', !!mango);
+    expect('pilot lychee profile loaded in parent', !!lychee);
+    expect('pilot bougainvillea profile loaded in parent', !!bougainvillea);
+    const profilesBySlug = {
+      mango: mango,
+      lychee: lychee,
+      bougainvillea: bougainvillea
+    };
 
     const indexText = await fetch('../index.html').then((r) => r.text());
     expect('index.html has no GOS evaluator import',
@@ -853,24 +1065,29 @@ async function main() {
     logReport('frostCapOrBlock:');
     inventory.frostCapOrBlock.forEach((x) => logReport('  - ' + x));
     logReport('untrustedResult: ' + json(inventory.untrustedResult));
-    logReport('cross-engine risk-band mapping: DEFERRED (not invented in GOS-3C0)');
+    logReport('cross-engine risk-band mapping: DEFERRED (not invented in GOS-3C1)');
     logReport('behavioral Smart Recommendations comparison: DEFERRED (no stable SR API without app-state mutation)');
+    logReport('deferred mismatched-context fixtures: Olive Mediterranean/California; Apple temperate/California; Mango California region exclusion');
     expect('v1b levels include unknown and excellent..notRecommended',
       inventory.levels.indexOf('unknown') >= 0
       && inventory.levels.indexOf('notRecommended') >= 0
       && inventory.levels.indexOf('excellent') >= 0);
+    expect('fixture matrix has eight fixtures', FIXTURE_IDS.length === 8);
 
     const fixtureResults = {};
     const firstPassByFixture = {};
 
     for (let f = 0; f < FIXTURE_IDS.length; f++) {
       const fixtureId = FIXTURE_IDS[f];
+      const catalogSlug = fixtureCatalogSlug(fixtureId);
+      const profile = profilesBySlug[catalogSlug];
+      expect('profile available for ' + fixtureId, !!profile, catalogSlug);
       const repeats = [];
       for (let i = 0; i < DETERMINISM_REPEATS; i++) {
         restoreStorage(initialSnap);
         expect('cookie unchanged before repeat ' + fixtureId + '#' + i,
           String(document.cookie || '') === initialSnap.cookie);
-        const once = await runSingleComparison(fixtureId, mango, evidenceById, profileDoc, evidenceDoc);
+        const once = await runSingleComparison(fixtureId, profile, evidenceById, profileDoc, evidenceDoc);
         repeats.push({
           v1b: once.normalizedV1b,
           gos: once.normalizedGos,
@@ -947,6 +1164,108 @@ async function main() {
       || (E.comparison.secondaryCategories || []).indexOf('different_question_not_conflict') >= 0
       || E.comparison.primaryCategory === 'different_question_not_conflict');
 
+    // GOS-3C1 — Lychee Florida freeze conflict preservation
+    const L = fixtureResults.lychee_florida_mature_freeze_conflict_preserved;
+    const Lsurv = L.gos.outcomes.survival;
+    const Ldef = fixtureDef('lychee_florida_mature_freeze_conflict_preserved');
+    expect('L v1b trusted scored', L.v1b.score != null && L.v1b.dataSource !== 'location_untrusted', json(L.v1b));
+    expect('L GOS evaluation ok', L.gos.evaluationStatus === 'ok' || L.gos.evaluationStatus === 'complete'
+      || (L.gos.evaluationStatus && L.gos.evaluationStatus.indexOf('block') < 0),
+      L.gos.evaluationStatus);
+    expect('L survival unknown supported conflicting',
+      Lsurv.level === 'unknown' && Lsurv.dataStatus === 'supported'
+      && (Lsurv.blockers || []).length === 0
+      && Lsurv.sourceCoverage && Lsurv.sourceCoverage.conflicting === true,
+      json(Lsurv));
+    expect('L conflicting freeze evidence both used',
+      (Lsurv.evidenceRefsUsed || []).indexOf('ev_lychee_surv_freeze_mature_mg051') >= 0
+      && (Lsurv.evidenceRefsUsed || []).indexOf('ev_lychee_surv_freeze_range_hs1499') >= 0,
+      json(Lsurv.evidenceRefsUsed));
+    expect('L survival not averaged to concrete level',
+      Lsurv.level === 'unknown'
+      && Lsurv.level !== 'possible' && Lsurv.level !== 'risky' && Lsurv.level !== 'notRecommended');
+    expect('L vegetativeGrowth possible/partial',
+      L.gos.outcomes.vegetativeGrowth.level === 'possible'
+      && L.gos.outcomes.vegetativeGrowth.dataStatus === 'partial');
+    expect('L flowering risky/partial with chill limiting',
+      L.gos.outcomes.flowering.level === 'risky'
+      && L.gos.outcomes.flowering.dataStatus === 'partial'
+      && (L.gos.outcomes.flowering.limitingFactors || []).indexOf('lychee_flow_chill_comment') >= 0
+      && (L.gos.outcomes.flowering.missingInputs || []).indexOf('chillHours') >= 0,
+      json(L.gos.outcomes.flowering));
+    expect('L fruitSet possible/partial',
+      L.gos.outcomes.fruitSet.level === 'possible' && L.gos.outcomes.fruitSet.dataStatus === 'partial');
+    expect('L fruitRipeningOrYield unknown',
+      L.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && L.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('L longTermReliability unknown/partial',
+      L.gos.outcomes.longTermReliability.level === 'unknown'
+      && L.gos.outcomes.longTermReliability.dataStatus === 'partial');
+    expect('L expectedPrimaryCategory assertion-only',
+      L.comparison.primaryCategory === Ldef.expectedPrimaryCategory,
+      'actual=' + L.comparison.primaryCategory + ' expected=' + Ldef.expectedPrimaryCategory);
+
+    // GOS-3C1 — Bougainvillea flowering display vs unknown fruit
+    const Bg = fixtureResults.florida_bougainvillea_mature_flowering_display;
+    const Bgdef = fixtureDef('florida_bougainvillea_mature_flowering_display');
+    expect('Bg v1b trusted scored', Bg.v1b.score != null && Bg.v1b.dataSource !== 'location_untrusted', json(Bg.v1b));
+    expect('Bg survival risky with frost limiting',
+      Bg.gos.outcomes.survival.level === 'risky'
+      && Bg.gos.outcomes.survival.dataStatus === 'partial'
+      && (Bg.gos.outcomes.survival.limitingFactors || []).indexOf('boug_surv_frost_limiting') >= 0,
+      json(Bg.gos.outcomes.survival));
+    expect('Bg vegetativeGrowth possible', Bg.gos.outcomes.vegetativeGrowth.level === 'possible');
+    expect('Bg flowering possible/supported',
+      Bg.gos.outcomes.flowering.level === 'possible'
+      && Bg.gos.outcomes.flowering.dataStatus === 'supported');
+    expect('Bg fruitSet unknown',
+      Bg.gos.outcomes.fruitSet.level === 'unknown' && Bg.gos.outcomes.fruitSet.dataStatus === 'unknown');
+    expect('Bg fruitRipeningOrYield unknown',
+      Bg.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && Bg.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('Bg longTermReliability unknown/partial',
+      Bg.gos.outcomes.longTermReliability.level === 'unknown'
+      && Bg.gos.outcomes.longTermReliability.dataStatus === 'partial');
+    expect('Bg floweringDisplay goal interpretation',
+      Bg.gos.goalFit && Bg.gos.goalFit.goal === 'floweringDisplay'
+      && Bg.gos.overallConclusion === 'interpret_for_flowering_display'
+      && (Bg.gos.recommendedUse || []).indexOf('flowering_display') >= 0,
+      json({ goalFit: Bg.gos.goalFit, overallConclusion: Bg.gos.overallConclusion, recommendedUse: Bg.gos.recommendedUse }));
+    expect('Bg expectedPrimaryCategory assertion-only',
+      Bg.comparison.primaryCategory === Bgdef.expectedPrimaryCategory,
+      'actual=' + Bg.comparison.primaryCategory + ' expected=' + Bgdef.expectedPrimaryCategory);
+
+    // GOS-3C1 — Mango bloom fruitSet cold vs survival
+    const M = fixtureResults.florida_mature_mango_bloom_fruitset_cold;
+    const Mdef = fixtureDef('florida_mature_mango_bloom_fruitset_cold');
+    const Mset = M.gos.outcomes.fruitSet;
+    const Msurv = M.gos.outcomes.survival;
+    expect('M v1b trusted scored', M.v1b.score != null && M.v1b.dataSource !== 'location_untrusted', json(M.v1b));
+    expect('M fruitSet cold evidence used',
+      (Mset.evidenceRefsUsed || []).indexOf('ev_mango_set_flower_cold_mg216') >= 0,
+      json(Mset.evidenceRefsUsed));
+    expect('M fruitSet notRecommended with stage blocker',
+      Mset.level === 'notRecommended'
+      && (Mset.blockers || []).indexOf('mango_set_flower_cold') >= 0,
+      json(Mset));
+    expect('M survival possible without fruitSet blocker',
+      Msurv.level === 'possible'
+      && (Msurv.blockers || []).length === 0
+      && (Msurv.blockers || []).indexOf('mango_set_flower_cold') < 0,
+      json(Msurv));
+    expect('M young freeze blocker absent',
+      (Msurv.blockers || []).indexOf('mango_surv_young_freeze_kill') < 0);
+    expect('M fruitRipeningOrYield unknown not inferred',
+      M.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && M.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('M expectedPrimaryCategory assertion-only',
+      M.comparison.primaryCategory === Mdef.expectedPrimaryCategory,
+      'actual=' + M.comparison.primaryCategory + ' expected=' + Mdef.expectedPrimaryCategory);
+    expect('M primary from generic stage-blocker rule not fixture-ID branch',
+      M.comparison.primaryCategory === 'blocker_scope_difference'
+      && (M.comparison.notableDifferences || []).indexOf('gos_reproductive_blocker_absent_from_survival') >= 0,
+      json(M.comparison));
+
     // Final storage / cookie / location proof
     restoreStorage(initialSnap);
     const finalSnap = snapshotStorage();
@@ -972,13 +1291,14 @@ async function main() {
       'final=' + gardenSource + ' initial=' + initialGardenSource);
 
     const failed = results.filter((r) => !r.pass).length;
-    recommendation = failed === 0 ? 'READY_FOR_FULL_GOS_3C' : 'NOT_READY';
+    recommendation = failed === 0 ? 'GOS_3C1_COMPLETE' : 'NOT_READY';
     logReport('=== performance medians (dev only) ===');
     logReport('iframeBootstrapMedianMs=' + median(perfSamples.iframeBootstrapMs));
     logReport('v1bInvokeMedianMs=' + median(perfSamples.v1bInvokeMs));
     logReport('gosInvokeMedianMs=' + median(perfSamples.gosInvokeMs));
     logReport('comparisonMedianMs=' + median(perfSamples.comparisonMs));
     logReport('fullHarnessDurationMs=' + (performance.now() - harnessStart));
+    logReport('fixtureCount=' + FIXTURE_IDS.length);
     logReport('recommendation=' + recommendation);
   } catch (err) {
     expect('harness completed without throw', false, String(err && err.stack || err));
