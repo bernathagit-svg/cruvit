@@ -82,7 +82,7 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation only so far; chat and results table unchanged; sun/water logic/UI not started); **Growth Outcome Suitability** (GOS-3C1 expanded comparison complete locally; no UI/ranking/runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation only so far; chat and results table unchanged; sun/water logic/UI not started); **Growth Outcome Suitability** (GOS-3C2 readiness contract complete locally — docs only; GOS-3C1 matrix **979/979** / **8** fixtures unchanged; no UI/ranking/runtime consumer until separately approved).
 
 **Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → next UX planning (sun/water readiness) + catalog task B → C–E → enrichment → backend/database migration.
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Growth Outcome Suitability — GOS-3C2 comparison conclusions and runtime-readiness contract** | Done (local) | **Documentation-only contract freeze; no runtime loader, no evaluator/schema/pilot/test harness change, no Climate Suitability v1b change, no Smart Recommendations/My Garden/Plant Doctor/Garden Design consumer, no UI, no persistence, no Sidecar consumer, no score/risk mapping, no new fixtures.** File: `PROJECT_STATUS.md` only. Freezes: (A) what Climate Suitability v1b answers vs (B) what GOS answers; (C) engines are not direct replacements / no winner / no cross-engine translation; (D) harness-native neutral vocabulary (`aligned_unknown`, `gos_preserves_unknown`, `blocker_scope_difference`, `applicability_difference`, `different_question_not_conflict`, `unresolved_due_missing_input`); (E) what GOS-3C1 proved; (F) what it did not prove (979/979 = approved matrix only); (G) eight mandatory runtime-readiness gates; (H) fallback when untrusted / missing GOS data; (I) deferred list including GOS-3D implementation and mismatched-context fixtures; (J) next step = separately approved **read-only GOS-3D planning only**. **Does not authorize runtime integration.** GOS-3C1 facts unchanged: **8** fixtures, **979/979**, five consecutive stable runs, ×10 determinism. Evaluator **62/62**, pilot **42/5**, registry **1.5.0 / 76 / 1 / 9**, hydration production-verified closed. **Push pending** separate approval. **GOS-3D not started.** |
 | **Plant-card image hydration lifecycle stabilization** | Done (pushed / production verified) | **Runtime plant-card hydration + Audit baseline boundary only; no Sidecar/identity/GOS/evaluator/v1b/SR/schema/pilot change; no search/result image-path change; no Audit-only hydration suppression; no fixed delay; no save-without-render workaround.** Files: `index.html`, `tests/my-garden-identity-audit.test.html`, `PROJECT_STATUS.md`. **Runtime:** generation-based stale-result rejection; pass-level batched `service.save` + single `render()`; dedicated plant-card in-flight Set (search/`hydratePlantResultImages` still uses `imageHydrationQueue` unchanged); pass mutex + coalesced retry; retry-safe cleanup after failure/stale; explicit read-only idle contract `isPlantCardHydrationIdle()` / `waitForPlantCardHydrationIdle()` covering scheduled timeout, active pass, in-flight fetches, flush pending, queued retry. Successful current-generation pass still applies resolved URLs, persists them, and performs one batched render so the resolved image displays in the current session. **Audit:** waits for real plant-card hydration idle (existing `waitFor`, 30s bound) before capturing `bodyBefore`; clear failure if idle never reached; `no DOM mutation from audit` equality assertion **unchanged**. Assertion total **126 → 127** (+1 idle-before-baseline). **Behavioral probe (TEMP):** normal saves=1/renders=1 + session DOM display + persisted `imageUrl`; four-plant batch saves=1/renders=1; stale zero mutation/save/render; fail clears in-flight and returns idle/retryable; idle false while scheduled/fetching/flushing and true after success/fail/stale cleanup; result path uncoupled. **Strict Audit gate:** **20/20 consecutive fresh Chrome profiles all 127/127**; zero DOM-mutation failures; zero idle-timeout failures. **Non-regression:** comparison **979/979** (eight fixtures; blob unchanged vs GOS-3C1 `6f37ee4`); evaluator **62/62**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**; Resolver **108/108**; Reconciliation **158 / 156 PASS / 2 EXPECTED_QUARANTINED_CONFLICT / 0 unexpected**; Identity **81**; registry **1.5.0 / 76 / 1 / 9**; `git diff --check` clean. **GOS-3C1 implementation remains unchanged.** **Pushed** to `origin/main` at commit **`f7d320cf36b5eb669adcedab701a50e6c218986a`** (together with GOS-3C1). **Automatic Netlify deploy** — no manual deploy or Netlify settings change. **Production verified** at https://friendly-taiyaki-64aacb.netlify.app/ corresponding to that commit: app smoke OK; My Garden / plant cards / Add Plant / language / location intact; four eligible plants resolved with same-session display; **one storage write** and **one batched hydration render** after the initiating render; no render/save/fetch loop; reload reused all four persisted image URLs; production Identity Audit **127/127**; hydration-idle and strict no-DOM-mutation assertions passed (`before=432987 after=432987`); no fatal console errors; no GOS runtime evaluator/pilot/comparison assets requested. **Checkpoint closed** — does **not** block GOS work. **GOS-3C2 not started.** |
 | **Growth Outcome Suitability — GOS-3C1 expanded comparison matrix complete locally** | Done (local) | **Test-only comparison-matrix expansion only; no production API, no v1b copy, no evaluator/schema/pilot change, no runtime GOS loading, no Smart Recommendations change, no UI/persistence/identity/Sidecar integration, no cross-engine score/risk map.** Updated `tests/growth-outcome-v1b-comparison.test.html` only (+ `PROJECT_STATUS.md`). Kept all five GOS-3C0 mango fixtures. **Added exactly three Florida-aligned fixtures (total 8):** `lychee_florida_mature_freeze_conflict_preserved` (Homestead Subtropical / freeze `conflictsWith` preserved → survival `unknown` + `sourceCoverage.conflicting`); `florida_bougainvillea_mature_flowering_display` (Miami Tropical / `floweringDisplay` vs fruitSet+ripening `unknown`); `florida_mature_mango_bloom_fruitset_cold` (Homestead / bloom+small-fruit `mango_set_flower_cold` on fruitSet only; survival `possible` empty blockers). **Generic fact-based rule:** reproductive blocker absent from survival → `blocker_scope_difference` before `gos_preserves_unknown` (no new fixture-ID classifier branch; `expectedPrimaryCategory` assertion-only). **Verdict:** GOS_3C1_COMPLETE. **Harness:** **979/979 PASS**. **Five consecutive runs:** all **979/979**. Each of 8 fixtures × **10** fresh iframes; byte-identical normalized v1b/GOS/comparison; storage/cookie/location restored; no confirmed-location leakage; no runtime GOS fetch; no Sidecar; no winner language. **Perf medians (dev only):** iframe bootstrap ~208–229 ms; v1b ~1.3–1.5 ms; GOS ~1.0 ms; comparison ~273–296 ms. **Deferred mismatched-context fixtures:** Olive Mediterranean/California; Apple temperate/California; Mango California region exclusion; chill/pollinizer/cultivar/protected-environment pairs; score/risk mapping. **Non-regression (comparison-adjacent suites):** evaluator **62/62**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; GOS-1 harness **69/69**; Resolver **108/108**; Reconciliation **158 / 156 PASS / 2 EXPECTED_QUARANTINED_CONFLICT**; Identity **81**; registry **1.5.0 / 76 / 1 / 9**; `git diff --check` clean. Runtime, evaluator, Climate Suitability v1b, Smart Recommendations, schema, pilot data, UI, persistence, identity, and Sidecar were **unchanged** by GOS-3C1. **My Garden Identity Audit (checkpoint verification):** intermittent — not a consistent **126/126**. Sole failed assertion: `no DOM mutation from audit`. Isolation investigation: late **plant-image hydration** in `index.html` (`render()` → `setTimeout(hydratePlantCardImages,0)` → `fetchPlantImageFromWikipedia` → `service.save` / `render`) rewrote existing My Garden plant-card `img` `src`, inline `background-image`, and `data-fallback-list` (Netlify `plant-image` proxy → Wikipedia/Wikimedia); node count unchanged (**827→827**); mutation **not** in Sidecar-related DOM. Audit **never loaded** either GOS-3C1 file (`tests/growth-outcome-v1b-comparison.test.html`, `PROJECT_STATUS.md`). Loaded runtime/Audit/Sidecar/identity/`index.html` blobs were **byte-identical** between baseline `01718c0` and current HEAD. Controlled isolation (identical TEMP runner): LIVE_CURRENT_HEAD **9/10**, EXPORTED_CURRENT_HEAD **9/10**, EXPORTED_BASELINE **10/10**. **GOS-3C1 causation not established** — no causal execution path found. Investigation did **not** establish a baseline-reproduced “known pre-existing flake”; do **not** classify as Sidecar flake or accepted quarantine. Plant-image hydration race is **outside GOS-3C1 scope** (separate future checkpoint); **no runtime fix** made in this commit. **Push pending** separate explicit approval. **Next:** separately approved GOS-3C2 / next-matrix planning only — **not started**. |
 | **Growth Outcome Suitability — GOS-3C0 comparison feasibility complete locally** | Done (local) | **Test-only feasibility/determinism harness only; no production API, no v1b copy, no runtime GOS loading, no Smart Recommendations change, no UI/persistence/identity/Sidecar integration, no full fixture matrix, no cross-engine risk-band map.** Added `tests/growth-outcome-v1b-comparison.test.html`. Parent harness imports pure GOS evaluator + loads pilot JSON only; same-origin iframe loads real `../index.html` and invokes live `evaluateClimateSuitabilityV1` / `setAppLocation` / `getAppLocation` / `hasTrustedAppLocation` (post-ready weather stub only; no Sidecar wait; no bootstrap-time spies). **Exact five fixtures:** `untrusted_location_mango`, `trusted_warm_mango_mature_ornamental`, `trusted_warm_mango_mature_reliable_yield`, `florida_young_mango_cold`, `florida_mature_mango_same_cold`. **Verdict:** READY_FOR_FULL_GOS_3C. **Harness:** **601/601 PASS**. **Five consecutive normal-browser runs:** all **601/601**. Each fixture × **10** fresh create/destroy iframes with byte-identical normalized v1b, GOS, and comparison outputs. State: parent localStorage/sessionStorage snapshotted+restored; cookies unchanged; location restored; iframe destroyed every fixture; finally restore; no confirmed fixture location remains. **Observed findings (non-judgmental):** both engines preserve untrusted-location blocking (`aligned_unknown`); v1b one broad result vs GOS six outcomes; `userGoal` changes GOS interpretation only (B/C biology + v1b byte-identical; v1b warm mango `good`/score 71); v1b has no age model; GOS age applicability distinguishes young (`mango_surv_young_freeze_kill` / `blocker_scope_difference`) vs mature (`applicability_difference` / `different_question_not_conflict`). No winner language; no score bridge; cross-engine risk-band mapping deferred. **v1b levels:** notRecommended, unknown, risky, possible, good, excellent. Score-null: untrusted location; missing plant. **Perf medians (dev only, not SLA):** iframe bootstrap ~349 ms; v1b ~1.7 ms; GOS ~1.25 ms; one comparison ~466 ms; five-fixture harness ~26 s. **Non-regression:** evaluator **62/62**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; GOS-1 harness **69/69**; Audit **126/126**; Resolver **108/108**; Reconciliation **158 / 156 PASS / 2 EXPECTED_QUARANTINED_CONFLICT**; Identity **81**; registry **1.5.0 / 76 / 1 / 9**; `git diff --check` clean. **Superseded next:** GOS-3C1 complete locally — see GOS-3C1 checkpoint row. |
@@ -305,7 +306,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **14** | Garden Design Studio 2.0 | Planned |
 | **15** | AI Garden Coach | Planned |
 | **16** | Garden-Level Disease Intelligence | **Future** — documented requirement only; blocked on data foundations (see dedicated plan). Must not remain single-plant-only Plant Doctor. |
-| **17** | Growth Outcome Suitability | **GOS-3C1 complete locally** (expanded Florida-aligned comparison matrix; eight fixtures; GOS_3C1_COMPLETE). No catalog/UI/ranking/product consumer until separately approved. Before broad Smart Recommendations or Add Plant suitability expansion. |
+| **17** | Growth Outcome Suitability | **GOS-3C2 complete locally** (comparison conclusions + runtime-readiness contract documented; no runtime authorization). GOS-3C1 matrix remains **8** fixtures / **979/979**. No catalog/UI/ranking/product consumer until separately approved. Before broad Smart Recommendations or Add Plant suitability expansion. |
 
 ### Phase notes (brief)
 
@@ -320,15 +321,15 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
 - **16 — Garden-Level Disease Intelligence:** future only — see dedicated plan. Plant Doctor must evolve beyond single-plant diagnosis to garden-wide, individualized, confidence-aware disease/pest/environment reasoning. **Blocked** until canonical identity, per-user Plant Library, zones/positions, photo/symptom history, care/weather history, and multi-plant observation data exist. Do not schedule ahead of those foundations or ahead of current climate accuracy work.
-- **17 — Growth Outcome Suitability:** GOS-3C1 expanded comparison matrix complete locally. Do **not** add runtime loader/catalog/UI/ranking/product consumer until separately approved.
+- **17 — Growth Outcome Suitability:** GOS-3C2 comparison conclusions and runtime-readiness contract complete locally (docs only). GOS-3C1 matrix unchanged (**8** / **979/979**). Do **not** add runtime loader/catalog/UI/ranking/product consumer until separately approved after readiness gates.
 
 ---
 
 # Growth Outcome Suitability Plan
 
-**Status:** **GOS-3C1 complete locally** — expanded test-only v1b/GOS comparison matrix (`tests/growth-outcome-v1b-comparison.test.html`; eight Florida-aligned fixtures; GOS_3C1_COMPLETE); GOS-3C0/3A/3B evaluator and GOS-2B pilot data remain in force; no application runtime loading. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred.
+**Status:** **GOS-3C2 complete locally** — comparison conclusions and runtime-readiness contract frozen in documentation (this file). Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** evidence / **5** profiles); GOS-3A/3B pure evaluator (**62/62**); GOS-3C0 feasibility; GOS-3C1 expanded matrix (`tests/growth-outcome-v1b-comparison.test.html`; **8** Florida-aligned fixtures; **979/979**; five consecutive stable runs; ×10 fresh-iframe determinism; `GOS_3C1_COMPLETE`). No application runtime loading. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS-3C2 does not authorize runtime integration or GOS-3D implementation.**
 
-**Placement:** After the expanded comparison matrix, any further matrix growth or stopped developer API / product display / ranking requires separate approval — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
+**Placement:** After the readiness contract, any stopped developer API, inert runtime loader, product display, or ranking requires separate approval and satisfaction of the gates below — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
 
 **Required biological outcomes (contract):**
 - survival
@@ -341,6 +342,97 @@ Ordered sequence. Do not skip ahead without explicit approval.
 **Also planned for later interpretation (not biological evidence):**
 - user goal and recommended use
 - confidence, sources, region applicability, and unknown fallback (already shaped in GOS-1 contracts)
+
+---
+
+## GOS-3C2 — Comparison Conclusions and Runtime-Readiness Contract
+
+**Checkpoint type:** documentation-only. **File:** `PROJECT_STATUS.md`. **Not authorized:** runtime GOS loading, test/evaluator/schema/pilot changes, score/risk mapping, UI, persistence, Sidecar or module consumers.
+
+### A. What Climate Suitability v1b answers
+
+Climate Suitability Engine **v1b** answers an existing **plant-level climate suitability** question using its own native contract: score, level, factors/blocks, frost and related heuristics, and the trusted-location gate (`hasTrustedAppLocation` / untrusted → score `null` and level `unknown` with `location_untrusted` semantics as exercised in the comparison harness).
+
+v1b’s numeric score and levels (`excellent` … `notRecommended`, plus `unknown`) must **not** be reinterpreted as the six GOS biological outcomes.
+
+### B. What GOS answers
+
+Growth Outcome Suitability evaluates **six independent biological outcomes** (`survival`, `vegetativeGrowth`, `flowering`, `fruitSet`, `fruitRipeningOrYield`, `longTermReliability`) with category-first levels (`possible` / `risky` / `notRecommended` / `unknown`), `internalScore` always `null`, and no score-50 fallback.
+
+When inputs and evidence allow, GOS can preserve outcome-specific blockers, missing inputs, unknown results, conflicting evidence (unaveraged), and explicit applicability filters (regionTags, climateTags, age, cultivar, environment, phenology/stage, and related fields when supplied). Biology remains separate from `userGoal`; goal interpretation may produce `goalFit` / `recommendedUse` / `overallConclusion` without rewriting biology.
+
+### C. Why the engines are not direct replacements
+
+- They answer **materially different questions** (one broad climate-suitability result vs six biological outcomes).
+- Similar-looking labels do **not** prove semantic equivalence.
+- GOS-3C0/3C1 selected **no winner** and introduced **no** cross-engine score, level, risk-band, or confidence translation.
+- **GOS-3C1 does not authorize replacing v1b.**
+
+### D. Approved comparison vocabulary (harness-native)
+
+Frozen from `tests/growth-outcome-v1b-comparison.test.html` `ALLOWED_CATEGORIES` only — no invented categories:
+
+| Category | Neutral meaning |
+|----------|-----------------|
+| `aligned_unknown` | Both engines block/unknown under untrusted location in the approved fixture path. |
+| `gos_preserves_unknown` | GOS keeps later-stage (or other) `unknown` where v1b may still emit a scored climate result — unknown is preserved, not filled. |
+| `blocker_scope_difference` | A GOS blocker applies to a different outcome/scope than a broad v1b species heuristic (e.g. reproductive vs survival, or age-specific survival). |
+| `applicability_difference` | Explicit applicability (e.g. age) changes GOS behavior where v1b has no equivalent model. |
+| `different_question_not_conflict` | Observed divergence reflects different questions, not a judged “conflict winner.” |
+| `unresolved_due_missing_input` | Fallback when no allowed category matched — signals incompleteness, not a preferred engine. |
+
+### E. What GOS-3C1 proved (approved matrix only)
+
+- Trusted and untrusted location behavior compared (untrusted → both blocked/unknown alignment).
+- Approved goal pair: changing only `userGoal` did not alter biology (v1b unchanged; GOS biology byte-identical).
+- Age applicability exercised (young vs mature Mango cold fixtures).
+- Reproductive blocker scope separated from survival (`blocker_scope_difference` / bloom–fruitSet cold).
+- Conflicting Lychee freeze evidence remained uncombined (`conflictsWith` / conflicting coverage).
+- Bougainvillea flowering success did not imply fruit success (floweringDisplay vs fruit unknown).
+- Deterministic outputs for **8** fixtures × **10** fresh iframes; five consecutive **979/979** runs; isolation/restoration protections passed.
+- No runtime GOS import; no winner language; no score/risk map.
+
+### F. What GOS-3C1 did not prove
+
+- Global plant or regional coverage; California/Mediterranean alignment; temperate Apple contexts.
+- Complete cultivar coverage; numeric chill-hour behavior; pollinizer true/false pairs; protected-environment temperature-gain behavior.
+- Product-facing explanation UX; Smart Recommendations ranking behavior; runtime consumer safety; persistence of GOS results; replacement of Climate Suitability v1b.
+
+**979/979 proves the approved matrix contracts only — not global production readiness.**
+
+### Runtime-readiness gates (mandatory before any future API/loader/consumer)
+
+All applicable gates must be explicitly satisfied or handled conservatively. **GOS-3C2 documents the gates; it does not implement them.**
+
+1. **Trusted location** — Trusted location required; untrusted must block GOS or return native unknown/blocked behavior; default Western Galilee must never be treated as confirmed user location.
+2. **Profile and evidence availability** — Valid GOS profile + validated referenced evidence required; missing data must not invent outcomes; existing v1b remains available for its climate-suitability question when GOS data is unavailable.
+3. **Explicit applicability inputs** — Inputs required by an applicable rule must be supplied explicitly or remain missing (including where relevant: `regionTags`, `climateTags`, `ageClass`, cultivar, growing environment, units, duration, phenology/stage, `chillHours`, pollinizer availability, protected-growing context). **No** coordinate-to-region or hidden-value inference.
+4. **Unknown and conflict preservation** — Unknown stays unknown; conflicts unaveraged; missing inputs exposed internally; no success/failure inheritance across biological stages.
+5. **Biology / userGoal separation** — Biological outputs identical when only `userGoal` changes; `goalFit` / `recommendedUse` / `overallConclusion` may interpret but never rewrite biology.
+6. **Evidence traceability** — Future consumer contracts must preserve access to evidence used/excluded, applicability reasons, blockers, limiting factors, missing inputs, conflicting-source status, and profile/schema (or equivalent) provenance. UI not defined here.
+7. **Safe coexistence with v1b** — No score mapping, silent merging, automatic winner, v1b replacement, or Smart Recommendations ranking change; product path must state which engine answers which question.
+8. **Consumer input readiness** — Current My Garden and Smart Recommendations do **not** guarantee all GOS inputs. Future consumers must **not** guess missing age, cultivar, phenology, chill hours, pollinizer, protected environment, or explicit regional applicability.
+
+### Approved fallback contract
+
+- **Untrusted location:** GOS remains blocked/unknown per its native contract.
+- **No valid GOS profile/evidence:** do not fabricate a GOS result; existing v1b may continue answering its climate-suitability question.
+- Continuing v1b is **not** equivalent to generating missing GOS outcomes.
+- No score-50 or generic borderline fallback may be introduced into GOS.
+
+### Deferred (explicit)
+
+Runtime GOS loading; **GOS-3D implementation**; replacement of Climate Suitability v1b; Smart Recommendations integration/ranking; My Garden / Plant Doctor / Garden Design consumers; UI display; result persistence; Sidecar consumer; cross-engine score/risk mapping; global catalog expansion; Shopify/commercial use; extra fixtures only to increase species count.
+
+**Deferred comparison contexts (retained):** Olive Mediterranean/California; Apple temperate/California; Mango California region exclusion; numeric chill-hour fixtures; pollinizer pairs; cultivar pairs; protected-environment temperature-gain fixtures.
+
+### Next-step boundary
+
+After GOS-3C2, the only approved next step is a **separately approved read-only GOS-3D planning** task. That planning may investigate a stopped, developer-only, non-authoritative API contract. **GOS-3C2 does not authorize GOS-3D implementation** and must not start it automatically.
+
+### GOS-3C2 completion criteria
+
+This checkpoint is complete when this document clearly contains: engine responsibility boundaries; approved neutral comparison vocabulary; proven vs unproven conclusions; runtime-readiness gates; fallback contract; deferred work; next-step boundary; and **no runtime authorization**.
 
 ---
 
@@ -662,7 +754,7 @@ Do **not** remove the existing chat implementation immediately. The future filte
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Growth Outcome Suitability — GOS-3C1 complete locally; further matrix / GOS-3D+ separately approved (no app pilot load, UI, ranking, persistence, score bridge, or Sidecar consumer)
+- Growth Outcome Suitability — GOS-3C2 readiness contract complete locally (docs); GOS-3C1 matrix **979/979** / **8** fixtures unchanged; GOS-3D+ separately approved (no app pilot load, UI, ranking, persistence, score bridge, or Sidecar consumer)
 - Next UX planning — sun/water filter readiness (only currently safe structured filters; UI not started)
 - Remaining climate accuracy tasks C–E (missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after B / when approved)
@@ -771,7 +863,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**GOS-3C2 / next-matrix planning only (do not start implementation automatically).** GOS-3C1 expanded Florida-aligned comparison matrix is complete locally (eight fixtures; 979/979). Plant-card image hydration lifecycle stabilization is **closed** (pushed + production verified at `f7d320c` / https://friendly-taiyaki-64aacb.netlify.app/; Audit **127/127**; does not block GOS). Any further fixtures (including deferred Olive/Apple/California mismatched-context cases), classifier refactor of legacy GOS-3C0 fixture-ID branches, or GOS-3D stopped developer API requires a separate approved plan. Remain test-only and non-judgmental until then; no production import; no cross-engine scoring bridge; no runtime GOS loading; no UI; no persistence; no Smart Recommendations change; no Sidecar use. Later separately gated after planning approval: GOS-3D → GOS-3E → GOS-3F → GOS-4. Keep canonical identity advisory and legacy My Garden authoritative. **GOS-3C2 not started.**
+**GOS-3D planning only (read-only; do not start implementation automatically).** GOS-3C2 comparison conclusions and runtime-readiness contract is complete locally (documentation-only; no runtime authorization). GOS-3C1 matrix remains **8** fixtures / **979/979**. Plant-card hydration lifecycle is closed (production verified at `f7d320c`). A future stopped, developer-only, non-authoritative API may be investigated only under a separately approved GOS-3D plan after readiness gates. Do **not** implement GOS-3D, load pilot data in the app, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Extra matrix fixtures remain deferred unless a genuine new evaluator contract appears. Later separately gated after planning approval: GOS-3D → GOS-3E → GOS-3F → GOS-4. Keep canonical identity advisory and legacy My Garden authoritative. **GOS-3D not started.**
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
