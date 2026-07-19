@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Growth Outcome Developer API Tests (GOS-3D)</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 1100px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Growth Outcome Suitability — GOS-3D developer API harness</h1>
+  <p class="sub">
+    Standalone harness for the stopped, explicit-call-only developer API.
+    Loads pilot JSON in the harness only. API module must not load data or wire into the app.
+  </p>
+  <div id="summary">Running…</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+<script type="module">
+import {
+  evaluateBiologicalGrowthOutcomes,
+  evaluateGrowthOutcomeSuitability,
+  GROWTH_OUTCOME_NAMES,
+  GROWTH_OUTCOME_GOALS,
+  GROWTH_OUTCOME_ENGINE_VERSION
+} from '../modules/suitability/growth-outcome-evaluator.js';
+
+import {
+  GOS_DEVELOPER_API_VERSION,
+  GOS_DEVELOPER_CAPABILITY,
+  GOS_DEVELOPER_MODES,
+  GOS_DEVELOPER_API_REASONS,
+  getGrowthOutcomeDeveloperApiDescriptor,
+  evaluateGrowthOutcomeForDeveloper
+} from '../modules/suitability/growth-outcome-developer-api.js';
+
+const results = [];
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail || '' });
+}
+
+function json(v) { return JSON.stringify(v); }
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+function isFrozenDeep(v, seen) {
+  seen = seen || new Set();
+  if (v === null || typeof v !== 'object') return true;
+  if (seen.has(v)) return true;
+  seen.add(v);
+  if (!Object.isFrozen(v)) return false;
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+    return true;
+  }
+  const keys = Object.keys(v);
+  for (let i = 0; i < keys.length; i++) if (!isFrozenDeep(v[keys[i]], seen)) return false;
+  return true;
+}
+
+function fixtureRegionTokensFromProfile(profile) {
+  const tags = [];
+  const values = (profile.regionApplicability && profile.regionApplicability.values) || [];
+  values.forEach((v) => tags.push(String(v).toLowerCase()));
+  const notes = String((profile.regionApplicability && profile.regionApplicability.notes) || '').toLowerCase();
+  if (notes.indexOf('florida') >= 0) tags.push('florida');
+  if (notes.indexOf('subtropical') >= 0) tags.push('subtropical');
+  if (notes.indexOf('mediterranean') >= 0) tags.push('mediterranean');
+  return Array.from(new Set(tags));
+}
+
+function evidenceByIdFromDoc(doc) {
+  const map = {};
+  (doc.evidence || []).forEach((e) => { map[e.evidenceId] = e; });
+  return map;
+}
+
+function profileBySlug(doc, slug) {
+  return (doc.profiles || []).find((p) => p.canonicalSlug === slug);
+}
+
+function baseTrustedClimate(extra) {
+  return Object.assign({
+    trusted: true,
+    latitude: 25.76,
+    longitude: -80.19,
+    regionTags: ['florida'],
+    climateTags: ['subtropical'],
+    hemisphere: 'northern',
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    values: {}
+  }, extra || {});
+}
+
+function baseGarden(extra) {
+  return Object.assign({
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  }, extra || {});
+}
+
+function basePlant(extra) {
+  return Object.assign({
+    cultivar: 'unknown',
+    rootstock: 'unknown',
+    ageClass: 'unknown',
+    propagation: 'unknown',
+    previousFlowering: null,
+    previousFruitSet: null,
+    previousRipening: null,
+    containerSize: null,
+    contextTags: []
+  }, extra || {});
+}
+
+function isApiBlockedEnvelope(env) {
+  return !!env && env.ok === false && env.apiStatus === 'blocked' && env.result === null &&
+    typeof env.reason === 'string' && env.apiVersion === GOS_DEVELOPER_API_VERSION;
+}
+
+function finish() {
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const host = document.getElementById('summary');
+  host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+  host.className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>'
+  ).join('');
+  window.__GOS3D_SUMMARY = { total: results.length, passed: passed, failed: failed };
+  window.__GOS3_SUMMARY = window.__GOS3D_SUMMARY;
+  try {
+    const params = new URLSearchParams(String(location.search || ''));
+    if (params.get('report') === '1') {
+      fetch('/__result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary: window.__GOS3D_SUMMARY,
+          failedNames: results.filter((r) => !r.pass).map((r) => r.name + ' :: ' + r.detail)
+        })
+      }).catch(function () {});
+    }
+  } catch (_e) {}
+}
+
+async function main() {
+  const bodyLenBefore = document.body.innerHTML.length;
+  const lsKeysBefore = Object.keys(localStorage || {}).slice().sort();
+  const ssKeysBefore = Object.keys(sessionStorage || {}).slice().sort();
+  const cookieBefore = String(document.cookie || '');
+
+  let storageWriteCount = 0;
+  let fetchCount = 0;
+  let xhrOpenCount = 0;
+  let timerCount = 0;
+  let listenerCount = 0;
+  let idbCount = 0;
+  const origSetItem = Storage.prototype.setItem;
+  const origFetch = window.fetch;
+  const origXHROpen = XMLHttpRequest.prototype.open;
+  const origSetTimeout = window.setTimeout;
+  const origSetInterval = window.setInterval;
+  const origAddEventListener = EventTarget.prototype.addEventListener;
+  const OrigIDB = window.indexedDB;
+
+  Storage.prototype.setItem = function () {
+    storageWriteCount++;
+    return origSetItem.apply(this, arguments);
+  };
+  window.fetch = function () {
+    fetchCount++;
+    return origFetch.apply(this, arguments);
+  };
+  XMLHttpRequest.prototype.open = function () {
+    xhrOpenCount++;
+    return origXHROpen.apply(this, arguments);
+  };
+  window.setTimeout = function () {
+    timerCount++;
+    return origSetTimeout.apply(this, arguments);
+  };
+  window.setInterval = function () {
+    timerCount++;
+    return origSetInterval.apply(this, arguments);
+  };
+  EventTarget.prototype.addEventListener = function () {
+    listenerCount++;
+    return origAddEventListener.apply(this, arguments);
+  };
+  try {
+    if (OrigIDB) {
+      window.indexedDB = {
+        open: function () { idbCount++; throw new Error('indexedDB blocked in GOS-3D harness'); },
+        deleteDatabase: function () { idbCount++; throw new Error('indexedDB blocked in GOS-3D harness'); }
+      };
+    }
+  } catch (_e) {}
+
+  // Restore for harness-owned pilot fetch / report after side-effect window.
+  function restoreSpies() {
+    Storage.prototype.setItem = origSetItem;
+    window.fetch = origFetch;
+    XMLHttpRequest.prototype.open = origXHROpen;
+    window.setTimeout = origSetTimeout;
+    window.setInterval = origSetInterval;
+    EventTarget.prototype.addEventListener = origAddEventListener;
+    try { window.indexedDB = OrigIDB; } catch (_e) {}
+  }
+
+  // A. Import inertness / descriptor
+  expect('export evaluateGrowthOutcomeForDeveloper', typeof evaluateGrowthOutcomeForDeveloper === 'function');
+  expect('export getGrowthOutcomeDeveloperApiDescriptor', typeof getGrowthOutcomeDeveloperApiDescriptor === 'function');
+  expect('capability constant exact', GOS_DEVELOPER_CAPABILITY === 'explicit_developer_evaluation');
+  expect('api version string', typeof GOS_DEVELOPER_API_VERSION === 'string' && GOS_DEVELOPER_API_VERSION.indexOf('gos3d') >= 0);
+  expect('modes biology+suitability', json(GOS_DEVELOPER_MODES) === json(['biology', 'suitability']));
+  expect('reason vocabulary includes capability', GOS_DEVELOPER_API_REASONS.indexOf('developer_capability_required') >= 0);
+  expect('engine version re-export match', GROWTH_OUTCOME_ENGINE_VERSION === '0.1.0-gos3a');
+
+  const desc1 = getGrowthOutcomeDeveloperApiDescriptor();
+  const desc2 = getGrowthOutcomeDeveloperApiDescriptor();
+  expect('descriptor same frozen reference', desc1 === desc2);
+  expect('descriptor deeply frozen', isFrozenDeep(desc1));
+  expect('descriptor explicit_call_only', desc1.activation === 'explicit_call_only');
+  expect('descriptor authoritative false', desc1.authoritative === false);
+  expect('descriptor runtimeWired false', desc1.runtimeWired === false);
+  expect('descriptor persistence false', desc1.persistence === false);
+  expect('descriptor productConsumers none', desc1.productConsumers === 'none');
+  expect('descriptor apiVersion', desc1.apiVersion === GOS_DEVELOPER_API_VERSION);
+  expect('descriptor engineVersion', desc1.engineVersion === GROWTH_OUTCOME_ENGINE_VERSION);
+  expect('no window developer API global',
+    typeof window.evaluateGrowthOutcomeForDeveloper === 'undefined' &&
+    typeof window.CruvitGrowthOutcomeDeveloperApi === 'undefined');
+  expect('import created no storage writes', storageWriteCount === 0, String(storageWriteCount));
+  expect('import created no timers', timerCount === 0, String(timerCount));
+  expect('import created no idb', idbCount === 0, String(idbCount));
+
+  // Load pilot in harness only (restore fetch for this).
+  restoreSpies();
+  const evidenceDoc = await fetch('../data/growth-outcome-pilot/evidence.json').then((r) => r.json());
+  const profileDoc = await fetch('../data/growth-outcome-pilot/profiles.json').then((r) => r.json());
+  const evidenceById = evidenceByIdFromDoc(evidenceDoc);
+  const mango = profileBySlug(profileDoc, 'mango');
+  const lychee = profileBySlug(profileDoc, 'lychee');
+  expect('pilot mango loaded in harness', !!mango);
+  expect('pilot lychee loaded in harness', !!lychee);
+  expect('pilot evidence count 42', (evidenceDoc.evidence || []).length === 42);
+
+  // Re-arm spies for API invocation window
+  storageWriteCount = 0;
+  fetchCount = 0;
+  xhrOpenCount = 0;
+  timerCount = 0;
+  listenerCount = 0;
+  idbCount = 0;
+  Storage.prototype.setItem = function () {
+    storageWriteCount++;
+    return origSetItem.apply(this, arguments);
+  };
+  window.fetch = function () {
+    fetchCount++;
+    return origFetch.apply(this, arguments);
+  };
+  XMLHttpRequest.prototype.open = function () {
+    xhrOpenCount++;
+    return origXHROpen.apply(this, arguments);
+  };
+  window.setTimeout = function () {
+    timerCount++;
+    return origSetTimeout.apply(this, arguments);
+  };
+  window.setInterval = function () {
+    timerCount++;
+    return origSetInterval.apply(this, arguments);
+  };
+  EventTarget.prototype.addEventListener = function () {
+    listenerCount++;
+    return origAddEventListener.apply(this, arguments);
+  };
+
+  const climate = baseTrustedClimate({
+    regionTags: fixtureRegionTokensFromProfile(mango),
+    values: { minimumTemperatureF: 45, frostExposureHours: 0 }
+  });
+  const garden = baseGarden();
+  const plant = basePlant({ ageClass: 'mature' });
+
+  function validBiologyRequest(extra) {
+    return Object.assign({
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'biology',
+      profile: mango,
+      evidenceById: evidenceById,
+      locationClimate: climate,
+      gardenContext: garden,
+      plantContext: plant
+    }, extra || {});
+  }
+
+  function validSuitabilityRequest(extra) {
+    return Object.assign({
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'suitability',
+      profile: mango,
+      evidenceById: evidenceById,
+      locationClimate: climate,
+      gardenContext: garden,
+      plantContext: plant,
+      userGoal: 'ornamentalFoliage'
+    }, extra || {});
+  }
+
+  // B. Capability gate
+  const missCapEnv = evaluateGrowthOutcomeForDeveloper({
+    mode: 'biology',
+    profile: mango,
+    evidenceById: evidenceById,
+    locationClimate: climate,
+    gardenContext: garden,
+    plantContext: plant
+  });
+  expect('missing capability blocks', isApiBlockedEnvelope(missCapEnv) &&
+    missCapEnv.reason === 'developer_capability_required');
+  const wrongCap = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ capability: 'please_run' }));
+  expect('wrong capability blocks', isApiBlockedEnvelope(wrongCap) &&
+    wrongCap.reason === 'developer_capability_required');
+  expect('capability block result null', missCapEnv.result === null && wrongCap.result === null);
+  expect('capability block has no outcomes object',
+    !(missCapEnv.result && missCapEnv.result.outcomes) &&
+    !Object.prototype.hasOwnProperty.call(missCapEnv, 'outcomes'));
+
+  // C. Mode gate
+  const missMode = evaluateGrowthOutcomeForDeveloper({
+    capability: GOS_DEVELOPER_CAPABILITY,
+    profile: mango,
+    evidenceById: evidenceById,
+    locationClimate: climate
+  });
+  expect('missing mode blocks', isApiBlockedEnvelope(missMode) && missMode.reason === 'unsupported_mode');
+  const badMode = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ mode: 'ranking' }));
+  expect('unsupported mode blocks', isApiBlockedEnvelope(badMode) && badMode.reason === 'unsupported_mode');
+
+  // D. Profile gate
+  const missProfile = evaluateGrowthOutcomeForDeveloper({
+    capability: GOS_DEVELOPER_CAPABILITY,
+    mode: 'biology',
+    evidenceById: evidenceById,
+    locationClimate: climate
+  });
+  expect('missing profile blocks', isApiBlockedEnvelope(missProfile) && missProfile.reason === 'profile_required');
+  const badProfile = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({
+    profile: { canonicalSlug: 'x' }
+  }));
+  expect('invalid profile blocks', isApiBlockedEnvelope(badProfile) && badProfile.reason === 'invalid_profile');
+
+  // E. Evidence gate
+  const missEv = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ evidenceById: null }));
+  expect('missing evidence bundle blocks', isApiBlockedEnvelope(missEv) &&
+    missEv.reason === 'evidence_bundle_required');
+  const incomplete = clone(evidenceById);
+  const mangoRefs = [];
+  GROWTH_OUTCOME_NAMES.forEach((n) => {
+    const block = mango.outcomes[n];
+    (block.evidenceRefs || []).forEach((id) => mangoRefs.push(id));
+    (block.requirements || []).forEach((rule) => (rule.evidenceRefs || []).forEach((id) => mangoRefs.push(id)));
+  });
+  const dropId = mangoRefs[0];
+  delete incomplete[dropId];
+  const missRef = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ evidenceById: incomplete }));
+  expect('missing referenced evidence id blocks', isApiBlockedEnvelope(missRef) &&
+    missRef.reason === 'referenced_evidence_missing', dropId);
+
+  // Present-but-later-excluded evidence remains permitted (California tags exclude FL evidence natively)
+  const exclClimate = baseTrustedClimate({
+    regionTags: ['california'],
+    climateTags: ['mediterranean'],
+    values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+  });
+  const exclReq = validBiologyRequest({
+    locationClimate: exclClimate,
+    plantContext: basePlant({ ageClass: 'young' })
+  });
+  const exclSnap = {
+    profile: clone(exclReq.profile),
+    evidenceById: clone(exclReq.evidenceById),
+    locationClimate: clone(exclReq.locationClimate),
+    plantContext: clone(exclReq.plantContext)
+  };
+  const exclEnv = evaluateGrowthOutcomeForDeveloper(exclReq);
+  expect('excluded-but-present evidence allowed by API', exclEnv.ok === true && exclEnv.result != null);
+  expect('API does not invent region applicability decision status',
+    exclEnv.result.evaluationStatus === 'ok' || exclEnv.result.evaluationStatus === 'blocked_untrusted_location');
+  const exclReasons = json(exclEnv.result.outcomes.survival.evidenceRefsExcluded || []);
+  expect('native exclusion still happens inside evaluator',
+    /region_mismatch|insufficient_region|evidence_not_supplied/.test(exclReasons) ||
+    (exclEnv.result.outcomes.survival.evidenceRefsUsed || []).indexOf('ev_mango_surv_freeze_young_mg216') < 0,
+    exclReasons);
+  expect('exclusion path inputs unchanged',
+    json(exclReq.profile) === json(exclSnap.profile) &&
+    json(exclReq.evidenceById) === json(exclSnap.evidenceById) &&
+    json(exclReq.locationClimate) === json(exclSnap.locationClimate));
+
+  // F. Trusted location
+  const missLoc = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ locationClimate: null }));
+  expect('missing location blocks', isApiBlockedEnvelope(missLoc) &&
+    missLoc.reason === 'trusted_location_required');
+  const untrusted = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({
+    locationClimate: baseTrustedClimate({ trusted: false })
+  }));
+  expect('trusted false blocks at API', isApiBlockedEnvelope(untrusted) &&
+    untrusted.reason === 'trusted_location_required');
+  const coordsOnly = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({
+    locationClimate: { latitude: 25.76, longitude: -80.19, trusted: false }
+  }));
+  expect('coordinates alone do not create trust', isApiBlockedEnvelope(coordsOnly) &&
+    coordsOnly.reason === 'trusted_location_required');
+  const noTrustedField = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({
+    locationClimate: { latitude: 25.76, longitude: -80.19 }
+  }));
+  expect('omitted trusted field blocks', isApiBlockedEnvelope(noTrustedField) &&
+    noTrustedField.reason === 'trusted_location_required');
+
+  // G. Goal gate
+  const missGoalEnv = evaluateGrowthOutcomeForDeveloper({
+    capability: GOS_DEVELOPER_CAPABILITY,
+    mode: 'suitability',
+    profile: mango,
+    evidenceById: evidenceById,
+    locationClimate: climate,
+    gardenContext: garden,
+    plantContext: plant
+  });
+  expect('suitability missing goal blocks', isApiBlockedEnvelope(missGoalEnv) &&
+    missGoalEnv.reason === 'valid_user_goal_required');
+  const badGoal = evaluateGrowthOutcomeForDeveloper(validSuitabilityRequest({ userGoal: 'winPrize' }));
+  expect('suitability invalid goal blocks', isApiBlockedEnvelope(badGoal) &&
+    badGoal.reason === 'valid_user_goal_required');
+  const bioWithGoal = evaluateGrowthOutcomeForDeveloper(validBiologyRequest({ userGoal: 'ornamentalFoliage' }));
+  expect('biology rejects supplied userGoal', isApiBlockedEnvelope(bioWithGoal) &&
+    bioWithGoal.reason === 'user_goal_not_allowed_in_biology_mode');
+
+  // H. Happy-path native equivalence
+  const bioReq = validBiologyRequest();
+  const bioSnap = {
+    profile: clone(bioReq.profile),
+    evidenceById: clone(bioReq.evidenceById),
+    locationClimate: clone(bioReq.locationClimate),
+    gardenContext: clone(bioReq.gardenContext),
+    plantContext: clone(bioReq.plantContext)
+  };
+  const nativeBio = evaluateBiologicalGrowthOutcomes({
+    profile: bioReq.profile,
+    evidenceById: bioReq.evidenceById,
+    locationClimate: bioReq.locationClimate,
+    gardenContext: bioReq.gardenContext,
+    plantContext: bioReq.plantContext
+  });
+  const apiBio = evaluateGrowthOutcomeForDeveloper(bioReq);
+  expect('biology envelope ok', apiBio.ok === true && apiBio.apiStatus === 'ok' && apiBio.mode === 'biology');
+  expect('biology nested result byte-identical', json(apiBio.result) === json(nativeBio));
+  expect('biology inputs non-mutated',
+    json(bioReq.profile) === json(bioSnap.profile) &&
+    json(bioReq.evidenceById) === json(bioSnap.evidenceById) &&
+    json(bioReq.locationClimate) === json(bioSnap.locationClimate) &&
+    json(bioReq.gardenContext) === json(bioSnap.gardenContext) &&
+    json(bioReq.plantContext) === json(bioSnap.plantContext));
+
+  const suitReq = validSuitabilityRequest();
+  const suitSnap = {
+    profile: clone(suitReq.profile),
+    evidenceById: clone(suitReq.evidenceById),
+    locationClimate: clone(suitReq.locationClimate),
+    gardenContext: clone(suitReq.gardenContext),
+    plantContext: clone(suitReq.plantContext),
+    userGoal: suitReq.userGoal
+  };
+  const nativeSuit = evaluateGrowthOutcomeSuitability({
+    profile: suitReq.profile,
+    evidenceById: suitReq.evidenceById,
+    locationClimate: suitReq.locationClimate,
+    gardenContext: suitReq.gardenContext,
+    plantContext: suitReq.plantContext,
+    userGoal: suitReq.userGoal
+  });
+  const apiSuit = evaluateGrowthOutcomeForDeveloper(suitReq);
+  expect('suitability envelope ok', apiSuit.ok === true && apiSuit.apiStatus === 'ok' && apiSuit.mode === 'suitability');
+  expect('suitability nested result byte-identical', json(apiSuit.result) === json(nativeSuit));
+  expect('suitability inputs non-mutated',
+    json(suitReq.profile) === json(suitSnap.profile) &&
+    json(suitReq.evidenceById) === json(suitSnap.evidenceById) &&
+    json(suitReq.locationClimate) === json(suitSnap.locationClimate) &&
+    json(suitReq.gardenContext) === json(suitSnap.gardenContext) &&
+    json(suitReq.plantContext) === json(suitSnap.plantContext) &&
+    suitReq.userGoal === suitSnap.userGoal);
+
+  // I. Unknown preservation
+  expect('unknown outcomes preserved',
+    GROWTH_OUTCOME_NAMES.some((n) => apiBio.result.outcomes[n].level === 'unknown'));
+  expect('no score-50 fallback',
+    GROWTH_OUTCOME_NAMES.every((n) => apiBio.result.outcomes[n].internalScore === null));
+  expect('no excellent/good biological emission required path',
+    GROWTH_OUTCOME_NAMES.every((n) => {
+      const lvl = apiBio.result.outcomes[n].level;
+      return lvl === 'possible' || lvl === 'risky' || lvl === 'notRecommended' || lvl === 'unknown';
+    }));
+
+  // J. Conflict preservation (lychee freeze)
+  const lycheeClimate = baseTrustedClimate({
+    regionTags: fixtureRegionTokensFromProfile(lychee),
+    values: { minimumTemperatureF: 24, frostExposureHours: 3 }
+  });
+  const lycheeReq = {
+    capability: GOS_DEVELOPER_CAPABILITY,
+    mode: 'biology',
+    profile: lychee,
+    evidenceById: evidenceById,
+    locationClimate: lycheeClimate,
+    gardenContext: baseGarden(),
+    plantContext: basePlant({ ageClass: 'mature' })
+  };
+  const nativeLychee = evaluateBiologicalGrowthOutcomes({
+    profile: lycheeReq.profile,
+    evidenceById: lycheeReq.evidenceById,
+    locationClimate: lycheeReq.locationClimate,
+    gardenContext: lycheeReq.gardenContext,
+    plantContext: lycheeReq.plantContext
+  });
+  const apiLychee = evaluateGrowthOutcomeForDeveloper(lycheeReq);
+  expect('lychee API ok', apiLychee.ok === true);
+  expect('lychee nested byte-identical', json(apiLychee.result) === json(nativeLychee));
+  expect('lychee conflict preserved',
+    apiLychee.result.outcomes.survival.level === 'unknown' ||
+    apiLychee.result.outcomes.survival.sourceCoverage.conflicting === true,
+    apiLychee.result.outcomes.survival.level + ' conflicting=' +
+      String(apiLychee.result.outcomes.survival.sourceCoverage &&
+        apiLychee.result.outcomes.survival.sourceCoverage.conflicting));
+  expect('lychee conflicting coverage native',
+    apiLychee.result.outcomes.survival.sourceCoverage.conflicting ===
+    nativeLychee.outcomes.survival.sourceCoverage.conflicting);
+
+  // K. Evidence trace / provenance
+  const survival = apiBio.result.outcomes.survival;
+  expect('trace evidenceRefsUsed array', Array.isArray(survival.evidenceRefsUsed));
+  expect('trace evidenceRefsExcluded array', Array.isArray(survival.evidenceRefsExcluded));
+  expect('trace blockers array', Array.isArray(survival.blockers));
+  expect('trace limitingFactors array', Array.isArray(survival.limitingFactors));
+  expect('trace missingInputs array', Array.isArray(survival.missingInputs) ||
+    Array.isArray(apiBio.result.missingInputs));
+  expect('trace sourceCoverage object', !!survival.sourceCoverage && typeof survival.sourceCoverage === 'object');
+  expect('provenance engineVersion', apiBio.result.engineVersion === GROWTH_OUTCOME_ENGINE_VERSION);
+  expect('provenance profileVersion', apiBio.result.profileVersion === mango.profileVersion);
+  expect('provenance evidenceDataVersion field present',
+    Object.prototype.hasOwnProperty.call(apiBio.result, 'evidenceDataVersion'));
+  expect('provenance climateFingerprint present',
+    Object.prototype.hasOwnProperty.call(apiBio.result, 'climateFingerprint'));
+  expect('provenance contextFingerprint present',
+    Object.prototype.hasOwnProperty.call(apiBio.result, 'contextFingerprint'));
+
+  // L. Determinism ×10
+  const bioEnvelopes = [];
+  const suitEnvelopes = [];
+  for (let i = 0; i < 10; i++) {
+    bioEnvelopes.push(evaluateGrowthOutcomeForDeveloper(validBiologyRequest()));
+    suitEnvelopes.push(evaluateGrowthOutcomeForDeveloper(validSuitabilityRequest()));
+  }
+  expect('biology ×10 envelope identical',
+    bioEnvelopes.every((e) => json(e) === json(bioEnvelopes[0])));
+  expect('suitability ×10 envelope identical',
+    suitEnvelopes.every((e) => json(e) === json(suitEnvelopes[0])));
+  expect('biology ×10 nested identical',
+    bioEnvelopes.every((e) => json(e.result) === json(bioEnvelopes[0].result)));
+  expect('suitability ×10 nested identical',
+    suitEnvelopes.every((e) => json(e.result) === json(suitEnvelopes[0].result)));
+
+  // M already covered in H; reinforce with fresh clones
+  const mutReq = validSuitabilityRequest();
+  const mutBefore = clone(mutReq);
+  evaluateGrowthOutcomeForDeveloper(mutReq);
+  expect('request object non-mutated after call', json(mutReq) === json(mutBefore));
+
+  // N. Frozen output
+  expect('envelope deeply frozen', isFrozenDeep(apiBio) && isFrozenDeep(apiSuit));
+  expect('nested result deeply frozen', isFrozenDeep(apiBio.result) && isFrozenDeep(apiSuit.result));
+  let mutateBlocked = false;
+  try {
+    apiBio.ok = false;
+    mutateBlocked = apiBio.ok === true;
+  } catch (_e) {
+    mutateBlocked = true;
+  }
+  expect('envelope mutation blocked', mutateBlocked && apiBio.ok === true);
+  let nestedMutateBlocked = false;
+  try {
+    apiBio.result.evaluationStatus = 'hacked';
+    nestedMutateBlocked = apiBio.result.evaluationStatus !== 'hacked';
+  } catch (_e) {
+    nestedMutateBlocked = true;
+  }
+  expect('nested result mutation blocked', nestedMutateBlocked);
+
+  // Descriptor unchanged after successful calls
+  const descAfter = getGrowthOutcomeDeveloperApiDescriptor();
+  expect('descriptor unchanged after calls', descAfter === desc1 && json(descAfter) === json(desc1));
+
+  // O. No side effects during API invocation
+  expect('zero storage writes during API calls', storageWriteCount === 0, String(storageWriteCount));
+  expect('zero fetch during API calls', fetchCount === 0, String(fetchCount));
+  expect('zero XHR during API calls', xhrOpenCount === 0, String(xhrOpenCount));
+  expect('zero timers during API calls', timerCount === 0, String(timerCount));
+  expect('zero idb during API calls', idbCount === 0, String(idbCount));
+  expect('localStorage keys unchanged', json(Object.keys(localStorage || {}).slice().sort()) === json(lsKeysBefore));
+  expect('sessionStorage keys unchanged', json(Object.keys(sessionStorage || {}).slice().sort()) === json(ssKeysBefore));
+  expect('cookies unchanged', String(document.cookie || '') === cookieBefore);
+  expect('no developer API globals registered',
+    typeof window.evaluateGrowthOutcomeForDeveloper === 'undefined' &&
+    typeof window.CruvitGrowthOutcomeDeveloperApi === 'undefined');
+
+  restoreSpies();
+
+  // P. No product wiring
+  const indexHtml = await fetch('../index.html').then((r) => r.text());
+  expect('index.html no growth-outcome-developer-api.js',
+    indexHtml.indexOf('growth-outcome-developer-api') < 0);
+  expect('index.html no evaluateGrowthOutcomeForDeveloper',
+    indexHtml.indexOf('evaluateGrowthOutcomeForDeveloper') < 0);
+  expect('index.html no GOS_DEVELOPER_CAPABILITY',
+    indexHtml.indexOf('GOS_DEVELOPER_CAPABILITY') < 0);
+  expect('index.html no modules/suitability/growth-outcome-developer',
+    indexHtml.indexOf('modules/suitability/growth-outcome-developer') < 0);
+
+  // Scan known product modules for import (static text)
+  const productPaths = [
+    '../modules/identity/my-garden-identity-sidecar.js',
+    '../modules/identity/plant-identity-shadow.js',
+    '../modules/identity/my-garden-identity-audit.js'
+  ];
+  for (let i = 0; i < productPaths.length; i++) {
+    const text = await fetch(productPaths[i]).then((r) => r.ok ? r.text() : '');
+    expect('no product import ' + productPaths[i].split('/').pop(),
+      text.indexOf('growth-outcome-developer-api') < 0 &&
+      text.indexOf('evaluateGrowthOutcomeForDeveloper') < 0);
+  }
+
+  // Classification: API failures are not biological results
+  const blockedSamples = [missCapEnv, wrongCap, missMode, badMode, missProfile, badProfile, missEv, missRef, missLoc, untrusted];
+  blockedSamples.forEach((env, idx) => {
+    expect('blocked envelope classification #' + idx,
+      env.ok === false && env.result === null &&
+      !env.outcomes &&
+      env.apiStatus === 'blocked' &&
+      typeof env.reason === 'string' &&
+      !/score|riskMap|v1b/i.test(json(env)));
+  });
+
+  // DOM: harness may rewrite summary table after spies restored — body length may grow from report only.
+  expect('harness body still present', document.body.innerHTML.length >= bodyLenBefore);
+
+  finish();
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  document.getElementById('summary').textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+  document.getElementById('summary').className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>'
+  ).join('');
+  window.__GOS3D_SUMMARY = { total: results.length, passed: passed, failed: failed };
+  window.__GOS3_SUMMARY = window.__GOS3D_SUMMARY;
+}
+
+main().catch((err) => {
+  expect('harness execution', false, String(err && err.stack || err));
+  finish();
+});
+</script>
+</body>
+</html>
