@@ -259,6 +259,21 @@
       };
     } catch (e) {}
 
+    // Wait for the app's real plant-card hydration lifecycle to become idle before
+    // establishing the DOM baseline. Does not start, cancel, or suppress hydration.
+    var hydrationIdleBeforeBaseline = await waitFor(function () {
+      try {
+        return typeof cw.isPlantCardHydrationIdle === 'function' && cw.isPlantCardHydrationIdle();
+      } catch (e) {
+        return false;
+      }
+    }, 30000);
+    expect(
+      'plant-card hydration idle before audit baseline',
+      hydrationIdleBeforeBaseline === true,
+      hydrationIdleBeforeBaseline ? '' : 'timed out waiting for plant-card hydration idle'
+    );
+
     var bodyBefore = cw.document.body ? cw.document.body.innerHTML.length : 0;
 
     A.enable();

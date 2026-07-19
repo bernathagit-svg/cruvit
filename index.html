@@ -2314,6 +2314,71 @@ function swapToInstantPlantImage(imgEl){
   if(parent)parent.classList.add('has-photo');
 }
 const imageHydrationQueue=new Set();
+// Plant-card hydration lifecycle (My Garden strip only). Separate from search/result
+// imageHydrationQueue so failed/stale card attempts stay retryable without changing
+// hydratePlantResultImages semantics.
+var plantCardHydrationGeneration=0;
+var plantCardHydrationInFlight=new Set();
+var plantCardHydrationPassActive=false;
+var plantCardHydrationRetryScheduled=false;
+var plantCardHydrationScheduledCount=0;
+var plantCardHydrationFlushPending=false;
+function plantCardHydrationKey(p){
+  if(!p || typeof p!=='object') return '';
+  if(p.id!=null && String(p.id)!=='') return 'id:'+String(p.id);
+  const name=String(p.name||'');
+  const sci=String(p.scientific||(p.meta&&p.meta.scientific)||'');
+  return 'ns:'+name+'\0'+sci;
+}
+function resolvePlantCardHydrationTarget(snap){
+  const plants=data.plants||[];
+  if(!snap) return null;
+  if(snap.id!=null && String(snap.id)!==''){
+    const byId=plants.find(p=>p && String(p.id)===String(snap.id));
+    if(byId) return byId;
+  }
+  return plants.find(p=>p && String(p.name||'')===String(snap.name||'') &&
+    String(p.scientific||(p.meta&&p.meta.scientific)||'')===String(snap.scientific||''))||null;
+}
+function clearTransientPlantImageLoading(p){
+  if(p && Object.prototype.hasOwnProperty.call(p,'imageLoading')) delete p.imageLoading;
+}
+function isPlantCardHydrationIdle(){
+  return !plantCardHydrationPassActive
+    && !plantCardHydrationRetryScheduled
+    && !plantCardHydrationFlushPending
+    && plantCardHydrationScheduledCount===0
+    && plantCardHydrationInFlight.size===0;
+}
+function waitForPlantCardHydrationIdle(timeoutMs){
+  const limit=timeoutMs==null?30000:Number(timeoutMs)||30000;
+  return new Promise(function(resolve){
+    const t0=Date.now();
+    function tick(){
+      if(isPlantCardHydrationIdle()){ resolve(true); return; }
+      if(Date.now()-t0>=limit){ resolve(false); return; }
+      setTimeout(tick,50);
+    }
+    tick();
+  });
+}
+function schedulePlantCardHydrationPass(generation){
+  plantCardHydrationScheduledCount++;
+  setTimeout(function(){
+    plantCardHydrationScheduledCount=Math.max(0,plantCardHydrationScheduledCount-1);
+    hydratePlantCardImages(generation);
+  },0);
+}
+function schedulePlantCardHydrationRetry(){
+  if(plantCardHydrationRetryScheduled) return;
+  plantCardHydrationRetryScheduled=true;
+  plantCardHydrationScheduledCount++;
+  setTimeout(function(){
+    plantCardHydrationRetryScheduled=false;
+    plantCardHydrationScheduledCount=Math.max(0,plantCardHydrationScheduledCount-1);
+    hydratePlantCardImages(plantCardHydrationGeneration);
+  },0);
+}
 async function fetchPlantImageFromWikipedia(query){
   const q=String(query||'').trim();
   if(!q) return '';
@@ -2358,24 +2423,85 @@ async function fetchPlantImageFromWikipedia(query){
   }catch(e){}
   return '';
 }
-async function hydratePlantCardImages(){
-  for(const p of data.plants||[]){
-    if(!p || plantImage(p) || p.imageLoading) continue;
-    const meta=plantMeta(p);
-    const query=[p.scientific,meta.scientific,meta.imageSearchQuery,p.name,meta.name].filter(Boolean).join(' ');
-    if(!query || imageHydrationQueue.has(query)) continue;
-    imageHydrationQueue.add(query); p.imageLoading=true;
-    fetchPlantImageFromWikipedia(query).then(img=>{
-      p.imageLoading=false;
-      if(img){
-        p.imageUrl=img;
-        if(p.meta)p.meta.imageUrl=img;
-        const slug=slugify(p.name);
-        if(PLANT_INDEX[slug]) PLANT_INDEX[slug].imageUrl=img;
-        service.save(data);
-        render();
-      }
-    }).catch(()=>{p.imageLoading=false});
+async function hydratePlantCardImages(scheduledGeneration){
+  const generation=scheduledGeneration==null?plantCardHydrationGeneration:scheduledGeneration;
+  if(generation!==plantCardHydrationGeneration) return;
+  if(plantCardHydrationPassActive){
+    // Coalesce: one active pass; retry current generation after it finishes.
+    schedulePlantCardHydrationRetry();
+    return;
+  }
+  plantCardHydrationPassActive=true;
+  try{
+    if(generation!==plantCardHydrationGeneration) return;
+    const candidates=[];
+    for(const p of data.plants||[]){
+      if(!p || plantImage(p)) continue;
+      clearTransientPlantImageLoading(p);
+      const key=plantCardHydrationKey(p);
+      if(!key || plantCardHydrationInFlight.has(key)) continue;
+      const meta=plantMeta(p);
+      const query=[p.scientific,meta.scientific,meta.imageSearchQuery,p.name,meta.name].filter(Boolean).join(' ');
+      if(!query) continue;
+      candidates.push({
+        key,
+        query,
+        id:p.id,
+        name:p.name,
+        scientific:p.scientific||(meta&&meta.scientific)||''
+      });
+    }
+    if(!candidates.length) return;
+    for(const c of candidates) plantCardHydrationInFlight.add(c.key);
+    let settled;
+    try{
+      settled=await Promise.all(candidates.map(async(c)=>{
+        try{
+          const img=await fetchPlantImageFromWikipedia(c.query);
+          return {key:c.key,id:c.id,name:c.name,scientific:c.scientific,img:img||''};
+        }catch(_){
+          return {key:c.key,id:c.id,name:c.name,scientific:c.scientific,img:''};
+        }finally{
+          plantCardHydrationInFlight.delete(c.key);
+        }
+      }));
+    }catch(_){
+      for(const c of candidates) plantCardHydrationInFlight.delete(c.key);
+      if(generation!==plantCardHydrationGeneration) schedulePlantCardHydrationRetry();
+      return;
+    }
+    if(generation!==plantCardHydrationGeneration){
+      // Stale pass: no data/DOM/save/render. Allow the current generation to retry.
+      schedulePlantCardHydrationRetry();
+      return;
+    }
+    let changed=false;
+    for(const r of settled||[]){
+      if(!r || !r.img) continue;
+      const p=resolvePlantCardHydrationTarget(r);
+      if(!p || plantImage(p)) continue;
+      if(p.imageUrl===r.img || (p.meta && p.meta.imageUrl===r.img)) continue;
+      p.imageUrl=r.img;
+      if(p.meta) p.meta.imageUrl=r.img;
+      const slug=slugify(p.name);
+      if(PLANT_INDEX[slug]) PLANT_INDEX[slug].imageUrl=r.img;
+      clearTransientPlantImageLoading(p);
+      changed=true;
+    }
+    if(generation!==plantCardHydrationGeneration){
+      schedulePlantCardHydrationRetry();
+      return;
+    }
+    if(!changed) return;
+    plantCardHydrationFlushPending=true;
+    try{
+      service.save(data);
+      render();
+    }finally{
+      plantCardHydrationFlushPending=false;
+    }
+  }finally{
+    plantCardHydrationPassActive=false;
   }
 }
 async function hydratePlantResultImages(){
@@ -3952,7 +4078,9 @@ function render(){syncHealthScore();
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   applyGardenUserLabels();
   document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
-  setTimeout(hydratePlantCardImages,0);
+  plantCardHydrationGeneration++;
+  const plantCardHydrationPass=plantCardHydrationGeneration;
+  schedulePlantCardHydrationPass(plantCardHydrationPass);
   
   const actionableTasks=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
   const openTotal=actionableTasks.length;
