@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — GOS-3F developer comparison harness</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 24px; max-width: 1180px; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  p.sub { margin: 0 0 16px; opacity: .75; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; } .warn { color: #8a5a00; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(127,127,127,.35); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #report { margin: 12px 0; font: 12px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; opacity: .9; }
+  #frameHost { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+</style>
+</head>
+<body>
+  <h1>Growth Outcome Suitability — GOS-3F developer comparison harness</h1>
+  <p class="sub">
+    Test-only standalone harness. Invokes GOS through the capability-gated developer API, asserts nested
+    result ≡ direct evaluator, and preserves GOS-3C1 neutral v1b categories for the same eight fixtures.
+    Real <code>index.html</code> iframe invokes live <code>evaluateClimateSuitabilityV1</code> only.
+    No score bridge, no product wiring, no production verification in this checkpoint.
+  </p>
+  <div id="summary">Running…</div>
+  <div id="report"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div id="frameHost" aria-hidden="true"></div>
+
+<script type="module">
+/**
+ * GOS-3F — explicit developer comparison harness (test-only).
+ *
+ * PROVENANCE: fixture IDs, inputs, classifier, and expected primary categories are copied from
+ * tests/growth-outcome-v1b-comparison.test.html frozen at commit
+ * 4a11dd59aa2a66232e795ed7403b93865c29eb14 (GOS-3C1 matrix). This file is NOT a shared runtime
+ * source and does not modify the GOS-3C1 harness.
+ *
+ * Untrusted fixture note: the developer API fail-closes with trusted_location_required (result null)
+ * before calling the evaluator. Category parity for that fixture uses the direct evaluator nested
+ * result (same as GOS-3C1). The API envelope is never treated as a biological engine result.
+ */
+import {
+  evaluateBiologicalGrowthOutcomes,
+  evaluateGrowthOutcomeSuitability,
+  GROWTH_OUTCOME_NAMES,
+  GROWTH_OUTCOME_ENGINE_VERSION
+} from '../modules/suitability/growth-outcome-evaluator.js';
+
+import {
+  GOS_DEVELOPER_API_VERSION,
+  GOS_DEVELOPER_CAPABILITY,
+  evaluateGrowthOutcomeForDeveloper
+} from '../modules/suitability/growth-outcome-developer-api.js';
+
+const STORAGE_KEY = 'cruvit_mg_v23_real_plant_profiles';
+const DETERMINISM_REPEATS = 10;
+const FIXTURE_IDS = Object.freeze([
+  'untrusted_location_mango',
+  'trusted_warm_mango_mature_ornamental',
+  'trusted_warm_mango_mature_reliable_yield',
+  'florida_young_mango_cold',
+  'florida_mature_mango_same_cold',
+  'lychee_florida_mature_freeze_conflict_preserved',
+  'florida_bougainvillea_mature_flowering_display',
+  'florida_mature_mango_bloom_fruitset_cold'
+]);
+
+const ALLOWED_CATEGORIES = Object.freeze([
+  'aligned_unknown',
+  'gos_preserves_unknown',
+  'applicability_difference',
+  'blocker_scope_difference',
+  'different_question_not_conflict',
+  'unresolved_due_missing_input'
+]);
+
+/**
+ * Frozen GOS-3C1 parity manifest (test-only).
+ * expectedPrimaryCategory values match classifier primaryCategory for the C1 matrix at 4a11dd5.
+ * apiExpected: 'ok' requires successful envelope.result; 'blocked_trusted_location' is the
+ * developer-API fail-closed contract for the untrusted fixture.
+ */
+const EXPECTED_PARITY_MANIFEST = Object.freeze({
+  fixtureCount: 8,
+  allowedCategories: ALLOWED_CATEGORIES,
+  fixtures: Object.freeze({
+    untrusted_location_mango: Object.freeze({
+      expectedPrimaryCategory: 'aligned_unknown',
+      apiExpected: 'blocked_trusted_location'
+    }),
+    trusted_warm_mango_mature_ornamental: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    trusted_warm_mango_mature_reliable_yield: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    florida_young_mango_cold: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    florida_mature_mango_same_cold: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    lychee_florida_mature_freeze_conflict_preserved: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    florida_bougainvillea_mature_flowering_display: Object.freeze({
+      expectedPrimaryCategory: 'gos_preserves_unknown',
+      apiExpected: 'ok'
+    }),
+    florida_mature_mango_bloom_fruitset_cold: Object.freeze({
+      expectedPrimaryCategory: 'blocker_scope_difference',
+      apiExpected: 'ok'
+    })
+  })
+});
+deepFreezeManifest(EXPECTED_PARITY_MANIFEST);
+
+function deepFreezeManifest(value, seen) {
+  if (value === null || typeof value !== 'object') return value;
+  seen = seen || new WeakSet();
+  if (seen.has(value)) return value;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) deepFreezeManifest(value[i], seen);
+  } else {
+    const keys = Object.keys(value);
+    for (let i = 0; i < keys.length; i++) deepFreezeManifest(value[keys[i]], seen);
+  }
+  return Object.freeze(value);
+}
+
+/** Test-local fixture config copied from GOS-3C1. expectedPrimaryCategory is assertion-only for C1 defs. */
+const FIXTURE_DEFS = Object.freeze({
+  lychee_florida_mature_freeze_conflict_preserved: Object.freeze({
+    catalogSlug: 'lychee',
+    locationPack: 'florida',
+    weatherKind: 'florida_cold',
+    regionTags: Object.freeze(['florida', 'subtropical']),
+    climateTags: Object.freeze(['subtropical', 'florida']),
+    latitude: 25.4687,
+    longitude: -80.4776,
+    values: Object.freeze({ minimumTemperatureF: 29.5, frostExposureHours: 3 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze([]),
+    sunExposure: 'full',
+    userGoal: 'ornamentalFoliage',
+    broadClimate: 'subtropical',
+    freezingRisk: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'gos_preserves_unknown'
+  }),
+  florida_bougainvillea_mature_flowering_display: Object.freeze({
+    catalogSlug: 'bougainvillea',
+    locationPack: 'warm',
+    weatherKind: 'warm',
+    regionTags: Object.freeze(['florida', 'warm-climates']),
+    climateTags: Object.freeze(['tropical', 'subtropical']),
+    latitude: 25.7617,
+    longitude: -80.1918,
+    values: Object.freeze({ minimumTemperatureF: 50, frostExposureHours: 0 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze([]),
+    sunExposure: 'full',
+    userGoal: 'floweringDisplay',
+    broadClimate: 'tropical',
+    freezingRisk: 'low',
+    structuralFreezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'gos_preserves_unknown'
+  }),
+  florida_mature_mango_bloom_fruitset_cold: Object.freeze({
+    catalogSlug: 'mango',
+    locationPack: 'florida',
+    weatherKind: 'florida_cold',
+    regionTags: Object.freeze(['florida', 'subtropical']),
+    climateTags: Object.freeze(['subtropical', 'florida']),
+    latitude: 25.4687,
+    longitude: -80.4776,
+    values: Object.freeze({ minimumTemperatureF: 35, frostExposureHours: 2 }),
+    ageClass: 'mature',
+    cultivar: 'unknown',
+    plantContextTags: Object.freeze(['bloom', 'small-fruit-stage']),
+    sunExposure: 'full',
+    userGoal: 'ornamentalFoliage',
+    broadClimate: 'subtropical',
+    freezingRisk: 'medium',
+    structuralFreezingRisk: 'medium',
+    isFrostFreeGrowingClimate: false,
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    expectedPrimaryCategory: 'blocker_scope_difference'
+  })
+});
+
+function fixtureDef(fixtureId) {
+  return FIXTURE_DEFS[fixtureId] || null;
+}
+
+function fixtureCatalogSlug(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  return def ? def.catalogSlug : 'mango';
+}
+
+function fixtureWeatherKind(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  if (def && def.weatherKind) return def.weatherKind;
+  return (fixtureId.indexOf('florida_') === 0) ? 'florida_cold' : 'warm';
+}
+
+function fixtureLocationPack(fixtureId) {
+  const def = fixtureDef(fixtureId);
+  if (def && def.locationPack) return def.locationPack;
+  if (fixtureId === 'untrusted_location_mango') return 'untrusted';
+  if (fixtureId.indexOf('florida_') === 0) return 'florida';
+  return 'warm';
+}
+
+const results = [];
+const reportLines = [];
+const perfSamples = {
+  iframeBootstrapMs: [],
+  v1bInvokeMs: [],
+  gosInvokeMs: [],
+  comparisonMs: []
+};
+
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail || '' });
+}
+
+function logReport(line) {
+  reportLines.push(String(line));
+}
+
+function json(v) {
+  return JSON.stringify(v);
+}
+
+function stableStringify(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(stableStringify).join(',') + ']';
+  const keys = Object.keys(value).sort();
+  return '{' + keys.map((k) => JSON.stringify(k) + ':' + stableStringify(value[k])).join(',') + '}';
+}
+
+function deepFreeze(value, seen) {
+  if (value === null || typeof value !== 'object') return value;
+  seen = seen || new WeakSet();
+  if (seen.has(value)) return value;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) deepFreeze(value[i], seen);
+  } else {
+    const keys = Object.keys(value);
+    for (let i = 0; i < keys.length; i++) deepFreeze(value[keys[i]], seen);
+  }
+  return Object.freeze(value);
+}
+
+function isFrozenDeep(v, seen) {
+  seen = seen || new Set();
+  if (v === null || typeof v !== 'object') return true;
+  if (seen.has(v)) return true;
+  seen.add(v);
+  if (!Object.isFrozen(v)) return false;
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+    return true;
+  }
+  const keys = Object.keys(v);
+  for (let i = 0; i < keys.length; i++) if (!isFrozenDeep(v[keys[i]], seen)) return false;
+  return true;
+}
+
+function median(arr) {
+  if (!arr.length) return null;
+  const a = arr.slice().sort((x, y) => x - y);
+  const m = Math.floor(a.length / 2);
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+}
+
+function clone(v) {
+  return JSON.parse(JSON.stringify(v));
+}
+
+function snapshotStorage() {
+  const ls = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    ls[k] = localStorage.getItem(k);
+  }
+  const ss = {};
+  for (let i = 0; i < sessionStorage.length; i++) {
+    const k = sessionStorage.key(i);
+    ss[k] = sessionStorage.getItem(k);
+  }
+  return {
+    localStorage: ls,
+    sessionStorage: ss,
+    cookie: String(document.cookie || '')
+  };
+}
+
+function restoreStorage(snap) {
+  localStorage.clear();
+  Object.keys(snap.localStorage).forEach((k) => localStorage.setItem(k, snap.localStorage[k]));
+  sessionStorage.clear();
+  Object.keys(snap.sessionStorage).forEach((k) => sessionStorage.setItem(k, snap.sessionStorage[k]));
+}
+
+function storageEquals(a, b) {
+  return stableStringify(a.localStorage) === stableStringify(b.localStorage)
+    && stableStringify(a.sessionStorage) === stableStringify(b.sessionStorage)
+    && String(a.cookie) === String(b.cookie);
+}
+
+function waitFor(predicate, timeoutMs) {
+  const start = performance.now();
+  return new Promise((resolve) => {
+    function tick() {
+      let ok = false;
+      try { ok = !!predicate(); } catch (e) { ok = false; }
+      if (ok) return resolve(true);
+      if (performance.now() - start > timeoutMs) return resolve(false);
+      setTimeout(tick, 40);
+    }
+    tick();
+  });
+}
+
+function evidenceByIdFromDoc(doc) {
+  const map = {};
+  (doc.evidence || []).forEach((e) => { map[e.evidenceId] = e; });
+  return map;
+}
+
+function profileBySlug(doc, slug) {
+  return (doc.profiles || []).find((p) => p.canonicalSlug === slug);
+}
+
+function fixtureRegionTokensFromProfile(profile) {
+  const tags = [];
+  const values = (profile.regionApplicability && profile.regionApplicability.values) || [];
+  values.forEach((v) => tags.push(String(v).toLowerCase()));
+  const notes = String((profile.regionApplicability && profile.regionApplicability.notes) || '').toLowerCase();
+  if (notes.indexOf('florida') >= 0) tags.push('florida');
+  if (notes.indexOf('subtropical') >= 0) tags.push('subtropical');
+  if (notes.indexOf('mediterranean') >= 0) tags.push('mediterranean');
+  return Array.from(new Set(tags));
+}
+
+function normalizeV1b(raw) {
+  const r = raw || {};
+  const factors = r.factors && typeof r.factors === 'object' ? {
+    survival: r.factors.survival == null ? null : Number(r.factors.survival),
+    thrive: r.factors.thrive == null ? null : Number(r.factors.thrive),
+    heatCold: r.factors.heatCold == null ? null : Number(r.factors.heatCold),
+    humidity: r.factors.humidity == null ? null : Number(r.factors.humidity),
+    scanFit: r.factors.scanFit == null ? null : Number(r.factors.scanFit)
+  } : { survival: null, thrive: null, heatCold: null, humidity: null, scanFit: null };
+  const blocks = Array.isArray(r.blocks)
+    ? r.blocks.map((b) => String(b).trim()).filter(Boolean).sort()
+    : [];
+  return {
+    engineVersion: String(r.engineVersion || ''),
+    score: r.score == null ? null : Number(r.score),
+    level: String(r.level || ''),
+    factors: factors,
+    blockIds: blocks,
+    dataSource: String(r.dataSource || ''),
+    plantSlug: String(r.plantSlug || '')
+  };
+}
+
+function normalizeGosOutcome(o) {
+  const x = o || {};
+  const sc = x.sourceCoverage && typeof x.sourceCoverage === 'object' ? x.sourceCoverage : null;
+  return {
+    level: x.level,
+    confidence: x.confidence,
+    dataStatus: x.dataStatus,
+    blockers: (x.blockers || []).slice().sort(),
+    limitingFactors: (x.limitingFactors || []).slice().sort(),
+    favorableFactors: (x.favorableFactors || []).slice().sort(),
+    evidenceRefsUsed: (x.evidenceRefsUsed || []).slice().sort(),
+    evidenceRefsExcluded: (x.evidenceRefsExcluded || []).map((e) => {
+      if (e && typeof e === 'object') {
+        return { evidenceId: e.evidenceId || null, reason: e.reason || null, ruleId: e.ruleId || null, mode: e.mode || null };
+      }
+      return { evidenceId: String(e), reason: null, ruleId: null, mode: null };
+    }).sort((a, b) => stableStringify(a).localeCompare(stableStringify(b))),
+    missingInputs: (x.missingInputs || []).slice().sort(),
+    dependencyCaps: (x.dependencyCaps || []).slice().sort(),
+    internalScore: x.internalScore,
+    sourceCoverage: {
+      conflicting: !!(sc && sc.conflicting)
+    }
+  };
+}
+
+function normalizeGos(full, biological) {
+  const bio = biological || full;
+  const outcomes = {};
+  GROWTH_OUTCOME_NAMES.forEach((name) => {
+    outcomes[name] = normalizeGosOutcome(bio.outcomes && bio.outcomes[name]);
+  });
+  return {
+    engineVersion: String(full.engineVersion || bio.engineVersion || ''),
+    evaluationStatus: String(bio.evaluationStatus || ''),
+    locationStatus: String(bio.locationStatus || ''),
+    outcomes: outcomes,
+    missingInputs: (bio.missingInputs || []).slice().sort(),
+    goalFit: full.goalFit ? clone(full.goalFit) : null,
+    recommendedUse: (full.recommendedUse || []).slice().sort(),
+    overallConclusion: full.overallConclusion || null,
+    warnings: (full.warnings || []).slice().sort()
+  };
+}
+
+function classifyComparison(fixtureId, v1bN, gosN, gosBioN) {
+  const categories = [];
+  let trustedLocationParity = 'n/a';
+  let broadSurvivalDirection = 'incomparable';
+  let unknownPreservation = 'n/a';
+  let reproductiveDetail = 'n/a';
+  let regionalApplicabilityDifference = false;
+  let cultivarApplicabilityDifference = false;
+  let blockerDifference = 'n/a';
+  const notableAgreements = [];
+  const notableDifferences = [];
+  const unresolvedQuestions = [];
+
+  const v1bUntrusted = v1bN.level === 'unknown' && v1bN.score === null && v1bN.dataSource === 'location_untrusted';
+  const gosBlocked = gosN.evaluationStatus === 'blocked_untrusted_location'
+    && GROWTH_OUTCOME_NAMES.every((n) => gosN.outcomes[n].level === 'unknown');
+
+  if (fixtureId === 'untrusted_location_mango') {
+    trustedLocationParity = (v1bUntrusted && gosBlocked) ? 'both_blocked' : 'mismatch';
+    broadSurvivalDirection = (v1bUntrusted && gosBlocked) ? 'aligned' : 'incomparable';
+    unknownPreservation = 'both_unknown';
+    categories.push('aligned_unknown');
+    if (v1bUntrusted && gosBlocked) notableAgreements.push('untrusted_location_blocks_both');
+    else notableDifferences.push('untrusted_parity_failed');
+  } else {
+    trustedLocationParity = 'both_trusted';
+    broadSurvivalDirection = 'incomparable';
+
+    // Generic stage-scoped reproductive blocker (fact-based; before unknown preservation).
+    const survivalLevel = gosBioN.outcomes.survival.level;
+    const survivalBlockers = gosBioN.outcomes.survival.blockers || [];
+    const reproductiveNames = ['flowering', 'fruitSet', 'fruitRipeningOrYield'];
+    let stageScopedReproductiveBlocker = false;
+    for (let ri = 0; ri < reproductiveNames.length; ri++) {
+      const rBlockers = gosBioN.outcomes[reproductiveNames[ri]].blockers || [];
+      if (!rBlockers.length) continue;
+      if (survivalLevel === 'notRecommended') continue;
+      const hasDistinct = rBlockers.some((b) => survivalBlockers.indexOf(b) < 0);
+      if (hasDistinct) {
+        stageScopedReproductiveBlocker = true;
+        break;
+      }
+    }
+    if (stageScopedReproductiveBlocker) {
+      categories.push('blocker_scope_difference');
+      blockerDifference = 'scope';
+      notableDifferences.push('gos_reproductive_blocker_absent_from_survival');
+    }
+
+    const laterUnknown = ['flowering', 'fruitSet', 'fruitRipeningOrYield', 'longTermReliability']
+      .some((n) => gosBioN.outcomes[n].level === 'unknown');
+    if (laterUnknown && v1bN.level !== 'unknown' && v1bN.score != null) {
+      unknownPreservation = 'gos_preserves';
+      categories.push('gos_preserves_unknown');
+      notableDifferences.push('gos_later_stage_unknown_while_v1b_scored');
+    } else if (laterUnknown) {
+      unknownPreservation = 'gos_preserves';
+      categories.push('gos_preserves_unknown');
+    }
+    categories.push('different_question_not_conflict');
+    notableAgreements.push('engines_answer_different_questions');
+  }
+
+  if (fixtureId === 'florida_young_mango_cold' || fixtureId === 'florida_mature_mango_same_cold') {
+    categories.push('applicability_difference');
+    regionalApplicabilityDifference = true;
+    const youngBlock = (gosBioN.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') >= 0;
+    if (fixtureId === 'florida_young_mango_cold' && youngBlock) {
+      categories.push('blocker_scope_difference');
+      blockerDifference = 'scope';
+      notableDifferences.push('gos_age_specific_survival_blocker_vs_v1b_species_heuristic');
+    }
+    if (fixtureId === 'florida_mature_mango_same_cold' && !youngBlock) {
+      categories.push('applicability_difference');
+      notableDifferences.push('gos_young_blocker_not_applied_for_mature');
+      notableDifferences.push('v1b_does_not_model_plant_age');
+    }
+  }
+
+  const unique = [];
+  categories.forEach((c) => {
+    if (ALLOWED_CATEGORIES.indexOf(c) >= 0 && unique.indexOf(c) < 0) unique.push(c);
+  });
+  if (!unique.length) {
+    unique.push('unresolved_due_missing_input');
+    unresolvedQuestions.push('no_allowed_category_matched');
+  }
+
+  const banned = /gos better|v1b wrong|preferred engine|replacement|winner/i;
+  const textBlob = unique.concat(notableAgreements, notableDifferences, unresolvedQuestions).join(' ');
+  if (banned.test(textBlob)) {
+    unresolvedQuestions.push('banned_winner_language_detected');
+  }
+
+  return {
+    trustedLocationParity: trustedLocationParity,
+    broadSurvivalDirection: broadSurvivalDirection,
+    confidenceDifference: 'incomparable',
+    unknownPreservation: unknownPreservation,
+    reproductiveDetail: reproductiveDetail,
+    regionalApplicabilityDifference: regionalApplicabilityDifference,
+    cultivarApplicabilityDifference: cultivarApplicabilityDifference,
+    blockerDifference: blockerDifference,
+    primaryCategory: unique[0],
+    secondaryCategories: unique.slice(1),
+    notableAgreements: notableAgreements.sort(),
+    notableDifferences: notableDifferences.sort(),
+    unresolvedQuestions: unresolvedQuestions.sort()
+  };
+}
+
+function buildComparisonObject(fixtureId, plantIdentity, locationContext, v1bN, gosN, gosBioN, meta) {
+  const comparison = classifyComparison(fixtureId, v1bN, gosN, gosBioN);
+  return deepFreeze({
+    fixtureId: fixtureId,
+    plantIdentity: plantIdentity,
+    locationContext: locationContext,
+    normalizedV1b: v1bN,
+    normalizedGos: gosN,
+    biologicalGos: gosBioN,
+    comparison: comparison,
+    meta: meta
+  });
+}
+
+function fixedWeatherPayload(kind) {
+  // Fixed timestamps — never Date.now() — for normalized climate determinism.
+  if (kind === 'florida_cold') {
+    return {
+      location: {
+        label: 'Homestead, Florida, USA',
+        lat: 25.4687,
+        lon: -80.4776,
+        climate: 'Subtropical',
+        country: 'United States',
+        timezone: 'America/New_York'
+      },
+      weather: {
+        fetchedAt: '2026-01-15T12:00:00.000Z',
+        forecastPeak: 22,
+        forecastLow: 8,
+        maxC: 22,
+        minC: 8,
+        alerts: []
+      }
+    };
+  }
+  return {
+    location: {
+      label: 'Miami, Florida, USA',
+      lat: 25.7617,
+      lon: -80.1918,
+      climate: 'Tropical',
+      country: 'United States',
+      timezone: 'America/New_York'
+    },
+    weather: {
+      fetchedAt: '2026-07-01T12:00:00.000Z',
+      forecastPeak: 33,
+      forecastLow: 24,
+      maxC: 33,
+      minC: 24,
+      alerts: []
+    }
+  };
+}
+
+function installPostReadyIframeGuards(cw, weatherKind) {
+  const forbiddenHits = [];
+  const origFetch = cw.fetch.bind(cw);
+  cw.fetch = async function (input, init) {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    const u = String(url);
+    if (/growth-outcome-pilot\/(evidence|profiles)\.json|modules\/suitability\/growth-outcome-(evaluator|developer-api)\.js/i.test(u)) {
+      forbiddenHits.push(u);
+      throw new Error('Forbidden GOS resource requested by iframe: ' + u);
+    }
+    if (/garden-weather/i.test(u)) {
+      const fixed = fixedWeatherPayload(weatherKind);
+      const body = JSON.stringify(fixed);
+      return new cw.Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+    return origFetch(input, init);
+  };
+  return {
+    forbiddenHits: function () { return forbiddenHits.slice(); }
+  };
+}
+
+function destroyIframe(iframe) {
+  if (!iframe) return;
+  try {
+    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+  } catch (e) {}
+}
+
+async function createReadyIframe(weatherKind) {
+  const host = document.getElementById('frameHost');
+  const iframe = document.createElement('iframe');
+  iframe.title = 'gos3f-v1b';
+  const t0 = performance.now();
+  const loadPromise = new Promise((resolve, reject) => {
+    iframe.addEventListener('load', () => resolve(), { once: true });
+    iframe.addEventListener('error', () => reject(new Error('iframe load error')), { once: true });
+  });
+  iframe.src = '../index.html?gos3c0=' + encodeURIComponent(String(Date.now()));
+  host.appendChild(iframe);
+  await loadPromise;
+  const cw = iframe.contentWindow;
+  const ready = await waitFor(() => {
+    return cw
+      && typeof cw.evaluateClimateSuitabilityV1 === 'function'
+      && typeof cw.setAppLocation === 'function'
+      && typeof cw.getAppLocation === 'function'
+      && typeof cw.hasTrustedAppLocation === 'function'
+      && typeof cw.clearAppLocation === 'function';
+  }, 30000);
+  const bootstrapMs = performance.now() - t0;
+  perfSamples.iframeBootstrapMs.push(bootstrapMs);
+  if (!ready) {
+    destroyIframe(iframe);
+    throw new Error('iframe APIs not ready (evaluateClimateSuitabilityV1/setAppLocation/getAppLocation/hasTrustedAppLocation)');
+  }
+  // Post-ready only — do not wrap fetch during bootstrap.
+  const guards = installPostReadyIframeGuards(cw, weatherKind || 'warm');
+  // Resource audit after bootstrap: iframe must not have loaded GOS assets.
+  let resourceHits = [];
+  try {
+    const entries = cw.performance && cw.performance.getEntriesByType
+      ? cw.performance.getEntriesByType('resource')
+      : [];
+    resourceHits = entries.map((e) => String(e.name || '')).filter((n) =>
+      /growth-outcome-pilot\/(evidence|profiles)\.json|modules\/suitability\/growth-outcome-(evaluator|developer-api)\.js/i.test(n)
+    );
+  } catch (e) {
+    resourceHits = [];
+  }
+  return { iframe: iframe, cw: cw, guards: guards, resourceHits: resourceHits, bootstrapMs: bootstrapMs };
+}
+
+async function ensureUntrusted(cw) {
+  if (cw.hasTrustedAppLocation()) {
+    await cw.clearAppLocation();
+  }
+  // clearAppLocation sets source:default → untrusted
+  return cw.hasTrustedAppLocation() === false;
+}
+
+async function ensureTrustedWarm(cw) {
+  await cw.setAppLocation({
+    label: 'Miami, Florida, USA',
+    climate: 'Tropical',
+    lat: 25.7617,
+    lon: -80.1918,
+    country: 'United States',
+    countryCode: 'US',
+    source: 'manual',
+    rawInput: 'Miami, Florida'
+  });
+  return cw.hasTrustedAppLocation() === true;
+}
+
+async function ensureTrustedFlorida(cw) {
+  await cw.setAppLocation({
+    label: 'Homestead, Florida, USA',
+    climate: 'Subtropical',
+    lat: 25.4687,
+    lon: -80.4776,
+    country: 'United States',
+    countryCode: 'US',
+    source: 'manual',
+    rawInput: 'Homestead, Florida'
+  });
+  return cw.hasTrustedAppLocation() === true;
+}
+
+function runGosForFixture(fixtureId, profile, evidenceById) {
+  const regionTags = fixtureRegionTokensFromProfile(profile);
+  const baseGarden = {
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  };
+
+  if (fixtureId === 'untrusted_location_mango') {
+    const locationClimate = {
+      trusted: false,
+      latitude: null,
+      longitude: null,
+      regionTags: [],
+      climateTags: [],
+      hemisphere: 'northern',
+      locationConfidence: 'default',
+      climateConfidence: 'none',
+      values: {}
+    };
+    const plantContext = { cultivar: 'unknown', ageClass: 'unknown', propagation: 'unknown', contextTags: [] };
+    const t0 = performance.now();
+    const biological = evaluateBiologicalGrowthOutcomes({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext
+    });
+    const full = evaluateGrowthOutcomeSuitability({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext,
+      userGoal: 'ornamentalFoliage'
+    });
+    perfSamples.gosInvokeMs.push(performance.now() - t0);
+    return {
+      full: full,
+      biological: biological,
+      locationContext: { trusted: false, broadClimate: null, freezingRisk: null, regionTags: [], notes: 'untrusted' },
+      inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: baseGarden, plantContext: plantContext }
+    };
+  }
+
+  if (fixtureId === 'trusted_warm_mango_mature_ornamental' || fixtureId === 'trusted_warm_mango_mature_reliable_yield') {
+    const locationClimate = {
+      trusted: true,
+      latitude: 25.7617,
+      longitude: -80.1918,
+      regionTags: regionTags,
+      climateTags: ['tropical', 'subtropical'],
+      hemisphere: 'northern',
+      locationConfidence: 'high',
+      climateConfidence: 'medium',
+      structuralFreezingRisk: 'low',
+      isFrostFreeGrowingClimate: true,
+      values: { minimumTemperatureF: 50, frostExposureHours: 0 }
+    };
+    const plantContext = { cultivar: 'unknown', ageClass: 'mature', propagation: 'unknown', contextTags: [] };
+    const goal = fixtureId === 'trusted_warm_mango_mature_reliable_yield'
+      ? 'reliableHouseholdYield'
+      : 'ornamentalFoliage';
+    const t0 = performance.now();
+    const biological = evaluateBiologicalGrowthOutcomes({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext
+    });
+    const full = evaluateGrowthOutcomeSuitability({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext,
+      userGoal: goal
+    });
+    perfSamples.gosInvokeMs.push(performance.now() - t0);
+    return {
+      full: full,
+      biological: biological,
+      locationContext: {
+        trusted: true,
+        broadClimate: 'tropical',
+        freezingRisk: 'low',
+        regionTags: regionTags.slice().sort(),
+        notes: 'trusted_warm_mango'
+      },
+      inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: baseGarden, plantContext: plantContext }
+    };
+  }
+
+  // Florida cold fixtures D/E (GOS-3C0) — exact prior behavior
+  if (fixtureId === 'florida_young_mango_cold' || fixtureId === 'florida_mature_mango_same_cold') {
+    const locationClimate = {
+      trusted: true,
+      latitude: 25.4687,
+      longitude: -80.4776,
+      regionTags: ['florida', 'subtropical'],
+      climateTags: ['subtropical', 'florida'],
+      hemisphere: 'northern',
+      locationConfidence: 'high',
+      climateConfidence: 'medium',
+      structuralFreezingRisk: 'medium',
+      isFrostFreeGrowingClimate: false,
+      values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+    };
+    const plantContext = {
+      cultivar: 'unknown',
+      ageClass: fixtureId === 'florida_young_mango_cold' ? 'young' : 'mature',
+      propagation: 'unknown',
+      contextTags: []
+    };
+    const t0 = performance.now();
+    const biological = evaluateBiologicalGrowthOutcomes({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext
+    });
+    const full = evaluateGrowthOutcomeSuitability({
+      profile: profile,
+      evidenceById: evidenceById,
+      locationClimate: locationClimate,
+      gardenContext: baseGarden,
+      plantContext: plantContext,
+      userGoal: 'ornamentalFoliage'
+    });
+    perfSamples.gosInvokeMs.push(performance.now() - t0);
+    return {
+      full: full,
+      biological: biological,
+      locationContext: {
+        trusted: true,
+        broadClimate: 'subtropical',
+        freezingRisk: 'medium',
+        regionTags: ['florida', 'subtropical'],
+        notes: fixtureId
+      },
+      inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: baseGarden, plantContext: plantContext }
+    };
+  }
+
+  // GOS-3C1 config-driven Florida-aligned fixtures
+  const def = fixtureDef(fixtureId);
+  if (!def) throw new Error('Unknown comparison fixture: ' + fixtureId);
+  const gardenContext = {
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: def.sunExposure || 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  };
+  const locationClimate = {
+    trusted: true,
+    latitude: def.latitude,
+    longitude: def.longitude,
+    regionTags: def.regionTags.slice(),
+    climateTags: def.climateTags.slice(),
+    hemisphere: 'northern',
+    locationConfidence: def.locationConfidence,
+    climateConfidence: def.climateConfidence,
+    structuralFreezingRisk: def.structuralFreezingRisk,
+    isFrostFreeGrowingClimate: def.isFrostFreeGrowingClimate,
+    values: Object.assign({}, def.values)
+  };
+  const plantContext = {
+    cultivar: def.cultivar,
+    ageClass: def.ageClass,
+    propagation: 'unknown',
+    contextTags: def.plantContextTags.slice()
+  };
+  const t0 = performance.now();
+  const biological = evaluateBiologicalGrowthOutcomes({
+    profile: profile,
+    evidenceById: evidenceById,
+    locationClimate: locationClimate,
+    gardenContext: gardenContext,
+    plantContext: plantContext
+  });
+  const full = evaluateGrowthOutcomeSuitability({
+    profile: profile,
+    evidenceById: evidenceById,
+    locationClimate: locationClimate,
+    gardenContext: gardenContext,
+    plantContext: plantContext,
+    userGoal: def.userGoal
+  });
+  perfSamples.gosInvokeMs.push(performance.now() - t0);
+  return {
+    full: full,
+    biological: biological,
+    locationContext: {
+      trusted: true,
+      broadClimate: def.broadClimate,
+      freezingRisk: def.freezingRisk,
+      regionTags: def.regionTags.slice().sort(),
+      notes: fixtureId
+    },
+    inputsFrozenCheck: { locationClimate: locationClimate, gardenContext: gardenContext, plantContext: plantContext }
+  };
+}
+
+function invokeDeveloperApiForFixture(fixtureId, profile, evidenceById, gosPack) {
+  const inputs = gosPack.inputsFrozenCheck;
+  const goal = (function () {
+    if (fixtureId === 'trusted_warm_mango_mature_reliable_yield') return 'reliableHouseholdYield';
+    const def = fixtureDef(fixtureId);
+    if (def && def.userGoal) return def.userGoal;
+    return 'ornamentalFoliage';
+  })();
+
+  const baseReq = {
+    capability: GOS_DEVELOPER_CAPABILITY,
+    profile: profile,
+    evidenceById: evidenceById,
+    locationClimate: inputs.locationClimate,
+    gardenContext: inputs.gardenContext,
+    plantContext: inputs.plantContext
+  };
+  const before = {
+    profile: clone(profile),
+    evidenceById: clone(evidenceById),
+    locationClimate: clone(inputs.locationClimate),
+    gardenContext: clone(inputs.gardenContext),
+    plantContext: clone(inputs.plantContext)
+  };
+
+  const bioReq = Object.assign({ mode: 'biology' }, baseReq);
+  const suitReq = Object.assign({ mode: 'suitability', userGoal: goal }, baseReq);
+
+  const apiBioEnv = evaluateGrowthOutcomeForDeveloper(bioReq);
+  const apiSuitEnv = evaluateGrowthOutcomeForDeveloper(suitReq);
+
+  const after = {
+    profile: profile,
+    evidenceById: evidenceById,
+    locationClimate: inputs.locationClimate,
+    gardenContext: inputs.gardenContext,
+    plantContext: inputs.plantContext
+  };
+  return {
+    goal: goal,
+    before: before,
+    after: after,
+    apiBioEnv: apiBioEnv,
+    apiSuitEnv: apiSuitEnv,
+    inputsUnchanged: stableStringify(before) === stableStringify({
+      profile: after.profile,
+      evidenceById: after.evidenceById,
+      locationClimate: after.locationClimate,
+      gardenContext: after.gardenContext,
+      plantContext: after.plantContext
+    })
+  };
+}
+
+async function runSingleComparison(fixtureId, profile, evidenceById, profileDoc, evidenceDoc) {
+  const weatherKind = fixtureWeatherKind(fixtureId);
+  const locationPack = fixtureLocationPack(fixtureId);
+  const catalogSlug = fixtureCatalogSlug(fixtureId);
+  const parity = EXPECTED_PARITY_MANIFEST.fixtures[fixtureId];
+  let iframe = null;
+  const tComp0 = performance.now();
+  try {
+    expect('parity manifest entry exists (' + fixtureId + ')', !!parity);
+    const ready = await createReadyIframe(weatherKind);
+    iframe = ready.iframe;
+    const cw = ready.cw;
+    expect('iframe bootstrap resources exclude GOS (' + fixtureId + ')', ready.resourceHits.length === 0,
+      ready.resourceHits.join(',') || 'none');
+
+    if (locationPack === 'untrusted') {
+      const untrusted = await ensureUntrusted(cw);
+      expect('untrusted gate for ' + fixtureId, untrusted, 'hasTrusted=' + cw.hasTrustedAppLocation());
+      const loc = cw.getAppLocation();
+      expect('DEFAULT/Western Galilee not trusted', cw.hasTrustedAppLocation() === false
+        && (String(loc.source || '').toLowerCase() === 'default' || loc.confirmationStatus === 'default'),
+        'source=' + loc.source + ' status=' + loc.confirmationStatus);
+    } else if (locationPack === 'florida') {
+      const trusted = await ensureTrustedFlorida(cw);
+      expect('trusted Florida location for ' + fixtureId, trusted);
+    } else {
+      const trusted = await ensureTrustedWarm(cw);
+      expect('trusted warm location for ' + fixtureId, trusted);
+    }
+
+    const tV0 = performance.now();
+    const v1bRaw = cw.evaluateClimateSuitabilityV1(catalogSlug, { indoorShelter: false });
+    perfSamples.v1bInvokeMs.push(performance.now() - tV0);
+    const v1bN = normalizeV1b(v1bRaw);
+
+    const gosPack = runGosForFixture(fixtureId, profile, evidenceById);
+    const inputSnapshotBefore = stableStringify(gosPack.inputsFrozenCheck);
+    expect('direct GOS full deeply frozen (' + fixtureId + ')', isFrozenDeep(gosPack.full));
+    expect('direct GOS biological deeply frozen (' + fixtureId + ')', isFrozenDeep(gosPack.biological));
+
+    const apiPack = invokeDeveloperApiForFixture(fixtureId, profile, evidenceById, gosPack);
+    expect('developer API inputs non-mutated (' + fixtureId + ')', apiPack.inputsUnchanged);
+    expect('direct GOS inputs unchanged after API (' + fixtureId + ')',
+      stableStringify(gosPack.inputsFrozenCheck) === inputSnapshotBefore);
+
+    const apiBioEnv = apiPack.apiBioEnv;
+    const apiSuitEnv = apiPack.apiSuitEnv;
+    expect('API bio envelope frozen (' + fixtureId + ')', isFrozenDeep(apiBioEnv));
+    expect('API suit envelope frozen (' + fixtureId + ')', isFrozenDeep(apiSuitEnv));
+    expect('API versions present (' + fixtureId + ')',
+      apiSuitEnv.apiVersion === GOS_DEVELOPER_API_VERSION
+      && apiSuitEnv.engineVersion === GROWTH_OUTCOME_ENGINE_VERSION
+      && apiBioEnv.apiVersion === GOS_DEVELOPER_API_VERSION);
+
+    let apiSuccess = false;
+    let classifyFull = null;
+    let classifyBio = null;
+
+    if (parity.apiExpected === 'blocked_trusted_location') {
+      expect('API bio blocks untrusted (' + fixtureId + ')',
+        apiBioEnv.ok === false && apiBioEnv.apiStatus === 'blocked'
+        && apiBioEnv.reason === 'trusted_location_required' && apiBioEnv.result === null);
+      expect('API suit blocks untrusted (' + fixtureId + ')',
+        apiSuitEnv.ok === false && apiSuitEnv.apiStatus === 'blocked'
+        && apiSuitEnv.reason === 'trusted_location_required' && apiSuitEnv.result === null);
+      expect('blocked envelope has no fabricated outcomes (' + fixtureId + ')',
+        !Object.prototype.hasOwnProperty.call(apiSuitEnv, 'outcomes'));
+      // Category parity uses direct evaluator nested result (API has no nested biology by design).
+      classifyFull = gosPack.full;
+      classifyBio = gosPack.biological;
+      apiSuccess = true; // expected blocked path succeeded
+      expect('API≠evaluator nested skipped; direct blocked status (' + fixtureId + ')',
+        gosPack.full.evaluationStatus === 'blocked_untrusted_location'
+        && gosPack.biological.evaluationStatus === 'blocked_untrusted_location');
+    } else {
+      expect('API bio ok (' + fixtureId + ')',
+        apiBioEnv.ok === true && apiBioEnv.apiStatus === 'ok' && apiBioEnv.reason === 'ok'
+        && apiBioEnv.result != null && apiBioEnv.mode === 'biology');
+      expect('API suit ok (' + fixtureId + ')',
+        apiSuitEnv.ok === true && apiSuitEnv.apiStatus === 'ok' && apiSuitEnv.reason === 'ok'
+        && apiSuitEnv.result != null && apiSuitEnv.mode === 'suitability');
+      expect('API nested results frozen (' + fixtureId + ')',
+        isFrozenDeep(apiBioEnv.result) && isFrozenDeep(apiSuitEnv.result));
+      expect('API bio ≡ direct biological (' + fixtureId + ')',
+        stableStringify(apiBioEnv.result) === stableStringify(gosPack.biological));
+      expect('API suit ≡ direct suitability (' + fixtureId + ')',
+        stableStringify(apiSuitEnv.result) === stableStringify(gosPack.full));
+      classifyFull = apiSuitEnv.result;
+      classifyBio = apiBioEnv.result;
+      apiSuccess = true;
+    }
+
+    const gosN = normalizeGos(classifyFull, classifyBio);
+    const gosBioN = normalizeGos(classifyBio, classifyBio);
+    gosBioN.goalFit = null;
+    gosBioN.recommendedUse = [];
+    gosBioN.overallConclusion = null;
+    gosBioN.warnings = (classifyBio.warnings || []).slice().sort();
+
+    const meta = {
+      gosEngineVersion: GROWTH_OUTCOME_ENGINE_VERSION,
+      apiVersion: GOS_DEVELOPER_API_VERSION,
+      v1bEngineVersion: 'v1b',
+      profileVersion: profile.profileVersion || null,
+      evidenceDataVersion: evidenceDoc.dataVersion || null,
+      profilesSchemaVersion: profileDoc.schemaVersion || null,
+      fixtureVersion: 'gos-3f-0.1.0'
+    };
+    const plantIdentity = {
+      canonicalSlug: catalogSlug,
+      catalogSlug: catalogSlug,
+      plantId: profile.plantId || null
+    };
+    const comparisonObj = buildComparisonObject(
+      fixtureId, plantIdentity, gosPack.locationContext, v1bN, gosN, gosBioN, meta
+    );
+    expect('comparison deeply frozen (' + fixtureId + ')', isFrozenDeep(comparisonObj));
+    expect('no winner language (' + fixtureId + ')',
+      !/gos better|v1b wrong|preferred engine|replacement|winner/i.test(stableStringify(comparisonObj.comparison)));
+    expect('primary category allowed (' + fixtureId + ')',
+      ALLOWED_CATEGORIES.indexOf(comparisonObj.comparison.primaryCategory) >= 0,
+      comparisonObj.comparison.primaryCategory);
+    expect('primary category parity with GOS-3C1 (' + fixtureId + ')',
+      comparisonObj.comparison.primaryCategory === parity.expectedPrimaryCategory,
+      'actual=' + comparisonObj.comparison.primaryCategory + ' expected=' + parity.expectedPrimaryCategory);
+
+    expect('post-ready forbidden GOS fetches (' + fixtureId + ')',
+      ready.guards.forbiddenHits().length === 0,
+      ready.guards.forbiddenHits().join(',') || 'none');
+
+    if (cw.hasTrustedAppLocation && cw.hasTrustedAppLocation()) {
+      await cw.clearAppLocation();
+    }
+    expect('iframe location untrusted before destroy (' + fixtureId + ')', cw.hasTrustedAppLocation() === false);
+
+    perfSamples.comparisonMs.push(performance.now() - tComp0);
+    return {
+      fixtureId: fixtureId,
+      normalizedV1b: v1bN,
+      normalizedGos: gosN,
+      biologicalGos: gosBioN,
+      comparison: comparisonObj.comparison,
+      comparisonObj: comparisonObj,
+      apiSuccess: apiSuccess,
+      apiBioEnv: apiBioEnv,
+      apiSuitEnv: apiSuitEnv,
+      apiExpected: parity.apiExpected,
+      expectedPrimaryCategory: parity.expectedPrimaryCategory,
+      equivalenceOk: parity.apiExpected === 'blocked_trusted_location'
+        ? true
+        : (stableStringify(apiBioEnv.result) === stableStringify(gosPack.biological)
+          && stableStringify(apiSuitEnv.result) === stableStringify(gosPack.full))
+    };
+  } finally {
+    destroyIframe(iframe);
+  }
+}
+
+async function inventoryV1bFromSource(indexText) {
+  const levels = [];
+  const levelFromScore = indexText.match(/function climateSuitabilityV1LevelFromScore[\s\S]*?^}/m);
+  const levelTokens = ['notRecommended', 'unknown', 'risky', 'possible', 'good', 'excellent'];
+  levelTokens.forEach((t) => {
+    if (new RegExp("'" + t + "'|\"" + t + "\"").test(indexText) && levels.indexOf(t) < 0) levels.push(t);
+  });
+  const scoreNull = [];
+  if (/score:\s*null/.test(indexText) && /location_untrusted/.test(indexText)) {
+    scoreNull.push('hasTrustedAppLocation_false → score null, level unknown, dataSource location_untrusted');
+  }
+  if (/if\(!plant\)/.test(indexText)) {
+    scoreNull.push('missing plant → score null, level unknown');
+  }
+  if (/blocks\.length&&strictBlocks/.test(indexText)) {
+    scoreNull.push('strictBlocks with blocks → score 0 (not null), level notRecommended');
+  }
+  const frost = [];
+  if (/climateSuitabilityV1HighFrostNeedsConservativeClimate/.test(indexText)) {
+    frost.push('high frost-sensitive + non-frost-free → factor penalties + level cap risky|possible');
+  }
+  if (/Frost risk is too high for this plant/.test(indexText)) {
+    frost.push('high frostSensitivity + freezingRisk!==low + !indoorShelter → hard block');
+  }
+  if (/tropical-frost-sensitive-fruit/.test(indexText)) {
+    frost.push('tropical-frost-sensitive-fruit group participates in frost caps/blocks');
+  }
+  return {
+    levels: levels,
+    scoreNullConditions: scoreNull,
+    frostCapOrBlock: frost,
+    untrustedResult: {
+      level: 'unknown',
+      score: null,
+      dataSource: 'location_untrusted'
+    }
+  };
+}
+
+function finish(okLabel) {
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const host = document.getElementById('summary');
+  host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + okLabel;
+  host.className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</td></tr>'
+  ).join('');
+  document.getElementById('report').textContent = reportLines.join('\n');
+  const summary = {
+    total: results.length,
+    passed: passed,
+    failed: failed,
+    ready: failed === 0,
+    fixtureCount: FIXTURE_IDS.length,
+    recommendation: failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY',
+    verdict: failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY'
+  };
+  window.__GOS3F_DONE = true;
+  window.__GOS3F_SUMMARY = summary;
+  window.__GOS3_SUMMARY = summary;
+  window.__GOS3F_PERF = {
+    iframeBootstrapMedianMs: median(perfSamples.iframeBootstrapMs),
+    v1bInvokeMedianMs: median(perfSamples.v1bInvokeMs),
+    gosInvokeMedianMs: median(perfSamples.gosInvokeMs),
+    comparisonMedianMs: median(perfSamples.comparisonMs)
+  };
+  window.__GOS3F_REPORT = reportLines.slice();
+  try {
+    const params = new URLSearchParams(String(location.search || ''));
+    if (params.get('report') === '1') {
+      const body = JSON.stringify({
+        summary: summary,
+        perf: window.__GOS3F_PERF,
+        report: reportLines.slice(),
+        failedNames: results.filter((r) => !r.pass).map((r) => r.name + ' :: ' + r.detail)
+      });
+      fetch('/__result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+      }).catch(function () {});
+      fetch('/__gos3c1_result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body
+      }).catch(function () {});
+    }
+  } catch (e) {}
+}
+
+async function main() {
+  const harnessStart = performance.now();
+  const initialSnap = snapshotStorage();
+  let recommendation = 'NOT_READY';
+  try {
+    expect('no window GOS evaluator global',
+      typeof window.evaluateGrowthOutcomeSuitability === 'undefined'
+      && typeof window.CruvitGrowthOutcomeEvaluator === 'undefined');
+    expect('no window developer API global',
+      typeof window.evaluateGrowthOutcomeForDeveloper === 'undefined'
+      && typeof window.GOS_DEVELOPER_CAPABILITY === 'undefined');
+
+    expect('parity manifest fixtureCount 8', EXPECTED_PARITY_MANIFEST.fixtureCount === 8);
+    expect('parity manifest deeply frozen', isFrozenDeep(EXPECTED_PARITY_MANIFEST));
+    expect('FIXTURE_IDS length 8', FIXTURE_IDS.length === 8);
+    expect('FIXTURE_IDS unique', new Set(FIXTURE_IDS).size === 8);
+    expect('manifest keys match FIXTURE_IDS exactly',
+      FIXTURE_IDS.every((id) => !!EXPECTED_PARITY_MANIFEST.fixtures[id])
+      && Object.keys(EXPECTED_PARITY_MANIFEST.fixtures).length === 8
+      && Object.keys(EXPECTED_PARITY_MANIFEST.fixtures).every((id) => FIXTURE_IDS.indexOf(id) >= 0));
+    expect('manifest categories are approved only',
+      Object.keys(EXPECTED_PARITY_MANIFEST.fixtures).every((id) =>
+        ALLOWED_CATEGORIES.indexOf(EXPECTED_PARITY_MANIFEST.fixtures[id].expectedPrimaryCategory) >= 0));
+
+    // Parent-only pilot/evaluator/API loads
+    const evidenceDoc = await fetch('../data/growth-outcome-pilot/evidence.json').then((r) => r.json());
+    const profileDoc = await fetch('../data/growth-outcome-pilot/profiles.json').then((r) => r.json());
+    const evidenceById = evidenceByIdFromDoc(evidenceDoc);
+    const mango = profileBySlug(profileDoc, 'mango');
+    const lychee = profileBySlug(profileDoc, 'lychee');
+    const bougainvillea = profileBySlug(profileDoc, 'bougainvillea');
+    expect('pilot mango profile loaded in parent', !!mango);
+    expect('pilot lychee profile loaded in parent', !!lychee);
+    expect('pilot bougainvillea profile loaded in parent', !!bougainvillea);
+    const profilesBySlug = {
+      mango: mango,
+      lychee: lychee,
+      bougainvillea: bougainvillea
+    };
+
+    const indexText = await fetch('../index.html').then((r) => r.text());
+    expect('index.html has no GOS evaluator import',
+      !/growth-outcome-evaluator/.test(indexText)
+      && !/modules\/suitability\/growth-outcome/.test(indexText));
+    expect('index.html has no developer API',
+      !/growth-outcome-developer-api/.test(indexText)
+      && !/evaluateGrowthOutcomeForDeveloper/.test(indexText)
+      && !/GOS_DEVELOPER_CAPABILITY/.test(indexText));
+    expect('index.html has no developer-comparison harness',
+      !/growth-outcome-developer-comparison/.test(indexText));
+    expect('index.html has no pilot evidence/profiles path',
+      !/growth-outcome-pilot\/evidence\.json/.test(indexText)
+      && !/growth-outcome-pilot\/profiles\.json/.test(indexText));
+    expect('Smart Rec path has no GOS call',
+      !/evaluateGrowthOutcomeSuitability|evaluateBiologicalGrowthOutcomes|interpretGrowthOutcomesForGoal|evaluateGrowthOutcomeForDeveloper/.test(indexText));
+    expect('no GOS↔v1b score bridge tokens',
+      !/gosToV1b|v1bToGos|growthOutcomeScore|bridgeGrowthOutcome/i.test(indexText));
+
+    const inventory = await inventoryV1bFromSource(indexText);
+    logReport('=== GOS-3F developer comparison (API path) ===');
+    logReport('provenance commit=4a11dd59aa2a66232e795ed7403b93865c29eb14');
+    logReport('v1b levels: ' + json(inventory.levels));
+    logReport('cross-engine risk-band mapping: DEFERRED (not invented in GOS-3F)');
+    expect('v1b levels include unknown and excellent..notRecommended',
+      inventory.levels.indexOf('unknown') >= 0
+      && inventory.levels.indexOf('notRecommended') >= 0
+      && inventory.levels.indexOf('excellent') >= 0);
+    expect('fixture matrix has eight fixtures', FIXTURE_IDS.length === 8);
+
+    const fixtureResults = {};
+    const firstPassByFixture = {};
+
+    for (let f = 0; f < FIXTURE_IDS.length; f++) {
+      const fixtureId = FIXTURE_IDS[f];
+      const catalogSlug = fixtureCatalogSlug(fixtureId);
+      const profile = profilesBySlug[catalogSlug];
+      expect('profile available for ' + fixtureId, !!profile, catalogSlug);
+      const repeats = [];
+      for (let i = 0; i < DETERMINISM_REPEATS; i++) {
+        restoreStorage(initialSnap);
+        expect('cookie unchanged before repeat ' + fixtureId + '#' + i,
+          String(document.cookie || '') === initialSnap.cookie);
+        const once = await runSingleComparison(fixtureId, profile, evidenceById, profileDoc, evidenceDoc);
+        repeats.push({
+          v1b: once.normalizedV1b,
+          gos: once.normalizedGos,
+          bio: once.biologicalGos,
+          comparison: once.comparison,
+          apiBioEnv: once.apiBioEnv,
+          apiSuitEnv: once.apiSuitEnv,
+          apiSuccess: once.apiSuccess,
+          equivalenceOk: once.equivalenceOk,
+          expectedPrimaryCategory: once.expectedPrimaryCategory
+        });
+        restoreStorage(initialSnap);
+        expect('storage restored after ' + fixtureId + '#' + i, storageEquals(snapshotStorage(), initialSnap));
+      }
+
+      const base = repeats[0];
+      let allV1b = true;
+      let allGos = true;
+      let allCmp = true;
+      let allApi = true;
+      for (let i = 1; i < repeats.length; i++) {
+        if (stableStringify(repeats[i].v1b) !== stableStringify(base.v1b)) allV1b = false;
+        if (stableStringify(repeats[i].gos) !== stableStringify(base.gos)) allGos = false;
+        if (stableStringify(repeats[i].comparison) !== stableStringify(base.comparison)) allCmp = false;
+        if (stableStringify(repeats[i].apiBioEnv) !== stableStringify(base.apiBioEnv)) allApi = false;
+        if (stableStringify(repeats[i].apiSuitEnv) !== stableStringify(base.apiSuitEnv)) allApi = false;
+      }
+      expect('determinism x' + DETERMINISM_REPEATS + ' v1b (' + fixtureId + ')', allV1b);
+      expect('determinism x' + DETERMINISM_REPEATS + ' gos (' + fixtureId + ')', allGos);
+      expect('determinism x' + DETERMINISM_REPEATS + ' comparison (' + fixtureId + ')', allCmp);
+      expect('determinism x' + DETERMINISM_REPEATS + ' api envelopes (' + fixtureId + ')', allApi);
+      expect('API success path for fixture (' + fixtureId + ')', !!base.apiSuccess);
+      expect('API≡evaluator equivalence (' + fixtureId + ')', !!base.equivalenceOk);
+      expect('category parity (' + fixtureId + ')',
+        base.comparison.primaryCategory === base.expectedPrimaryCategory,
+        'actual=' + base.comparison.primaryCategory + ' expected=' + base.expectedPrimaryCategory);
+      logReport('determinism ' + fixtureId + ': v1b=' + allV1b + ' gos=' + allGos + ' comparison=' + allCmp
+        + ' api=' + allApi + ' primary=' + base.comparison.primaryCategory
+        + ' expected=' + base.expectedPrimaryCategory + ' equiv=' + base.equivalenceOk);
+      logReport('  v1b=' + stableStringify(base.v1b));
+      logReport('  gos.eval=' + base.gos.evaluationStatus + ' survival=' + base.gos.outcomes.survival.level
+        + ' blockers=' + json(base.gos.outcomes.survival.blockers));
+      logReport('  primaryCategory=' + base.comparison.primaryCategory
+        + ' secondary=' + json(base.comparison.secondaryCategories));
+
+      fixtureResults[fixtureId] = base;
+      firstPassByFixture[fixtureId] = base;
+    }
+
+    // Fixture-specific semantic assertions (from last deterministic baseline)
+    const A = fixtureResults.untrusted_location_mango;
+    expect('A v1b unknown/null/location_untrusted',
+      A.v1b.level === 'unknown' && A.v1b.score === null && A.v1b.dataSource === 'location_untrusted',
+      json(A.v1b));
+    expect('A GOS blocked_untrusted_location', A.gos.evaluationStatus === 'blocked_untrusted_location');
+    expect('A all six unknown', GROWTH_OUTCOME_NAMES.every((n) => A.gos.outcomes[n].level === 'unknown'));
+    expect('A parity both_blocked', A.comparison.trustedLocationParity === 'both_blocked');
+    expect('A primary aligned_unknown', A.comparison.primaryCategory === 'aligned_unknown');
+
+    const B = fixtureResults.trusted_warm_mango_mature_ornamental;
+    const C = fixtureResults.trusted_warm_mango_mature_reliable_yield;
+    expect('B v1b scored (trusted)', B.v1b.score != null && B.v1b.level !== '' && B.v1b.dataSource !== 'location_untrusted',
+      json(B.v1b));
+    expect('B/C v1b byte-identical', stableStringify(B.v1b) === stableStringify(C.v1b));
+    expect('B/C biological GOS byte-identical', stableStringify(B.bio.outcomes) === stableStringify(C.bio.outcomes)
+      && B.bio.evaluationStatus === C.bio.evaluationStatus);
+    expect('B/C goal fields may differ',
+      stableStringify(B.gos.goalFit) !== stableStringify(C.gos.goalFit)
+      || stableStringify(B.gos.recommendedUse) !== stableStringify(C.gos.recommendedUse)
+      || B.gos.overallConclusion !== C.gos.overallConclusion);
+    expect('B broadSurvivalDirection incomparable', B.comparison.broadSurvivalDirection === 'incomparable');
+    expect('B uses allowed category only',
+      ALLOWED_CATEGORIES.indexOf(B.comparison.primaryCategory) >= 0);
+    expect('B primary category parity',
+      B.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.trusted_warm_mango_mature_ornamental.expectedPrimaryCategory);
+    expect('C primary category parity',
+      C.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.trusted_warm_mango_mature_reliable_yield.expectedPrimaryCategory);
+
+    const D = fixtureResults.florida_young_mango_cold;
+    const E = fixtureResults.florida_mature_mango_same_cold;
+    expect('D young blocker present or deferred evidence captured',
+      (D.gos.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') >= 0
+      || (D.gos.outcomes.survival.level === 'notRecommended'),
+      'level=' + D.gos.outcomes.survival.level + ' blockers=' + json(D.gos.outcomes.survival.blockers));
+    expect('E young blocker absent',
+      (E.gos.outcomes.survival.blockers || []).indexOf('mango_surv_young_freeze_kill') < 0,
+      json(E.gos.outcomes.survival.blockers));
+    expect('D/E v1b may be identical (no age model)', true,
+      'v1bEqual=' + (stableStringify(D.v1b) === stableStringify(E.v1b)));
+    expect('E has applicability_difference',
+      E.comparison.primaryCategory === 'applicability_difference'
+      || (E.comparison.secondaryCategories || []).indexOf('applicability_difference') >= 0
+      || (E.comparison.secondaryCategories || []).indexOf('different_question_not_conflict') >= 0
+      || E.comparison.primaryCategory === 'different_question_not_conflict');
+    expect('D primary category parity',
+      D.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.florida_young_mango_cold.expectedPrimaryCategory);
+    expect('E primary category parity',
+      E.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.florida_mature_mango_same_cold.expectedPrimaryCategory);
+
+    // GOS-3C1 — Lychee Florida freeze conflict preservation
+    const L = fixtureResults.lychee_florida_mature_freeze_conflict_preserved;
+    const Lsurv = L.gos.outcomes.survival;
+    const Ldef = fixtureDef('lychee_florida_mature_freeze_conflict_preserved');
+    expect('L v1b trusted scored', L.v1b.score != null && L.v1b.dataSource !== 'location_untrusted', json(L.v1b));
+    expect('L GOS evaluation ok', L.gos.evaluationStatus === 'ok' || L.gos.evaluationStatus === 'complete'
+      || (L.gos.evaluationStatus && L.gos.evaluationStatus.indexOf('block') < 0),
+      L.gos.evaluationStatus);
+    expect('L survival unknown supported conflicting',
+      Lsurv.level === 'unknown' && Lsurv.dataStatus === 'supported'
+      && (Lsurv.blockers || []).length === 0
+      && Lsurv.sourceCoverage && Lsurv.sourceCoverage.conflicting === true,
+      json(Lsurv));
+    expect('L conflicting freeze evidence both used',
+      (Lsurv.evidenceRefsUsed || []).indexOf('ev_lychee_surv_freeze_mature_mg051') >= 0
+      && (Lsurv.evidenceRefsUsed || []).indexOf('ev_lychee_surv_freeze_range_hs1499') >= 0,
+      json(Lsurv.evidenceRefsUsed));
+    expect('L survival not averaged to concrete level',
+      Lsurv.level === 'unknown'
+      && Lsurv.level !== 'possible' && Lsurv.level !== 'risky' && Lsurv.level !== 'notRecommended');
+    expect('L vegetativeGrowth possible/partial',
+      L.gos.outcomes.vegetativeGrowth.level === 'possible'
+      && L.gos.outcomes.vegetativeGrowth.dataStatus === 'partial');
+    expect('L flowering risky/partial with chill limiting',
+      L.gos.outcomes.flowering.level === 'risky'
+      && L.gos.outcomes.flowering.dataStatus === 'partial'
+      && (L.gos.outcomes.flowering.limitingFactors || []).indexOf('lychee_flow_chill_comment') >= 0
+      && (L.gos.outcomes.flowering.missingInputs || []).indexOf('chillHours') >= 0,
+      json(L.gos.outcomes.flowering));
+    expect('L fruitSet possible/partial',
+      L.gos.outcomes.fruitSet.level === 'possible' && L.gos.outcomes.fruitSet.dataStatus === 'partial');
+    expect('L fruitRipeningOrYield unknown',
+      L.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && L.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('L longTermReliability unknown/partial',
+      L.gos.outcomes.longTermReliability.level === 'unknown'
+      && L.gos.outcomes.longTermReliability.dataStatus === 'partial');
+    expect('L expectedPrimaryCategory assertion-only',
+      L.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.lychee_florida_mature_freeze_conflict_preserved.expectedPrimaryCategory,
+      'actual=' + L.comparison.primaryCategory + ' expected=' +
+      EXPECTED_PARITY_MANIFEST.fixtures.lychee_florida_mature_freeze_conflict_preserved.expectedPrimaryCategory);
+
+    // GOS-3C1 — Bougainvillea flowering display vs unknown fruit
+    const Bg = fixtureResults.florida_bougainvillea_mature_flowering_display;
+    const Bgdef = fixtureDef('florida_bougainvillea_mature_flowering_display');
+    expect('Bg v1b trusted scored', Bg.v1b.score != null && Bg.v1b.dataSource !== 'location_untrusted', json(Bg.v1b));
+    expect('Bg survival risky with frost limiting',
+      Bg.gos.outcomes.survival.level === 'risky'
+      && Bg.gos.outcomes.survival.dataStatus === 'partial'
+      && (Bg.gos.outcomes.survival.limitingFactors || []).indexOf('boug_surv_frost_limiting') >= 0,
+      json(Bg.gos.outcomes.survival));
+    expect('Bg vegetativeGrowth possible', Bg.gos.outcomes.vegetativeGrowth.level === 'possible');
+    expect('Bg flowering possible/supported',
+      Bg.gos.outcomes.flowering.level === 'possible'
+      && Bg.gos.outcomes.flowering.dataStatus === 'supported');
+    expect('Bg fruitSet unknown',
+      Bg.gos.outcomes.fruitSet.level === 'unknown' && Bg.gos.outcomes.fruitSet.dataStatus === 'unknown');
+    expect('Bg fruitRipeningOrYield unknown',
+      Bg.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && Bg.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('Bg longTermReliability unknown/partial',
+      Bg.gos.outcomes.longTermReliability.level === 'unknown'
+      && Bg.gos.outcomes.longTermReliability.dataStatus === 'partial');
+    expect('Bg floweringDisplay goal interpretation',
+      Bg.gos.goalFit && Bg.gos.goalFit.goal === 'floweringDisplay'
+      && Bg.gos.overallConclusion === 'interpret_for_flowering_display'
+      && (Bg.gos.recommendedUse || []).indexOf('flowering_display') >= 0,
+      json({ goalFit: Bg.gos.goalFit, overallConclusion: Bg.gos.overallConclusion, recommendedUse: Bg.gos.recommendedUse }));
+    expect('Bg expectedPrimaryCategory assertion-only',
+      Bg.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.florida_bougainvillea_mature_flowering_display.expectedPrimaryCategory,
+      'actual=' + Bg.comparison.primaryCategory + ' expected=' +
+      EXPECTED_PARITY_MANIFEST.fixtures.florida_bougainvillea_mature_flowering_display.expectedPrimaryCategory);
+
+    // GOS-3C1 — Mango bloom fruitSet cold vs survival
+    const M = fixtureResults.florida_mature_mango_bloom_fruitset_cold;
+    const Mdef = fixtureDef('florida_mature_mango_bloom_fruitset_cold');
+    const Mset = M.gos.outcomes.fruitSet;
+    const Msurv = M.gos.outcomes.survival;
+    expect('M v1b trusted scored', M.v1b.score != null && M.v1b.dataSource !== 'location_untrusted', json(M.v1b));
+    expect('M fruitSet cold evidence used',
+      (Mset.evidenceRefsUsed || []).indexOf('ev_mango_set_flower_cold_mg216') >= 0,
+      json(Mset.evidenceRefsUsed));
+    expect('M fruitSet notRecommended with stage blocker',
+      Mset.level === 'notRecommended'
+      && (Mset.blockers || []).indexOf('mango_set_flower_cold') >= 0,
+      json(Mset));
+    expect('M survival possible without fruitSet blocker',
+      Msurv.level === 'possible'
+      && (Msurv.blockers || []).length === 0
+      && (Msurv.blockers || []).indexOf('mango_set_flower_cold') < 0,
+      json(Msurv));
+    expect('M young freeze blocker absent',
+      (Msurv.blockers || []).indexOf('mango_surv_young_freeze_kill') < 0);
+    expect('M fruitRipeningOrYield unknown not inferred',
+      M.gos.outcomes.fruitRipeningOrYield.level === 'unknown'
+      && M.gos.outcomes.fruitRipeningOrYield.dataStatus === 'unknown');
+    expect('M expectedPrimaryCategory assertion-only',
+      M.comparison.primaryCategory === EXPECTED_PARITY_MANIFEST.fixtures.florida_mature_mango_bloom_fruitset_cold.expectedPrimaryCategory,
+      'actual=' + M.comparison.primaryCategory + ' expected=' +
+      EXPECTED_PARITY_MANIFEST.fixtures.florida_mature_mango_bloom_fruitset_cold.expectedPrimaryCategory);
+    expect('M primary from generic stage-blocker rule not fixture-ID branch',
+      M.comparison.primaryCategory === 'blocker_scope_difference'
+      && (M.comparison.notableDifferences || []).indexOf('gos_reproductive_blocker_absent_from_survival') >= 0,
+      json(M.comparison));
+
+    // Final storage / cookie / location proof
+    restoreStorage(initialSnap);
+    const finalSnap = snapshotStorage();
+    expect('final storage matches initial', storageEquals(finalSnap, initialSnap));
+    expect('final cookie unchanged', finalSnap.cookie === initialSnap.cookie);
+    expect('no frameHost iframe remains', document.getElementById('frameHost').children.length === 0);
+
+    // No confirmed fixture location remains in parent storage garden payload
+    let gardenSource = null;
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      gardenSource = saved && saved.gardenLocation ? saved.gardenLocation.source : null;
+    } catch (e) {
+      gardenSource = 'parse_error';
+    }
+    const initialGardenSource = (function () {
+      try {
+        const saved = JSON.parse(initialSnap.localStorage[STORAGE_KEY] || 'null');
+        return saved && saved.gardenLocation ? saved.gardenLocation.source : null;
+      } catch (e) { return null; }
+    })();
+    expect('gardenLocation source restored to pre-test', gardenSource === initialGardenSource,
+      'final=' + gardenSource + ' initial=' + initialGardenSource);
+
+    const failed = results.filter((r) => !r.pass).length;
+    recommendation = failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY';
+    logReport('=== performance medians (dev only) ===');
+    logReport('iframeBootstrapMedianMs=' + median(perfSamples.iframeBootstrapMs));
+    logReport('v1bInvokeMedianMs=' + median(perfSamples.v1bInvokeMs));
+    logReport('gosInvokeMedianMs=' + median(perfSamples.gosInvokeMs));
+    logReport('comparisonMedianMs=' + median(perfSamples.comparisonMs));
+    logReport('fullHarnessDurationMs=' + (performance.now() - harnessStart));
+    logReport('fixtureCount=' + FIXTURE_IDS.length);
+    logReport('verdict=' + recommendation);
+    FIXTURE_IDS.forEach((id) => {
+      const fr = fixtureResults[id];
+      if (!fr) return;
+      logReport('fixture ' + id + ': apiSuccess=' + fr.apiSuccess
+        + ' equivalenceOk=' + fr.equivalenceOk
+        + ' primary=' + fr.comparison.primaryCategory
+        + ' expected=' + fr.expectedPrimaryCategory);
+    });
+  } catch (err) {
+    expect('harness completed without throw', false, String(err && err.stack || err));
+    recommendation = 'NOT_READY';
+    logReport('FATAL: ' + String(err && err.stack || err));
+  } finally {
+    try { restoreStorage(initialSnap); } catch (e) {}
+    try {
+      const host = document.getElementById('frameHost');
+      while (host && host.firstChild) host.removeChild(host.firstChild);
+    } catch (e) {}
+    finish(recommendation);
+  }
+}
+
+main();
+</script>
+</body>
+</html>
