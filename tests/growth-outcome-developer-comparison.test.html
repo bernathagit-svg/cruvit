@@ -21,9 +21,11 @@
 <body>
   <h1>Growth Outcome Suitability — GOS-3F developer comparison harness</h1>
   <p class="sub">
-    Test-only standalone harness. Invokes GOS through the capability-gated developer API, asserts nested
-    result ≡ direct evaluator, and preserves GOS-3C1 neutral v1b categories for the same eight fixtures.
-    Real <code>index.html</code> iframe invokes live <code>evaluateClimateSuitabilityV1</code> only.
+    Test-only standalone harness. Successful trusted-fixture developer API nested results are byte-identical
+    to direct evaluator results. The untrusted fixture validates the fail-closed API trusted-location boundary
+    (<code>result === null</code>); its neutral category parity is checked through the direct evaluator path;
+    the blocked API envelope is never classified as biology. Preserves GOS-3C1 neutral v1b categories for the
+    same eight fixtures. Real <code>index.html</code> iframe invokes live <code>evaluateClimateSuitabilityV1</code> only.
     No score bridge, no product wiring, no production verification in this checkpoint.
   </p>
   <div id="summary">Running…</div>
@@ -45,7 +47,9 @@
  *
  * Untrusted fixture note: the developer API fail-closes with trusted_location_required (result null)
  * before calling the evaluator. Category parity for that fixture uses the direct evaluator nested
- * result (same as GOS-3C1). The API envelope is never treated as a biological engine result.
+ * result (same as GOS-3C1) — biologicalComparisonSource=direct_evaluator_boundary_parity.
+ * The API envelope is never treated as a biological engine result.
+ * apiToEvaluatorEquivalence is not_applicable when hasNativeApiResult is false.
  */
 import {
   evaluateBiologicalGrowthOutcomes,
@@ -85,8 +89,8 @@ const ALLOWED_CATEGORIES = Object.freeze([
 /**
  * Frozen GOS-3C1 parity manifest (test-only).
  * expectedPrimaryCategory values match classifier primaryCategory for the C1 matrix at 4a11dd5.
- * apiExpected: 'ok' requires successful envelope.result; 'blocked_trusted_location' is the
- * developer-API fail-closed contract for the untrusted fixture.
+ * apiExpectedOutcome: 'successful_native_result' requires successful envelope.result;
+ * 'blocked_trusted_location' is the developer-API fail-closed contract for the untrusted fixture.
  */
 const EXPECTED_PARITY_MANIFEST = Object.freeze({
   fixtureCount: 8,
@@ -94,35 +98,35 @@ const EXPECTED_PARITY_MANIFEST = Object.freeze({
   fixtures: Object.freeze({
     untrusted_location_mango: Object.freeze({
       expectedPrimaryCategory: 'aligned_unknown',
-      apiExpected: 'blocked_trusted_location'
+      apiExpectedOutcome: 'blocked_trusted_location'
     }),
     trusted_warm_mango_mature_ornamental: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     trusted_warm_mango_mature_reliable_yield: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     florida_young_mango_cold: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     florida_mature_mango_same_cold: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     lychee_florida_mature_freeze_conflict_preserved: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     florida_bougainvillea_mature_flowering_display: Object.freeze({
       expectedPrimaryCategory: 'gos_preserves_unknown',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     }),
     florida_mature_mango_bloom_fruitset_cold: Object.freeze({
       expectedPrimaryCategory: 'blocker_scope_difference',
-      apiExpected: 'ok'
+      apiExpectedOutcome: 'successful_native_result'
     })
   })
 });
@@ -1030,42 +1034,65 @@ async function runSingleComparison(fixtureId, profile, evidenceById, profileDoc,
       && apiSuitEnv.engineVersion === GROWTH_OUTCOME_ENGINE_VERSION
       && apiBioEnv.apiVersion === GOS_DEVELOPER_API_VERSION);
 
-    let apiSuccess = false;
     let classifyFull = null;
     let classifyBio = null;
+    let semantics = null;
 
-    if (parity.apiExpected === 'blocked_trusted_location') {
-      expect('API bio blocks untrusted (' + fixtureId + ')',
+    if (parity.apiExpectedOutcome === 'blocked_trusted_location') {
+      expect('expected developer API trusted-location boundary block (bio) (' + fixtureId + ')',
         apiBioEnv.ok === false && apiBioEnv.apiStatus === 'blocked'
         && apiBioEnv.reason === 'trusted_location_required' && apiBioEnv.result === null);
-      expect('API suit blocks untrusted (' + fixtureId + ')',
+      expect('expected developer API trusted-location boundary block (suit) (' + fixtureId + ')',
         apiSuitEnv.ok === false && apiSuitEnv.apiStatus === 'blocked'
         && apiSuitEnv.reason === 'trusted_location_required' && apiSuitEnv.result === null);
       expect('blocked envelope has no fabricated outcomes (' + fixtureId + ')',
         !Object.prototype.hasOwnProperty.call(apiSuitEnv, 'outcomes'));
+      expect('no native API biological result (' + fixtureId + ')',
+        apiBioEnv.result === null && apiSuitEnv.result === null);
       // Category parity uses direct evaluator nested result (API has no nested biology by design).
       classifyFull = gosPack.full;
       classifyBio = gosPack.biological;
-      apiSuccess = true; // expected blocked path succeeded
-      expect('API≠evaluator nested skipped; direct blocked status (' + fixtureId + ')',
+      expect('API-to-evaluator nested equivalence not applicable; direct blocked status (' + fixtureId + ')',
         gosPack.full.evaluationStatus === 'blocked_untrusted_location'
         && gosPack.biological.evaluationStatus === 'blocked_untrusted_location');
+      expect('blocked envelope excluded from biological classification input (' + fixtureId + ')',
+        classifyFull === gosPack.full && classifyBio === gosPack.biological);
+      semantics = {
+        apiBoundaryPassed: true,
+        apiExpectedOutcome: 'blocked_trusted_location',
+        apiBlockedReason: 'trusted_location_required',
+        hasNativeApiResult: false,
+        apiToEvaluatorEquivalence: 'not_applicable',
+        biologicalComparisonPerformed: true,
+        biologicalComparisonSource: 'direct_evaluator_boundary_parity'
+      };
     } else {
-      expect('API bio ok (' + fixtureId + ')',
+      expect('successful native API nested result (bio) (' + fixtureId + ')',
         apiBioEnv.ok === true && apiBioEnv.apiStatus === 'ok' && apiBioEnv.reason === 'ok'
         && apiBioEnv.result != null && apiBioEnv.mode === 'biology');
-      expect('API suit ok (' + fixtureId + ')',
+      expect('successful native API nested result (suit) (' + fixtureId + ')',
         apiSuitEnv.ok === true && apiSuitEnv.apiStatus === 'ok' && apiSuitEnv.reason === 'ok'
         && apiSuitEnv.result != null && apiSuitEnv.mode === 'suitability');
       expect('API nested results frozen (' + fixtureId + ')',
         isFrozenDeep(apiBioEnv.result) && isFrozenDeep(apiSuitEnv.result));
-      expect('API bio ≡ direct biological (' + fixtureId + ')',
+      expect('nested API result byte-identical to direct evaluator (bio) (' + fixtureId + ')',
         stableStringify(apiBioEnv.result) === stableStringify(gosPack.biological));
-      expect('API suit ≡ direct suitability (' + fixtureId + ')',
+      expect('nested API result byte-identical to direct evaluator (suit) (' + fixtureId + ')',
         stableStringify(apiSuitEnv.result) === stableStringify(gosPack.full));
       classifyFull = apiSuitEnv.result;
       classifyBio = apiBioEnv.result;
-      apiSuccess = true;
+      semantics = {
+        apiBoundaryPassed: true,
+        apiExpectedOutcome: 'successful_native_result',
+        apiBlockedReason: null,
+        hasNativeApiResult: true,
+        apiToEvaluatorEquivalence: (
+          stableStringify(apiBioEnv.result) === stableStringify(gosPack.biological)
+          && stableStringify(apiSuitEnv.result) === stableStringify(gosPack.full)
+        ) ? 'pass' : 'fail',
+        biologicalComparisonPerformed: true,
+        biologicalComparisonSource: 'developer_api_nested_result'
+      };
     }
 
     const gosN = normalizeGos(classifyFull, classifyBio);
@@ -1111,6 +1138,15 @@ async function runSingleComparison(fixtureId, profile, evidenceById, profileDoc,
     }
     expect('iframe location untrusted before destroy (' + fixtureId + ')', cw.hasTrustedAppLocation() === false);
 
+    const neutralCategory = comparisonObj.comparison.primaryCategory;
+    const expectedCategoryParity = neutralCategory === parity.expectedPrimaryCategory;
+    if (parity.apiExpectedOutcome === 'blocked_trusted_location') {
+      expect('direct evaluator used only for GOS-3C1 biological category parity (' + fixtureId + ')',
+        semantics.biologicalComparisonSource === 'direct_evaluator_boundary_parity'
+        && semantics.hasNativeApiResult === false
+        && semantics.apiToEvaluatorEquivalence === 'not_applicable');
+    }
+
     perfSamples.comparisonMs.push(performance.now() - tComp0);
     return {
       fixtureId: fixtureId,
@@ -1119,15 +1155,18 @@ async function runSingleComparison(fixtureId, profile, evidenceById, profileDoc,
       biologicalGos: gosBioN,
       comparison: comparisonObj.comparison,
       comparisonObj: comparisonObj,
-      apiSuccess: apiSuccess,
       apiBioEnv: apiBioEnv,
       apiSuitEnv: apiSuitEnv,
-      apiExpected: parity.apiExpected,
       expectedPrimaryCategory: parity.expectedPrimaryCategory,
-      equivalenceOk: parity.apiExpected === 'blocked_trusted_location'
-        ? true
-        : (stableStringify(apiBioEnv.result) === stableStringify(gosPack.biological)
-          && stableStringify(apiSuitEnv.result) === stableStringify(gosPack.full))
+      apiBoundaryPassed: semantics.apiBoundaryPassed,
+      apiExpectedOutcome: semantics.apiExpectedOutcome,
+      apiBlockedReason: semantics.apiBlockedReason,
+      hasNativeApiResult: semantics.hasNativeApiResult,
+      apiToEvaluatorEquivalence: semantics.apiToEvaluatorEquivalence,
+      biologicalComparisonPerformed: semantics.biologicalComparisonPerformed,
+      biologicalComparisonSource: semantics.biologicalComparisonSource,
+      neutralCategory: neutralCategory,
+      expectedCategoryParity: expectedCategoryParity
     };
   } finally {
     destroyIframe(iframe);
@@ -1173,9 +1212,27 @@ async function inventoryV1bFromSource(indexText) {
   };
 }
 
-function finish(okLabel) {
+function fixtureSemanticRecord(fr) {
+  if (!fr) return null;
+  return {
+    fixtureId: fr.fixtureId,
+    apiBoundaryPassed: fr.apiBoundaryPassed,
+    apiExpectedOutcome: fr.apiExpectedOutcome,
+    apiBlockedReason: fr.apiBlockedReason,
+    hasNativeApiResult: fr.hasNativeApiResult,
+    apiToEvaluatorEquivalence: fr.apiToEvaluatorEquivalence,
+    biologicalComparisonPerformed: fr.biologicalComparisonPerformed,
+    biologicalComparisonSource: fr.biologicalComparisonSource,
+    neutralCategory: fr.neutralCategory,
+    expectedCategoryParity: fr.expectedCategoryParity,
+    expectedPrimaryCategory: fr.expectedPrimaryCategory
+  };
+}
+
+function finish(okLabel, fixtureRecords) {
   const passed = results.filter((r) => r.pass).length;
   const failed = results.length - passed;
+  const records = Array.isArray(fixtureRecords) ? fixtureRecords.filter(Boolean) : [];
   const host = document.getElementById('summary');
   host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + okLabel;
   host.className = failed ? 'fail' : 'pass';
@@ -1188,8 +1245,18 @@ function finish(okLabel) {
     total: results.length,
     passed: passed,
     failed: failed,
+    assertionCount: results.length,
+    passCount: passed,
+    failCount: failed,
     ready: failed === 0,
     fixtureCount: FIXTURE_IDS.length,
+    trustedNativeResultFixtureCount: records.filter((r) => r.hasNativeApiResult === true).length,
+    blockedBoundaryFixtureCount: records.filter((r) => r.apiExpectedOutcome === 'blocked_trusted_location').length,
+    apiBoundaryPassCount: records.filter((r) => r.apiBoundaryPassed === true).length,
+    nativeApiResultEquivalencePassCount: records.filter((r) => r.apiToEvaluatorEquivalence === 'pass').length,
+    nativeApiResultEquivalenceNotApplicableCount: records.filter((r) => r.apiToEvaluatorEquivalence === 'not_applicable').length,
+    biologicalComparisonCount: records.filter((r) => r.biologicalComparisonPerformed === true).length,
+    fixtures: records,
     recommendation: failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY',
     verdict: failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY'
   };
@@ -1230,6 +1297,7 @@ async function main() {
   const harnessStart = performance.now();
   const initialSnap = snapshotStorage();
   let recommendation = 'NOT_READY';
+  const fixtureResults = {};
   try {
     expect('no window GOS evaluator global',
       typeof window.evaluateGrowthOutcomeSuitability === 'undefined'
@@ -1295,7 +1363,6 @@ async function main() {
       && inventory.levels.indexOf('excellent') >= 0);
     expect('fixture matrix has eight fixtures', FIXTURE_IDS.length === 8);
 
-    const fixtureResults = {};
     const firstPassByFixture = {};
 
     for (let f = 0; f < FIXTURE_IDS.length; f++) {
@@ -1310,15 +1377,23 @@ async function main() {
           String(document.cookie || '') === initialSnap.cookie);
         const once = await runSingleComparison(fixtureId, profile, evidenceById, profileDoc, evidenceDoc);
         repeats.push({
+          fixtureId: once.fixtureId,
           v1b: once.normalizedV1b,
           gos: once.normalizedGos,
           bio: once.biologicalGos,
           comparison: once.comparison,
           apiBioEnv: once.apiBioEnv,
           apiSuitEnv: once.apiSuitEnv,
-          apiSuccess: once.apiSuccess,
-          equivalenceOk: once.equivalenceOk,
-          expectedPrimaryCategory: once.expectedPrimaryCategory
+          expectedPrimaryCategory: once.expectedPrimaryCategory,
+          apiBoundaryPassed: once.apiBoundaryPassed,
+          apiExpectedOutcome: once.apiExpectedOutcome,
+          apiBlockedReason: once.apiBlockedReason,
+          hasNativeApiResult: once.hasNativeApiResult,
+          apiToEvaluatorEquivalence: once.apiToEvaluatorEquivalence,
+          biologicalComparisonPerformed: once.biologicalComparisonPerformed,
+          biologicalComparisonSource: once.biologicalComparisonSource,
+          neutralCategory: once.neutralCategory,
+          expectedCategoryParity: once.expectedCategoryParity
         });
         restoreStorage(initialSnap);
         expect('storage restored after ' + fixtureId + '#' + i, storageEquals(snapshotStorage(), initialSnap));
@@ -1340,14 +1415,34 @@ async function main() {
       expect('determinism x' + DETERMINISM_REPEATS + ' gos (' + fixtureId + ')', allGos);
       expect('determinism x' + DETERMINISM_REPEATS + ' comparison (' + fixtureId + ')', allCmp);
       expect('determinism x' + DETERMINISM_REPEATS + ' api envelopes (' + fixtureId + ')', allApi);
-      expect('API success path for fixture (' + fixtureId + ')', !!base.apiSuccess);
-      expect('API≡evaluator equivalence (' + fixtureId + ')', !!base.equivalenceOk);
+      expect('API boundary contract satisfied (' + fixtureId + ')', base.apiBoundaryPassed === true);
+      if (base.apiExpectedOutcome === 'blocked_trusted_location') {
+        expect('untrusted fixture: API-to-evaluator equivalence not applicable (' + fixtureId + ')',
+          base.apiToEvaluatorEquivalence === 'not_applicable'
+          && base.hasNativeApiResult === false
+          && base.apiBlockedReason === 'trusted_location_required');
+        expect('untrusted fixture: biological comparison source is direct evaluator (' + fixtureId + ')',
+          base.biologicalComparisonSource === 'direct_evaluator_boundary_parity'
+          && base.biologicalComparisonPerformed === true);
+      } else {
+        expect('trusted fixture: nested API result equivalence pass (' + fixtureId + ')',
+          base.apiToEvaluatorEquivalence === 'pass'
+          && base.hasNativeApiResult === true
+          && base.apiBlockedReason === null
+          && base.biologicalComparisonSource === 'developer_api_nested_result');
+      }
       expect('category parity (' + fixtureId + ')',
-        base.comparison.primaryCategory === base.expectedPrimaryCategory,
-        'actual=' + base.comparison.primaryCategory + ' expected=' + base.expectedPrimaryCategory);
-      logReport('determinism ' + fixtureId + ': v1b=' + allV1b + ' gos=' + allGos + ' comparison=' + allCmp
-        + ' api=' + allApi + ' primary=' + base.comparison.primaryCategory
-        + ' expected=' + base.expectedPrimaryCategory + ' equiv=' + base.equivalenceOk);
+        base.expectedCategoryParity === true
+        && base.neutralCategory === base.expectedPrimaryCategory
+        && base.comparison.primaryCategory === base.expectedPrimaryCategory,
+        'actual=' + base.neutralCategory + ' expected=' + base.expectedPrimaryCategory);
+      logReport('determinism ' + fixtureId
+        + ': v1b=' + allV1b + ' gos=' + allGos + ' comparison=' + allCmp + ' api=' + allApi
+        + ' apiExpectedOutcome=' + base.apiExpectedOutcome
+        + ' hasNativeApiResult=' + base.hasNativeApiResult
+        + ' apiToEvaluatorEquivalence=' + base.apiToEvaluatorEquivalence
+        + ' biologicalComparisonSource=' + base.biologicalComparisonSource
+        + ' neutralCategory=' + base.neutralCategory);
       logReport('  v1b=' + stableStringify(base.v1b));
       logReport('  gos.eval=' + base.gos.evaluationStatus + ' survival=' + base.gos.outcomes.survival.level
         + ' blockers=' + json(base.gos.outcomes.survival.blockers));
@@ -1367,6 +1462,14 @@ async function main() {
     expect('A all six unknown', GROWTH_OUTCOME_NAMES.every((n) => A.gos.outcomes[n].level === 'unknown'));
     expect('A parity both_blocked', A.comparison.trustedLocationParity === 'both_blocked');
     expect('A primary aligned_unknown', A.comparison.primaryCategory === 'aligned_unknown');
+    expect('A apiExpectedOutcome blocked_trusted_location', A.apiExpectedOutcome === 'blocked_trusted_location');
+    expect('A hasNativeApiResult false', A.hasNativeApiResult === false);
+    expect('A apiBlockedReason trusted_location_required', A.apiBlockedReason === 'trusted_location_required');
+    expect('A apiToEvaluatorEquivalence not_applicable', A.apiToEvaluatorEquivalence === 'not_applicable');
+    expect('A biologicalComparisonSource direct_evaluator_boundary_parity',
+      A.biologicalComparisonSource === 'direct_evaluator_boundary_parity');
+    expect('A api bio envelope result null', A.apiBioEnv.result === null && A.apiBioEnv.ok === false);
+    expect('A api suit envelope result null', A.apiSuitEnv.result === null && A.apiSuitEnv.ok === false);
 
     const B = fixtureResults.trusted_warm_mango_mature_ornamental;
     const C = fixtureResults.trusted_warm_mango_mature_reliable_yield;
@@ -1537,6 +1640,18 @@ async function main() {
     expect('gardenLocation source restored to pre-test', gardenSource === initialGardenSource,
       'final=' + gardenSource + ' initial=' + initialGardenSource);
 
+    const fixtureRecords = FIXTURE_IDS.map((id) => fixtureSemanticRecord(fixtureResults[id]));
+    const trustedNativeCount = fixtureRecords.filter((r) => r && r.hasNativeApiResult === true).length;
+    const blockedBoundaryCount = fixtureRecords.filter((r) => r && r.apiExpectedOutcome === 'blocked_trusted_location').length;
+    const equivPassCount = fixtureRecords.filter((r) => r && r.apiToEvaluatorEquivalence === 'pass').length;
+    const equivNaCount = fixtureRecords.filter((r) => r && r.apiToEvaluatorEquivalence === 'not_applicable').length;
+    expect('aggregate: eight fixture semantic records', fixtureRecords.length === 8 && fixtureRecords.every(Boolean));
+    expect('aggregate: seven trusted native API nested-result fixtures', trustedNativeCount === 7);
+    expect('aggregate: one blocked trusted-location boundary fixture', blockedBoundaryCount === 1);
+    expect('aggregate: seven API-to-evaluator equivalence pass', equivPassCount === 7);
+    expect('aggregate: one API-to-evaluator equivalence not_applicable', equivNaCount === 1);
+    expect('aggregate: not all eight fixtures have native API results', trustedNativeCount !== 8);
+
     const failed = results.filter((r) => !r.pass).length;
     recommendation = failed === 0 ? 'GOS_3F_COMPLETE' : 'NOT_READY';
     logReport('=== performance medians (dev only) ===');
@@ -1546,14 +1661,24 @@ async function main() {
     logReport('comparisonMedianMs=' + median(perfSamples.comparisonMs));
     logReport('fullHarnessDurationMs=' + (performance.now() - harnessStart));
     logReport('fixtureCount=' + FIXTURE_IDS.length);
+    logReport('trustedNativeResultFixtureCount=' + trustedNativeCount);
+    logReport('blockedBoundaryFixtureCount=' + blockedBoundaryCount);
+    logReport('nativeApiResultEquivalencePassCount=' + equivPassCount);
+    logReport('nativeApiResultEquivalenceNotApplicableCount=' + equivNaCount);
     logReport('verdict=' + recommendation);
     FIXTURE_IDS.forEach((id) => {
       const fr = fixtureResults[id];
       if (!fr) return;
-      logReport('fixture ' + id + ': apiSuccess=' + fr.apiSuccess
-        + ' equivalenceOk=' + fr.equivalenceOk
-        + ' primary=' + fr.comparison.primaryCategory
-        + ' expected=' + fr.expectedPrimaryCategory);
+      logReport('fixture ' + id
+        + ': apiExpectedOutcome=' + fr.apiExpectedOutcome
+        + ' apiBoundaryPassed=' + fr.apiBoundaryPassed
+        + ' hasNativeApiResult=' + fr.hasNativeApiResult
+        + ' apiBlockedReason=' + fr.apiBlockedReason
+        + ' apiToEvaluatorEquivalence=' + fr.apiToEvaluatorEquivalence
+        + ' biologicalComparisonPerformed=' + fr.biologicalComparisonPerformed
+        + ' biologicalComparisonSource=' + fr.biologicalComparisonSource
+        + ' neutralCategory=' + fr.neutralCategory
+        + ' expectedCategoryParity=' + fr.expectedCategoryParity);
     });
   } catch (err) {
     expect('harness completed without throw', false, String(err && err.stack || err));
@@ -1565,7 +1690,8 @@ async function main() {
       const host = document.getElementById('frameHost');
       while (host && host.firstChild) host.removeChild(host.firstChild);
     } catch (e) {}
-    finish(recommendation);
+    const records = FIXTURE_IDS.map((id) => fixtureSemanticRecord(fixtureResults[id]));
+    finish(recommendation, records);
   }
 }
 
