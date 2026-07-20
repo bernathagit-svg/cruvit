@@ -144,8 +144,9 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Growth Outcome Suitability — GOS-3F production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no product consumer; no UI/persistence/Sidecar/v1b mapping; no score/risk mapping or winner language.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`f4bdf3c93eccda9334892d3a1e958e30c9c1f957`**. **Deployed harness** `/tests/growth-outcome-developer-comparison.test.html` HTTP **200** `text/html`; `git hash-object` matches HEAD blob `898c4961…`; includes corrected semantic fields and `GOS_3F_COMPLETE`. Developer API **0.1.0-gos3d** and evaluator **0.1.0-gos3a** blob-matched; `index.html` blob-matched. **Normal app isolation (before):** home + My Garden + Smart Recommendations + Garden Design + Identify + Plant Doctor sample — **zero** requests for GOS-3F harness, developer API, evaluator, or pilot JSON; no GOS UI; no GOS window globals; `evaluateClimateSuitabilityV1` remains present. **Explicit harness URL only:** five consecutive production runs all **2018/2018** / `GOS_3F_COMPLETE` / fixtureCount **8**; aggregates trusted native **7**, blocked boundary **1**, equivalence pass **7**, equivalence N/A **1**, biological comparisons **8**; all eight neutral categories unchanged. Untrusted `untrusted_location_mango`: `blocked_trusted_location` / `hasNativeApiResult=false` / `apiToEvaluatorEquivalence=not_applicable` / `biologicalComparisonSource=direct_evaluator_boundary_parity` / `aligned_unknown`; blocked envelope never classified as biology. Network during harness: same-origin harness/API/evaluator/pilot/iframe `index.html` only; **zero** OpenAI/Anthropic/Shopify/Netlify-function mutation endpoints. Iframes destroyed; storage keys unchanged across runs; no GOS result persistence; no GOS globals registered. **After:** reload home + navigation sample again — **zero** automatic GOS asset requests; no GOS UI/storage; v1b still available. **Verdict:** `GOS_3F_PRODUCTION_VERIFIED`. GOS remains **not product-enabled / not authoritative / not a v1b replacement**. **GOS-4 not started.** **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
-| **Growth Outcome Suitability — GOS-3F explicit developer comparison harness complete locally** | Done (local) | **Standalone test-only developer comparison harness only; no evaluator/API/`index.html`/GOS-3C1 harness/schema/pilot/product change; no score/risk mapping; no winner language; no production verification in this commit.** File: `tests/growth-outcome-developer-comparison.test.html` (+ `PROJECT_STATUS.md`). Reuses exact eight GOS-3C1 fixture IDs (copied matrix frozen from commit `4a11dd5`; not a shared runtime source). Invokes GOS via `evaluateGrowthOutcomeForDeveloper` with `GOS_DEVELOPER_CAPABILITY`. **Seven trusted fixtures:** successful native API nested results byte-identical to direct evaluator (`apiToEvaluatorEquivalence=pass`, `biologicalComparisonSource=developer_api_nested_result`). **One untrusted fixture** (`untrusted_location_mango`): developer API fail-closed `trusted_location_required` / `result === null` / `hasNativeApiResult=false` / `apiToEvaluatorEquivalence=not_applicable`; `aligned_unknown` parity from live v1b + direct evaluator boundary path (`biologicalComparisonSource=direct_evaluator_boundary_parity`); blocked envelope never classified as biology. Live iframe v1b path unchanged from C1. Frozen expected primary categories unchanged: `aligned_unknown` (untrusted); `gos_preserves_unknown` ×6; `blocker_scope_difference` (bloom fruitSet cold). Neutral vocabulary unchanged. Verdict: `GOS_3F_COMPLETE`. **Reporting semantic clarification (post-audit):** separates API-boundary pass from nested-result equivalence; no universal “API nested ≡ evaluator across all eight” claim. **Harness:** **2018/2018**; five consecutive runs all **2018/2018**; ×10 fresh-iframe determinism per fixture. **Non-regression:** developer API **105/105**; evaluator **62/62**; GOS-3C1 comparison **979/979** / **8**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**. **Production verification later completed** — see GOS-3F production verification checkpoint (`GOS_3F_PRODUCTION_VERIFIED`). **GOS-4 not started.** |
+| **Growth Outcome Suitability — GOS-4A read-only display contract** | Done (local) | **Documentation-only display-semantics freeze; no visual artifact; no GOS invocation; no runtime/test/module/`index.html`/harness/schema/pilot/product change; no score/risk mapping; no winner language; no product consumer.** File: `PROJECT_STATUS.md` only. Freezes: (1) three-contract separation — API envelope vs native GOS result vs display presentation; (2) API-blocked / native-blocked / native-success display states; (3) fixed six-outcome order and independence; (4) display hierarchy and default visibility; (5) allowed vs forbidden transforms; (6) terminology / confidence / blockers / evidence / biology–userGoal / v1b coexistence rules; (7) future synthetic-data and accessibility/localization requirements; (8) future standalone developer-display boundary; (9) validation gates and stop conditions. **Does not authorize** HTML display, `index.html` loading, product UI, persistence, Sidecar, or v1b replacement. Existing facts unchanged: GOS-3F **2018/2018** / **8** fixtures / 7 trusted / 1 blocked; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. |
+| **Growth Outcome Suitability — GOS-3F production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no product consumer; no UI/persistence/Sidecar/v1b mapping; no score/risk mapping or winner language.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`f4bdf3c93eccda9334892d3a1e958e30c9c1f957`**. **Deployed harness** `/tests/growth-outcome-developer-comparison.test.html` HTTP **200** `text/html`; `git hash-object` matches HEAD blob `898c4961…`; includes corrected semantic fields and `GOS_3F_COMPLETE`. Developer API **0.1.0-gos3d** and evaluator **0.1.0-gos3a** blob-matched; `index.html` blob-matched. **Normal app isolation (before):** home + My Garden + Smart Recommendations + Garden Design + Identify + Plant Doctor sample — **zero** requests for GOS-3F harness, developer API, evaluator, or pilot JSON; no GOS UI; no GOS window globals; `evaluateClimateSuitabilityV1` remains present. **Explicit harness URL only:** five consecutive production runs all **2018/2018** / `GOS_3F_COMPLETE` / fixtureCount **8**; aggregates trusted native **7**, blocked boundary **1**, equivalence pass **7**, equivalence N/A **1**, biological comparisons **8**; all eight neutral categories unchanged. Untrusted `untrusted_location_mango`: `blocked_trusted_location` / `hasNativeApiResult=false` / `apiToEvaluatorEquivalence=not_applicable` / `biologicalComparisonSource=direct_evaluator_boundary_parity` / `aligned_unknown`; blocked envelope never classified as biology. Network during harness: same-origin harness/API/evaluator/pilot/iframe `index.html` only; **zero** OpenAI/Anthropic/Shopify/Netlify-function mutation endpoints. Iframes destroyed; storage keys unchanged across runs; no GOS result persistence; no GOS globals registered. **After:** reload home + navigation sample again — **zero** automatic GOS asset requests; no GOS UI/storage; v1b still available. **Verdict:** `GOS_3F_PRODUCTION_VERIFIED`. GOS remains **not product-enabled / not authoritative / not a v1b replacement**. Display-semantics freeze continues in GOS-4A (docs-only). **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
+| **Growth Outcome Suitability — GOS-3F explicit developer comparison harness complete locally** | Done (local) | **Standalone test-only developer comparison harness only; no evaluator/API/`index.html`/GOS-3C1 harness/schema/pilot/product change; no score/risk mapping; no winner language; no production verification in this commit.** File: `tests/growth-outcome-developer-comparison.test.html` (+ `PROJECT_STATUS.md`). Reuses exact eight GOS-3C1 fixture IDs (copied matrix frozen from commit `4a11dd5`; not a shared runtime source). Invokes GOS via `evaluateGrowthOutcomeForDeveloper` with `GOS_DEVELOPER_CAPABILITY`. **Seven trusted fixtures:** successful native API nested results byte-identical to direct evaluator (`apiToEvaluatorEquivalence=pass`, `biologicalComparisonSource=developer_api_nested_result`). **One untrusted fixture** (`untrusted_location_mango`): developer API fail-closed `trusted_location_required` / `result === null` / `hasNativeApiResult=false` / `apiToEvaluatorEquivalence=not_applicable`; `aligned_unknown` parity from live v1b + direct evaluator boundary path (`biologicalComparisonSource=direct_evaluator_boundary_parity`); blocked envelope never classified as biology. Live iframe v1b path unchanged from C1. Frozen expected primary categories unchanged: `aligned_unknown` (untrusted); `gos_preserves_unknown` ×6; `blocker_scope_difference` (bloom fruitSet cold). Neutral vocabulary unchanged. Verdict: `GOS_3F_COMPLETE`. **Reporting semantic clarification (post-audit):** separates API-boundary pass from nested-result equivalence; no universal “API nested ≡ evaluator across all eight” claim. **Harness:** **2018/2018**; five consecutive runs all **2018/2018**; ×10 fresh-iframe determinism per fixture. **Non-regression:** developer API **105/105**; evaluator **62/62**; GOS-3C1 comparison **979/979** / **8**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**. **Production verification later completed** — see GOS-3F production verification checkpoint (`GOS_3F_PRODUCTION_VERIFIED`). Display contract: GOS-4A (docs-only). |
 | **Growth Outcome Suitability — GOS-3E production inert verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no harness execution; no GOS evaluation; no product consumer; no UI/persistence/Sidecar/v1b mapping.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`6d4d987ae6c35e089f4dd26a0a33c58fee0ac9ef`**. **Deployed assets (HTTP 200, `application/javascript`):** `/modules/suitability/growth-outcome-developer-api.js` (`GOS_DEVELOPER_API_VERSION` **0.1.0-gos3d**; `git hash-object` matches commit blob `f3ba70b6…`); `/modules/suitability/growth-outcome-evaluator.js` (**0.1.0-gos3a**; blob `174a6067…`). **Fresh Chrome profile:** normal app startup and entry-hub navigation sample (Smart Recommendations, Garden Design, Plant Doctor/diagnose, Identify, return toward My Garden) made **zero** requests for developer API, evaluator, pilot JSON, or developer-API harness; no GOS UI; no GOS window globals; v1b path unchanged. **Isolated descriptor-only import** of the developer API (temporary spies restored): loaded only API + evaluator static dependency; **no** `evaluateGrowthOutcomeForDeveloper` / biology / suitability calls; zero storage/cookie/IndexedDB/DOM/timer/listener/fetch/XHR/WebSocket/global side effects from the module; descriptor deeply frozen, `explicit_call_only`, `authoritative: false`, `runtimeWired: false`, `persistence: false`, `productConsumers: none`; unchanged across repeated reads. Reload after import still made zero automatic GOS requests. Standalone harness HEAD optional (**200**); **not executed**. **Verdict:** `GOS_3E_PRODUCTION_INERT_VERIFIED`. GOS remains **not product-enabled**. **GOS-3F not started.** **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
 | **Growth Outcome Suitability — GOS-3D stopped developer-only API complete locally** | Done (local) | **Stopped, explicit-call-only, non-authoritative thin API over the pure evaluator; no `index.html` import, no runtime/product consumer, no mutable started/enabled state, no pilot load inside the API, no v1b mapping, no UI/persistence/Sidecar/SR/My Garden/Plant Doctor/Garden Design.** Files: `modules/suitability/growth-outcome-developer-api.js` (`GOS_DEVELOPER_API_VERSION` **0.1.0-gos3d**), `tests/growth-outcome-developer-api.test.html`, `PROJECT_STATUS.md`. **Exports:** `GOS_DEVELOPER_API_VERSION`, `GOS_DEVELOPER_CAPABILITY` (`explicit_developer_evaluation`), `GOS_DEVELOPER_MODES`, `GOS_DEVELOPER_API_REASONS`, `getGrowthOutcomeDeveloperApiDescriptor()`, `evaluateGrowthOutcomeForDeveloper(request)`. **Descriptor:** deeply frozen; `activation: explicit_call_only`; `authoritative: false`; `runtimeWired: false`; `persistence: false`; `productConsumers: none`; unchanged after successful calls. **Preflight fail-closed reasons:** `developer_capability_required`, `unsupported_mode`, `profile_required`, `invalid_profile`, `evidence_bundle_required`, `referenced_evidence_missing`, `trusted_location_required`, `valid_user_goal_required`, `user_goal_not_allowed_in_biology_mode` (biology rejects supplied `userGoal`). **Success:** native pass-through of `evaluateBiologicalGrowthOutcomes` / `evaluateGrowthOutcomeSuitability` inside frozen envelope `{ ok, apiStatus, reason, apiVersion, engineVersion, mode, result }`; nested result byte-identical to direct evaluator. **Harness:** **105/105**; five consecutive runs all **105/105**; ×10 determinism; input non-mutation; frozen outputs; zero storage/DOM/network/timer side effects during API calls; static `index.html` / identity-module isolation. **Non-regression:** evaluator **62/62** (byte-identical to `4df7541`); comparison **979/979** / **8** fixtures; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema harness **69/69**; `git diff --check` clean. Evaluator, schemas, pilot data, Climate Suitability v1b, and `index.html` unchanged. **Not production-enabled.** Superseded next: GOS-3E production inert verification — see GOS-3E checkpoint row. |
 | **Growth Outcome Suitability — GOS-3C2 comparison conclusions and runtime-readiness contract** | Done (local) | **Documentation-only contract freeze; no runtime loader, no evaluator/schema/pilot/test harness change, no Climate Suitability v1b change, no Smart Recommendations/My Garden/Plant Doctor/Garden Design consumer, no UI, no persistence, no Sidecar consumer, no score/risk mapping, no new fixtures.** File: `PROJECT_STATUS.md` only. Freezes: (A) what Climate Suitability v1b answers vs (B) what GOS answers; (C) engines are not direct replacements / no winner / no cross-engine translation; (D) harness-native neutral vocabulary (`aligned_unknown`, `gos_preserves_unknown`, `blocker_scope_difference`, `applicability_difference`, `different_question_not_conflict`, `unresolved_due_missing_input`); (E) what GOS-3C1 proved; (F) what it did not prove (979/979 = approved matrix only); (G) eight mandatory runtime-readiness gates; (H) fallback when untrusted / missing GOS data; (I) deferred list including GOS-3D implementation and mismatched-context fixtures; (J) next step = separately approved **read-only GOS-3D planning only**. **Does not authorize runtime integration.** GOS-3C1 facts unchanged: **8** fixtures, **979/979**, five consecutive stable runs, ×10 determinism. Evaluator **62/62**, pilot **42/5**, registry **1.5.0 / 76 / 1 / 9**, hydration production-verified closed. **Push pending** separate approval. **GOS-3D not started.** |
@@ -325,15 +326,15 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
 - **16 — Garden-Level Disease Intelligence:** future only — see dedicated plan. Plant Doctor must evolve beyond single-plant diagnosis to garden-wide, individualized, confidence-aware disease/pest/environment reasoning. **Blocked** until canonical identity, per-user Plant Library, zones/positions, photo/symptom history, care/weather history, and multi-plant observation data exist. Do not schedule ahead of those foundations or ahead of current climate accuracy work.
-- **17 — Growth Outcome Suitability:** GOS-3F production verification complete (`GOS_3F_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for `f4bdf3c`; five × **2018/2018**; not product-enabled). GOS-3C1 matrix unchanged (**8** / **979/979**). Do **not** add runtime loader/catalog/UI/ranking/product consumer until separately approved (GOS-4+).
+- **17 — Growth Outcome Suitability:** GOS-4A read-only display contract complete (documentation-only; no visual/runtime authorization). GOS-3F production verify remains in force (**2018/2018**). GOS-3C1 matrix unchanged (**8** / **979/979**). Do **not** add runtime loader/catalog/UI/ranking/product consumer until separately approved (standalone developer display / GOS-4B+).
 
 ---
 
 # Growth Outcome Suitability Plan
 
-**Status:** **GOS-3F production verification complete** — `GOS_3F_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for commit **`f4bdf3c`**. Explicit harness five production runs all **2018/2018** / `GOS_3F_COMPLETE` (seven trusted nested API ≡ evaluator; one untrusted API-boundary + direct-evaluator `aligned_unknown` parity; blocked envelope never classified as biology). Normal app made zero automatic GOS requests before and after. Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** / **5**); GOS-3A/3B evaluator (**62/62**); GOS-3C0/3C1 matrix (**8** / **979/979**, harness unchanged); GOS-3C2 readiness contract; GOS-3D developer API (**105/105**); GOS-3E production inert verify. **Not imported by `index.html`.** No application runtime loading, product consumer, UI, persistence, Sidecar consumer, or v1b mapping. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS-3F does not authorize product activation, GOS-4, or replacement of Climate Suitability v1b.**
+**Status:** **GOS-4A complete locally** — read-only display contract frozen in this document (semantics only; no visual artifact; no GOS invocation). Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** / **5**); GOS-3A/3B evaluator (**62/62**); GOS-3C0/3C1 matrix (**8** / **979/979**); GOS-3C2 readiness contract; GOS-3D developer API (**105/105**); GOS-3E production inert verify; GOS-3F production verify (`GOS_3F_PRODUCTION_VERIFIED`; **2018/2018**). **Not imported by `index.html`.** No application runtime loading, product consumer, UI, persistence, Sidecar consumer, or v1b mapping. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS-4A does not authorize a visual display, product activation, or replacement of Climate Suitability v1b.**
 
-**Placement:** After production verification of the developer comparison harness, any product display or ranking requires separate approval and satisfaction of the gates below — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
+**Placement:** After the display contract, any standalone developer display or product display/ranking requires separate approval and satisfaction of the gates below — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
 
 **Required biological outcomes (contract):**
 - survival
@@ -426,13 +427,13 @@ All applicable gates must be explicitly satisfied or handled conservatively. **G
 
 ### Deferred (explicit)
 
-**GOS-4** read-only display planning; product runtime activation / `index.html` loading; replacement of Climate Suitability v1b; Smart Recommendations integration/ranking; My Garden / Plant Doctor / Garden Design consumers; UI display; result persistence; Sidecar consumer; cross-engine score/risk mapping; global catalog expansion; Shopify/commercial use; extra fixtures only to increase species count.
+Standalone developer-only read-only display implementation (post–GOS-4A); product runtime activation / `index.html` loading; replacement of Climate Suitability v1b; Smart Recommendations integration/ranking; My Garden / Plant Doctor / Garden Design consumers; user-facing UI display; result persistence; Sidecar consumer; cross-engine score/risk mapping; global catalog expansion; Shopify/commercial use; extra fixtures only to increase species count.
 
 **Deferred comparison contexts (retained):** Olive Mediterranean/California; Apple temperate/California; Mango California region exclusion; numeric chill-hour fixtures; pollinizer pairs; cultivar pairs; protected-environment temperature-gain fixtures.
 
 ### Next-step boundary
 
-GOS-3F production verification is complete (see checkpoint row / `GOS_3F_PRODUCTION_VERIFIED`). The next separately approved step is **GOS-4** planning — do **not** start it automatically. **GOS-3F does not authorize product wiring or GOS-4.**
+GOS-4A read-only display contract is complete (see section below). The next separately approved step may be a standalone developer-only display — do **not** start it automatically. **GOS-4A does not authorize visual implementation or product wiring.**
 
 ### GOS-3C2 completion criteria
 
@@ -498,7 +499,7 @@ This checkpoint is complete when this document clearly contains: engine responsi
 
 **Validation:** harness **2018/2018** (five consecutive local runs); developer API **105/105**; evaluator **62/62**; GOS-3C1 **979/979** / **8**; pilot **69** / **936/936**; GOS-1 **101**; schema **69/69**.
 
-**Production verification:** complete — see checkpoint row and section below (`GOS_3F_PRODUCTION_VERIFIED`). **GOS-4 not started.** Push of this documentation commit pending separate approval.
+**Production verification:** complete — see checkpoint row and section below (`GOS_3F_PRODUCTION_VERIFIED`).
 
 ---
 
@@ -512,7 +513,167 @@ This checkpoint is complete when this document clearly contains: engine responsi
 
 **Production harness (five consecutive runs):** all **2018/2018** / `GOS_3F_COMPLETE` / fixtureCount **8**; trusted native **7**; blocked boundary **1**; equivalence pass **7**; equivalence N/A **1**; biological comparisons **8**; eight neutral categories unchanged. Untrusted fixture semantics unchanged (`blocked_trusted_location`, `not_applicable`, `direct_evaluator_boundary_parity`, `aligned_unknown`). Complete iframe/storage restoration; no result persistence; no paid AI / Shopify / Netlify-function mutation attributable to the harness. Normal app: zero automatic GOS requests before and after.
 
-**Not claimed:** GOS is not product-enabled, not authoritative, and not a Climate Suitability v1b replacement. **GOS-4 not started.**
+**Not claimed:** GOS is not product-enabled, not authoritative, and not a Climate Suitability v1b replacement.
+
+---
+
+## GOS-4A — Read-Only Display Contract
+
+**Checkpoint type:** documentation-only. **File:** `PROJECT_STATUS.md` only. **Verdict:** display-semantics freeze complete.
+
+**This checkpoint defines display semantics only.** Intended audience: developers and future implementers. **No visual artifact is created. No GOS evaluation is invoked. No product consumer is authorized. No `index.html` or runtime loading is authorized.** A later standalone developer display requires separate approval. User-facing display remains further deferred.
+
+Native field and enum names below are taken from `modules/suitability/growth-outcome-evaluator.js` and `modules/suitability/growth-outcome-developer-api.js`. Exported level enums are documented as native values only — not every pilot profile emits every level. No new product meaning or score translation is invented.
+
+### 1. Three-contract separation
+
+**A. Developer API envelope** — answers whether an explicit developer request was accepted and whether a native result exists. Fields: `ok`, `apiStatus`, `reason`, `apiVersion`, `engineVersion`, `mode`, `result`. Success: `apiStatus: 'ok'`, `reason: 'ok'`, `result` = frozen native evaluator output. Blocked: `apiStatus: 'blocked'`, `result === null`.
+
+**B. Native GOS result** — biological and optional goal-interpretation payload when `result` is non-null: `identityStatus`, `locationStatus`, `evaluationStatus`, six `outcomes`, evidence/applicability, `warnings`, `unknowns`, `missingInputs`, versions/provenance (`engineVersion`, `profileVersion`, `evidenceDataVersion`, `climateFingerprint`, `contextFingerprint`), and when suitability mode applies: `goalFit`, `recommendedUse`, `overallConclusion`.
+
+**C. Display contract** — may only select fields, order fields, assign human-readable labels, group information, expand/collapse secondary details, and apply accessibility/localization presentation. **Must not change biological meaning.**
+
+### 2. API-envelope / native-result display states
+
+**State A — API blocked before evaluation** (`ok === false`, `result === null`). Native API reasons include: `developer_capability_required`, `unsupported_mode`, `profile_required`, `invalid_profile`, `evidence_bundle_required`, `referenced_evidence_missing`, `trusted_location_required`, `valid_user_goal_required`, `user_goal_not_allowed_in_biology_mode`.
+
+Required behavior: show developer/API-boundary status only (`apiStatus`, `reason`, `mode`, `apiVersion`, `engineVersion` when present); result absent; **render no six-outcome biological section**; do not fabricate unknown outcomes; do not call the direct evaluator as a visual fallback; do not compare the API failure with v1b; do not convert an API reason into a biological level.
+
+**State B — Native result exists but evaluation is blocked, insufficient, or incomplete** (envelope ok; nested e.g. `evaluationStatus: 'blocked_untrusted_location'` or `insufficient_profile`).
+
+Required behavior: show native `evaluationStatus`, `identityStatus`, `locationStatus`; display only native fields actually returned; preserve native unknown outcomes where present; show `warnings`, `unknowns`, `missingInputs`; do not invent certainty or complete missing fields.
+
+**State C — Native GOS result available** (envelope ok; nested evaluation usable).
+
+Required behavior: display all six outcomes separately; preserve native levels exactly; preserve outcome-specific `confidence` and `dataStatus`; preserve blockers, limiting factors, missing inputs, evidence traces, and conflicts; show userGoal interpretation separately from biology.
+
+### 3. Six biological outcomes (fixed order)
+
+Exact repository-native keys (`GROWTH_OUTCOME_NAMES`), fixed display order:
+
+1. `survival`
+2. `vegetativeGrowth`
+3. `flowering`
+4. `fruitSet`
+5. `fruitRipeningOrYield`
+6. `longTermReliability`
+
+Display must never imply stage inheritance: survival does not guarantee vegetative growth; vegetative growth does not guarantee flowering; flowering does not guarantee fruit set; fruit set does not guarantee ripening/useful yield; one successful stage must not override a later risky or unknown stage. Each outcome remains independent.
+
+### 4. Display hierarchy
+
+1. **Identity and evaluated context** — plant/profile identity, `identityStatus`, relevant explicit context, climate/context fingerprints where available. Do not invent identity or location.
+2. **Evaluation and trust status** — `evaluationStatus`, `locationStatus`; API-boundary status separately when applicable. Always visible.
+3. **Six biological outcomes** — for each: outcome label, native `level`, `confidence`, `dataStatus`, `applicabilityStatus` where returned, `blockers`, `limitingFactors`, `missingInputs`.
+4. **Goal interpretation** — separate section: `goalFit`, `recommendedUse`, `overallConclusion`. Label clearly as interpretation based on the selected goal, not biological output.
+5. **Unknowns and missing information** — `unknowns`, `explicitUnknowns`, `missingInputs`, `assumptions` where natively returned. Do not hide when non-empty.
+6. **Evidence and conflicts** — `evidenceRefsUsed`, `evidenceRefsExcluded`, `sourceCoverage`, conflicting status, `explanationFacts`. Conflict information must be prominent when `sourceCoverage.conflicting === true`.
+7. **Versions and provenance** — API version (when via envelope), `engineVersion`, `profileVersion`, `evidenceDataVersion`, `climateFingerprint`, `contextFingerprint` where available.
+
+### 5. Default visibility
+
+**Always visible:** API or evaluation status; all six outcome labels and native levels when a native result exists; blockers; missing inputs; conflict indication; biology-versus-goal separation.
+
+**May be expandable:** detailed `favorableFactors`; evidence reference lists; excluded-evidence reasons; `explanationFacts`; fingerprints; full provenance metadata.
+
+Expansion must not hide: `unknown`, conflict, blockers, or missing required inputs.
+
+### 6. Allowed display transformations
+
+Localization dictionary for labels; human-readable display labels; fixed biological outcome ordering; grouping evidence in expandable regions; line wrapping and responsive layout; icons accompanied by text; showing the native `unknown` level as unknown; separating biological outcomes from goal interpretation; showing native confidence and data status without recalculation; developer-only display of internal enum values.
+
+### 7. Forbidden transformations
+
+Deriving percentages from outcome levels; creating an overall average; creating a combined suitability score; red/yellow/green scoring that changes native meaning; converting unknown to 50; converting unknown to borderline; interpreting API blocked reasons as biological outcomes; treating `result === null` as six unknown outcomes; hiding or averaging conflicting evidence; hiding missing inputs; replacing evidence references with unsupported explanatory prose; declaring GOS or v1b the winner; mapping GOS levels to v1b score or level; recommending a plant solely because survival is possible; presenting ornamental goal fit as reliable flowering or yield; presenting flowering success as fruit-set or yield success; rewriting biology based on `userGoal`.
+
+### 8. Terminology rules
+
+Internal enum values are **not** automatically final user-facing copy. A future display must use a localization dictionary. English labels in a developer artifact are not final global product copy.
+
+**Outcome keys → non-final developer glosses:** `survival` → Survival; `vegetativeGrowth` → Vegetative growth; `flowering` → Flowering; `fruitSet` → Fruit set; `fruitRipeningOrYield` → Fruit ripening or yield; `longTermReliability` → Long-term reliability.
+
+**Native level enums** (`GROWTH_OUTCOME_LEVELS`, exact): `excellent`, `good`, `possible`, `risky`, `notRecommended`, `unknown`. Documented as exported native values only — not every profile emits every level. **Do not add** a level such as `borderline`.
+
+**Native confidence values** (evaluator `CONF_RANK` / outcome field): `none`, `low`, `medium`, `high`.
+
+**Native dataStatus values observed in evaluator paths:** `unknown`, `supported`, `partial`, `conflicting` (plus profile-supplied values passed through).
+
+**Native applicabilityStatus values observed:** `matched`, `insufficient_context`, `mismatched`.
+
+Safe developer glosses for levels/statuses may be listed later but must remain marked non-final product copy. Translations must not soften `unknown`, conflict, or `notRecommended` meanings. Right-to-left languages must not change the biological order.
+
+### 9. Confidence and data-status handling
+
+Display native `confidence` only; do not convert confidence to an invented numeric percentage. Display `dataStatus` and `applicabilityStatus` separately from the biological `level`. Low or unknown confidence must not silently change the level. Missing evidence must not be visually presented as negative evidence. Excluded evidence must remain distinguishable from absent evidence.
+
+### 10. Blockers and limiting factors
+
+`blockers` and `limitingFactors` remain outcome-specific. A flowering blocker must not automatically appear as a survival blocker; a fruit-set blocker must not automatically change flowering. A cross-outcome summary is allowed only in addition to — never instead of — the original per-outcome lists. No blocker may be applied outside its explicit applicability scope.
+
+### 11. Evidence presentation
+
+Initial future display contract must support: `evidenceRefsUsed`, `evidenceRefsExcluded`, exclusion/applicability reason where already available, `sourceCoverage` applicable/excluded counts, `sourceCoverage.conflicting`, `explanationFacts`, and evidence/profile/version provenance. Initial developer display may show evidence IDs. Source title, domain, or citation metadata may be shown only when already available in existing validated data. **Do not create new source text or evidence metadata in GOS-4A.** Mark `explanationFacts` as evaluator-produced facts, not marketing copy.
+
+### 12. Biology versus userGoal
+
+`userGoal` is not part of biological evaluation. Changing only `userGoal` must not change the six outcomes. `goalFit`, `recommendedUse`, and `overallConclusion` are interpretation and must appear in a visually and semantically separate section. Ornamental suitability must not be confused with flowering or yield reliability; a flowering-focused goal must not imply successful fruit set; a reliable-yield goal must be allowed to expose limitations even when survival is possible.
+
+**Future validation requirements:** same biological result bytes for two requests differing only in `userGoal`; goal interpretation may differ; no biological outcome row changes; no blocker/evidence list changes solely from `userGoal`.
+
+### 13. v1b coexistence
+
+The initial future GOS display artifact should display **GOS only**. It may include one neutral note equivalent to: “Growth Outcome Suitability and Climate Suitability v1b answer different questions.” Do not include side-by-side scores, comparison ranking, winner language, unified score, automatic recommendation reconciliation, or v1b replacement language. Cross-engine comparison remains owned by the isolated GOS-3C1 and GOS-3F harnesses.
+
+### 14. Future data-source restrictions
+
+For a future separately approved developer display — **allowed:** synthetic approved GOS fixtures; explicitly supplied developer API request; explicit developer capability (`explicit_developer_evaluation`); explicit trusted `locationClimate`; in-memory results. **Forbidden:** real user account data; real My Garden data; saved plant or care-task data; product orders; Smart Recommendations state; persistent location changes; result persistence; automatic loading from normal app navigation.
+
+**GOS-4A itself performs no invocation and uses no data.**
+
+### 15. Accessibility requirements (future display)
+
+Semantic headings and logical heading hierarchy; keyboard-accessible expand/collapse with visible focus; screen-reader labels for statuses; text accompanying every icon or color; no color-only status meaning; logical order matching the six biological stages; long-text wrapping; evidence and missing-input content remains readable; mobile-width layout safety; right-to-left layout safety; status wording understandable without relying on internal color conventions.
+
+### 16. Localization requirements (future display)
+
+Native enum keys remain stable internal keys. Displayed labels must come from a localization dictionary. Future localization must cover: outcome names; levels; statuses; blocker labels; limiting-factor labels; missing-input labels; confidence/data status; API-boundary reasons; goal interpretation labels. No translation strings are added in GOS-4A.
+
+### 17. Future standalone developer-display boundary
+
+The next possible separately approved step after GOS-4A may investigate or implement: one standalone developer-only read-only display page; direct explicit URL only; synthetic approved fixture data only; developer API invocation only; no `index.html` import; no normal product navigation; no persistence; no product consumer; no v1b side-by-side scoring; local validation before optional isolated production verification. **This page is not authorized or created by GOS-4A.**
+
+### 18. Future display-validation gates
+
+A later visual artifact must prove: direct explicit URL only; no `index.html` reference; no normal product request; API and evaluator unchanged; existing GOS-3F remains **2018/2018**; developer API harness remains **105/105**; evaluator remains **62/62**; GOS-3C1 remains **979/979**; blocked API envelope renders no six biological outcomes; native blocked/insufficient states preserve returned information; six outcomes remain separate and ordered; unknown remains unknown; conflicts remain visible and unaveraged; missing inputs remain visible; biology remains identical when only `userGoal` changes; interpretation appears separately; no score/risk transformation; no persistence; no real user or garden data; deterministic rendering for identical native results; accessible semantic structure; RTL-safe and mobile-width-safe structure; no product mutation; `git diff --check` clean.
+
+### 19. Stop conditions (later visual work)
+
+Stop if: `index.html` must import GOS; a product consumer is required; developer API or evaluator semantics must change; a combined score is introduced; unknown is converted to borderline; API blocked state is converted to biology; conflicts are hidden or averaged; missing inputs are hidden; `userGoal` changes biology; GOS and v1b are ranked; real user or garden data is required; results are persisted; existing stable harnesses must be destructively changed; schemas, evidence, pilot profiles, or catalog coverage must expand; product UI is mixed into a developer-only checkpoint.
+
+### 20. Explicitly deferred after GOS-4A
+
+Standalone developer display implementation; production verification of a display; normal product runtime loading; user-facing GOS UI; Smart Recommendations / My Garden / Plant Doctor / Plant Identification / Garden Design consumers; v1b replacement; score/risk mapping; persistence; Sidecar consumer; global catalog expansion; final localization copy; polished product visual design.
+
+### 21. GOS-4A completion criteria
+
+This checkpoint is complete when this document contains: API/biology/display contract separation; API-blocked display behavior; native blocked/insufficient behavior; native-success display behavior; fixed six-outcome hierarchy; allowed and forbidden transformations; terminology rules; confidence/data-status rules; blockers and limiting-factor rules; evidence/conflict rules; biology/userGoal separation; v1b coexistence rule; future synthetic-data restriction; accessibility requirements; localization requirements; future standalone-display boundary; validation gates; stop conditions; deferred work; and an **explicit statement that no runtime or visual implementation is authorized**.
+
+**No runtime or visual implementation is authorized by GOS-4A.**
+
+### 22. Documentation validation checklist (GOS-4A)
+
+| Check | Result |
+|-------|--------|
+| Three contracts separated (API envelope / native GOS result / display) | PASS |
+| Blocked API envelope never renders six biological outcomes | PASS |
+| Six outcomes remain independent; fixed order; no stage inheritance | PASS |
+| Unknown / conflict / missing inputs remain visible (not hidden by expansion) | PASS |
+| `userGoal` remains interpretation-only; biology unchanged when only goal changes | PASS |
+| No combined score / average / percentage / borderline / score-50 authorized | PASS |
+| No product consumer / `index.html` loading / runtime wiring authorized | PASS |
+| Future standalone developer display remains separately gated | PASS |
+| Existing harness facts preserved (GOS-3F **2018/2018**, API **105/105**, evaluator **62/62**, GOS-3C1 **979/979**) | PASS |
+| No GOS invocation / production testing / harness run in this checkpoint | PASS |
 
 ---
 
@@ -834,7 +995,7 @@ Do **not** remove the existing chat implementation immediately. The future filte
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Growth Outcome Suitability — GOS-3F production verification complete (`GOS_3F_PRODUCTION_VERIFIED`; five × **2018/2018** on production; not product-enabled); GOS-3C1 matrix **979/979** / **8** fixtures unchanged; GOS-4+ separately approved (no app pilot load, UI, ranking, persistence, score bridge, or Sidecar consumer)
+- Growth Outcome Suitability — GOS-4A read-only display contract complete (docs-only; no visual/runtime authorization); GOS-3F production verify **2018/2018** unchanged; GOS-3C1 **979/979** / **8** unchanged; standalone developer display / product consumers separately approved (no app pilot load, UI, ranking, persistence, score bridge, or Sidecar consumer)
 - Next UX planning — sun/water filter readiness (only currently safe structured filters; UI not started)
 - Remaining climate accuracy tasks C–E (missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after B / when approved)
@@ -943,7 +1104,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**GOS-4 planning only when separately approved (do not start automatically).** GOS-3F production verification is complete (`GOS_3F_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for `f4bdf3c`; five × **2018/2018**). Do **not** wire the developer API into the app, load pilot data at runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **GOS-4 not started.**
+**Standalone developer-only GOS read-only display only when separately approved (do not start automatically).** GOS-4A display contract is complete (documentation-only; no visual artifact authorized). Do **not** wire the developer API into the app, load pilot data at runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **Standalone developer display not started. Product-facing GOS UI not started.**
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
