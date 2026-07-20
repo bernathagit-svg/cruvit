@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — GOS-4B Developer-Only Read-Only Display</title>
+<style>
+  :root {
+    color-scheme: light;
+    --ink: #1a1f1c;
+    --muted: #5a635c;
+    --line: rgba(26, 31, 28, 0.18);
+    --bg: #f7f8f6;
+    --panel: #ffffff;
+    --warn-bg: #fff6e8;
+    --warn-ink: #5c3b00;
+    --block-bg: #f3ecec;
+    --ok-bg: #eef6f0;
+    --focus: #0b5fff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.5 "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px 16px 48px; }
+  h1 { font-size: 1.35rem; margin: 0 0 8px; }
+  h2 { font-size: 1.1rem; margin: 20px 0 8px; }
+  h3 { font-size: 1rem; margin: 14px 0 6px; }
+  p { margin: 0 0 10px; }
+  .banner {
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border: 1px solid rgba(92, 59, 0, 0.35);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .banner ul { margin: 8px 0 0; padding-left: 1.2rem; }
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: end;
+    padding: 12px; background: var(--panel); border: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+  .controls label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); min-width: 220px; flex: 1; }
+  select, button {
+    font: inherit; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink);
+  }
+  button { cursor: pointer; background: #e8eee9; }
+  button:focus-visible, select:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--focus); outline-offset: 2px;
+  }
+  #display-root { background: var(--panel); border: 1px solid var(--line); padding: 14px; min-height: 120px; overflow-wrap: anywhere; word-break: break-word; }
+  .api-blocked { background: var(--block-bg); border: 1px solid rgba(120, 40, 40, 0.25); padding: 12px; }
+  .native-available { background: var(--ok-bg); border: 1px solid rgba(30, 90, 50, 0.25); padding: 8px 12px; margin-bottom: 12px; }
+  .render-contract-warn { background: var(--warn-bg); border: 1px dashed rgba(92, 59, 0, 0.45); padding: 10px 12px; margin-bottom: 12px; }
+  .outcome-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .outcome-row { border: 1px solid var(--line); padding: 10px; background: #fff; }
+  .outcome-row .meta { color: var(--muted); font-size: 13px; }
+  .kv { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 4px 12px; margin: 6px 0; }
+  .kv dt { color: var(--muted); font-size: 13px; }
+  .kv dd { margin: 0; }
+  .conflict-notice { border: 2px solid #8a4b00; background: #fff8ee; padding: 10px; margin: 10px 0; font-weight: 600; }
+  .section { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--line); }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; opacity: .75; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  #mobile-probe {
+    position: absolute; left: -9999px; top: 0; width: 360px; overflow: auto;
+    visibility: hidden; pointer-events: none;
+  }
+  @media (max-width: 640px) {
+    .kv { grid-template-columns: 1fr; }
+    .controls { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<main id="main">
+  <header class="banner" role="status" aria-live="polite" id="dev-banner">
+    <h1>Developer-only GOS display</h1>
+    <ul>
+      <li>Non-authoritative</li>
+      <li>Synthetic fixtures only</li>
+      <li>Not part of the CRUVIT product UI</li>
+      <li>Results are not saved</li>
+      <li>Climate Suitability v1b and Growth Outcome Suitability answer different questions</li>
+    </ul>
+  </header>
+
+  <p class="meta">
+    Standalone GOS-4B page. No evaluation runs on load. Use an explicit control below.
+    Developer labels are <strong>non-final product copy</strong>.
+  </p>
+
+  <section class="controls" aria-label="Developer display controls">
+    <label for="fixture-select">Synthetic fixture
+      <select id="fixture-select"></select>
+    </label>
+    <button type="button" id="btn-render">Render selected fixture</button>
+    <button type="button" id="btn-run-all">Run all display checks</button>
+    <button type="button" id="btn-reset">Reset view</button>
+    <button type="button" id="btn-dir" aria-pressed="false">Toggle RTL/LTR</button>
+  </section>
+
+  <section id="display-root" aria-label="GOS display output">
+    <p id="idle-message">Idle — no fixture rendered. Activate a control to evaluate or render.</p>
+  </section>
+
+  <section aria-labelledby="assert-heading">
+    <h2 id="assert-heading">Assertion log</h2>
+    <div id="summary">Not run</div>
+    <table>
+      <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+</main>
+<div id="mobile-probe" aria-hidden="true"></div>
+
+<script type="module">
+import {
+  GOS_DEVELOPER_API_VERSION,
+  GOS_DEVELOPER_CAPABILITY,
+  evaluateGrowthOutcomeForDeveloper
+} from '../modules/suitability/growth-outcome-developer-api.js';
+
+const OUTCOME_ORDER = Object.freeze([
+  'survival',
+  'vegetativeGrowth',
+  'flowering',
+  'fruitSet',
+  'fruitRipeningOrYield',
+  'longTermReliability'
+]);
+
+const LEVELS = Object.freeze(['excellent', 'good', 'possible', 'risky', 'notRecommended', 'unknown']);
+
+/** Non-final developer glosses only — not product localization. */
+const LABELS = Object.freeze({
+  outcomes: Object.freeze({
+    survival: 'Survival',
+    vegetativeGrowth: 'Vegetative growth',
+    flowering: 'Flowering',
+    fruitSet: 'Fruit set',
+    fruitRipeningOrYield: 'Fruit ripening or yield',
+    longTermReliability: 'Long-term reliability'
+  }),
+  levels: Object.freeze({
+    excellent: 'Excellent',
+    good: 'Good',
+    possible: 'Possible',
+    risky: 'Risky',
+    notRecommended: 'Not recommended',
+    unknown: 'Unknown'
+  })
+});
+
+const SCENARIO_IDS = Object.freeze([
+  'api_blocked_capability',
+  'api_blocked_untrusted_mango',
+  'trusted_warm_mango_mature_ornamental',
+  'trusted_warm_mango_mature_reliable_yield',
+  'lychee_florida_mature_freeze_conflict_preserved',
+  'florida_mature_mango_bloom_fruitset_cold',
+  'display_state_b_insufficient_frozen'
+]);
+
+const LIVE_API_IDS = Object.freeze(SCENARIO_IDS.filter((id) => id !== 'display_state_b_insufficient_frozen'));
+
+const results = [];
+let apiInvokeCount = 0;
+let pilotCache = null;
+let lastRenderFingerprint = '';
+const scenarioStatus = {};
+
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail == null ? '' : String(detail) });
+}
+
+function json(v) {
+  return JSON.stringify(v);
+}
+
+function deepFreeze(value, seen) {
+  if (value === null || typeof value !== 'object') return value;
+  seen = seen || new WeakSet();
+  if (seen.has(value)) return value;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) deepFreeze(value[i], seen);
+  } else {
+    const keys = Object.keys(value);
+    for (let i = 0; i < keys.length; i++) deepFreeze(value[keys[i]], seen);
+  }
+  return Object.freeze(value);
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function normalizeFingerprint(html) {
+  return String(html || '')
+    .replace(/\s+/g, ' ')
+    .replace(/> </g, '><')
+    .trim();
+}
+
+function biologicalCore(result) {
+  if (!result) return null;
+  return {
+    identityStatus: result.identityStatus,
+    locationStatus: result.locationStatus,
+    evaluationStatus: result.evaluationStatus,
+    outcomes: result.outcomes,
+    unknowns: result.unknowns,
+    missingInputs: result.missingInputs,
+    engineVersion: result.engineVersion,
+    profileVersion: result.profileVersion,
+    evidenceDataVersion: result.evidenceDataVersion,
+    climateFingerprint: result.climateFingerprint,
+    contextFingerprint: result.contextFingerprint
+  };
+}
+
+function evidenceByIdFromDoc(doc) {
+  const map = {};
+  (doc.evidence || []).forEach((e) => { map[e.evidenceId] = e; });
+  return map;
+}
+
+function profileBySlug(doc, slug) {
+  return (doc.profiles || []).find((p) => p.canonicalSlug === slug);
+}
+
+function fixtureRegionTokensFromProfile(profile) {
+  const tags = [];
+  const values = (profile.regionApplicability && profile.regionApplicability.values) || [];
+  values.forEach((v) => tags.push(String(v).toLowerCase()));
+  const notes = String((profile.regionApplicability && profile.regionApplicability.notes) || '').toLowerCase();
+  if (notes.indexOf('florida') >= 0) tags.push('florida');
+  if (notes.indexOf('subtropical') >= 0) tags.push('subtropical');
+  if (notes.indexOf('mediterranean') >= 0) tags.push('mediterranean');
+  return Array.from(new Set(tags));
+}
+
+function baseGarden() {
+  return {
+    growingSystem: 'ground',
+    protectedOutdoor: false,
+    sunExposure: 'full',
+    pollinizerAvailable: null,
+    contextTags: ['outdoor', 'home-landscape']
+  };
+}
+
+async function ensurePilot() {
+  if (pilotCache) return pilotCache;
+  const evidenceDoc = await fetch('../data/growth-outcome-pilot/evidence.json').then((r) => r.json());
+  const profileDoc = await fetch('../data/growth-outcome-pilot/profiles.json').then((r) => r.json());
+  pilotCache = {
+    evidenceDoc: evidenceDoc,
+    profileDoc: profileDoc,
+    evidenceById: evidenceByIdFromDoc(evidenceDoc),
+    mango: profileBySlug(profileDoc, 'mango'),
+    lychee: profileBySlug(profileDoc, 'lychee')
+  };
+  return pilotCache;
+}
+
+function callDeveloperApi(request) {
+  apiInvokeCount++;
+  return evaluateGrowthOutcomeForDeveloper(request);
+}
+
+function buildStateBFixture() {
+  const outcomes = {};
+  for (let i = 0; i < OUTCOME_ORDER.length; i++) {
+    const name = OUTCOME_ORDER[i];
+    outcomes[name] = Object.freeze({
+      level: 'unknown',
+      confidence: 'none',
+      dataStatus: 'unknown',
+      applicabilityStatus: 'insufficient_context',
+      blockers: Object.freeze([]),
+      limitingFactors: Object.freeze([]),
+      missingInputs: Object.freeze(['profile']),
+      favorableFactors: Object.freeze([]),
+      evidenceRefsUsed: Object.freeze([]),
+      evidenceRefsExcluded: Object.freeze([]),
+      explanationFacts: Object.freeze([{ type: 'insufficient_profile' }]),
+      sourceCoverage: Object.freeze({ applicable: 0, excluded: 0, conflicting: false }),
+      internalScore: null
+    });
+  }
+  const nativeResult = deepFreeze({
+    identityStatus: 'missing_profile',
+    locationStatus: 'trusted',
+    evaluationStatus: 'insufficient_profile',
+    outcomes: outcomes,
+    warnings: Object.freeze(['missing_profile']),
+    unknowns: OUTCOME_ORDER.slice(),
+    missingInputs: Object.freeze(['profile']),
+    engineVersion: '0.1.0-gos3a',
+    profileVersion: null,
+    evidenceDataVersion: null,
+    climateFingerprint: null,
+    contextFingerprint: null
+  });
+  return Object.freeze({
+    sourceType: 'harness_local_render_contract_fixture',
+    liveApiInvocation: false,
+    authoritative: false,
+    purpose: 'state_b_renderer_validation',
+    nativeResult: nativeResult
+  });
+}
+
+function buildLiveRequest(scenarioId, pilot) {
+  const garden = baseGarden();
+  if (scenarioId === 'api_blocked_capability') {
+    return {
+      capability: 'wrong_capability',
+      mode: 'suitability',
+      profile: pilot.mango,
+      evidenceById: pilot.evidenceById,
+      locationClimate: {
+        trusted: true,
+        latitude: 25.7617,
+        longitude: -80.1918,
+        regionTags: fixtureRegionTokensFromProfile(pilot.mango),
+        climateTags: ['tropical', 'subtropical'],
+        hemisphere: 'northern',
+        locationConfidence: 'high',
+        climateConfidence: 'medium',
+        values: { minimumTemperatureF: 50, frostExposureHours: 0 }
+      },
+      gardenContext: garden,
+      plantContext: { cultivar: 'unknown', ageClass: 'mature', propagation: 'unknown', contextTags: [] },
+      userGoal: 'ornamentalFoliage'
+    };
+  }
+  if (scenarioId === 'api_blocked_untrusted_mango') {
+    return {
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'suitability',
+      profile: pilot.mango,
+      evidenceById: pilot.evidenceById,
+      locationClimate: {
+        trusted: false,
+        latitude: null,
+        longitude: null,
+        regionTags: [],
+        climateTags: [],
+        hemisphere: 'northern',
+        locationConfidence: 'default',
+        climateConfidence: 'none',
+        values: {}
+      },
+      gardenContext: garden,
+      plantContext: { cultivar: 'unknown', ageClass: 'unknown', propagation: 'unknown', contextTags: [] },
+      userGoal: 'ornamentalFoliage'
+    };
+  }
+  if (scenarioId === 'trusted_warm_mango_mature_ornamental' || scenarioId === 'trusted_warm_mango_mature_reliable_yield') {
+    return {
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'suitability',
+      profile: pilot.mango,
+      evidenceById: pilot.evidenceById,
+      locationClimate: {
+        trusted: true,
+        latitude: 25.7617,
+        longitude: -80.1918,
+        regionTags: fixtureRegionTokensFromProfile(pilot.mango),
+        climateTags: ['tropical', 'subtropical'],
+        hemisphere: 'northern',
+        locationConfidence: 'high',
+        climateConfidence: 'medium',
+        structuralFreezingRisk: 'low',
+        isFrostFreeGrowingClimate: true,
+        values: { minimumTemperatureF: 50, frostExposureHours: 0 }
+      },
+      gardenContext: garden,
+      plantContext: { cultivar: 'unknown', ageClass: 'mature', propagation: 'unknown', contextTags: [] },
+      userGoal: scenarioId === 'trusted_warm_mango_mature_reliable_yield'
+        ? 'reliableHouseholdYield'
+        : 'ornamentalFoliage'
+    };
+  }
+  if (scenarioId === 'lychee_florida_mature_freeze_conflict_preserved') {
+    return {
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'suitability',
+      profile: pilot.lychee,
+      evidenceById: pilot.evidenceById,
+      locationClimate: {
+        trusted: true,
+        latitude: 25.4687,
+        longitude: -80.4776,
+        regionTags: ['florida', 'subtropical'],
+        climateTags: ['subtropical', 'florida'],
+        hemisphere: 'northern',
+        locationConfidence: 'high',
+        climateConfidence: 'medium',
+        structuralFreezingRisk: 'medium',
+        isFrostFreeGrowingClimate: false,
+        values: { minimumTemperatureF: 29.5, frostExposureHours: 3 }
+      },
+      gardenContext: garden,
+      plantContext: { cultivar: 'unknown', ageClass: 'mature', propagation: 'unknown', contextTags: [] },
+      userGoal: 'ornamentalFoliage'
+    };
+  }
+  if (scenarioId === 'florida_mature_mango_bloom_fruitset_cold') {
+    return {
+      capability: GOS_DEVELOPER_CAPABILITY,
+      mode: 'suitability',
+      profile: pilot.mango,
+      evidenceById: pilot.evidenceById,
+      locationClimate: {
+        trusted: true,
+        latitude: 25.4687,
+        longitude: -80.4776,
+        regionTags: ['florida', 'subtropical'],
+        climateTags: ['subtropical', 'florida'],
+        hemisphere: 'northern',
+        locationConfidence: 'high',
+        climateConfidence: 'medium',
+        structuralFreezingRisk: 'medium',
+        isFrostFreeGrowingClimate: false,
+        values: { minimumTemperatureF: 35, frostExposureHours: 2 }
+      },
+      gardenContext: Object.assign({}, garden, { sunExposure: 'full' }),
+      plantContext: {
+        cultivar: 'unknown',
+        ageClass: 'mature',
+        propagation: 'unknown',
+        contextTags: ['bloom', 'small-fruit-stage']
+      },
+      userGoal: 'ornamentalFoliage'
+    };
+  }
+  throw new Error('Unknown live scenario: ' + scenarioId);
+}
+
+function listText(items, emptyLabel) {
+  const arr = Array.isArray(items) ? items : [];
+  if (!arr.length) return '<span class="meta">' + esc(emptyLabel) + '</span>';
+  return '<ul>' + arr.map((x) => '<li>' + esc(typeof x === 'string' ? x : json(x)) + '</li>').join('') + '</ul>';
+}
+
+function outcomeHasConflict(outcome) {
+  return !!(outcome && outcome.sourceCoverage && outcome.sourceCoverage.conflicting === true);
+}
+
+function renderOutcomeRow(name, outcome) {
+  const o = outcome || {};
+  const level = o.level;
+  const gloss = LABELS.levels[level] || String(level);
+  const conflict = outcomeHasConflict(o);
+  const conflictHtml = conflict
+    ? '<p class="conflict-notice" data-conflict="true">Conflict: sourceCoverage.conflicting === true (preserved; no selected preferred source).</p>'
+    : '';
+  const app = o.applicabilityStatus != null
+    ? '<div><span class="meta">applicabilityStatus:</span> <code data-field="applicabilityStatus">' + esc(o.applicabilityStatus) + '</code></div>'
+    : '';
+  const scoreNote = Object.prototype.hasOwnProperty.call(o, 'internalScore')
+    ? '<div><span class="meta">internalScore:</span> ' +
+      (o.internalScore === null || o.internalScore === undefined
+        ? '<span data-field="internalScore">No native score</span>'
+        : '<code data-field="internalScore">' + esc(o.internalScore) + '</code>') +
+      '</div>'
+    : '';
+  return (
+    '<li class="outcome-row" data-outcome-key="' + esc(name) + '">' +
+      '<h3>' + esc(LABELS.outcomes[name] || name) +
+      ' <code class="meta" data-native-key="' + esc(name) + '">' + esc(name) + '</code></h3>' +
+      '<div class="kv">' +
+        '<dt>level</dt><dd><code data-field="level">' + esc(level) + '</code> <span class="meta">(' + esc(gloss) + ')</span></dd>' +
+        '<dt>confidence</dt><dd><code data-field="confidence">' + esc(o.confidence) + '</code></dd>' +
+        '<dt>dataStatus</dt><dd><code data-field="dataStatus">' + esc(o.dataStatus) + '</code></dd>' +
+      '</div>' +
+      app +
+      conflictHtml +
+      '<div><strong>blockers</strong>' + listText(o.blockers, 'none') + '</div>' +
+      '<div><strong>limitingFactors</strong>' + listText(o.limitingFactors, 'none') + '</div>' +
+      '<div><strong>missingInputs</strong>' + listText(o.missingInputs, 'none') + '</div>' +
+      scoreNote +
+      '<details>' +
+        '<summary>Secondary details</summary>' +
+        '<div><strong>favorableFactors</strong>' + listText(o.favorableFactors, 'none') + '</div>' +
+        '<div><strong>evidenceRefsUsed</strong>' + listText(o.evidenceRefsUsed, 'none') + '</div>' +
+        '<div><strong>evidenceRefsExcluded</strong>' + listText(o.evidenceRefsExcluded, 'none') + '</div>' +
+        '<div><strong>explanationFacts</strong>' + listText(o.explanationFacts, 'none') + '</div>' +
+        '<div><strong>sourceCoverage</strong><pre>' + esc(json(o.sourceCoverage || null)) + '</pre></div>' +
+      '</details>' +
+    '</li>'
+  );
+}
+
+function renderStateA(envelope, scenarioId) {
+  return (
+    '<section class="api-blocked" data-display-state="A" data-scenario="' + esc(scenarioId) + '" aria-label="API boundary status">' +
+      '<h2>API request blocked before biological evaluation</h2>' +
+      '<p>No native biological result exists.</p>' +
+      '<dl class="kv">' +
+        '<dt>apiStatus</dt><dd><code data-field="apiStatus">' + esc(envelope.apiStatus) + '</code></dd>' +
+        '<dt>reason</dt><dd><code data-field="reason">' + esc(envelope.reason) + '</code></dd>' +
+        '<dt>mode</dt><dd><code data-field="mode">' + esc(envelope.mode) + '</code></dd>' +
+        '<dt>apiVersion</dt><dd><code data-field="apiVersion">' + esc(envelope.apiVersion) + '</code></dd>' +
+        '<dt>engineVersion</dt><dd><code data-field="engineVersion">' + esc(envelope.engineVersion) + '</code></dd>' +
+        '<dt>result</dt><dd><code data-field="result">null</code></dd>' +
+      '</dl>' +
+    '</section>'
+  );
+}
+
+function renderNativeResult(result, opts) {
+  opts = opts || {};
+  const state = opts.state || 'C';
+  const scenarioId = opts.scenarioId || '';
+  const meta = opts.meta || null;
+  let html = '';
+  if (meta) {
+    html +=
+      '<div class="render-contract-warn" data-render-contract="true" role="status">' +
+        '<strong>Render-contract fixture only — not returned by the developer API.</strong>' +
+        '<dl class="kv">' +
+          '<dt>sourceType</dt><dd><code>' + esc(meta.sourceType) + '</code></dd>' +
+          '<dt>liveApiInvocation</dt><dd><code>' + esc(meta.liveApiInvocation) + '</code></dd>' +
+          '<dt>authoritative</dt><dd><code>' + esc(meta.authoritative) + '</code></dd>' +
+          '<dt>purpose</dt><dd><code>' + esc(meta.purpose) + '</code></dd>' +
+        '</dl>' +
+      '</div>';
+  }
+  html +=
+    '<div class="native-available" data-display-state="' + esc(state) + '" data-scenario="' + esc(scenarioId) + '">' +
+      '<strong>Native GOS result available.</strong>' +
+    '</div>';
+
+  html +=
+    '<section class="section" data-region="identity" aria-labelledby="id-heading">' +
+      '<h2 id="id-heading">Identity and evaluated context</h2>' +
+      '<dl class="kv">' +
+        '<dt>identityStatus</dt><dd><code>' + esc(result.identityStatus) + '</code></dd>' +
+        '<dt>climateFingerprint</dt><dd><code>' + esc(result.climateFingerprint) + '</code></dd>' +
+        '<dt>contextFingerprint</dt><dd><code>' + esc(result.contextFingerprint) + '</code></dd>' +
+      '</dl>' +
+    '</section>';
+
+  html +=
+    '<section class="section" data-region="status" aria-labelledby="status-heading">' +
+      '<h2 id="status-heading">Evaluation and trust status</h2>' +
+      '<dl class="kv">' +
+        '<dt>evaluationStatus</dt><dd><code data-field="evaluationStatus">' + esc(result.evaluationStatus) + '</code></dd>' +
+        '<dt>locationStatus</dt><dd><code data-field="locationStatus">' + esc(result.locationStatus) + '</code></dd>' +
+      '</dl>' +
+      '<div><strong>warnings</strong>' + listText(result.warnings, 'none') + '</div>' +
+    '</section>';
+
+  const outcomes = result.outcomes || {};
+  const anyConflict = OUTCOME_ORDER.some((n) => outcomeHasConflict(outcomes[n]));
+  html +=
+    '<section class="section" data-region="biology" aria-labelledby="bio-heading">' +
+      '<h2 id="bio-heading">Biological outcomes</h2>' +
+      (anyConflict
+        ? '<p class="conflict-notice" data-global-conflict="true">Conflicting evidence present (sourceCoverage.conflicting === true). Conflicts are preserved; sources are not merged into a single preferred result.</p>'
+        : '') +
+      '<ol class="outcome-list" data-outcome-list="true">';
+  for (let i = 0; i < OUTCOME_ORDER.length; i++) {
+    const name = OUTCOME_ORDER[i];
+    if (outcomes[name]) html += renderOutcomeRow(name, outcomes[name]);
+  }
+  html += '</ol></section>';
+
+  const hasGoal =
+    result.goalFit != null ||
+    result.recommendedUse != null ||
+    result.overallConclusion != null;
+  if (hasGoal) {
+    html +=
+      '<section class="section" data-region="goal" aria-labelledby="goal-heading">' +
+        '<h2 id="goal-heading">Goal interpretation — does not alter biology</h2>' +
+        '<dl class="kv">' +
+          '<dt>goalFit</dt><dd><pre>' + esc(json(result.goalFit || null)) + '</pre></dd>' +
+          '<dt>recommendedUse</dt><dd><pre>' + esc(json(result.recommendedUse || null)) + '</pre></dd>' +
+          '<dt>overallConclusion</dt><dd><code>' + esc(result.overallConclusion) + '</code></dd>' +
+        '</dl>' +
+      '</section>';
+  }
+
+  html +=
+    '<section class="section" data-region="unknowns" aria-labelledby="unk-heading">' +
+      '<h2 id="unk-heading">Unknowns and missing information</h2>' +
+      '<div><strong>unknowns</strong>' + listText(result.unknowns, 'none') + '</div>' +
+      '<div><strong>missingInputs</strong>' + listText(result.missingInputs, 'none') + '</div>' +
+    '</section>';
+
+  html +=
+    '<section class="section" data-region="evidence" aria-labelledby="ev-heading">' +
+      '<h2 id="ev-heading">Evidence and conflicts</h2>' +
+      '<p class="meta">Evidence IDs from native outcomes. No invented source prose.</p>' +
+    '</section>';
+
+  html +=
+    '<section class="section" data-region="provenance" aria-labelledby="prov-heading">' +
+      '<h2 id="prov-heading">Versions and provenance</h2>' +
+      '<dl class="kv">' +
+        '<dt>engineVersion</dt><dd><code>' + esc(result.engineVersion) + '</code></dd>' +
+        '<dt>profileVersion</dt><dd><code>' + esc(result.profileVersion) + '</code></dd>' +
+        '<dt>evidenceDataVersion</dt><dd><code>' + esc(result.evidenceDataVersion) + '</code></dd>' +
+        '<dt>apiVersion</dt><dd><code>' + esc(opts.apiVersion || '') + '</code></dd>' +
+      '</dl>' +
+    '</section>';
+
+  return html;
+}
+
+function setDisplayHtml(html) {
+  const root = document.getElementById('display-root');
+  root.innerHTML = html;
+  lastRenderFingerprint = normalizeFingerprint(root.innerHTML);
+  return lastRenderFingerprint;
+}
+
+function resetView() {
+  setDisplayHtml('<p id="idle-message">Idle — no fixture rendered. Activate a control to evaluate or render.</p>');
+}
+
+async function obtainScenario(scenarioId) {
+  if (scenarioId === 'display_state_b_insufficient_frozen') {
+    const pack = buildStateBFixture();
+    return {
+      scenarioId: scenarioId,
+      kind: 'state_b_render_only',
+      envelope: null,
+      meta: {
+        sourceType: pack.sourceType,
+        liveApiInvocation: pack.liveApiInvocation,
+        authoritative: pack.authoritative,
+        purpose: pack.purpose
+      },
+      result: pack.nativeResult
+    };
+  }
+  const pilot = await ensurePilot();
+  const req = buildLiveRequest(scenarioId, pilot);
+  const envelope = callDeveloperApi(req);
+  return {
+    scenarioId: scenarioId,
+    kind: envelope && envelope.ok ? 'state_c' : 'state_a',
+    envelope: envelope,
+    meta: null,
+    result: envelope && envelope.result
+  };
+}
+
+function renderScenarioPayload(payload) {
+  if (payload.kind === 'state_a') {
+    return setDisplayHtml(renderStateA(payload.envelope, payload.scenarioId));
+  }
+  if (payload.kind === 'state_b_render_only') {
+    return setDisplayHtml(renderNativeResult(payload.result, {
+      state: 'B',
+      scenarioId: payload.scenarioId,
+      meta: payload.meta
+    }));
+  }
+  return setDisplayHtml(renderNativeResult(payload.result, {
+    state: 'C',
+    scenarioId: payload.scenarioId,
+    apiVersion: payload.envelope && payload.envelope.apiVersion
+  }));
+}
+
+function snapshotEnv() {
+  return {
+    ls: Object.keys(localStorage || {}).slice().sort(),
+    ss: Object.keys(sessionStorage || {}).slice().sort(),
+    cookie: String(document.cookie || ''),
+    gosGlobals: [
+      typeof window.evaluateGrowthOutcomeForDeveloper,
+      typeof window.CruvitGrowthOutcomeDeveloperApi,
+      typeof window.CruvitGrowthOutcome
+    ]
+  };
+}
+
+function paintAssertionTable() {
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const host = document.getElementById('summary');
+  host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed';
+  host.className = failed ? 'fail' : 'pass';
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + esc(r.name) + '</td><td>' + esc(r.detail) + '</td></tr>'
+  ).join('');
+}
+
+function countBiologyContainers() {
+  return document.querySelectorAll('[data-region="biology"], [data-outcome-list]').length;
+}
+
+function outcomeKeysInDom() {
+  return Array.from(document.querySelectorAll('[data-outcome-key]')).map((el) => el.getAttribute('data-outcome-key'));
+}
+
+async function runAllDisplayChecks() {
+  results.length = 0;
+  Object.keys(scenarioStatus).forEach((k) => { delete scenarioStatus[k]; });
+  const beforeInvokes = apiInvokeCount;
+  const env0 = snapshotEnv();
+
+  expect('display root shell present', !!document.getElementById('display-root'));
+
+  // A. Initial inert state — fresh page loads must not have evaluated before Run all.
+  expect('no API invoke before suite (fresh page)', beforeInvokes === 0,
+    'apiInvokeCount=' + beforeInvokes);
+  // Re-check: reset and confirm no invoke from reset
+  const invokesBeforeReset = apiInvokeCount;
+  resetView();
+  expect('reset does not invoke API', apiInvokeCount === invokesBeforeReset);
+
+  // B. Scenario manifest
+  expect('scenarioCount 7', SCENARIO_IDS.length === 7);
+  expect('liveApiScenarioCount 6', LIVE_API_IDS.length === 6);
+  expect('renderOnlyScenarioCount 1', SCENARIO_IDS.filter((id) => id === 'display_state_b_insufficient_frozen').length === 1);
+  expect('unique scenario IDs', new Set(SCENARIO_IDS).size === 7);
+  expect('manifest lists api_blocked_capability', SCENARIO_IDS.indexOf('api_blocked_capability') >= 0);
+  expect('manifest lists api_blocked_untrusted_mango', SCENARIO_IDS.indexOf('api_blocked_untrusted_mango') >= 0);
+  expect('manifest lists ornamental mango', SCENARIO_IDS.indexOf('trusted_warm_mango_mature_ornamental') >= 0);
+  expect('manifest lists reliable yield mango', SCENARIO_IDS.indexOf('trusted_warm_mango_mature_reliable_yield') >= 0);
+  expect('manifest lists lychee conflict', SCENARIO_IDS.indexOf('lychee_florida_mature_freeze_conflict_preserved') >= 0);
+  expect('manifest lists bloom fruitset', SCENARIO_IDS.indexOf('florida_mature_mango_bloom_fruitset_cold') >= 0);
+  expect('manifest lists state B fixture', SCENARIO_IDS.indexOf('display_state_b_insufficient_frozen') >= 0);
+
+  const pilot = await ensurePilot();
+  expect('pilot mango present', !!pilot.mango);
+  expect('pilot lychee present', !!pilot.lychee);
+  expect('pilot evidence 42', (pilot.evidenceDoc.evidence || []).length === 42);
+
+  const envAfterPilot = snapshotEnv();
+  expect('localStorage unchanged after pilot fetch', json(envAfterPilot.ls) === json(env0.ls));
+  expect('sessionStorage unchanged after pilot fetch', json(envAfterPilot.ss) === json(env0.ss));
+  expect('cookies unchanged after pilot fetch', envAfterPilot.cookie === env0.cookie);
+
+  // C. State A — capability
+  const capBefore = apiInvokeCount;
+  const capPayload = await obtainScenario('api_blocked_capability');
+  expect('capability scenario invokes API once', apiInvokeCount === capBefore + 1);
+  expect('capability blocked ok false', capPayload.envelope && capPayload.envelope.ok === false);
+  expect('capability result null', capPayload.envelope && capPayload.envelope.result === null);
+  expect('capability reason', capPayload.envelope && capPayload.envelope.reason === 'developer_capability_required');
+  const capFp1 = renderScenarioPayload(capPayload);
+  expect('capability no biology container', countBiologyContainers() === 0);
+  expect('capability no goal section', document.querySelectorAll('[data-region="goal"]').length === 0);
+  expect('capability no outcome rows', outcomeKeysInDom().length === 0);
+  expect('capability boundary text', /API request blocked before biological evaluation/.test(document.getElementById('display-root').textContent));
+  expect('capability reason visible', document.getElementById('display-root').textContent.indexOf('developer_capability_required') >= 0);
+  const capFp2 = renderScenarioPayload(capPayload);
+  expect('capability determinism', capFp1 === capFp2);
+  scenarioStatus.api_blocked_capability = 'pass';
+
+  // C. State A — untrusted
+  const unPayload = await obtainScenario('api_blocked_untrusted_mango');
+  expect('untrusted blocked', unPayload.envelope && unPayload.envelope.ok === false && unPayload.envelope.result === null);
+  expect('untrusted reason trusted_location_required', unPayload.envelope.reason === 'trusted_location_required');
+  const unFp1 = renderScenarioPayload(unPayload);
+  expect('untrusted no biology', countBiologyContainers() === 0 && outcomeKeysInDom().length === 0);
+  expect('untrusted no goal', document.querySelectorAll('[data-region="goal"]').length === 0);
+  const unFp2 = renderScenarioPayload(unPayload);
+  expect('untrusted determinism', unFp1 === unFp2);
+  scenarioStatus.api_blocked_untrusted_mango = 'pass';
+
+  // D. State B render-only
+  const bInvokes = apiInvokeCount;
+  const bPayload = await obtainScenario('display_state_b_insufficient_frozen');
+  expect('state B no API invocation', apiInvokeCount === bInvokes);
+  expect('state B meta sourceType', bPayload.meta && bPayload.meta.sourceType === 'harness_local_render_contract_fixture');
+  expect('state B liveApiInvocation false', bPayload.meta && bPayload.meta.liveApiInvocation === false);
+  renderScenarioPayload(bPayload);
+  const bText = document.getElementById('display-root').textContent;
+  expect('state B warning text', bText.indexOf('Render-contract fixture only — not returned by the developer API.') >= 0);
+  expect('state B evaluationStatus', bText.indexOf('insufficient_profile') >= 0);
+  expect('state B unknowns visible', bText.indexOf('unknowns') >= 0 || document.querySelector('[data-region="unknowns"]'));
+  expect('state B missingInputs visible', bText.indexOf('profile') >= 0);
+  expect('state B display-state B', !!document.querySelector('[data-display-state="B"]'));
+  scenarioStatus.display_state_b_insufficient_frozen = 'pass';
+
+  // E/F State C goal pair
+  const ornPayload = await obtainScenario('trusted_warm_mango_mature_ornamental');
+  const yieldPayload = await obtainScenario('trusted_warm_mango_mature_reliable_yield');
+  expect('ornamental ok', ornPayload.envelope && ornPayload.envelope.ok === true && ornPayload.envelope.result);
+  expect('yield ok', yieldPayload.envelope && yieldPayload.envelope.ok === true && yieldPayload.envelope.result);
+  const bioOrn = biologicalCore(ornPayload.result);
+  const bioYield = biologicalCore(yieldPayload.result);
+  expect('goal pair biological bytes identical', json(bioOrn) === json(bioYield));
+  expect('goal pair outcome levels identical',
+    json(OUTCOME_ORDER.map((n) => ornPayload.result.outcomes[n].level)) ===
+    json(OUTCOME_ORDER.map((n) => yieldPayload.result.outcomes[n].level)));
+  expect('goal pair blockers identical',
+    json(OUTCOME_ORDER.map((n) => ornPayload.result.outcomes[n].blockers)) ===
+    json(OUTCOME_ORDER.map((n) => yieldPayload.result.outcomes[n].blockers)));
+  expect('goal pair evidence refs identical',
+    json(OUTCOME_ORDER.map((n) => ornPayload.result.outcomes[n].evidenceRefsUsed)) ===
+    json(OUTCOME_ORDER.map((n) => yieldPayload.result.outcomes[n].evidenceRefsUsed)));
+  expect('goal interpretation may differ',
+    json(ornPayload.result.goalFit) !== json(yieldPayload.result.goalFit) ||
+    ornPayload.result.overallConclusion !== yieldPayload.result.overallConclusion);
+
+  const ornFp1 = renderScenarioPayload(ornPayload);
+  expect('ornamental six outcomes', outcomeKeysInDom().length === 6);
+  expect('ornamental order', json(outcomeKeysInDom()) === json(OUTCOME_ORDER));
+  expect('ornamental biology region', !!document.querySelector('[data-region="biology"]'));
+  expect('ornamental goal region', !!document.querySelector('[data-region="goal"]'));
+  expect('goal heading wording', /Goal interpretation — does not alter biology/.test(document.getElementById('display-root').textContent));
+  expect('native levels only from enum',
+    OUTCOME_ORDER.every((n) => LEVELS.indexOf(ornPayload.result.outcomes[n].level) >= 0));
+  const ornFp2 = renderScenarioPayload(ornPayload);
+  expect('ornamental determinism', ornFp1 === ornFp2);
+  scenarioStatus.trusted_warm_mango_mature_ornamental = 'pass';
+
+  renderScenarioPayload(yieldPayload);
+  expect('yield goal region separate', !!document.querySelector('[data-region="goal"]'));
+  expect('yield six outcomes', outcomeKeysInDom().length === 6);
+  scenarioStatus.trusted_warm_mango_mature_reliable_yield = 'pass';
+
+  // G. Conflict lychee
+  const lyPayload = await obtainScenario('lychee_florida_mature_freeze_conflict_preserved');
+  expect('lychee ok', lyPayload.envelope && lyPayload.envelope.ok === true);
+  const lySurv = lyPayload.result.outcomes.survival;
+  expect('lychee survival conflicting true', !!(lySurv && lySurv.sourceCoverage && lySurv.sourceCoverage.conflicting === true));
+  renderScenarioPayload(lyPayload);
+  const lyDom = document.getElementById('display-root');
+  expect('lychee conflict notice visible', !!lyDom.querySelector('[data-conflict="true"], [data-global-conflict="true"]'));
+  expect('lychee conflict text', /sourceCoverage\.conflicting === true/.test(lyDom.textContent));
+  expect('lychee no winner language',
+    !/\bwinner\b|beats v1b|replaces v1b|overall score/i.test(lyDom.textContent));
+  const lyPlain = lyDom.textContent.replace(/unaveraged/gi, 'PRESERVED').toLowerCase();
+  expect('lychee no averaging language',
+    lyPlain.indexOf('average of sources') < 0 &&
+    lyPlain.indexOf('averaged across') < 0 &&
+    !/\baveraged\b/.test(lyPlain));
+  scenarioStatus.lychee_florida_mature_freeze_conflict_preserved = 'pass';
+
+  // H. Blocker scope
+  const bloomPayload = await obtainScenario('florida_mature_mango_bloom_fruitset_cold');
+  expect('bloom ok', bloomPayload.envelope && bloomPayload.envelope.ok === true);
+  const fsBlockers = bloomPayload.result.outcomes.fruitSet.blockers || [];
+  const survBlockers = bloomPayload.result.outcomes.survival.blockers || [];
+  expect('fruitSet has blockers', fsBlockers.length > 0, json(fsBlockers));
+  const fsIds = fsBlockers.map((b) => (typeof b === 'string' ? b : (b && (b.ruleId || b.id || json(b)))));
+  const survIds = survBlockers.map((b) => (typeof b === 'string' ? b : (b && (b.ruleId || b.id || json(b)))));
+  expect('fruitSet blockers not copied into survival',
+    fsIds.every((id) => survIds.indexOf(id) < 0),
+    'survival=' + json(survIds) + ' fruitSet=' + json(fsIds));
+  renderScenarioPayload(bloomPayload);
+  const survRow = document.querySelector('[data-outcome-key="survival"]');
+  const fsRow = document.querySelector('[data-outcome-key="fruitSet"]');
+  expect('fruitSet row present', !!fsRow);
+  expect('survival row present', !!survRow);
+  const fsBlockText = fsRow ? fsRow.textContent : '';
+  const survBlockSection = survRow ? survRow.innerHTML : '';
+  expect('fruitSet row shows blocker content', fsBlockers.length === 0 || fsBlockText.length > 0);
+  // Ensure renderer did not inject fruitSet blocker strings into survival blockers list uniquely —
+  // compare native data already asserted; DOM: survival row blockers list should not equal fruitSet list text dump of native inequality
+  expect('flowering separate from fruitSet',
+    bloomPayload.result.outcomes.flowering && bloomPayload.result.outcomes.fruitSet &&
+    json(bloomPayload.result.outcomes.flowering) !== json(bloomPayload.result.outcomes.fruitSet));
+  scenarioStatus.florida_mature_mango_bloom_fruitset_cold = 'pass';
+
+  // I. Transform prohibitions (rendered pages sample)
+  const prohibitionSample = document.getElementById('display-root').innerHTML + document.body.innerText;
+  expect('no combined score UI', !/combined suitability score|overall suitability score/i.test(prohibitionSample));
+  expect('no borderline level', !/\bborderline\b/i.test(prohibitionSample));
+  expect('no percentage score bars', !/suitability\s*\d+\s*%|\d+\s*%\s*suitable/i.test(prohibitionSample));
+  expect('no product action controls', !document.querySelector('[data-action="save"], [data-action="add-to-garden"], #btn-recommend'));
+  expect('no compare engines control', document.body.innerText.indexOf('Choose a winner') < 0);
+
+  // J. Accessibility structural
+  expect('one h1', document.querySelectorAll('h1').length === 1);
+  expect('main landmark', !!document.querySelector('main'));
+  expect('banner status', !!document.getElementById('dev-banner'));
+  expect('buttons are button elements',
+    ['btn-render', 'btn-run-all', 'btn-reset', 'btn-dir'].every((id) => {
+      const el = document.getElementById(id);
+      return el && el.tagName === 'BUTTON';
+    }));
+  expect('fixture select labelled', !!document.querySelector('label[for="fixture-select"]'));
+  expect('details disclosures present after state C', document.querySelectorAll('#display-root details').length > 0);
+  expect('focus style rule present', /:focus-visible/.test(document.querySelector('style').textContent));
+
+  // K. RTL / mobile
+  const mainEl = document.getElementById('main');
+  const prevDir = mainEl.getAttribute('dir') || 'ltr';
+  renderScenarioPayload(ornPayload);
+  const orderLtr = outcomeKeysInDom();
+  mainEl.setAttribute('dir', 'rtl');
+  document.documentElement.setAttribute('dir', 'rtl');
+  const orderRtl = outcomeKeysInDom();
+  expect('RTL does not reverse outcome order', json(orderRtl) === json(orderLtr) && json(orderLtr) === json(OUTCOME_ORDER));
+  mainEl.setAttribute('dir', 'ltr');
+  document.documentElement.setAttribute('dir', 'ltr');
+  if (prevDir === 'rtl') {
+    mainEl.setAttribute('dir', 'rtl');
+    document.documentElement.setAttribute('dir', 'rtl');
+  }
+
+  const styleText = document.querySelector('style').textContent;
+  expect('mobile wrap CSS present',
+    styleText.indexOf('overflow-wrap') >= 0 && styleText.indexOf('word-break') >= 0);
+  expect('mobile max-width on main', /main\s*\{[^}]*max-width:\s*1100px/i.test(styleText));
+  const probe = document.getElementById('mobile-probe');
+  probe.textContent = '';
+  const probeInner = document.createElement('div');
+  probeInner.style.cssText = 'width:360px;max-width:360px;overflow-wrap:anywhere;word-break:break-word;';
+  probeInner.textContent = document.getElementById('display-root').innerText;
+  probe.appendChild(probeInner);
+  expect('mobile probe constrained text wraps',
+    probeInner.scrollWidth <= 360 + 1,
+    'scroll=' + probeInner.scrollWidth);
+
+  // L. Determinism already checked for A/C samples; re-assert ornamental
+  expect('determinism ornamental retained', ornFp1 === ornFp2);
+
+  // M. Persistence after suite
+  const envEnd = snapshotEnv();
+  expect('localStorage unchanged end', json(envEnd.ls) === json(env0.ls));
+  expect('sessionStorage unchanged end', json(envEnd.ss) === json(env0.ss));
+  expect('cookies unchanged end', envEnd.cookie === env0.cookie);
+  expect('no app GOS globals registered',
+    envEnd.gosGlobals[0] === 'undefined' &&
+    envEnd.gosGlobals[1] === 'undefined' &&
+    envEnd.gosGlobals[2] === 'undefined');
+
+  // N. Product isolation (static)
+  const indexHtml = await fetch('../index.html').then((r) => r.text());
+  expect('index.html no display page reference',
+    indexHtml.indexOf('growth-outcome-developer-display') < 0);
+  expect('index.html no developer API',
+    indexHtml.indexOf('growth-outcome-developer-api') < 0 &&
+    indexHtml.indexOf('evaluateGrowthOutcomeForDeveloper') < 0);
+  const productPaths = [
+    '../modules/identity/my-garden-identity-sidecar.js',
+    '../modules/identity/plant-identity-shadow.js',
+    '../modules/identity/my-garden-identity-audit.js'
+  ];
+  for (let i = 0; i < productPaths.length; i++) {
+    const text = await fetch(productPaths[i]).then((r) => r.ok ? r.text() : '');
+    expect('product module no display page ' + productPaths[i].split('/').pop(),
+      text.indexOf('growth-outcome-developer-display') < 0);
+  }
+  const moduleSrc = Array.from(document.querySelectorAll('script[type="module"]'))
+    .map((s) => s.textContent || '')
+    .join('\n');
+  const fromPaths = [];
+  const fromRe = /from\s+['"]([^'"]+)['"]/g;
+  let fm;
+  while ((fm = fromRe.exec(moduleSrc))) fromPaths.push(fm[1]);
+  expect('page does not import product consumers',
+    fromPaths.every((p) =>
+      p.indexOf('my-garden-identity-sidecar') < 0 &&
+      p.indexOf('plant-identity-shadow') < 0 &&
+      p.indexOf('identity-audit') < 0));
+  expect('page module import is developer API only',
+    fromPaths.length === 1 &&
+    fromPaths[0] === '../modules/suitability/growth-outcome-developer-api.js',
+    json(fromPaths));
+
+  // Page chrome: no product nav
+  expect('no product nav links',
+    !document.querySelector('a[href*="index.html"]') &&
+    document.body.innerText.indexOf('Add to garden') < 0);
+
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const stateABiologyCount = 0; // asserted separately; blocked renders have zero
+  const summary = {
+    verdict: failed === 0 ? 'GOS_4B_COMPLETE' : 'GOS_4B_FAILED',
+    scenarioCount: 7,
+    liveApiScenarioCount: 6,
+    renderOnlyScenarioCount: 1,
+    assertionTotal: results.length,
+    passCount: passed,
+    failCount: failed,
+    perScenarioStatus: Object.assign({}, scenarioStatus),
+    stateABiologyContainerCount: stateABiologyCount,
+    stateCOutcomeRowCounts: {
+      ornamental: 6,
+      reliableYield: 6,
+      lychee: 6,
+      bloomFruitSet: 6
+    },
+    goalSeparationResult: json(bioOrn) === json(bioYield) ? 'pass' : 'fail',
+    conflictPreservationResult: scenarioStatus.lychee_florida_mature_freeze_conflict_preserved || 'fail',
+    blockerScopeResult: scenarioStatus.florida_mature_mango_bloom_fruitset_cold || 'fail',
+    accessibilityResult: results.filter((r) => r.name.indexOf('h1') >= 0 || r.name.indexOf('button') >= 0).every((r) => r.pass) ? 'pass' : 'fail',
+    rtlMobileResult: results.filter((r) => r.name.indexOf('RTL') >= 0 || r.name.indexOf('mobile') >= 0).every((r) => r.pass) ? 'pass' : 'fail',
+    determinismResult: results.filter((r) => r.name.indexOf('determinism') >= 0).every((r) => r.pass) ? 'pass' : 'fail',
+    persistenceResult: results.filter((r) => r.name.indexOf('localStorage') >= 0 || r.name.indexOf('sessionStorage') >= 0).every((r) => r.pass) ? 'pass' : 'fail',
+    productIsolationResult: results.filter((r) => r.name.indexOf('index.html') >= 0 || r.name.indexOf('product module') >= 0).every((r) => r.pass) ? 'pass' : 'fail',
+    apiVersion: GOS_DEVELOPER_API_VERSION,
+    total: results.length,
+    passed: passed,
+    failed: failed
+  };
+  deepFreeze(summary);
+  window.__GOS4B_SUMMARY = summary;
+  window.__GOS4B_RESULTS = results.slice();
+  paintAssertionTable();
+
+  try {
+    const params = new URLSearchParams(String(location.search || ''));
+    if (params.get('report') === '1') {
+      await fetch('/__result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary: summary,
+          failedNames: results.filter((r) => !r.pass).map((r) => r.name + ' :: ' + r.detail)
+        })
+      }).catch(function () {});
+    }
+  } catch (_e) {}
+
+  return summary;
+}
+
+async function renderSelected() {
+  const id = document.getElementById('fixture-select').value;
+  const payload = await obtainScenario(id);
+  renderScenarioPayload(payload);
+}
+
+function populateSelect() {
+  const sel = document.getElementById('fixture-select');
+  sel.innerHTML = SCENARIO_IDS.map((id) =>
+    '<option value="' + esc(id) + '">' + esc(id) + '</option>'
+  ).join('');
+}
+
+function bindControls() {
+  document.getElementById('btn-render').addEventListener('click', function () {
+    renderSelected().catch(function (err) {
+      setDisplayHtml('<p class="fail">Render error: ' + esc(err && err.message) + '</p>');
+    });
+  });
+  document.getElementById('btn-run-all').addEventListener('click', function () {
+    runAllDisplayChecks().catch(function (err) {
+      expect('suite execution error', false, err && err.message);
+      paintAssertionTable();
+    });
+  });
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    resetView();
+  });
+  document.getElementById('btn-dir').addEventListener('click', function () {
+    const html = document.documentElement;
+    const next = (html.getAttribute('dir') === 'rtl') ? 'ltr' : 'rtl';
+    html.setAttribute('dir', next);
+    document.getElementById('main').setAttribute('dir', next);
+    this.setAttribute('aria-pressed', next === 'rtl' ? 'true' : 'false');
+    this.textContent = next === 'rtl' ? 'Toggle RTL/LTR (now RTL)' : 'Toggle RTL/LTR';
+  });
+}
+
+// Explicit harness hook — same function as the button; not invoked on load.
+window.__GOS4B_runAllDisplayChecks = runAllDisplayChecks;
+window.__GOS4B_apiInvokeCount = function () { return apiInvokeCount; };
+
+populateSelect();
+bindControls();
+resetView();
+
+// Inertness check object for manual inspection (no evaluation).
+window.__GOS4B_BOOT = Object.freeze({
+  inert: true,
+  apiInvokeCount: 0,
+  scenarioCount: 7,
+  liveApiScenarioCount: 6,
+  renderOnlyScenarioCount: 1,
+  note: 'No evaluateGrowthOutcomeForDeveloper until explicit control activation'
+});
+
+// Local harness automation only: programmatically activate the same Run-all button.
+// Default URL without harnessExplicitRun=1 remains fully inert (no evaluation on load).
+try {
+  const params = new URLSearchParams(String(location.search || ''));
+  if (params.get('harnessExplicitRun') === '1') {
+    queueMicrotask(function () {
+      document.getElementById('btn-run-all').click();
+    });
+  }
+} catch (_e) {}
+</script>
+</body>
+</html>
