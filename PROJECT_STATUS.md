@@ -82,7 +82,7 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation only so far; chat and results table unchanged; sun/water logic/UI not started); **Growth Outcome Suitability** (GOS-3C2 readiness contract complete locally — docs only; GOS-3C1 matrix **979/979** / **8** fixtures unchanged; no UI/ranking/runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation only so far; chat and results table unchanged; sun/water logic/UI not started); **Growth Outcome Suitability** (GOS-5A consumer readiness contract newly introduced — docs only; closes GOS-3C2 gate 8 on paper; GOS-4B production verified; GOS-3C1 matrix **979/979** / **8** fixtures unchanged; no adapter / UI / ranking / runtime consumer until separately approved).
 
 **Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → next UX planning (sun/water readiness) + catalog task B → C–E → enrichment → backend/database migration.
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Growth Outcome Suitability — GOS-5A consumer readiness contract** | Done (local) | **Documentation-only; newly introduced checkpoint name (repository previously had no GOS-5); not a prior locked historical decision.** Closes **GOS-3C2 gate 8** (consumer input readiness) as a contract before any product integration. File: `PROJECT_STATUS.md` only. Freezes: input ownership; hard prerequisites; optional/unknown rules; no-guessing; block/unavailable/v1b fallback matrix; biology-only and explicit `userGoal`; identity/profile/evidence/trusted-location/`locationClimate`; v1b coexistence; non-authoritative in-memory lifecycle; observability and rollback requirements; pilot coverage limits (**5** profiles / **42** evidence); My Garden diagnostic-only as first planning candidate (not authorized); consumer order and deferred modules; SR ranking prohibition; Plant Doctor / Garden Design exclusions; next possible stopped synthetic adapter as planning-only. **Does not authorize** adapter, product consumer, product UI, `index.html` loading, persistence, Sidecar consumer, score/risk mapping, or v1b replacement. Existing facts unchanged: GOS-4B `GOS_4B_PRODUCTION_VERIFIED` / **101/101** / **7** scenarios; GOS-3F **2018/2018**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. |
 | **Growth Outcome Suitability — GOS-4B isolated production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no product consumer; no user-facing GOS UI; no score/risk mapping; no winner language; no persistence.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`4f9fde3ace2767fe22f8c3bcde7ddf3871e172f3`**. **Deployed display** `/tests/growth-outcome-developer-display.test.html` HTTP **200** `text/html`; `git hash-object` matches commit blob for display, developer API **0.1.0-gos3d**, evaluator **0.1.0-gos3a**, pilot profiles/evidence, and `index.html`. Contains `GOS_4B_COMPLETE`, exact 7-scenario manifest, State B render-contract warning, and explicit-action-only evaluation gate. **Fresh Chrome profile — normal app isolation (before):** home + My Garden + Smart Recommendations + Plant Doctor/Identify + Garden Design sample — **zero** requests for display, developer API, evaluator, or pilot JSON; no GOS display UI/link; no GOS window globals; `evaluateClimateSuitabilityV1` present. **Initial display inertness:** shell/banner visible; apiInvokeCount **0**; idle (no biology); pilot JSON not fetched until explicit run. **Explicit Run all only:** five consecutive production runs all **101/101** / `GOS_4B_COMPLETE` / scenarioCount **7** / liveApi **6** / renderOnly **1**; goal/conflict/blocker/a11y/RTL/determinism/persistence/product-isolation all **pass**; forbidden external mutation endpoints **0**. Spot checks: State A capability + untrusted — no biology; State B harness-local label + apiDelta **0**; State C six ordered outcomes; Lychee conflict visible; RTL order unchanged; Reset clears DOM. **After:** reload home + navigation sample — **zero** automatic GOS/display requests; no stored display result; v1b still available. **Verdict:** `GOS_4B_PRODUCTION_VERIFIED`. GOS remains **not product-enabled / not authoritative / not a v1b replacement**. User-facing product GOS UI remains deferred. **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
 | **Growth Outcome Suitability — GOS-4B standalone developer-only read-only display** | Done (pushed) | **Standalone explicit-URL developer display/test page only; no `index.html` import/reference; no product navigation; no product consumer; no evaluator/API/existing-harness/schema/pilot/product/runtime change; no score/risk mapping; no winner language; no persistence.** File: `tests/growth-outcome-developer-display.test.html` (+ `PROJECT_STATUS.md`). **Path:** `/tests/growth-outcome-developer-display.test.html` (direct explicit URL only). **No evaluation on page load** — shell/banner/controls only until explicit “Render selected fixture” / “Run all display checks”. **Scenarios (exactly 7):** live API **6** — `api_blocked_capability`, `api_blocked_untrusted_mango`, `trusted_warm_mango_mature_ornamental`, `trusted_warm_mango_mature_reliable_yield`, `lychee_florida_mature_freeze_conflict_preserved`, `florida_mature_mango_bloom_fruitset_cold`; render-only State B **1** — `display_state_b_insufficient_frozen` (`sourceType: harness_local_render_contract_fixture`; **not** a live developer API response). **Harness:** **101/101**; verdict `GOS_4B_COMPLETE`; five consecutive local runs all **101/101**. Pushed at `4f9fde3`. **Production verification later completed** — see GOS-4B production verification checkpoint (`GOS_4B_PRODUCTION_VERIFIED`). |
 | **Growth Outcome Suitability — GOS-4A read-only display contract** | Done (pushed) | **Documentation-only display-semantics freeze; no visual artifact; no GOS invocation; no runtime/test/module/`index.html`/harness/schema/pilot/product change; no score/risk mapping; no winner language; no product consumer.** File: `PROJECT_STATUS.md` only. Freezes: (1) three-contract separation — API envelope vs native GOS result vs display presentation; (2) API-blocked / native-blocked / native-success display states; (3) fixed six-outcome order and independence; (4) display hierarchy and default visibility; (5) allowed vs forbidden transforms; (6) terminology / confidence / blockers / evidence / biology–userGoal / v1b coexistence rules; (7) future synthetic-data and accessibility/localization requirements; (8) future standalone developer-display boundary; (9) validation gates and stop conditions. **Does not authorize** HTML display, `index.html` loading, product UI, persistence, Sidecar, or v1b replacement. Existing facts unchanged: GOS-3F **2018/2018** / **8** fixtures / 7 trusted / 1 blocked; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. Pushed at `48a5cec`. |
@@ -313,7 +314,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **14** | Garden Design Studio 2.0 | Planned |
 | **15** | AI Garden Coach | Planned |
 | **16** | Garden-Level Disease Intelligence | **Future** — documented requirement only; blocked on data foundations (see dedicated plan). Must not remain single-plant-only Plant Doctor. |
-| **17** | Growth Outcome Suitability | **GOS-3C2 complete locally** (comparison conclusions + runtime-readiness contract documented; no runtime authorization). GOS-3C1 matrix remains **8** fixtures / **979/979**. No catalog/UI/ranking/product consumer until separately approved. Before broad Smart Recommendations or Add Plant suitability expansion. |
+| **17** | Growth Outcome Suitability | **GOS-5A consumer readiness contract newly introduced** (docs only; closes GOS-3C2 gate 8 on paper; no runtime authorization). GOS-4B production verified. GOS-3C1 matrix remains **8** fixtures / **979/979**. No adapter/catalog/UI/ranking/product consumer until separately approved. Before broad Smart Recommendations or Add Plant suitability expansion. |
 
 ### Phase notes (brief)
 
@@ -328,13 +329,13 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
 - **16 — Garden-Level Disease Intelligence:** future only — see dedicated plan. Plant Doctor must evolve beyond single-plant diagnosis to garden-wide, individualized, confidence-aware disease/pest/environment reasoning. **Blocked** until canonical identity, per-user Plant Library, zones/positions, photo/symptom history, care/weather history, and multi-plant observation data exist. Do not schedule ahead of those foundations or ahead of current climate accuracy work.
-- **17 — Growth Outcome Suitability:** GOS-4B production verified (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101** on explicit display URL at `4f9fde3`). GOS-4A contract remains in force. GOS-3F **2018/2018**; GOS-3C1 **8** / **979/979**. Do **not** add product runtime loader/catalog/UI/ranking/consumer until separately approved.
+- **17 — Growth Outcome Suitability:** GOS-5A consumer readiness contract newly introduced (docs only; closes GOS-3C2 gate 8 on paper). GOS-4B production verified (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101** on explicit display URL at `4f9fde3`). GOS-4A contract remains in force. GOS-3F **2018/2018**; GOS-3C1 **8** / **979/979**. Do **not** add adapter / product runtime loader / catalog / UI / ranking / consumer until separately approved.
 
 ---
 
 # Growth Outcome Suitability Plan
 
-**Status:** **GOS-4B production verified** (`GOS_4B_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for `4f9fde3`; five × **101/101** on production display URL). GOS-4A display contract remains authoritative. Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** / **5**); GOS-3A/3B evaluator (**62/62**); GOS-3C0/3C1 matrix (**8** / **979/979**); GOS-3C2 readiness contract; GOS-3D developer API (**105/105**); GOS-3E production inert verify; GOS-3F production verify (`GOS_3F_PRODUCTION_VERIFIED`; **2018/2018**). **Not imported by `index.html`.** No application runtime loading, product consumer, product UI, persistence, Sidecar consumer, or v1b mapping. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS-4B is not product-enabled and does not replace Climate Suitability v1b.**
+**Status:** **GOS-5A consumer readiness contract newly introduced** (documentation-only; closes GOS-3C2 gate 8 on paper; no adapter / product consumer / UI authorized). **GOS-4B production verified** (`GOS_4B_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for `4f9fde3`; five × **101/101** on production display URL). GOS-4A display contract remains authoritative. Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** / **5** — mango, lychee, apple, olive, bougainvillea); GOS-3A/3B evaluator (**62/62**); GOS-3C0/3C1 matrix (**8** / **979/979**); GOS-3C2 readiness contract; GOS-3D developer API (**105/105**); GOS-3E production inert verify; GOS-3F production verify (`GOS_3F_PRODUCTION_VERIFIED`; **2018/2018**). **Not imported by `index.html`.** No application runtime loading, product consumer, product UI, persistence, Sidecar consumer, or v1b mapping. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS remains not product-enabled and does not replace Climate Suitability v1b.**
 
 **Placement:** Product display/ranking requires separate approval — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
 
@@ -435,7 +436,7 @@ Standalone developer-only read-only display implementation (post–GOS-4A); prod
 
 ### Next-step boundary
 
-GOS-4B production verification is complete (`GOS_4B_PRODUCTION_VERIFIED`). Further product work (consumers, ranking, user-facing UI) remains separately gated — do **not** start automatically. **Product-facing GOS UI and `index.html` wiring remain unauthorized.**
+GOS-4B production verification is complete (`GOS_4B_PRODUCTION_VERIFIED`). **GOS-5A** (newly introduced documentation checkpoint) freezes the consumer-input ownership contract that closes **gate 8** on paper before any integration code. Further product work (adapters, consumers, ranking, user-facing UI) remains separately gated — do **not** start automatically. **Product-facing GOS UI and `index.html` wiring remain unauthorized.**
 
 ### GOS-3C2 completion criteria
 
@@ -704,6 +705,332 @@ This checkpoint is complete when this document contains: API/biology/display con
 **Production verification:** complete — see checkpoint row (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101** on production).
 
 **Deferred:** user-facing product GOS UI; product consumers; persistence; v1b side-by-side; score/risk mapping.
+
+---
+
+## GOS-5A — Consumer Readiness Contract
+
+**Checkpoint type:** documentation-only. **File:** `PROJECT_STATUS.md` only.
+
+**Historical accuracy:** GOS-5A is a **newly proposed checkpoint name introduced now**. The repository did **not** previously define a GOS-5 checkpoint. GOS-5A is **not** an earlier locked historical decision. It is introduced now to close **GOS-3C2 consumer-readiness gate 8** (consumer input readiness) **before any product integration**.
+
+**Purpose:** Freeze consumer-input ownership, hard prerequisites, no-guessing rules, unavailable/block/fallback behavior, biology-only and explicit `userGoal` handling, v1b coexistence, in-memory result lifecycle, observability requirements, and rollback requirements — so later consumers cannot guess missing GOS inputs.
+
+**Explicit non-authorization (GOS-5A does not authorize):**
+- any product consumer
+- any product UI / user-facing GOS UI
+- a stopped consumer adapter (implementation)
+- `index.html` loading or product runtime wiring
+- persistence of GOS results
+- profile or evidence coverage expansion
+- Sidecar consumer
+- score / risk / level mapping
+- Climate Suitability v1b replacement
+- Smart Recommendations ranking or filtering by GOS
+
+Every later consumer or adapter requires **separate approval**.
+
+### 1. Contract audience
+
+**Audience:** developers; future consumer implementers; product/runtime reviewers. **Not** end users.
+
+This contract defines:
+- who owns each input
+- which inputs are required
+- which inputs may remain unknown
+- which values may never be inferred
+- when a consumer must not call GOS
+- when Climate Suitability v1b / current product behavior continues
+- how results may exist in memory
+- how later integration can be disabled or removed
+
+### 2. First eventual candidate consumer (planning only)
+
+**First candidate:** My Garden diagnostic-only suitability explanation.
+
+**Intended future user question:** “For this already identified plant in my confirmed garden location, what is the likely outcome for survival, vegetative growth, flowering, fruit set, fruit ripening or yield, and long-term reliability?”
+
+**Planning-only status:**
+- This is only the first candidate for later planning.
+- It is **not** approved for implementation in GOS-5A.
+- It must not rank plants.
+- It must not recommend purchases.
+- It must not change tasks or care schedules.
+- It must not change the saved My Garden plant.
+- It must not automatically run when My Garden loads.
+- It must not replace Climate Suitability v1b (`evaluateClimateSuitabilityV1`).
+- It must not treat Add Plant as approval to invoke GOS.
+- Existing legacy My Garden identity remains authoritative until identity persistence is separately approved.
+- Advisory Sidecar / registry consultation (`CruvitIdentityShadow`, `CruvitGardenPlantIdentityConsult`, `CruvitGardenIdentityAudit`) must not silently overwrite the saved plant identity.
+
+### 3. Earliest safe future consumer order (planning only — none authorized)
+
+1. My Garden diagnostic-only explanation
+2. Plant Identification post-identification explanation
+3. Smart Recommendations only much later and only if it remains non-ranking
+4. Plant Doctor deferred — diagnosis and suitability answer different questions
+5. Garden Design deferred — placement also requires microclimate, spacing, compatibility, and design context beyond GOS
+
+**None of the above is authorized by GOS-5A.**
+
+### 4. Input ownership
+
+| Input | Owner | Rules |
+|-------|-------|-------|
+| **A. Canonical plant identity** | Identity registry and current consumer-owned plant identity; legacy My Garden record remains authoritative until a separately approved migration/persistence change | Unresolved identity blocks consumer invocation. Free text must not be promoted to a canonical identity. Sidecar advisory output must not silently become authoritative. Pending or quarantined identity remains unavailable. |
+| **B. Biological GOS profile** | Validated GOS profile dataset (`data/growth-outcome-pilot/profiles.json`) | Catalog prose and `climateTraits` must not be converted into a GOS profile. No profile means GOS unavailable for that plant. Profile availability must be explicit. |
+| **C. Evidence bundle** | Validated GOS evidence dataset (`data/growth-outcome-pilot/evidence.json`) | Evidence must match the selected profile/version. Referenced evidence missing causes fail-closed behavior. Consumer must not create evidence text. |
+| **D. Trusted location** | Global Location Foundation; `hasTrustedAppLocation()` / repository-native trusted-location contract | Default Western Galilee / `DEFAULT_GARDEN_LOCATION` is never trusted user location. Unconfirmed or default location blocks product invocation. Consumer must not promote location confidence. |
+| **E. Normalized `locationClimate`** | A future explicitly approved consumer adapter or location-to-GOS mapping contract | No hidden coordinate-to-region inference. No undocumented region tags. No guessing `climateTags` or applicability tags. A mapping implementation is **not** authorized by GOS-5A. |
+| **F. Plant age, maturity, and phenology** | My Garden record or explicit user observation | Absence remains unknown. Never default to mature, established, young, flowering, or fruiting. No inference from photo age unless separately validated. |
+| **G. Cultivar, pollinizer, winter chill, protection, growing system** | Explicit plant/garden record or user input | Absence remains unknown. Do not infer from plant species, container appearance, country, or navigation context. |
+| **H. Garden microclimate** | Not yet fully modeled | Remains unknown unless explicitly captured. Device location does not prove sun, drainage, wind, frost pocket, balcony protection, nearby wall effects, or irrigation. |
+| **I. `userGoal`** | Explicit user selection using the native GOS goal taxonomy (`GROWTH_OUTCOME_GOALS`: `ornamentalFoliage`, `floweringDisplay`, `edibleHarvest`, `reliableHouseholdYield`, `experimentalGrowing`, `protectedGrowing`, `lowMaintenance`, `containerGrowing`) | Do not infer from module, navigation path, SR intent score, edible category, plant type, purchase history, or saved garden. If no explicit goal exists, only biology mode may later be considered. Suitability mode must require an explicit valid `userGoal`. |
+| **J. Evidence conflict and uncertainty** | GOS evaluator native output | Consumer and adapter must not average, resolve, suppress, or rewrite conflicts. |
+
+### 5. Hard prerequisites before a future product invocation
+
+A product consumer must **not** invoke GOS when any hard prerequisite is absent:
+
+- resolved canonical plant identity
+- validated GOS profile explicitly available
+- matching validated evidence bundle available
+- trusted confirmed product location (`hasTrustedAppLocation()` true)
+- approved deterministic `locationClimate` construction
+- explicit invocation mode (`biology` or `suitability` per `GOS_DEVELOPER_MODES`)
+- developer/product capability boundary approved for that consumer
+- if mode is `suitability`: explicit valid `userGoal` from `GROWTH_OUTCOME_GOALS`
+
+The existing developer API fail-closed behavior (`evaluateGrowthOutcomeForDeveloper` reasons such as `trusted_location_required`, `valid_user_goal_required`, `profile_required`, `referenced_evidence_missing`, `developer_capability_required`) remains a **secondary** safety boundary, not a replacement for product-consumer preflight.
+
+### 6. Optional or context-dependent inputs
+
+These may remain absent only when: they are represented as absent or unknown; the evaluator can preserve them as `missingInputs`, unknowns, insufficient data, or non-applicable context; and **no default value is inserted**.
+
+Covered at minimum: `ageClass`; maturity; cultivar; flowering/fruiting observations; protected environment; container/open-ground state; winter chill; pollinizer; detailed microclimate; irrigation; drainage; sun exposure; explicit regional applicability tags (`regionTags` / `climateTags` when not supplied by an approved mapping).
+
+**Note:** Some optional fields may become hard prerequisites for a specific profile, evidence rule, or consumer. The future adapter must identify that explicitly rather than guessing.
+
+### 7. No-guessing rule
+
+A future consumer, adapter, API wrapper, display, or evaluator must **never silently infer**:
+
+- canonical identity
+- profile
+- evidence
+- trusted status
+- regional applicability
+- age or maturity
+- cultivar
+- chill hours
+- pollinizer
+- protected environment
+- flowering or fruiting stage
+- container versus ground
+- microclimate
+- `userGoal`
+
+Navigation context is not user intent. Plant category is not `userGoal`. Country or coordinates alone are not a complete garden microclimate.
+
+### 8. Block, unavailable, and fallback matrix
+
+| Condition | Behavior |
+|-----------|----------|
+| **A. Identity unresolved** | Consumer blocks before invocation. No GOS call. No biological result. Current product behavior may continue. Neutral explanation: GOS outcome information is unavailable until plant identity is resolved. |
+| **B. No validated GOS profile** | No profile fabrication. No GOS call. v1b / current product behavior continues. Neutral unavailable state. Do **not** show six fabricated unknown outcomes. |
+| **C. Evidence missing or version mismatch** | Fail closed. No product biological display. Current product behavior continues. Log only a non-sensitive reason code in a future approved observability layer. |
+| **D. Location untrusted** | Consumer blocks before invocation. Developer API would also return `trusted_location_required` if reached. Never use default Western Galilee as trusted. v1b trusted-location rules remain unchanged. |
+| **E. Approved `locationClimate` mapping unavailable** | No GOS call. Do not derive `regionTags` or `climateTags` ad hoc. Current product behavior continues. |
+| **F. Explicit applicability context incomplete** (maturity, cultivar, phenology, chill, pollinizer, protected system, etc.) | Do not default values. Either allow native unknown/insufficient handling only when a future approved contract proves the evaluator supports this safely, **or** block invocation for that profile/consumer. This choice must be explicit per future adapter test. |
+| **G. `userGoal` absent** | Do not infer it. Suitability mode is unavailable. Biology-only mode may later be allowed after separate approval. `goalFit`, `recommendedUse`, and `overallConclusion` must not be fabricated. |
+| **H. Evidence conflict** | Preserve native conflict. No winner. No averaging. No unified product score. |
+| **I. Capability unavailable** | API blocked. No biology. v1b / current product behavior continues. |
+
+**Prohibit:** score 50; borderline fallback; generic “probably suitable”; six unknown outcomes fabricated from an API or consumer block.
+
+### 9. Biology-only handling
+
+When explicit `userGoal` is absent:
+- a future consumer may only consider biology mode (`GOS_DEVELOPER_MODES` / evaluator biology path)
+- biology mode still requires all other hard prerequisites
+- no `goalFit`
+- no `recommendedUse`
+- no goal-based `overallConclusion`
+- product copy must not infer whether the user wants foliage, flowers, experimentation, or reliable yield
+
+**Biology-only eligibility is not approval to implement it.**
+
+### 10. v1b coexistence
+
+For the first future consumer:
+- Climate Suitability v1b remains the visible product climate-suitability result (`evaluateClimateSuitabilityV1`).
+- GOS remains supplementary and diagnostic-only.
+- GOS must not replace, suppress, rewrite, or map v1b.
+- No shared or averaged score.
+- No winner language.
+- No automatic reconciliation.
+- Contradictory outputs must remain separate and explain that the engines answer different questions.
+- The future GOS feature must be removable without altering the v1b-only path.
+- Rollback means removing or disabling the GOS call/display while leaving v1b unchanged.
+
+**GOS-5A does not authorize computing both engines in product runtime yet.**
+
+### 11. Authority
+
+- GOS is non-authoritative.
+- GOS does not select plants.
+- GOS does not rank recommendations.
+- GOS does not change care tasks.
+- GOS does not diagnose disease.
+- GOS does not decide garden placement.
+- GOS does not trigger purchases.
+- GOS does not overwrite catalog or garden data.
+- Consumer-owned data remains owned by the consumer.
+- Evaluator output is immutable advisory data for the duration of an approved request only.
+
+### 12. Result lifecycle
+
+For any future initial consumer:
+- result is in memory only
+- result exists only for the active view/request
+- result is not written to `localStorage`, `sessionStorage`, IndexedDB, or cookies
+- result is not written to My Garden
+- result is not attached to the identity Sidecar
+- result is not sent to analytics as biological content
+- result is discarded on reset, navigation, feature disablement, or page lifecycle end
+
+Persistence requires a separate contract and approval.
+
+### 13. Future observability requirements
+
+Before any runtime consumer implementation, a separate approved plan must define:
+- explicit feature boundary
+- explicit enablement
+- blocked/unavailable reason codes
+- no PII
+- no raw garden or plant-context persistence
+- no biological result persistence
+- error-count monitoring
+- invocation-count monitoring
+- blocked-reason counts
+- rollback/kill switch
+- proof that v1b-only behavior remains intact
+- production isolation and removal verification
+
+GOS-5A documents these requirements only. **Do not implement logging or a feature flag in this checkpoint.**
+
+### 14. Rollback requirements
+
+A future integration must be independently removable. Rollback must require only:
+- disabling or removing the GOS consumer boundary
+- removing its supplementary display
+- leaving v1b, My Garden, identity, location, care tasks, recommendations, and product behavior unchanged
+- leaving no stored GOS result or migrated data behind
+
+No database migration may be required for the first consumer.
+
+### 15. Profile-coverage handling
+
+**Current validated coverage (GOS-2B pilot, unchanged):**
+- **5** pilot profiles: mango, lychee, apple, olive, bougainvillea
+- **42** evidence records
+- limited pilot regions and contexts
+- not global coverage
+- catalog identity coverage does **not** equal GOS profile coverage
+
+**Rules:**
+- GOS may later be offered only when an exact validated profile exists
+- unsupported plants receive an unavailable state
+- unsupported plants must not be scored from catalog prose
+- inconsistent catalog-wide availability must be explained before user-facing rollout
+- profile expansion is a separate scientific/data workstream
+- profile expansion must not be mixed into consumer adapter implementation
+
+### 16. My Garden diagnostic-only future boundary
+
+The first candidate consumer may later be designed only for:
+- an existing My Garden plant
+- resolved canonical identity
+- validated profile
+- trusted location
+- approved `locationClimate`
+- explicit or safely absent context
+- explicit action by the user or developer
+- supplementary explanation only
+
+It must **not** initially: run for all plants automatically; run on My Garden page load; write to the plant record; schedule tasks; alter care recommendations; recommend products; change Garden Mood; affect notifications; change Add Plant ranking; persist a result; replace v1b.
+
+### 17. Plant Identification future boundary
+
+- May be considered only after identity resolution.
+- Provisional or low-confidence identification cannot become canonical automatically.
+- Trusted location remains required.
+- Biology-only may be the only safe mode when no explicit goal exists.
+- GOS information must not be confused with identification confidence.
+- Integration remains deferred after My Garden contract work.
+
+### 18. Smart Recommendations prohibition
+
+- Smart Recommendations must **not** use GOS to rank, filter, sort, suppress, or automatically select plants at this stage.
+- Existing SR intents are not native GOS `userGoal` values.
+- `edibleIntent` or `floweringIntent` (or equivalent SR signals) must not be translated automatically into a GOS goal.
+- GOS must not become recommendation authority through an adapter.
+- SR integration remains a later separately approved high-risk checkpoint.
+
+### 19. Plant Doctor and Garden Design exclusions
+
+**Plant Doctor:** diagnosis and suitability are separate questions. GOS must not alter diagnosis confidence or treatment. No integration in the initial consumer sequence.
+
+**Garden Design:** GOS alone does not model placement, spacing, compatibility, root competition, irrigation zones, sun movement, design intent, or local microclimate. No placement authority. No integration in the initial consumer sequence.
+
+### 20. Next possible checkpoint after GOS-5A
+
+After GOS-5A is completed and separately pushed, the next possible step may be: **a read-only planning checkpoint for a stopped synthetic consumer-input adapter.**
+
+That future adapter would potentially:
+- accept a synthetic My Garden-shaped snapshot
+- validate ownership and hard prerequisites
+- reject guessed fields
+- construct a developer API request deterministically
+- remain explicit-call-only
+- use no real user or garden data
+- create no product consumer
+- create no UI
+- persist nothing
+
+**GOS-5A does not authorize or implement that adapter.**
+
+### 21. Future adapter validation gates
+
+A future stopped adapter must prove: synthetic fixtures only; canonical identity required; profile availability explicit; evidence availability explicit; trusted location required; deterministic approved `locationClimate` mapping; `userGoal` not inferred; suitability mode blocked without explicit goal; biology mode contains no goal interpretation; missing optional context remains missing; no defaults for maturity/cultivar/phenology/pollinizer/protection; no mutation of consumer input; deterministic request construction; no GOS invocation on import; explicit capability required; blocked envelope is not biology; no persistence; API and evaluator unchanged; product runtime remains GOS-free; existing GOS suites remain unchanged.
+
+### 22. Explicitly deferred after GOS-5A
+
+Stopped consumer adapter implementation; product runtime invocation; product-facing GOS UI; My Garden consumer implementation; Plant Identification consumer; Smart Recommendations integration; Plant Doctor integration; Garden Design integration; v1b replacement; score/risk mapping; persistence; Sidecar consumer; profile/evidence expansion; final localization; polished product design; real-user testing; analytics or monitoring implementation.
+
+### 23. GOS-5A completion criteria
+
+This checkpoint is complete when this document contains: statement that GOS-5A is newly introduced; first candidate consumer and non-authorization wording; consumer order and deferred consumers; complete input-ownership table; hard prerequisites; optional/unknown input rules; no-guessing rules; block/unavailable/fallback matrix; biology-only handling; `userGoal` handling; identity/profile/evidence handling; trusted-location and `locationClimate` handling; v1b coexistence; non-authoritative boundary; in-memory-only result lifecycle; observability requirements; rollback requirements; profile-coverage limitations; My Garden diagnostic-only future boundary; Smart Recommendations prohibition; Plant Doctor and Garden Design exclusions; next possible stopped-adapter planning gate; and an **explicit statement that no implementation is authorized**.
+
+**No adapter, product consumer, product UI, persistence, or `index.html` wiring is authorized by GOS-5A.**
+
+### 24. Documentation validation checklist (GOS-5A)
+
+| Check | Result |
+|-------|--------|
+| GOS-5A described as newly introduced (not prior historical GOS-5) | PASS |
+| First candidate is planning-only / not authorized for implementation | PASS |
+| Input ownership is explicit | PASS |
+| Hard prerequisites are explicit | PASS |
+| No-guessing rules are explicit | PASS |
+| Unavailable / block / fallback behavior is explicit | PASS |
+| `userGoal` is never inferred | PASS |
+| Biology-only behavior is explicit | PASS |
+| v1b remains the product climate-suitability path | PASS |
+| Result lifecycle is in memory only | PASS |
+| Rollback is independent | PASS |
+| SR ranking is prohibited | PASS |
+| No adapter or product implementation is authorized | PASS |
 
 ---
 
@@ -1134,7 +1461,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Product-facing GOS work only when separately approved (do not start automatically).** GOS-4B production verification is complete (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101** on the isolated display URL). Do **not** wire the developer API into the app, add product navigation, load pilot data in normal runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **Product-facing GOS UI not started.**
+**GOS-5A consumer readiness contract is complete locally (docs only).** Next possible step after separate push approval: a **read-only planning checkpoint** for a stopped synthetic consumer-input adapter — do **not** start automatically. Do **not** implement an adapter, wire the developer API into the app, add product navigation, load pilot data in normal runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **No product consumer or product-facing GOS UI authorized.**
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
