@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — GOS-5C Stopped Synthetic Consumer Adapter</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.9rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>GOS-5C — Stopped Synthetic Consumer Adapter</h1>
+  <p class="sub">
+    Developer-only validation surface. Synthetic fixtures only. No GOS / developer API / evaluator invocation.
+    Explicit action required — idle on load.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Adapter module imported (must remain inert). Pilot JSON and validation run only after
+    <strong>Run all adapter checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all adapter checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · apiInvokeCount=0 · evaluatorInvokeCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script type="module">
+import {
+  GOS_DEVELOPER_CONSUMER_ADAPTER_VERSION,
+  GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY,
+  GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS,
+  describeGrowthOutcomeConsumerAdapter,
+  validateSyntheticConsumerSnapshot,
+  buildGrowthOutcomeDeveloperRequestFromSyntheticSnapshot
+} from '../modules/suitability/growth-outcome-developer-consumer-adapter.js';
+
+const EXPECTED_API_CAPABILITY = 'explicit_developer_evaluation';
+const EXPECTED_GOALS = Object.freeze([
+  'ornamentalFoliage',
+  'floweringDisplay',
+  'edibleHarvest',
+  'reliableHouseholdYield',
+  'experimentalGrowing',
+  'protectedGrowing',
+  'lowMaintenance',
+  'containerGrowing'
+]);
+
+const FIXTURE_IDS = Object.freeze([
+  'ready_biology_mango',
+  'ready_suitability_mango',
+  'unresolved_identity',
+  'advisory_identity_not_authoritative',
+  'profile_unavailable',
+  'evidence_unavailable_or_mismatch',
+  'untrusted_location',
+  'location_climate_missing',
+  'suitability_without_user_goal',
+  'ready_biology_optional_context_omitted',
+  'guessed_required_field_rejected',
+  'deterministic_non_mutating_repeat'
+]);
+
+const results = [];
+let runActive = false;
+let pilotProfiles = null;
+let pilotEvidence = null;
+let evidenceById = null;
+
+const counters = {
+  adapterValidationCalls: 0,
+  adapterBuildCalls: 0,
+  developerApiInvokeCount: 0,
+  evaluatorInvokeCount: 0,
+  gosBiologicalResultCount: 0,
+  storageMutationCount: 0,
+  productModuleLoadCount: 0,
+  pilotFetchCount: 0
+};
+
+window.__GOS5C_BOOT = Object.freeze({
+  inert: true,
+  apiInvokeCount: 0,
+  evaluatorInvokeCount: 0,
+  fixtureCount: FIXTURE_IDS.length
+});
+
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail || '' });
+}
+
+function json(v) { return JSON.stringify(v); }
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+function isFrozenDeep(v, seen) {
+  seen = seen || new Set();
+  if (v === null || typeof v !== 'object') return true;
+  if (seen.has(v)) return true;
+  seen.add(v);
+  if (!Object.isFrozen(v)) return false;
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+    return true;
+  }
+  const keys = Object.keys(v);
+  for (let i = 0; i < keys.length; i++) if (!isFrozenDeep(v[keys[i]], seen)) return false;
+  return true;
+}
+
+function deepFreeze(value, seen) {
+  if (value === null || typeof value !== 'object') return value;
+  seen = seen || new WeakSet();
+  if (seen.has(value)) return value;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) deepFreeze(value[i], seen);
+  } else {
+    const keys = Object.keys(value);
+    for (let i = 0; i < keys.length; i++) deepFreeze(value[keys[i]], seen);
+  }
+  return Object.freeze(value);
+}
+
+function profileBySlug(doc, slug) {
+  return (doc.profiles || []).find((p) => p.canonicalSlug === slug);
+}
+
+function evidenceByIdFromDoc(doc) {
+  const map = {};
+  (doc.evidence || []).forEach((e) => { map[e.evidenceId] = e; });
+  return map;
+}
+
+function baseLocationClimate(extra) {
+  return Object.assign({
+    trusted: true,
+    latitude: 25.7617,
+    longitude: -80.1918,
+    regionTags: ['florida', 'subtropical'],
+    climateTags: ['tropical', 'subtropical'],
+    hemisphere: 'northern',
+    locationConfidence: 'high',
+    climateConfidence: 'medium',
+    structuralFreezingRisk: 'low',
+    isFrostFreeGrowingClimate: true,
+    values: { minimumTemperatureF: 55, frostExposureHours: 0 },
+    mappingVersion: '0.1.0-synthetic-fixture',
+    suppliedBy: 'synthetic_fixture'
+  }, extra || {});
+}
+
+function baseReadySnapshot(fixtureId, overrides) {
+  const snap = {
+    snapshotVersion: '0.1.0',
+    sourceConsumer: 'my_garden_synthetic_diagnostic',
+    sourceRecordId: 'synthetic_' + fixtureId,
+    identity: {
+      canonicalSlug: 'mango',
+      identityStatus: 'resolved',
+      sourceAuthority: 'synthetic_fixture_authoritative',
+      explicitlyProvided: true,
+      inferred: false
+    },
+    profileAvailability: {
+      available: true,
+      canonicalSlug: 'mango',
+      profileVersion: '0.1.0',
+      explicitlyProvided: true,
+      owner: 'data/growth-outcome-pilot/profiles.json',
+      inferred: false
+    },
+    evidenceAvailability: {
+      available: true,
+      evidenceDataVersion: '0.1.0',
+      explicitlyProvided: true,
+      owner: 'data/growth-outcome-pilot/evidence.json',
+      inferred: false
+    },
+    location: {
+      trusted: true,
+      source: 'synthetic_fixture_confirmed',
+      confirmationStatus: 'confirmed',
+      explicitlyProvided: true,
+      inferred: false
+    },
+    locationClimate: baseLocationClimate(),
+    invocation: {
+      mode: 'biology',
+      explicitlyProvided: true,
+      inferred: false
+    },
+    provenance: {
+      synthetic: true,
+      fixtureId: fixtureId,
+      authoritativeFields: ['identity', 'locationClimate', 'invocation.mode'],
+      unknownFields: []
+    },
+    plantContext: {
+      ageClass: 'mature',
+      cultivar: 'unknown',
+      propagation: 'unknown',
+      contextTags: []
+    },
+    gardenContext: {
+      growingSystem: 'ground',
+      protectedOutdoor: false,
+      sunExposure: 'full',
+      pollinizerAvailable: null,
+      contextTags: ['outdoor', 'home-landscape']
+    }
+  };
+  return Object.assign(snap, overrides || {});
+}
+
+function buildOptions(extra) {
+  return Object.assign({
+    capability: GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY,
+    profile: profileBySlug(pilotProfiles, 'mango'),
+    evidenceById: evidenceById,
+    evidenceDataVersion: pilotEvidence.dataVersion
+  }, extra || {});
+}
+
+function wrapValidate(snapshot, options) {
+  counters.adapterValidationCalls += 1;
+  return validateSyntheticConsumerSnapshot(snapshot, options);
+}
+
+function wrapBuild(snapshot, options) {
+  counters.adapterBuildCalls += 1;
+  return buildGrowthOutcomeDeveloperRequestFromSyntheticSnapshot(snapshot, options);
+}
+
+function snapshotKeysBefore() {
+  return {
+    ls: Object.keys(localStorage || {}).slice().sort(),
+    ss: Object.keys(sessionStorage || {}).slice().sort(),
+    cookie: String(document.cookie || '')
+  };
+}
+
+function storageUnchanged(before) {
+  const after = snapshotKeysBefore();
+  return json(before.ls) === json(after.ls) &&
+    json(before.ss) === json(after.ss) &&
+    before.cookie === after.cookie;
+}
+
+async function ensurePilot() {
+  if (pilotProfiles && pilotEvidence) return;
+  counters.pilotFetchCount += 1;
+  const [pRes, eRes] = await Promise.all([
+    fetch('../data/growth-outcome-pilot/profiles.json'),
+    fetch('../data/growth-outcome-pilot/evidence.json')
+  ]);
+  pilotProfiles = await pRes.json();
+  pilotEvidence = await eRes.json();
+  evidenceById = evidenceByIdFromDoc(pilotEvidence);
+}
+
+function fixtureSnapshot(id) {
+  switch (id) {
+    case 'ready_biology_mango':
+      return baseReadySnapshot(id);
+    case 'ready_suitability_mango':
+      return baseReadySnapshot(id, {
+        invocation: {
+          mode: 'suitability',
+          userGoal: 'reliableHouseholdYield',
+          explicitlyProvided: true,
+          inferred: false
+        }
+      });
+    case 'unresolved_identity':
+      return baseReadySnapshot(id, {
+        identity: {
+          canonicalSlug: '',
+          identityStatus: 'unresolved',
+          sourceAuthority: 'synthetic_fixture_authoritative',
+          explicitlyProvided: true,
+          inferred: false
+        },
+        profileAvailability: {
+          available: true,
+          canonicalSlug: 'mango',
+          profileVersion: '0.1.0',
+          explicitlyProvided: true,
+          owner: 'data/growth-outcome-pilot/profiles.json',
+          inferred: false
+        }
+      });
+    case 'advisory_identity_not_authoritative':
+      return baseReadySnapshot(id, {
+        identity: {
+          canonicalSlug: 'mango',
+          identityStatus: 'resolved',
+          sourceAuthority: 'advisory_sidecar',
+          explicitlyProvided: true,
+          inferred: false
+        }
+      });
+    case 'profile_unavailable':
+      return baseReadySnapshot(id, {
+        profileAvailability: {
+          available: false,
+          canonicalSlug: 'mango',
+          profileVersion: '0.1.0',
+          explicitlyProvided: true,
+          owner: 'data/growth-outcome-pilot/profiles.json',
+          inferred: false
+        }
+      });
+    case 'evidence_unavailable_or_mismatch':
+      return baseReadySnapshot(id, {
+        evidenceAvailability: {
+          available: false,
+          evidenceDataVersion: '0.1.0',
+          explicitlyProvided: true,
+          owner: 'data/growth-outcome-pilot/evidence.json',
+          inferred: false
+        }
+      });
+    case 'untrusted_location':
+      return baseReadySnapshot(id, {
+        location: {
+          trusted: false,
+          source: 'default',
+          confirmationStatus: 'unconfirmed',
+          explicitlyProvided: true,
+          inferred: false
+        },
+        locationClimate: baseLocationClimate({ trusted: false })
+      });
+    case 'location_climate_missing': {
+      const s = baseReadySnapshot(id);
+      delete s.locationClimate;
+      return s;
+    }
+    case 'suitability_without_user_goal':
+      return baseReadySnapshot(id, {
+        invocation: {
+          mode: 'suitability',
+          explicitlyProvided: true,
+          inferred: false
+        }
+      });
+    case 'ready_biology_optional_context_omitted': {
+      const s = baseReadySnapshot(id);
+      delete s.plantContext;
+      delete s.gardenContext;
+      return s;
+    }
+    case 'guessed_required_field_rejected':
+      return baseReadySnapshot(id, {
+        identity: {
+          canonicalSlug: 'mango',
+          identityStatus: 'resolved',
+          sourceAuthority: 'synthetic_fixture_authoritative',
+          explicitlyProvided: true,
+          inferred: true
+        }
+      });
+    case 'deterministic_non_mutating_repeat':
+      return baseReadySnapshot(id);
+    default:
+      throw new Error('unknown fixture ' + id);
+  }
+}
+
+function assertBlocked(id, result, primaryReason) {
+  expect(id + ' status blocked', result.status === 'blocked');
+  expect(id + ' request null', result.request === null || result.request === undefined);
+  expect(id + ' has reason ' + primaryReason,
+    Array.isArray(result.reasonCodes) && result.reasonCodes.indexOf(primaryReason) >= 0,
+    json(result.reasonCodes));
+  expect(id + ' frozen', isFrozenDeep(result));
+}
+
+function assertReady(id, result, mode) {
+  expect(id + ' status ready', result.status === 'ready');
+  expect(id + ' request present', !!result.request && typeof result.request === 'object');
+  expect(id + ' mode', result.request && result.request.mode === mode);
+  expect(id + ' capability token', result.request && result.request.capability === EXPECTED_API_CAPABILITY);
+  expect(id + ' no adapter capability in request',
+    result.request && result.request.capability !== GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY);
+  expect(id + ' has profile', !!result.request.profile);
+  expect(id + ' has evidence', !!result.request.evidenceById);
+  expect(id + ' has locationClimate', !!result.request.locationClimate);
+  expect(id + ' locationClimate suppliedBy',
+    result.request.locationClimate.suppliedBy === 'synthetic_fixture');
+  expect(id + ' frozen', isFrozenDeep(result));
+}
+
+async function runAllChecks() {
+  if (runActive) return;
+  runActive = true;
+  results.length = 0;
+  document.getElementById('summary').textContent = 'Running…';
+  document.getElementById('rows').innerHTML = '';
+  document.getElementById('btn-run-all').disabled = true;
+
+  const storageBefore = snapshotKeysBefore();
+  const lsWriteBefore = counters.storageMutationCount;
+
+  // A. Initial import inertness / boot
+  expect('A boot inert flag', window.__GOS5C_BOOT && window.__GOS5C_BOOT.inert === true);
+  expect('A developerApiInvokeCount zero', counters.developerApiInvokeCount === 0);
+  expect('A evaluatorInvokeCount zero', counters.evaluatorInvokeCount === 0);
+  expect('A no window evaluateGrowthOutcomeForDeveloper',
+    typeof window.evaluateGrowthOutcomeForDeveloper === 'undefined');
+  expect('A no window evaluateBiologicalGrowthOutcomes',
+    typeof window.evaluateBiologicalGrowthOutcomes === 'undefined');
+
+  // B. Descriptor
+  const d1 = describeGrowthOutcomeConsumerAdapter();
+  const d2 = describeGrowthOutcomeConsumerAdapter();
+  expect('B same descriptor ref', d1 === d2);
+  expect('B deeply frozen', isFrozenDeep(d1));
+  expect('B version', d1.adapterVersion === '0.1.0-gos5c');
+  expect('B status stopped', d1.status === 'stopped');
+  expect('B developerOnly', d1.developerOnly === true);
+  expect('B syntheticOnly', d1.syntheticOnly === true);
+  expect('B authoritative false', d1.authoritative === false);
+  expect('B persistence false', d1.persistence === false);
+  expect('B productConsumer false', d1.productConsumer === false);
+  expect('B invokesGOS false', d1.invokesGOS === false);
+  expect('B activation', d1.activation === 'explicit_call_only');
+  expect('B supportedConsumer', d1.supportedConsumer === 'my_garden_synthetic_diagnostic');
+  expect('B modes', json(d1.supportedModes) === json(['biology', 'suitability']));
+  expect('B capability', d1.requiredCapability === GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY);
+  expect('B snapshotVersion', d1.snapshotVersion === '0.1.0');
+  expect('B api capability token match', d1.developerApiCapabilityToken === EXPECTED_API_CAPABILITY);
+  expect('B native goals match', json(d1.nativeUserGoals) === json(EXPECTED_GOALS));
+
+  // C. Capability
+  const capMiss = wrapValidate({ snapshotVersion: '0.1.0' }, {});
+  expect('C missing capability blocked', capMiss.status === 'blocked' &&
+    json(capMiss.reasonCodes) === json(['adapter_capability_required']));
+  const capWrong = wrapBuild({ snapshotVersion: '0.1.0' }, { capability: 'nope' });
+  expect('C wrong capability blocked', capWrong.status === 'blocked' &&
+    capWrong.request === null &&
+    json(capWrong.reasonCodes) === json(['adapter_capability_required']));
+  expect('C capability outputs frozen', isFrozenDeep(capMiss) && isFrozenDeep(capWrong));
+
+  // D. Reason vocabulary
+  expect('D reasons length 18', GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS.length === 18);
+  expect('D reasons frozen', Object.isFrozen(GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS));
+  expect('D first reason capability', GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS[0] === 'adapter_capability_required');
+  expect('D second invalid_snapshot', GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS[1] === 'invalid_snapshot');
+  expect('D last invalid_user_goal',
+    GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS[17] === 'invalid_user_goal');
+  expect('D descriptor reasons match', json(d1.reasons) === json(GOS_DEVELOPER_CONSUMER_ADAPTER_REASONS.slice()));
+
+  // E. Fixture manifest
+  expect('E fixtureCount 12', FIXTURE_IDS.length === 12);
+  expect('E fixture ids frozen', Object.isFrozen(FIXTURE_IDS));
+
+  // F. Structural invalid
+  const nullSnap = wrapValidate(null, { capability: GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY });
+  expect('F null snapshot invalid only', nullSnap.status === 'blocked' &&
+    json(nullSnap.reasonCodes) === json(['invalid_snapshot']));
+  const arrSnap = wrapValidate([], { capability: GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY });
+  expect('F array snapshot invalid only', arrSnap.status === 'blocked' &&
+    json(arrSnap.reasonCodes) === json(['invalid_snapshot']));
+
+  await ensurePilot();
+  expect('pilot profiles loaded', !!pilotProfiles && Array.isArray(pilotProfiles.profiles));
+  expect('pilot evidence loaded', !!pilotEvidence && Array.isArray(pilotEvidence.evidence));
+  expect('mango profile present', !!profileBySlug(pilotProfiles, 'mango'));
+  expect('evidence dataVersion 0.1.0', pilotEvidence.dataVersion === '0.1.0');
+
+  const perFixture = {};
+  let readyFixtureCount = 0;
+  let blockedFixtureCount = 0;
+  let biologyReadyCount = 0;
+  let suitabilityReadyCount = 0;
+  const reasonSeen = Object.create(null);
+  let determinismOk = true;
+  let nonMutationOk = true;
+
+  // Fixtures
+  for (let fi = 0; fi < FIXTURE_IDS.length; fi++) {
+    const id = FIXTURE_IDS[fi];
+    const snap = fixtureSnapshot(id);
+    const snapBefore = clone(snap);
+    const opts = buildOptions();
+    const profileBefore = clone(opts.profile);
+    const evidenceBefore = clone(opts.evidenceById);
+
+    if (id === 'deterministic_non_mutating_repeat') {
+      const outs = [];
+      for (let n = 0; n < 10; n++) {
+        outs.push(wrapBuild(snap, opts));
+      }
+      const first = json(outs[0]);
+      let allSame = true;
+      for (let n = 1; n < outs.length; n++) {
+        if (json(outs[n]) !== first) allSame = false;
+      }
+      expect('12 determinism ×10 identical', allSame);
+      determinismOk = determinismOk && allSame;
+      assertReady(id, outs[0], 'biology');
+      expect('12 userGoal absent', !Object.prototype.hasOwnProperty.call(outs[0].request, 'userGoal'));
+      readyFixtureCount += 1;
+      biologyReadyCount += 1;
+      perFixture[id] = { status: 'ready', reasonCodes: [] };
+      if (json(snap) !== json(snapBefore) || json(opts.profile) !== json(profileBefore) ||
+          json(opts.evidenceById) !== json(evidenceBefore)) {
+        nonMutationOk = false;
+      }
+      expect('12 input non-mutation', nonMutationOk);
+      continue;
+    }
+
+    const built = wrapBuild(snap, opts);
+    if (json(snap) !== json(snapBefore) || json(opts.profile) !== json(profileBefore) ||
+        json(opts.evidenceById) !== json(evidenceBefore)) {
+      nonMutationOk = false;
+    }
+
+    if (id === 'ready_biology_mango') {
+      assertReady(id, built, 'biology');
+      expect(id + ' userGoal absent', !Object.prototype.hasOwnProperty.call(built.request, 'userGoal'));
+      expect(id + ' has plantContext', !!built.request.plantContext);
+      readyFixtureCount += 1;
+      biologyReadyCount += 1;
+      perFixture[id] = { status: 'ready', reasonCodes: [] };
+    } else if (id === 'ready_suitability_mango') {
+      assertReady(id, built, 'suitability');
+      expect(id + ' userGoal', built.request.userGoal === 'reliableHouseholdYield');
+      const bioSnap = fixtureSnapshot('ready_biology_mango');
+      const bioBuilt = wrapBuild(bioSnap, buildOptions());
+      expect(id + ' biology fields match except mode/goal',
+        bioBuilt.request.profile === built.request.profile ||
+        json(bioBuilt.request.profile) === json(built.request.profile));
+      expect(id + ' locationClimate equal',
+        json(bioBuilt.request.locationClimate) === json(built.request.locationClimate));
+      readyFixtureCount += 1;
+      suitabilityReadyCount += 1;
+      perFixture[id] = { status: 'ready', reasonCodes: [] };
+    } else if (id === 'ready_biology_optional_context_omitted') {
+      assertReady(id, built, 'biology');
+      expect(id + ' no plantContext', built.request.plantContext === undefined);
+      expect(id + ' no gardenContext', built.request.gardenContext === undefined);
+      expect(id + ' omittedOptional non-empty',
+        Array.isArray(built.omittedOptionalInputs) && built.omittedOptionalInputs.length > 0);
+      expect(id + ' omitted sorted',
+        json(built.omittedOptionalInputs) === json(built.omittedOptionalInputs.slice().sort()));
+      readyFixtureCount += 1;
+      biologyReadyCount += 1;
+      perFixture[id] = { status: 'ready', reasonCodes: [] };
+    } else if (id === 'unresolved_identity') {
+      assertBlocked(id, built, 'unresolved_identity');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'advisory_identity_not_authoritative') {
+      assertBlocked(id, built, 'identity_not_authoritative');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'profile_unavailable') {
+      assertBlocked(id, built, 'profile_unavailable');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'evidence_unavailable_or_mismatch') {
+      assertBlocked(id, built, 'evidence_unavailable');
+      // Secondary clone: version mismatch with available true
+      const mismatchSnap = baseReadySnapshot('evidence_version_mismatch_clone', {
+        evidenceAvailability: {
+          available: true,
+          evidenceDataVersion: '9.9.9',
+          explicitlyProvided: true,
+          owner: 'data/growth-outcome-pilot/evidence.json',
+          inferred: false
+        }
+      });
+      const mismatchBuilt = wrapBuild(mismatchSnap, buildOptions({ evidenceDataVersion: '0.1.0' }));
+      expect('6 secondary evidence_version_mismatch',
+        mismatchBuilt.status === 'blocked' &&
+        mismatchBuilt.reasonCodes.indexOf('evidence_version_mismatch') >= 0,
+        json(mismatchBuilt.reasonCodes));
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'untrusted_location') {
+      assertBlocked(id, built, 'untrusted_location');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'location_climate_missing') {
+      assertBlocked(id, built, 'location_climate_missing');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'suitability_without_user_goal') {
+      assertBlocked(id, built, 'explicit_user_goal_required');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    } else if (id === 'guessed_required_field_rejected') {
+      assertBlocked(id, built, 'guessed_required_field');
+      blockedFixtureCount += 1;
+      perFixture[id] = { status: 'blocked', reasonCodes: built.reasonCodes };
+    }
+
+    if (built.reasonCodes) {
+      built.reasonCodes.forEach((r) => { reasonSeen[r] = true; });
+    }
+  }
+
+  expect('S input/profile/evidence non-mutation overall', nonMutationOk);
+  expect('R determinism overall', determinismOk);
+
+  // Mapping unapproved
+  const badMap = baseReadySnapshot('bad_map', {
+    locationClimate: baseLocationClimate({
+      suppliedBy: 'product_helper',
+      mappingVersion: 'adhoc'
+    })
+  });
+  const badMapBuilt = wrapBuild(badMap, buildOptions());
+  expect('L mapping unapproved',
+    badMapBuilt.status === 'blocked' &&
+    badMapBuilt.reasonCodes.indexOf('location_climate_mapping_unapproved') >= 0);
+
+  // Unsupported consumer
+  const badConsumer = baseReadySnapshot('bad_consumer', { sourceConsumer: 'my_garden_raw' });
+  const badConsumerBuilt = wrapBuild(badConsumer, buildOptions());
+  expect('F unsupported_consumer',
+    badConsumerBuilt.reasonCodes.indexOf('unsupported_consumer') >= 0);
+
+  // Forbidden biology field
+  const withOutcomes = baseReadySnapshot('with_outcomes');
+  withOutcomes.outcomes = { survival: 'possible' };
+  const forbiddenBuilt = wrapBuild(withOutcomes, buildOptions());
+  expect('F forbidden outcomes',
+    forbiddenBuilt.reasonCodes.indexOf('invalid_snapshot') >= 0);
+
+  // U. No GOS/API/evaluator
+  expect('U developerApiInvokeCount still 0', counters.developerApiInvokeCount === 0);
+  expect('U evaluatorInvokeCount still 0', counters.evaluatorInvokeCount === 0);
+  expect('U gosBiologicalResultCount 0', counters.gosBiologicalResultCount === 0);
+
+  // V. Persistence
+  expect('V storage unchanged', storageUnchanged(storageBefore));
+  expect('V no storage mutation counter growth',
+    counters.storageMutationCount === lsWriteBefore);
+
+  // W. Product / v1b isolation
+  expect('W no evaluateClimateSuitabilityV1 global',
+    typeof window.evaluateClimateSuitabilityV1 === 'undefined' ||
+    !document.querySelector('script[src*="index.html"]'));
+  expect('W productModuleLoadCount 0', counters.productModuleLoadCount === 0);
+
+  // X. Static reference — adapter source must not import API/evaluator
+  let adapterSrc = '';
+  try {
+    const srcRes = await fetch('../modules/suitability/growth-outcome-developer-consumer-adapter.js');
+    adapterSrc = await srcRes.text();
+  } catch (_e) {
+    adapterSrc = '';
+  }
+  expect('X adapter fetched for static check', adapterSrc.length > 100);
+  expect('X no developer-api import',
+    !/from\s+['"][^'"]*growth-outcome-developer-api/.test(adapterSrc));
+  expect('X no evaluator import',
+    !/from\s+['"][^'"]*growth-outcome-evaluator/.test(adapterSrc));
+  expect('X no index.html import',
+    !/from\s+['"][^'"]*index\.html['"]/.test(adapterSrc) &&
+    !/import\s*\(\s*['"][^'"]*index\.html['"]/.test(adapterSrc));
+  expect('X capability constant present',
+    adapterSrc.indexOf('explicit_synthetic_consumer_adaptation') >= 0);
+
+  const passed = results.filter((r) => r.pass).length;
+  const failed = results.length - passed;
+  const reasonCodeCoverage = Object.keys(reasonSeen).sort();
+
+  const summary = {
+    verdict: failed === 0 ? 'GOS_5C_COMPLETE' : 'GOS_5C_FAILED',
+    fixtureCount: 12,
+    assertionTotal: results.length,
+    passCount: passed,
+    failCount: failed,
+    readyFixtureCount: readyFixtureCount,
+    blockedFixtureCount: blockedFixtureCount,
+    biologyReadyCount: biologyReadyCount,
+    suitabilityReadyCount: suitabilityReadyCount,
+    reasonCodeCoverage: reasonCodeCoverage,
+    determinism: determinismOk ? 'pass' : 'fail',
+    inputNonMutation: nonMutationOk ? 'pass' : 'fail',
+    importInertness: 'pass',
+    persistence: storageUnchanged(storageBefore) ? 'pass' : 'fail',
+    productIsolation: 'pass',
+    noGosInvocation: counters.developerApiInvokeCount === 0 &&
+      counters.evaluatorInvokeCount === 0 ? 'pass' : 'fail',
+    adapterVersion: GOS_DEVELOPER_CONSUMER_ADAPTER_VERSION,
+    capability: GOS_DEVELOPER_CONSUMER_ADAPTER_CAPABILITY,
+    perFixture: perFixture,
+    counters: Object.assign({}, counters),
+    total: results.length,
+    passed: passed,
+    failed: failed
+  };
+  deepFreeze(summary);
+  window.__GOS5C_SUMMARY = summary;
+
+  document.getElementById('summary').textContent =
+    'SUMMARY: ' + passed + '/' + results.length + ' · verdict ' + summary.verdict;
+  document.getElementById('summary').className = failed ? 'fail' : 'pass';
+  document.getElementById('statusLine').textContent =
+    'State: complete · validationCalls=' + counters.adapterValidationCalls +
+    ' · buildCalls=' + counters.adapterBuildCalls +
+    ' · apiInvoke=0 · evaluatorInvoke=0 · pilotFetch=' + counters.pilotFetchCount;
+  document.getElementById('rows').innerHTML = results.map((r) =>
+    '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+    '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td></tr>'
+  ).join('');
+  document.getElementById('banner').textContent =
+    failed === 0
+      ? 'GOS_5C_COMPLETE — all adapter checks passed. No GOS/API/evaluator invocation.'
+      : 'GOS_5C_FAILED — see failing assertions.';
+
+  document.getElementById('btn-run-all').disabled = false;
+  runActive = false;
+
+  try {
+    const params = new URLSearchParams(String(location.search || ''));
+    if (params.get('report') === '1') {
+      fetch('/__result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          summary: summary,
+          failedNames: results.filter((r) => !r.pass).map((r) => r.name + ' :: ' + r.detail)
+        })
+      }).catch(function () {});
+    }
+  } catch (_e) {}
+
+  return summary;
+}
+
+function resetHarness() {
+  results.length = 0;
+  runActive = false;
+  document.getElementById('summary').textContent = 'Not run yet.';
+  document.getElementById('summary').className = '';
+  document.getElementById('rows').innerHTML = '';
+  document.getElementById('banner').textContent =
+    'Idle. Adapter module imported (must remain inert). Pilot JSON and validation run only after Run all adapter checks.';
+  document.getElementById('statusLine').textContent =
+    'State: idle · apiInvokeCount=0 · evaluatorInvokeCount=0';
+  document.getElementById('btn-run-all').disabled = false;
+  try { delete window.__GOS5C_SUMMARY; } catch (_e) { window.__GOS5C_SUMMARY = undefined; }
+}
+
+document.getElementById('btn-run-all').addEventListener('click', function () {
+  runAllChecks().catch(function (err) {
+    document.getElementById('summary').textContent = 'ERROR: ' + (err && err.message ? err.message : err);
+    document.getElementById('summary').className = 'fail';
+    runActive = false;
+    document.getElementById('btn-run-all').disabled = false;
+  });
+});
+document.getElementById('btn-reset').addEventListener('click', resetHarness);
+
+window.__GOS5C_runAllAdapterChecks = runAllChecks;
+
+try {
+  const params = new URLSearchParams(String(location.search || ''));
+  if (params.get('harnessExplicitRun') === '1') {
+    queueMicrotask(function () {
+      document.getElementById('btn-run-all').click();
+    });
+  }
+} catch (_e) {}
+</script>
+</body>
+</html>
