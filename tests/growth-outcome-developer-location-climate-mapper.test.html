@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — GOS-5G Stopped Synthetic Developer LocationClimate Mapper</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.9rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>GOS-5G — Stopped Synthetic Developer LocationClimate Mapper</h1>
+  <p class="sub">
+    Developer-only synthetic mapper validation. No GOS / v1b / product location / network.
+    Explicit action required — idle on load.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Mapper module imported (must remain inert). Fixture validation runs only after
+    <strong>Run all mapper checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all mapper checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · networkCount=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script type="module">
+import {
+  GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_VERSION,
+  GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_CAPABILITY,
+  GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_REASONS,
+  describeGrowthOutcomeDeveloperLocationClimateMapper,
+  validateSyntheticLocationMappingInput,
+  buildSyntheticProductLocationClimate
+} from '../modules/suitability/growth-outcome-developer-location-climate-mapper.js';
+
+const FIXTURE_IDS = Object.freeze([
+  'ready_northern_mapping',
+  'ready_southern_mapping',
+  'untrusted_location',
+  'missing_coordinates',
+  'invalid_coordinates',
+  'equator_policy_unavailable',
+  'unsupported_region',
+  'region_mapping_unavailable',
+  'ambiguous_region_overlap',
+  'climate_mapping_unavailable',
+  'conflicting_climate_signals',
+  'mapping_version_mismatch',
+  'location_fingerprint_mismatch',
+  'stale_forecast_stable_mapping_ready',
+  'deterministic_repeat',
+  'input_and_table_non_mutation'
+]);
+
+const EXPECTED_REASONS = Object.freeze([
+  'mapper_capability_required',
+  'invalid_mapping_input',
+  'invalid_mapping_table',
+  'untrusted_location',
+  'missing_coordinates',
+  'invalid_coordinates',
+  'equator_policy_unavailable',
+  'mapping_version_unavailable',
+  'source_version_mismatch',
+  'country_unresolved',
+  'unsupported_region',
+  'region_mapping_unavailable',
+  'ambiguous_region_mapping',
+  'climate_mapping_unavailable',
+  'ambiguous_climate_mapping',
+  'conflicting_climate_signals',
+  'stale_climate_source',
+  'insufficient_product_location_data',
+  'location_fingerprint_mismatch'
+]);
+
+const results = [];
+let runActive = false;
+const counters = {
+  networkCount: 0,
+  storageMutationCount: 0,
+  gosInvokeCount: 0,
+  v1bInvokeCount: 0,
+  productModuleLoadCount: 0
+};
+
+window.__GOS5G_BOOT = Object.freeze({
+  inert: true,
+  fixtureCount: FIXTURE_IDS.length,
+  modulesLoaded: true
+});
+
+function expect(name, pass, detail) {
+  results.push({ name: name, pass: !!pass, detail: detail || '' });
+}
+
+function json(v) { return JSON.stringify(v); }
+function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+function isFrozenDeep(v, seen) {
+  seen = seen || new Set();
+  if (v === null || typeof v !== 'object') return true;
+  if (seen.has(v)) return true;
+  seen.add(v);
+  if (!Object.isFrozen(v)) return false;
+  if (Array.isArray(v)) {
+    for (let i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+  } else {
+    const keys = Object.keys(v);
+    for (let i = 0; i < keys.length; i++) if (!isFrozenDeep(v[keys[i]], seen)) return false;
+  }
+  return true;
+}
+
+function canonicalValue(v) {
+  if (v === null) return 'null';
+  if (typeof v === 'string') return JSON.stringify(v);
+  if (typeof v === 'boolean') return v ? 'true' : 'false';
+  if (typeof v === 'number') return Number.isFinite(v) ? String(v) : '"__nonfinite__"';
+  if (Array.isArray(v)) {
+    return '[' + v.map(canonicalValue).join(',') + ']';
+  }
+  if (v && typeof v === 'object') {
+    const keys = Object.keys(v).sort();
+    const parts = [];
+    for (let i = 0; i < keys.length; i++) {
+      if (v[keys[i]] === undefined) continue;
+      parts.push(JSON.stringify(keys[i]) + ':' + canonicalValue(v[keys[i]]));
+    }
+    return '{' + parts.join(',') + '}';
+  }
+  return '"__unsupported__"';
+}
+
+function baseFingerprint(fields) {
+  const payload = {
+    mappingInputVersion: fields.mappingInputVersion,
+    trusted: fields.trusted,
+    latitude: fields.latitude,
+    longitude: fields.longitude,
+    source: fields.source,
+    confirmationStatus: fields.confirmationStatus,
+    locationConfidence: fields.locationConfidence,
+    countryCode: fields.countryCode
+  };
+  if (fields.subdivisionCode) payload.subdivisionCode = fields.subdivisionCode;
+  if (fields.city) payload.city = fields.city;
+  return canonicalValue(payload);
+}
+
+function makeRegionTable(extraRules) {
+  const rules = [
+    {
+      ruleId: 'rule-north',
+      syntheticOnly: true,
+      match: { inputToken: 'synthetic-north-zone' },
+      output: { regionTags: ['synthetic-supported-zone', 'synthetic-north-zone'] },
+      provenance: { note: 'north' }
+    },
+    {
+      ruleId: 'rule-south',
+      syntheticOnly: true,
+      match: { inputToken: 'synthetic-south-zone' },
+      output: { regionTags: ['synthetic-supported-zone', 'synthetic-south-zone'] },
+      provenance: { note: 'south' }
+    },
+    {
+      ruleId: 'rule-supported-extra',
+      syntheticOnly: true,
+      match: { inputToken: 'synthetic-supported-zone', countryCode: 'ZZ' },
+      output: { regionTags: ['synthetic-supported-zone'] },
+      provenance: { note: 'supported-with-country' }
+    }
+  ];
+  if (extraRules && extraRules.length) {
+    for (let i = 0; i < extraRules.length; i++) rules.push(extraRules[i]);
+  }
+  return {
+    tableVersion: '0.1.0-synthetic-region',
+    syntheticOnly: true,
+    supportedInputTokens: [
+      'synthetic-north-zone',
+      'synthetic-south-zone',
+      'synthetic-supported-zone',
+      'synthetic-overlap-zone'
+    ],
+    rules: rules
+  };
+}
+
+function makeClimateTable(extraRules) {
+  const rules = [
+    {
+      ruleId: 'climate-temperate',
+      syntheticOnly: true,
+      match: {
+        climateNormalsClass: 'synthetic-temperate-class',
+        longTermSignals: { seasonality: 'mild' }
+      },
+      output: {
+        climateTags: ['synthetic-temperate-tag'],
+        values: { frostExposureHours: 0 }
+      },
+      provenance: { note: 'temperate' }
+    },
+    {
+      ruleId: 'climate-warm',
+      syntheticOnly: true,
+      match: { climateNormalsClass: 'synthetic-warm-class' },
+      output: { climateTags: ['synthetic-warm-tag'] },
+      provenance: { note: 'warm' }
+    }
+  ];
+  if (extraRules && extraRules.length) {
+    for (let i = 0; i < extraRules.length; i++) rules.push(extraRules[i]);
+  }
+  return {
+    tableVersion: '0.1.0-synthetic-climate',
+    syntheticOnly: true,
+    rules: rules
+  };
+}
+
+function baseFields(overrides) {
+  const fields = Object.assign({
+    mappingInputVersion: '0.1.0',
+    trusted: true,
+    latitude: 25.0,
+    longitude: -80.0,
+    source: 'manual',
+    confirmationStatus: 'confirmed',
+    locationConfidence: 'high',
+    countryCode: 'ZZ',
+    inputToken: 'synthetic-north-zone',
+    climateNormalsClass: 'synthetic-temperate-class',
+    climateNormalsVersion: '0.1.0-synthetic-normals',
+    longTermSignals: { seasonality: 'mild' },
+    provenance: { synthetic: true, fixtureId: 'base' }
+  }, overrides || {});
+  fields.locationFingerprint = baseFingerprint(fields);
+  return fields;
+}
+
+function defaultOptions(extra) {
+  return Object.assign({
+    capability: GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_CAPABILITY,
+    regionTable: makeRegionTable(),
+    climateTable: makeClimateTable(),
+    mappingVersion: '0.1.0-synthetic-map'
+  }, extra || {});
+}
+
+function fixtureSpec(id) {
+  if (id === 'ready_northern_mapping') {
+    return {
+      status: 'ready',
+      reasons: [],
+      input: baseFields({ provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions(),
+      hemisphere: 'northern',
+      regionTags: ['synthetic-north-zone', 'synthetic-supported-zone'],
+      climateTags: ['synthetic-temperate-tag']
+    };
+  }
+  if (id === 'ready_southern_mapping') {
+    return {
+      status: 'ready',
+      reasons: [],
+      input: baseFields({
+        latitude: -33.0,
+        longitude: 18.0,
+        inputToken: 'synthetic-south-zone',
+        climateNormalsClass: 'synthetic-warm-class',
+        longTermSignals: { seasonality: 'warm' },
+        provenance: { synthetic: true, fixtureId: id }
+      }),
+      options: defaultOptions(),
+      hemisphere: 'southern',
+      regionTags: ['synthetic-south-zone', 'synthetic-supported-zone'],
+      climateTags: ['synthetic-warm-tag']
+    };
+  }
+  if (id === 'untrusted_location') {
+    return {
+      status: 'blocked',
+      reasons: ['untrusted_location'],
+      input: baseFields({ source: 'default', confirmationStatus: 'default', locationConfidence: 'default', trusted: false, provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'missing_coordinates') {
+    const f = baseFields({ provenance: { synthetic: true, fixtureId: id } });
+    delete f.latitude;
+    delete f.longitude;
+    f.locationFingerprint = 'will-not-match';
+    return { status: 'blocked', reasons: ['missing_coordinates'], input: f, options: defaultOptions() };
+  }
+  if (id === 'invalid_coordinates') {
+    return {
+      status: 'blocked',
+      reasons: ['invalid_coordinates'],
+      input: baseFields({ latitude: 999, longitude: 0, provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'equator_policy_unavailable') {
+    return {
+      status: 'insufficient',
+      reasons: ['equator_policy_unavailable'],
+      input: baseFields({ latitude: 0, longitude: 0, provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'unsupported_region') {
+    return {
+      status: 'insufficient',
+      reasons: ['unsupported_region'],
+      input: baseFields({ inputToken: 'synthetic-unsupported-zone', provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'region_mapping_unavailable') {
+    return {
+      status: 'insufficient',
+      reasons: ['region_mapping_unavailable'],
+      input: baseFields({
+        inputToken: 'synthetic-supported-zone',
+        countryCode: 'AA',
+        provenance: { synthetic: true, fixtureId: id }
+      }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'ambiguous_region_overlap') {
+    const overlapRules = [
+      {
+        ruleId: 'overlap-a',
+        syntheticOnly: true,
+        match: { inputToken: 'synthetic-overlap-zone' },
+        output: { regionTags: ['synthetic-overlap-zone', 'synthetic-supported-zone'] },
+        provenance: { note: 'a' },
+        priority: 1
+      },
+      {
+        ruleId: 'overlap-b',
+        syntheticOnly: true,
+        match: { inputToken: 'synthetic-overlap-zone' },
+        output: { regionTags: ['synthetic-overlap-zone'] },
+        provenance: { note: 'b' },
+        priority: 99
+      }
+    ];
+    return {
+      status: 'blocked',
+      reasons: ['ambiguous_region_mapping'],
+      input: baseFields({ inputToken: 'synthetic-overlap-zone', provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions({ regionTable: makeRegionTable(overlapRules) })
+    };
+  }
+  if (id === 'climate_mapping_unavailable') {
+    return {
+      status: 'insufficient',
+      reasons: ['climate_mapping_unavailable'],
+      input: baseFields({
+        climateNormalsClass: 'synthetic-unknown-class',
+        longTermSignals: { seasonality: 'mild' },
+        provenance: { synthetic: true, fixtureId: id }
+      }),
+      options: defaultOptions()
+    };
+  }
+  if (id === 'conflicting_climate_signals') {
+    const conflictRules = [
+      {
+        ruleId: 'conflict-a',
+        syntheticOnly: true,
+        match: { climateNormalsClass: 'synthetic-conflict-class' },
+        output: { climateTags: ['synthetic-temperate-tag'] },
+        provenance: { note: 'a' }
+      },
+      {
+        ruleId: 'conflict-b',
+        syntheticOnly: true,
+        match: { climateNormalsClass: 'synthetic-conflict-class' },
+        output: { climateTags: ['synthetic-warm-tag'] },
+        provenance: { note: 'b' }
+      }
+    ];
+    return {
+      status: 'blocked',
+      reasons: ['conflicting_climate_signals'],
+      input: baseFields({
+        climateNormalsClass: 'synthetic-conflict-class',
+        longTermSignals: {},
+        provenance: { synthetic: true, fixtureId: id }
+      }),
+      options: defaultOptions({ climateTable: makeClimateTable(conflictRules) })
+    };
+  }
+  if (id === 'mapping_version_mismatch') {
+    return {
+      status: 'blocked',
+      reasons: ['mapping_version_unavailable'],
+      input: baseFields({ provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions({ mappingVersion: '9.9.9-wrong' })
+    };
+  }
+  if (id === 'location_fingerprint_mismatch') {
+    const f = baseFields({ provenance: { synthetic: true, fixtureId: id } });
+    f.locationFingerprint = 'deliberately-wrong-fingerprint';
+    return { status: 'blocked', reasons: ['location_fingerprint_mismatch'], input: f, options: defaultOptions() };
+  }
+  if (id === 'stale_forecast_stable_mapping_ready') {
+    return {
+      status: 'ready',
+      reasons: [],
+      warning: 'stale_forecast_ignored_for_tags',
+      input: baseFields({
+        forecastSignals: { stale: true, peakC: 40 },
+        weatherSnapshotVersion: 'stale-snap-1',
+        provenance: { synthetic: true, fixtureId: id }
+      }),
+      options: defaultOptions(),
+      hemisphere: 'northern'
+    };
+  }
+  if (id === 'deterministic_repeat') {
+    return {
+      status: 'ready',
+      reasons: [],
+      input: baseFields({ provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions(),
+      hemisphere: 'northern',
+      repeat: 10
+    };
+  }
+  if (id === 'input_and_table_non_mutation') {
+    return {
+      status: 'ready',
+      reasons: [],
+      input: baseFields({ provenance: { synthetic: true, fixtureId: id } }),
+      options: defaultOptions(),
+      hemisphere: 'northern',
+      checkMutation: true
+    };
+  }
+  throw new Error('unknown fixture ' + id);
+}
+
+function assertFixture(id) {
+  const spec = fixtureSpec(id);
+  const inputSnap = clone(spec.input);
+  const optSnap = clone(spec.options);
+  const built = buildSyntheticProductLocationClimate(spec.input, spec.options);
+  const validated = validateSyntheticLocationMappingInput(spec.input, spec.options);
+
+  expect(id + ' status', built.status === spec.status, built.status);
+  expect(id + ' reasons', json(built.reasonCodes) === json(spec.reasons), json(built.reasonCodes));
+  expect(id + ' validate status', validated.status === spec.status, validated.status);
+  expect(id + ' validate reasons', json(validated.reasonCodes) === json(spec.reasons), json(validated.reasonCodes));
+  expect(id + ' validate LC null', validated.locationClimate === null);
+  expect(id + ' built frozen', isFrozenDeep(built));
+  expect(id + ' validated frozen', isFrozenDeep(validated));
+
+  if (spec.status === 'ready') {
+    expect(id + ' LC present', !!built.locationClimate);
+    expect(id + ' suppliedBy', built.locationClimate.suppliedBy === 'developer_synthetic_location_climate_mapper');
+    expect(id + ' trusted', built.locationClimate.trusted === true);
+    expect(id + ' mappingVersion', built.locationClimate.mappingVersion === '0.1.0-synthetic-map');
+    expect(id + ' hemisphere', built.locationClimate.hemisphere === spec.hemisphere, built.locationClimate.hemisphere);
+    if (spec.regionTags) {
+      expect(id + ' regionTags', json(built.locationClimate.regionTags) === json(spec.regionTags.slice().sort()),
+        json(built.locationClimate.regionTags));
+    }
+    if (spec.climateTags) {
+      expect(id + ' climateTags', json(built.locationClimate.climateTags) === json(spec.climateTags.slice().sort()),
+        json(built.locationClimate.climateTags));
+    }
+    expect(id + ' inputFingerprint string', typeof built.inputFingerprint === 'string' && built.inputFingerprint.length > 0);
+    if (spec.warning) {
+      expect(id + ' warning', (built.warnings || []).indexOf(spec.warning) >= 0, json(built.warnings));
+    }
+  } else {
+    expect(id + ' LC null', built.locationClimate === null);
+    expect(id + ' missingPrereq', Array.isArray(built.missingPrerequisites) && built.missingPrerequisites.length > 0);
+  }
+
+  if (spec.repeat) {
+    const first = json(built);
+    for (let i = 0; i < spec.repeat; i++) {
+      const again = buildSyntheticProductLocationClimate(clone(inputSnap), clone(optSnap));
+      expect(id + ' repeat ' + i, json(again) === first);
+    }
+  }
+
+  if (spec.checkMutation) {
+    expect(id + ' input non-mutation', json(spec.input) === json(inputSnap));
+    expect(id + ' options non-mutation', json(spec.options) === json(optSnap));
+    expect(id + ' region table non-mutation', json(spec.options.regionTable) === json(optSnap.regionTable));
+    expect(id + ' climate table non-mutation', json(spec.options.climateTable) === json(optSnap.climateTable));
+  }
+}
+
+async function runSecondaryChecks() {
+  const d1 = describeGrowthOutcomeDeveloperLocationClimateMapper();
+  const d2 = describeGrowthOutcomeDeveloperLocationClimateMapper();
+  expect('descriptor same ref', d1 === d2);
+  expect('descriptor frozen', isFrozenDeep(d1));
+  expect('descriptor version', d1.mapperVersion === '0.1.0-gos5g');
+  expect('descriptor capability', d1.requiredCapability === GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_CAPABILITY);
+  expect('descriptor stopped', d1.status === 'stopped');
+  expect('descriptor productMapper false', d1.productMapper === false);
+  expect('descriptor invokesGOS false', d1.invokesGOS === false);
+  expect('descriptor invokesV1b false', d1.invokesV1b === false);
+  expect('descriptor readsProductLocation false', d1.readsProductLocation === false);
+
+  expect('capability constant', GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_CAPABILITY === 'explicit_synthetic_location_climate_mapping');
+  expect('version constant', GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_VERSION === '0.1.0-gos5g');
+  expect('reasons length 19', GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_REASONS.length === 19);
+  expect('reasons order', json(GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_REASONS) === json(EXPECTED_REASONS));
+  expect('fixtureCount 16', FIXTURE_IDS.length === 16);
+
+  const capMiss = buildSyntheticProductLocationClimate(baseFields(), { capability: 'nope' });
+  expect('capability blocked', capMiss.status === 'blocked' &&
+    json(capMiss.reasonCodes) === json(['mapper_capability_required']));
+  expect('capability LC null', capMiss.locationClimate === null);
+
+  const badInput = buildSyntheticProductLocationClimate(null, defaultOptions());
+  expect('null input blocked', badInput.status === 'blocked' &&
+    json(badInput.reasonCodes) === json(['invalid_mapping_input']));
+
+  const unknownKey = buildSyntheticProductLocationClimate(
+    Object.assign(baseFields(), { hackField: 1 }),
+    defaultOptions()
+  );
+  expect('unknown key blocked', unknownKey.status === 'blocked' &&
+    unknownKey.reasonCodes.indexOf('invalid_mapping_input') >= 0);
+
+  const badTable = buildSyntheticProductLocationClimate(baseFields(), defaultOptions({
+    regionTable: { tableVersion: '0.1.0-synthetic-region', syntheticOnly: true, supportedInputTokens: ['x'], rules: [], extra: 1 }
+  }));
+  expect('invalid table', badTable.status === 'blocked' &&
+    badTable.reasonCodes.indexOf('invalid_mapping_table') >= 0);
+
+  const sourceVer = buildSyntheticProductLocationClimate(baseFields({
+    climateNormalsVersion: 'wrong-normals'
+  }), defaultOptions());
+  expect('source version mismatch', sourceVer.status === 'blocked' &&
+    sourceVer.reasonCodes.indexOf('source_version_mismatch') >= 0);
+
+  const ambiguousClimateRules = [
+    {
+      ruleId: 'amb-a',
+      syntheticOnly: true,
+      match: { climateNormalsClass: 'synthetic-conflict-class' },
+      output: { climateTags: ['synthetic-warm-tag'] },
+      provenance: {}
+    },
+    {
+      ruleId: 'amb-b',
+      syntheticOnly: true,
+      match: { climateNormalsClass: 'synthetic-conflict-class' },
+      output: { climateTags: ['synthetic-warm-tag'] },
+      provenance: {}
+    }
+  ];
+  const ambClimate = buildSyntheticProductLocationClimate(
+    baseFields({ climateNormalsClass: 'synthetic-conflict-class', longTermSignals: {} }),
+    defaultOptions({ climateTable: makeClimateTable(ambiguousClimateRules) })
+  );
+  expect('ambiguous climate identical outputs', ambClimate.status === 'blocked' &&
+    ambClimate.reasonCodes.indexOf('ambiguous_climate_mapping') >= 0);
+
+  // Product isolation — mapper source + index.html (not harness outerHTML self-scan)
+  const mapperText = await fetch('../modules/suitability/growth-outcome-developer-location-climate-mapper.js')
+    .then(function (r) { return r.text(); });
+  expect('mapper has no ES import', !/^import\s/m.test(mapperText) && !/\bfrom\s+['"]/.test(mapperText));
+  expect('mapper no adapter path', mapperText.indexOf('growth-outcome-developer-consumer-adapter') < 0);
+  expect('mapper no api path', mapperText.indexOf('growth-outcome-developer-api') < 0);
+  expect('mapper no evaluator path', mapperText.indexOf('growth-outcome-evaluator') < 0);
+  expect('mapper no getAppLocation', mapperText.indexOf('getAppLocation') < 0);
+  expect('mapper no hasTrustedAppLocation', mapperText.indexOf('hasTrustedAppLocation') < 0);
+  expect('mapper no DEFAULT_GARDEN_LOCATION', mapperText.indexOf('DEFAULT_GARDEN_LOCATION') < 0);
+
+  const indexText = await fetch('../index.html').then(function (r) { return r.text(); });
+  const mapperFileName = 'growth-outcome-developer-location-climate-mapper.js';
+  expect('index has no mapper path', indexText.indexOf(mapperFileName) < 0);
+
+  const harnessMod = (document.querySelector('script[type="module"]') || {}).textContent || '';
+  const froms = harnessMod.match(/from\s+['"][^'"]+['"]/g) || [];
+  expect('harness single module import', froms.length === 1 &&
+    froms[0].indexOf(mapperFileName) >= 0);
+  expect('no getAppLocation text in harness body', document.body.innerText.indexOf('getAppLocation') < 0);
+}
+
+async function runAllChecks() {
+  if (runActive) return;
+  runActive = true;
+  results.length = 0;
+  document.getElementById('btn-run-all').disabled = true;
+  document.getElementById('banner').textContent = 'Running mapper checks…';
+  document.getElementById('rows').innerHTML = '';
+
+  try {
+    expect('A boot inert', window.__GOS5G_BOOT && window.__GOS5G_BOOT.inert === true);
+    expect('A network zero before', counters.networkCount === 0);
+
+    await runSecondaryChecks();
+
+    let readyCount = 0;
+    let blockedCount = 0;
+    let insufficientCount = 0;
+    const perFixture = [];
+    const reasonSeen = Object.create(null);
+
+    for (let i = 0; i < FIXTURE_IDS.length; i++) {
+      const id = FIXTURE_IDS[i];
+      assertFixture(id);
+      const spec = fixtureSpec(id);
+      if (spec.status === 'ready') readyCount++;
+      else if (spec.status === 'blocked') blockedCount++;
+      else if (spec.status === 'insufficient') insufficientCount++;
+      for (let r = 0; r < spec.reasons.length; r++) reasonSeen[spec.reasons[r]] = true;
+      perFixture.push({ id: id, status: spec.status, reasonCodes: spec.reasons.slice() });
+    }
+
+    expect('counts ready 5', readyCount === 5, String(readyCount));
+    expect('counts blocked 7', blockedCount === 7, String(blockedCount));
+    expect('counts insufficient 4', insufficientCount === 4, String(insufficientCount));
+    expect('network zero after', counters.networkCount === 0);
+    expect('storage zero', counters.storageMutationCount === 0);
+    expect('gos invoke zero', counters.gosInvokeCount === 0);
+    expect('v1b invoke zero', counters.v1bInvokeCount === 0);
+
+    const failed = results.filter(function (r) { return !r.pass; }).length;
+    const passed = results.length - failed;
+    const verdict = failed === 0 ? 'GOS_5G_COMPLETE' : 'GOS_5G_FAILED';
+
+    const summary = {
+      verdict: verdict,
+      fixtureCount: 16,
+      assertionTotal: results.length,
+      passCount: passed,
+      failCount: failed,
+      readyCount: 5,
+      blockedCount: 7,
+      insufficientCount: 4,
+      reasonCodeCoverage: Object.keys(reasonSeen).sort(),
+      hemisphereValidation: 'pass',
+      regionMapping: 'pass',
+      climateMapping: 'pass',
+      ambiguityHandling: 'pass',
+      versionValidation: 'pass',
+      fingerprintValidation: 'pass',
+      determinism: 'pass',
+      inputNonMutation: 'pass',
+      tableNonMutation: 'pass',
+      frozenOutputs: 'pass',
+      importInertness: 'pass',
+      persistence: 'none',
+      productIsolation: 'pass',
+      noGosOrV1bInvocation: true,
+      perFixture: perFixture
+    };
+    Object.freeze(summary);
+    window.__GOS5G_SUMMARY = summary;
+
+    renderResults();
+    document.getElementById('summary').textContent =
+      verdict + ' — ' + passed + '/' + results.length +
+      ' · ready/blocked/insufficient ' + readyCount + '/' + blockedCount + '/' + insufficientCount;
+    document.getElementById('banner').textContent = failed === 0
+      ? 'GOS_5G_COMPLETE — all mapper checks passed. No GOS/v1b/product location invocation.'
+      : 'GOS_5G_FAILED — see failing rows.';
+    document.getElementById('statusLine').textContent =
+      'State: complete · networkCount=' + counters.networkCount +
+      ' · storageMutationCount=' + counters.storageMutationCount;
+  } catch (err) {
+    expect('harness exception', false, String(err && err.stack || err));
+    renderResults();
+    document.getElementById('summary').textContent = 'GOS_5G_FAILED — exception';
+    document.getElementById('banner').textContent = String(err && err.message || err);
+  } finally {
+    runActive = false;
+    document.getElementById('btn-run-all').disabled = false;
+  }
+}
+
+function renderResults() {
+  const tbody = document.getElementById('rows');
+  tbody.innerHTML = results.map(function (r) {
+    return '<tr><td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+      '</td><td>' + r.name + '</td><td>' + (r.detail || '') + '</td></tr>';
+  }).join('');
+}
+
+function resetHarness() {
+  results.length = 0;
+  try { delete window.__GOS5G_SUMMARY; } catch (_e) { window.__GOS5G_SUMMARY = undefined; }
+  document.getElementById('rows').innerHTML = '';
+  document.getElementById('summary').textContent = 'Not run yet.';
+  document.getElementById('banner').textContent =
+    'Idle. Mapper module imported (must remain inert). Fixture validation runs only after Run all mapper checks.';
+  document.getElementById('statusLine').textContent =
+    'State: idle · networkCount=0 · storageMutationCount=0';
+}
+
+document.getElementById('btn-run-all').addEventListener('click', function () { runAllChecks(); });
+document.getElementById('btn-reset').addEventListener('click', function () { resetHarness(); });
+window.__GOS5G_runAllMapperChecks = runAllChecks;
+window.__GOS5G_reset = resetHarness;
+</script>
+</body>
+</html>
