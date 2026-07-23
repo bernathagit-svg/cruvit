@@ -144,7 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Growth Outcome Suitability — GOS-5F synthetic LocationClimate mapping table & mapper API contract** | Done (local) | **Documentation-only; newly introduced checkpoint (prior GOS-5F work was planning/investigation only; not a historical pre-existing checkpoint).** Freezes synthetic developer-only mapper **API and mapping-table contract** before any mapper code: future paths (`growth-outcome-developer-location-climate-mapper.js` + harness); future implementation identity **GOS-5G** / `0.1.0-gos5g`; capability `explicit_synthetic_location_climate_mapping`; public functions; input `mappingInputVersion` **0.1.0**; options-supplied synthetic region/climate tables (exact `inputToken` / long-term match only); ambiguity fail-closed; statuses `ready`/`blocked`/`insufficient`; ordered reason vocabulary; `suppliedBy: developer_synthetic_location_climate_mapper`; fingerprint/version/confidence/weather rules; exact **16** fixtures; harness/`__GOS5G_SUMMARY` contract; mapper→adapter deferred; **no** real region; **no** mapper/harness/table file created. File: `PROJECT_STATUS.md` only. Existing facts unchanged: GOS-5E closed; GOS-5D `GOS_5D_PRODUCTION_VERIFIED` / **129/129**; GOS-5C **141/141**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. |
+| **Growth Outcome Suitability — GOS-5F synthetic LocationClimate mapping table & mapper API contract** | Done (local) | **Documentation-only; newly introduced checkpoint (prior GOS-5F work was planning/investigation only; not a historical pre-existing checkpoint).** Freezes synthetic developer-only mapper **API and mapping-table contract** before any mapper code: future paths (`growth-outcome-developer-location-climate-mapper.js` + harness); future implementation identity **GOS-5G** / `0.1.0-gos5g`; capability `explicit_synthetic_location_climate_mapping`; public functions; input `mappingInputVersion` **0.1.0**; options-supplied synthetic region/climate tables (exact `inputToken` / long-term match only); ambiguity fail-closed; statuses `ready`/`blocked`/`insufficient`; ordered reason vocabulary; `suppliedBy: developer_synthetic_location_climate_mapper`; fingerprint/version/confidence/weather rules; exact **16** fixtures; harness/`__GOS5G_SUMMARY` contract; mapper→adapter deferred; **no** real region; **no** mapper/harness/table file created. **Clarification (docs-only, additive):** top-level `inputToken` / `climateNormalsClass`; `supportedInputTokens` region boundary; ambiguous vs conflicting climate algorithms; base vs full fingerprints; version-reason split; stale-forecast warning-only; `missingPrerequisites` map; final fixture counts ready **5** / blocked **7** / insufficient **4**. File: `PROJECT_STATUS.md` only. Existing facts unchanged: GOS-5E closed; GOS-5D `GOS_5D_PRODUCTION_VERIFIED` / **129/129**; GOS-5C **141/141**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. |
 | **Growth Outcome Suitability — GOS-5E product LocationClimate mapping contract** | Done (local) | **Documentation-only; newly introduced checkpoint (not a prior historical GOS-5E).** Freezes the product→GOS `locationClimate` mapping **contract** before any mapper implementation: source ownership; pass-through / deterministic / table-mapped / prohibited fields; trusted-location + coordinate prerequisites; hemisphere rules; `regionTags` / `climateTags` ownership; prohibited inference; weather vs climate normals vs microclimate separation; confidence enums (no percentages); mapper statuses `ready` / `blocked` / `insufficient`; reason codes; fail-closed with `locationClimate: null`; partial output ineligible for product GOS invocation; v1b coexistence; future mapper I/O / provenance / versioning / fingerprints / invalidation; **no real region approved** (not Israel, Western Galilee, Switzerland, or Florida); synthetic validation gates; stop conditions; deferred work. **Does not authorize** mapper code, harness, My Garden integration, product GOS invocation, persistence, UI, or any product region mapping table. File: `PROJECT_STATUS.md` only. Existing facts unchanged: GOS-5D `GOS_5D_PRODUCTION_VERIFIED` / **129/129**; GOS-5C `GOS_5C_PRODUCTION_INERT_VERIFIED` / **141/141**; GOS-5B/5A contracts; GOS-4B **101/101**; GOS-3F **2018/2018**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. |
 | **Growth Outcome Suitability — GOS-5D isolated production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no product consumer/UI; no My Garden access; no product `locationClimate` mapping; no v1b/direct evaluator comparison; no persistence.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`b52d5dbd437c3fdc0e713d6223a994e0706b73b7`**. **Harness** `/tests/growth-outcome-developer-consumer-adapter-api-roundtrip.test.html` HTTP **200** `text/html`; `git hash-object` matches commit. Adapter, developer API, evaluator, pilot profiles/evidence, and `index.html` blob-matched. Contains `GOS_5D_COMPLETE`, exact 6-scenario manifest, and aggregate field names. **Normal app isolation (before):** home + My Garden + Smart Recommendations + Identify + Plant Doctor + Garden Design — **zero** automatic requests for GOS-5D harness, adapter, developer API/evaluator, or pilot JSON attributable to GOS-5D; no GOS-5D UI/link; no adapter/API/GOS-5D globals; `evaluateClimateSuitabilityV1` present. **Initial harness inertness:** static shell; `__GOS5D_BOOT.inert=true`; modulesLoaded false; no adapter/API/evaluator/pilot resource load until explicit Run. **Explicit Run all only:** five consecutive production runs all **129/129** / `GOS_5D_COMPLETE` / scenarioCount **6**; unchangedReady **2**; adapterBlockedNoApi **3**; derivedApiBoundaryBlock **1**; apiSuccess **2**; apiBlocked **1**; apiNotInvoked **3**; biology/suitability round-trip; `ornamentalFoliage` goal preservation; unchanged-request handoff; adapter-blocked zero-API; API `developer_capability_required` on harness-derived clone; capability/blocked-state separation; determinism; non-mutation; frozen outputs; storage unchanged; same-origin network only (adapter/API/evaluator/pilot + isolation `index.html` fetch). **After:** reload home + navigation sample — **zero** automatic GOS-5D/adapter/API/evaluator/pilot requests; no stored round-trip result; v1b still product path. **Verdict:** `GOS_5D_PRODUCTION_VERIFIED`. GOS remains **not product-enabled / not authoritative / not a v1b replacement**. **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
 | **Growth Outcome Suitability — GOS-5D synthetic adapter → developer API round-trip** | Done (pushed) | **Newly introduced checkpoint (not a prior historical GOS-5D).** Standalone developer-only synthetic seam harness only; no adapter/API/evaluator/`index.html`/existing-harness/schema/pilot/product change; no My Garden; no product `locationClimate` mapping; no v1b invocation/comparison; no direct evaluator call; no persistence.** File: `tests/growth-outcome-developer-consumer-adapter-api-roundtrip.test.html` (+ `PROJECT_STATUS.md`). **Path:** `/tests/growth-outcome-developer-consumer-adapter-api-roundtrip.test.html` (direct explicit URL only). **Idle on load** — dynamic import of adapter + developer API and pilot fetch only after explicit “Run all round-trip checks”. **Scenarios (exactly 6):** `roundtrip_ready_biology_mango`; `roundtrip_ready_suitability_mango`; `adapter_blocked_unresolved_identity_no_api`; `adapter_blocked_untrusted_location_no_api`; `adapter_blocked_suitability_without_goal_no_api`; `api_blocked_capability_after_ready_request_clone` (harness-derived capability clone — not an unchanged adapter request). **Aggregates:** unchangedReadyRoundTrip **2**; adapterBlockedNoApi **3**; derivedApiBoundaryBlock **1**; apiSuccess **2**; apiBlocked **1**; apiNotInvoked **3**. Proves unchanged adapter-built ready requests accepted by stopped developer API; biology omits `userGoal`; suitability preserves explicit `ornamentalFoliage`; adapter-blocked paths never invoke API; adapter ready + API blocked remain separate; capability tokens remain distinct; determinism ×10; frozen outputs; input/profile/evidence non-mutation. **Harness:** **129/129**; verdict `GOS_5D_COMPLETE`; five consecutive local runs all **129/129**. **Non-regression:** GOS-5C **141/141**; GOS-4B **101/101**; GOS-3F **2018/2018**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979** / **8**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**. Protected byte identity vs `5fa7fe7` for adapter, API, evaluator, existing GOS harnesses, `index.html`, styles, identity, pilot data. **Not product-enabled.** Adapter module still does not import or invoke the API. Pushed at `b52d5db`. **Production verification later completed** — see GOS-5D production verification checkpoint (`GOS_5D_PRODUCTION_VERIFIED`). |
@@ -2100,8 +2100,191 @@ This checkpoint is complete when this document contains: newly introduced wordin
 | Future implementation separately gated as GOS-5G | PASS |
 | GOS-5E and earlier verified facts preserved | PASS |
 | File scope `PROJECT_STATUS.md` only | PASS |
+| Clarification: `inputToken` / `climateNormalsClass` top-level placement frozen | PASS |
+| Clarification: unsupported vs unavailable region algorithm frozen | PASS |
+| Clarification: ambiguous vs conflicting climate algorithm frozen | PASS |
+| Clarification: base vs full fingerprint behavior frozen | PASS |
+| Clarification: mapping/source version distinction frozen | PASS |
+| Clarification: stale forecast warning-only; `stale_climate_source` unused in 16 fixtures | PASS |
+| Clarification: unknown-key and `longTermSignals` rules frozen | PASS |
+| Clarification: `missingPrerequisites` map frozen | PASS |
+| Clarification: priority ignored for selection | PASS |
+| Clarification: final 16-fixture matrix ready **5** / blocked **7** / insufficient **4** | PASS |
+| Clarification does not authorize GOS-5G implementation | PASS |
 
 **No mapper, harness, mapping-table file, schema, product consumer, product UI, persistence, real-region approval, product location read, GOS invocation, or v1b invocation is authorized by GOS-5F.**
+
+### 39. GOS-5F Clarification — Implementation-Mechanical Rules
+
+**Type:** documentation-only additive clarification under GOS-5F. **Verdict contribution:** closes GOS-5G planning gaps identified by verdict `NEEDS_GOS_5F_CONTRACT_CORRECTION`.
+
+**Explicit statements:** This clarification does **not** authorize GOS-5G implementation. No mapper, table, harness, product mapping, or real-region approval is created. It freezes **only** the remaining technical ambiguities identified during GOS-5G planning. GOS-5E product policy and the prior GOS-5F sections remain in force; where this clarification is more specific, it governs future GOS-5G coding.
+
+#### 39.1 Required top-level match keys
+
+**Required top-level input fields (in addition to GOS-5F §8):** `inputToken`; `climateNormalsClass`.
+
+**`inputToken`:** required non-empty string; exact-match synthetic mapping key; must **not** be derived from city, country, label, coordinates, v1b, or product location; must be supplied explicitly by the synthetic fixture; participates in the **full** mapper input fingerprint.
+
+**`climateNormalsClass`:** required non-empty string; exact synthetic long-term climate-class key; must **not** be derived from current weather, forecast, `broadClimate`, or v1b output; must be supplied explicitly by the synthetic fixture; participates in the **full** mapper input fingerprint.
+
+Neither value may be placed implicitly inside `provenance`.
+
+#### 39.2 `longTermSignals`
+
+Required plain object; deterministic; synthetic; explicitly supplied. Allowed scalar values only: string, finite number, boolean. **Prohibit:** nested objects; arrays; functions; undefined; NaN; Infinity; live timestamps; live weather objects. Keys are non-empty strings. Canonical serialization sorts keys lexicographically. Mapper must never infer or add a missing signal.
+
+#### 39.3 Unknown-key policy
+
+**Input top-level allowed keys (exact):** `mappingInputVersion`; `trusted`; `latitude`; `longitude`; `source`; `confirmationStatus`; `locationConfidence`; `climateConfidence`; `countryCode`; `subdivisionCode`; `city`; `inputToken`; `climateNormalsClass`; `locationFingerprint`; `climateNormalsVersion`; `weatherSnapshotVersion`; `longTermSignals`; `forecastSignals`; `provenance`.
+
+Unknown top-level input keys → `blocked` + `invalid_mapping_input`.
+
+**Region-table top-level allowed keys:** `tableVersion`; `syntheticOnly`; `supportedInputTokens`; `rules`.
+
+**Climate-table top-level allowed keys:** `tableVersion`; `syntheticOnly`; `rules`.
+
+Unknown table, rule, match, or output keys → `blocked` + `invalid_mapping_table`.
+
+**Exception:** optional rule `priority` is allowed as metadata; ignored for matching; must never resolve ambiguity.
+
+#### 39.4 Region-table support boundary and matching
+
+Region table must contain `supportedInputTokens`: array of unique non-empty synthetic strings.
+
+| Case | Status | Reason |
+|------|--------|--------|
+| A. `inputToken` not in `supportedInputTokens` | `insufficient` | `unsupported_region` |
+| B. token supported, but zero rules match all declared exact fields | `insufficient` | `region_mapping_unavailable` |
+| C. exactly one rule matches | region mapping succeeds | — |
+| D. more than one rule matches | `blocked` | `ambiguous_region_mapping` (no priority winner) |
+
+Non-ready cases: `locationClimate: null`.
+
+**Region-rule match:** required `match.inputToken` exact equality; optional exact `countryCode` / `subdivisionCode` when declared by the rule. Rule matches only when `inputToken` equals and every optional declared match field also equals. No normalization beyond trimming contract-required strings. **Prohibit:** case guessing; substring; nearest; geographic-distance; implicit fallback.
+
+#### 39.5 Climate-rule matching and ambiguity
+
+Required match field: `climateNormalsClass` (exact). Optional: `longTermSignals` key/value exact scalars — every key declared by the rule must exist with exactly equal scalar value.
+
+| Case | Status | Reason |
+|------|--------|--------|
+| Zero matches | `insufficient` | `climate_mapping_unavailable` |
+| Exactly one match | climate mapping succeeds | — |
+| More than one match, canonically identical outputs | `blocked` | `ambiguous_climate_mapping` |
+| More than one match, different `climateTags` or `values` | `blocked` | `conflicting_climate_signals` |
+
+Do not merge outputs. Do not average values. Non-ready: `locationClimate: null`. Do not proceed to climate-rule matching when region mapping is non-ready.
+
+#### 39.6 Accepted synthetic versions (GOS-5G)
+
+| Field | Accepted value |
+|-------|----------------|
+| `mappingInputVersion` | `0.1.0` |
+| mapper version | `0.1.0-gos5g` |
+| `mappingVersion` | `0.1.0-synthetic-map` |
+| `regionTable.tableVersion` | `0.1.0-synthetic-region` |
+| `climateTable.tableVersion` | `0.1.0-synthetic-climate` |
+| `climateNormalsVersion` | `0.1.0-synthetic-normals` |
+
+**`mapping_version_unavailable` (blocked):** `options.mappingVersion` missing, empty, or unsupported.
+
+**`source_version_mismatch` (blocked):** unsupported `mappingInputVersion`; region/climate table version differs from frozen supported versions; `climateNormalsVersion` differs from frozen supported normals version.
+
+Both → `locationClimate: null`.
+
+#### 39.7 Two fingerprints
+
+**A. Base location fingerprint** — validates caller-supplied `locationFingerprint`.
+
+Participants: `mappingInputVersion`; `trusted`; `latitude`; `longitude`; `source`; `confirmationStatus`; `locationConfidence`; `countryCode`; `subdivisionCode` when present; `city` when present. No table versions; no climate class/signals; no forecast. Canonical deterministic serialization; sorted object keys; no timestamps. `input.locationFingerprint` must exactly equal the computed base fingerprint. Mismatch → `blocked` + `location_fingerprint_mismatch` + `locationClimate: null`.
+
+**B. Full mapper input fingerprint** — output field `inputFingerprint` (not a second caller field).
+
+Participants: all base fields; `climateConfidence` when present; `inputToken`; `climateNormalsClass`; `climateNormalsVersion`; canonical `longTermSignals`; `regionTable.tableVersion`; `climateTable.tableVersion`; `mappingVersion`.
+
+**Constructibility:** Base FP when input is structurally valid and required base fields have valid types. Full `inputFingerprint` only when input structure is valid, both tables structurally valid, and `mappingVersion` + table versions present; otherwise `inputFingerprint: null`. Do not fabricate a partial fingerprint.
+
+#### 39.8 Canonical serialization
+
+Object keys sorted lexicographically; scalars preserved exactly; arrays sorted only when order has no contract meaning; mapper-owned `regionTags` / `climateTags` sorted lexicographically; `longTermSignals` keys sorted; undefined omitted; null preserved only where explicitly permitted; no locale-dependent sorting; no hashing required; the canonical serialized string may serve as the fingerprint.
+
+#### 39.9 Stale forecast
+
+`forecastSignals` never influence `regionTags`, `climateTags`, or stable mapped `values`. Stale forecast alone does not block a valid stable mapping. When a fixture explicitly marks forecast data stale and stable mapping succeeds: `status: ready`; `reasonCodes: []`; `warnings` includes `stale_forecast_ignored_for_tags`. Reason `stale_climate_source` is reserved for a future long-term climate-source staleness case and is **not** emitted by any of the frozen 16 primary fixtures.
+
+#### 39.10 Confidence
+
+Allowed: `default` \| `low` \| `medium` \| `high`. `locationConfidence` required; `default` → not ready → `blocked` + `untrusted_location`. `climateConfidence` optional; invalid → `blocked` + `invalid_mapping_input`; valid → pass through unchanged; never merged; never percentages.
+
+#### 39.11 `missingPrerequisites` map (exact)
+
+| Reason | Prerequisite token |
+|--------|--------------------|
+| `mapper_capability_required` | `mapperCapability` |
+| `invalid_mapping_input` | `mappingInput` |
+| `invalid_mapping_table` | `mappingTables` |
+| `untrusted_location` | `trustedLocation` |
+| `missing_coordinates` | `coordinates` |
+| `invalid_coordinates` | `validCoordinates` |
+| `equator_policy_unavailable` | `hemispherePolicy` |
+| `mapping_version_unavailable` | `mappingVersion` |
+| `source_version_mismatch` | `sourceVersions` |
+| `country_unresolved` | `countryCode` |
+| `unsupported_region` | `supportedSyntheticRegion` |
+| `region_mapping_unavailable` | `regionMapping` |
+| `ambiguous_region_mapping` | `unambiguousRegionMapping` |
+| `climate_mapping_unavailable` | `climateMapping` |
+| `ambiguous_climate_mapping` | `unambiguousClimateMapping` |
+| `conflicting_climate_signals` | `consistentClimateSignals` |
+| `stale_climate_source` | `freshLongTermClimateSource` |
+| `insufficient_product_location_data` | `sufficientLocationData` |
+| `location_fingerprint_mismatch` | `validLocationFingerprint` |
+
+De-duplicate; order by frozen reason precedence; no biological terminology.
+
+#### 39.12 Validation stop and accumulation
+
+Missing/wrong capability → stop immediately; only `mapper_capability_required`. Null/primitive/array input → stop; only `invalid_mapping_input`. Malformed region or climate table → `blocked` + `invalid_mapping_table`; stop before semantic matching. Structurally valid input → accumulate applicable reasons; de-duplicate; sort by frozen precedence. Climate matching only after region mapping is ready to proceed.
+
+#### 39.13 Final 16-fixture status matrix (overrides preliminary planning estimates)
+
+**Ready (5):** `ready_northern_mapping`; `ready_southern_mapping`; `stale_forecast_stable_mapping_ready`; `deterministic_repeat`; `input_and_table_non_mutation`.
+
+**Blocked (7):** `untrusted_location`; `missing_coordinates`; `invalid_coordinates`; `ambiguous_region_overlap`; `conflicting_climate_signals`; `mapping_version_mismatch`; `location_fingerprint_mismatch`.
+
+**Insufficient (4):** `equator_policy_unavailable`; `unsupported_region`; `region_mapping_unavailable`; `climate_mapping_unavailable`.
+
+**Primary reasons:**
+
+| Fixture | Primary `reasonCodes` |
+|---------|----------------------|
+| `ready_northern_mapping` | `[]` |
+| `ready_southern_mapping` | `[]` |
+| `untrusted_location` | `[untrusted_location]` |
+| `missing_coordinates` | `[missing_coordinates]` |
+| `invalid_coordinates` | `[invalid_coordinates]` |
+| `equator_policy_unavailable` | `[equator_policy_unavailable]` |
+| `unsupported_region` | `[unsupported_region]` |
+| `region_mapping_unavailable` | `[region_mapping_unavailable]` |
+| `ambiguous_region_overlap` | `[ambiguous_region_mapping]` |
+| `climate_mapping_unavailable` | `[climate_mapping_unavailable]` |
+| `conflicting_climate_signals` | `[conflicting_climate_signals]` |
+| `mapping_version_mismatch` | `[mapping_version_unavailable]` |
+| `location_fingerprint_mismatch` | `[location_fingerprint_mismatch]` |
+| `stale_forecast_stable_mapping_ready` | `[]` + warning `stale_forecast_ignored_for_tags` |
+| `deterministic_repeat` | `[]` |
+| `input_and_table_non_mutation` | `[]` |
+
+Secondary harness assertions may cover `source_version_mismatch`, `ambiguous_climate_mapping`, `invalid_mapping_table`, `mapper_capability_required`, `invalid_mapping_input`, `country_unresolved`, `insufficient_product_location_data` without increasing `fixtureCount` beyond **16**.
+
+#### 39.14 Priority
+
+Optional `priority` on rules is metadata only. Mapper may preserve it for inspection; must ignore during selection; must not use it to resolve multiple matches; multiple matches still yield ambiguity or conflict.
+
+#### 39.15 GOS-5G identity and file scope (unchanged; still unauthorized)
+
+Future checkpoint: **GOS-5G — Stopped Synthetic Developer LocationClimate Mapper**. Version `0.1.0-gos5g`. Summary `window.__GOS5G_SUMMARY`. Verdict `GOS_5G_COMPLETE`. Files exactly: `modules/suitability/growth-outcome-developer-location-climate-mapper.js`; `tests/growth-outcome-developer-location-climate-mapper.test.html`; `PROJECT_STATUS.md`. No fourth file; no schema; no table JSON. **Implementation remains unauthorized by this clarification.**
 
 ---
 
@@ -2532,7 +2715,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**GOS-5F synthetic LocationClimate mapping table & mapper API contract is complete** (`GOS_5F_SYNTHETIC_MAPPER_API_CONTRACT_COMPLETE`; docs-only; **no** mapper/harness/table file; **no** real region approved). GOS-5E remains in force. GOS-5D production verification remains closed (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** / `GOS_5D_COMPLETE` at `b52d5db`). Next possible step after separate push approval of this docs commit: separately approved **GOS-5G — Stopped Synthetic Developer LocationClimate Mapper** implementation only, or separately approved **My Garden consumer planning only** — do **not** start automatically. Do **not** implement the mapper without GOS-5G approval, approve Israel/Western Galilee/Switzerland/Florida (or any real region), wire the adapter or developer API into the app, add product navigation, load pilot data in normal runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **No product consumer or product-facing GOS UI authorized.**
+**GOS-5F synthetic LocationClimate mapping table & mapper API contract is complete** (`GOS_5F_SYNTHETIC_MAPPER_API_CONTRACT_COMPLETE`), including the **GOS-5F Clarification — Implementation-Mechanical Rules** (docs-only; **no** mapper/harness/table file; **no** real region approved; fixture matrix ready **5** / blocked **7** / insufficient **4**). GOS-5E remains in force. GOS-5D production verification remains closed (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** / `GOS_5D_COMPLETE` at `b52d5db`). Next possible step after separate push approval of this docs commit: separately approved **GOS-5G — Stopped Synthetic Developer LocationClimate Mapper** implementation only, or separately approved **My Garden consumer planning only** — do **not** start automatically. Do **not** implement the mapper without GOS-5G approval, approve Israel/Western Galilee/Switzerland/Florida (or any real region), wire the adapter or developer API into the app, add product navigation, load pilot data in normal runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **No product consumer or product-facing GOS UI authorized.**
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
