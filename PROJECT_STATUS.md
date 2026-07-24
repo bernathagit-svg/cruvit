@@ -61,10 +61,10 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### Next phase — read-only Smart Recommendations filter and data-readiness planning / catalog task B
-Status: **Next — planning and catalog work**
+### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
+Status: **Active — documentation checkpoint in progress / next coverage audit gated**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. Next UX planning remains filter matchers/data readiness for sun/water; next catalog implementation remains **B — canonical plant identities, aliases, and duplicate records**. Do not populate taxonomy arrays or implement filter UI in this foundation step.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Named checkpoint:** Smart Recommendations Sun/Water Filter Readiness Contract (documentation-only; newly formalized — not a prior completed historical checkpoint). Catalog task **B** is **Frozen (v1)**. Do not populate taxonomy arrays, implement matchers, or enable filter UI in this foundation step. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation only so far; chat and results table unchanged; sun/water logic/UI not started); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; stopped synthetic locationClimate mapper developer-only / synthetic-only / not product-enabled; mapper→adapter seam deferred; no real region; GOS-5F/5E contracts closed; GOS-5D production verified — `GOS_5D_PRODUCTION_VERIFIED`; GOS-5C production inertness verified; GOS-5B/5A contracts closed; GOS-4B production verified; GOS-3C1 matrix **979/979** / **8** fixtures unchanged; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; sun/water readiness contract is the active docs track; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → next UX planning (sun/water readiness) + catalog task B → C–E → enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (next, separately gated)** → sun/water matcher implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Smart Recommendations — Sun/Water Filter Readiness Contract** | Done (local) | **Documentation-only; newly formalized named checkpoint** (repository previously identified “next UX planning — sun/water filter readiness” but had no completed readiness-contract checkpoint). Freezes structured-field-only sun/water matcher readiness: allowed native sources (`climateTraits.sunNeeds` / `climateTraits.waterNeeds` via `smartRecClimateMetaForPlant` / curated `SMART_REC_CLIMATE_METADATA`; `needsReview`); prohibited prose/tag/GOS/v1b inference; approved first filter values and native representations; match semantics; OR-within-group / AND-across-groups; missing/`needsReview`/conflict fail-closed; trusted-location vs filter separation; results-table and chat protection; other filter groups deferred; coverage-audit required before implementation; GOS paused after GOS-5G. **Does not authorize** matcher code, filter UI, catalog enrichment, `index.html` change, results/chat redesign, other filter groups, GOS consumer, or Design Excellence. File: `PROJECT_STATUS.md` only. Next possible: **Smart Recommendations Sun/Water Structured Coverage Audit** (read-only; separately gated). **Push pending** separate approval. |
 | **Growth Outcome Suitability — GOS-5G isolated production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no mapper→adapter seam; no product location reads; no real region; no product consumer/UI; no GOS/v1b invocation; no persistence.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`0ae5b3f73025be789f9927d4987c27587b7308af`**. **Module** `/modules/suitability/growth-outcome-developer-location-climate-mapper.js` HTTP **200** `application/javascript` (`0.1.0-gos5g`; `explicit_synthetic_location_climate_mapping`; `developer_synthetic_location_climate_mapper`; LF-normalized content matches committed file). **Harness** `/tests/growth-outcome-developer-location-climate-mapper.test.html` HTTP **200** `text/html` (LF-normalized match; contains `GOS_5G_COMPLETE`, exact 16-fixture manifest, `__GOS5G_SUMMARY` fields). **`index.html`** LF-normalized match to commit. **Normal app isolation (before):** home + My Garden + Smart Recommendations + Identify + Plant Doctor + Garden Design — **zero** automatic requests for mapper, mapper harness, adapter/API/evaluator attributable to GOS-5G, or pilot JSON attributable to GOS-5G; no mapper UI/link; no mapper globals; `evaluateClimateSuitabilityV1` present. **Initial harness inertness:** static shell; `__GOS5G_BOOT.inert=true`; summary absent; harness `networkCount=0` / `storageMutationCount=0`; only mapper module static load; no fixture execution / mapping output / GOS/v1b/product-location until explicit Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **223/223** / `GOS_5G_COMPLETE` / fixtureCount **16** / ready **5** / blocked **7** / insufficient **4**; identical assertion totals, reasons, summaries; capability enforcement; northern/southern hemisphere; equator insufficient; region/climate exact match; ambiguity fail-closed (`ambiguous_region_mapping`, `conflicting_climate_signals`, secondary `ambiguous_climate_mapping`); `mapping_version_unavailable` vs `source_version_mismatch`; fingerprint mismatch fail-closed; stale forecast ready + `stale_forecast_ignored_for_tags` only; determinism ×10; input/table non-mutation; frozen outputs; mapper network zero; storage/cookies unchanged; Reset restores idle not-run state; same-origin harness isolation fetch of `index.html` only (no adapter/API/evaluator/pilot). **After:** reload home + navigation sample — **zero** automatic mapper/GOS-5G/adapter/API/evaluator/pilot requests; no stored synthetic mapping; no mapper global/UI; v1b still product path. **Verdict:** `GOS_5G_PRODUCTION_VERIFIED`. Mapper remains **not product-enabled / not a product mapper / no real region / mapper→adapter deferred**. **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
 | **Growth Outcome Suitability — GOS-5G stopped synthetic developer LocationClimate mapper** | Done (pushed) | **Newly introduced implementation checkpoint (not a prior historical GOS-5G).** Stopped, pure, import-inert, explicit-call-only, developer-only, synthetic-only mapper + standalone harness; no `index.html`/styles/location/My Garden/identity/adapter/API/evaluator/existing-harness/schema/pilot/product change; no mapping-table JSON; no real region; no product location read; no GOS/v1b invocation; no mapper→adapter seam; no persistence; no product consumer/UI; no network dependency in mapper; no score/risk mapping; no partial ready output.** Files: `modules/suitability/growth-outcome-developer-location-climate-mapper.js` (`0.1.0-gos5g`), `tests/growth-outcome-developer-location-climate-mapper.test.html`, `PROJECT_STATUS.md`. **Capability:** `GOS_DEVELOPER_LOCATION_CLIMATE_MAPPER_CAPABILITY` = `explicit_synthetic_location_climate_mapping`. **Exports:** `describeGrowthOutcomeDeveloperLocationClimateMapper`, `validateSyntheticLocationMappingInput`, `buildSyntheticProductLocationClimate` (+ frozen capability/reasons/version). **Descriptor:** deeply frozen singleton; `status: stopped`; `developerOnly/syntheticOnly: true`; `authoritative/persistence/productMapper/invokesGOS/invokesV1b/readsProductLocation: false`; `supportedCoverage: synthetic_mapping_tables_only`; `activation: explicit_call_only`; `suppliedBy` on ready LC: `developer_synthetic_location_climate_mapper`. **Fixtures (exactly 16):** `ready_northern_mapping`, `ready_southern_mapping`, `untrusted_location`, `missing_coordinates`, `invalid_coordinates`, `equator_policy_unavailable`, `unsupported_region`, `region_mapping_unavailable`, `ambiguous_region_overlap`, `climate_mapping_unavailable`, `conflicting_climate_signals`, `mapping_version_mismatch`, `location_fingerprint_mismatch`, `stale_forecast_stable_mapping_ready`, `deterministic_repeat`, `input_and_table_non_mutation`. **Counts:** ready **5** / blocked **7** / insufficient **4**. **Harness:** **223/223**; verdict `GOS_5G_COMPLETE`; five consecutive local Reset→Run cycles all **223/223**. Pushed at `0ae5b3f`. **Production verification later completed** — see GOS-5G isolated production verification checkpoint (`GOS_5G_PRODUCTION_VERIFIED`). |
 | **Growth Outcome Suitability — GOS-5F synthetic LocationClimate mapping table & mapper API contract** | Done (local) | **Documentation-only; newly introduced checkpoint (prior GOS-5F work was planning/investigation only; not a historical pre-existing checkpoint).** Freezes synthetic developer-only mapper **API and mapping-table contract** before any mapper code: future paths (`growth-outcome-developer-location-climate-mapper.js` + harness); future implementation identity **GOS-5G** / `0.1.0-gos5g`; capability `explicit_synthetic_location_climate_mapping`; public functions; input `mappingInputVersion` **0.1.0**; options-supplied synthetic region/climate tables (exact `inputToken` / long-term match only); ambiguity fail-closed; statuses `ready`/`blocked`/`insufficient`; ordered reason vocabulary; `suppliedBy: developer_synthetic_location_climate_mapper`; fingerprint/version/confidence/weather rules; exact **16** fixtures; harness/`__GOS5G_SUMMARY` contract; mapper→adapter deferred; **no** real region; **no** mapper/harness/table file created. **Clarification (docs-only, additive):** top-level `inputToken` / `climateNormalsClass`; `supportedInputTokens` region boundary; ambiguous vs conflicting climate algorithms; base vs full fingerprints; version-reason split; stale-forecast warning-only; `missingPrerequisites` map; final fixture counts ready **5** / blocked **7** / insufficient **4**. File: `PROJECT_STATUS.md` only. Existing facts unchanged: GOS-5E closed; GOS-5D `GOS_5D_PRODUCTION_VERIFIED` / **129/129**; GOS-5C **141/141**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**. **Push pending** separate approval. **Implementation later completed** — see GOS-5G checkpoint row. |
@@ -311,7 +312,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)**; next UX planning = SR filter and data-readiness; next catalog implementation = B identities/aliases/duplicates; then C–E |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)** + filter taxonomy schema + **Sun/Water Filter Readiness Contract (docs)**; catalog task **B Frozen (v1)**; next = **Sun/Water Structured Coverage Audit** (separately gated), then sun/water matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -323,12 +324,12 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **14** | Garden Design Studio 2.0 | Planned |
 | **15** | AI Garden Coach | Planned |
 | **16** | Garden-Level Disease Intelligence | **Future** — documented requirement only; blocked on data foundations (see dedicated plan). Must not remain single-plant-only Plant Doctor. |
-| **17** | Growth Outcome Suitability | **GOS-5F** synthetic mapping-table & mapper API contract closed (docs-only; no mapper code). **GOS-5E** product `locationClimate` mapping contract closed (docs-only; no real region approved). **GOS-5D production verified** (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** on explicit round-trip URL at `b52d5db`; 6 scenarios). GOS-5C production inertness verified. GOS-5B/5A contracts closed. GOS-4B production verified. GOS-3C1 matrix remains **8** fixtures / **979/979**. No catalog/UI/ranking/product consumer until separately approved. Before broad Smart Recommendations or Add Plant suitability expansion. |
+| **17** | Growth Outcome Suitability | **GOS-5G production verified** (`GOS_5G_PRODUCTION_VERIFIED` at `0ae5b3f` / docs `124b815`). Synthetic mapper closed; **synthetic GOS expansion paused**. Mapper→adapter seam, real-region mapping, and My Garden GOS consumer remain deferred. No catalog/UI/ranking/product consumer until separately approved. Active product track is Smart Recommendations sun/water readiness — not further GOS synthetic proofs. |
 
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, and **SR filter taxonomy schema foundation** (additive optional fields on `PlantCatalogItem`; seed unchanged; filters not enabled) are done. **Browse Eligibility Audit:** old gate used broad tags/climate prose; 84 unique plants after seed, all with structured meta, 62 passed old gate, 22 excluded before scoring (hydrangea example). **Gate fix (`index.html` `scorePlantForSource` SR branch only):** admit only when `smartRecClimateMetaForPlant(p)` is non-null; no tag/climate fallback. Local tests: untrusted browse empty; trusted London gate 62→84, browse 32→40; hydrangea good/82; lavender/olive unchanged; mango/lychee blocked+hidden; raspberry borderline; shade plants reach scoring; `low-water` hyphen irrelevant to eligibility; synthetic no-meta rejected; scoring/UI/chat/results table unchanged; no console errors. **Accuracy task A done.** **Filter data readiness:** only `sunNeeds` / `waterNeeds` safe for filters today; other approved groups need enrichment into the new schema fields. **Next UX planning:** sun/water filter matchers when data-ready (UI still not started). **Next catalog implementation:** B — canonical plant identities, aliases, and duplicate records (separate from filter schema). Then C–E → taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), and **Sun/Water Filter Readiness Contract** (docs-only; newly formalized) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** only structured `sunNeeds` / `waterNeeds` (via climate meta) are in scope for the first matcher family; other approved groups stay disabled until enrichment + separate contracts. **Next:** separately approved **Sun/Water Structured Coverage Audit** (read-only), then separately approved sun/water matcher implementation. Then catalog **C–E** → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -338,13 +339,13 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **13 — Shopify Smart Connection:** real product catalog, cart/checkout, and **User Product Outcome Memory** (see Product Commerce plan below). Product recommendations must flow from Treatment Calendar (`treatmentId`) — never random.
 - **13–15 — Shopify, Design Studio 2.0, AI Coach:** after core garden data graph is connected.
 - **16 — Garden-Level Disease Intelligence:** future only — see dedicated plan. Plant Doctor must evolve beyond single-plant diagnosis to garden-wide, individualized, confidence-aware disease/pest/environment reasoning. **Blocked** until canonical identity, per-user Plant Library, zones/positions, photo/symptom history, care/weather history, and multi-plant observation data exist. Do not schedule ahead of those foundations or ahead of current climate accuracy work.
-- **17 — Growth Outcome Suitability:** GOS-5F synthetic mapping-table & mapper API contract closed (docs-only; no mapper code; future implementation separately gated as **GOS-5G**). GOS-5E product `locationClimate` mapping contract closed (docs-only; no real region approved). GOS-5D production verified (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** / `GOS_5D_COMPLETE` on explicit round-trip URL at `b52d5db`). GOS-5C production inertness verified (`GOS_5C_PRODUCTION_INERT_VERIFIED`; five × **141/141** at `0148a4a`). GOS-5B/5A contracts remain in force. GOS-4B production verified (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101** on explicit display URL at `4f9fde3`). GOS-4A contract remains in force. GOS-3F **2018/2018**; GOS-3C1 **8** / **979/979**. Do **not** add product runtime loader / catalog / UI / ranking / consumer until separately approved.
+- **17 — Growth Outcome Suitability:** **GOS-5G production verified** (`GOS_5G_PRODUCTION_VERIFIED`). Stopped synthetic LocationClimate mapper closed. **Synthetic GOS expansion paused.** Mapper→adapter seam, real-region mapping, My Garden GOS consumer, product UI/ranking/persistence remain deferred / separately gated. Climate Suitability v1b remains the product path. Active product track: Smart Recommendations sun/water readiness.
 
 ---
 
 # Growth Outcome Suitability Plan
 
-**Status:** **GOS-5F** synthetic LocationClimate mapping-table & mapper API contract closed (documentation-only; no mapper/harness/table file; future implementation separately gated as **GOS-5G**). **GOS-5E** product `locationClimate` mapping contract closed (documentation-only; **no real region approved**). **GOS-5D production verified** (`GOS_5D_PRODUCTION_VERIFIED` at https://friendly-taiyaki-64aacb.netlify.app/ for `b52d5db`; five × **129/129** / `GOS_5D_COMPLETE` on explicit round-trip harness; 6 scenarios). Standalone harness `tests/growth-outcome-developer-consumer-adapter-api-roundtrip.test.html` proves unchanged adapter-built ready requests are accepted by the stopped developer API; adapter-blocked paths never invoke the API; adapter/API blocked states remain separate. Adapter module (`0.1.0-gos5c`) still does **not** import or invoke the API. **GOS-5C production inertness verified** (`GOS_5C_PRODUCTION_INERT_VERIFIED` for `0148a4a`; five × **141/141**). GOS-5B/5A contracts remain in force. **GOS-4B production verified** (`GOS_4B_PRODUCTION_VERIFIED` for `4f9fde3`; five × **101/101**). GOS-4A display contract remains authoritative. Prior foundations remain in force: GOS-1 schemas; GOS-2B pilot (**42** / **5**); GOS-3A/3B evaluator (**62/62**); GOS-3C0/3C1 matrix (**8** / **979/979**); GOS-3C2 readiness contract; GOS-3D developer API (**105/105**); GOS-3E / GOS-3F production verify. **Not imported by `index.html`.** No application runtime loading, product consumer, product UI, persistence, Sidecar consumer, or v1b mapping. Do **not** load pilot data in the application, rewrite catalog/`climateTraits`, change UI, or change Smart Recommendations / Add Plant ranking. Sidecar remains inert and unused by GOS. Mismatched-context Olive/Apple/California fixtures remain deferred. **GOS remains not product-enabled and does not replace Climate Suitability v1b.**
+**Status:** **GOS-5G production verified** (`GOS_5G_PRODUCTION_VERIFIED` for mapper commit `0ae5b3f`; verification docs `124b815`). Stopped synthetic LocationClimate mapper + harness closed. Prior stack through GOS-5F/5E/5D/5C/5B/5A/4B/4A/3F/3C1 remains in force. **Synthetic GOS expansion paused** — mapper→adapter seam, real-region mapping, and My Garden GOS consumer remain deferred. **Not imported by `index.html`.** No application runtime loading, product consumer, product UI, persistence, Sidecar consumer, or v1b mapping. Sidecar remains inert and unused by GOS. **GOS remains not product-enabled and does not replace Climate Suitability v1b.** Active product track after roadmap re-baseline: Smart Recommendations sun/water filter readiness.
 
 **Placement:** Product display/ranking requires separate approval — and remains **before** broad Smart Recommendations or Add Plant suitability expansion.
 
@@ -475,8 +476,8 @@ This checkpoint is complete when this document clearly contains: engine responsi
 
 **Checkpoint type:** production verification only (no runtime/test code change). **Verdict:** `GOS_3E_PRODUCTION_INERT_VERIFIED`.
 
-**Production URL:** https://friendly-taiyaki-64aacb.netlify.app/  
-**Deployed commit:** `6d4d987ae6c35e089f4dd26a0a33c58fee0ac9ef`  
+**Production URL:** https://friendly-taiyaki-64aacb.netlify.app/
+**Deployed commit:** `6d4d987ae6c35e089f4dd26a0a33c58fee0ac9ef`
 **Versions:** developer API **0.1.0-gos3d**; evaluator **0.1.0-gos3a** (HTTP 200; `git hash-object` matches commit blobs).
 
 **Proved:**
@@ -2451,7 +2452,7 @@ Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Me
 
 # Smart Recommendations UX Scope
 
-**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` are currently safe for filter use; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. Existing chat and results table remain unchanged. Canonical identity cleanup remains separate catalog task B.
+**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` are currently safe for filter use; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** (below) freezes matcher readiness semantics. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
 
 ### Input experience (future UX phase)
 
@@ -2603,15 +2604,336 @@ Do **not** remove the existing chat implementation immediately. The future filte
 
 ---
 
+# Smart Recommendations — Sun/Water Filter Readiness Contract
+
+**Checkpoint type:** documentation / planning only. **File:** `PROJECT_STATUS.md` only.
+**Historical accuracy:** Newly formalized named checkpoint. The repository already identified “next UX planning — sun/water filter readiness” as the unfinished Smart Recommendations next step; this section freezes that readiness as an explicit contract. It is **not** an already completed historical matcher/UI checkpoint.
+**Verdict identity (docs):** `SR_SUN_WATER_FILTER_READINESS_CONTRACT_COMPLETE`.
+
+**Explicit non-authorization:** This checkpoint defines readiness and matcher semantics only. It does **not** enable filter UI; does **not** populate or enrich the catalog; does **not** modify the current results table; does **not** remove the current chat/input surface; does **not** authorize other filter groups; does **not** authorize `index.html` changes. **Matcher implementation requires separate approval.**
+
+### 1. Purpose
+
+Define when structured catalog data is sufficiently complete and trustworthy for a plant to participate in:
+
+- sun-exposure filtering
+- water-needs filtering
+
+The contract prevents:
+
+- guessing from prose
+- guessing from plant category
+- guessing from common gardening knowledge
+- treating missing data as a match
+- treating `needsReview` as eligible
+- silently broadening compatibility
+
+### 2. Allowed structured data sources (repository-native)
+
+Resolved climate meta for Smart Recommendations today comes from `smartRecClimateMetaForPlant(p)` in `index.html`, which prefers curated `SMART_REC_CLIMATE_METADATA[key]`, else `climateMetaFromCatalogTraits(p.climateTraits, …)` (merges `climateTraits.groupIds` via `SMART_REC_CLIMATE_GROUPS`, then plant `climateTraits`). Schema definition: `PlantClimateTraits` in `data/plant-catalog.schema.json`.
+
+**Sun matcher may use only:**
+
+| Native field / source | Role |
+|-----------------------|------|
+| `climateTraits.sunNeeds` (string) | Primary structured sun token after meta resolution |
+| Curated `SMART_REC_CLIMATE_METADATA[*].sunNeeds` | Explicit per-key override table used by current SR meta resolution |
+| `climateTraits.groupIds` → `SMART_REC_CLIMATE_GROUPS[*].sunNeeds` | Deterministic group inheritance only when present and not under review |
+| `climateTraits.needsReview` / merged meta `needsReview` | Review gate (boolean) |
+| Scientific-name review triggers already applied by meta resolution (`spp.` / `various`) | Force `needsReview` |
+
+**Optional schema fields not authorized for first sun matcher** (exist but are not current SR meta drivers): `environmentSuitability.sunPlacement.sunNeeds`, `sunPlacement.shadeTolerance`, prose `notes`.
+
+**Water matcher may use only:**
+
+| Native field / source | Role |
+|-----------------------|------|
+| `climateTraits.waterNeeds` (string) | Primary structured water token after meta resolution (`low` / `medium` / `high`) |
+| Curated `SMART_REC_CLIMATE_METADATA[*].waterNeeds` | Explicit per-key override table |
+| `climateTraits.groupIds` → `SMART_REC_CLIMATE_GROUPS[*].waterNeeds` | Deterministic group inheritance when present and not under review |
+| `climateTraits.needsReview` / merged meta `needsReview` | Review gate |
+
+**Optional schema fields not authorized for first water matcher:** `PlantWaterNeedsProfile.level`, `droughtTolerance`, `moistureLoving`, `environmentSuitability.waterNeeds.*`, prose `notes`. These may be considered only in a later separately approved contract if mapped 1:1 to frozen values.
+
+**Not used for sun/water filter readiness:** `filterTaxonomyMeta.confidence` / `filterTaxonomyMeta.needsReview` (those apply to optional taxonomy arrays `growingEnvironments`, `gardenStyles`, etc., not to `climateTraits.sunNeeds` / `waterNeeds`).
+
+### 3. Prohibited data sources
+
+Matchers must **not** derive eligibility from:
+
+- description / care / guide prose (`guide`, `warnings`, free-text `sun` / `water` legacy strings on flat catalog rows)
+- plant name, Hebrew name, aliases, or scientific name (except the existing `spp.` / `various` → `needsReview` safety trigger)
+- category / plant type
+- style / purpose / environment taxonomy tags
+- recommendation groups as soft text
+- image interpretation
+- AI-generated text
+- Climate Suitability **v1b** score or level
+- **GOS** results
+- location label or country alone
+- legacy free-text `tags` (e.g. `sun`, `drought tolerant`, `shade`) — **not authoritative** for filter match
+- keyword / substring matching over prose
+
+### 4. Approved first filter values
+
+User-facing labels (UX Scope) are mapped only where a native structured representation exists today.
+
+#### Sun
+
+| UX / filter value | Native structured representation(s) | Exact-match semantics (selected filter → plant) | Implementation-ready? | Deferred reason if any |
+|-------------------|--------------------------------------|-----------------------------------------------|------------------------|------------------------|
+| Full sun | `sunNeeds === 'full_sun'` | exactMatch | Yes (field-level) | — |
+| Partial sun / part shade | `part_shade`, `morning_sun_part_shade` | exactMatch to either token | Yes (field-level) | — |
+| Shade | `shade`, `bright_shade` | exactMatch to either token | Yes (field-level) | — |
+| Full sun (compatible range) | `full_sun_to_part_shade` | **compatibleMatch** only for Full sun **or** Partial sun / part shade selections (not for Shade) | Yes, with frozen compatible rule | Must not imply ideal full-sun preference |
+| Dappled shade | — | — | **Deferred** | No native token in current SR meta vocabulary |
+| North-facing / low light (indoor) | — | — | **Deferred** | Not explicitly modeled in `climateTraits.sunNeeds` |
+
+Native tokens observed in current SR meta / fit helpers: `full_sun`, `full_sun_to_part_shade`, `morning_sun_part_shade`, `part_shade`, `bright_shade`, `shade`.
+
+#### Water
+
+| UX / filter value | Native structured representation(s) | Exact-match semantics | Implementation-ready? | Deferred reason if any |
+|-------------------|--------------------------------------|----------------------|------------------------|------------------------|
+| Low / drought-tolerant | `waterNeeds === 'low'` | exactMatch | Yes (field-level) | Do **not** auto-map from tags or `droughtTolerance` string in first matcher |
+| Moderate | `waterNeeds === 'medium'` | exactMatch | Yes (field-level) | — |
+| High / moist | `waterNeeds === 'high'` | exactMatch | Yes (field-level) | — |
+| Bog / wet | — | — | **Deferred** | No `bog`/`wet` token in current `climateTraits.waterNeeds`; `moistureLoving` not authorized yet |
+
+Do **not** enable a UX value merely because a broader taxonomy label exists.
+
+### 5. Matcher semantics
+
+Documented outcomes (conceptual; not an exported runtime enum in this docs checkpoint):
+
+- **exactMatch** — plant structured token equals an allowed token for the selected filter value
+- **compatibleMatch** — only the frozen range rule: `full_sun_to_part_shade` may match Full sun **or** Partial sun / part shade; never Shade
+- **notMatch** — structured token present and reviewed, but outside the selected value’s allowed set
+- **unknown** — required structured field absent / empty after resolution
+- **ineligible** — `needsReview`, conflicting structured values, or prohibited-only evidence
+
+Rules:
+
+- Exact structured value may match.
+- Compatible ranges match **only** under the frozen `full_sun_to_part_shade` rule above.
+- Missing data → unknown/ineligible, **not** match.
+- Conflicting structured values (e.g. unresolved disagreement between curated key meta and traits after merge policy) → ineligible.
+- Unreviewed / `needsReview` data does not match.
+- Broader tolerance must not automatically imply ideal suitability (`full_sun_to_part_shade` is compatibility, not preference claim).
+- Where catalog later distinguishes “tolerates” vs “prefers”, matchers must keep that distinction; today only `sunNeeds` / `waterNeeds` strings are authorized.
+
+### 6. Multi-select behavior
+
+Confirmed for the future filter UX (aligned with UX Scope multi-value groups):
+
+- **Within sun:** multiple selected sun values → **OR**
+- **Within water:** multiple selected water values → **OR**
+- **Across groups:** sun group ∧ water group → **AND**
+
+Example: (Full sun OR partial sun) AND Low water.
+
+Do not implement until a separately approved matcher/UI checkpoint.
+
+### 7. Missing and incomplete data
+
+A plant is **not sun-filter-eligible** / **not water-filter-eligible** when, for that field:
+
+- required structured token is absent after meta resolution
+- value is null or empty string
+- `needsReview === true` on merged meta or field-level review
+- structured values conflict
+- only prose / tags / legacy flat `sun`/`water` strings exist
+- a legacy field cannot be mapped exactly to an approved native token
+
+**Distinction:**
+
+| Gate | Meaning |
+|------|---------|
+| General browse eligibility | Existing: trusted location + non-null `smartRecClimateMetaForPlant(p)` (structured meta present). Unchanged. |
+| Sun-filter eligibility | Browse-eligible **and** sun token present, not `needsReview`, and exact/compatible match to selected sun value(s) |
+| Water-filter eligibility | Browse-eligible **and** water token present, not `needsReview`, and exact match to selected water value(s) |
+
+A plant may remain visible in **unfiltered** browse under current browse rules but must **not** be claimed as a positive filter match when sun/water filter-ineligible.
+
+### 8. `needsReview` behavior
+
+- `needsReview` on resolved climate meta **blocks** sun and water filter matching for that plant.
+- It does **not** by itself redefine general browse admission beyond today’s meta-resolution behavior (meta may still exist with `needsReview` for scoring explanations; filter match must fail closed).
+- Field-specific review on future profiles is preferred when available; today climate meta uses a **merged boolean** `needsReview`.
+- Global / merged `needsReview` blocks **both** sun and water matchers.
+- Review status must never be ignored to increase result count.
+
+### 9. Confidence and source rules
+
+- `PlantClimateTraits` has **no** confidence enum today; do **not** invent numeric scores.
+- `filterTaxonomyMeta.confidence` (`low`|`medium`|`high`) applies to optional taxonomy arrays — **not** to sun/water climateTraits matching in this contract.
+- Minimum accepted readiness for filter matching: structured `sunNeeds` / `waterNeeds` present after resolution **and** `needsReview !== true`.
+- Curated seed / `SMART_REC_CLIMATE_METADATA` entries are accepted when they supply those tokens and are not under review.
+- Unknown / missing source: climateTraits entries do not currently require a `source` string; absence of structured token fails closed. Do not invent a source field requirement beyond repository-native fields.
+- Conflicting sources: fail closed (ineligible), no silent winner beyond the existing deterministic merge order used only to **resolve meta for presence**; filter match still requires a single clear token and no review flag.
+
+### 10. Override precedence
+
+Where supported by current resolution:
+
+1. Reviewed curated per-key `SMART_REC_CLIMATE_METADATA` entry (when selected by `smartRecMetaKeyForPlant`)
+2. Reviewed plant `climateTraits.sunNeeds` / `waterNeeds` (after group merge)
+3. Reviewed deterministic `groupIds` → `SMART_REC_CLIMATE_GROUPS` inheritance
+4. Otherwise unknown / ineligible
+
+Must **not** allow: prose override; UI selection rewriting catalog; runtime inference persistence; matcher repairing catalog metadata.
+
+### 11. Trusted-location interaction
+
+- Trusted location (`hasTrustedAppLocation()`) remains required to enter climate-based Smart Recommendations browse/scoring.
+- Sun/water filters must **not** infer garden sun or watering from GPS/device location.
+- Selected filter = user’s requested growing condition.
+- Location controls climate eligibility separately (v1b / existing suitability).
+- Filter matching must not override climate suitability.
+- Expected combination order (documentation of current product gates — **no runtime reordering in this docs task**):
+
+  1. trusted-location browse gate
+  2. catalog browse eligibility (`smartRecClimateMetaForPlant` non-null)
+  3. sun/water filter match (future)
+  4. existing climate-suitability behavior
+  5. current results rendering
+
+### 12. Results-table protection
+
+For the first matcher implementation (future):
+
+- current Smart Recommendations results table remains unchanged
+- no new columns, score redesign, GOS outcomes, ranking redesign, explanation-panel redesign, pagination redesign, or Design Excellence work
+- filter controls may later **narrow** the existing result set only
+
+### 13. Chat / input protection
+
+- current Smart Recommendations chat/input surface is **not** removed during the first matcher checkpoint
+- filter controls are additive until a separately approved UX transition
+- no destructive replacement; no migration of saved state; no automatic conversion of chat text into structured filters
+
+### 14. Groups that remain disabled
+
+Remain deferred even when taxonomy labels or schema slots exist:
+
+- growing environment / site type (`growingEnvironments`)
+- planting method / container type (`plantingMethods`)
+- garden style / ecosystem (`gardenStyles`)
+- garden purpose / use (`gardenPurposes`)
+- plant type / category
+- soil / drainage
+- climate traits as a user filter group (heat/cold/frost/humidity as filters)
+- maintenance (`maintenanceLevel`)
+- special attributes
+- size / space
+- time / season
+- risk / safety
+
+Enable only after structured fields exist, coverage threshold is met (via audit), matcher semantics are frozen, and data-quality gates pass.
+
+### 15. Field-level readiness metrics (no invented catalog-wide %)
+
+Do **not** invent a catalog-wide percentage threshold in this contract.
+
+Field-level implementation readiness requires:
+
+- every enabled filter value has an exact structured representation
+- every match path is deterministic
+- missing / conflicting / `needsReview` data fails closed
+- test fixtures cover match / non-match / unknown / review states
+- no prose inference
+- current eligible catalog sample is inspected in a later coverage audit
+- matcher can report eligibility coverage without changing product behavior
+
+Catalog-wide rollout thresholds may be set only after a read-only coverage audit.
+
+### 16. Later coverage-audit requirement
+
+Before enabling UI, a separately approved read-only / test checkpoint — **Smart Recommendations Sun/Water Structured Coverage Audit** — must report:
+
+- total browse-eligible plants
+- sun-filter eligible count by value
+- water-filter eligible count by value
+- unknown count
+- `needsReview` count
+- conflicting-data count
+- inherited-data (`groupIds`) count
+- per-plant override / curated-key count
+
+The audit must **not** modify catalog data. **Not performed in this documentation checkpoint.**
+
+### 17. Future matcher output boundary
+
+A later pure matcher may return a non-authoritative structure describing eligibility such as: eligible / matched / reasons / missingFields / reviewRequired / sourceUsed / confidence / normalizedValue — field names not frozen as code exports here.
+
+The matcher must **not**: rank plants; alter climate score; write catalog data; persist filters automatically; produce product recommendations by itself.
+
+### 18. Future implementation validation gates
+
+Later implementation must provide: pure deterministic matchers; input non-mutation; no storage; no network; no GOS; no v1b semantic change; trusted-location gate unchanged; missing-meta safety unchanged; results table unchanged; chat/input unchanged; exact structured fields only; `needsReview` fail-closed; conflict fail-closed; OR within a group and AND across groups; repeatable identical outputs; accessibility / RTL / mobile safety for later controls; no other filter groups enabled.
+
+### 19. Non-regression
+
+Preserve: trusted-location enforcement; missing-meta safety; existing browse eligibility; current result-table rendering; current SR chat/input; Climate Suitability v1b behavior; GOS product isolation; My Garden / Plant Doctor / Garden Design baselines; catalog validators; identity contracts (advisory).
+
+### 20. Later implementation scope (not authorized now)
+
+After this contract **and** a separately approved coverage audit, the smallest possible matcher implementation may include:
+
+- one pure Smart Recommendations sun/water matcher module or narrowly scoped functions
+- one standalone test harness
+- `PROJECT_STATUS.md`
+
+`index.html` integration remains a **later** separately approved checkpoint if required. **Not authorized by this contract.**
+
+### 21. Next possible checkpoint
+
+After this contract is completed and separately pushed:
+
+**Smart Recommendations Sun/Water Structured Coverage Audit** — planning/read-only or standalone audit only; inspect existing catalog coverage; no data modification; no UI enablement.
+
+### 22. Deferred work
+
+Sun/water matcher code; filter UI; catalog population/enrichment; `index.html` integration; results-table redesign; chat replacement; other filter groups; GOS ranking/consumer; real-region mapping; identity persistence; My Garden GOS consumer; Design Excellence; product visual redesign; mapper→adapter seam.
+
+### 23. Roadmap re-baseline (this checkpoint)
+
+- GOS synthetic stack is **paused** after GOS-5G closure.
+- Next active product track is **Smart Recommendations sun/water readiness**.
+- Mapper→adapter seam, real-region mapping, and My Garden GOS consumer remain **deferred**.
+- Catalog tasks **C–E** follow readiness + coverage work in controlled order.
+
+### 24. Documentation validation checklist
+
+| Check | Result |
+|-------|--------|
+| Sun/water only for first matcher family | PASS |
+| Structured fields only (native names) | PASS |
+| No prose / tag inference | PASS |
+| Missing data fails closed | PASS |
+| `needsReview` fails closed | PASS |
+| Trusted-location gate preserved | PASS |
+| Climate eligibility and filter eligibility separated | PASS |
+| Results table preserved | PASS |
+| Chat preserved | PASS |
+| Other filter groups deferred | PASS |
+| Coverage audit required before implementation | PASS |
+| No GOS product integration | PASS |
+| Matcher/UI implementation separately gated | PASS |
+
+**UI/matcher implementation is not authorized by this contract.**
+
+---
+
 # Future Roadmap (priority buckets)
 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- Growth Outcome Suitability — GOS-5F synthetic mapping-table & mapper API contract closed (docs-only; no mapper code; future impl **GOS-5G**); GOS-5E product `locationClimate` mapping contract closed (docs-only; no real region approved); GOS-5D production verified (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** on explicit round-trip URL at `b52d5db`); GOS-5C production inertness verified (`GOS_5C_PRODUCTION_INERT_VERIFIED`; five × **141/141** at `0148a4a`); GOS-4B production verified (`GOS_4B_PRODUCTION_VERIFIED`; five × **101/101**); GOS-4A contract in force; GOS-3F **2018/2018** unchanged; GOS-3C1 **979/979** / **8** unchanged; product consumers separately approved (no app pilot load, product UI, ranking, persistence, score bridge, or Sidecar consumer)
-- Next UX planning — sun/water filter readiness (only currently safe structured filters; UI not started)
-- Remaining climate accuracy tasks C–E (missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
-- Enrichment of optional SR filter taxonomy fields (after B / when approved)
+- **Smart Recommendations Sun/Water Filter Readiness Contract** (docs — this checkpoint); next: **Sun/Water Structured Coverage Audit** (read-only, separately gated); then sun/water matcher implementation (separately gated; UI not started)
+- Remaining climate accuracy tasks **C–E** (after readiness/coverage; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
+- Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
+- Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
 - Per-user Plant Library v1
 - Shared Plant Picker v1
 
@@ -2717,7 +3039,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**GOS-5F synthetic LocationClimate mapping table & mapper API contract is complete** (`GOS_5F_SYNTHETIC_MAPPER_API_CONTRACT_COMPLETE`), including the **GOS-5F Clarification — Implementation-Mechanical Rules** (docs-only; **no** mapper/harness/table file; **no** real region approved; fixture matrix ready **5** / blocked **7** / insufficient **4**). GOS-5E remains in force. GOS-5D production verification remains closed (`GOS_5D_PRODUCTION_VERIFIED`; five × **129/129** / `GOS_5D_COMPLETE` at `b52d5db`). Next possible step after separate push approval of this docs commit: separately approved **GOS-5G — Stopped Synthetic Developer LocationClimate Mapper** implementation only, or separately approved **My Garden consumer planning only** — do **not** start automatically. Do **not** implement the mapper without GOS-5G approval, approve Israel/Western Galilee/Switzerland/Florida (or any real region), wire the adapter or developer API into the app, add product navigation, load pilot data in normal runtime, add UI/ranking/persistence, replace v1b, map scores/risk bands, or consume Sidecar. Keep canonical identity advisory and legacy My Garden authoritative. **No product consumer or product-facing GOS UI authorized.**
+**Smart Recommendations Sun/Water Filter Readiness Contract is complete** (`SR_SUN_WATER_FILTER_READINESS_CONTRACT_COMPLETE`) — documentation-only; newly formalized; structured-field-only sun/water matcher readiness frozen; UI/matcher **not** authorized. GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this docs commit: separately approved **Smart Recommendations Sun/Water Structured Coverage Audit** (read-only / standalone audit; no catalog mutation; no UI) — do **not** start automatically. Do **not** implement sun/water matchers, enable filter UI, populate catalog taxonomy, change `index.html`, redesign results/chat, enable other filter groups, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
