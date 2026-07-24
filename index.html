@@ -674,8 +674,6 @@ function smartRecMergeClimateMeta(){
     coldTolerance:'medium',
     frostSensitivity:'medium',
     humidityTolerance:'medium',
-    waterNeeds:'medium',
-    sunNeeds:'full_sun_to_part_shade',
     needsWinterChill:false,
     needsDrySeason:false,
     drainageNeeds:'medium',
@@ -688,8 +686,15 @@ function smartRecMergeClimateMeta(){
     needsReview:false
   };
   [...arguments].filter(Boolean).forEach(meta=>{
-    ['heatTolerance','coldTolerance','frostSensitivity','humidityTolerance','waterNeeds','sunNeeds','drainageNeeds'].forEach(key=>{
+    ['heatTolerance','coldTolerance','frostSensitivity','humidityTolerance','drainageNeeds'].forEach(key=>{
       if(meta[key]) merged[key]=meta[key];
+    });
+    // sunNeeds / waterNeeds: absence means no opinion — copy only explicit own non-empty strings
+    ['sunNeeds','waterNeeds'].forEach(key=>{
+      if(!Object.prototype.hasOwnProperty.call(meta,key)) return;
+      const value=meta[key];
+      if(typeof value!=='string'||!value.trim()) return;
+      merged[key]=value;
     });
     ['floweringRequirements','fruitingRequirements','survivalVsThriveNotes'].forEach(key=>{
       if(meta[key]) merged[key]=meta[key];

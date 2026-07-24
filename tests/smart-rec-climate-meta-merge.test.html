@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Smart Recommendations Climate Meta Merge Regression</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #frameHost { position: absolute; left: -9999px; top: 0; width: 1200px; height: 800px; overflow: hidden; }
+  pre.meta { margin: 0; white-space: pre-wrap; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Climate Meta Merge Regression</h1>
+  <p class="sub">
+    Developer-only. Proves sunNeeds/waterNeeds absence means no opinion in
+    <code>smartRecMergeClimateMeta</code>. Loads real <code>index.html</code> only after explicit Run.
+    No GOS / v1b / catalog mutation / persistence.
+  </p>
+  <div class="banner" id="banner">
+    Idle. No iframe. Production merge functions are exercised only after
+    <strong>Run all merge checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all merge checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · iframe=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="plantTable"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <div id="frameHost" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  var runActive = false;
+  var iframeEl = null;
+  var storageMutationCount = 0;
+  var plantResults = {};
+
+  window.__SR_MERGE_BOOT = Object.freeze({
+    inert: true,
+    iframeLoaded: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function owns(obj, key) {
+    return !!obj && Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function snapMeta(meta) {
+    if (!meta) return { sun: null, water: null, nr: null, ownsSun: false, ownsWater: false };
+    return {
+      sun: owns(meta, 'sunNeeds') ? meta.sunNeeds : null,
+      water: owns(meta, 'waterNeeds') ? meta.waterNeeds : null,
+      nr: !!meta.needsReview,
+      ownsSun: owns(meta, 'sunNeeds'),
+      ownsWater: owns(meta, 'waterNeeds')
+    };
+  }
+
+  function jsonStable(v) {
+    return JSON.stringify(v);
+  }
+
+  function setStatus(text) {
+    $('statusLine').textContent = text;
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + (r.detail || '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderPlantTable() {
+    var keys = Object.keys(plantResults);
+    if (!keys.length) {
+      $('plantTable').innerHTML = '';
+      return;
+    }
+    var html = '<h2>Live plant metadata (after repair)</h2><table><thead><tr>' +
+      '<th>Key / slug</th><th>sunNeeds</th><th>waterNeeds</th><th>owns sun/water</th><th>needsReview</th><th>notes</th>' +
+      '</tr></thead><tbody>';
+    keys.forEach(function (k) {
+      var p = plantResults[k];
+      html += '<tr><td>' + k + '</td><td>' + String(p.sun) + '</td><td>' + String(p.water) +
+        '</td><td>' + p.ownsSun + '/' + p.ownsWater + '</td><td>' + p.nr + '</td><td>' + (p.notes || '') + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    $('plantTable').innerHTML = html;
+  }
+
+  function destroyIframe() {
+    if (iframeEl && iframeEl.parentNode) {
+      try { iframeEl.parentNode.removeChild(iframeEl); } catch (e) {}
+    }
+    iframeEl = null;
+    $('frameHost').innerHTML = '';
+  }
+
+  function waitFor(pred, ms) {
+    var deadline = Date.now() + (ms || 30000);
+    return new Promise(function (resolve) {
+      function tick() {
+        var ok = false;
+        try { ok = !!pred(); } catch (e) { ok = false; }
+        if (ok) return resolve(true);
+        if (Date.now() > deadline) return resolve(false);
+        setTimeout(tick, 40);
+      }
+      tick();
+    });
+  }
+
+  function installStorageGuards(cw) {
+    storageMutationCount = 0;
+    try {
+      var ls = cw.localStorage;
+      var ss = cw.sessionStorage;
+      ['setItem', 'removeItem', 'clear'].forEach(function (m) {
+        if (ls && typeof ls[m] === 'function') {
+          var orig = ls[m].bind(ls);
+          ls[m] = function () { storageMutationCount++; return orig.apply(null, arguments); };
+        }
+        if (ss && typeof ss[m] === 'function') {
+          var origS = ss[m].bind(ss);
+          ss[m] = function () { storageMutationCount++; return origS.apply(null, arguments); };
+        }
+      });
+    } catch (e) {}
+  }
+
+  async function createReadyIframe() {
+    destroyIframe();
+    var host = $('frameHost');
+    var iframe = document.createElement('iframe');
+    iframe.title = 'sr-merge-app';
+    var loadPromise = new Promise(function (resolve, reject) {
+      iframe.addEventListener('load', function () { resolve(); }, { once: true });
+      iframe.addEventListener('error', function () { reject(new Error('iframe load error')); }, { once: true });
+    });
+    iframe.src = '../index.html?srMerge=' + encodeURIComponent(String(Date.now()));
+    host.appendChild(iframe);
+    iframeEl = iframe;
+    await loadPromise;
+    var cw = iframe.contentWindow;
+    var ready = await waitFor(function () {
+      return cw
+        && typeof cw.smartRecMergeClimateMeta === 'function'
+        && typeof cw.buildSmartRecClimateMetadata === 'function'
+        && typeof cw.smartRecClimateMetaForPlant === 'function'
+        && typeof cw.smartRecMetaKeyForPlant === 'function';
+    }, 30000);
+    if (!ready) {
+      destroyIframe();
+      throw new Error('Production merge APIs not ready on iframe window');
+    }
+    installStorageGuards(cw);
+    return cw;
+  }
+
+  function runUnitCases(cw) {
+    var merge = cw.smartRecMergeClimateMeta;
+
+    // 1. earlier explicit sun + later omit sun
+    var m1 = merge({ sunNeeds: 'full_sun', waterNeeds: 'low' }, { needsReview: false, warningFlags: ['x'] });
+    expect('earlier explicit sun survives later omit', owns(m1, 'sunNeeds') && m1.sunNeeds === 'full_sun', jsonStable(snapMeta(m1)));
+
+    // 2. earlier explicit water + later omit water
+    expect('earlier explicit water survives later omit', owns(m1, 'waterNeeds') && m1.waterNeeds === 'low', jsonStable(snapMeta(m1)));
+
+    // 3. later explicit sun overrides
+    var m2 = merge({ sunNeeds: 'full_sun' }, { sunNeeds: 'part_shade' });
+    expect('later explicit sun overrides', m2.sunNeeds === 'part_shade', jsonStable(snapMeta(m2)));
+
+    // 4. later explicit water overrides
+    var m3 = merge({ waterNeeds: 'low' }, { waterNeeds: 'high' });
+    expect('later explicit water overrides', m3.waterNeeds === 'high', jsonStable(snapMeta(m3)));
+
+    // 5. both absent — own neither
+    var m4 = merge({ heatTolerance: 'high' }, { warningFlags: ['a'] });
+    expect('both absent: no owned sunNeeds', !owns(m4, 'sunNeeds'), jsonStable(snapMeta(m4)));
+    expect('both absent: no owned waterNeeds', !owns(m4, 'waterNeeds'), jsonStable(snapMeta(m4)));
+
+    // 6. sun only — water unchanged/absent
+    var m5 = merge({ sunNeeds: 'bright_shade' });
+    expect('sun only: owns sun', owns(m5, 'sunNeeds') && m5.sunNeeds === 'bright_shade', jsonStable(snapMeta(m5)));
+    expect('sun only: water absent', !owns(m5, 'waterNeeds'), jsonStable(snapMeta(m5)));
+
+    // 7. water only — sun unchanged/absent
+    var m6 = merge({ waterNeeds: 'medium' });
+    expect('water only: owns water', owns(m6, 'waterNeeds') && m6.waterNeeds === 'medium', jsonStable(snapMeta(m6)));
+    expect('water only: sun absent', !owns(m6, 'sunNeeds'), jsonStable(snapMeta(m6)));
+
+    // 8. null / undefined / empty / whitespace / non-string do not override or create defaults
+    var base = merge({ sunNeeds: 'full_sun', waterNeeds: 'high' });
+    var polluted = {
+      sunNeeds: null,
+      waterNeeds: undefined
+    };
+    Object.defineProperty(polluted, 'extraSun', { value: 'shade', enumerable: true });
+    var m7 = merge(base, {
+      sunNeeds: null,
+      waterNeeds: '',
+    }, {
+      sunNeeds: '   ',
+      waterNeeds: 123
+    }, {
+      sunNeeds: undefined
+    });
+    expect('null/empty/non-string do not override sun', m7.sunNeeds === 'full_sun', jsonStable(snapMeta(m7)));
+    expect('null/empty/non-string do not override water', m7.waterNeeds === 'high', jsonStable(snapMeta(m7)));
+    var m8 = merge({ heatTolerance: 'low' }, { sunNeeds: null, waterNeeds: '' });
+    expect('null/empty do not create sun default', !owns(m8, 'sunNeeds'), jsonStable(snapMeta(m8)));
+    expect('null/empty do not create water default', !owns(m8, 'waterNeeds'), jsonStable(snapMeta(m8)));
+
+    // 9. unsupported non-empty string copied
+    var m9 = merge({ sunNeeds: 'not_a_real_token_xyz' });
+    expect('unsupported explicit string copied', m9.sunNeeds === 'not_a_real_token_xyz', jsonStable(snapMeta(m9)));
+
+    // 10. needsReview preserved
+    var m10 = merge({ sunNeeds: 'full_sun' }, { needsReview: true });
+    expect('needsReview preserved', m10.needsReview === true && m10.sunNeeds === 'full_sun', jsonStable(snapMeta(m10)));
+
+    // 11. other climate defaults unchanged
+    var m11 = merge({});
+    expect('other defaults: heatTolerance medium', m11.heatTolerance === 'medium', m11.heatTolerance);
+    expect('other defaults: drainageNeeds medium', m11.drainageNeeds === 'medium', m11.drainageNeeds);
+    expect('other defaults: needsReview false', m11.needsReview === false, String(m11.needsReview));
+    expect('other defaults: no sun seeded', !owns(m11, 'sunNeeds'), jsonStable(snapMeta(m11)));
+    expect('other defaults: no water seeded', !owns(m11, 'waterNeeds'), jsonStable(snapMeta(m11)));
+
+    // 12. input non-mutation
+    var inA = { sunNeeds: 'full_sun', waterNeeds: 'low', groupIds: ['g1'] };
+    var inB = { warningFlags: ['w'], needsReview: true };
+    var beforeA = jsonStable(inA);
+    var beforeB = jsonStable(inB);
+    merge(inA, inB);
+    expect('input A not mutated', jsonStable(inA) === beforeA, beforeA);
+    expect('input B not mutated', jsonStable(inB) === beforeB, beforeB);
+
+    // 13. deterministic ×10
+    var fingerprints = [];
+    var detPass = true;
+    for (var i = 0; i < 10; i++) {
+      var d = merge(
+        { groupIds: ['high-water-shade-plant'], sunNeeds: 'morning_sun_part_shade', waterNeeds: 'high' },
+        { groupIds: ['pet-child-caution'], warningFlags: ['toxic_pets'] }
+      );
+      fingerprints.push(jsonStable(snapMeta(d)));
+      if (fingerprints[i] !== fingerprints[0]) detPass = false;
+    }
+    expect('deterministic merge ×10', detPass, fingerprints[0]);
+  }
+
+  function runBuildAndPlantCases(cw) {
+    var built = cw.buildSmartRecClimateMetadata();
+    expect('buildSmartRecClimateMetadata returns object', !!built && typeof built === 'object', typeof built);
+
+    function metaForSlug(slug, scientific, name) {
+      return cw.smartRecClimateMetaForPlant({
+        slug: slug,
+        scientific: scientific || '',
+        name: name || slug
+      });
+    }
+
+    function record(key, meta, notes) {
+      var s = snapMeta(meta);
+      plantResults[key] = {
+        sun: s.sun,
+        water: s.water,
+        ownsSun: s.ownsSun,
+        ownsWater: s.ownsWater,
+        nr: s.nr,
+        notes: notes || ''
+      };
+      return s;
+    }
+
+    // Hydrangea
+    var hyd = metaForSlug('hydrangea', 'Hydrangea macrophylla', 'Hydrangea');
+    var hs = record('hydrangea', hyd, 'recover morning_sun_part_shade / high');
+    expect('hydrangea sunNeeds morning_sun_part_shade', hs.sun === 'morning_sun_part_shade', jsonStable(hs));
+    expect('hydrangea waterNeeds high', hs.water === 'high', jsonStable(hs));
+    expect('hydrangea owns both fields', hs.ownsSun && hs.ownsWater, jsonStable(hs));
+
+    // Raspberry
+    var rasp = metaForSlug('raspberry', 'Rubus idaeus', 'Raspberry');
+    var rs = record('raspberry', rasp, 'water recovers to high');
+    expect('raspberry waterNeeds high', rs.water === 'high', jsonStable(rs));
+    expect('raspberry sun is explicit group value', rs.ownsSun && typeof rs.sun === 'string' && rs.sun.trim() !== '', jsonStable(rs));
+
+    // Grapevine
+    var grape = metaForSlug('grapevine', 'Vitis vinifera', 'Grapevine');
+    var gs = record('grapevine', grape, 'sun recovers to full_sun');
+    expect('grapevine sunNeeds full_sun', gs.sun === 'full_sun', jsonStable(gs));
+    expect('grapevine water explicit', gs.ownsWater && typeof gs.water === 'string', jsonStable(gs));
+
+    // Passionfruit — tokens may match prior visible values; prove ownership from explicit path
+    var pass = metaForSlug('passionfruit', 'Passiflora edulis', 'Passionfruit');
+    var ps = record('passionfruit', pass, 'latent pollution removed; explicit tokens');
+    expect('passionfruit owns sun from climate groups', ps.ownsSun, jsonStable(ps));
+    expect('passionfruit owns water from climate groups', ps.ownsWater, jsonStable(ps));
+    // Trailing support-dependent omit must not invent defaults when starting from empty merge of that group alone
+    var supportOnly = cw.smartRecMergeClimateMeta({ groupIds: ['support-dependent-plant'] }, {});
+    expect('support-dependent alone owns no sun', !owns(supportOnly, 'sunNeeds'), jsonStable(snapMeta(supportOnly)));
+    expect('support-dependent alone owns no water', !owns(supportOnly, 'waterNeeds'), jsonStable(snapMeta(supportOnly)));
+
+    // Mint
+    var mint = metaForSlug('mint', 'Mentha spp.', 'Mint');
+    var ms = record('mint', mint, 'part_shade/high; NR true');
+    expect('mint sunNeeds part_shade', ms.sun === 'part_shade', jsonStable(ms));
+    expect('mint waterNeeds high', ms.water === 'high', jsonStable(ms));
+    expect('mint needsReview true', ms.nr === true, jsonStable(ms));
+
+    // Jasmine
+    var jas = metaForSlug('jasmine', 'Jasminum spp.', 'Jasmine');
+    var js = record('jasmine', jas, 'NR true; latent pollution removed');
+    expect('jasmine needsReview true', js.nr === true, jsonStable(js));
+    expect('jasmine owns explicit sun', js.ownsSun, jsonStable(js));
+    expect('jasmine owns explicit water', js.ownsWater, jsonStable(js));
+
+    // Strelitzia
+    var stre = metaForSlug('strelitzia', 'Strelitzia reginae', 'Bird of Paradise');
+    var ss = record('strelitzia', stre, 'trailing pet-child does not override');
+    expect('strelitzia owns sun', ss.ownsSun, jsonStable(ss));
+    expect('strelitzia owns water', ss.ownsWater, jsonStable(ss));
+    var petOnly = cw.smartRecMergeClimateMeta({ groupIds: ['pet-child-caution'] }, { warningFlags: ['toxic_pets'] });
+    expect('pet-child-caution alone owns no sun', !owns(petOnly, 'sunNeeds'), jsonStable(snapMeta(petOnly)));
+    expect('pet-child-caution alone owns no water', !owns(petOnly, 'waterNeeds'), jsonStable(snapMeta(petOnly)));
+
+    // Aloe vera
+    var aloe = metaForSlug('aloe-vera', 'Aloe vera', 'Aloe Vera');
+    var as_ = record('aloe-vera', aloe, 'water recovers to low');
+    expect('aloe-vera waterNeeds low', as_.water === 'low', jsonStable(as_));
+    expect('aloe-vera owns sun', as_.ownsSun, jsonStable(as_));
+
+    // Cyclamen
+    var cyc = metaForSlug('cyclamen', 'Cyclamen persicum', 'Cyclamen');
+    var cs = record('cyclamen', cyc, 'sun recovers to morning_sun_part_shade');
+    expect('cyclamen sunNeeds morning_sun_part_shade', cs.sun === 'morning_sun_part_shade', jsonStable(cs));
+    expect('cyclamen waterNeeds medium', cs.water === 'medium', jsonStable(cs));
+
+    // Black-eyed-susan-vine
+    var bes = metaForSlug('black-eyed-susan-vine', 'Thunbergia alata', 'Black-eyed Susan Vine');
+    var bs = record('black-eyed-susan-vine', bes, 'latent pollution removed');
+    expect('black-eyed-susan-vine owns sun', bs.ownsSun, jsonStable(bs));
+    expect('black-eyed-susan-vine owns water', bs.ownsWater, jsonStable(bs));
+
+    // Monstera — specific bright_shade
+    var mon = metaForSlug('monstera', 'Monstera deliciosa', 'Monstera');
+    var mo = record('monstera', mon, 'specific bright_shade precedence');
+    expect('monstera sunNeeds bright_shade', mo.sun === 'bright_shade', jsonStable(mo));
+    expect('monstera owns water without inventing default-only path', mo.ownsWater === true, jsonStable(mo));
+
+    // Banana
+    var ban = metaForSlug('banana', 'Musa spp.', 'Banana');
+    var bn = record('banana', ban, 'full_sun/high; NR');
+    expect('banana sunNeeds full_sun', bn.sun === 'full_sun', jsonStable(bn));
+    expect('banana waterNeeds high', bn.water === 'high', jsonStable(bn));
+    expect('banana needsReview true', bn.nr === true, jsonStable(bn));
+
+    // Blueberry — explicit multi-group conflict remains last-explicit; not pollution-only
+    var blue = metaForSlug('blueberry', 'Vaccinium spp.', 'Blueberry');
+    var bl = record('blueberry', blue, 'explicit multi-group conflict unresolved');
+    expect('blueberry owns sun (last explicit wins)', bl.ownsSun, jsonStable(bl));
+    expect('blueberry owns water (last explicit wins)', bl.ownsWater, jsonStable(bl));
+    expect('blueberry needsReview true (spp.)', bl.nr === true, jsonStable(bl));
+    // Prove both groups contribute distinct explicit values in isolation
+    var gAcid = cw.smartRecMergeClimateMeta(
+      { groupIds: ['acid-soil-cool-moisture'] },
+      { sunNeeds: 'morning_sun_part_shade', waterNeeds: 'medium' }
+    );
+    var gBerry = cw.smartRecMergeClimateMeta(
+      { groupIds: ['cool-moist-berry'] },
+      { sunNeeds: 'full_sun_to_part_shade', waterNeeds: 'high' }
+    );
+    expect('blueberry conflict class: groups disagree on sun', gAcid.sunNeeds !== gBerry.sunNeeds, gAcid.sunNeeds + ' vs ' + gBerry.sunNeeds);
+    expect('blueberry conflict class: groups disagree on water', gAcid.waterNeeds !== gBerry.waterNeeds, gAcid.waterNeeds + ' vs ' + gBerry.waterNeeds);
+    var blueMerged = cw.smartRecMergeClimateMeta(gAcid, gBerry);
+    expect('blueberry merge last-explicit sun', blueMerged.sunNeeds === gBerry.sunNeeds, blueMerged.sunNeeds);
+    expect('blueberry merge last-explicit water', blueMerged.waterNeeds === gBerry.waterNeeds, blueMerged.waterNeeds);
+
+    // Bougainvillea
+    var boug = metaForSlug('bougainvillea', 'Bougainvillea spp.', 'Bougainvillea');
+    var bo = record('bougainvillea', boug, 'specific full_sun/low; NR');
+    expect('bougainvillea sunNeeds full_sun', bo.sun === 'full_sun', jsonStable(bo));
+    expect('bougainvillea waterNeeds low', bo.water === 'low', jsonStable(bo));
+    expect('bougainvillea needsReview true', bo.nr === true, jsonStable(bo));
+
+    // Specific override precedence unit
+    var specific = cw.smartRecMergeClimateMeta(
+      { sunNeeds: 'full_sun_to_part_shade', waterNeeds: 'medium' },
+      { sunNeeds: 'full_sun', waterNeeds: 'low' }
+    );
+    expect('specific override precedence sun', specific.sunNeeds === 'full_sun', jsonStable(snapMeta(specific)));
+    expect('specific override precedence water', specific.waterNeeds === 'low', jsonStable(snapMeta(specific)));
+
+    // Alias resolution
+    var aliases = [
+      { slug: 'grape-vine', scientific: 'Vitis vinifera', name: 'Grape Vine', canon: 'grapevine' },
+      { slug: 'passion-fruit', scientific: 'Passiflora edulis', name: 'Passion Fruit Vine', canon: 'passionfruit' },
+      { slug: 'apple-tree', scientific: 'Malus domestica', name: 'Apple Tree', canon: 'apple' },
+      { slug: 'fig-tree', scientific: 'Ficus carica', name: 'Fig Tree', canon: 'fig' },
+      { slug: 'plum-tree', scientific: 'Prunus spp.', name: 'Plum Tree', canon: 'plum' }
+    ];
+    aliases.forEach(function (a) {
+      var key = cw.smartRecMetaKeyForPlant({ slug: a.slug, scientific: a.scientific, name: a.name });
+      expect('alias key ' + a.slug + ' → ' + a.canon, key === a.canon, 'key=' + key);
+      var aliasMeta = cw.smartRecClimateMetaForPlant({ slug: a.slug, scientific: a.scientific, name: a.name });
+      var canonMeta = cw.smartRecClimateMetaForPlant({ slug: a.canon, scientific: a.scientific, name: a.canon });
+      expect('alias ' + a.slug + ' same sun as canonical', snapMeta(aliasMeta).sun === snapMeta(canonMeta).sun, jsonStable({ alias: snapMeta(aliasMeta), canon: snapMeta(canonMeta) }));
+      expect('alias ' + a.slug + ' same water as canonical', snapMeta(aliasMeta).water === snapMeta(canonMeta).water, jsonStable({ alias: snapMeta(aliasMeta), canon: snapMeta(canonMeta) }));
+    });
+
+    // Seed climateTraits path structure (coconut) — still resolves meta; NR preserved
+    var coconut = cw.smartRecClimateMetaForPlant({
+      slug: 'coconut',
+      scientific: 'Cocos nucifera',
+      climateTraits: {
+        sunNeeds: 'full_sun',
+        waterNeeds: 'medium',
+        needsReview: true,
+        groupIds: ['tropical-frost-sensitive-fruit', 'hot-dry-palm']
+      }
+    });
+    var coco = record('coconut(seed-path)', coconut, 'traits path NR preserved');
+    expect('seed path coconut owns sun', coco.ownsSun && coco.sun === 'full_sun', jsonStable(coco));
+    expect('seed path coconut needsReview', coco.nr === true, jsonStable(coco));
+
+    // Built table hydrangea matches plant path
+    expect('built table hydrangea sun', built.hydrangea && built.hydrangea.sunNeeds === 'morning_sun_part_shade', built.hydrangea && built.hydrangea.sunNeeds);
+    expect('built table hydrangea water', built.hydrangea && built.hydrangea.waterNeeds === 'high', built.hydrangea && built.hydrangea.waterNeeds);
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    plantResults = {};
+    $('btn-run-all').disabled = true;
+    $('banner').textContent = 'Running merge checks against production index.html…';
+    $('summary').textContent = 'Running…';
+    setStatus('State: running · loading iframe…');
+    renderRows();
+    renderPlantTable();
+
+    try {
+      var cw = await createReadyIframe();
+      setStatus('State: running · iframe ready · executing fixtures…');
+      window.__SR_MERGE_BOOT = Object.freeze({ inert: false, iframeLoaded: true });
+
+      runUnitCases(cw);
+      runBuildAndPlantCases(cw);
+
+      // Same-origin iframe bootstrap may write garden/session keys (app behavior).
+      // Harness must not persist its own summary/results.
+      var harnessPersisted = false;
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i) || '';
+          if (/SR_MERGE|__SR_MERGE/i.test(k)) { harnessPersisted = true; break; }
+        }
+      } catch (e) {}
+      expect('harness did not persist merge summary to localStorage', harnessPersisted === false, 'storageMutationCount=' + storageMutationCount);
+
+    } catch (err) {
+      expect('harness execution', false, String(err && err.message || err));
+    }
+
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var summaryText = failed === 0
+      ? ('PASS — ' + passed + '/' + results.length)
+      : ('FAIL — ' + passed + '/' + results.length + ' (' + failed + ' failed)');
+    $('summary').textContent = summaryText;
+    $('summary').className = failed === 0 ? 'pass' : 'fail';
+    $('banner').textContent = failed === 0
+      ? 'Complete. All merge assertions passed. Reset clears iframe and output.'
+      : 'Complete with failures. Inspect rows below.';
+    setStatus('State: complete · iframe=' + (iframeEl ? 1 : 0) + ' · storageMutationCount=' + storageMutationCount +
+      ' · assertions=' + results.length);
+    renderRows();
+    renderPlantTable();
+
+    var fingerprint = results.map(function (r) {
+      return (r.pass ? 'P' : 'F') + ':' + r.name + ':' + r.detail;
+    }).join('\n');
+    var plantFp = jsonStable(plantResults);
+
+    window.__SR_MERGE_SUMMARY = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      ok: failed === 0,
+      storageMutationCount: storageMutationCount,
+      plantResults: plantResults,
+      fingerprint: fingerprint,
+      plantFingerprint: plantFp,
+      verdict: failed === 0 ? 'SR_MERGE_POLLUTION_REPAIR_HARNESS_PASS' : 'SR_MERGE_POLLUTION_REPAIR_HARNESS_FAIL'
+    });
+    try {
+      document.title = (failed === 0 ? 'SR MERGE PASS' : 'SR MERGE FAIL') + ' — ' + results.length + ' tests';
+    } catch (e) {}
+
+    runActive = false;
+    $('btn-run-all').disabled = false;
+  }
+
+  function resetAll() {
+    if (runActive) return;
+    destroyIframe();
+    results = [];
+    plantResults = {};
+    storageMutationCount = 0;
+    window.__SR_MERGE_SUMMARY = undefined;
+    window.__SR_MERGE_BOOT = Object.freeze({ inert: true, iframeLoaded: false });
+    $('banner').textContent = 'Idle. No iframe. Production merge functions are exercised only after Run all merge checks.';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    setStatus('State: idle · iframe=0 · storageMutationCount=0');
+    renderRows();
+    renderPlantTable();
+    try { document.title = 'Cruvit — Smart Recommendations Climate Meta Merge Regression'; } catch (e) {}
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>

@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — matcher blocked by targeted cleanup; next = merge-pollution repair planning**
+Status: **Active — merge-default pollution repaired locally; matcher still blocked by remaining conflict cleanup + re-audit**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed docs track:** Sun/Water Filter Readiness Contract → Sun/Water Structured Coverage Audit (verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`) → **Targeted Sun/Water Cleanup Plan** (this documentation checkpoint). Catalog task **B** is **Frozen (v1)**. Matcher implementation is **blocked** until merge-pollution repair, conflict cleanup, and a canonical/alias-aware re-audit. Do not populate taxonomy arrays, implement matchers, or enable filter UI in this foundation step. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** Sun/Water Filter Readiness Contract → Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`) → Targeted Sun/Water Cleanup Plan → Merge-Pollution Repair Planning → **Sun/Water Merge-Pollution Repair (implemented locally)**. Catalog task **B** is **Frozen (v1)**. Matcher implementation remains **blocked** until conflict cleanup and a canonical/alias-aware re-audit. Do not populate taxonomy arrays, implement matchers, or enable filter UI in this foundation step. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -84,7 +84,7 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 
 **Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; sun/water cleanup plan is the active docs track; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (done; `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair Planning (next, separately gated)** → merge repair + tests → conflict/seed cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair Planning** → **Merge-Pollution Repair (local; this checkpoint)** → conflict inventory / targeted catalog cleanup (next) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Targeted Sun/Water Cleanup Plan** | Done (local) | **Documentation-only.** Freezes cleanup sequencing after coverage audit verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`: merge-default pollution as first blocker; explicit-field-only merge semantics (“absence means no opinion”); conflict classes; source precedence; seed/`needsReview` review; spp./various policy; canonical vs alias counting; phased implementation order; re-audit before matcher planning; no arbitrary rollout threshold. **Does not authorize** merge repair, catalog edits, schema change, matcher, filter UI, harness, GOS/v1b, or `index.html` change. File: `PROJECT_STATUS.md` only. Next possible: **Smart Recommendations Sun/Water Merge-Pollution Repair Planning** (read-only planning; separately gated). **Push pending** separate approval. |
+| **Smart Recommendations — Sun/Water Merge-Pollution Repair** | Done (local) | **Narrow `smartRecMergeClimateMeta` repair only.** Removes seeded `sunNeeds`/`waterNeeds` defaults; absence means no opinion; override only for own non-empty string fields (`Object.prototype.hasOwnProperty.call`). Other accumulator defaults and non-sun/water merge behavior preserved. Files: `index.html` (function boundary only), `tests/smart-rec-climate-meta-merge.test.html` (**89/89**; five consecutive local Reset→Run identical), `PROJECT_STATUS.md`. Post-repair re-audit (unique slug): browse **84** / eligible **84** / `needsReview` **48** / seed **32**; trailing-omit merge-default pollution **0**; fail-closed sun/water/both **36/36/36** (actual post-repair; not imposed). Remaining: explicit multi-group conflict **1** (blueberry); traits-versus-group **22**; blueberry conflict unresolved. Alias/canonical behavior preserved. Non-regression: identity recon **158** (0 unexpected); GOS-5G **223/223**; GOS-5D **129/129**; GOS-5C **141/141**; GOS-4B **101/101**; GOS-3F **2018/2018**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**. Protected byte identity vs `b1c2c1f` for catalog/schema/styles/GOS/identity outside approved files. **No** catalog/schema/matcher/filter UI/results/chat/GOS/v1b change. **Push / production verification pending** separate approval. Next: conflict inventory / targeted catalog cleanup (separately gated). |
+| **Smart Recommendations — Targeted Sun/Water Cleanup Plan** | Done (pushed) | **Documentation-only.** Freezes cleanup sequencing after coverage audit verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`: merge-default pollution as first blocker; explicit-field-only merge semantics (“absence means no opinion”); conflict classes; source precedence; seed/`needsReview` review; spp./various policy; canonical vs alias counting; phased implementation order; re-audit before matcher planning; no arbitrary rollout threshold. Pushed at `b1c2c1f`. Repair later implemented — see Merge-Pollution Repair row. |
 | **Smart Recommendations — Sun/Water Structured Coverage Audit** | Done (read-only) | **Read-only audit; no file modification.** Baseline (preserved): browse rows **84** / browse-eligible **84** / excluded **0**; merged `needsReview` **48**; per-plant structured sun **34** / water **34**; seed **32** all with `climateTraits.needsReview`; fail-closed sun **25** / water **24** / both **24**. Fail-closed sun values: `full_sun` **20**, `full_sun_to_part_shade` **3**, `morning_sun_part_shade` **0**, `part_shade` **0**, `bright_shade` **2**, `shade` **0**. Fail-closed water: `low` **3**, `medium` **20**, `high` **1**. Unsupported: dappled shade, north-facing/low light, bog/wet. Critical finding: **merge-default pollution** in `smartRecMergeClimateMeta` (defaults `full_sun_to_part_shade` / `medium` overwrite earlier explicit group values). Verdict: **`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`**. |
 | **Smart Recommendations — Sun/Water Filter Readiness Contract** | Done (pushed) | **Documentation-only; newly formalized named checkpoint** (repository previously identified “next UX planning — sun/water filter readiness” but had no completed readiness-contract checkpoint). Freezes structured-field-only sun/water matcher readiness: allowed native sources (`climateTraits.sunNeeds` / `climateTraits.waterNeeds` via `smartRecClimateMetaForPlant` / curated `SMART_REC_CLIMATE_METADATA`; `needsReview`); prohibited prose/tag/GOS/v1b inference; approved first filter values and native representations; match semantics; OR-within-group / AND-across-groups; missing/`needsReview`/conflict fail-closed; trusted-location vs filter separation; results-table and chat protection; other filter groups deferred; coverage-audit required before implementation; GOS paused after GOS-5G. **Does not authorize** matcher code, filter UI, catalog enrichment, `index.html` change, results/chat redesign, other filter groups, GOS consumer, or Design Excellence. File: `PROJECT_STATUS.md` only. Pushed at `b60ebd1`. Coverage audit completed afterward — see Structured Coverage Audit + Targeted Cleanup Plan rows. |
 | **Growth Outcome Suitability — GOS-5G isolated production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/module/`index.html` change; no manual deploy; no Netlify setting change; no mapper→adapter seam; no product location reads; no real region; no product consumer/UI; no GOS/v1b invocation; no persistence.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to commit **`0ae5b3f73025be789f9927d4987c27587b7308af`**. **Module** `/modules/suitability/growth-outcome-developer-location-climate-mapper.js` HTTP **200** `application/javascript` (`0.1.0-gos5g`; `explicit_synthetic_location_climate_mapping`; `developer_synthetic_location_climate_mapper`; LF-normalized content matches committed file). **Harness** `/tests/growth-outcome-developer-location-climate-mapper.test.html` HTTP **200** `text/html` (LF-normalized match; contains `GOS_5G_COMPLETE`, exact 16-fixture manifest, `__GOS5G_SUMMARY` fields). **`index.html`** LF-normalized match to commit. **Normal app isolation (before):** home + My Garden + Smart Recommendations + Identify + Plant Doctor + Garden Design — **zero** automatic requests for mapper, mapper harness, adapter/API/evaluator attributable to GOS-5G, or pilot JSON attributable to GOS-5G; no mapper UI/link; no mapper globals; `evaluateClimateSuitabilityV1` present. **Initial harness inertness:** static shell; `__GOS5G_BOOT.inert=true`; summary absent; harness `networkCount=0` / `storageMutationCount=0`; only mapper module static load; no fixture execution / mapping output / GOS/v1b/product-location until explicit Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **223/223** / `GOS_5G_COMPLETE` / fixtureCount **16** / ready **5** / blocked **7** / insufficient **4**; identical assertion totals, reasons, summaries; capability enforcement; northern/southern hemisphere; equator insufficient; region/climate exact match; ambiguity fail-closed (`ambiguous_region_mapping`, `conflicting_climate_signals`, secondary `ambiguous_climate_mapping`); `mapping_version_unavailable` vs `source_version_mismatch`; fingerprint mismatch fail-closed; stale forecast ready + `stale_forecast_ignored_for_tags` only; determinism ×10; input/table non-mutation; frozen outputs; mapper network zero; storage/cookies unchanged; Reset restores idle not-run state; same-origin harness isolation fetch of `index.html` only (no adapter/API/evaluator/pilot). **After:** reload home + navigation sample — **zero** automatic mapper/GOS-5G/adapter/API/evaluator/pilot requests; no stored synthetic mapping; no mapper global/UI; v1b still product path. **Verdict:** `GOS_5G_PRODUCTION_VERIFIED`. Mapper remains **not product-enabled / not a product mapper / no real region / mapper→adapter deferred**. **Push pending** separate approval. File: `PROJECT_STATUS.md` only. |
@@ -314,7 +315,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)** + filter taxonomy schema + **Sun/Water Filter Readiness Contract (docs)** + **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`) + **Targeted Sun/Water Cleanup Plan (docs)**; catalog task **B Frozen (v1)**; matcher blocked by cleanup; next = **Merge-Pollution Repair Planning** (separately gated), then phased cleanup + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)** + filter taxonomy schema + **Sun/Water Filter Readiness Contract (docs)** + **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`) + **Targeted Sun/Water Cleanup Plan (docs)** + **Merge-Pollution Repair (local)**; catalog task **B Frozen (v1)**; matcher still blocked by remaining conflict cleanup + re-audit; next = conflict inventory / targeted catalog cleanup (separately gated), then re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -331,7 +332,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (read-only; verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), and **Targeted Sun/Water Cleanup Plan** (docs-only; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** only structured `sunNeeds` / `waterNeeds` (via climate meta) remain in scope for the first matcher family, but matcher implementation is **blocked** by merge-default pollution and related cleanup. Other approved groups stay disabled until enrichment + separate contracts. **GOS remains paused.** **Next:** separately approved **Sun/Water Merge-Pollution Repair Planning**, then phased cleanup + canonical/alias-aware re-audit, then matcher scope decision / planning / implementation (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (read-only; verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), and **Sun/Water Merge-Pollution Repair** (local; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** only structured `sunNeeds` / `waterNeeds` (via climate meta) remain in scope for the first matcher family; merge-default pollution is **0**, but matcher implementation remains **blocked** by remaining explicit/traits conflict cleanup + canonical/alias-aware re-audit. Other approved groups stay disabled until enrichment + separate contracts. **GOS remains paused.** **Next:** separately approved conflict inventory / targeted catalog cleanup, then re-audit, then matcher scope decision / planning / implementation (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -3204,12 +3205,89 @@ Keep deferred: matcher code; filter UI; catalog-wide enrichment; schema changes;
 
 ---
 
+# Smart Recommendations — Sun/Water Merge-Pollution Repair
+
+**Checkpoint type:** narrow implementation. **Verdict identity:** `SR_SUN_WATER_MERGE_POLLUTION_REPAIR_COMPLETE` (local).
+**Parent:** `b1c2c1fa9ae7ed4320778d4d498337104f425184` (Targeted Cleanup Plan).
+
+### Function boundary
+
+Only `smartRecMergeClimateMeta` in `index.html` changed:
+
+- Removed accumulator defaults `sunNeeds: 'full_sun_to_part_shade'` and `waterNeeds: 'medium'`.
+- Preserved every other accumulator default and all non-sun/water merge behavior.
+- For `sunNeeds` / `waterNeeds` only: copy when the incoming object owns the key (`Object.prototype.hasOwnProperty.call`), value is a string, and `value.trim()` is non-empty.
+- Absence / `undefined` / `null` / empty / whitespace / non-string → no opinion (do not override; do not create defaults; do not coerce).
+- No vocabulary normalize/remap/validate inside the merge function.
+- Merge order, specific overrides, seed traits path, `needsReview`, spp./various fail-closed, alias/canonical resolution, browse eligibility, missing-meta safety, trusted-location gate, scoring, rendering, and chat unchanged.
+
+### Regression harness
+
+Path: `tests/smart-rec-climate-meta-merge.test.html` (direct-URL-only; not product navigation).
+Loads real production `index.html` in a same-origin iframe only after explicit **Run all merge checks**. Reset removes iframe and clears output. No catalog mutation, no harness persistence, no GOS/v1b.
+
+**Final assertion total:** **89/89**.
+**Five consecutive local Reset→Run cycles:** all **89/89**; identical assertion totals, plant fingerprints, and deterministic normalized outputs; harness storageMutationCount **0**; no harness-persisted merge summary keys.
+
+### Real-plant before/after (live per-group wrap path)
+
+| Key | Before (polluted wrap merge) | After (repaired) | Notes |
+|-----|------------------------------|------------------|-------|
+| hydrangea | `full_sun_to_part_shade` / `medium` | `morning_sun_part_shade` / `high` | recovered |
+| raspberry | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `high` | water recovered |
+| grapevine | `full_sun_to_part_shade` / `medium` | `full_sun` / `medium` | sun recovered |
+| passionfruit | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `medium` | visible unchanged; trailing omit no longer supplies defaults |
+| mint | `full_sun_to_part_shade` / `medium` | `part_shade` / `high` | NR remains true |
+| jasmine | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `medium` | NR true; latent pollution removed |
+| strelitzia | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `medium` | trailing omit does not override |
+| aloe-vera | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `low` | water recovered |
+| cyclamen | `full_sun_to_part_shade` / `medium` | `morning_sun_part_shade` / `medium` | sun recovered |
+| black-eyed-susan-vine | `full_sun_to_part_shade` / `medium` | `full_sun_to_part_shade` / `medium` | latent pollution removed |
+| monstera | `bright_shade` / `medium` | `bright_shade` / `medium` | specific bright_shade precedence preserved |
+| banana | `full_sun` / `high` | `full_sun` / `high` | NR true; unaffected specific/group path |
+| blueberry | `full_sun_to_part_shade` / `high` | `full_sun_to_part_shade` / `high` | explicit multi-group conflict unresolved; last-explicit precedence retained; NR true |
+| bougainvillea | `full_sun` / `low` | `full_sun` / `low` | NR true; specific precedence preserved |
+
+Aliases verified equal to canonical: `grape-vine`→`grapevine`, `passion-fruit`→`passionfruit`, `apple-tree`→`apple`, `fig-tree`→`fig`, `plum-tree`→`plum` (no extra climate identity).
+
+### Post-repair coverage re-audit (unique browse slug; no catalog edits)
+
+| Metric | Value |
+|--------|-------|
+| Browse rows | **84** |
+| Browse eligible | **84** |
+| Browse excluded | **0** |
+| Canonical browse identities | **77** |
+| Alias rows | **7** |
+| `needsReview` | **48** |
+| Seed records | **32** |
+| Resolved sun histogram | `full_sun` **50**; `full_sun_to_part_shade` **19**; `morning_sun_part_shade` **7**; `part_shade` **1**; `bright_shade` **7**; `shade` **0** |
+| Resolved water histogram | `low` **16**; `medium` **56**; `high` **12** |
+| Fail-closed sun eligible | **36** (`full_sun` **22**; `full_sun_to_part_shade` **10**; `morning_sun_part_shade` **2**; `bright_shade` **2**) |
+| Fail-closed water eligible | **36** (`low` **4**; `medium` **29**; `high` **3**) |
+| Fail-closed both | **36** |
+| Trailing-omit merge-default pollution (sun/water) | **0** |
+| Remaining explicit multi-group conflicts | **1** (blueberry) |
+| Remaining traits-versus-group conflicts | **22** |
+
+Invariant counts preserved: **84 / 84 / 48 / 32**. Fail-closed totals rose from the pre-repair polluted baseline (**25 / 24 / 24**) because honest explicit values are no longer overwritten — totals are recorded, not imposed as a rollout threshold.
+
+### Explicit non-claims
+
+Matchers are **not** ready. Filter UI is **not** enabled. Catalog conflicts are **not** all fixed. `needsReview` is **not** reduced. Coverage is **not** globally sufficient for matcher authorization. Production verification remains separately required after push.
+
+### Next cleanup phase
+
+Conflict inventory / targeted catalog cleanup (explicit multi-group + traits-versus-group), then canonical/alias-aware re-audit — each separately gated. **Push pending** separate approval. No deploy / production verification in this checkpoint.
+
+---
+
 # Future Roadmap (priority buckets)
 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations Targeted Sun/Water Cleanup Plan** (docs — this checkpoint); coverage audit done (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`); next: **Merge-Pollution Repair Planning** (read-only planning, separately gated); then phased cleanup + re-audit; then matcher scope/planning/implementation (each separately gated; UI not started)
+- **Smart Recommendations Sun/Water Merge-Pollution Repair** (local — this checkpoint; pollution **0**); next: conflict inventory / targeted catalog cleanup (separately gated); then canonical/alias-aware re-audit; then matcher scope/planning/implementation (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -3318,7 +3396,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Smart Recommendations Targeted Sun/Water Cleanup Plan is complete** (`SR_SUN_WATER_TARGETED_CLEANUP_PLAN_COMPLETE`) — documentation-only; cleanup sequencing frozen after coverage audit verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`; merge-default pollution is the first blocker; matcher/UI **not** authorized. Coverage audit baseline counts preserved (84 browse-eligible; fail-closed both **24**; etc.). GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this docs commit: separately approved **Smart Recommendations Sun/Water Merge-Pollution Repair Planning** (read-only implementation planning; no repair code in that planning checkpoint) — do **not** start automatically. Do **not** repair merge behavior, edit catalog/schema, implement sun/water matchers, enable filter UI, change `index.html` outside a separately approved repair boundary, redesign results/chat, enable other filter groups, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
+**Smart Recommendations Sun/Water Merge-Pollution Repair is complete locally** (`SR_SUN_WATER_MERGE_POLLUTION_REPAIR_COMPLETE`) — `smartRecMergeClimateMeta` absence-means-no-opinion for sun/water; trailing-omit pollution **0**; harness **89/89** ×5; invariants **84 / 84 / 48 / 32** preserved; blueberry explicit conflict unresolved; matcher/UI **not** authorized. GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this repair commit: separately approved **conflict inventory / targeted catalog cleanup** — do **not** start automatically. Do **not** edit catalog/schema, implement sun/water matchers, enable filter UI, redesign results/chat, enable other filter groups, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
