@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — merge pollution closed; canonical conflict inventory complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`); Source-Evidence Contract is the current docs checkpoint; matcher still blocked**
+Status: **Active — Source-Evidence Contract closed; Field-Specific Review-State Planning complete (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`); Field-Specific Review-State Documentation Contract is the current docs checkpoint; matcher still blocked**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** Sun/Water Filter Readiness Contract → Structured Coverage Audit → Targeted Cleanup Plan → Merge-Pollution Repair (`eab1800`; production verified) → **Canonical Conflict Inventory** (read-only; verdict `NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Sun/Water Source-Evidence Contract** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain `needsReview` / filter-ineligible; **no** cleanup batch is implementation-ready. Matcher implementation remains **blocked** until evidence + field-specific review planning + cleanup + re-audit. Do not populate taxonomy arrays, implement matchers, or enable filter UI. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** Sun/Water Filter Readiness Contract → Structured Coverage Audit → Targeted Cleanup Plan → Merge-Pollution Repair (`eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract** (pushed) → **Field-Specific Review-State Planning** (read-only; `READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`) → **Field-Specific Review-State Documentation Contract** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally `needsReview`-blocked; **36/36/36** remains legacy eligibility only (not reviewed-supported). **No** schema, registry, validator, runtime gate, cleanup batch, matcher, or filter UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -84,7 +84,7 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 
 **Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; sun/water cleanup plan is the active docs track; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; this checkpoint)** → Field-Specific Review-State Planning (next, deferred) → blueberry explicit cleanup planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`) → **Field-Specific Review-State Documentation Contract (docs; this checkpoint)** → Developer-Only Field Review Registry Contract (next, deferred) → Field Review Validator Planning (deferred) → blueberry explicit cleanup planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,9 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Sun/Water Source-Evidence Contract** | Done (local) | **Documentation-only.** Freezes evidence, provenance, identity-scope, preference-versus-tolerance, contextual-applicability, corroboration, evidence precedence, group/seed/specific edit gates, and needsReview clearance protection before any sun/water cleanup. Inventory baseline preserved: browse **84** / eligible **84** / canonical **77** / aliases **7** / NR **48** / seed **32** / fail-closed **36/36/36** / pollution **0** / explicit conflict **1** / traits-versus-group **22** / conflicted identities **23** (all NR; fail-closed leak **0**). Does **not** select values, clear NR, resolve blueberry or the 22 seed conflicts, edit catalog/groups/assignments/specific meta/schema/`index.html`, or authorize matchers/UI. Aligns with existing repo provenance conventions (GOS evidence `authority`/`sourceType`/`verifiedAt`; identity structured `sources`; catalog `source` / `qualityTier` / `filterTaxonomyMeta.confidence` for taxonomy only — not sun/water climateTraits). **Next deferred:** Field-Specific Review-State Planning, then Blueberry Explicit Conflict Cleanup Planning. File: `PROJECT_STATUS.md` only. **Push pending** separate approval. |
+| **Smart Recommendations — Sun/Water Field-Specific Review-State Documentation Contract** | Done (local) | **Documentation-only.** Freezes conceptual per-field review authority (`fieldReview.sun` / `fieldReview.water` direction), evidence/review/eligibility separation, fail-closed derivation, migration Phases 1–4 (global `needsReview` umbrella in Phases 1–2), legacy **36/36/36** bridge (30 canonical + 6 aliases; not reviewed-supported), conflict-aware gating, alias/canonical rules, group blast-radius, evidence linkage, stale invalidation, validator/audit requirements, and sibling schema-placement direction — **without** authorizing schema, registry, validator, runtime, NR clearance, value resolution, matchers, or UI. Baseline preserved: browse **84** / eligible **84** / canonical **77** / aliases **7** / NR **48** / seed **32** / fail-closed **36/36/36** / pollution **0** / explicit **1** / traits-versus-group **22** / conflicted **23** (all NR; leak **0**). **Next deferred:** Developer-Only Field Review Registry Contract, then Field Review Validator Planning. Blueberry cleanup remains further deferred. File: `PROJECT_STATUS.md` only. **Push pending** separate approval. |
+| **Smart Recommendations — Sun/Water Field-Specific Review-State Planning** | Done (read-only) | **Read-only planning; no file modification.** Confirmed conflict safety depends on global `needsReview`; fail-closed audit does not encode per-field conflict/evidence/split review. Recommended B+C hybrid (nested per-field status). Migration umbrella B. Legacy 36 = grandfather coverage only. Verdict: **`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`**. |
+| **Smart Recommendations — Sun/Water Source-Evidence Contract** | Done (pushed) | **Documentation-only.** Freezes evidence, provenance, identity-scope, preference-versus-tolerance, contextual-applicability, corroboration, evidence precedence, group/seed/specific edit gates, and needsReview clearance protection before any sun/water cleanup. Inventory baseline preserved: browse **84** / eligible **84** / canonical **77** / aliases **7** / NR **48** / seed **32** / fail-closed **36/36/36** / pollution **0** / explicit conflict **1** / traits-versus-group **22** / conflicted identities **23** (all NR; fail-closed leak **0**). Does **not** select values, clear NR, resolve blueberry or the 22 seed conflicts, edit catalog/groups/assignments/specific meta/schema/`index.html`, or authorize matchers/UI. Aligns with existing repo provenance conventions (GOS evidence `authority`/`sourceType`/`verifiedAt`; identity structured `sources`; catalog `source` / `qualityTier` / `filterTaxonomyMeta.confidence` for taxonomy only — not sun/water climateTraits). Pushed at `64f0e95`. **Superseded next-gate:** Field-Specific Review-State Documentation Contract (this track). |
 | **Smart Recommendations — Sun/Water Canonical Conflict Inventory** | Done (read-only) | **Read-only inventory; no file modification.** Reproduced post-repair baseline exactly. Explicit multi-group conflict **1** (`blueberry` / `Vaccinium spp.`; sun `morning_sun_part_shade` vs `full_sun_to_part_shade`; water `medium` vs `high`; last group wins; no repo evidence for a correct winner). Traits-versus-group **22** unique seed canonical keys (traits win via `climateMetaFromCatalogTraits`; all NR; no sun/water source/confidence). All **23** conflicted identities NR; fail-closed leak **0**. Verdict: **`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`**. No cleanup authorized. |
 | **Smart Recommendations — Sun/Water Merge-Pollution Repair production verification** | Done (local) | **Documentation-only after production verification; no runtime/test/`index.html`/harness/catalog/schema/matcher/UI/GOS/v1b change; no manual deploy; no Netlify setting change; no conflict cleanup; no matcher/filter UI authorization.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed runtime commit **`eab1800b8e3b72a3c450065643b2638b8c7112f9`**. **App** `/` and **`/index.html`** HTTP **200** `text/html` (LF-normalized content matches local `eab1800` after stripping Netlify UTF-8 BOM). **Harness** `/tests/smart-rec-climate-meta-merge.test.html` HTTP **200** `text/html` (LF-normalized exact match to local `eab1800`). Production index contains repaired `smartRecMergeClimateMeta` (`absence means no opinion` + `Object.prototype.hasOwnProperty.call`; no sun/water accumulator seeds). **Normal app isolation (before):** home + Smart Recommendations — **zero** automatic harness load/execution; no merge-test UI; no GOS request; no new sun/water filter UI; chat (`srChatThread`) + results (`smartRecResults`) unchanged; no repair-related console error/rejection; no repair persistence keys; `evaluateClimateSuitabilityV1` present. **Initial harness inertness:** `__SR_MERGE_BOOT.inert=true`; no iframe; summary absent; **0** assertion rows; idle status; no index iframe load; no GOS; harness storageMutationCount **0**. **Explicit Run all only:** five consecutive production Reset→Run cycles all **89/89** / `SR_MERGE_POLLUTION_REPAIR_HARNESS_PASS` / fixtureCount **15**; identical assertion + plant fingerprints; storageMutationCount **0**; no GOS/v1b product request; no repair-related console error/rejection. Core merge semantics confirmed through production merge (earlier explicit survives omit; later explicit overrides; absent/null/undefined/empty/whitespace/non-string no opinion; unsupported string kept; needsReview + unrelated defaults preserved; input non-mutation; deterministic ×10). Real-plant production table matches committed local after values (hydrangea `morning_sun_part_shade`/`high`; raspberry water `high`; grapevine sun `full_sun`; mint `part_shade`/`high` NR; aloe water `low`; cyclamen `morning_sun_part_shade`/`medium`; monstera `bright_shade`; banana `full_sun`/`high` NR; blueberry conflict unresolved; bougainvillea `full_sun`/`low` NR; passionfruit/jasmine/strelitzia/black-eyed-susan-vine as committed). Aliases: `grape-vine`→`grapevine`, `passion-fruit`→`passionfruit`, `apple-tree`→`apple`, `fig-tree`→`fig`, `plum-tree`→`plum` (same meta; no new climate identity; non-mutating). **Post-repair production audit** (same read-only logic): browse **84** / eligible **84** / NR **48** / seed **32**; canonical **77**; aliases **7**; pollution **0**; fail-closed sun/water/both **36/36/36**; sun hist `full_sun` **50** / `full_sun_to_part_shade` **19** / `morning_sun_part_shade` **7** / `part_shade` **1** / `bright_shade` **7**; water hist `low` **16** / `medium` **56** / `high` **12**; explicit multi-group **1** (blueberry); traits-versus-group **22**. Trusted-location: untrusted → SR suitability blocked + v1b `location_untrusted` / score `null`; missing-meta → `null` meta / browse score false / suitability borderline contract preserved. **After:** reload home + SR — zero automatic harness/GOS; no merge-test residue; chat/results/UI unchanged; v1b still product path. **Verdict:** `SMART_REC_SUN_WATER_MERGE_REPAIR_PRODUCTION_VERIFIED`. Next work remains targeted real conflict inventory/cleanup — **no** matcher or filter UI authorized. **Push of this docs commit pending** separate approval. File: `PROJECT_STATUS.md` only. |
 | **Smart Recommendations — Sun/Water Merge-Pollution Repair** | Done (pushed) | **Narrow `smartRecMergeClimateMeta` repair only.** Removes seeded `sunNeeds`/`waterNeeds` defaults; absence means no opinion; override only for own non-empty string fields (`Object.prototype.hasOwnProperty.call`). Other accumulator defaults and non-sun/water merge behavior preserved. Files: `index.html` (function boundary only), `tests/smart-rec-climate-meta-merge.test.html` (**89/89**; fixtureCount **15**; five consecutive local Reset→Run identical; verdict `SR_MERGE_POLLUTION_REPAIR_HARNESS_PASS`), `PROJECT_STATUS.md`. Post-repair re-audit (unique slug): browse **84** / eligible **84** / `needsReview` **48** / seed **32**; trailing-omit merge-default pollution **0**; fail-closed sun/water/both **36/36/36** (actual post-repair; not imposed). Remaining: explicit multi-group conflict **1** (blueberry); traits-versus-group **22**; blueberry conflict unresolved. Alias/canonical behavior preserved. Non-regression: identity recon **158** (0 unexpected); GOS-5G **223/223**; GOS-5D **129/129**; GOS-5C **141/141**; GOS-4B **101/101**; GOS-3F **2018/2018**; API **105/105**; evaluator **62/62**; GOS-3C1 **979/979**; pilot validator **69**; pilot harness **936/936**; GOS-1 validator **101**; schema **69/69**. Protected byte identity vs `b1c2c1f` for catalog/schema/styles/GOS/identity outside approved files. **No** catalog/schema/matcher/filter UI/results/chat/GOS/v1b change. Pushed at `eab1800`. **Production verification later completed** — see production verification checkpoint (`SMART_REC_SUN_WATER_MERGE_REPAIR_PRODUCTION_VERIFIED`). Next: conflict inventory / targeted catalog cleanup (separately gated). |
@@ -318,7 +320,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)** + filter taxonomy schema + **Sun/Water Filter Readiness Contract (docs)** + **Structured Coverage Audit** + **Targeted Cleanup Plan (docs)** + **Merge-Pollution Repair** (`eab1800`; production verified) + **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) + **Source-Evidence Contract (docs; this checkpoint)**; catalog task **B Frozen (v1)**; matcher still blocked; next = Field-Specific Review-State Planning (separately gated), then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Location Reliability + missing-meta patch + **browse-eligibility gate fix (task A done)** + filter taxonomy schema + **Sun/Water Filter Readiness Contract (docs)** + **Structured Coverage Audit** + **Targeted Cleanup Plan (docs)** + **Merge-Pollution Repair** (`eab1800`; production verified) + **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) + **Source-Evidence Contract (docs; pushed)** + **Field-Specific Review-State Planning** (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`) + **Field-Specific Review-State Documentation Contract (docs; this checkpoint)**; catalog task **B Frozen (v1)**; matcher still blocked; next = Developer-Only Field Review Registry Contract (separately gated), then Field Review Validator Planning, then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -335,7 +337,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (verdict `NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`; **23** conflicted identities, all NR, fail-closed leak **0**), and **Sun/Water Source-Evidence Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; repository evidence is insufficient to choose cleanup values; **no** cleanup batch is implementation-ready. Matcher/UI remain **blocked**. Other approved groups stay disabled until enrichment + separate contracts. **GOS remains paused.** **Next:** Field-Specific Review-State Planning (separately gated), then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`; **23** conflicted identities, all NR, fail-closed leak **0**), **Sun/Water Source-Evidence Contract** (docs; pushed `64f0e95`), **Field-Specific Review-State Planning** (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`), and **Field-Specific Review-State Documentation Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; **no** schema/registry/validator/runtime/cleanup authorization. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Developer-Only Field Review Registry Contract (separately gated), then Field Review Validator Planning, then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -2458,7 +2460,7 @@ Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Me
 
 # Smart Recommendations UX Scope
 
-**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** (below) freezes evidence/review gates before any value cleanup; matcher/UI remain unauthorized. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
+**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** is closed (pushed). **Field-Specific Review-State Planning** is complete (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`). **Field-Specific Review-State Documentation Contract** (below) freezes conceptual per-field review authority; **no** schema/registry/validator/runtime/matcher/UI authorization. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
 
 ### Input experience (future UX phase)
 
@@ -3293,7 +3295,7 @@ Documentation-only closure — see Completed Checkpoints production-verification
 
 ### Next cleanup phase
 
-Canonical conflict inventory is **complete** (verdict `NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). Source-Evidence Contract is the active docs gate. Field-Specific Review-State Planning and blueberry cleanup planning remain deferred. Targeted cleanup batches remain separately gated after evidence + review-state rules. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.**
+Canonical conflict inventory and Source-Evidence Contract are **closed**. Field-Specific Review-State Planning is **complete**. Field-Specific Review-State Documentation Contract is the active docs gate. Developer registry / validator planning and blueberry cleanup planning remain deferred. Targeted cleanup batches remain separately gated after evidence packets + review authority + validators. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.**
 
 ---
 
@@ -3686,19 +3688,350 @@ Escalate to preference/tolerance modeling planning when evidence shows:
 - All **23** conflicts are safely blocked by `needsReview` (fail-closed leak **0**)
 - Repository evidence is **insufficient** for choosing cleanup values
 - **No** conflict cleanup batch is implementation-ready
-- This Source-Evidence Contract is the completed docs gate for evidence rules
-- **Next** (separately approved): Field-Specific Review-State Planning
-- Blueberry cleanup planning remains deferred until both evidence and review-state rules exist
+- This Source-Evidence Contract is the completed docs gate for evidence rules (pushed at `64f0e95`)
+- Field-Specific Review-State Planning completed afterward (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`)
+- **Next** (separately approved): Field-Specific Review-State Documentation Contract
+- Blueberry cleanup planning remains deferred until evidence packets, review authority, and validators exist
 - Matchers and filter UI remain **blocked**
 
-### 23. Next two deferred checkpoints (not authorized now)
+### 23. Next two deferred checkpoints (historical at contract time; later advanced)
 
-1. **Smart Recommendations Sun/Water Field-Specific Review-State Planning** — ensure filter eligibility does not depend only on global `needsReview`; define conflict-aware field review without changing runtime yet.
-2. **Smart Recommendations Blueberry Explicit Conflict Cleanup Planning** — plan the first one-identity cleanup using approved evidence and review rules.
+At Source-Evidence Contract time, the next deferred gates were Field-Specific Review-State Planning, then Blueberry Explicit Conflict Cleanup Planning. Planning later completed with verdict `READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`. Current track authority is the **Field-Specific Review-State Documentation Contract** section below.
 
 ### 24. Explicit non-claims
 
 No sun/water values were cleaned. No files other than this documentation were changed. No external research was performed. No `needsReview` clearance, catalog/schema/runtime/matcher/UI/GOS/v1b change is authorized by this contract.
+
+---
+
+# Smart Recommendations — Sun/Water Field-Specific Review-State Documentation Contract
+
+**Checkpoint type:** documentation / planning only. **File:** `PROJECT_STATUS.md` only.
+**Verdict identity (docs):** `SR_SUN_WATER_FIELD_REVIEW_DOCUMENTATION_CONTRACT_COMPLETE`.
+**Upstream planning verdict (preserved):** `READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`.
+
+**This checkpoint defines conceptual review-state authority only.**
+
+It does **not**:
+
+- create schema fields or schema enums
+- create a review registry
+- create a validator
+- change any runtime behavior or eligibility
+- clear any `needsReview` value
+- resolve any conflict or select any `sunNeeds` / `waterNeeds` value
+- create any coverage increase
+- authorize matchers, filter UI, results/chat redesign, GOS, or v1b product integration
+- perform external botanical research
+
+Every implementation remains **separately gated**.
+
+### 1. Frozen safety baseline (do not rewrite)
+
+| Metric | Count |
+|--------|------:|
+| Browse rows | **84** |
+| Browse eligible | **84** |
+| Canonical climate identities | **77** |
+| Alias rows | **7** |
+| Global `needsReview` | **48** |
+| Seed records | **32** |
+| Fail-closed sun / water / both | **36 / 36 / 36** |
+| Merge-default pollution | **0** |
+| Explicit multi-group conflicts | **1** |
+| Traits-versus-group conflicts | **22** |
+| Total conflicted canonical identities | **23** |
+| Conflicted identities with `needsReview` | **23** |
+| Conflict leakage into fail-closed eligibility | **0** |
+
+### 2. Conceptual separation (no single field is universal authority)
+
+Keep these concepts separate:
+
+| Concept | Role |
+|---------|------|
+| Evidence status | What is known / packet state (Source-Evidence Contract) |
+| Human review decision | Whether the field value is approved for filter use |
+| Derived filter eligibility | Fail-closed result of gates — never stored as sole authority |
+| Global `needsReview` | Broader umbrella safety (identity / assignment / spp. / quarantine / seed) |
+| Identity ambiguity | Separate from field-value quality |
+| Computed conflict findings | Audit/detection outputs; not automatically human review |
+
+No single boolean or scalar may act as authority for all of these.
+
+### 3. Recommended conceptual direction
+
+Use a nested per-field review concept equivalent to:
+
+- `fieldReview.sun`
+- `fieldReview.water`
+
+Each field needs a status **more expressive than a boolean**.
+
+Conceptual states that must be representable (names not frozen as schema/runtime enums):
+
+- `evidence_missing`
+- `evidence_collected`
+- `conflict_unresolved`
+- `context_ambiguous`
+- `identity_ambiguous`
+- `preference_tolerance_ambiguous`
+- `reviewed_supported`
+- `reviewed_conflicting`
+- `modeling_gap`
+- `stale`
+- `remains_ineligible`
+
+**Do not freeze final schema or runtime property names in this checkpoint.**
+
+### 4. Insufficient final models (rejected as sole authority)
+
+These are **not** sufficient as the final model:
+
+- `sunNeedsReview` / `waterNeedsReview` booleans only — collapse conflict, missing evidence, model-gap, and stale into one bit
+- evidence references without a review decision — knowledge is not approval
+- global `needsReview` plus runtime conflict detection only — blocks leaks but cannot express split sun/water eligibility after formal adoption
+- field review immediately overriding global `needsReview` — unsafe during migration
+- treating the current last-wins resolved value as reviewed — deterministic precedence is not evidence or approval
+
+### 5. Conceptual fail-closed eligibility (not implemented)
+
+**Sun filter eligibility** requires all of:
+
+- structured `sunNeeds`
+- stable canonical identity
+- supported token
+- accepted evidence linkage
+- `reviewed_supported` sun decision
+- no unresolved sun conflict
+- no sun context ambiguity
+- no preference/tolerance ambiguity affecting sun
+- no modeling gap affecting sun
+- global umbrella permits it under the approved migration phase
+
+**Water** uses the equivalent water requirements. **Both** = sun ∧ water independent gates.
+
+| Case | Future intent |
+|------|----------------|
+| Reviewed sun + unresolved water | Sun only — not water or both |
+| Reviewed water + unresolved sun | Water only — not sun or both |
+| Unresolved conflict on a field | That field remains ineligible |
+| Unsupported or missing value | Ineligible |
+| Global `needsReview` in Phases 1–2 | Blocks **all** filter fields |
+
+Do **not** implement eligibility in this checkpoint.
+
+### 6. Migration phases (not authorized now)
+
+| Phase | Behavior |
+|-------|----------|
+| **1** | Field-specific review metadata may later be introduced; global `needsReview` still blocks both fields; **no** coverage increase; **no** runtime authority change |
+| **2** | Developer validators and audits compare global and per-field states; **no** filter UI or product authority |
+| **3** | Separately approved field-specific eligibility may operate under a frozen override rule; requires separate implementation and production verification |
+| **4** | Global `needsReview` may later be narrowed, derived, or redefined; requires another contract |
+
+No phase is authorized for implementation by this documentation contract.
+
+### 7. Legacy compatibility
+
+- Current **36/36/36** fail-closed behavior remains unchanged by this docs checkpoint
+- Those **36** browse rows represent **30** canonical identities and **6** aliases
+- They are classified as **legacy eligible**
+- They are **not** automatically `reviewed_supported`
+- No record gains eligibility from this contract
+- No record loses current product behavior in this docs checkpoint
+- Future evidence review is required before `reviewed_supported` status
+
+### 8. Global `needsReview` protection (Phases 1–2)
+
+During migration Phases 1 and 2, global `needsReview` remains authoritative for filter blocking.
+
+It must **not** be cleared merely because:
+
+- one field is reviewed
+- one source exists
+- the value looks reasonable
+- coverage would improve
+- last-wins is deterministic
+- an alias resolves correctly
+- the unrelated field is safe
+
+### 9. Conflict-aware gating
+
+The future review system must account independently for:
+
+- explicit multi-group sun conflict
+- explicit multi-group water conflict
+- traits-versus-group sun conflict
+- traits-versus-group water conflict
+- specific-versus-group conflict
+- evidence conflict
+- identity ambiguity
+- context ambiguity
+- preference/tolerance ambiguity
+- modeling gap
+- stale review
+
+Prefer **computed conflict findings** plus **stored human review decisions**. Do not persist duplicate derived conflict facts unless later justified (e.g. fingerprint inputs).
+
+### 10. Canonical and alias behavior
+
+- Field review belongs to the **canonical** climate identity
+- Aliases inherit the canonical review result
+- Aliases do not own review metadata or evidence packets
+- Aliases do not increase reviewed coverage counts
+- Unresolved alias mapping remains ineligible
+- Sidecar and identity persistence remain separate workstreams
+
+### 11. Source-location behavior
+
+When the accepted value comes from:
+
+| Source | Approval attaches to |
+|--------|----------------------|
+| Seed `climateTraits` | One canonical identity only |
+| `SMART_REC_CLIMATE_GROUPS` | Group-level review only with full blast-radius evidence |
+| `SMART_REC_SPECIFIC_CLIMATE_METADATA` | That plant exception |
+| Canonical catalog record | The canonical field |
+| Evidence packet | Supports a decision; is **not** itself the decision |
+
+Do not modify any current source in this checkpoint.
+
+### 12. Group blast-radius safety
+
+A group field may later be reviewed only when:
+
+- group semantics are explicit
+- all affected canonical identities are inventoried
+- evidence supports group scope
+- non-conflicted members are checked
+- assignments are reviewed
+- no member needs a contradictory preference
+- aliases are excluded from canonical counts
+
+**No current group is approved in this checkpoint.**
+
+### 13. Evidence linkage
+
+Every future `reviewed_supported` field must link to:
+
+- canonical identity
+- exact field
+- reviewed value or deterministic fingerprint
+- evidence packet reference(s)
+- context scope
+- review decision
+- review version/date
+- source kind and source identifiers
+- reason
+- unresolved limitation
+
+Later preference: stable evidence packet references; small review stamps; no full evidence duplication in every plant record; no large CMS. **Do not create a registry now.**
+
+### 14. Minimum review metadata (conceptual)
+
+**Mandatory later:** field review status; reviewed value or fingerprint; evidence references; review version/date; canonical identity; source kind; source identifiers; reason or unresolved limitation.
+
+**Deferred:** reviewer account system; rich workflow history; UI review console; long context essays inside catalog rows.
+
+### 15. Stale invalidation
+
+A review becomes stale or ineligible when:
+
+- canonical identity changes
+- structured value changes
+- group, assignment, specific metadata, or seed source changes
+- evidence packet changes materially
+- fingerprint mismatches
+- context no longer matches
+- source is withdrawn or superseded
+- a new conflict is discovered
+- review contract version changes
+
+Conceptual fingerprint inputs: canonical key; field; current value; source kind; source IDs; evidence packet IDs; context scope; review contract version.
+
+Do **not** implement fingerprints in this checkpoint.
+
+### 16. Existing-record behavior
+
+Records without field-specific review metadata:
+
+- remain governed by global `needsReview`
+- do not become automatically reviewed
+- gain no new eligibility
+- remain deterministic and fail-closed
+- may retain current legacy eligibility when `needsReview` is false
+- must not be labeled `reviewed_supported`
+
+### 17. Application to the 23 conflicts (no value resolution)
+
+| Category | Conceptual field-review implication |
+|----------|-------------------------------------|
+| **Blueberry** | Sun unresolved; water unresolved; identity scope broad; global `needsReview` remains; no field eligibility |
+| **Sun-only** traits/group conflicts (8) | Sun unresolved; water may be non-conflicting; global `needsReview` still blocks both in Phases 1–2 |
+| **Water-only** traits/group conflicts (7) | Water unresolved; sun may be non-conflicting; global `needsReview` still blocks both in Phases 1–2 |
+| **Both-field** conflicts (7 + blueberry) | Both unresolved |
+| **spp./genus** identities | Identity ambiguity remains a separate umbrella blocker |
+| **Modeling-gap** candidates | Preference versus tolerated range remains unresolved |
+| **Assignment-problem** candidates | Field review cannot hide an incorrect assignment |
+
+Do not select values.
+
+### 18. Future validator requirements (not created now)
+
+A future developer-only validator must detect:
+
+- `reviewed_supported` field without evidence
+- reviewed value/fingerprint different from current value
+- `reviewed_supported` field with unresolved conflict
+- alias-owned review metadata
+- group-reviewed field without blast-radius review
+- global `needsReview` cleared while a field conflict remains
+- eligible field with unsupported token
+- stale review version
+- missing canonical identity
+- contradictory evidence and review states
+- source assignment changed without invalidating review
+
+### 19. Future audit requirements (no UI)
+
+A future developer audit must report: canonical identity count; aliases excluded; sun/water review-state histograms; reviewed-supported; conflict unresolved; evidence missing; stale; identity ambiguous; context ambiguous; modeling gap; global `needsReview` interactions; legacy eligible; sun eligible; water eligible; both eligible; invalid combinations.
+
+### 20. Schema-placement direction (not authorized now)
+
+Preferred long-term conceptual placement:
+
+- sibling field-review metadata associated with the canonical catalog/climate record
+- not mixed into `sunNeeds` or `waterNeeds` scalar values
+- evidence references adjacent or external
+- aliases do not carry copies
+
+A separate inert developer registry may be used later for proving the model.
+
+**This checkpoint does not authorize:** schema extension; catalog migration; registry; validator; runtime consumption.
+
+### 21. Roadmap re-baseline (this checkpoint)
+
+- Source-Evidence Contract is **closed** (pushed `64f0e95`)
+- Field-Specific Review-State Planning is **complete** (`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`)
+- This Documentation Contract is the current docs checkpoint
+- **No** schema, registry, validator, or runtime implementation is authorized
+- **36/36/36** remains legacy eligibility only
+- All **23** conflicts remain globally blocked
+- Blueberry cleanup remains deferred
+- Matchers and filter UI remain **blocked**
+- GOS remains **paused**
+
+### 22. Next two deferred checkpoints (not authorized now)
+
+1. **Smart Recommendations — Developer-Only Field Review Registry Contract**
+2. **Smart Recommendations — Field Review Validator Planning**
+
+Blueberry cleanup remains deferred until evidence packets, review authority, and validators exist.
+
+### 23. Explicit non-claims
+
+No schema fields, registry, validator, or runtime gate were created. No `needsReview` was cleared. No sun/water values were selected or cleaned. No coverage increase is authorized. No files other than this documentation were changed.
 
 ---
 
@@ -3707,7 +4040,7 @@ No sun/water values were cleaned. No files other than this documentation were ch
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — merge repair closed (`eab1800` production verified; pollution **0**); conflict inventory complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`; **23** conflicts, all NR); **Source-Evidence Contract** done (docs; this checkpoint); next: Field-Specific Review-State Planning → blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — merge repair closed (`eab1800` production verified; pollution **0**); conflict inventory complete (**23** conflicts, all NR); Source-Evidence Contract closed (pushed); Field-Specific Review-State Planning complete; **Field-Specific Review-State Documentation Contract** done (docs; this checkpoint); **36/36/36** legacy only; next: Developer-Only Field Review Registry Contract → Field Review Validator Planning → blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -3816,7 +4149,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Smart Recommendations Sun/Water Source-Evidence Contract is complete locally** (`SR_SUN_WATER_SOURCE_EVIDENCE_CONTRACT_COMPLETE`) — authority/provenance rules, identity and context scope, preference versus tolerance, group/seed/specific edit gates, and needsReview clearance protection are frozen in docs. Merge repair remains closed; conflict inventory remains frozen (**23** conflicts; all NR; fail-closed leak **0**); **no** value resolution and **no** cleanup batch is authorized. GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this docs commit: **Smart Recommendations Sun/Water Field-Specific Review-State Planning** — do **not** start automatically. Do **not** begin blueberry cleanup, edit catalog/schema/`index.html`, clear needsReview, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
+**Smart Recommendations Sun/Water Field-Specific Review-State Documentation Contract is complete locally** (`SR_SUN_WATER_FIELD_REVIEW_DOCUMENTATION_CONTRACT_COMPLETE`) — nested per-field review direction, evidence/review/eligibility separation, global `needsReview` migration umbrella (Phases 1–2), legacy **36/36/36** bridge, conflict-aware gating, evidence linkage, and stale invalidation are frozen in docs. Source-Evidence Contract remains closed; conflict inventory remains frozen (**23** conflicts; all NR; leak **0**); **no** schema/registry/validator/runtime/value resolution/`needsReview` clearance is authorized. GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this docs commit: **Smart Recommendations — Developer-Only Field Review Registry Contract** — do **not** start automatically. Do **not** begin Field Review Validator Planning, blueberry cleanup, edit catalog/schema/`index.html`, clear needsReview, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
