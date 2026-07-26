@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Smart Recommendations Developer Field Review Registry</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Field Review Registry</h1>
+  <p class="sub">
+    Developer-only. Proves the inert field-review registry module with
+    <strong>synthetic fixtures only</strong>. Module loads only after explicit Run.
+    No index.html / GOS / v1b / catalog / persistence / real plant approvals.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Registry module not requested. Synthetic fixtures execute only after
+    <strong>Run all registry checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all registry checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  var runActive = false;
+  var storageMutationCount = 0;
+  var networkCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_FIELD_REVIEW_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+  function setStatus(text) {
+    $('statusLine').textContent = text;
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    networkCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      networkCount++;
+      return Promise.reject(new Error('network_disabled_in_field_review_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      networkCount++;
+      throw new Error('xhr_disabled_in_field_review_harness');
+    };
+    window.__SR_FIELD_REVIEW_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_FIELD_REVIEW_RESTORE === 'function') {
+      window.__SR_FIELD_REVIEW_RESTORE();
+      window.__SR_FIELD_REVIEW_RESTORE = null;
+    }
+  }
+
+  function baseApproval(extra) {
+    return Object.assign({
+      canonicalKey: 'syn-fixture-alpha',
+      field: 'sun',
+      reviewStatus: 'reviewed_supported',
+      reviewedValue: 'full_sun',
+      valueFingerprint: null,
+      evidenceRefs: ['ev-syn-001'],
+      sourceKind: 'canonical_catalog_record',
+      sourceIds: ['syn-catalog-alpha'],
+      contextScope: 'outdoor',
+      reviewVersion: '1',
+      reviewedAt: '2026-07-25',
+      reason: 'synthetic approval fixture'
+    }, extra || {});
+  }
+
+  function makeContext(mod, extra) {
+    return Object.assign({
+      knownCanonicalKeys: ['syn-fixture-alpha', 'syn-fixture-beta', 'syn-fixture-gamma'],
+      knownAliasKeys: ['syn-alias-alpha'],
+      knownEvidenceRefs: ['ev-syn-001', 'ev-syn-002'],
+      supportedReviewedValueTokens: ['full_sun', 'full_sun_to_part_shade', 'medium', 'low', 'high'],
+      reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+    }, extra || {});
+  }
+
+  function withFingerprint(mod, record, ctx) {
+    var r = clone(record);
+    var fp = mod.buildFieldReviewValueFingerprint({
+      canonicalKey: r.canonicalKey,
+      field: r.field,
+      reviewedValue: r.reviewedValue,
+      sourceKind: r.sourceKind,
+      sourceIds: r.sourceIds,
+      evidenceRefs: r.evidenceRefs,
+      contextScope: r.contextScope,
+      reviewContractVersion: (ctx && ctx.reviewContractVersion) || mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+    });
+    r.valueFingerprint = fp.fingerprint;
+    return r;
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    renderRows();
+    var names = results.map(function (r) { return (r.pass ? 'P:' : 'F:') + r.name; }).join('|');
+    lastSummary = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      verdict: verdict,
+      fixtureCount: 3,
+      storageMutationCount: storageMutationCount,
+      networkCount: networkCount,
+      moduleLoaded: moduleLoaded,
+      assertionFingerprint: String(passed) + '/' + results.length + '#' + names.length + ':' + names.slice(0, 80)
+    });
+    window.__SR_FIELD_REVIEW_SUMMARY = lastSummary;
+    setStatus('State: complete · moduleLoaded=1 · storageMutationCount=' + storageMutationCount +
+      ' · networkCount=' + networkCount);
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    $('btn-run-all').disabled = true;
+    $('banner').textContent = 'Running synthetic registry checks…';
+    setStatus('State: running…');
+    installGuards();
+    var lsBefore = Object.keys(localStorage || {}).slice().sort().join(',');
+    var ssBefore = Object.keys(sessionStorage || {}).slice().sort().join(',');
+    var cookieBefore = String(document.cookie || '');
+
+    try {
+      var mod = await import('../modules/smart-recommendations/developer-field-review-registry.js');
+      moduleLoaded = true;
+      window.__SR_FIELD_REVIEW_BOOT = Object.freeze({ inert: false, moduleLoaded: true });
+
+      var desc = mod.getSmartRecDeveloperFieldReviewRegistryDescriptor();
+      expect('descriptor frozen', isFrozenDeep(desc), '');
+      expect('developerOnly', desc.developerOnly === true, String(desc.developerOnly));
+      expect('authoritative false', desc.authoritative === false, '');
+      expect('productConsumer false', desc.productConsumer === false, '');
+      expect('runtimeEligibilityAuthority false', desc.runtimeEligibilityAuthority === false, '');
+      expect('runtimeWired false', desc.runtimeWired === false, '');
+      expect('persistence false', desc.persistence === false, '');
+      expect('network false', desc.network === false, '');
+      expect('automaticPopulation false', desc.automaticPopulation === false, '');
+      expect('catalogMutation false', desc.catalogMutation === false, '');
+      expect('needsReviewMutation false', desc.needsReviewMutation === false, '');
+      expect('aliasOwnership false', desc.aliasOwnership === false, '');
+      expect('activation explicit_call_only', desc.activation === 'explicit_call_only', desc.activation);
+      expect('productConsumers none', desc.productConsumers === 'none', '');
+      expect('realRecordCount 0', desc.realRecordCount === 0, String(desc.realRecordCount));
+      expect('version', desc.registryVersion === mod.SR_FIELD_REVIEW_REGISTRY_VERSION, desc.registryVersion);
+      expect('capability', desc.capability === mod.SR_FIELD_REVIEW_REGISTRY_CAPABILITY, desc.capability);
+
+      var empty = mod.getEmptySmartRecDeveloperFieldReviewRegistry();
+      expect('empty registry frozen', isFrozenDeep(empty), '');
+      expect('empty records', empty && empty.records && Object.keys(empty.records).length === 0, '');
+      expect('empty version', empty.registryVersion === mod.SR_FIELD_REVIEW_REGISTRY_VERSION, '');
+      var empty2 = mod.getEmptySmartRecDeveloperFieldReviewRegistry();
+      expect('empty registry identity stable', empty === empty2, '');
+      try { empty.records.hack = 1; } catch (_e) {}
+      expect('empty registry immutable', Object.keys(empty.records).length === 0, '');
+
+      expect('fields sun/water', JSON.stringify(mod.SR_FIELD_REVIEW_FIELDS) === JSON.stringify(['sun', 'water']), '');
+      expect('stored statuses count', mod.SR_FIELD_REVIEW_STORED_STATUSES.length === 8, String(mod.SR_FIELD_REVIEW_STORED_STATUSES.length));
+      expect('source kinds count', mod.SR_FIELD_REVIEW_SOURCE_KINDS.length === 5, String(mod.SR_FIELD_REVIEW_SOURCE_KINDS.length));
+
+      var ctx = makeContext(mod);
+      var sunRec = withFingerprint(mod, baseApproval({ field: 'sun', reviewedValue: 'full_sun' }), ctx);
+      var waterRec = withFingerprint(mod, baseApproval({
+        field: 'water',
+        reviewedValue: 'medium',
+        sourceIds: ['syn-catalog-alpha-water'],
+        evidenceRefs: ['ev-syn-002'],
+        reason: 'synthetic water approval'
+      }), ctx);
+
+      var sunOk = mod.validateFieldReviewRecord(sunRec, ctx);
+      expect('valid synthetic sun', sunOk.valid === true, JSON.stringify(sunOk.reasons));
+      var waterOk = mod.validateFieldReviewRecord(waterRec, ctx);
+      expect('valid synthetic water', waterOk.valid === true, JSON.stringify(waterOk.reasons));
+
+      var built = mod.validateAndBuildFieldReviewRegistry([sunRec, waterRec], ctx);
+      expect('build sun+water independent', built.valid === true &&
+        built.registry.records['syn-fixture-alpha'].sun &&
+        built.registry.records['syn-fixture-alpha'].water, JSON.stringify(built.reasons));
+      expect('built registry frozen', isFrozenDeep(built.registry), '');
+
+      var aliasRec = withFingerprint(mod, baseApproval({ canonicalKey: 'syn-alias-alpha' }), ctx);
+      var aliasRes = mod.validateFieldReviewRecord(aliasRec, ctx);
+      expect('alias-owned rejected', aliasRes.valid === false &&
+        aliasRes.reasons.indexOf('alias_owned_record') >= 0, JSON.stringify(aliasRes.reasons));
+
+      var unknownRec = withFingerprint(mod, baseApproval({ canonicalKey: 'syn-unknown' }), ctx);
+      var unknownRes = mod.validateFieldReviewRecord(unknownRec, ctx);
+      expect('unknown canonical rejected', unknownRes.valid === false &&
+        unknownRes.reasons.indexOf('unknown_canonical_key') >= 0, JSON.stringify(unknownRes.reasons));
+
+      var dup = mod.validateAndBuildFieldReviewRegistry([sunRec, clone(sunRec)], ctx);
+      expect('duplicate canonical-field rejected', dup.valid === false &&
+        dup.reasons.indexOf('duplicate_canonical_field') >= 0, JSON.stringify(dup.reasons));
+
+      var betaSun = withFingerprint(mod, baseApproval({
+        canonicalKey: 'syn-fixture-beta',
+        field: 'sun',
+        sourceIds: ['syn-catalog-beta']
+      }), ctx);
+      var multi = mod.validateAndBuildFieldReviewRegistry([sunRec, waterRec, betaSun], ctx);
+      expect('same key different fields + second key', multi.valid === true &&
+        multi.registry.records['syn-fixture-alpha'].sun &&
+        multi.registry.records['syn-fixture-alpha'].water &&
+        multi.registry.records['syn-fixture-beta'].sun, JSON.stringify(multi.reasons));
+
+      // Status handling
+      mod.SR_FIELD_REVIEW_STORED_STATUSES.forEach(function (st) {
+        var rec = {
+          canonicalKey: 'syn-fixture-gamma',
+          field: 'sun',
+          reviewStatus: st,
+          reviewVersion: '1',
+          reviewedAt: '2026-07-25',
+          reason: 'status fixture ' + st
+        };
+        if (st === 'reviewed_supported') {
+          rec = withFingerprint(mod, baseApproval({
+            canonicalKey: 'syn-fixture-gamma',
+            sourceIds: ['syn-catalog-gamma'],
+            evidenceRefs: ['ev-syn-001']
+          }), ctx);
+        }
+        var res = mod.validateFieldReviewRecord(rec, ctx);
+        expect('stored status ' + st, res.valid === true, JSON.stringify(res.reasons));
+      });
+
+      var badStatus = mod.validateFieldReviewRecord({
+        canonicalKey: 'syn-fixture-alpha',
+        field: 'sun',
+        reviewStatus: 'not_a_status',
+        reviewVersion: '1',
+        reviewedAt: '2026-07-25',
+        reason: 'bad'
+      }, ctx);
+      expect('unsupported status rejected', badStatus.valid === false &&
+        badStatus.reasons.indexOf('unsupported_review_status') >= 0, JSON.stringify(badStatus.reasons));
+
+      mod.SR_FIELD_REVIEW_COMPUTED_ONLY_STATUSES.forEach(function (st) {
+        var res = mod.validateFieldReviewRecord({
+          canonicalKey: 'syn-fixture-alpha',
+          field: 'sun',
+          reviewStatus: st,
+          reviewVersion: '1',
+          reviewedAt: '2026-07-25',
+          reason: 'computed as stored'
+        }, ctx);
+        expect('computed-only ' + st + ' rejected', res.valid === false &&
+          res.reasons.indexOf('computed_status_not_storable') >= 0, JSON.stringify(res.reasons));
+      });
+
+      // Approval requirements
+      var noEv = withFingerprint(mod, baseApproval({ evidenceRefs: [] }), ctx);
+      // empty evidence breaks fingerprint; craft incomplete approval without evidence
+      var noEv2 = baseApproval({ evidenceRefs: [], valueFingerprint: 'x' });
+      var noEvRes = mod.validateFieldReviewRecord(noEv2, ctx);
+      expect('reviewed_supported without evidence fails', noEvRes.valid === false &&
+        noEvRes.reasons.indexOf('evidence_refs_required') >= 0, JSON.stringify(noEvRes.reasons));
+
+      var noVal = baseApproval({ reviewedValue: '', valueFingerprint: 'x', evidenceRefs: ['ev-syn-001'] });
+      var noValRes = mod.validateFieldReviewRecord(noVal, ctx);
+      expect('reviewed_supported without value fails', noValRes.valid === false &&
+        noValRes.reasons.indexOf('reviewed_value_required') >= 0, JSON.stringify(noValRes.reasons));
+
+      var noFp = baseApproval({ valueFingerprint: null });
+      var noFpRes = mod.validateFieldReviewRecord(noFp, ctx);
+      expect('reviewed_supported without fingerprint fails', noFpRes.valid === false &&
+        noFpRes.reasons.indexOf('value_fingerprint_required') >= 0, JSON.stringify(noFpRes.reasons));
+
+      var noSource = withFingerprint(mod, baseApproval({ sourceKind: '', sourceIds: [] }), ctx);
+      var noSourceRec = baseApproval({ sourceKind: '', sourceIds: [], valueFingerprint: 'x' });
+      var noSourceRes = mod.validateFieldReviewRecord(noSourceRec, ctx);
+      expect('reviewed_supported without source fails', noSourceRes.valid === false &&
+        (noSourceRes.reasons.indexOf('source_kind_required') >= 0 ||
+         noSourceRes.reasons.indexOf('source_ids_required') >= 0), JSON.stringify(noSourceRes.reasons));
+
+      var noCtx = baseApproval({ contextScope: '', valueFingerprint: 'x' });
+      var noCtxRes = mod.validateFieldReviewRecord(noCtx, ctx);
+      expect('reviewed_supported without context fails', noCtxRes.valid === false &&
+        noCtxRes.reasons.indexOf('context_scope_required') >= 0, JSON.stringify(noCtxRes.reasons));
+
+      var noMeta = baseApproval({
+        reviewVersion: '',
+        reviewedAt: '',
+        reason: '',
+        valueFingerprint: 'x'
+      });
+      var noMetaRes = mod.validateFieldReviewRecord(noMeta, ctx);
+      expect('reviewed_supported missing meta fails', noMetaRes.valid === false &&
+        noMetaRes.reasons.indexOf('review_version_required') >= 0 &&
+        noMetaRes.reasons.indexOf('reviewed_at_required') >= 0 &&
+        noMetaRes.reasons.indexOf('reason_required') >= 0, JSON.stringify(noMetaRes.reasons));
+
+      var collected = mod.validateFieldReviewRecord({
+        canonicalKey: 'syn-fixture-alpha',
+        field: 'sun',
+        reviewStatus: 'evidence_collected',
+        reviewVersion: '1',
+        reviewedAt: '2026-07-25',
+        reason: 'evidence only'
+      }, ctx);
+      expect('evidence_collected not approval', collected.valid === true &&
+        collected.normalized.reviewStatus === 'evidence_collected', JSON.stringify(collected.reasons));
+
+      // Source kinds
+      mod.SR_FIELD_REVIEW_SOURCE_KINDS.forEach(function (sk) {
+        var rec = withFingerprint(mod, baseApproval({
+          sourceKind: sk,
+          sourceIds: ['syn-src-' + sk]
+        }), ctx);
+        var res = mod.validateFieldReviewRecord(rec, ctx);
+        expect('source kind ' + sk, res.valid === true, JSON.stringify(res.reasons));
+      });
+
+      var badKind = withFingerprint(mod, baseApproval({ sourceKind: 'blog_post' }), ctx);
+      // fingerprint may still build; validation rejects kind
+      var badKindRec = baseApproval({
+        sourceKind: 'blog_post',
+        valueFingerprint: 'x',
+        sourceIds: ['a']
+      });
+      var badKindRes = mod.validateFieldReviewRecord(badKindRec, ctx);
+      expect('unsupported source kind rejected', badKindRes.valid === false &&
+        badKindRes.reasons.indexOf('unsupported_source_kind') >= 0, JSON.stringify(badKindRes.reasons));
+
+      var emptyIds = baseApproval({ sourceIds: [], valueFingerprint: 'x' });
+      var emptyIdsRes = mod.validateFieldReviewRecord(emptyIds, ctx);
+      expect('empty sourceIds rejected', emptyIdsRes.valid === false &&
+        emptyIdsRes.reasons.indexOf('source_ids_required') >= 0, JSON.stringify(emptyIdsRes.reasons));
+
+      var missingEv = withFingerprint(mod, baseApproval({ evidenceRefs: ['ev-missing'] }), ctx);
+      var missingEvRes = mod.validateFieldReviewRecord(missingEv, ctx);
+      expect('missing known evidence rejected', missingEvRes.valid === false &&
+        missingEvRes.reasons.indexOf('evidence_ref_missing') >= 0, JSON.stringify(missingEvRes.reasons));
+
+      // Fingerprinting
+      var fpA = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha',
+        field: 'sun',
+        reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record',
+        sourceIds: ['b', 'a'],
+        evidenceRefs: ['ev-syn-002', 'ev-syn-001'],
+        contextScope: 'outdoor',
+        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      var fpB = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha',
+        field: 'sun',
+        reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record',
+        sourceIds: ['a', 'b'],
+        evidenceRefs: ['ev-syn-001', 'ev-syn-002'],
+        contextScope: 'outdoor',
+        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      expect('fingerprint deterministic', fpA.ok && fpB.ok && fpA.fingerprint === fpB.fingerprint, fpA.fingerprint);
+      expect('array order independent', fpA.fingerprint === fpB.fingerprint, '');
+
+      function fpWith(extra) {
+        return mod.buildFieldReviewValueFingerprint(Object.assign({
+          canonicalKey: 'syn-fixture-alpha',
+          field: 'sun',
+          reviewedValue: 'full_sun',
+          sourceKind: 'canonical_catalog_record',
+          sourceIds: ['a'],
+          evidenceRefs: ['ev-syn-001'],
+          contextScope: 'outdoor',
+          reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+        }, extra));
+      }
+      var baseFp = fpWith({}).fingerprint;
+      expect('value change changes fp', fpWith({ reviewedValue: 'medium' }).fingerprint !== baseFp, '');
+      expect('source kind change changes fp', fpWith({ sourceKind: 'seed_climateTraits' }).fingerprint !== baseFp, '');
+      expect('source id change changes fp', fpWith({ sourceIds: ['z'] }).fingerprint !== baseFp, '');
+      expect('evidence change changes fp', fpWith({ evidenceRefs: ['ev-syn-002'] }).fingerprint !== baseFp, '');
+      expect('context change changes fp', fpWith({ contextScope: 'indoor' }).fingerprint !== baseFp, '');
+      expect('contract version change changes fp',
+        fpWith({ reviewContractVersion: '9.9.9' }).fingerprint !== baseFp, '');
+
+      var mismatch = clone(sunRec);
+      mismatch.valueFingerprint = 'not-the-real-fingerprint';
+      var mismatchRes = mod.validateFieldReviewRecord(mismatch, ctx);
+      expect('stored mismatch stale', mismatchRes.valid === false &&
+        mismatchRes.stale === true &&
+        mismatchRes.reasons.indexOf('fingerprint_mismatch') >= 0, JSON.stringify(mismatchRes.reasons));
+
+      expect('matching fingerprint not stale', sunOk.stale === false && sunOk.fingerprintMatches === true, '');
+
+      // Field name rejection
+      var sunNeedsField = mod.validateFieldReviewRecord(baseApproval({ field: 'sunNeeds', valueFingerprint: 'x' }), ctx);
+      expect('sunNeeds field name rejected', sunNeedsField.valid === false &&
+        sunNeedsField.reasons.indexOf('unsupported_field') >= 0, JSON.stringify(sunNeedsField.reasons));
+
+      // Input non-mutation
+      var inputSnap = JSON.stringify(sunRec);
+      var ctxSnap = JSON.stringify(ctx);
+      mod.validateFieldReviewRecord(sunRec, ctx);
+      mod.validateAndBuildFieldReviewRegistry([sunRec, waterRec], ctx);
+      expect('input unchanged', JSON.stringify(sunRec) === inputSnap, '');
+      expect('context unchanged', JSON.stringify(ctx) === ctxSnap, '');
+
+      // Unsupported token
+      var badToken = withFingerprint(mod, baseApproval({ reviewedValue: 'dappled_shade' }), ctx);
+      var badTokenRes = mod.validateFieldReviewRecord(badToken, ctx);
+      expect('unsupported token rejected', badTokenRes.valid === false &&
+        badTokenRes.reasons.indexOf('unsupported_reviewed_value') >= 0, JSON.stringify(badTokenRes.reasons));
+
+      // Outputs frozen
+      expect('validation result frozen', isFrozenDeep(sunOk), '');
+      expect('build result frozen', isFrozenDeep(built), '');
+
+      // Determinism of two builds
+      var built2 = mod.validateAndBuildFieldReviewRegistry([sunRec, waterRec], ctx);
+      expect('repeated build identical', JSON.stringify(built.registry) === JSON.stringify(built2.registry), '');
+
+      // Storage / network
+      var lsAfter = Object.keys(localStorage || {}).slice().sort().join(',');
+      var ssAfter = Object.keys(sessionStorage || {}).slice().sort().join(',');
+      expect('no localStorage mutation', lsAfter === lsBefore && storageMutationCount === 0, String(storageMutationCount));
+      expect('no sessionStorage mutation', ssAfter === ssBefore, '');
+      expect('cookie unchanged', String(document.cookie || '') === cookieBefore, '');
+      expect('zero network', networkCount === 0, String(networkCount));
+      expect('no idb use', typeof indexedDB !== 'undefined', 'idb present but unused');
+
+      // Empty real registry never gains synthetic records
+      var stillEmpty = mod.getEmptySmartRecDeveloperFieldReviewRegistry();
+      expect('real registry still empty', Object.keys(stillEmpty.records).length === 0, '');
+
+      var failed = results.filter(function (r) { return !r.pass; }).length;
+      finishSummary(failed ? 'SR_FIELD_REVIEW_REGISTRY_HARNESS_FAIL' : 'SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS');
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      finishSummary('SR_FIELD_REVIEW_REGISTRY_HARNESS_FAIL');
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    networkCount = 0;
+    window.__SR_FIELD_REVIEW_SUMMARY = null;
+    window.__SR_FIELD_REVIEW_BOOT = Object.freeze({ inert: true, moduleLoaded: false });
+    $('banner').textContent = 'Idle. Registry module not requested. Synthetic fixtures execute only after Run all registry checks.';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('rows').innerHTML = '';
+    setStatus('State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>

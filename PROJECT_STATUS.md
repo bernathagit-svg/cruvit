@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Field-Specific Review-State Documentation Contract closed; Developer-Only Field Review Registry Planning complete (`READY_FOR_DEVELOPER_FIELD_REVIEW_REGISTRY_DOCUMENTATION_CONTRACT`); Registry Documentation Contract is the current docs checkpoint; matcher still blocked**
+Status: **Active — Developer-Only Field Review Registry Implementation complete locally (inert; zero real records); next deferred gate is Field Review Validator Planning; matcher still blocked**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Source-Evidence Contract** (pushed) → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`) → **Developer-Only Field Review Registry Planning** (`READY_FOR_DEVELOPER_FIELD_REVIEW_REGISTRY_DOCUMENTATION_CONTRACT`) → **Developer-Only Field Review Registry Documentation Contract** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Future registry will start with **zero real records** (synthetic fixtures only). **No** module/harness/schema/runtime/validator/cleanup/matcher/UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Source-Evidence Contract** (pushed) → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`) → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`) → **Developer-Only Field Review Registry Implementation** (this local checkpoint; inert module + harness; `realRecordCount` **0**). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Registry has **zero real records** (synthetic fixtures only in the standalone harness). **No** product runtime consumer, schema, eligibility/`needsReview` change, cleanup, matcher, or UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -84,7 +84,7 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 
 **Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; sun/water cleanup plan is the active docs track; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; this checkpoint)** → Registry Implementation (next, deferred) → Field Review Validator Planning (deferred) → blueberry explicit cleanup planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; pushed `6d8c117`)** → **Developer-Only Field Review Registry Implementation** (local; inert; this checkpoint) → Field Review Validator Planning (next, deferred) → blueberry explicit cleanup planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Developer-Only Field Review Registry Documentation Contract** | Done (local) | **Documentation-only.** Freezes inert developer-only registry placement (`modules/smart-recommendations/developer-field-review-registry.js` + standalone harness), descriptor/authority boundary, canonical sun/water keying, minimum record shape, stored-versus-computed statuses, evidence packet ID linkage, fingerprint/version semantics, source kinds, canonical-only (no group-owned) records, legacy empty population, synthetic fixtures only, stale invalidation, validator/inertness/test requirements, three-file implementation scope, and schema deferral — **without** creating a module, harness, schema, or real records. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy fail-closed **36/36/36** / conflicted **23** (all blocked; leak **0**). **Next deferred:** Registry Implementation, then Field Review Validator Planning. File: `PROJECT_STATUS.md` only. **Push pending** separate approval. |
+| **Smart Recommendations — Developer-Only Field Review Registry Implementation** | Done (local) | **Inert developer-only module + standalone harness only; no product runtime consumer.** Files: `modules/smart-recommendations/developer-field-review-registry.js` (`0.1.0-sr-field-review-registry`; capability `explicit_developer_field_review_registry`), `tests/smart-rec-developer-field-review-registry.test.html`, `PROJECT_STATUS.md`. **Descriptor:** `developerOnly/authoritative/productConsumer/runtimeEligibilityAuthority/runtimeWired/persistence/network/automaticPopulation/catalogMutation/needsReviewMutation/aliasOwnership` exact frozen flags; `activation: explicit_call_only`; `productConsumers: none`; `realRecordCount: 0`; allowed fields `sun`/`water`. **Empty real registry** deeply frozen; no blueberry / 22 traits-group / 30 legacy / alias / real plant records. **Exports:** `getSmartRecDeveloperFieldReviewRegistryDescriptor`, `getEmptySmartRecDeveloperFieldReviewRegistry`, `buildFieldReviewValueFingerprint`, `validateFieldReviewRecord`, `validateAndBuildFieldReviewRegistry` (+ frozen field/status/source/reason constants). Stored statuses: `reviewed_supported`, `reviewed_conflicting`, `remains_ineligible`, `modeling_gap`, `identity_ambiguous`, `context_ambiguous`, `preference_tolerance_ambiguous`, `evidence_collected`. Source kinds: `seed_climateTraits`, `climate_group`, `specific_climate_metadata`, `canonical_catalog_record`, `evidence_derived_override`. Pure fingerprint + stale/mismatch validation; synthetic fixtures only. **Harness:** direct-URL-only; idle until Run; dynamic import after Run; **85/85**; fixtureCount **3**; verdict `SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS`; five consecutive local Reset→Run identical (`85/85#2475:…`); storageMutationCount **0**; networkCount **0**. **Product isolation:** `index.html` does not import/reference the module; normal app load requests neither module nor harness; SR/v1b/GOS/My Garden do not consume it; no new UI. **Non-regression:** merge **89/89**; schema **69/69**; identity recon **158** (unexpected **0**); identity resolver **108/108**; `git diff --check` clean. **Protected byte identity** vs `6d8c117` for all pre-existing tracked files except `PROJECT_STATUS.md`. **No** catalog/schema/`index.html`/eligibility/`needsReview`/value resolution/matcher/UI/GOS/v1b change. **Push pending** separate approval; **production verification required after push** (new static module/harness). **Next deferred:** Field Review Validator Planning. |
+| **Smart Recommendations — Developer-Only Field Review Registry Documentation Contract** | Done (pushed) | **Documentation-only.** Freezes inert developer-only registry placement (`modules/smart-recommendations/developer-field-review-registry.js` + standalone harness), descriptor/authority boundary, canonical sun/water keying, minimum record shape, stored-versus-computed statuses, evidence packet ID linkage, fingerprint/version semantics, source kinds, canonical-only (no group-owned) records, legacy empty population, synthetic fixtures only, stale invalidation, validator/inertness/test requirements, three-file implementation scope, and schema deferral — **without** creating a module, harness, schema, or real records at docs time. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy fail-closed **36/36/36** / conflicted **23** (all blocked; leak **0**). Pushed at `6d8c117`. **Implementation later completed locally** — see Registry Implementation row. |
 | **Smart Recommendations — Developer-Only Field Review Registry Planning** | Done (read-only) | **Read-only planning; no file modification.** Compared placement options; recommended separate inert JS module (GOS-API style, not Sidecar/`index.html`/catalog). Zero real records + synthetic fixtures. Verdict: **`READY_FOR_DEVELOPER_FIELD_REVIEW_REGISTRY_DOCUMENTATION_CONTRACT`**. |
 | **Smart Recommendations — Sun/Water Field-Specific Review-State Documentation Contract** | Done (pushed) | **Documentation-only.** Freezes conceptual per-field review authority (`fieldReview.sun` / `fieldReview.water` direction), evidence/review/eligibility separation, fail-closed derivation, migration Phases 1–4 (global `needsReview` umbrella in Phases 1–2), legacy **36/36/36** bridge (30 canonical + 6 aliases; not reviewed-supported), conflict-aware gating, alias/canonical rules, group blast-radius, evidence linkage, stale invalidation, validator/audit requirements, and sibling schema-placement direction — **without** authorizing schema, registry, validator, runtime, NR clearance, value resolution, matchers, or UI. Baseline preserved: browse **84** / eligible **84** / canonical **77** / aliases **7** / NR **48** / seed **32** / fail-closed **36/36/36** / pollution **0** / explicit **1** / traits-versus-group **22** / conflicted **23** (all NR; leak **0**). Pushed at `0c02f5d`. **Superseded next-gate:** Developer-Only Field Review Registry Documentation Contract. |
 | **Smart Recommendations — Sun/Water Field-Specific Review-State Planning** | Done (read-only) | **Read-only planning; no file modification.** Confirmed conflict safety depends on global `needsReview`; fail-closed audit does not encode per-field conflict/evidence/split review. Recommended B+C hybrid (nested per-field status). Migration umbrella B. Legacy 36 = grandfather coverage only. Verdict: **`READY_FOR_FIELD_REVIEW_DOCUMENTATION_CONTRACT`**. |
@@ -322,7 +323,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + **Source-Evidence Contract (pushed)** + **Field-Specific Review-State Planning** + **Field-Specific Review-State Documentation Contract (pushed `0c02f5d`)** + **Developer-Only Field Review Registry Planning** + **Developer-Only Field Review Registry Documentation Contract (docs; this checkpoint)**; catalog task **B Frozen (v1)**; matcher still blocked; next = Registry Implementation (separately gated; zero real records), then Field Review Validator Planning, then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + **Source-Evidence Contract (pushed)** + **Field-Specific Review-State Planning** + **Field-Specific Review-State Documentation Contract (pushed `0c02f5d`)** + **Developer-Only Field Review Registry Planning** + **Developer-Only Field Review Registry Documentation Contract (pushed `6d8c117`)** + **Developer-Only Field Review Registry Implementation (local; inert; zero real records)**; catalog task **B Frozen (v1)**; matcher still blocked; next = Field Review Validator Planning (separately gated), then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -339,7 +340,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, and **Developer-Only Field Review Registry Documentation Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; future registry starts with **zero real records**; **no** module/harness/schema/runtime/validator/cleanup authorization. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Registry Implementation (separately gated), then Field Review Validator Planning, then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`), and **Developer-Only Field Review Registry Implementation** (local; inert module + harness; `realRecordCount` **0**) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; registry has **zero real records**; module is **not** imported by `index.html` and is **not** a product consumer. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Field Review Validator Planning (separately gated), then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -4392,16 +4393,103 @@ Do **not** extend `plant-catalog.schema.json` for the developer-only proof.
 - Matchers and UI remain **blocked**
 - GOS remains **paused**
 
-### 22. Next two deferred checkpoints (not authorized now)
+### 22. Next two deferred checkpoints (not authorized at docs time)
 
-1. **Smart Recommendations — Developer-Only Field Review Registry Implementation** — smallest inert developer-only module with zero real records, synthetic fixtures, and standalone tests
-2. **Smart Recommendations — Field Review Validator Planning** — plan validation of registry records against canonical identities, conflicts, evidence references, and stale fingerprints
+1. **Smart Recommendations — Developer-Only Field Review Registry Implementation** — later completed locally (see Implementation section below)
+2. **Smart Recommendations — Field Review Validator Planning** — plan validation of registry records against canonical identities, conflicts, evidence references, and stale fingerprints (still deferred)
 
 Blueberry cleanup remains further deferred.
 
-### 23. Explicit non-claims
+### 23. Explicit non-claims (docs-time)
 
-No module, harness, schema, or registry records were created. No `needsReview` was cleared. No sun/water values were selected. No eligibility change is authorized. No files other than this documentation were changed.
+At documentation-contract time: no module, harness, schema, or registry records were created. No `needsReview` was cleared. No sun/water values were selected. No eligibility change is authorized. Docs-time file scope was `PROJECT_STATUS.md` only. Implementation later created the inert module + harness under a separate gated checkpoint.
+
+---
+
+# Smart Recommendations — Developer-Only Field Review Registry Implementation
+
+**Checkpoint type:** inert developer-only implementation proof.
+**Verdict identity (local):** `SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS`.
+**Parent commit:** `6d8c117cbd030d94ee587d04a17b5f8c4eee9d54` (Documentation Contract).
+
+### Paths
+
+| Role | Path |
+|------|------|
+| Module | `modules/smart-recommendations/developer-field-review-registry.js` |
+| Harness | `tests/smart-rec-developer-field-review-registry.test.html` |
+| Docs | `PROJECT_STATUS.md` |
+
+### Version / capability / authority
+
+| Key | Value |
+|-----|-------|
+| `registryVersion` | `0.1.0-sr-field-review-registry` |
+| `reviewContractVersion` | `0.1.0-sr-field-review-contract` |
+| Capability | `explicit_developer_field_review_registry` |
+| `developerOnly` | `true` |
+| `authoritative` | `false` |
+| `productConsumer` | `false` |
+| `runtimeEligibilityAuthority` | `false` |
+| `runtimeWired` | `false` |
+| `persistence` | `false` |
+| `network` | `false` |
+| `automaticPopulation` | `false` |
+| `catalogMutation` | `false` |
+| `needsReviewMutation` | `false` |
+| `aliasOwnership` | `false` |
+| `activation` | `explicit_call_only` |
+| `productConsumers` | `none` |
+| `realRecordCount` | `0` |
+| Allowed fields | `sun`, `water` |
+
+### Population / fixtures
+
+- Exported real registry is empty and deeply frozen.
+- No blueberry, traits-versus-group (**22**), legacy fail-closed (**30** canonical / **6** aliases), or alias-owned real records.
+- Synthetic fixture keys only (`syn-fixture-*` / `syn-alias-*`) supplied through harness validation context.
+- No automatic catalog/evidence/placeholder population.
+
+### Stored statuses / source kinds
+
+- Stored human-decision statuses: `reviewed_supported`, `reviewed_conflicting`, `remains_ineligible`, `modeling_gap`, `identity_ambiguous`, `context_ambiguous`, `preference_tolerance_ambiguous`, `evidence_collected`.
+- Computed-only (rejected if stored): `evidence_missing`, `conflict_unresolved`, `stale`, `fingerprint_mismatch`, `unsupported_token`.
+- Source kinds: `seed_climateTraits`, `climate_group`, `specific_climate_metadata`, `canonical_catalog_record`, `evidence_derived_override`.
+
+### Validation / fingerprint / stale
+
+- Deterministic canonical fingerprint from ordered normalized inputs (canonicalKey, field, reviewedValue, sourceKind, sorted sourceIds, sorted evidenceRefs, normalized contextScope, reviewContractVersion).
+- `reviewed_supported` requires reviewed value, fingerprint, evidenceRefs, sourceKind/sourceIds, contextScope, reviewVersion, reviewedAt, reason.
+- Alias-owned and unknown canonical keys fail closed; uniqueness on `canonicalKey + field`; sun/water independent.
+- Fingerprint mismatch / changed provenance reported stale/invalid; harness supplies synthetic current values only.
+- Pure helpers only — not a production product validator and not wired into runtime eligibility.
+
+### Harness results (local)
+
+| Metric | Result |
+|--------|--------|
+| Assertions | **85/85** |
+| Fixture count | **3** |
+| Verdict | `SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS` |
+| Five consecutive Reset→Run | identical **85/85**; fingerprint `85/85#2475:P:descriptor frozen\|P:developerOnly\|P:authoritative false\|P:productConsumer fals` |
+| Storage / network | **0** / **0** |
+| Idle before Run | module not requested; no fixture execution |
+| Reset | clears output/summary; restores idle |
+
+### Isolation / non-regression / byte identity
+
+- `index.html` does **not** import or reference the registry module.
+- Normal product load requests neither the module nor the harness; Smart Recommendations / Climate Suitability v1b / GOS / My Garden do not consume it; no new UI; no persistence change.
+- Merge harness `tests/smart-rec-climate-meta-merge.test.html`: **89/89**.
+- Schema harness `tests/growth-outcome-schema.test.html`: **69/69**.
+- Identity reconciliation `tests/plant-identity-reconciliation.test.html`: **158** (unexpected **0**).
+- Identity resolver `tests/plant-identity-resolver.test.html`: **108/108**.
+- `git diff --check` clean.
+- Protected byte identity vs `6d8c117` for all pre-existing tracked files except `PROJECT_STATUS.md` (new module/harness had no baseline blob).
+
+### Explicit non-claims
+
+No real field reviews exist. No reviewed-supported product data exists. Eligibility/`needsReview` unchanged. Conflicts unresolved. Validator planning not begun. Registry is non-authoritative and not product-wired. No push/deploy/production verification in this checkpoint (production verification required after push because new static artifacts are added).
 
 ---
 
@@ -4410,7 +4498,7 @@ No module, harness, schema, or registry records were created. No `needsReview` w
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — merge repair closed; conflict inventory complete (**23** conflicts, all NR); Source-Evidence + Field-Review docs closed (pushed); registry planning complete; **Developer-Only Field Review Registry Documentation Contract** done (docs; this checkpoint); **36/36/36** legacy only; registry starts with **zero real records**; next: Registry Implementation → Field Review Validator Planning → blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — merge repair closed; conflict inventory complete (**23** conflicts, all NR); Source-Evidence + Field-Review docs closed (pushed); registry docs pushed (`6d8c117`); **Developer-Only Field Review Registry Implementation** complete locally (inert; **85/85**; `realRecordCount` **0**); **36/36/36** legacy only; next: Field Review Validator Planning → blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -4519,7 +4607,7 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Smart Recommendations Developer-Only Field Review Registry Documentation Contract is complete locally** (`SR_DEVELOPER_FIELD_REVIEW_REGISTRY_DOCUMENTATION_CONTRACT_COMPLETE`) — inert developer-only registry placement, canonical sun/water keying, evidence references, fingerprints/stale invalidation, zero real records, and synthetic-fixtures-only population are frozen in docs. Field-Specific Review-State Documentation Contract remains closed (pushed); conflict inventory remains frozen (**23** conflicts; all NR; leak **0**); **36/36/36** remains legacy only; **no** module/harness/schema/runtime/validator/value resolution/`needsReview` clearance is authorized. GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push approval of this docs commit: **Smart Recommendations — Developer-Only Field Review Registry Implementation** — do **not** start automatically. Do **not** begin Field Review Validator Planning, blueberry cleanup, edit catalog/schema/`index.html`, clear needsReview, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
+**Smart Recommendations Developer-Only Field Review Registry Implementation is complete locally** (`SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS`) — inert module `modules/smart-recommendations/developer-field-review-registry.js` (`0.1.0-sr-field-review-registry` / `explicit_developer_field_review_registry`) + standalone harness `tests/smart-rec-developer-field-review-registry.test.html` (**85/85**; five identical local runs; `realRecordCount` **0**; synthetic fixtures only; zero product consumer; no `index.html` import). Documentation Contract remains closed (pushed `6d8c117`); conflict inventory remains frozen (**23** conflicts; all NR; leak **0**); **36/36/36** remains legacy only. **Push pending** separate approval; **production verification required after push** (new static module/harness). GOS-5G remains closed (`GOS_5G_PRODUCTION_VERIFIED`); **synthetic GOS expansion paused**. Next possible step after separate push/production-verification approval: **Smart Recommendations — Field Review Validator Planning** — do **not** start automatically. Do **not** add real review records, clear needsReview, edit catalog/schema/`index.html`, resolve botanical values, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
