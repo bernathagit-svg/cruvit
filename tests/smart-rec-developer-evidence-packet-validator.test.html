@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Smart Recommendations Developer Evidence Packet Validator</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Evidence Packet Validator</h1>
+  <p class="sub">
+    Developer-only. Proves the inert evidence-packet validator with
+    <strong>synthetic fixtures only</strong>. Modules load only after explicit Run.
+    No index.html / GOS / v1b / catalog / persistence / real plant approvals.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Validator and registry modules not requested. Synthetic fixtures execute only after
+    <strong>Run all validator checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all validator checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  var runActive = false;
+  var storageMutationCount = 0;
+  var networkCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+  var consoleErrorCount = 0;
+  var unhandledRejectionCount = 0;
+  var fixtureCount = 0;
+
+  window.__SR_EVIDENCE_PACKET_VALIDATOR_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false
+  });
+
+  window.addEventListener('error', function () { consoleErrorCount++; });
+  window.addEventListener('unhandledrejection', function () { unhandledRejectionCount++; });
+
+  function $(id) { return document.getElementById(id); }
+
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+
+  function setStatus(text) {
+    $('statusLine').textContent = text;
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    networkCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      networkCount++;
+      return Promise.reject(new Error('network_disabled_in_evidence_packet_validator_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      networkCount++;
+      throw new Error('xhr_disabled_in_evidence_packet_validator_harness');
+    };
+    window.__SR_EVIDENCE_PACKET_VALIDATOR_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_EVIDENCE_PACKET_VALIDATOR_RESTORE === 'function') {
+      window.__SR_EVIDENCE_PACKET_VALIDATOR_RESTORE();
+      window.__SR_EVIDENCE_PACKET_VALIDATOR_RESTORE = null;
+    }
+  }
+
+  function hasCode(report, code) {
+    return !!(report && report.findingsByCode && report.findingsByCode[code] && report.findingsByCode[code].length);
+  }
+
+  function hasDetail(report, code, detailPart) {
+    if (!hasCode(report, code)) return false;
+    var list = report.findingsByCode[code];
+    for (var i = 0; i < list.length; i++) {
+      if (String(list[i].detail || '').indexOf(detailPart) >= 0) return true;
+    }
+    return false;
+  }
+
+  function outdoorGeneral() {
+    return {
+      setting: 'outdoor',
+      planting: 'ground',
+      maturity: 'mature',
+      objective: 'general'
+    };
+  }
+
+  function basePacket(extra) {
+    return Object.assign({
+      evidenceId: 'syn-ev-001',
+      canonicalKey: 'syn-fixture-alpha',
+      scientificIdentity: 'Syntheticus alpha',
+      field: 'sun',
+      proposedValue: 'full_sun',
+      claimType: 'preference',
+      authorityTier: 'A',
+      sourceType: 'university_extension',
+      sourceTitle: 'Synthetic Extension Bulletin',
+      publisher: 'Synthetic Extension Service',
+      sourceReference: 'syn-ref-ext-001',
+      sourceIdentity: 'syn-ref-ext-001',
+      verifiedAt: '2026-07-27',
+      publicationDate: '2024-01-15',
+      sourceUpdateDate: '2024-06-01',
+      shortExcerpt: 'Synthetic short excerpt for review only.',
+      reviewerSummary: 'Synthetic reviewer summary, not source text.',
+      normalizedClaim: 'prefers full sun outdoors when mature',
+      contextScope: outdoorGeneral(),
+      packetStatus: 'collected',
+      packetVersion: '1',
+      packetContractVersion: null,
+      sourceFingerprint: null,
+      contentFingerprint: null,
+      packetNeedsReview: false,
+      activeSupport: false,
+      soleAuthority: false
+    }, extra || {});
+  }
+
+  function withFingerprints(reg, packet) {
+    var p = clone(packet);
+    p.packetContractVersion = p.packetContractVersion || reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION;
+    var src = reg.buildEvidencePacketSourceFingerprint({
+      sourceType: p.sourceType,
+      sourceTitle: p.sourceTitle,
+      publisher: p.publisher,
+      sourceReference: p.sourceReference,
+      sourceIdentity: p.sourceIdentity || p.sourceReference
+    });
+    var content = reg.buildEvidencePacketContentFingerprint({
+      evidenceId: p.evidenceId,
+      canonicalKey: p.canonicalKey,
+      field: p.field,
+      normalizedClaim: p.normalizedClaim,
+      proposedValue: p.proposedValue,
+      authorityTier: p.authorityTier,
+      sourceIdentity: p.sourceIdentity || p.sourceReference,
+      sourceReference: p.sourceReference,
+      contextScope: p.contextScope,
+      claimType: p.claimType,
+      packetContractVersion: p.packetContractVersion
+    });
+    p.sourceFingerprint = src.fingerprint;
+    p.contentFingerprint = content.fingerprint;
+    return p;
+  }
+
+  function baseInput(reg, extra) {
+    return Object.assign({
+      registry: reg.getEmptySmartRecDeveloperEvidencePacketRegistry(),
+      registryDescriptor: reg.getSmartRecDeveloperEvidencePacketRegistryDescriptor(),
+      registryVersion: reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION,
+      packetContractVersion: reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+      knownCanonicalKeys: ['syn-fixture-alpha', 'syn-fixture-beta', 'syn-fixture-gamma'],
+      aliasToCanonicalMap: { 'syn-alias-alpha': 'syn-fixture-alpha' },
+      knownAliasKeys: ['syn-alias-alpha'],
+      allowedFields: ['sun', 'water'],
+      allowedClaimTypes: reg.SR_EVIDENCE_CLAIM_TYPES.slice(),
+      allowedAuthorityTiers: reg.SR_EVIDENCE_AUTHORITY_TIERS.slice(),
+      allowedPacketStatuses: reg.SR_EVIDENCE_PACKET_STATUSES.slice(),
+      allowedSourceTypes: reg.SR_EVIDENCE_SOURCE_TYPES.slice(),
+      candidatePackets: [],
+      syntheticFixtureOnly: true,
+      copyrightExcerptPolicy: { maxShortExcerptChars: 280 },
+      currentSourceSnapshot: { bySourceIdentity: {} },
+      lifecycleSnapshot: { links: [] },
+      fieldReviewReferenceSnapshot: { decisions: [] }
+    }, extra || {});
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    renderRows();
+    var names = results.map(function (r) { return (r.pass ? 'P:' : 'F:') + r.name; }).join('|');
+    lastSummary = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      verdict: verdict,
+      fixtureCount: fixtureCount,
+      storageMutationCount: storageMutationCount,
+      networkCount: networkCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledRejectionCount,
+      moduleLoaded: moduleLoaded,
+      summaryFingerprint: window.__SR_EVIDENCE_PACKET_VALIDATOR_LAST_REPORT_FP || null,
+      assertionFingerprint: String(passed) + '/' + results.length + '#' + names.length + ':' + names.slice(0, 120)
+    });
+    window.__SR_EVIDENCE_PACKET_VALIDATOR_SUMMARY = lastSummary;
+    setStatus('State: complete · moduleLoaded=1 · storageMutationCount=' + storageMutationCount +
+      ' · networkCount=' + networkCount + ' · fixtureCount=' + fixtureCount);
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    fixtureCount = 0;
+    consoleErrorCount = 0;
+    unhandledRejectionCount = 0;
+    $('btn-run-all').disabled = true;
+    $('banner').textContent = 'Running synthetic evidence packet validator checks…';
+    setStatus('State: running…');
+    installGuards();
+    var lsBefore = Object.keys(localStorage || {}).slice().sort().join(',');
+    var ssBefore = Object.keys(sessionStorage || {}).slice().sort().join(',');
+    var cookieBefore = String(document.cookie || '');
+
+    try {
+      var reg = await import('../modules/smart-recommendations/developer-evidence-packet-registry.js');
+      var val = await import('../modules/smart-recommendations/developer-evidence-packet-validator.js');
+      moduleLoaded = true;
+      window.__SR_EVIDENCE_PACKET_VALIDATOR_BOOT = Object.freeze({ inert: false, moduleLoaded: true });
+
+      var desc = val.getSmartRecDeveloperEvidencePacketValidatorDescriptor();
+      expect('descriptor frozen', isFrozenDeep(desc), '');
+      expect('validatorVersion', desc.validatorVersion === val.SR_EVIDENCE_PACKET_VALIDATOR_VERSION, desc.validatorVersion);
+      expect('capability', desc.capability === val.SR_EVIDENCE_PACKET_VALIDATOR_CAPABILITY, desc.capability);
+      expect('supportedRegistryVersion', desc.supportedRegistryVersion === reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION, '');
+      expect('supportedPacketContractVersion', desc.supportedPacketContractVersion === reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION, '');
+      expect('developerOnly', desc.developerOnly === true, '');
+      expect('authoritative false', desc.authoritative === false, '');
+      expect('productConsumer false', desc.productConsumer === false, '');
+      expect('runtimeEligibilityAuthority false', desc.runtimeEligibilityAuthority === false, '');
+      expect('packetMutation false', desc.packetMutation === false, '');
+      expect('catalogMutation false', desc.catalogMutation === false, '');
+      expect('fieldReviewMutation false', desc.fieldReviewMutation === false, '');
+      expect('needsReviewMutation false', desc.needsReviewMutation === false, '');
+      expect('persistence false', desc.persistence === false, '');
+      expect('network false', desc.network === false, '');
+      expect('automaticExecution false', desc.automaticExecution === false, '');
+      expect('activation explicit_call_only', desc.activation === 'explicit_call_only', desc.activation);
+      expect('productConsumers none', desc.productConsumers === 'none', '');
+      expect('severities three', desc.severities.join(',') === 'error,warning,info', '');
+      expect('finding codes include excessive_copied_text', desc.findingCodes.indexOf('excessive_copied_text') >= 0, '');
+      expect('finding codes include invalid_dates', desc.findingCodes.indexOf('invalid_dates') >= 0, '');
+      expect('finding codes include packet_field_review_mismatch', desc.findingCodes.indexOf('packet_field_review_mismatch') >= 0, '');
+      expect('real registry empty', reg.getEmptySmartRecDeveloperEvidencePacketRegistry().packets.length === 0, '');
+      expect('realPacketCount 0', reg.getSmartRecDeveloperEvidencePacketRegistryDescriptor().realPacketCount === 0, '');
+
+      // --- Valid fixtures ---
+      var emptyReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: []
+      }));
+      fixtureCount++;
+      expect('empty registry accepted', emptyReport.valid === true && hasCode(emptyReport, 'empty_registry_accepted'), String(emptyReport.errorCount));
+      expect('empty report frozen', isFrozenDeep(emptyReport), '');
+      expect('synthetic_fixture_only info', hasCode(emptyReport, 'synthetic_fixture_only'), '');
+
+      var tierA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-tier-a-sun',
+        field: 'sun',
+        proposedValue: 'full_sun',
+        authorityTier: 'A',
+        sourceReference: 'syn-ref-tier-a',
+        sourceIdentity: 'syn-ref-tier-a',
+        normalizedClaim: 'prefers full sun outdoors mature',
+        shortExcerpt: 'Synthetic Tier A sun excerpt for review only.'
+      }));
+      var tierABefore = clone(tierA);
+      var tierAReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA]
+      }));
+      fixtureCount++;
+      expect('valid Tier A sun packet', tierAReport.valid === true, JSON.stringify(tierAReport.findings));
+      expect('Tier A packet not mutated', JSON.stringify(tierA) === JSON.stringify(tierABefore), '');
+
+      var tierB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-tier-b-water',
+        field: 'water',
+        proposedValue: 'medium',
+        authorityTier: 'B',
+        soleAuthority: true,
+        sourceType: 'professional_grower_or_nursery',
+        sourceTitle: 'Synthetic Grower Sheet',
+        publisher: 'Synthetic Nursery Co',
+        sourceReference: 'syn-ref-tier-b',
+        sourceIdentity: 'syn-ref-tier-b',
+        normalizedClaim: 'prefers medium water outdoors mature',
+        shortExcerpt: 'Synthetic Tier B water excerpt for review only.'
+      }));
+      var tierBReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierB]
+      }));
+      fixtureCount++;
+      expect('valid Tier B water with corroboration warning', tierBReport.valid === true &&
+        hasCode(tierBReport, 'authority_corroboration_recommended'), JSON.stringify(tierBReport.findings));
+
+      var sunWaterReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA, tierB]
+      }));
+      fixtureCount++;
+      expect('independent sun+water same canonical', sunWaterReport.valid === true && sunWaterReport.packetCount === 2,
+        String(sunWaterReport.packetCount));
+
+      var draftPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-draft',
+        packetStatus: 'draft',
+        sourceReference: 'syn-ref-draft',
+        sourceIdentity: 'syn-ref-draft',
+        normalizedClaim: 'draft claim full sun',
+        publicationDate: undefined,
+        shortExcerpt: undefined,
+        sourceUpdateDate: undefined
+      }));
+      delete draftPkt.publicationDate;
+      delete draftPkt.shortExcerpt;
+      delete draftPkt.sourceUpdateDate;
+      draftPkt = withFingerprints(reg, draftPkt);
+      var draftReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [draftPkt]
+      }));
+      fixtureCount++;
+      expect('valid draft packet', draftReport.valid === true, JSON.stringify(draftReport.findings));
+
+      var collectedPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-collected',
+        packetStatus: 'collected',
+        sourceReference: 'syn-ref-collected',
+        sourceIdentity: 'syn-ref-collected',
+        normalizedClaim: 'collected claim full sun'
+      }));
+      var collectedReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [collectedPkt]
+      }));
+      fixtureCount++;
+      expect('valid collected packet', collectedReport.valid === true, JSON.stringify(collectedReport.findings));
+
+      var broadPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-broad',
+        scientificIdentity: null,
+        identityScope: 'broad',
+        sourceReference: 'syn-ref-broad',
+        sourceIdentity: 'syn-ref-broad',
+        normalizedClaim: 'broad identity sun preference'
+      }));
+      delete broadPkt.scientificIdentity;
+      broadPkt = withFingerprints(reg, broadPkt);
+      var broadReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [broadPkt]
+      }));
+      fixtureCount++;
+      expect('broad identity warning', broadReport.valid === true && hasCode(broadReport, 'broad_identity_scope'), '');
+
+      var nrPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-nr',
+        packetNeedsReview: true,
+        sourceReference: 'syn-ref-nr',
+        sourceIdentity: 'syn-ref-nr',
+        normalizedClaim: 'needs review sun preference'
+      }));
+      var nrReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [nrPkt]
+      }));
+      fixtureCount++;
+      expect('packetNeedsReview warning', nrReport.valid === true && hasCode(nrReport, 'packet_needs_review'), '');
+
+      var frCompat = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-fr-ok',
+        sourceReference: 'syn-ref-fr-ok',
+        sourceIdentity: 'syn-ref-fr-ok',
+        normalizedClaim: 'fr compatible sun preference'
+      }));
+      var frOkReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [frCompat],
+        fieldReviewReferenceSnapshot: {
+          decisions: [{
+            evidenceRefs: ['syn-ev-fr-ok'],
+            canonicalKey: 'syn-fixture-alpha',
+            field: 'sun',
+            contextScope: outdoorGeneral(),
+            contentFingerprint: frCompat.contentFingerprint,
+            reviewVersion: '1'
+          }],
+          supportedReviewVersions: ['1']
+        }
+      }));
+      fixtureCount++;
+      expect('optional Field Review-compatible reference', frOkReport.valid === true &&
+        !hasCode(frOkReport, 'packet_field_review_mismatch'), JSON.stringify(frOkReport.findings));
+
+      var det1 = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA]
+      }));
+      var det2 = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA]
+      }));
+      fixtureCount++;
+      expect('deterministic fingerprints reused', !!tierA.sourceFingerprint && !!tierA.contentFingerprint, '');
+      expect('deterministic repeated validator result', det1.summaryFingerprint === det2.summaryFingerprint &&
+        det1.valid === det2.valid, det1.summaryFingerprint);
+      window.__SR_EVIDENCE_PACKET_VALIDATOR_LAST_REPORT_FP = det1.summaryFingerprint;
+
+      // --- Invalid fixtures ---
+      function expectInvalid(name, packetExtra, code, inputExtra) {
+        var uniq = 'syn-ev-bad-' + name.replace(/\s+/g, '-').slice(0, 40);
+        var pkt = withFingerprints(reg, basePacket(Object.assign({
+          evidenceId: uniq,
+          sourceReference: 'syn-ref-bad-' + name.replace(/\s+/g, '-').slice(0, 40),
+          sourceIdentity: 'syn-ref-bad-' + name.replace(/\s+/g, '-').slice(0, 40),
+          normalizedClaim: 'invalid fixture claim ' + name,
+          shortExcerpt: 'Synthetic excerpt for ' + name + ' only.'
+        }, packetExtra || {})));
+        if (packetExtra && packetExtra._noFp) {
+          pkt.sourceFingerprint = null;
+          pkt.contentFingerprint = null;
+        }
+        if (packetExtra && packetExtra._badSrcFp) pkt.sourceFingerprint = 'wrong-src-fp';
+        if (packetExtra && packetExtra._badContentFp) pkt.contentFingerprint = 'wrong-content-fp';
+        if (packetExtra && packetExtra._skipFp) {
+          pkt = clone(basePacket(Object.assign({
+            evidenceId: 'syn-ev-bad-' + name.replace(/\s+/g, '-').slice(0, 40),
+            sourceReference: 'syn-ref-bad-' + name.replace(/\s+/g, '-').slice(0, 40),
+            sourceIdentity: 'syn-ref-bad-' + name.replace(/\s+/g, '-').slice(0, 40),
+            normalizedClaim: 'invalid fixture claim ' + name,
+            packetContractVersion: reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION
+          }, packetExtra)));
+          delete pkt._skipFp;
+          delete pkt._noFp;
+          delete pkt._badSrcFp;
+          delete pkt._badContentFp;
+        }
+        delete pkt._noFp;
+        delete pkt._badSrcFp;
+        delete pkt._badContentFp;
+        delete pkt._skipFp;
+        var report = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, Object.assign({
+          candidatePackets: [pkt]
+        }, inputExtra || {})));
+        fixtureCount++;
+        expect(name, !report.valid && hasCode(report, code), code + ' · ' + JSON.stringify(report.findings.slice(0, 3)));
+        return report;
+      }
+
+      var dupA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-dup-id',
+        sourceReference: 'syn-ref-dup-a',
+        sourceIdentity: 'syn-ref-dup-a',
+        normalizedClaim: 'dup id claim a',
+        shortExcerpt: 'Dup id excerpt A.'
+      }));
+      var dupB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-dup-id',
+        sourceReference: 'syn-ref-dup-b',
+        sourceIdentity: 'syn-ref-dup-b',
+        normalizedClaim: 'dup id claim b',
+        shortExcerpt: 'Dup id excerpt B.'
+      }));
+      var dupIdReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [dupA, dupB]
+      }));
+      fixtureCount++;
+      expect('duplicate evidenceId', !dupIdReport.valid && hasCode(dupIdReport, 'duplicate_evidence_id'), '');
+
+      var semA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-sem-a',
+        sourceReference: 'syn-ref-sem-same',
+        sourceIdentity: 'syn-ref-sem-same',
+        normalizedClaim: 'identical semantic claim',
+        shortExcerpt: 'Semantic excerpt A.'
+      }));
+      var semB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-sem-b',
+        sourceReference: 'syn-ref-sem-same',
+        sourceIdentity: 'syn-ref-sem-same',
+        normalizedClaim: 'identical semantic claim',
+        shortExcerpt: 'Semantic excerpt B.'
+      }));
+      var semReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [semA, semB]
+      }));
+      fixtureCount++;
+      expect('semantic duplicate', !semReport.valid && hasCode(semReport, 'semantic_duplicate_packet'), '');
+
+      expectInvalid('alias-owned packet', { canonicalKey: 'syn-alias-alpha' }, 'alias_owned_packet');
+      expectInvalid('unknown canonical key', { canonicalKey: 'syn-unknown-zzz' }, 'unknown_canonical_key');
+      expectInvalid('unsupported field', { field: 'soil', proposedValue: 'full_sun' }, 'unsupported_field');
+      expectInvalid('missing scientific identity', { scientificIdentity: '', identityScope: 'species' }, 'missing_scientific_identity');
+      expectInvalid('unsupported claim type', { claimType: 'guesswork' }, 'unsupported_claim_type');
+      expectInvalid('unsupported authority tier', { authorityTier: 'Z' }, 'unsupported_authority_tier');
+      expectInvalid('unsupported source type', { sourceType: 'twitter_rumor' }, 'unsupported_source_type');
+      expectInvalid('missing source identity', {
+        sourceIdentity: '',
+        sourceReference: '',
+        _skipFp: true,
+        sourceFingerprint: 'x',
+        contentFingerprint: 'y'
+      }, 'missing_source_reference');
+      expectInvalid('missing source reference', {
+        sourceReference: '',
+        sourceIdentity: 'only-identity',
+        _skipFp: true,
+        sourceFingerprint: 'x',
+        contentFingerprint: 'y'
+      }, 'missing_source_reference');
+      expectInvalid('missing normalized claim', { normalizedClaim: '' }, 'missing_normalized_claim');
+      expectInvalid('missing free-text context', { contextScope: 'just some prose' }, 'missing_context_scope');
+      expectInvalid('unsupported packet status', { packetStatus: 'approved' }, 'unsupported_packet_status');
+      expectInvalid('packet contract mismatch', { packetContractVersion: '9.9.9-wrong' }, 'packet_contract_version_mismatch');
+      expectInvalid('missing source fingerprint', { _noFp: true }, 'source_fingerprint_missing');
+      expectInvalid('source fingerprint mismatch', { _badSrcFp: true }, 'source_fingerprint_mismatch');
+      expectInvalid('missing content fingerprint', {
+        _skipFp: true,
+        sourceFingerprint: (function () {
+          var tmp = withFingerprints(reg, basePacket({
+            evidenceId: 'syn-ev-tmp-src',
+            sourceReference: 'syn-ref-tmp-src',
+            sourceIdentity: 'syn-ref-tmp-src',
+            normalizedClaim: 'tmp'
+          }));
+          return tmp.sourceFingerprint;
+        })(),
+        contentFingerprint: null,
+        evidenceId: 'syn-ev-bad-missing-content-fingerprint',
+        sourceReference: 'syn-ref-bad-missing-content-fingerprint',
+        sourceIdentity: 'syn-ref-bad-missing-content-fingerprint',
+        normalizedClaim: 'missing content fp claim'
+      }, 'content_fingerprint_missing');
+      expectInvalid('content fingerprint mismatch', { _badContentFp: true }, 'content_fingerprint_mismatch');
+      expectInvalid('unsupported proposed value', { proposedValue: 'dappled_shade' }, 'unsupported_proposed_value');
+      expectInvalid('AI-only authority', { sourceType: 'ai_generated_summary' }, 'ai_only_authority');
+      expectInvalid('Tier C as sole authority', { authorityTier: 'C', soleAuthority: true }, 'tier_c_as_sole_authority');
+      expectInvalid('withdrawn active packet', { packetStatus: 'withdrawn', activeSupport: true }, 'withdrawn_packet_active');
+      expectInvalid('rejected active packet', { packetStatus: 'rejected', activeSupport: true }, 'rejected_packet_active');
+      expectInvalid('superseded active packet', { packetStatus: 'superseded', activeSupport: true, supersededBy: 'syn-ev-other' }, 'superseded_packet_active');
+
+      var overA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-over-a',
+        field: 'sun',
+        proposedValue: 'full_sun',
+        packetStatus: 'collected',
+        activeSupport: true,
+        sourceReference: 'syn-ref-over-a',
+        sourceIdentity: 'syn-ref-over-a',
+        normalizedClaim: 'overlap claim a full sun',
+        shortExcerpt: 'Overlap excerpt A.'
+      }));
+      var overB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-over-b',
+        field: 'sun',
+        proposedValue: 'part_shade',
+        packetStatus: 'collected',
+        activeSupport: true,
+        sourceReference: 'syn-ref-over-b',
+        sourceIdentity: 'syn-ref-over-b',
+        normalizedClaim: 'overlap claim b part shade',
+        shortExcerpt: 'Overlap excerpt B.'
+      }));
+      var overReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [overA, overB]
+      }));
+      fixtureCount++;
+      expect('overlapping active conflict', !overReport.valid && hasCode(overReport, 'overlapping_active_conflict'), '');
+
+      var aliasCanonA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-ac-a',
+        canonicalKey: 'syn-fixture-alpha',
+        sourceReference: 'syn-ref-ac',
+        sourceIdentity: 'syn-ref-ac',
+        normalizedClaim: 'alias canonical dup claim',
+        shortExcerpt: 'Alias canon excerpt A.'
+      }));
+      var aliasCanonB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-ac-b',
+        canonicalKey: 'syn-alias-alpha',
+        sourceReference: 'syn-ref-ac',
+        sourceIdentity: 'syn-ref-ac',
+        normalizedClaim: 'alias canonical dup claim',
+        shortExcerpt: 'Alias canon excerpt B.'
+      }));
+      var acReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [aliasCanonA, aliasCanonB]
+      }));
+      fixtureCount++;
+      expect('alias/canonical duplicate', !acReport.valid &&
+        (hasCode(acReport, 'alias_canonical_duplicate') || hasCode(acReport, 'alias_owned_packet')), '');
+
+      expectInvalid('multi-field packet', { fields: ['sun', 'water'], field: ['sun', 'water'] }, 'multi_field_packet');
+      expectInvalid('unstable fingerprint', { _badSrcFp: true }, 'unstable_fingerprint');
+
+      var longExcerpt = 'X'.repeat(300);
+      expectInvalid('excessive copied text', { shortExcerpt: longExcerpt }, 'excessive_copied_text');
+      expectInvalid('invalid dates', { publicationDate: 'not-a-date' }, 'invalid_dates');
+
+      var frBad = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-fr-bad',
+        sourceReference: 'syn-ref-fr-bad',
+        sourceIdentity: 'syn-ref-fr-bad',
+        normalizedClaim: 'fr mismatch claim'
+      }));
+      var frBadReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [frBad],
+        fieldReviewReferenceSnapshot: {
+          decisions: [{
+            evidenceRefs: ['syn-ev-fr-bad'],
+            canonicalKey: 'syn-fixture-beta',
+            field: 'water',
+            contextScope: outdoorGeneral(),
+            contentFingerprint: 'wrong-fp'
+          }]
+        }
+      }));
+      fixtureCount++;
+      expect('Field Review reference mismatch', !frBadReport.valid && hasCode(frBadReport, 'packet_field_review_mismatch'), '');
+
+      var mutReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA],
+        mutationAttempt: true
+      }));
+      fixtureCount++;
+      expect('mutation attempt', !mutReport.valid && hasCode(mutReport, 'registry_or_input_mutation'), '');
+
+      var missSuper = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-miss-super',
+        supersedes: 'syn-ev-does-not-exist',
+        sourceReference: 'syn-ref-miss-super',
+        sourceIdentity: 'syn-ref-miss-super',
+        normalizedClaim: 'missing supersession claim'
+      }));
+      var missSuperReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [missSuper]
+      }));
+      fixtureCount++;
+      expect('missing supersession target', !missSuperReport.valid &&
+        hasDetail(missSuperReport, 'unsupported_packet_status', 'missing_supersedes_target'),
+        JSON.stringify(missSuperReport.findings));
+
+      var cycA = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-cyc-a',
+        supersedes: 'syn-ev-cyc-b',
+        sourceReference: 'syn-ref-cyc-a',
+        sourceIdentity: 'syn-ref-cyc-a',
+        normalizedClaim: 'cycle claim a',
+        shortExcerpt: 'Cycle excerpt A.'
+      }));
+      var cycB = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-cyc-b',
+        supersedes: 'syn-ev-cyc-a',
+        sourceReference: 'syn-ref-cyc-b',
+        sourceIdentity: 'syn-ref-cyc-b',
+        normalizedClaim: 'cycle claim b',
+        shortExcerpt: 'Cycle excerpt B.'
+      }));
+      var cycReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [cycA, cycB]
+      }));
+      fixtureCount++;
+      expect('supersession cycle', !cycReport.valid &&
+        hasDetail(cycReport, 'unsupported_packet_status', 'supersession_cycle'),
+        JSON.stringify(cycReport.findings));
+
+      var withdrawnSrcPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-wd-src',
+        packetStatus: 'collected',
+        activeSupport: true,
+        sourceReference: 'syn-ref-withdrawn-src',
+        sourceIdentity: 'syn-ref-withdrawn-src',
+        normalizedClaim: 'withdrawn source claim'
+      }));
+      var wdSrcReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [withdrawnSrcPkt],
+        currentSourceSnapshot: {
+          bySourceIdentity: {
+            'syn-ref-withdrawn-src': { status: 'withdrawn' }
+          }
+        }
+      }));
+      fixtureCount++;
+      expect('active packet references withdrawn source', !wdSrcReport.valid &&
+        hasCode(wdSrcReport, 'withdrawn_packet_active'), '');
+
+      var staleFrPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-stale-fr',
+        packetStatus: 'stale',
+        sourceReference: 'syn-ref-stale-fr',
+        sourceIdentity: 'syn-ref-stale-fr',
+        normalizedClaim: 'stale fr support claim'
+      }));
+      var staleFrReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [staleFrPkt],
+        fieldReviewReferenceSnapshot: {
+          decisions: [{
+            evidenceRefs: ['syn-ev-stale-fr'],
+            canonicalKey: 'syn-fixture-alpha',
+            field: 'sun',
+            contextScope: outdoorGeneral(),
+            contentFingerprint: staleFrPkt.contentFingerprint
+          }]
+        }
+      }));
+      fixtureCount++;
+      expect('stale packet Field Review reference', !staleFrReport.valid &&
+        hasDetail(staleFrReport, 'packet_field_review_mismatch', 'stale_packet_supports_field_review'), '');
+
+      // Purity / isolation
+      var purityPackets = [clone(tierA)];
+      var puritySnap = JSON.stringify(purityPackets);
+      var purityInput = baseInput(reg, { candidatePackets: purityPackets });
+      var purityInputSnap = JSON.stringify(purityInput);
+      var purityReport = val.validateSmartRecDeveloperEvidencePacketRegistry(purityInput);
+      expect('inputs not mutated', JSON.stringify(purityPackets) === puritySnap &&
+        JSON.stringify(purityInput) === purityInputSnap, '');
+      expect('report frozen', isFrozenDeep(purityReport), '');
+      expect('findings frozen', isFrozenDeep(purityReport.findings), '');
+      expect('valid iff errorCount 0', purityReport.valid === (purityReport.errorCount === 0), '');
+      expect('storage zero', storageMutationCount === 0, String(storageMutationCount));
+      expect('network zero', networkCount === 0, String(networkCount));
+
+      var lsAfter = Object.keys(localStorage || {}).slice().sort().join(',');
+      var ssAfter = Object.keys(sessionStorage || {}).slice().sort().join(',');
+      var cookieAfter = String(document.cookie || '');
+      expect('localStorage unchanged', lsBefore === lsAfter, '');
+      expect('sessionStorage unchanged', ssBefore === ssAfter, '');
+      expect('cookies unchanged', cookieBefore === cookieAfter, '');
+      expect('console errors zero', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections zero', unhandledRejectionCount === 0, String(unhandledRejectionCount));
+
+      var failed = results.filter(function (r) { return !r.pass; }).length;
+      finishSummary(failed ? 'SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_FAIL' : 'SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS');
+    } catch (err) {
+      expect('harness execution', false, String(err && err.stack || err));
+      finishSummary('SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_FAIL');
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    results = [];
+    fixtureCount = 0;
+    moduleLoaded = false;
+    lastSummary = null;
+    window.__SR_EVIDENCE_PACKET_VALIDATOR_SUMMARY = null;
+    window.__SR_EVIDENCE_PACKET_VALIDATOR_LAST_REPORT_FP = null;
+    window.__SR_EVIDENCE_PACKET_VALIDATOR_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false
+    });
+    $('rows').innerHTML = '';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('banner').textContent = 'Idle. Validator and registry modules not requested. Synthetic fixtures execute only after Run all validator checks.';
+    setStatus('State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>
