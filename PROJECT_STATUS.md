@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Field Review Registry/Validator closed; Evidence Packet Registry Implementation pushed (`a3b35ca`) and production verified (`SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`); Evidence Packet Validator Planning is next (not begun); matcher still blocked**
+Status: **Active — Field Review Registry/Validator closed; Evidence Packet Registry closed and production verified (`SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`); Evidence Packet Validator Planning complete; Evidence Packet Validator Documentation Contract is the current checkpoint; Evidence Packet Validator implementation remains separately gated; matcher still blocked**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Source-Evidence Contract** (pushed) → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`) → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`) → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry is developer-only/inert/non-authoritative with empty real registry; **no** product runtime consumer, catalog/`needsReview`/eligibility change, cleanup, matcher, or UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Source-Evidence Contract** (pushed) → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`) → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`) → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → **Evidence Packet Validator Planning** (complete; `READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`) → **Evidence Packet Validator Documentation Contract** (this checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry remains empty, developer-only/inert/non-authoritative; **no** schema or product authority; **no** product runtime consumer, catalog/`needsReview`/eligibility change, blueberry cleanup, matcher, or UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Evidence Packet Registry production verified; Evidence Packet Validator Planning next; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Evidence Packet Registry closed/empty/non-authoritative; Evidence Packet Validator Documentation Contract current; Evidence Packet Validator implementation separately gated; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; pushed `6d8c117`)** → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → Evidence Packet Validator Planning (next, deferred) → blueberry explicit cleanup planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; pushed `6d8c117`)** → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → **Evidence Packet Validator Planning** (complete) → **Evidence Packet Validator Documentation Contract** (current docs checkpoint) → Evidence Packet Validator Implementation (separately gated) → Blueberry Field-Cleanup Planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,9 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Evidence Packet Registry production verification** | Done (local docs) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime change; no manual deploy; no Netlify setting change; no real packets.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`a3b35ca07c76f294f45a3bc8aabd7e8ac318b1d1`**. **Module** `/modules/smart-recommendations/developer-evidence-packet-registry.js` HTTP **200** `application/javascript` (LF-normalized content matches committed file; version `0.1.0-sr-evidence-packet-registry`; capability `explicit_developer_evidence_packet_registry`; `realPacketCount: 0`). **Harness** `/tests/smart-rec-developer-evidence-packet-registry.test.html` HTTP **200** `text/html` (LF-normalized match; contains `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS`, Run/Reset). **Normal app isolation (before):** home loads; **zero** requests for evidence registry module/harness; no evidence globals/UI; no GOS attributable to this work; `evaluateClimateSuitabilityV1` present; no evidence/field-review storage keys. **Initial harness inertness:** `__SR_EVIDENCE_PACKET_BOOT.inert=true`; moduleLoaded false; summary absent; **0** assertion rows; idle status; registry module not requested before Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **84/84** / `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS` / fixtureCount **37**; identical summaryFingerprint `0.1.0-sr-evidence-packet-registry\|0.1.0-sr-evidence-packet-contract\|2\|2\|0\|0\|1\|info:synthetic_fixture_only::::::`; storageMutationCount **0**; networkCount **0** (API); no console error/unhandled rejection; descriptor authority flags exact and frozen; empty real registry; synthetic-only fixtures; authority/claim/context/copyright/fingerprint/lifecycle/duplicate assertions pass. **After:** fresh home — zero automatic evidence registry/harness/GOS load; no retained harness state; v1b still product path; SR/My Garden unchanged; no filter UI; legacy **36/36/36** and **23** conflicts remain blocked; no field-specific product eligibility. **Verdict:** `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`. Docs push pending. **Next deferred:** Evidence Packet Validator Planning (not begun). |
+| **Smart Recommendations — Evidence Packet Validator Documentation Contract** | Done (local docs) | **Documentation-only.** Freezes separate developer-only validator structure and authority (`modules/smart-recommendations/developer-evidence-packet-validator.js` + standalone harness), authority descriptor (`explicit_developer_evidence_packet_validation`; supported registry `0.1.0-sr-evidence-packet-registry`; supported packet contract `0.1.0-sr-evidence-packet-contract`), first-proof input contract, deterministic frozen report model, error/warning/info severities, blocking finding-code inventory, warnings/info, canonical/alias rules, authority/AI rules, claim/context rules, copyright-safe checks, fingerprint/version reuse of registry builders, lifecycle validation, duplicate/overlap validation, Field Review reference boundary, synthetic-only first population, test strategy, exact three-file implementation scope with Evidence Packet Registry **byte-identical**, local/production gates, stop conditions, and next two deferred checkpoints (Validator Implementation; Blueberry Field-Cleanup Planning) — **without** creating a validator module/harness, modifying the Evidence Packet Registry, modifying Field Review foundations, creating real packets, researching, selecting values, or changing schema/catalog/`needsReview`/eligibility/matcher/UI. Baseline preserved: Evidence Packet Registry **84/84** / `realPacketCount` **0**; Field Review Validator **76/76**; Field Review Registry **85/85**; canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**). Docs commit local; push separately gated. **Next deferred:** Evidence Packet Validator Implementation (not begun). |
+| **Smart Recommendations — Evidence Packet Validator Planning** | Done (read-only) | **Read-only planning; no file modification.** Recommended separate developer-only validator module (not registry-module expansion / harness-only / Node-only / `index.html`). Keep closed Evidence Packet Registry byte-identical; reuse registry fingerprint builders; optional synthetic Field Review reference checks only; full real decision↔packet compatibility deferred to a later Field Review Validator Reference Amendment. Verdict: **`READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`**. |
+| **Smart Recommendations — Evidence Packet Registry production verification** | Done (pushed) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime change; no manual deploy; no Netlify setting change; no real packets.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`a3b35ca07c76f294f45a3bc8aabd7e8ac318b1d1`**. **Module** `/modules/smart-recommendations/developer-evidence-packet-registry.js` HTTP **200** `application/javascript` (LF-normalized content matches committed file; version `0.1.0-sr-evidence-packet-registry`; capability `explicit_developer_evidence_packet_registry`; `realPacketCount: 0`). **Harness** `/tests/smart-rec-developer-evidence-packet-registry.test.html` HTTP **200** `text/html` (LF-normalized match; contains `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS`, Run/Reset). **Normal app isolation (before):** home loads; **zero** requests for evidence registry module/harness; no evidence globals/UI; no GOS attributable to this work; `evaluateClimateSuitabilityV1` present; no evidence/field-review storage keys. **Initial harness inertness:** `__SR_EVIDENCE_PACKET_BOOT.inert=true`; moduleLoaded false; summary absent; **0** assertion rows; idle status; registry module not requested before Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **84/84** / `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS` / fixtureCount **37**; identical summaryFingerprint `0.1.0-sr-evidence-packet-registry\|0.1.0-sr-evidence-packet-contract\|2\|2\|0\|0\|1\|info:synthetic_fixture_only::::::`; storageMutationCount **0**; networkCount **0** (API); no console error/unhandled rejection; descriptor authority flags exact and frozen; empty real registry; synthetic-only fixtures; authority/claim/context/copyright/fingerprint/lifecycle/duplicate assertions pass. **After:** fresh home — zero automatic evidence registry/harness/GOS load; no retained harness state; v1b still product path; SR/My Garden unchanged; no filter UI; legacy **36/36/36** and **23** conflicts remain blocked; no field-specific product eligibility. **Verdict:** `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`. Docs pushed at `3b719e4`. **Superseded next-gate:** Evidence Packet Validator Documentation Contract. |
 | **Smart Recommendations — Evidence Packet Registry Implementation** | Done (pushed) | **Inert developer-only evidence packet registry + standalone harness only; no product runtime consumer.** Files: `modules/smart-recommendations/developer-evidence-packet-registry.js` (`0.1.0-sr-evidence-packet-registry`; capability `explicit_developer_evidence_packet_registry`; packetContractVersion `0.1.0-sr-evidence-packet-contract`), `tests/smart-rec-developer-evidence-packet-registry.test.html`, `PROJECT_STATUS.md`. **Descriptor:** `developerOnly`/`authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`fieldReviewMutation`/`needsReviewMutation`/`identityMutation`/`persistence`/`network`/`automaticExecution`/`automaticApproval` exact; `activation: explicit_call_only`; `productConsumers: none`; `realPacketCount: 0`; fields `sun`/`water`. **Exports:** `getSmartRecDeveloperEvidencePacketRegistryDescriptor`, `getEmptySmartRecDeveloperEvidencePacketRegistry`, `buildEvidencePacketSourceFingerprint`, `buildEvidencePacketContentFingerprint`, `validateEvidencePacket`, `validateAndBuildEvidencePacketRegistry`, plus frozen vocabularies (claim types, Tier A/B/C, packet statuses, 12 source types, finding severities/codes). Empty frozen real registry; synthetic fixtures only; no JSON Schema; no field-review import/mutation; AI non-authoritative; Tier C cannot be sole authority; copyright-safe short excerpt + normalized claim; structured context required; deterministic fingerprints/lifecycle; duplicate/overlap detection. **Harness:** **84/84**; fixtureCount **37**; verdict `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS`; five identical local Reset→Run; identical summaryFingerprint `0.1.0-sr-evidence-packet-registry\|0.1.0-sr-evidence-packet-contract\|2\|2\|0\|0\|1\|info:synthetic_fixture_only::::::`; storage/network **0**; no console error/unhandled rejection. Non-regression: field-review validator **76/76**; field-review registry **85/85**; merge **89/89**; schema **69/69**; identity recon **158** total / **156** PASS / **2** EXPECTED_QUARANTINED_CONFLICT / **0** unexpected; resolver **108/108**; `git diff --check` clean. Field-review foundations + `index.html` **byte-identical** vs `5afc546`. Product isolation: `index.html` does not reference evidence registry module/harness; field-review modules do not import it. No schema/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no real packet; no external research; no value selection. Pushed at `a3b35ca`. **Production verification later completed** — see production verification checkpoint (`SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`). |
 | **Smart Recommendations — Evidence Packet Registry Documentation Contract** | Done (pushed) | **Documentation-only.** Freezes CRUVIT-owned fast local-database architecture, separate developer-only evidence packet registry placement (`modules/smart-recommendations/developer-evidence-packet-registry.js` + standalone harness), authority boundary, packet identity/ownership, minimum packet fields, claim types, Tier A/B/C + AI non-authority, copyright-safe claim storage, structured context, status ownership vs field-review, fingerprints/versions, stale/withdrawn/superseded, canonical/alias/duplicate rules, field-review reference validation separation, empty/synthetic first population, agent draft-only boundary, solo workflow, future evidence-validator requirements, test strategy, exact three-file implementation scope, schema deferral, inertness, production boundary, and stop conditions — **without** creating a module, harness, schema, or real packet at docs time. Baseline preserved: field-review `realRecordCount` **0**; real SR evidence packets **0**; canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**). Pushed at `5afc546`. **Implementation later completed locally** — see Evidence Packet Registry Implementation row. |
 | **Smart Recommendations — Evidence Packet Registry Planning** | Done (read-only) | **Read-only planning; no file modification.** Compared placement options; recommended separate developer-only JS module (not catalog/GOS-schema embedding / external DB). Empty real registry + synthetic fixtures; schema deferred; separate future evidence validator. Verdict: **`READY_FOR_EVIDENCE_PACKET_REGISTRY_DOCUMENTATION_CONTRACT`**. |
@@ -332,7 +334,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + **Source-Evidence Contract (pushed)** + **Field-Specific Review-State Planning** + **Field-Specific Review-State Documentation Contract (pushed `0c02f5d`)** + **Developer-Only Field Review Registry Planning** + **Developer-Only Field Review Registry Documentation Contract (pushed `6d8c117`)** + **Developer-Only Field Review Registry Implementation (pushed `565e12c`; production verified)** + **Field Review Validator Planning** + **Field Review Validator Documentation Contract (pushed `95af15e`)** + **Field Review Validator Implementation (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`)** + **Evidence Packet Registry Planning** + **Evidence Packet Registry Documentation Contract (pushed `5afc546`)** + **Evidence Packet Registry Implementation (pushed `a3b35ca`; production verified `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`)**; catalog task **B Frozen (v1)**; matcher still blocked; next = Evidence Packet Validator Planning (separately gated), then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + **Source-Evidence Contract (pushed)** + **Field-Specific Review-State Planning** + **Field-Specific Review-State Documentation Contract (pushed `0c02f5d`)** + **Developer-Only Field Review Registry Planning** + **Developer-Only Field Review Registry Documentation Contract (pushed `6d8c117`)** + **Developer-Only Field Review Registry Implementation (pushed `565e12c`; production verified)** + **Field Review Validator Planning** + **Field Review Validator Documentation Contract (pushed `95af15e`)** + **Field Review Validator Implementation (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`)** + **Evidence Packet Registry Planning** + **Evidence Packet Registry Documentation Contract (pushed `5afc546`)** + **Evidence Packet Registry Implementation (pushed `a3b35ca`; production verified `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`)** + **Evidence Packet Validator Planning** (complete) + **Evidence Packet Validator Documentation Contract** (current docs checkpoint); catalog task **B Frozen (v1)**; Evidence Packet Registry remains empty and non-authoritative; **36/36/36** unchanged; all **23** conflicts blocked; blueberry cleanup deferred; matcher/UI blocked; GOS paused; next = Evidence Packet Validator Implementation (separately gated), then Blueberry Field-Cleanup Planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -349,7 +351,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`), **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified; `realRecordCount` **0**), **Field Review Validator Planning**, **Field Review Validator Documentation Contract** (pushed `95af15e`), **Field Review Validator Implementation** (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**), **Evidence Packet Registry Planning**, and **Evidence Packet Registry Documentation Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; field-review registry remains empty/non-authoritative; validator is developer-only / non-authoritative; real SR evidence packets **0**; no evidence registry module yet. Matcher/UI remain **blocked**. **GOS remains paused.** Blueberry cleanup remains deferred. **Next:** Evidence Packet Registry Implementation (separately gated), then Evidence Packet Validator Planning, then blueberry cleanup planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`), **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified; `realRecordCount` **0**), **Field Review Validator Planning**, **Field Review Validator Documentation Contract** (pushed `95af15e`), **Field Review Validator Implementation** (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**), **Evidence Packet Registry Planning**, **Evidence Packet Registry Documentation Contract** (pushed `5afc546`), **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; `realPacketCount` **0**), **Evidence Packet Validator Planning** (complete), and **Evidence Packet Validator Documentation Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; field-review registry remains empty/non-authoritative; Field Review Validator is developer-only / non-authoritative; Evidence Packet Registry remains empty/non-authoritative; real SR evidence packets **0**; no schema or product authority. Matcher/UI remain **blocked**. **GOS remains paused.** Blueberry cleanup remains deferred. **Next:** Evidence Packet Validator Implementation (separately gated), then Blueberry Field-Cleanup Planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -3307,7 +3309,7 @@ Documentation-only closure — see Completed Checkpoints production-verification
 
 ### Next cleanup phase
 
-Canonical conflict inventory, Source-Evidence Contract, Field-Specific Review-State Documentation Contract, Developer-Only Field Review Registry Documentation Contract, Registry Implementation (production verified), Field Review Validator Planning, Field Review Validator Documentation Contract, Field Review Validator Implementation, Field Review Validator production verification, Evidence Packet Registry Planning, Evidence Packet Registry Documentation Contract, Evidence Packet Registry Implementation, and Evidence Packet Registry production verification are **closed**. Evidence Packet Validator Planning remains separately gated and is **not** begun. First population remains empty and synthetic-only; no external research or real packet exists; no schema or product authority is authorized. Blueberry cleanup planning remains deferred. Targeted cleanup batches remain separately gated after evidence packets + review authority + validators. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validator remains non-authoritative; legacy **36/36/36** unchanged; all **23** conflicts remain blocked; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
+Canonical conflict inventory, Source-Evidence Contract, Field-Specific Review-State Documentation Contract, Developer-Only Field Review Registry Documentation Contract, Registry Implementation (production verified), Field Review Validator Planning, Field Review Validator Documentation Contract, Field Review Validator Implementation, Field Review Validator production verification, Evidence Packet Registry Planning, Evidence Packet Registry Documentation Contract, Evidence Packet Registry Implementation, Evidence Packet Registry production verification, and Evidence Packet Validator Planning are **closed**. **Evidence Packet Validator Documentation Contract** is the current docs checkpoint. Evidence Packet Validator Implementation remains separately gated and is **not** begun. First population remains empty and synthetic-only; no external research or real packet exists; no schema or product authority is authorized. Blueberry cleanup planning remains deferred. Targeted cleanup batches remain separately gated after evidence packets + review authority + validators. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validator remains non-authoritative; Evidence Packet Registry remains empty/non-authoritative; legacy **36/36/36** unchanged; all **23** conflicts remain blocked; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
 
 ---
 
@@ -5381,6 +5383,8 @@ Stop implementation if: product runtime must import evidence packets; live APIs 
 
 Do **not** begin either checkpoint now.
 
+*(Historical note — preserved):* both deferred checkpoints above were later completed. Evidence Packet Registry Implementation is production verified (`a3b35ca` / `3b719e4`). Evidence Packet Validator Planning is complete. Current docs checkpoint is **Evidence Packet Validator Documentation Contract**; Evidence Packet Validator Implementation remains separately gated.
+
 ### 29. Documentation validation checklist
 
 | Check | Result |
@@ -5536,7 +5540,591 @@ Trusted-location / missing-meta / global `needsReview` unchanged; legacy **36/36
 
 ## Next deferred gate
 
-**Evidence Packet Validator Planning** remains separately gated and is **not** begun. No runtime/schema/catalog/matcher/UI/eligibility authorization from this production verification.
+**Evidence Packet Validator Documentation Contract** is the current docs checkpoint (this file). Evidence Packet Validator Planning is complete. Evidence Packet Validator implementation remains separately gated and is **not** begun. No runtime/schema/catalog/matcher/UI/eligibility authorization from the evidence packet registry production verification.
+
+---
+
+# Smart Recommendations — Evidence Packet Validator Documentation Contract
+
+**Checkpoint type:** documentation / planning only. **File:** `PROJECT_STATUS.md` only.
+**Verdict identity (docs):** `SR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT_COMPLETE`.
+**Upstream planning verdict (preserved):** `READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`.
+
+**This checkpoint defines validator structure and authority only.**
+
+It creates **no** validator module. It creates **no** validator harness. It does **not** modify the Evidence Packet Registry. It does **not** modify the Field Review Registry or Validator. It creates **no** real packets. It performs **no** external research. It changes **no** schema, catalog, or product runtime. It clears **no** `needsReview` value. It changes **no** eligibility. It resolves **no** botanical value. Every implementation remains **separately gated**.
+
+### 1. Frozen Evidence Packet Registry baseline (do not rewrite)
+
+| Item | Value |
+|------|-------|
+| Module | `modules/smart-recommendations/developer-evidence-packet-registry.js` |
+| Harness | `tests/smart-rec-developer-evidence-packet-registry.test.html` |
+| Registry version | `0.1.0-sr-evidence-packet-registry` |
+| Packet contract version | `0.1.0-sr-evidence-packet-contract` |
+| `realPacketCount` | **0** |
+| Production harness | **84/84** |
+| `fixtureCount` | **37** |
+| Verdict | `SR_EVIDENCE_PACKET_REGISTRY_HARNESS_PASS` |
+| Finding codes | **45** |
+| Product consumer | **none** |
+| Network / persistence | **none** |
+| Real packets | **none** |
+
+### 2. Frozen product-safety baseline (do not rewrite)
+
+| Metric | Count |
+|--------|------:|
+| Canonical climate identities | **77** |
+| Alias rows | **7** |
+| Global `needsReview` | **48** |
+| Legacy sun / water / both eligibility | **36 / 36 / 36** |
+| Conflicted canonical identities | **23** |
+| Conflicted identities blocked | **23** |
+| Conflict leakage into fail-closed eligibility | **0** |
+
+Field Review Registry/Validator and Evidence Packet Registry remain developer-only, inert, non-authoritative. Plant-identity registry (**76** canonical) remains a **separate** layer and is not rewritten here.
+
+### 3. Validator purpose
+
+The future validator **may audit**:
+
+- evidence packet identity
+- canonical ownership
+- required packet fields
+- source authority
+- claim type
+- structured context
+- fingerprints and versions
+- duplicates and overlaps
+- lifecycle consistency
+- AI-only authority
+- copyright-safe excerpt handling
+- optional packet-to-field-review reference compatibility
+
+The future validator **must never**:
+
+- approve packets
+- modify packets
+- create Field Review decisions
+- update canonical plant data
+- clear `needsReview`
+- change eligibility
+- call external APIs
+- perform research
+- run automatically
+- be imported by `index.html`
+- create product UI
+- become product authority
+
+### 4. Validator placement
+
+| Role | Preferred path |
+|------|----------------|
+| Future module | `modules/smart-recommendations/developer-evidence-packet-validator.js` |
+| Future harness | `tests/smart-rec-developer-evidence-packet-validator.test.html` |
+
+Rules:
+
+- separate developer-only validator module
+- existing Evidence Packet Registry module/harness remain **byte-identical**
+- not imported by `index.html`
+- not loaded by normal navigation
+- loaded only by its standalone developer harness
+- no product consumer
+- no schema or catalog coupling
+
+### 5. Authority descriptor
+
+The future validator descriptor must conceptually include:
+
+| Concept | Required value |
+|---------|----------------|
+| `validatorVersion` | version string for the validator itself |
+| capability | `explicit_developer_evidence_packet_validation` |
+| `supportedRegistryVersion` | `0.1.0-sr-evidence-packet-registry` |
+| `supportedPacketContractVersion` | `0.1.0-sr-evidence-packet-contract` |
+| `developerOnly` | `true` |
+| `authoritative` | `false` |
+| `productConsumer` | `false` |
+| `runtimeEligibilityAuthority` | `false` |
+| `packetMutation` | `false` |
+| `catalogMutation` | `false` |
+| `fieldReviewMutation` | `false` |
+| `needsReviewMutation` | `false` |
+| `persistence` | `false` |
+| `network` | `false` |
+| `automaticExecution` | `false` |
+| `activation` | `explicit_call_only` |
+| `productConsumers` | `none` |
+
+Final code property names may follow existing repository conventions; the conceptual authority surface above is frozen.
+
+### 6. First-proof input contract
+
+**Required explicit inputs:**
+
+- Evidence Packet Registry descriptor
+- registry root/version
+- candidate packets
+- known canonical-key set
+- alias-to-canonical map
+- allowed fields
+- allowed claim types
+- allowed authority tiers
+- allowed packet statuses
+- allowed source types
+- current source snapshot
+- lifecycle/supersession snapshot
+- packet contract version
+- copyright/excerpt policy
+
+**Synthetic-only first-proof inputs:**
+
+- canonical keys
+- aliases
+- packet candidates
+- source snapshots
+- lifecycle snapshots
+- optional field-review reference snapshot
+- optional known source-reference set
+
+**Deferred:**
+
+- real evidence packets
+- live product/catalog imports
+- live external APIs
+- real Field Review decisions
+- runtime consumption
+
+### 7. Deterministic report contract
+
+The future validator returns a deeply frozen deterministic report conceptually containing:
+
+- `valid`
+- `validatorVersion`
+- `registryVersion`
+- `packetCount`
+- `checkedCount`
+- `errorCount`
+- `warningCount`
+- `infoCount`
+- `findings`
+- `findingsByCode`
+- `invalidPackets`
+- `duplicatePackets`
+- `stalePackets`
+- `conflictingPackets`
+- `summaryFingerprint`
+
+Rules:
+
+- `valid` is `true` only when `errorCount` equals `0`
+- identical normalized inputs produce identical reports
+- identical inputs produce identical `summaryFingerprint`
+- no mutation
+- no repair
+- no randomness
+- no current-time-dependent output
+- no locale-dependent ordering
+
+### 8. Severity behavior
+
+Support exactly:
+
+| Severity | Meaning |
+|----------|---------|
+| `error` | blocking invalidity |
+| `warning` | non-blocking developer caution |
+| `info` | audit information |
+
+Warnings and info:
+
+- cannot approve evidence
+- cannot suppress an error
+- cannot change packet status
+- cannot clear `needsReview` or change eligibility
+
+### 9. Blocking finding codes
+
+The future validator must support blocking findings equivalent to:
+
+- `missing_evidence_id`
+- `duplicate_evidence_id`
+- `semantic_duplicate_packet`
+- `unknown_canonical_key`
+- `alias_owned_packet`
+- `unsupported_field`
+- `missing_scientific_identity`
+- `unsupported_claim_type`
+- `unsupported_authority_tier`
+- `unsupported_source_type`
+- `missing_source_identity`
+- `missing_source_reference`
+- `missing_normalized_claim`
+- `missing_context_scope`
+- `unsupported_packet_status`
+- `packet_contract_version_mismatch`
+- `source_fingerprint_missing`
+- `source_fingerprint_mismatch`
+- `content_fingerprint_missing`
+- `content_fingerprint_mismatch`
+- `unsupported_proposed_value`
+- `ai_only_authority`
+- `tier_c_as_sole_authority`
+- `withdrawn_packet_active`
+- `rejected_packet_active`
+- `superseded_packet_active`
+- `overlapping_active_conflict`
+- `alias_canonical_duplicate`
+- `multi_field_packet`
+- `unstable_fingerprint`
+- `excessive_copied_text`
+- `invalid_dates`
+- `packet_field_review_mismatch`
+- `registry_or_input_mutation`
+
+Do **not** implement them in this docs checkpoint.
+
+### 10. Warnings and info
+
+**Warnings (conceptual):**
+
+- `broad_identity_scope`
+- `authority_corroboration_recommended`
+- `missing_publication_date`
+- `packet_needs_review`
+- `short_excerpt_missing`
+- `source_update_date_missing`
+
+**Info (conceptual):**
+
+- `empty_registry_accepted`
+- `synthetic_fixture_only`
+
+### 11. Canonical and alias validation
+
+Rules:
+
+- canonical identities own packets
+- alias-owned packets are invalid
+- aliases do not increase packet counts
+- aliases do not increase evidence strength
+- unknown or quarantined identities cannot support reviewed use
+- one packet belongs to one field only
+- one source may produce separate sun and water packets
+- packet IDs must not depend on display language
+
+### 12. Authority and AI validation
+
+Rules:
+
+- Tier A may be structurally sufficient when identity, field, claim, and context are exactly scoped
+- Tier B may require corroboration
+- Tier C cannot be sole approval authority
+- AI-generated summaries are extraction aids only
+- AI-only authority is blocking for approval use
+- repeated AI summaries of the same source are not independent corroboration
+- evidence quantity cannot outweigh source quality automatically
+
+### 13. Claim and context validation
+
+**Supported claim types:**
+
+- `preference`
+- `optimum`
+- `tolerance`
+- `survival_minimum`
+- `general_guidance`
+
+**Structured context must support:**
+
+- setting
+- planting
+- maturity
+- objective
+- optional season
+- optional climate/region
+- optional humidity
+- optional drainage
+- optional light intensity
+- optional protected cultivation
+
+Rules:
+
+- tolerance is not preference
+- drought tolerance is not automatically low water need
+- free-text-only context is insufficient
+- different contexts may produce separate valid packets
+- context mismatch must not be silently ignored
+
+### 14. Copyright-safe validation
+
+The validator should conceptually check:
+
+- source reference exists
+- normalized claim exists
+- short excerpt is optional and review-focused
+- full-page copied text is invalid
+- reviewer summary is distinct from source text
+- duplicate copied passages cannot inflate packet count
+- no real copyrighted text is required in synthetic fixtures
+
+Do **not** invent a numeric excerpt limit unless repository policy already defines one.
+
+### 15. Fingerprint and version validation
+
+Prefer reusing:
+
+- `buildEvidencePacketSourceFingerprint`
+- `buildEvidencePacketContentFingerprint`
+
+from the closed Evidence Packet Registry module.
+
+Do **not** duplicate the canonical fingerprint serialization.
+
+Keep distinct:
+
+- `validatorVersion`
+- `evidenceRegistryVersion`
+- `packetVersion`
+- `packetContractVersion`
+- `sourceFingerprint`
+- `contentFingerprint`
+- `reviewVersion`
+
+Validate changes to:
+
+- source identity/reference
+- normalized claim
+- proposed value
+- authority tier
+- context
+- claim type
+- packet contract version
+
+Unsupported forward versions fail closed. No automatic migration or fingerprint rewrite.
+
+### 16. Lifecycle validation
+
+Supported packet lifecycle states:
+
+- `draft`
+- `collected`
+- `stale`
+- `withdrawn`
+- `superseded`
+- `rejected`
+
+The future validator must detect:
+
+- withdrawn packet treated as active
+- rejected packet treated as active
+- superseded packet treated as active
+- invalid supersedes/supersededBy links
+- missing referenced packet
+- supersession cycles
+- stale packet supporting a Field Review decision
+
+Lifecycle findings never mutate catalog data.
+
+### 17. Duplicate and overlap validation
+
+Detect:
+
+- duplicate `evidenceId`
+- semantic duplicate
+- alias/canonical duplicate
+- artificial source splitting
+- overlapping active packets with different proposed values
+- repeated AI summaries
+- one source counted repeatedly to inflate corroboration
+- one packet attempting to support several fields
+
+### 18. Field Review reference boundary
+
+**Evidence Packet Validator owns:**
+
+- packet integrity
+- authority
+- fingerprints
+- lifecycle
+- duplicates
+- source/claim/context validity
+
+**Closed Field Review Validator owns:**
+
+- human decision status
+- reviewed value
+- evidence reference requirement
+- decision fingerprint
+
+Do **not** modify the Field Review Validator in this docs checkpoint.
+
+Optional synthetic packet-to-decision readiness checks may exist in the Evidence Packet Validator, but full real decision-to-packet compatibility requires a later separate **Field Review Validator Reference Amendment**.
+
+### 19. First implementation population
+
+The future first implementation uses:
+
+- empty real Evidence Packet Registry
+- synthetic canonical keys
+- synthetic aliases
+- synthetic packets
+- synthetic source/lifecycle snapshots
+- optional synthetic Field Review reference snapshots
+
+**No:**
+
+- real packet
+- real source URL
+- botanical decision
+- blueberry approval
+- conflict cleanup
+- imported GOS evidence
+- real Field Review approval
+
+### 20. Test strategy
+
+Preferred future harness:
+
+- new standalone HTML harness
+- imports Evidence Packet Registry and Evidence Packet Validator only
+- explicit Run and Reset
+- initially inert
+- synthetic fixtures only
+- deterministic outputs
+- zero persistence
+- zero external/API activity
+- no `index.html`
+- no product runtime
+- no modification of closed harnesses
+
+### 21. Exact future implementation scope
+
+Future implementation may create/modify exactly:
+
+1. `modules/smart-recommendations/developer-evidence-packet-validator.js`
+2. `tests/smart-rec-developer-evidence-packet-validator.test.html`
+3. `PROJECT_STATUS.md`
+
+Evidence Packet Registry module/harness must remain **byte-identical**.
+
+If implementation requires registry changes: **stop** and require a separate **Evidence Registry Contract Amendment**.
+
+Do **not** authorize:
+
+- JSON Schema
+- catalog/seed changes
+- `index.html`
+- Field Review Registry/Validator changes
+- identity/GOS/My Garden changes
+- matcher/UI changes
+
+### 22. Local validation requirements
+
+A later implementation must require:
+
+| Gate | Requirement |
+|------|-------------|
+| Evidence Packet Validator harness | all pass |
+| Evidence Packet Registry | **84/84** |
+| Field Review Validator | **76/76** |
+| Field Review Registry | **85/85** |
+| Smart Recommendations merge | **89/89** |
+| Schema | **69/69** |
+| Identity reconciliation | **158** total; **156** PASS; **2** `EXPECTED_QUARANTINED_CONFLICT`; **0** unexpected failures |
+| Identity resolver | **108/108** |
+| Storage / network | **zero** |
+| Protected byte identity | Evidence Packet Registry module/harness unchanged |
+| Diff hygiene | `git diff --check` clean |
+
+### 23. Production-verification boundary
+
+A later implementation adds static artifacts and therefore requires:
+
+- separate push
+- HTTP/content matching
+- initial harness inertness
+- five identical production runs
+- deterministic `summaryFingerprint`
+- zero storage/external API
+- no product load
+- no product authority
+- `realPacketCount` remains **0**
+- legacy **36/36/36** remains unchanged
+- all **23** conflicts remain blocked
+
+**No production work occurs in this docs checkpoint.**
+
+### 24. Stop conditions
+
+Stop future implementation if:
+
+- `index.html` or product runtime is required
+- live APIs are required
+- Evidence Packet Registry must be modified
+- real packets or botanical decisions are required
+- schema/catalog changes are required
+- Field Review Validator requires broad changes
+- validator becomes authoritative
+- full copyrighted pages must be stored
+- scope exceeds the three approved files
+- validation cannot remain deterministic
+
+### 25. Next two deferred checkpoints
+
+After this documentation contract is separately pushed:
+
+1. **Smart Recommendations — Evidence Packet Validator Implementation**
+   Purpose: Implement the smallest inert developer-only validator with synthetic packets and a standalone harness.
+
+2. **Smart Recommendations — Blueberry Field-Cleanup Planning**
+   Purpose: Begin the first real conflict-cleanup planning only after the evidence and review foundations are complete.
+
+A later **Field Review Validator Reference Amendment** may be required before real reviewed-supported evidence references are used.
+
+Do **not** begin any deferred checkpoint now.
+
+### 26. Explicit non-claims / non-authorization
+
+This Documentation Contract does **not** authorize:
+
+- creating a validator module or harness now
+- modifying the Evidence Packet Registry
+- modifying the Field Review Registry or Validator
+- real evidence packets
+- external research
+- botanical value selection
+- schema / catalog / seed / `index.html` changes
+- `needsReview` / eligibility changes
+- matcher / UI
+- GOS / v1b invocation
+- product authority
+- push / deploy / production testing from this docs commit alone
+
+### 27. Documentation checklist
+
+| Check | Result |
+|-------|--------|
+| Separate developer-only validator | **PASS** |
+| Closed registry remains byte-identical | **PASS** |
+| No product/runtime import | **PASS** |
+| Synthetic snapshots only | **PASS** |
+| Deterministic frozen report | **PASS** |
+| error/warning/info severities | **PASS** |
+| Authority/AI rules | **PASS** |
+| Copyright-safe checks | **PASS** |
+| Context and claim types | **PASS** |
+| Fingerprint builders reused | **PASS** |
+| Lifecycle and duplicates checked | **PASS** |
+| Field Review boundary preserved | **PASS** |
+| Empty real registry | **PASS** |
+| Exact three-file implementation scope | **PASS** |
+| Production verification required after implementation | **PASS** |
+| No real packets/schema/catalog/matcher/UI authorization | **PASS** |
+
+**Checklist result: all PASS.**
 
 ---
 
@@ -5545,7 +6133,7 @@ Trusted-location / missing-meta / global `needsReview` unchanged; legacy **36/36
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — merge repair closed; conflict inventory complete (**23** conflicts, all NR); Source-Evidence + Field-Review docs closed (pushed); registry pushed (`565e12c`) and production verified (`SR_FIELD_REVIEW_REGISTRY_PRODUCTION_VERIFIED`; **85/85**; `realRecordCount` **0**); Validator Planning + Documentation Contract closed (pushed `95af15e`); Field Review Validator Implementation pushed (`018a043`) and production verified (`SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**; docs `1302ea3`); Field Review Registry and Validator **closed**; Evidence Packet Registry Planning complete (read-only); Evidence Packet Registry Documentation Contract pushed (`5afc546`); Evidence Packet Registry Implementation pushed (`a3b35ca`) and production verified (`SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; fixtureCount **37**; `realPacketCount` **0**); **36/36/36** legacy only; **23** conflicts remain blocked; blueberry cleanup deferred; matchers/UI blocked; GOS paused; commerce/data agents may later draft packets but cannot approve them; next: Evidence Packet Validator Planning → blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — merge repair closed; conflict inventory complete (**23** conflicts, all NR); Source-Evidence + Field-Review docs closed (pushed); registry pushed (`565e12c`) and production verified (`SR_FIELD_REVIEW_REGISTRY_PRODUCTION_VERIFIED`; **85/85**; `realRecordCount` **0**); Validator Planning + Documentation Contract closed (pushed `95af15e`); Field Review Validator Implementation pushed (`018a043`) and production verified (`SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**; docs `1302ea3`); Field Review Registry and Validator **closed**; Evidence Packet Registry Planning complete; Evidence Packet Registry Documentation Contract pushed (`5afc546`); Evidence Packet Registry Implementation pushed (`a3b35ca`) and production verified (`SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; fixtureCount **37**; `realPacketCount` **0**); Evidence Packet Registry **closed** and empty/non-authoritative; Evidence Packet Validator Planning complete (`READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`); **Evidence Packet Validator Documentation Contract** is the current checkpoint; Evidence Packet Validator implementation remains separately gated; **36/36/36** legacy only; **23** conflicts remain blocked; blueberry cleanup deferred; matchers/UI blocked; GOS paused; commerce/data agents may later draft packets but cannot approve them; next: Evidence Packet Validator Implementation → Blueberry Field-Cleanup Planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -5654,13 +6242,13 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review Registry + Field Review Validator (`018a043` / docs `1302ea3`) + Evidence Packet Registry Documentation Contract (`5afc546`) + Evidence Packet Registry Implementation (`a3b35ca`).
+**Done (pushed):** Field Review Registry + Field Review Validator (`018a043` / docs `1302ea3`) + Evidence Packet Registry Documentation Contract (`5afc546`) + Evidence Packet Registry Implementation (`a3b35ca`) + Evidence Packet Registry production verification (`3b719e4`; `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; fixtureCount **37**; `realPacketCount` **0**).
 
-**Done (local docs):** Evidence Packet Registry production verification — `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`. Production HTTP/content verification **PASS**; harness inert until Run; five identical production runs (**84/84**; fixtureCount **37**); identical summaryFingerprint; storage/network **0**; empty real registry; product isolation before/after; no runtime authority; **36/36/36** unchanged; all **23** conflicts still blocked. Docs push pending.
+**Done (local docs):** Evidence Packet Validator Planning (read-only; `READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`) + **Evidence Packet Validator Documentation Contract** (this checkpoint) — freezes separate developer-only validator placement, authority descriptor, input/report/severity contracts, finding codes, canonical/alias/authority/AI/claim/context/copyright/fingerprint/lifecycle/duplicate rules, Field Review reference boundary, synthetic-only first population, three-file implementation scope with Evidence Packet Registry **byte-identical**, local/production gates, and stop conditions — **without** creating a validator module/harness. Evidence Packet Registry remains empty and non-authoritative; **36/36/36** unchanged; all **23** conflicts remain blocked; no schema or product authority.
 
-**Next (separately gated, not started):** Evidence Packet Validator Planning — plan a separate validator for packet integrity, duplicates, authority, context, fingerprints, and lifecycle.
+**Next (separately gated, not started):** Evidence Packet Validator Implementation — smallest inert developer-only validator with synthetic packets and a standalone harness.
 
-**Then (separately gated):** blueberry cleanup planning → evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused (`GOS_5G_PRODUCTION_VERIFIED`; synthetic expansion paused). Agents may later draft packets but cannot approve them. Do **not** add real review records or evidence packets, clear needsReview, edit catalog/schema/`index.html`, resolve botanical values, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
+**Then (separately gated):** Blueberry Field-Cleanup Planning → evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused (`GOS_5G_PRODUCTION_VERIFIED`; synthetic expansion paused). Agents may later draft packets but cannot approve them. Do **not** add real review records or evidence packets, clear needsReview, edit catalog/schema/`index.html`, resolve botanical values, implement sun/water matchers, enable filter UI, redesign results/chat, resume GOS mapper→adapter / real-region / My Garden GOS consumer, replace v1b, or begin Design Excellence work without separate approval. Keep canonical identity advisory and legacy My Garden authoritative. Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
