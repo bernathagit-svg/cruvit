@@ -15,7 +15,11 @@
 
 import {
   SR_EVIDENCE_PACKET_REGISTRY_VERSION,
+  SR_EVIDENCE_PACKET_REGISTRY_VERSION_V01,
   SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+  SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01,
+  SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS,
+  SR_EVIDENCE_PACKET_SUPPORTED_REGISTRY_VERSIONS,
   SR_EVIDENCE_PACKET_FIELDS,
   SR_EVIDENCE_CLAIM_TYPES,
   SR_EVIDENCE_AUTHORITY_TIERS,
@@ -23,17 +27,26 @@ import {
   SR_EVIDENCE_SOURCE_TYPES,
   buildEvidencePacketSourceFingerprint,
   buildEvidencePacketContentFingerprint,
+  normalizeEvidencePacketContextScope,
   validateAndBuildEvidencePacketRegistry,
   getEmptySmartRecDeveloperEvidencePacketRegistry,
   getSmartRecDeveloperEvidencePacketRegistryDescriptor
 } from './developer-evidence-packet-registry.js';
 
 export const SR_EVIDENCE_PACKET_VALIDATOR_VERSION =
-  '0.1.0-sr-evidence-packet-validator';
+  '0.2.0-sr-evidence-packet-validator';
 
 /** Anti-accident capability token — not authentication. */
 export const SR_EVIDENCE_PACKET_VALIDATOR_CAPABILITY =
   'explicit_developer_evidence_packet_validation';
+
+export const SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS = Object.freeze(
+  SR_EVIDENCE_PACKET_SUPPORTED_REGISTRY_VERSIONS.slice()
+);
+
+export const SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS = Object.freeze(
+  SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS.slice()
+);
 
 /** Developer-only default excerpt length; overridable via copyrightExcerptPolicy. */
 export const SR_EVIDENCE_PACKET_VALIDATOR_DEFAULT_MAX_SHORT_EXCERPT_CHARS = 280;
@@ -87,7 +100,9 @@ export const SR_EVIDENCE_PACKET_VALIDATOR_FINDING_CODES = Object.freeze([
   'source_update_date_missing',
   'empty_registry_accepted',
   'synthetic_fixture_only',
-  'invalid_input'
+  'invalid_input',
+  'unsupported_context_qualifier',
+  'incompatible_context_qualifiers'
 ]);
 
 const ERROR_CODES = Object.freeze([
@@ -125,7 +140,9 @@ const ERROR_CODES = Object.freeze([
   'invalid_dates',
   'packet_field_review_mismatch',
   'registry_or_input_mutation',
-  'invalid_input'
+  'invalid_input',
+  'unsupported_context_qualifier',
+  'incompatible_context_qualifiers'
 ]);
 
 const WARNING_CODES = Object.freeze([
@@ -250,6 +267,8 @@ function buildDescriptor() {
     capability: SR_EVIDENCE_PACKET_VALIDATOR_CAPABILITY,
     supportedRegistryVersion: SR_EVIDENCE_PACKET_REGISTRY_VERSION,
     supportedPacketContractVersion: SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+    supportedRegistryVersions: SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.slice(),
+    supportedPacketContractVersions: SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.slice(),
     developerOnly: true,
     authoritative: false,
     productConsumer: false,
@@ -302,7 +321,12 @@ function resolveMaxExcerptChars(input) {
   return SR_EVIDENCE_PACKET_VALIDATOR_DEFAULT_MAX_SHORT_EXCERPT_CHARS;
 }
 
-function contextScopeKey(scope) {
+function contextScopeKey(scope, packetContractVersion) {
+  const n = normalizeEvidencePacketContextScope(
+    scope,
+    packetContractVersion || SR_EVIDENCE_PACKET_CONTRACT_VERSION
+  );
+  if (n && n.ok && n.normalized) return stableSerialize(n.normalized);
   if (scope === undefined || scope === null) return null;
   if (typeof scope === 'string') {
     const s = scope.trim();
@@ -624,7 +648,9 @@ function auditFieldReviewReferences(packets, frSnapshot, findings) {
         });
       }
       if (d.contextScope != null && pkt.contextScope != null) {
-        if (contextScopeKey(d.contextScope) !== contextScopeKey(pkt.contextScope)) {
+        const contract =
+          normalizeTrim(pkt.packetContractVersion) || SR_EVIDENCE_PACKET_CONTRACT_VERSION;
+        if (contextScopeKey(d.contextScope, contract) !== contextScopeKey(pkt.contextScope, contract)) {
           pushFinding(findings, {
             code: 'packet_field_review_mismatch',
             severity: 'error',
@@ -819,22 +845,22 @@ export function validateSmartRecDeveloperEvidencePacketRegistry(input) {
       ? String(registry.packetContractVersion).trim()
       : SR_EVIDENCE_PACKET_CONTRACT_VERSION;
 
-  if (registryVersion !== SR_EVIDENCE_PACKET_REGISTRY_VERSION) {
+  if (SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.indexOf(registryVersion) < 0) {
     pushFinding(findings, {
       code: 'packet_contract_version_mismatch',
       severity: 'error',
       detail: 'unsupported_or_mismatched_registry_version',
-      expected: SR_EVIDENCE_PACKET_REGISTRY_VERSION,
+      expected: SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.slice(),
       actual: registryVersion
     });
   }
 
-  if (packetContractVersion !== SR_EVIDENCE_PACKET_CONTRACT_VERSION) {
+  if (SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.indexOf(packetContractVersion) < 0) {
     pushFinding(findings, {
       code: 'packet_contract_version_mismatch',
       severity: 'error',
       detail: 'unsupported_or_mismatched_packet_contract_version',
-      expected: SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+      expected: SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.slice(),
       actual: packetContractVersion
     });
   }
@@ -942,7 +968,7 @@ export function validateSmartRecDeveloperEvidencePacketRegistry(input) {
     knownCanonicalKeys: knownCanonicalKeys,
     knownAliasKeys: knownAliasKeys,
     aliasToCanonicalMap: aliasToCanonicalMap,
-    packetContractVersion: packetContractVersion,
+    supportedPacketContractVersions: SR_EVIDENCE_PACKET_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.slice(),
     syntheticFixtureOnly: src.syntheticFixtureOnly === true
   };
 

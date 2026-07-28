@@ -295,6 +295,11 @@
       expect('capability', desc.capability === val.SR_EVIDENCE_PACKET_VALIDATOR_CAPABILITY, desc.capability);
       expect('supportedRegistryVersion', desc.supportedRegistryVersion === reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION, '');
       expect('supportedPacketContractVersion', desc.supportedPacketContractVersion === reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION, '');
+      expect('supports legacy and current versions',
+        desc.supportedRegistryVersions.indexOf(reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION_V01) >= 0 &&
+        desc.supportedPacketContractVersions.indexOf(reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01) >= 0 &&
+        desc.supportedRegistryVersions.indexOf(reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION) >= 0 &&
+        desc.supportedPacketContractVersions.indexOf(reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION) >= 0, '');
       expect('developerOnly', desc.developerOnly === true, '');
       expect('authoritative false', desc.authoritative === false, '');
       expect('productConsumer false', desc.productConsumer === false, '');
@@ -768,6 +773,165 @@
       fixtureCount++;
       expect('stale packet Field Review reference', !staleFrReport.valid &&
         hasDetail(staleFrReport, 'packet_field_review_mismatch', 'stale_packet_supports_field_review'), '');
+
+      // --- 0.2.0 validator amendment fixtures ---
+      var dayCtx = Object.assign({}, outdoorGeneral(), { daypart: 'morning' });
+      var dayPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-val-day',
+        contextScope: dayCtx,
+        sourceReference: 'syn-ref-val-day',
+        sourceIdentity: 'syn-ref-val-day',
+        normalizedClaim: 'validator daypart'
+      }));
+      var dayReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [dayPkt]
+      }));
+      fixtureCount++;
+      expect('valid 0.2 daypart context', dayReport.valid === true, JSON.stringify(dayReport.findings));
+
+      var heatValPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-val-heat',
+        contextScope: Object.assign({}, outdoorGeneral(), { heatProtection: 'beneficial' }),
+        sourceReference: 'syn-ref-val-heat',
+        sourceIdentity: 'syn-ref-val-heat',
+        normalizedClaim: 'validator heat'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 heatProtection context',
+        val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, { candidatePackets: [heatValPkt] })).valid === true, '');
+
+      var badCtxPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-val-bad-ctx',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'twilight' }),
+        sourceReference: 'syn-ref-val-bad-ctx',
+        sourceIdentity: 'syn-ref-val-bad-ctx',
+        normalizedClaim: 'bad daypart'
+      }));
+      // fingerprints may be null when context invalid — still validate
+      if (!badCtxPkt.contentFingerprint) {
+        badCtxPkt.contentFingerprint = 'x';
+        badCtxPkt.sourceFingerprint = badCtxPkt.sourceFingerprint || 'y';
+      }
+      var badCtxReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [badCtxPkt]
+      }));
+      fixtureCount++;
+      expect('invalid context qualifier propagated',
+        !badCtxReport.valid && hasCode(badCtxReport, 'unsupported_context_qualifier'), JSON.stringify(badCtxReport.findings));
+
+      var indoorHeatPkt = Object.assign(basePacket({
+        evidenceId: 'syn-ev-val-indoor-heat',
+        contextScope: { setting: 'indoor', planting: 'container', maturity: 'mature', objective: 'general', heatProtection: 'beneficial' },
+        sourceReference: 'syn-ref-val-indoor-heat',
+        sourceIdentity: 'syn-ref-val-indoor-heat',
+        normalizedClaim: 'indoor beneficial heat'
+      }), {});
+      indoorHeatPkt = withFingerprints(reg, indoorHeatPkt);
+      if (!indoorHeatPkt.contentFingerprint) {
+        indoorHeatPkt.sourceFingerprint = indoorHeatPkt.sourceFingerprint || 'src';
+        indoorHeatPkt.contentFingerprint = 'content';
+      }
+      var indoorHeatReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [indoorHeatPkt]
+      }));
+      fixtureCount++;
+      expect('incompatible context qualifier propagated',
+        !indoorHeatReport.valid && hasCode(indoorHeatReport, 'incompatible_context_qualifiers'),
+        JSON.stringify(indoorHeatReport.findings));
+
+      var compoundValReport = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [withFingerprints(reg, basePacket({
+          evidenceId: 'syn-ev-val-compound',
+          proposedValue: 'morning_sun_part_shade',
+          sourceReference: 'syn-ref-val-compound',
+          sourceIdentity: 'syn-ref-val-compound',
+          normalizedClaim: 'compound legacy'
+        }))]
+      }));
+      fixtureCount++;
+      expect('compound proposed-value rejection',
+        !compoundValReport.valid && hasCode(compoundValReport, 'unsupported_proposed_value'), '');
+
+      var frMatchPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-fr-norm',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'morning', climateOrRegion: ['b', 'a'] }),
+        sourceReference: 'syn-ref-fr-norm',
+        sourceIdentity: 'syn-ref-fr-norm',
+        normalizedClaim: 'fr normalized context'
+      }));
+      var frNormOk = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [frMatchPkt],
+        fieldReviewReferenceSnapshot: {
+          decisions: [{
+            evidenceRefs: ['syn-ev-fr-norm'],
+            canonicalKey: 'syn-fixture-alpha',
+            field: 'sun',
+            contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'morning', climateOrRegion: ['a', 'b'] }),
+            contentFingerprint: frMatchPkt.contentFingerprint
+          }]
+        }
+      }));
+      fixtureCount++;
+      expect('normalized-context Field Review snapshot match',
+        frNormOk.valid === true && !hasCode(frNormOk, 'packet_field_review_mismatch'), JSON.stringify(frNormOk.findings));
+
+      var frNormBad = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [frMatchPkt],
+        fieldReviewReferenceSnapshot: {
+          decisions: [{
+            evidenceRefs: ['syn-ev-fr-norm'],
+            canonicalKey: 'syn-fixture-alpha',
+            field: 'sun',
+            contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'afternoon' }),
+            contentFingerprint: frMatchPkt.contentFingerprint
+          }]
+        }
+      }));
+      fixtureCount++;
+      expect('normalized-context mismatch',
+        !frNormBad.valid && hasDetail(frNormBad, 'packet_field_review_mismatch', 'context_mismatch'), '');
+
+      var v01ValPkt = withFingerprints(reg, basePacket({
+        evidenceId: 'syn-ev-val-v01',
+        packetContractVersion: reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01,
+        contextScope: Object.assign({}, outdoorGeneral(), { weirdLegacyKey: 'ok' }),
+        sourceReference: 'syn-ref-val-v01',
+        sourceIdentity: 'syn-ref-val-v01',
+        normalizedClaim: 'v01 compatibility'
+      }));
+      fixtureCount++;
+      expect('0.1.0 compatibility',
+        val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+          candidatePackets: [v01ValPkt],
+          registryVersion: reg.SR_EVIDENCE_PACKET_REGISTRY_VERSION_V01,
+          packetContractVersion: reg.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01
+        })).valid === true, '');
+
+      fixtureCount++;
+      expect('0.2.0 compatibility', dayReport.valid === true, '');
+
+      var forwardReg = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA],
+        registryVersion: '9.9.9-sr-evidence-packet-registry'
+      }));
+      fixtureCount++;
+      expect('unsupported forward Registry version',
+        !forwardReg.valid && hasCode(forwardReg, 'packet_contract_version_mismatch'), '');
+
+      var forwardContract = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, {
+        candidatePackets: [tierA],
+        packetContractVersion: '9.9.9-sr-evidence-packet-contract'
+      }));
+      fixtureCount++;
+      expect('unsupported forward Packet Contract version',
+        !forwardContract.valid && hasCode(forwardContract, 'packet_contract_version_mismatch'), '');
+
+      var det1 = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, { candidatePackets: [dayPkt] }));
+      var det2 = val.validateSmartRecDeveloperEvidencePacketRegistry(baseInput(reg, { candidatePackets: [dayPkt] }));
+      fixtureCount++;
+      expect('deterministic 0.2 report',
+        det1.summaryFingerprint === det2.summaryFingerprint && det1.valid === det2.valid, '');
+      window.__SR_EVIDENCE_PACKET_VALIDATOR_LAST_REPORT_FP = det1.summaryFingerprint;
 
       // Purity / isolation
       var purityPackets = [clone(tierA)];

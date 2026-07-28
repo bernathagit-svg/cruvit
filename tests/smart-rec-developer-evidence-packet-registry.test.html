@@ -138,7 +138,7 @@
       knownCanonicalKeys: ['syn-fixture-alpha', 'syn-fixture-beta', 'syn-fixture-gamma'],
       knownAliasKeys: ['syn-alias-alpha'],
       aliasToCanonicalMap: { 'syn-alias-alpha': 'syn-fixture-alpha' },
-      packetContractVersion: mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+      supportedPacketContractVersions: mod.SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS.slice(),
       syntheticFixtureOnly: true
     }, extra || {});
   }
@@ -274,6 +274,10 @@
       expect('descriptor frozen', isFrozenDeep(desc), '');
       expect('registryVersion', desc.registryVersion === mod.SR_EVIDENCE_PACKET_REGISTRY_VERSION, desc.registryVersion);
       expect('packetContractVersion', desc.packetContractVersion === mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION, '');
+      expect('supports 0.1.0 and 0.2.0 contracts',
+        desc.supportedPacketContractVersions &&
+        desc.supportedPacketContractVersions.indexOf(mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01) >= 0 &&
+        desc.supportedPacketContractVersions.indexOf(mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION) >= 0, '');
       expect('capability', desc.capability === mod.SR_EVIDENCE_PACKET_REGISTRY_CAPABILITY, desc.capability);
       expect('developerOnly', desc.developerOnly === true, '');
       expect('authoritative false', desc.authoritative === false, '');
@@ -764,6 +768,301 @@
       mod.validateEvidencePacket(ctxPkt, ctx);
       fixtureCount++;
       expect('context object not mutated', JSON.stringify(ctxObj) === ctxBefore, '');
+
+      // --- 0.2.0 reference amendment fixtures ---
+      expect('normalizeEvidencePacketContextScope export', typeof mod.normalizeEvidencePacketContextScope === 'function', '');
+      expect('buildEvidencePacketReferenceSnapshot export', typeof mod.buildEvidencePacketReferenceSnapshot === 'function', '');
+      expect('daypart allowlist', mod.SR_EVIDENCE_CONTEXT_DAYPARTS.join(',') === 'morning,afternoon,all_day,unknown', '');
+      expect('heatProtection allowlist',
+        mod.SR_EVIDENCE_CONTEXT_HEAT_PROTECTIONS.join(',') === 'required,beneficial,not_required,unknown', '');
+
+      var daypartCtx = Object.assign({}, outdoorGeneral(), { daypart: 'morning' });
+      var daypartPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-daypart',
+        contextScope: daypartCtx,
+        sourceReference: 'syn-ref-daypart',
+        sourceIdentity: 'syn-ref-daypart',
+        normalizedClaim: 'morning outdoor preference'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 daypart', mod.validateEvidencePacket(daypartPkt, ctx).valid === true, '');
+
+      var heatCtx = Object.assign({}, outdoorGeneral(), { heatProtection: 'beneficial' });
+      var heatPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-heat',
+        contextScope: heatCtx,
+        sourceReference: 'syn-ref-heat',
+        sourceIdentity: 'syn-ref-heat',
+        normalizedClaim: 'afternoon heat protection beneficial'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 heatProtection', mod.validateEvidencePacket(heatPkt, ctx).valid === true, '');
+
+      var bothCtx = Object.assign({}, outdoorGeneral(), { daypart: 'morning', heatProtection: 'required' });
+      var bothPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-both-ctx',
+        contextScope: bothCtx,
+        sourceReference: 'syn-ref-both-ctx',
+        sourceIdentity: 'syn-ref-both-ctx',
+        normalizedClaim: 'morning with heat protection'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 daypart+heat', mod.validateEvidencePacket(bothPkt, ctx).valid === true, '');
+
+      var seasonPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-season',
+        contextScope: Object.assign({}, outdoorGeneral(), { season: 'summer' }),
+        sourceReference: 'syn-ref-season',
+        sourceIdentity: 'syn-ref-season',
+        normalizedClaim: 'summer season claim'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 season', mod.validateEvidencePacket(seasonPkt, ctx).valid === true, '');
+
+      var regionStrPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-region-str',
+        contextScope: Object.assign({}, outdoorGeneral(), { climateOrRegion: 'mediterranean' }),
+        sourceReference: 'syn-ref-region-str',
+        sourceIdentity: 'syn-ref-region-str',
+        normalizedClaim: 'mediterranean region claim'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 climateOrRegion string', mod.validateEvidencePacket(regionStrPkt, ctx).valid === true, '');
+
+      var regionArrNorm = mod.normalizeEvidencePacketContextScope(
+        Object.assign({}, outdoorGeneral(), { climateOrRegion: ['zeta', 'alpha', 'alpha', 'beta'] }),
+        mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION
+      );
+      fixtureCount++;
+      expect('climateOrRegion sort+dedupe',
+        regionArrNorm.ok && JSON.stringify(regionArrNorm.normalized.climateOrRegion) === JSON.stringify(['alpha', 'beta', 'zeta']),
+        JSON.stringify(regionArrNorm));
+
+      var regionArrPkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-region-arr',
+        contextScope: Object.assign({}, outdoorGeneral(), { climateOrRegion: ['zeta', 'alpha'] }),
+        sourceReference: 'syn-ref-region-arr',
+        sourceIdentity: 'syn-ref-region-arr',
+        normalizedClaim: 'multi region claim'
+      }));
+      fixtureCount++;
+      expect('valid 0.2 climateOrRegion array', mod.validateEvidencePacket(regionArrPkt, ctx).valid === true, '');
+
+      expectInvalid('invalid-daypart', {
+        evidenceId: 'syn-ev-bad-daypart',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'twilight' }),
+        sourceReference: 'syn-ref-bad-daypart',
+        sourceIdentity: 'syn-ref-bad-daypart',
+        normalizedClaim: 'bad daypart'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('invalid-heat', {
+        evidenceId: 'syn-ev-bad-heat',
+        contextScope: Object.assign({}, outdoorGeneral(), { heatProtection: 'mandatory' }),
+        sourceReference: 'syn-ref-bad-heat',
+        sourceIdentity: 'syn-ref-bad-heat',
+        normalizedClaim: 'bad heat'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('empty-season', {
+        evidenceId: 'syn-ev-empty-season',
+        contextScope: Object.assign({}, outdoorGeneral(), { season: '   ' }),
+        sourceReference: 'syn-ref-empty-season',
+        sourceIdentity: 'syn-ref-empty-season',
+        normalizedClaim: 'empty season'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('empty-region', {
+        evidenceId: 'syn-ev-empty-region',
+        contextScope: Object.assign({}, outdoorGeneral(), { climateOrRegion: '' }),
+        sourceReference: 'syn-ref-empty-region',
+        sourceIdentity: 'syn-ref-empty-region',
+        normalizedClaim: 'empty region'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('empty-region-item', {
+        evidenceId: 'syn-ev-empty-region-item',
+        contextScope: Object.assign({}, outdoorGeneral(), { climateOrRegion: ['ok', ''] }),
+        sourceReference: 'syn-ref-empty-region-item',
+        sourceIdentity: 'syn-ref-empty-region-item',
+        normalizedClaim: 'empty region item'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('unknown-context-key', {
+        evidenceId: 'syn-ev-unknown-key',
+        contextScope: Object.assign({}, outdoorGeneral(), { weirdQualifier: 'x' }),
+        sourceReference: 'syn-ref-unknown-key',
+        sourceIdentity: 'syn-ref-unknown-key',
+        normalizedClaim: 'unknown key'
+      }, 'unsupported_context_qualifier');
+
+      expectInvalid('indoor-daypart', {
+        evidenceId: 'syn-ev-indoor-daypart',
+        contextScope: { setting: 'indoor', planting: 'container', maturity: 'mature', objective: 'general', daypart: 'morning' },
+        sourceReference: 'syn-ref-indoor-daypart',
+        sourceIdentity: 'syn-ref-indoor-daypart',
+        normalizedClaim: 'indoor morning'
+      }, 'incompatible_context_qualifiers');
+
+      expectInvalid('indoor-heat-required', {
+        evidenceId: 'syn-ev-indoor-heat',
+        contextScope: { setting: 'indoor', planting: 'container', maturity: 'mature', objective: 'general', heatProtection: 'required' },
+        sourceReference: 'syn-ref-indoor-heat',
+        sourceIdentity: 'syn-ref-indoor-heat',
+        normalizedClaim: 'indoor heat'
+      }, 'incompatible_context_qualifiers');
+
+      expectInvalid('compound-morning-sun', {
+        evidenceId: 'syn-ev-compound-msp',
+        proposedValue: 'morning_sun_part_shade',
+        sourceReference: 'syn-ref-compound-msp',
+        sourceIdentity: 'syn-ref-compound-msp',
+        normalizedClaim: 'source mentions morning sun part shade',
+        shortExcerpt: 'morning sun / part shade wording only'
+      }, 'unsupported_proposed_value');
+
+      expectInvalid('compound-bright-shade', {
+        evidenceId: 'syn-ev-compound-bs',
+        proposedValue: 'bright_shade',
+        sourceReference: 'syn-ref-compound-bs',
+        sourceIdentity: 'syn-ref-compound-bs',
+        normalizedClaim: 'source mentions bright shade',
+        shortExcerpt: 'bright shade wording only'
+      }, 'unsupported_proposed_value');
+
+      var compoundProse = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-compound-prose',
+        proposedValue: 'part_shade',
+        normalizedClaim: 'source text mentions morning_sun_part_shade as prose only',
+        shortExcerpt: 'morning_sun_part_shade appears in excerpt',
+        sourceReference: 'syn-ref-compound-prose',
+        sourceIdentity: 'syn-ref-compound-prose'
+      }));
+      fixtureCount++;
+      expect('compound wording ok in claim/excerpt', mod.validateEvidencePacket(compoundProse, ctx).valid === true, '');
+
+      var fpBase = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-fp-base',
+        contextScope: outdoorGeneral(),
+        sourceReference: 'syn-ref-fp-ctx',
+        sourceIdentity: 'syn-ref-fp-ctx',
+        normalizedClaim: 'fp base claim'
+      }));
+      var fpDay = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-fp-base',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'afternoon' }),
+        sourceReference: 'syn-ref-fp-ctx',
+        sourceIdentity: 'syn-ref-fp-ctx',
+        normalizedClaim: 'fp base claim'
+      }));
+      fixtureCount++;
+      expect('contentFp changes with daypart',
+        fpBase.contentFingerprint !== fpDay.contentFingerprint && fpBase.sourceFingerprint === fpDay.sourceFingerprint, '');
+
+      var fpHeat = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-fp-base',
+        contextScope: Object.assign({}, outdoorGeneral(), { heatProtection: 'required' }),
+        sourceReference: 'syn-ref-fp-ctx',
+        sourceIdentity: 'syn-ref-fp-ctx',
+        normalizedClaim: 'fp base claim'
+      }));
+      fixtureCount++;
+      expect('contentFp changes with heatProtection',
+        fpBase.contentFingerprint !== fpHeat.contentFingerprint && fpBase.sourceFingerprint === fpHeat.sourceFingerprint, '');
+
+      var fpSeason = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-fp-base',
+        contextScope: Object.assign({}, outdoorGeneral(), { season: 'winter' }),
+        sourceReference: 'syn-ref-fp-ctx',
+        sourceIdentity: 'syn-ref-fp-ctx',
+        normalizedClaim: 'fp base claim'
+      }));
+      fixtureCount++;
+      expect('contentFp changes with season',
+        fpBase.contentFingerprint !== fpSeason.contentFingerprint && fpBase.sourceFingerprint === fpSeason.sourceFingerprint, '');
+
+      var fpRegion = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-fp-base',
+        contextScope: Object.assign({}, outdoorGeneral(), { climateOrRegion: 'temperate' }),
+        sourceReference: 'syn-ref-fp-ctx',
+        sourceIdentity: 'syn-ref-fp-ctx',
+        normalizedClaim: 'fp base claim'
+      }));
+      fixtureCount++;
+      expect('contentFp changes with climateOrRegion',
+        fpBase.contentFingerprint !== fpRegion.contentFingerprint && fpBase.sourceFingerprint === fpRegion.sourceFingerprint, '');
+
+      var semA = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-sem-a',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'morning' }),
+        sourceReference: 'syn-ref-sem-ctx',
+        sourceIdentity: 'syn-ref-sem-ctx',
+        normalizedClaim: 'same claim text',
+        activeSupport: true,
+        packetStatus: 'collected'
+      }));
+      var semB = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-sem-b',
+        contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'afternoon' }),
+        sourceReference: 'syn-ref-sem-ctx',
+        sourceIdentity: 'syn-ref-sem-ctx',
+        normalizedClaim: 'same claim text',
+        activeSupport: true,
+        packetStatus: 'collected'
+      }));
+      var semReport = mod.validateAndBuildEvidencePacketRegistry([semA, semB], ctx);
+      fixtureCount++;
+      expect('semantic dup respects daypart context',
+        semReport.valid === true && !hasCode(semReport, 'semantic_duplicate_packet'), JSON.stringify(semReport.findings));
+
+      var v01Pkt = withFingerprints(mod, basePacket({
+        evidenceId: 'syn-ev-v01',
+        packetContractVersion: mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01,
+        contextScope: Object.assign({}, outdoorGeneral(), { weirdLegacyKey: 'ignored-in-v01' }),
+        sourceReference: 'syn-ref-v01',
+        sourceIdentity: 'syn-ref-v01',
+        normalizedClaim: 'legacy 0.1.0 packet'
+      }));
+      fixtureCount++;
+      expect('supported 0.1.0 packet ignores unknown key',
+        mod.validateEvidencePacket(v01Pkt, ctx).valid === true, JSON.stringify(mod.validateEvidencePacket(v01Pkt, ctx).findings));
+
+      var mixedReport = mod.validateAndBuildEvidencePacketRegistry([
+        withFingerprints(mod, basePacket({
+          evidenceId: 'syn-ev-mix-01',
+          packetContractVersion: mod.SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01,
+          sourceReference: 'syn-ref-mix-01',
+          sourceIdentity: 'syn-ref-mix-01',
+          normalizedClaim: 'mix v01'
+        })),
+        withFingerprints(mod, basePacket({
+          evidenceId: 'syn-ev-mix-02',
+          contextScope: Object.assign({}, outdoorGeneral(), { daypart: 'morning' }),
+          sourceReference: 'syn-ref-mix-02',
+          sourceIdentity: 'syn-ref-mix-02',
+          normalizedClaim: 'mix v02'
+        }))
+      ], ctx);
+      fixtureCount++;
+      expect('mixed supported versions', mixedReport.valid === true, JSON.stringify(mixedReport.findings));
+
+      expectInvalid('unsupported-forward-version', {
+        evidenceId: 'syn-ev-forward',
+        packetContractVersion: '9.9.9-sr-evidence-packet-contract',
+        sourceReference: 'syn-ref-forward',
+        sourceIdentity: 'syn-ref-forward',
+        normalizedClaim: 'forward version'
+      }, 'packet_contract_version_mismatch');
+
+      var detCtxA = mod.validateEvidencePacket(daypartPkt, ctx);
+      var detCtxB = mod.validateEvidencePacket(daypartPkt, ctx);
+      fixtureCount++;
+      expect('deterministic repeated 0.2 result',
+        detCtxA.valid === detCtxB.valid && JSON.stringify(detCtxA.findings) === JSON.stringify(detCtxB.findings), '');
+
+      var snap = mod.buildEvidencePacketReferenceSnapshot(daypartPkt);
+      fixtureCount++;
+      expect('reference snapshot ok', snap.ok && snap.snapshot && snap.snapshot.contextScope.daypart === 'morning', JSON.stringify(snap));
 
       // Evidence existence != human approval
       expect('evidence does not create field-review', typeof mod.validateFieldReviewRecord === 'undefined', '');

@@ -15,15 +15,33 @@
  */
 
 export const SR_EVIDENCE_PACKET_REGISTRY_VERSION =
-  '0.1.0-sr-evidence-packet-registry';
+  '0.2.0-sr-evidence-packet-registry';
 
 /** Anti-accident capability token — not authentication. */
 export const SR_EVIDENCE_PACKET_REGISTRY_CAPABILITY =
   'explicit_developer_evidence_packet_registry';
 
-/** Packet contract version included in fingerprints. */
+/** Current packet contract version included in fingerprints. */
 export const SR_EVIDENCE_PACKET_CONTRACT_VERSION =
+  '0.2.0-sr-evidence-packet-contract';
+
+/** Explicit legacy contract retained for synthetic 0.1.0 compatibility. */
+export const SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01 =
   '0.1.0-sr-evidence-packet-contract';
+
+/** Explicit legacy registry version retained for synthetic compatibility. */
+export const SR_EVIDENCE_PACKET_REGISTRY_VERSION_V01 =
+  '0.1.0-sr-evidence-packet-registry';
+
+export const SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS = Object.freeze([
+  SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01,
+  SR_EVIDENCE_PACKET_CONTRACT_VERSION
+]);
+
+export const SR_EVIDENCE_PACKET_SUPPORTED_REGISTRY_VERSIONS = Object.freeze([
+  SR_EVIDENCE_PACKET_REGISTRY_VERSION_V01,
+  SR_EVIDENCE_PACKET_REGISTRY_VERSION
+]);
 
 export const SR_EVIDENCE_PACKET_FIELDS = Object.freeze(['sun', 'water']);
 
@@ -86,6 +104,22 @@ export const SR_EVIDENCE_CONTEXT_OBJECTIVES = Object.freeze([
   'unknown'
 ]);
 
+/** 0.2.0 optional canonical daypart qualifiers (not product sun tokens). */
+export const SR_EVIDENCE_CONTEXT_DAYPARTS = Object.freeze([
+  'morning',
+  'afternoon',
+  'all_day',
+  'unknown'
+]);
+
+/** 0.2.0 optional canonical heat-protection qualifiers. */
+export const SR_EVIDENCE_CONTEXT_HEAT_PROTECTIONS = Object.freeze([
+  'required',
+  'beneficial',
+  'not_required',
+  'unknown'
+]);
+
 export const SR_EVIDENCE_PROPOSED_VALUES_SUN = Object.freeze([
   'full_sun',
   'full_sun_to_part_shade',
@@ -98,6 +132,12 @@ export const SR_EVIDENCE_PROPOSED_VALUES_WATER = Object.freeze([
   'medium',
   'high',
   'very_high'
+]);
+
+/** Legacy compound / context-sensitive runtime tokens — never atomic proposed values. */
+export const SR_EVIDENCE_COMPOUND_LEGACY_PROPOSED_VALUES = Object.freeze([
+  'morning_sun_part_shade',
+  'bright_shade'
 ]);
 
 export const SR_EVIDENCE_FINDING_SEVERITIES = Object.freeze([
@@ -151,7 +191,9 @@ export const SR_EVIDENCE_FINDING_CODES = Object.freeze([
   'missing_publisher',
   'missing_source_title',
   'missing_verified_at',
-  'invalid_verified_at'
+  'invalid_verified_at',
+  'unsupported_context_qualifier',
+  'incompatible_context_qualifiers'
 ]);
 
 const ERROR_CODES = Object.freeze([
@@ -191,7 +233,9 @@ const ERROR_CODES = Object.freeze([
   'missing_publisher',
   'missing_source_title',
   'missing_verified_at',
-  'invalid_verified_at'
+  'invalid_verified_at',
+  'unsupported_context_qualifier',
+  'incompatible_context_qualifiers'
 ]);
 
 const WARNING_CODES = Object.freeze([
@@ -310,7 +354,7 @@ function addCode(findings, code, meta) {
   );
 }
 
-function isStructuredContextScope(scope) {
+function isStructuredContextScopeV01(scope) {
   const o = asObject(scope);
   if (!o) return false;
   if (
@@ -340,43 +384,322 @@ function isStructuredContextScope(scope) {
   return true;
 }
 
-function normalizeContextScope(scope) {
-  if (!isStructuredContextScope(scope)) return null;
-  const o = scope;
+function normalizeClimateOrRegion(value) {
+  if (Array.isArray(value)) {
+    const out = [];
+    const seen = Object.create(null);
+    for (let i = 0; i < value.length; i++) {
+      if (!isNonEmptyString(value[i])) return { ok: false, detail: 'empty_climate_or_region_item' };
+      const s = String(value[i]).trim();
+      if (seen[s]) continue;
+      seen[s] = true;
+      out.push(s);
+    }
+    if (out.length === 0) return { ok: false, detail: 'empty_climate_or_region_array' };
+    out.sort();
+    return { ok: true, value: out };
+  }
+  if (isNonEmptyString(value)) {
+    return { ok: true, value: String(value).trim() };
+  }
+  return { ok: false, detail: 'empty_climate_or_region' };
+}
+
+/**
+ * Deterministic, side-effect-free context normalizer.
+ * Version-specific: 0.1.0 preserves legacy ignore-unknown behavior; 0.2.0 fail-closes.
+ */
+export function normalizeEvidencePacketContextScope(scope, packetContractVersion) {
+  const findings = [];
+  const version = isNonEmptyString(packetContractVersion)
+    ? String(packetContractVersion).trim()
+    : SR_EVIDENCE_PACKET_CONTRACT_VERSION;
+
+  if (typeof scope === 'string') {
+    return freezeDeep({
+      ok: false,
+      normalized: null,
+      findings: [
+        {
+          code: 'missing_context_scope',
+          severity: 'error',
+          detail: 'free_text_only_rejected'
+        }
+      ]
+    });
+  }
+
+  const o = asObject(scope);
+  if (!o) {
+    return freezeDeep({
+      ok: false,
+      normalized: null,
+      findings: [
+        {
+          code: 'missing_context_scope',
+          severity: 'error',
+          detail: 'structured_context_required'
+        }
+      ]
+    });
+  }
+
+  if (version === SR_EVIDENCE_PACKET_CONTRACT_VERSION_V01) {
+    if (!isStructuredContextScopeV01(scope)) {
+      return freezeDeep({
+        ok: false,
+        normalized: null,
+        findings: [
+          {
+            code: 'missing_context_scope',
+            severity: 'error',
+            detail: 'structured_context_required'
+          }
+        ]
+      });
+    }
+    const out = {
+      setting: String(o.setting).trim(),
+      planting: String(o.planting).trim(),
+      maturity: String(o.maturity).trim(),
+      objective: String(o.objective).trim()
+    };
+    if (isNonEmptyString(o.season)) out.season = String(o.season).trim();
+    if (o.climateOrRegion != null) {
+      if (Array.isArray(o.climateOrRegion)) {
+        out.climateOrRegion = o.climateOrRegion
+          .map(function (x) {
+            return String(x).trim();
+          })
+          .filter(Boolean)
+          .sort();
+      } else if (isNonEmptyString(o.climateOrRegion)) {
+        out.climateOrRegion = String(o.climateOrRegion).trim();
+      }
+    }
+    if (isNonEmptyString(o.humidity)) out.humidity = String(o.humidity).trim();
+    if (isNonEmptyString(o.drainage)) out.drainage = String(o.drainage).trim();
+    if (isNonEmptyString(o.lightIntensity)) {
+      out.lightIntensity = String(o.lightIntensity).trim();
+    }
+    if (isNonEmptyString(o.protectedCultivation)) {
+      out.protectedCultivation = String(o.protectedCultivation).trim();
+    }
+    return freezeDeep({ ok: true, normalized: out, findings: findings });
+  }
+
+  if (version !== SR_EVIDENCE_PACKET_CONTRACT_VERSION) {
+    return freezeDeep({
+      ok: false,
+      normalized: null,
+      findings: [
+        {
+          code: 'packet_contract_version_mismatch',
+          severity: 'error',
+          detail: 'unsupported_contract_for_context_normalize',
+          actual: version
+        }
+      ]
+    });
+  }
+
+  const knownKeys = Object.create(null);
+  knownKeys.setting = true;
+  knownKeys.planting = true;
+  knownKeys.maturity = true;
+  knownKeys.objective = true;
+  knownKeys.season = true;
+  knownKeys.climateOrRegion = true;
+  knownKeys.humidity = true;
+  knownKeys.drainage = true;
+  knownKeys.lightIntensity = true;
+  knownKeys.protectedCultivation = true;
+  knownKeys.daypart = true;
+  knownKeys.heatProtection = true;
+
+  const keys = Object.keys(o);
+  for (let i = 0; i < keys.length; i++) {
+    if (!knownKeys[keys[i]]) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'unknown_context_key',
+        actual: keys[i]
+      });
+    }
+  }
+
+  if (
+    !isNonEmptyString(o.setting) ||
+    SR_EVIDENCE_CONTEXT_SETTINGS.indexOf(String(o.setting).trim()) < 0 ||
+    !isNonEmptyString(o.planting) ||
+    SR_EVIDENCE_CONTEXT_PLANTINGS.indexOf(String(o.planting).trim()) < 0 ||
+    !isNonEmptyString(o.maturity) ||
+    SR_EVIDENCE_CONTEXT_MATURITIES.indexOf(String(o.maturity).trim()) < 0 ||
+    !isNonEmptyString(o.objective) ||
+    SR_EVIDENCE_CONTEXT_OBJECTIVES.indexOf(String(o.objective).trim()) < 0
+  ) {
+    findings.push({
+      code: 'missing_context_scope',
+      severity: 'error',
+      detail: 'structured_context_required'
+    });
+    return freezeDeep({ ok: false, normalized: null, findings: findings });
+  }
+
   const out = {
     setting: String(o.setting).trim(),
     planting: String(o.planting).trim(),
     maturity: String(o.maturity).trim(),
     objective: String(o.objective).trim()
   };
-  if (isNonEmptyString(o.season)) out.season = String(o.season).trim();
-  if (o.climateOrRegion != null) {
-    if (Array.isArray(o.climateOrRegion)) {
-      out.climateOrRegion = o.climateOrRegion
-        .map(function (x) {
-          return String(x).trim();
-        })
-        .filter(Boolean)
-        .sort();
-    } else if (isNonEmptyString(o.climateOrRegion)) {
-      out.climateOrRegion = String(o.climateOrRegion).trim();
+
+  if (o.daypart !== undefined && o.daypart !== null) {
+    if (
+      !isNonEmptyString(o.daypart) ||
+      SR_EVIDENCE_CONTEXT_DAYPARTS.indexOf(String(o.daypart).trim()) < 0
+    ) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_daypart',
+        actual: o.daypart
+      });
+    } else {
+      out.daypart = String(o.daypart).trim();
     }
   }
-  if (isNonEmptyString(o.humidity)) out.humidity = String(o.humidity).trim();
-  if (isNonEmptyString(o.drainage)) out.drainage = String(o.drainage).trim();
-  if (isNonEmptyString(o.lightIntensity)) {
-    out.lightIntensity = String(o.lightIntensity).trim();
+
+  if (o.heatProtection !== undefined && o.heatProtection !== null) {
+    if (
+      !isNonEmptyString(o.heatProtection) ||
+      SR_EVIDENCE_CONTEXT_HEAT_PROTECTIONS.indexOf(String(o.heatProtection).trim()) < 0
+    ) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_heat_protection',
+        actual: o.heatProtection
+      });
+    } else {
+      out.heatProtection = String(o.heatProtection).trim();
+    }
   }
-  if (isNonEmptyString(o.protectedCultivation)) {
-    out.protectedCultivation = String(o.protectedCultivation).trim();
+
+  if (o.season !== undefined && o.season !== null) {
+    if (!isNonEmptyString(o.season)) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_season',
+        actual: o.season
+      });
+    } else {
+      out.season = String(o.season).trim();
+    }
   }
-  return out;
+
+  if (o.climateOrRegion !== undefined && o.climateOrRegion !== null) {
+    const region = normalizeClimateOrRegion(o.climateOrRegion);
+    if (!region.ok) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: region.detail || 'invalid_climate_or_region',
+        actual: o.climateOrRegion
+      });
+    } else {
+      out.climateOrRegion = region.value;
+    }
+  }
+
+  if (o.humidity !== undefined && o.humidity !== null) {
+    if (!isNonEmptyString(o.humidity)) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_humidity',
+        actual: o.humidity
+      });
+    } else {
+      out.humidity = String(o.humidity).trim();
+    }
+  }
+
+  if (o.drainage !== undefined && o.drainage !== null) {
+    if (!isNonEmptyString(o.drainage)) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_drainage',
+        actual: o.drainage
+      });
+    } else {
+      out.drainage = String(o.drainage).trim();
+    }
+  }
+
+  if (o.lightIntensity !== undefined && o.lightIntensity !== null) {
+    if (!isNonEmptyString(o.lightIntensity)) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_light_intensity',
+        actual: o.lightIntensity
+      });
+    } else {
+      out.lightIntensity = String(o.lightIntensity).trim();
+    }
+  }
+
+  if (o.protectedCultivation !== undefined && o.protectedCultivation !== null) {
+    if (!isNonEmptyString(o.protectedCultivation)) {
+      findings.push({
+        code: 'unsupported_context_qualifier',
+        severity: 'error',
+        detail: 'invalid_protected_cultivation',
+        actual: o.protectedCultivation
+      });
+    } else {
+      out.protectedCultivation = String(o.protectedCultivation).trim();
+    }
+  }
+
+  if (out.setting === 'indoor') {
+    if (out.daypart && out.daypart !== 'unknown') {
+      findings.push({
+        code: 'incompatible_context_qualifiers',
+        severity: 'error',
+        detail: 'daypart_requires_non_indoor_setting',
+        actual: out.daypart
+      });
+    }
+    if (out.heatProtection === 'required' || out.heatProtection === 'beneficial') {
+      findings.push({
+        code: 'incompatible_context_qualifiers',
+        severity: 'error',
+        detail: 'heat_protection_requires_non_indoor_setting',
+        actual: out.heatProtection
+      });
+    }
+  }
+
+  const hasError = findings.some(function (f) {
+    return f.severity === 'error';
+  });
+  if (hasError) {
+    return freezeDeep({ ok: false, normalized: null, findings: findings });
+  }
+  return freezeDeep({ ok: true, normalized: out, findings: findings });
 }
 
-function contextScopeKey(scope) {
-  const n = normalizeContextScope(scope);
-  if (!n) return null;
-  return stableSerialize(n);
+function contextScopeKey(scope, packetContractVersion) {
+  const n = normalizeEvidencePacketContextScope(
+    scope,
+    packetContractVersion || SR_EVIDENCE_PACKET_CONTRACT_VERSION
+  );
+  if (!n.ok || !n.normalized) return null;
+  return stableSerialize(n.normalized);
 }
 
 function proposedValueAllowed(field, value) {
@@ -387,14 +710,28 @@ function proposedValueAllowed(field, value) {
   return false;
 }
 
+function isCompoundLegacyProposedValue(value) {
+  if (!isNonEmptyString(value)) return false;
+  return SR_EVIDENCE_COMPOUND_LEGACY_PROPOSED_VALUES.indexOf(String(value).trim()) >= 0;
+}
+
 function isActiveSupportStatus(status) {
   return status === 'draft' || status === 'collected';
+}
+
+function isSupportedContractVersion(version) {
+  return (
+    isNonEmptyString(version) &&
+    SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS.indexOf(String(version).trim()) >= 0
+  );
 }
 
 function buildDescriptor() {
   return freezeDeep({
     registryVersion: SR_EVIDENCE_PACKET_REGISTRY_VERSION,
     packetContractVersion: SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+    supportedPacketContractVersions: SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS.slice(),
+    supportedRegistryVersions: SR_EVIDENCE_PACKET_SUPPORTED_REGISTRY_VERSIONS.slice(),
     capability: SR_EVIDENCE_PACKET_REGISTRY_CAPABILITY,
     developerOnly: true,
     authoritative: false,
@@ -415,6 +752,8 @@ function buildDescriptor() {
     authorityTiers: SR_EVIDENCE_AUTHORITY_TIERS.slice(),
     packetStatuses: SR_EVIDENCE_PACKET_STATUSES.slice(),
     sourceTypes: SR_EVIDENCE_SOURCE_TYPES.slice(),
+    contextDayparts: SR_EVIDENCE_CONTEXT_DAYPARTS.slice(),
+    contextHeatProtections: SR_EVIDENCE_CONTEXT_HEAT_PROTECTIONS.slice(),
     findingSeverities: SR_EVIDENCE_FINDING_SEVERITIES.slice(),
     findingCodes: SR_EVIDENCE_FINDING_CODES.slice(),
     realPacketCount: 0
@@ -504,7 +843,7 @@ export function buildEvidencePacketContentFingerprint(inputs) {
   const sourceIdentity = normalizeTrim(o.sourceIdentity) || sourceReference;
   const claimType = normalizeTrim(o.claimType);
   const packetContractVersion = normalizeTrim(o.packetContractVersion);
-  const ctxKey = contextScopeKey(o.contextScope);
+  const ctxKey = contextScopeKey(o.contextScope, packetContractVersion);
 
   if (
     !evidenceId ||
@@ -544,6 +883,43 @@ export function buildEvidencePacketContentFingerprint(inputs) {
 }
 
 /**
+ * Inert developer-only reference snapshot for Field Review handoff preparation.
+ * Does not grant authority or persistence.
+ */
+export function buildEvidencePacketReferenceSnapshot(packet) {
+  const rec = asObject(packet);
+  if (!rec) {
+    return freezeDeep({ ok: false, snapshot: null, reasons: ['packet_required'] });
+  }
+  const packetContractVersion =
+    normalizeTrim(rec.packetContractVersion) || SR_EVIDENCE_PACKET_CONTRACT_VERSION;
+  const ctxNorm = normalizeEvidencePacketContextScope(rec.contextScope, packetContractVersion);
+  if (!ctxNorm.ok) {
+    return freezeDeep({
+      ok: false,
+      snapshot: null,
+      reasons: ['context_normalize_failed'],
+      findings: ctxNorm.findings
+    });
+  }
+  return freezeDeep({
+    ok: true,
+    snapshot: {
+      packetContractVersion: packetContractVersion,
+      canonicalKey: normalizeKey(rec.canonicalKey),
+      field: normalizeTrim(rec.field),
+      claimType: normalizeTrim(rec.claimType),
+      proposedValue: normalizeTrim(rec.proposedValue),
+      contextScope: ctxNorm.normalized,
+      packetStatus: normalizeTrim(rec.packetStatus),
+      contentFingerprint: normalizeTrim(rec.contentFingerprint),
+      evidenceId: normalizeTrim(rec.evidenceId)
+    },
+    reasons: ['ok']
+  });
+}
+
+/**
  * Validate a single developer/synthetic evidence packet. Does not mutate input.
  */
 export function validateEvidencePacket(packet, context) {
@@ -556,9 +932,11 @@ export function validateEvidencePacket(packet, context) {
     ? ctx.knownAliasKeys.map(normalizeKey).filter(Boolean)
     : [];
   const aliasMap = asObject(ctx.aliasToCanonicalMap) || {};
-  const packetContractVersion = isNonEmptyString(ctx.packetContractVersion)
-    ? String(ctx.packetContractVersion).trim()
-    : SR_EVIDENCE_PACKET_CONTRACT_VERSION;
+  const supportedContracts = Array.isArray(ctx.supportedPacketContractVersions)
+    ? ctx.supportedPacketContractVersions.map(function (v) {
+        return String(v).trim();
+      })
+    : SR_EVIDENCE_PACKET_SUPPORTED_CONTRACT_VERSIONS.slice();
 
   const rec = asObject(packet);
   if (!rec) {
@@ -697,15 +1075,33 @@ export function validateEvidencePacket(packet, context) {
     addCode(findings, 'missing_normalized_claim', { evidenceId: evidenceId });
   }
 
-  const contextScope = normalizeContextScope(rec.contextScope);
-  if (!contextScope) {
-    addCode(findings, 'missing_context_scope', {
+  const packetContract = normalizeTrim(rec.packetContractVersion);
+  if (!packetContract || supportedContracts.indexOf(packetContract) < 0) {
+    addCode(findings, 'packet_contract_version_mismatch', {
       evidenceId: evidenceId,
-      detail:
-        typeof rec.contextScope === 'string'
-          ? 'free_text_only_rejected'
-          : 'structured_context_required'
+      expected: supportedContracts.slice(),
+      actual: packetContract,
+      detail: 'unsupported_or_unknown_packet_contract_version'
     });
+  }
+
+  const ctxNorm = normalizeEvidencePacketContextScope(
+    rec.contextScope,
+    packetContract || SR_EVIDENCE_PACKET_CONTRACT_VERSION
+  );
+  let contextScope = null;
+  if (!ctxNorm.ok) {
+    for (let ci = 0; ci < ctxNorm.findings.length; ci++) {
+      const cf = ctxNorm.findings[ci];
+      addCode(findings, cf.code, {
+        evidenceId: evidenceId,
+        detail: cf.detail,
+        expected: cf.expected,
+        actual: cf.actual
+      });
+    }
+  } else {
+    contextScope = ctxNorm.normalized;
   }
 
   const packetStatus = normalizeTrim(rec.packetStatus);
@@ -721,21 +1117,15 @@ export function validateEvidencePacket(packet, context) {
     addCode(findings, 'missing_packet_version', { evidenceId: evidenceId });
   }
 
-  const packetContract = normalizeTrim(rec.packetContractVersion);
-  if (!packetContract || packetContract !== packetContractVersion) {
-    addCode(findings, 'packet_contract_version_mismatch', {
-      evidenceId: evidenceId,
-      expected: packetContractVersion,
-      actual: packetContract
-    });
-  }
-
   const proposedValue = normalizeTrim(rec.proposedValue);
   if (!proposedValue || (field && !proposedValueAllowed(field, proposedValue))) {
     addCode(findings, 'unsupported_proposed_value', {
       evidenceId: evidenceId,
       field: field,
-      actual: proposedValue
+      actual: proposedValue,
+      detail: isCompoundLegacyProposedValue(proposedValue)
+        ? 'compound_legacy_token'
+        : 'not_in_allowlist'
     });
   }
 
@@ -861,7 +1251,7 @@ export function validateEvidencePacket(packet, context) {
     sourceReference: sourceReference,
     contextScope: contextScope || rec.contextScope,
     claimType: claimType,
-    packetContractVersion: packetContract || packetContractVersion
+    packetContractVersion: packetContract || SR_EVIDENCE_PACKET_CONTRACT_VERSION
   });
   if (contentFp.ok) {
     computedContentFingerprint = contentFp.fingerprint;
@@ -951,13 +1341,17 @@ function semanticDupKey(n) {
     String(n.sourceReference).trim().toLowerCase(),
     n.field,
     String(n.normalizedClaim).trim().toLowerCase(),
-    contextScopeKey(n.contextScope)
+    contextScopeKey(n.contextScope, n.packetContractVersion)
   ].join('::');
 }
 
 function activeOverlapKey(n) {
   if (!n || !n.canonicalKey || !n.field || !n.contextScope) return null;
-  return [n.canonicalKey, n.field, contextScopeKey(n.contextScope)].join('::');
+  return [
+    n.canonicalKey,
+    n.field,
+    contextScopeKey(n.contextScope, n.packetContractVersion)
+  ].join('::');
 }
 
 function countFindings(findings) {
