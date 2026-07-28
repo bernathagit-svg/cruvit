@@ -9,26 +9,58 @@
  *  - Explicit-call-only; no DOM, storage, fetch, timers, or persistence.
  *  - Does not mutate registry, catalog, needsReview, or caller inputs.
  *  - Does not import product runtime, GOS, v1b, identity Sidecar, or catalog.
- *  - Reuses registry buildFieldReviewValueFingerprint; does not reimplement it.
+ *  - Reuses registry fingerprint/normalize helpers; may consume EP snapshots.
  */
 
 import {
   SR_FIELD_REVIEW_REGISTRY_VERSION,
+  SR_FIELD_REVIEW_REGISTRY_VERSION_V01,
   SR_FIELD_REVIEW_CONTRACT_VERSION,
+  SR_FIELD_REVIEW_CONTRACT_VERSION_V01,
+  SR_FIELD_REVIEW_SUPPORTED_CONTRACT_VERSIONS,
+  SR_FIELD_REVIEW_SUPPORTED_REGISTRY_VERSIONS,
+  SR_FIELD_REVIEW_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS,
+  SR_FIELD_REVIEW_SUPPORTED_EVIDENCE_PACKET_REGISTRY_VERSIONS,
   SR_FIELD_REVIEW_FIELDS,
+  SR_FIELD_REVIEW_CLAIM_TYPES,
   SR_FIELD_REVIEW_STORED_STATUSES,
   SR_FIELD_REVIEW_COMPUTED_ONLY_STATUSES,
   SR_FIELD_REVIEW_SOURCE_KINDS,
+  SR_FIELD_REVIEW_DEFAULT_REVIEWED_VALUES_SUN,
+  SR_FIELD_REVIEW_DEFAULT_REVIEWED_VALUES_WATER,
+  SR_FIELD_REVIEW_COMPOUND_LEGACY_REVIEWED_VALUES,
   buildFieldReviewValueFingerprint,
+  normalizeFieldReviewEvidenceRefs,
+  normalizeFieldReviewContextScope,
   getEmptySmartRecDeveloperFieldReviewRegistry,
   getSmartRecDeveloperFieldReviewRegistryDescriptor
 } from './developer-field-review-registry.js';
 
-export const SR_FIELD_REVIEW_VALIDATOR_VERSION = '0.1.0-sr-field-review-validator';
+import {
+  SR_EVIDENCE_PACKET_CONTRACT_VERSION,
+  normalizeEvidencePacketContextScope
+} from './developer-evidence-packet-registry.js';
+
+export const SR_FIELD_REVIEW_VALIDATOR_VERSION =
+  '0.2.0-sr-field-review-validator';
 
 /** Anti-accident capability token — not authentication. */
 export const SR_FIELD_REVIEW_VALIDATOR_CAPABILITY =
   'explicit_developer_field_review_validation';
+
+export const SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS = Object.freeze(
+  SR_FIELD_REVIEW_SUPPORTED_CONTRACT_VERSIONS.slice()
+);
+
+export const SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS = Object.freeze(
+  SR_FIELD_REVIEW_SUPPORTED_REGISTRY_VERSIONS.slice()
+);
+
+export const SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS =
+  Object.freeze(SR_FIELD_REVIEW_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS.slice());
+
+export const SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_REGISTRY_VERSIONS =
+  Object.freeze(SR_FIELD_REVIEW_SUPPORTED_EVIDENCE_PACKET_REGISTRY_VERSIONS.slice());
 
 export const SR_FIELD_REVIEW_VALIDATOR_SEVERITIES = Object.freeze([
   'error',
@@ -67,7 +99,14 @@ export const SR_FIELD_REVIEW_VALIDATOR_FINDING_CODES = Object.freeze([
   'group_source_deferred',
   'empty_registry_accepted',
   'legacy_eligibility_summary',
-  'invalid_input'
+  'invalid_input',
+  'reviewed_claim_type_missing',
+  'unsupported_reviewed_claim_type',
+  'invalid_evidence_reference_shape',
+  'reviewed_claim_semantic_mismatch',
+  'evidence_content_fingerprint_mismatch',
+  'unsupported_evidence_reference_version',
+  'general_guidance_not_approvable'
 ]);
 
 function deepFreeze(value, seen) {
@@ -134,13 +173,73 @@ function stableSerialize(value) {
   return JSON.stringify(String(value));
 }
 
-function contextScopeKey(scope) {
-  if (scope === undefined || scope === null) return null;
-  if (typeof scope === 'string') {
-    const s = scope.trim();
-    return s || null;
+function contextScopeKey(scope, reviewContractVersion) {
+  const version = isNonEmptyString(reviewContractVersion)
+    ? String(reviewContractVersion).trim()
+    : SR_FIELD_REVIEW_CONTRACT_VERSION;
+  if (version === SR_FIELD_REVIEW_CONTRACT_VERSION_V01) {
+    if (scope === undefined || scope === null) return null;
+    if (typeof scope === 'string') {
+      const s = scope.trim();
+      return s || null;
+    }
+    if (typeof scope === 'object') return stableSerialize(scope);
+    return null;
   }
-  if (typeof scope === 'object') return stableSerialize(scope);
+  const norm = normalizeFieldReviewContextScope(scope, version);
+  return norm.ok ? norm.key : null;
+}
+
+function compareContext(a, b, reviewContractVersion) {
+  return contextScopeKey(a, reviewContractVersion) === contextScopeKey(b, reviewContractVersion);
+}
+
+function isActivePacketStatus(status) {
+  return status === 'draft' || status === 'collected';
+}
+
+function evidenceSnapshotMap(input) {
+  const map = Object.create(null);
+  const root =
+    asObject(input.evidencePacketSnapshots) ||
+    asObject(input.evidenceReferenceSnapshots) ||
+    asObject(input.packetSnapshots);
+  if (root) {
+    if (Array.isArray(root.snapshots)) {
+      for (let i = 0; i < root.snapshots.length; i++) {
+        const s = asObject(root.snapshots[i]);
+        if (s && isNonEmptyString(s.evidenceId)) map[String(s.evidenceId).trim()] = s;
+      }
+    } else if (Array.isArray(root)) {
+      for (let i = 0; i < root.length; i++) {
+        const s = asObject(root[i]);
+        if (s && isNonEmptyString(s.evidenceId)) map[String(s.evidenceId).trim()] = s;
+      }
+    } else {
+      const keys = Object.keys(root);
+      for (let i = 0; i < keys.length; i++) {
+        const s = asObject(root[keys[i]]);
+        if (!s) continue;
+        const id = isNonEmptyString(s.evidenceId)
+          ? String(s.evidenceId).trim()
+          : String(keys[i]).trim();
+        if (id) map[id] = Object.assign({}, s, { evidenceId: id });
+      }
+    }
+  }
+  const list = Array.isArray(input.syntheticEvidencePacketSnapshots)
+    ? input.syntheticEvidencePacketSnapshots
+    : [];
+  for (let i = 0; i < list.length; i++) {
+    const s = asObject(list[i]);
+    if (s && isNonEmptyString(s.evidenceId)) map[String(s.evidenceId).trim()] = s;
+  }
+  return map;
+}
+
+function defaultTokensForField(field) {
+  if (field === 'sun') return SR_FIELD_REVIEW_DEFAULT_REVIEWED_VALUES_SUN;
+  if (field === 'water') return SR_FIELD_REVIEW_DEFAULT_REVIEWED_VALUES_WATER;
   return null;
 }
 
@@ -150,12 +249,20 @@ function buildDescriptor() {
     capability: SR_FIELD_REVIEW_VALIDATOR_CAPABILITY,
     supportedRegistryVersion: SR_FIELD_REVIEW_REGISTRY_VERSION,
     supportedReviewContractVersion: SR_FIELD_REVIEW_CONTRACT_VERSION,
+    supportedRegistryVersions: SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.slice(),
+    supportedReviewContractVersions: SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.slice(),
+    supportedEvidencePacketContractVersions:
+      SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS.slice(),
+    supportedEvidencePacketRegistryVersions:
+      SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_REGISTRY_VERSIONS.slice(),
     developerOnly: true,
     authoritative: false,
     productConsumer: false,
     runtimeEligibilityAuthority: false,
     registryMutation: false,
     catalogMutation: false,
+    evidenceMutation: false,
+    fieldReviewMutation: false,
     needsReviewMutation: false,
     persistence: false,
     network: false,
@@ -165,6 +272,7 @@ function buildDescriptor() {
     severities: SR_FIELD_REVIEW_VALIDATOR_SEVERITIES.slice(),
     findingCodes: SR_FIELD_REVIEW_VALIDATOR_FINDING_CODES.slice(),
     allowedFields: SR_FIELD_REVIEW_FIELDS.slice(),
+    claimTypes: SR_FIELD_REVIEW_CLAIM_TYPES.slice(),
     storedStatuses: SR_FIELD_REVIEW_STORED_STATUSES.slice(),
     sourceKinds: SR_FIELD_REVIEW_SOURCE_KINDS.slice()
   });
@@ -331,10 +439,6 @@ function blastProofFor(input, canonicalKey, field, sourceIds) {
   return null;
 }
 
-function compareContext(a, b) {
-  return contextScopeKey(a) === contextScopeKey(b);
-}
-
 /**
  * Pure validation entry point for developer field-review registry artifacts.
  * Accepts only explicit snapshots; never fetches product data.
@@ -387,24 +491,43 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
     ? String(src.reviewContractVersion).trim()
     : SR_FIELD_REVIEW_CONTRACT_VERSION;
 
-  if (registryVersion !== SR_FIELD_REVIEW_REGISTRY_VERSION) {
+  if (
+    SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.indexOf(registryVersion) < 0
+  ) {
     pushFinding(findings, {
       code: 'stale_registry_version',
       severity: 'error',
-      expected: SR_FIELD_REVIEW_REGISTRY_VERSION,
+      expected: SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_REGISTRY_VERSIONS.slice(),
       actual: registryVersion,
       detail: 'unsupported_or_mismatched_registry_version'
     });
   }
 
-  if (reviewContractVersion !== SR_FIELD_REVIEW_CONTRACT_VERSION) {
+  if (
+    SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.indexOf(reviewContractVersion) < 0
+  ) {
     pushFinding(findings, {
       code: 'review_contract_version_mismatch',
       severity: 'error',
-      expected: SR_FIELD_REVIEW_CONTRACT_VERSION,
+      expected: SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.slice(),
       actual: reviewContractVersion,
       detail: 'unsupported_or_mismatched_review_contract_version'
     });
+  }
+
+  if (isNonEmptyString(src.evidencePacketRegistryVersion)) {
+    const epReg = String(src.evidencePacketRegistryVersion).trim();
+    if (
+      SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_REGISTRY_VERSIONS.indexOf(epReg) <
+      0
+    ) {
+      pushFinding(findings, {
+        code: 'unsupported_evidence_reference_version',
+        severity: 'error',
+        detail: 'unsupported_evidence_packet_registry_version',
+        actual: epReg
+      });
+    }
   }
 
   if (
@@ -493,6 +616,9 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
     const reviewedValue = isNonEmptyString(raw.reviewedValue)
       ? String(raw.reviewedValue).trim()
       : null;
+    const reviewedClaimType = isNonEmptyString(raw.reviewedClaimType)
+      ? String(raw.reviewedClaimType).trim()
+      : null;
     const valueFingerprint = isNonEmptyString(raw.valueFingerprint)
       ? String(raw.valueFingerprint).trim()
       : null;
@@ -500,17 +626,18 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
       ? String(raw.sourceKind).trim()
       : null;
     const sourceIds = Array.isArray(raw.sourceIds) ? normalizeStringArray(raw.sourceIds) : null;
-    const evidenceRefs = Array.isArray(raw.evidenceRefs)
-      ? normalizeStringArray(raw.evidenceRefs)
-      : null;
+    const rawEvidenceRefs = Array.isArray(raw.evidenceRefs) ? raw.evidenceRefs : null;
     const reviewVersion = isNonEmptyString(raw.reviewVersion)
       ? String(raw.reviewVersion).trim()
       : null;
     const contextScope = raw.contextScope;
     const isApproval = reviewStatus === 'reviewed_supported';
+    const isV02 = reviewContractVersion === SR_FIELD_REVIEW_CONTRACT_VERSION;
+    const packetSnapshots = evidenceSnapshotMap(src);
     const recordKey = (canonicalKey || '?') + '::' + (field || '?');
     let recordInvalid = false;
     let recordStale = false;
+    let evidenceRefs = null;
 
     if (!canonicalSummary[canonicalKey || '__unknown__']) {
       canonicalSummary[canonicalKey || '__unknown__'] = {
@@ -545,6 +672,32 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
         field: field,
         detail: detail || null
       });
+    }
+
+    if (rawEvidenceRefs) {
+      const refsNorm = normalizeFieldReviewEvidenceRefs(
+        rawEvidenceRefs,
+        reviewContractVersion
+      );
+      if (!refsNorm.ok) {
+        for (let rr = 0; rr < refsNorm.reasons.length; rr++) {
+          const code = refsNorm.reasons[rr];
+          if (code === 'unsupported_evidence_packet_contract_version') {
+            markError(
+              'unsupported_evidence_reference_version',
+              'unsupported_packet_contract_on_ref'
+            );
+          } else if (code === 'duplicate_evidence_ref') {
+            markError('invalid_evidence_reference_shape', 'duplicate_evidence_ref');
+          } else if (code === 'unsupported_review_contract_version') {
+            markError('review_contract_version_mismatch', code);
+          } else {
+            markError('invalid_evidence_reference_shape', code);
+          }
+        }
+      } else {
+        evidenceRefs = refsNorm.normalized;
+      }
     }
 
     if (!canonicalKey) {
@@ -625,6 +778,31 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
     const nr = needsReviewFor(src.needsReviewSnapshot, canonicalKey);
 
     if (isApproval) {
+      if (isV02) {
+        if (!reviewedClaimType) {
+          markError('reviewed_claim_type_missing', 'reviewed_claim_type_required');
+        } else if (SR_FIELD_REVIEW_CLAIM_TYPES.indexOf(reviewedClaimType) < 0) {
+          markError(
+            'unsupported_reviewed_claim_type',
+            'claim_type_not_allowed',
+            SR_FIELD_REVIEW_CLAIM_TYPES.slice(),
+            reviewedClaimType
+          );
+        } else if (reviewedClaimType === 'general_guidance') {
+          markError('general_guidance_not_approvable', 'general_guidance_sole_approval');
+        }
+      } else if (
+        reviewedClaimType != null &&
+        SR_FIELD_REVIEW_CLAIM_TYPES.indexOf(reviewedClaimType) < 0
+      ) {
+        markError(
+          'unsupported_reviewed_claim_type',
+          'claim_type_not_allowed',
+          SR_FIELD_REVIEW_CLAIM_TYPES.slice(),
+          reviewedClaimType
+        );
+      }
+
       if (!reviewedValue) markError('reviewed_supported_missing_value', 'reviewed_value_required');
       if (!valueFingerprint) markError('missing_value_fingerprint', 'value_fingerprint_required');
       if (!evidenceRefs || evidenceRefs.length === 0) {
@@ -638,56 +816,271 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
         markError('missing_source_ids', 'source_ids_required');
       }
 
-      if (supportedTokens && reviewedValue && supportedTokens.indexOf(reviewedValue) < 0) {
-        markError('unsupported_reviewed_value', 'token_not_supported', supportedTokens, reviewedValue);
+      if (reviewedValue) {
+        if (
+          SR_FIELD_REVIEW_COMPOUND_LEGACY_REVIEWED_VALUES.indexOf(reviewedValue) >= 0
+        ) {
+          markError(
+            'unsupported_reviewed_value',
+            'compound_legacy_token',
+            null,
+            reviewedValue
+          );
+        } else if (supportedTokens && supportedTokens.indexOf(reviewedValue) < 0) {
+          markError(
+            'unsupported_reviewed_value',
+            'token_not_supported',
+            supportedTokens,
+            reviewedValue
+          );
+        } else if (!supportedTokens && isV02) {
+          const defaults = defaultTokensForField(field);
+          if (defaults && defaults.indexOf(reviewedValue) < 0) {
+            markError(
+              'unsupported_reviewed_value',
+              'token_not_in_default_allowlist',
+              defaults.slice(),
+              reviewedValue
+            );
+          }
+        }
       }
+
+      if (isV02 && contextScope != null) {
+        const ctxN = normalizeFieldReviewContextScope(contextScope, reviewContractVersion);
+        if (!ctxN.ok) {
+          markError('context_scope_mismatch', 'context_normalize_failed');
+        }
+      }
+
+      let matchingClaimSupport = 0;
+      let matchingValueSupport = 0;
+      let anyActiveSupport = 0;
+      let onlyTolerance = true;
+      let onlySurvival = true;
+      let onlyGuidance = true;
+      let sawAnyPacket = false;
 
       if (evidenceRefs) {
         for (let e = 0; e < evidenceRefs.length; e++) {
           const ref = evidenceRefs[e];
-          if (!knownEvidence[ref]) {
-            markError('evidence_reference_missing', 'evidence_ref_not_in_set', null, ref);
+          const refId = isV02 ? ref.evidenceId : ref;
+          const knownOk =
+            Object.keys(knownEvidence).length === 0 || knownEvidence[refId] === true;
+          if (!knownOk && Object.keys(packetSnapshots).length === 0) {
+            markError('evidence_reference_missing', 'evidence_ref_not_in_set', null, refId);
             continue;
           }
-          const meta = evidenceMeta[ref];
-          if (meta) {
-            if (isNonEmptyString(meta.field) && String(meta.field).trim() !== field) {
-              markError(
-                'evidence_status_review_status_conflict',
-                'evidence_field_mismatch',
-                field,
-                meta.field
-              );
+
+          if (!isV02) {
+            const meta = evidenceMeta[refId];
+            if (meta) {
+              if (isNonEmptyString(meta.field) && String(meta.field).trim() !== field) {
+                markError(
+                  'evidence_status_review_status_conflict',
+                  'evidence_field_mismatch',
+                  field,
+                  meta.field
+                );
+              }
+              if (
+                isNonEmptyString(meta.canonicalKey) &&
+                normalizeKey(meta.canonicalKey) !== canonicalKey
+              ) {
+                markError(
+                  'evidence_status_review_status_conflict',
+                  'evidence_canonical_mismatch',
+                  canonicalKey,
+                  meta.canonicalKey
+                );
+              }
+              if (meta.status === 'withdrawn' || meta.status === 'superseded') {
+                markError(
+                  'evidence_status_review_status_conflict',
+                  'evidence_' + meta.status,
+                  'active',
+                  meta.status
+                );
+                recordStale = true;
+              }
+              if (
+                meta.contextScope != null &&
+                !compareContext(meta.contextScope, contextScope, reviewContractVersion)
+              ) {
+                markError(
+                  'context_scope_mismatch',
+                  'evidence_context_incompatible',
+                  contextScopeKey(contextScope, reviewContractVersion),
+                  contextScopeKey(meta.contextScope, reviewContractVersion)
+                );
+              }
             }
-            if (
-              isNonEmptyString(meta.canonicalKey) &&
-              normalizeKey(meta.canonicalKey) !== canonicalKey
-            ) {
-              markError(
-                'evidence_status_review_status_conflict',
-                'evidence_canonical_mismatch',
-                canonicalKey,
-                meta.canonicalKey
-              );
-            }
-            if (meta.status === 'withdrawn' || meta.status === 'superseded') {
-              markError(
-                'evidence_status_review_status_conflict',
-                'evidence_' + meta.status,
-                'active',
-                meta.status
-              );
-              recordStale = true;
-            }
-            if (meta.contextScope != null && !compareContext(meta.contextScope, contextScope)) {
-              markError(
-                'context_scope_mismatch',
-                'evidence_context_incompatible',
-                contextScopeKey(contextScope),
-                contextScopeKey(meta.contextScope)
-              );
-            }
+            continue;
           }
+
+          const snap = packetSnapshots[refId];
+          if (!snap) {
+            markError('evidence_reference_missing', 'packet_snapshot_missing', null, refId);
+            continue;
+          }
+          sawAnyPacket = true;
+
+          if (
+            SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS.indexOf(
+              String(ref.packetContractVersion).trim()
+            ) < 0
+          ) {
+            markError(
+              'unsupported_evidence_reference_version',
+              'compact_ref_packet_contract',
+              null,
+              ref.packetContractVersion
+            );
+          }
+
+          if (normalizeKey(snap.canonicalKey) !== canonicalKey) {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'canonical_key_mismatch',
+              canonicalKey,
+              snap.canonicalKey
+            );
+          }
+          if (isNonEmptyString(snap.field) && String(snap.field).trim() !== field) {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'field_mismatch',
+              field,
+              snap.field
+            );
+          }
+
+          const snapStatus = isNonEmptyString(snap.packetStatus)
+            ? String(snap.packetStatus).trim()
+            : null;
+          if (!isActivePacketStatus(snapStatus)) {
+            markError(
+              'evidence_status_review_status_conflict',
+              'inactive_packet_' + String(snapStatus),
+              'active',
+              snapStatus
+            );
+            if (snapStatus === 'stale') recordStale = true;
+          } else {
+            anyActiveSupport += 1;
+          }
+
+          const snapClaim = isNonEmptyString(snap.claimType)
+            ? String(snap.claimType).trim()
+            : null;
+          if (snapClaim === 'tolerance') onlyGuidance = false;
+          else if (snapClaim === 'survival_minimum') {
+            onlyGuidance = false;
+            onlyTolerance = false;
+          } else if (snapClaim === 'preference' || snapClaim === 'optimum') {
+            onlyGuidance = false;
+            onlyTolerance = false;
+            onlySurvival = false;
+          } else if (snapClaim === 'general_guidance') {
+            onlyTolerance = false;
+            onlySurvival = false;
+          } else {
+            onlyTolerance = false;
+            onlySurvival = false;
+            onlyGuidance = false;
+          }
+
+          if (reviewedClaimType && snapClaim === reviewedClaimType) {
+            matchingClaimSupport += 1;
+          } else if (reviewedClaimType && snapClaim && snapClaim !== reviewedClaimType) {
+            // counted later for sole-support checks
+          }
+
+          const snapValue = isNonEmptyString(snap.proposedValue)
+            ? String(snap.proposedValue).trim()
+            : null;
+          if (reviewedValue && snapValue === reviewedValue) {
+            matchingValueSupport += 1;
+          } else if (reviewedValue && snapValue && snapValue !== reviewedValue) {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'proposed_value_mismatch',
+              reviewedValue,
+              snapValue
+            );
+          }
+
+          if (
+            !compareContext(snap.contextScope, contextScope, reviewContractVersion)
+          ) {
+            markError(
+              'context_scope_mismatch',
+              'normalized_context_mismatch',
+              contextScopeKey(contextScope, reviewContractVersion),
+              contextScopeKey(snap.contextScope, reviewContractVersion)
+            );
+          }
+
+          const snapFp = isNonEmptyString(snap.contentFingerprint)
+            ? String(snap.contentFingerprint).trim()
+            : null;
+          if (
+            snapFp &&
+            String(ref.expectedContentFingerprint).trim() !== snapFp
+          ) {
+            markError(
+              'evidence_content_fingerprint_mismatch',
+              'expected_vs_snapshot',
+              ref.expectedContentFingerprint,
+              snapFp
+            );
+          }
+        }
+      }
+
+      if (isV02 && isApproval && reviewedClaimType && reviewedClaimType !== 'general_guidance') {
+        if (sawAnyPacket && matchingClaimSupport === 0) {
+          if (reviewedClaimType === 'preference' && onlyTolerance && anyActiveSupport > 0) {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'preference_supported_only_by_tolerance'
+            );
+          } else if (
+            reviewedClaimType === 'optimum' &&
+            onlySurvival &&
+            anyActiveSupport > 0
+          ) {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'optimum_supported_only_by_survival_minimum'
+            );
+          } else if (onlyGuidance && anyActiveSupport > 0) {
+            markError(
+              'general_guidance_not_approvable',
+              'general_guidance_only_support'
+            );
+          } else {
+            markError(
+              'reviewed_claim_semantic_mismatch',
+              'no_matching_claim_type_support',
+              reviewedClaimType,
+              null
+            );
+          }
+        }
+        if (sawAnyPacket && matchingValueSupport === 0 && reviewedValue) {
+          markError(
+            'reviewed_claim_semantic_mismatch',
+            'no_matching_proposed_value_support',
+            reviewedValue,
+            null
+          );
+        }
+        if (sawAnyPacket && anyActiveSupport === 0) {
+          markError(
+            'evidence_status_review_status_conflict',
+            'no_active_supporting_packet'
+          );
         }
       }
 
@@ -709,10 +1102,18 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
       }
 
       // Fingerprint via registry builder
-      if (reviewedValue && sourceKind && sourceIds && evidenceRefs && contextScope != null) {
+      if (
+        reviewedValue &&
+        sourceKind &&
+        sourceIds &&
+        evidenceRefs &&
+        contextScope != null &&
+        (!isV02 || reviewedClaimType)
+      ) {
         const fp = buildFieldReviewValueFingerprint({
           canonicalKey: canonicalKey,
           field: field,
+          reviewedClaimType: reviewedClaimType,
           reviewedValue: reviewedValue,
           sourceKind: sourceKind,
           sourceIds: sourceIds,
@@ -774,17 +1175,23 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
             recordStale = true;
           }
         }
-        if (cur.contextScope != null && !compareContext(cur.contextScope, contextScope)) {
+        if (
+          cur.contextScope != null &&
+          !compareContext(cur.contextScope, contextScope, reviewContractVersion)
+        ) {
           markError(
             'context_scope_mismatch',
             'current_context_differs',
-            contextScopeKey(contextScope),
-            contextScopeKey(cur.contextScope)
+            contextScopeKey(contextScope, reviewContractVersion),
+            contextScopeKey(cur.contextScope, reviewContractVersion)
           );
           recordStale = true;
         }
         if (
           isNonEmptyString(cur.reviewContractVersion) &&
+          SR_FIELD_REVIEW_VALIDATOR_SUPPORTED_CONTRACT_VERSIONS.indexOf(
+            String(cur.reviewContractVersion).trim()
+          ) >= 0 &&
           String(cur.reviewContractVersion).trim() !== reviewContractVersion
         ) {
           markError(
@@ -826,6 +1233,19 @@ export function validateSmartRecDeveloperFieldReviewRegistry(input) {
       }
     } else if (sourceKind === 'climate_group') {
       markWarning('group_source_deferred', 'non_approval_climate_group_record');
+    }
+
+    if (
+      reviewedClaimType != null &&
+      !isApproval &&
+      SR_FIELD_REVIEW_CLAIM_TYPES.indexOf(reviewedClaimType) < 0
+    ) {
+      markError(
+        'unsupported_reviewed_claim_type',
+        'claim_type_not_allowed',
+        SR_FIELD_REVIEW_CLAIM_TYPES.slice(),
+        reviewedClaimType
+      );
     }
 
     // Optional source-kind/source-id policy map

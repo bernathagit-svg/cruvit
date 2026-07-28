@@ -153,7 +153,8 @@
       knownAliasKeys: ['syn-alias-alpha'],
       knownEvidenceRefs: ['ev-syn-001', 'ev-syn-002'],
       supportedReviewedValueTokens: ['full_sun', 'full_sun_to_part_shade', 'medium', 'low', 'high'],
-      reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      // Legacy fixtures remain on explicit 0.1.0 contract semantics.
+      reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01
     }, extra || {});
   }
 
@@ -162,16 +163,19 @@
     var fp = mod.buildFieldReviewValueFingerprint({
       canonicalKey: r.canonicalKey,
       field: r.field,
+      reviewedClaimType: r.reviewedClaimType,
       reviewedValue: r.reviewedValue,
       sourceKind: r.sourceKind,
       sourceIds: r.sourceIds,
       evidenceRefs: r.evidenceRefs,
       contextScope: r.contextScope,
-      reviewContractVersion: (ctx && ctx.reviewContractVersion) || mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      reviewContractVersion: (ctx && ctx.reviewContractVersion) || mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01
     });
     r.valueFingerprint = fp.fingerprint;
     return r;
   }
+
+  var fixtureCount = 0;
 
   function finishSummary(verdict) {
     var passed = results.filter(function (r) { return r.pass; }).length;
@@ -186,7 +190,7 @@
       passed: passed,
       failed: failed,
       verdict: verdict,
-      fixtureCount: 3,
+      fixtureCount: fixtureCount,
       storageMutationCount: storageMutationCount,
       networkCount: networkCount,
       moduleLoaded: moduleLoaded,
@@ -194,7 +198,7 @@
     });
     window.__SR_FIELD_REVIEW_SUMMARY = lastSummary;
     setStatus('State: complete · moduleLoaded=1 · storageMutationCount=' + storageMutationCount +
-      ' · networkCount=' + networkCount);
+      ' · networkCount=' + networkCount + ' · fixtureCount=' + fixtureCount);
   }
 
   async function runAll() {
@@ -421,7 +425,7 @@
       expect('missing known evidence rejected', missingEvRes.valid === false &&
         missingEvRes.reasons.indexOf('evidence_ref_missing') >= 0, JSON.stringify(missingEvRes.reasons));
 
-      // Fingerprinting
+      // Fingerprinting (legacy 0.1.0 semantics)
       var fpA = mod.buildFieldReviewValueFingerprint({
         canonicalKey: 'syn-fixture-alpha',
         field: 'sun',
@@ -430,7 +434,7 @@
         sourceIds: ['b', 'a'],
         evidenceRefs: ['ev-syn-002', 'ev-syn-001'],
         contextScope: 'outdoor',
-        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01
       });
       var fpB = mod.buildFieldReviewValueFingerprint({
         canonicalKey: 'syn-fixture-alpha',
@@ -440,7 +444,7 @@
         sourceIds: ['a', 'b'],
         evidenceRefs: ['ev-syn-001', 'ev-syn-002'],
         contextScope: 'outdoor',
-        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+        reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01
       });
       expect('fingerprint deterministic', fpA.ok && fpB.ok && fpA.fingerprint === fpB.fingerprint, fpA.fingerprint);
       expect('array order independent', fpA.fingerprint === fpB.fingerprint, '');
@@ -454,7 +458,7 @@
           sourceIds: ['a'],
           evidenceRefs: ['ev-syn-001'],
           contextScope: 'outdoor',
-          reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+          reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01
         }, extra));
       }
       var baseFp = fpWith({}).fingerprint;
@@ -464,7 +468,10 @@
       expect('evidence change changes fp', fpWith({ evidenceRefs: ['ev-syn-002'] }).fingerprint !== baseFp, '');
       expect('context change changes fp', fpWith({ contextScope: 'indoor' }).fingerprint !== baseFp, '');
       expect('contract version change changes fp',
-        fpWith({ reviewContractVersion: '9.9.9' }).fingerprint !== baseFp, '');
+        fpWith({ reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION }).ok === false ||
+        fpWith({ reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION }).fingerprint !== baseFp, '');
+
+      fixtureCount = 3;
 
       var mismatch = clone(sunRec);
       mismatch.valueFingerprint = 'not-the-real-fingerprint';
@@ -493,6 +500,264 @@
       var badTokenRes = mod.validateFieldReviewRecord(badToken, ctx);
       expect('unsupported token rejected', badTokenRes.valid === false &&
         badTokenRes.reasons.indexOf('unsupported_reviewed_value') >= 0, JSON.stringify(badTokenRes.reasons));
+
+      // ---- 0.2.0 Reference Amendment fixtures ----
+      expect('registry version 0.2.0', mod.SR_FIELD_REVIEW_REGISTRY_VERSION === '0.2.0-sr-field-review-registry', mod.SR_FIELD_REVIEW_REGISTRY_VERSION);
+      expect('contract version 0.2.0', mod.SR_FIELD_REVIEW_CONTRACT_VERSION === '0.2.0-sr-field-review-contract', mod.SR_FIELD_REVIEW_CONTRACT_VERSION);
+      expect('supports FR 0.1.0 contract', mod.SR_FIELD_REVIEW_SUPPORTED_CONTRACT_VERSIONS.indexOf(mod.SR_FIELD_REVIEW_CONTRACT_VERSION_V01) >= 0, '');
+      expect('supports FR 0.2.0 contract', mod.SR_FIELD_REVIEW_SUPPORTED_CONTRACT_VERSIONS.indexOf(mod.SR_FIELD_REVIEW_CONTRACT_VERSION) >= 0, '');
+      expect('supports EP 0.1.0+0.2.0 contracts', mod.SR_FIELD_REVIEW_SUPPORTED_EVIDENCE_PACKET_CONTRACT_VERSIONS.length === 2, '');
+      expect('claim types coordinated', mod.SR_FIELD_REVIEW_CLAIM_TYPES.indexOf('preference') >= 0 && mod.SR_FIELD_REVIEW_CLAIM_TYPES.indexOf('tolerance') >= 0, '');
+      expect('descriptor evidenceMutation false', desc.evidenceMutation === false, String(desc.evidenceMutation));
+
+      var outdoorCtx = {
+        setting: 'outdoor',
+        planting: 'ground',
+        maturity: 'mature',
+        objective: 'general',
+        daypart: 'morning',
+        heatProtection: 'not_required'
+      };
+      var outdoorCtxAlt = {
+        setting: 'outdoor',
+        planting: 'ground',
+        maturity: 'mature',
+        objective: 'general',
+        daypart: 'afternoon',
+        heatProtection: 'not_required'
+      };
+      var outdoorCtxHeat = {
+        setting: 'outdoor',
+        planting: 'ground',
+        maturity: 'mature',
+        objective: 'general',
+        daypart: 'morning',
+        heatProtection: 'required'
+      };
+      var compactRef = function (id, fp) {
+        return {
+          evidenceId: id,
+          packetContractVersion: '0.2.0-sr-evidence-packet-contract',
+          expectedContentFingerprint: fp || ('fp-' + id)
+        };
+      };
+      function ctxV02(extra) {
+        return makeContext(mod, Object.assign({
+          reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION,
+          knownEvidenceRefs: ['ev-v2-1', 'ev-v2-2', 'ev-v2-3'],
+          supportedReviewedValueTokens: null
+        }, extra || {}));
+      }
+      function approvalV02(extra) {
+        return Object.assign({
+          canonicalKey: 'syn-fixture-alpha',
+          field: 'sun',
+          reviewStatus: 'reviewed_supported',
+          reviewedClaimType: 'preference',
+          reviewedValue: 'full_sun',
+          valueFingerprint: null,
+          evidenceRefs: [compactRef('ev-v2-1')],
+          sourceKind: 'canonical_catalog_record',
+          sourceIds: ['syn-catalog-alpha'],
+          contextScope: outdoorCtx,
+          reviewVersion: '2',
+          reviewedAt: '2026-07-28',
+          reason: 'v02 preference approval'
+        }, extra || {});
+      }
+      function withFpV02(rec, c) {
+        return withFingerprint(mod, rec, c);
+      }
+
+      var c2 = ctxV02();
+      var pref = withFpV02(approvalV02({ reviewedClaimType: 'preference' }), c2);
+      fixtureCount++;
+      expect('v02 preference approval', mod.validateFieldReviewRecord(pref, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(pref, c2).reasons));
+
+      var tol = withFpV02(approvalV02({
+        field: 'water',
+        reviewedClaimType: 'tolerance',
+        reviewedValue: 'medium',
+        evidenceRefs: [compactRef('ev-v2-2')],
+        sourceIds: ['syn-water']
+      }), c2);
+      fixtureCount++;
+      expect('v02 tolerance approval', mod.validateFieldReviewRecord(tol, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(tol, c2).reasons));
+
+      var opt = withFpV02(approvalV02({ reviewedClaimType: 'optimum', reviewedValue: 'full_sun_to_part_shade' }), c2);
+      fixtureCount++;
+      expect('v02 optimum shape', mod.validateFieldReviewRecord(opt, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(opt, c2).reasons));
+
+      var surv = withFpV02(approvalV02({ reviewedClaimType: 'survival_minimum', reviewedValue: 'part_shade' }), c2);
+      fixtureCount++;
+      expect('v02 survival_minimum shape', mod.validateFieldReviewRecord(surv, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(surv, c2).reasons));
+
+      var missClaim = withFpV02(approvalV02({ reviewedClaimType: '' }), c2);
+      // empty claim type treated as missing
+      var missClaimRaw = approvalV02({ reviewedClaimType: null, valueFingerprint: 'x' });
+      delete missClaimRaw.reviewedClaimType;
+      fixtureCount++;
+      expect('v02 missing claim type', mod.validateFieldReviewRecord(missClaimRaw, c2).reasons.indexOf('reviewed_claim_type_missing') >= 0, '');
+
+      fixtureCount++;
+      expect('v02 unsupported claim type', mod.validateFieldReviewRecord(approvalV02({ reviewedClaimType: 'not_a_claim', valueFingerprint: 'x' }), c2).reasons.indexOf('unsupported_reviewed_claim_type') >= 0, '');
+
+      fixtureCount++;
+      expect('v02 general_guidance not approvable', mod.validateFieldReviewRecord(approvalV02({ reviewedClaimType: 'general_guidance', valueFingerprint: 'x' }), c2).reasons.indexOf('general_guidance_not_approvable') >= 0, '');
+
+      var amb = {
+        canonicalKey: 'syn-fixture-alpha',
+        field: 'sun',
+        reviewStatus: 'preference_tolerance_ambiguous',
+        reviewVersion: '2',
+        reviewedAt: '2026-07-28',
+        reason: 'ambiguous'
+      };
+      fixtureCount++;
+      expect('ambiguity without value', mod.validateFieldReviewRecord(amb, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(amb, c2).reasons));
+      fixtureCount++;
+      expect('ambiguity without claim type', mod.validateFieldReviewRecord(amb, c2).normalized.reviewedClaimType == null, '');
+
+      var multiRefs = withFpV02(approvalV02({
+        evidenceRefs: [compactRef('ev-v2-2'), compactRef('ev-v2-1')]
+      }), c2);
+      fixtureCount++;
+      expect('v02 multiple compact refs', mod.validateFieldReviewRecord(multiRefs, c2).valid === true, JSON.stringify(mod.validateFieldReviewRecord(multiRefs, c2).reasons));
+
+      var refsNorm = mod.normalizeFieldReviewEvidenceRefs([compactRef('ev-v2-2'), compactRef('ev-v2-1')], mod.SR_FIELD_REVIEW_CONTRACT_VERSION);
+      fixtureCount++;
+      expect('v02 ref sort deterministic', refsNorm.ok && refsNorm.normalized[0].evidenceId === 'ev-v2-1', JSON.stringify(refsNorm));
+
+      fixtureCount++;
+      expect('v02 duplicate evidenceId rejected', mod.normalizeFieldReviewEvidenceRefs([compactRef('ev-v2-1'), compactRef('ev-v2-1')], mod.SR_FIELD_REVIEW_CONTRACT_VERSION).ok === false, '');
+
+      fixtureCount++;
+      expect('v02 missing evidenceId rejected', mod.normalizeFieldReviewEvidenceRefs([{ packetContractVersion: '0.2.0-sr-evidence-packet-contract', expectedContentFingerprint: 'x' }], mod.SR_FIELD_REVIEW_CONTRACT_VERSION).ok === false, '');
+
+      fixtureCount++;
+      expect('v02 unsupported EP contract', mod.normalizeFieldReviewEvidenceRefs([{ evidenceId: 'e', packetContractVersion: '9.9.9-sr-evidence-packet-contract', expectedContentFingerprint: 'x' }], mod.SR_FIELD_REVIEW_CONTRACT_VERSION).reasons.indexOf('unsupported_evidence_packet_contract_version') >= 0, '');
+
+      fixtureCount++;
+      expect('v02 missing fingerprint rejected', mod.normalizeFieldReviewEvidenceRefs([{ evidenceId: 'e', packetContractVersion: '0.2.0-sr-evidence-packet-contract' }], mod.SR_FIELD_REVIEW_CONTRACT_VERSION).ok === false, '');
+
+      fixtureCount++;
+      expect('v02 unknown ref key rejected', mod.normalizeFieldReviewEvidenceRefs([{ evidenceId: 'e', packetContractVersion: '0.2.0-sr-evidence-packet-contract', expectedContentFingerprint: 'x', sourceTitle: 'nope' }], mod.SR_FIELD_REVIEW_CONTRACT_VERSION).ok === false, '');
+
+      var dayOk = withFpV02(approvalV02({ contextScope: outdoorCtx }), c2);
+      fixtureCount++;
+      expect('v02 daypart context', mod.validateFieldReviewRecord(dayOk, c2).valid === true, '');
+
+      var heatOk = withFpV02(approvalV02({ contextScope: outdoorCtxHeat }), c2);
+      fixtureCount++;
+      expect('v02 heatProtection context', mod.validateFieldReviewRecord(heatOk, c2).valid === true, '');
+
+      fixtureCount++;
+      expect('v02 invalid context fails', mod.validateFieldReviewRecord(approvalV02({ contextScope: { setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general', daypart: 'midnight' }, valueFingerprint: 'x' }), c2).reasons.indexOf('context_normalize_failed') >= 0, '');
+
+      var ctxEqA = {
+        setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general',
+        climateOrRegion: ['b', 'a']
+      };
+      var ctxEqB = {
+        setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general',
+        climateOrRegion: ['a', 'b']
+      };
+      var fpEq1 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: ctxEqA, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      var fpEq2 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: ctxEqB, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 normalized equivalent context same fp', fpEq1.ok && fpEq2.ok && fpEq1.fingerprint === fpEq2.fingerprint, '');
+
+      var fpDay = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: outdoorCtx, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      var fpDay2 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: outdoorCtxAlt, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 daypart changes fp', fpDay.ok && fpDay2.ok && fpDay.fingerprint !== fpDay2.fingerprint, '');
+
+      var fpHeat2 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: outdoorCtxHeat, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 heatProtection changes fp', fpDay.fingerprint !== fpHeat2.fingerprint, '');
+
+      var fpClaim = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'tolerance', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp1')],
+        contextScope: outdoorCtx, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 claimType changes fp', fpDay.fingerprint !== fpClaim.fingerprint, '');
+
+      var fpPack = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'], evidenceRefs: [compactRef('ev-v2-1', 'fp-other')],
+        contextScope: outdoorCtx, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 expected packet fp changes FR fp', fpDay.fingerprint !== fpPack.fingerprint, '');
+
+      var fpOrder1 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'],
+        evidenceRefs: [compactRef('ev-v2-2', 'b'), compactRef('ev-v2-1', 'a')],
+        contextScope: outdoorCtx, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      var fpOrder2 = mod.buildFieldReviewValueFingerprint({
+        canonicalKey: 'syn-fixture-alpha', field: 'sun', reviewedClaimType: 'preference', reviewedValue: 'full_sun',
+        sourceKind: 'canonical_catalog_record', sourceIds: ['a'],
+        evidenceRefs: [compactRef('ev-v2-1', 'a'), compactRef('ev-v2-2', 'b')],
+        contextScope: outdoorCtx, reviewContractVersion: mod.SR_FIELD_REVIEW_CONTRACT_VERSION
+      });
+      fixtureCount++;
+      expect('v02 evidence order independent fp', fpOrder1.ok && fpOrder2.ok && fpOrder1.fingerprint === fpOrder2.fingerprint, '');
+
+      var compoundA = mod.validateFieldReviewRecord(approvalV02({ reviewedValue: 'morning_sun_part_shade', valueFingerprint: 'x' }), c2);
+      fixtureCount++;
+      expect('morning_sun_part_shade rejected', compoundA.reasons.indexOf('unsupported_reviewed_value') >= 0 &&
+        JSON.stringify(compoundA.details || []).indexOf('compound_legacy_token') >= 0, JSON.stringify(compoundA));
+
+      var compoundB = mod.validateFieldReviewRecord(approvalV02({ reviewedValue: 'bright_shade', valueFingerprint: 'x' }), c2);
+      fixtureCount++;
+      expect('bright_shade rejected', compoundB.reasons.indexOf('unsupported_reviewed_value') >= 0, '');
+
+      fixtureCount++;
+      expect('supported 0.1.0 record still valid', sunOk.valid === true, '');
+      fixtureCount++;
+      expect('supported 0.2.0 record valid', mod.validateFieldReviewRecord(pref, c2).valid === true, '');
+
+      var mixed = mod.validateAndBuildFieldReviewRegistry([sunRec], ctx);
+      var mixed2 = mod.validateAndBuildFieldReviewRegistry([pref], c2);
+      fixtureCount++;
+      expect('mixed supported versions separately ok', mixed.valid && mixed2.valid, '');
+
+      fixtureCount++;
+      expect('unsupported forward FR version', mod.validateFieldReviewRecord(pref, ctxV02({ reviewContractVersion: '9.9.9-sr-field-review-contract' })).reasons.indexOf('unsupported_review_contract_version') >= 0, '');
+
+      var mutSnap = JSON.stringify(pref);
+      mod.validateFieldReviewRecord(pref, c2);
+      fixtureCount++;
+      expect('v02 input not mutated', JSON.stringify(pref) === mutSnap, '');
+
+      var det1 = mod.validateFieldReviewRecord(pref, c2);
+      var det2 = mod.validateFieldReviewRecord(pref, c2);
+      fixtureCount++;
+      expect('v02 deterministic repeated', JSON.stringify(det1) === JSON.stringify(det2), '');
 
       // Outputs frozen
       expect('validation result frozen', isFrozenDeep(sunOk), '');
