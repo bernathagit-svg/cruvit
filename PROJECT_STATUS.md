@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Field Review Registry/Validator closed; Evidence Packet Registry closed and production verified; Evidence Packet Validator Implementation pushed (`17cf753`) and production verified (`SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`); Blueberry Field-Cleanup Planning is next (not begun); matcher still blocked**
+Status: **Active — Field Review and Evidence Packet foundations closed; Blueberry Field-Cleanup Planning complete (`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`); Blueberry Identity-Scope Evidence Planning is the current docs checkpoint; no external research or data change authorized; blueberry and all 23 conflicts remain blocked; matcher still blocked; GOS paused**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → **Evidence Packet Validator Planning** → **Evidence Packet Validator Documentation Contract** (pushed `ba30064`) → **Evidence Packet Validator Implementation** (pushed `17cf753`; production verified). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry remains empty/non-authoritative; Evidence Packet Validator is developer-only/inert/non-authoritative; **no** schema or product authority; **no** product runtime consumer, catalog/`needsReview`/eligibility change, blueberry cleanup, matcher, or UI is authorized. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Evidence Packet Validator Implementation** (pushed `17cf753`; production verified) → **Blueberry Field-Cleanup Planning** (read-only; complete) → **Blueberry Identity-Scope Evidence Planning** (current docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry remains empty/non-authoritative; Evidence Packet Validator is developer-only/inert/non-authoritative; **no** schema or product authority; **no** product runtime consumer, catalog/`needsReview`/eligibility change, blueberry identity narrowing, sun/water value selection, matcher, or UI is authorized. Identity scope is the first blueberry blocker. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Evidence Packet Registry closed/empty; Evidence Packet Validator production verified; Blueberry Field-Cleanup Planning next; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Field Review and Evidence Packet foundations closed; Blueberry Field-Cleanup Planning complete; Blueberry Identity-Scope Evidence Planning current; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; pushed `6d8c117`)** → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → **Evidence Packet Validator Planning** (complete) → **Evidence Packet Validator Documentation Contract** (current docs checkpoint) → Evidence Packet Validator Implementation (separately gated) → Blueberry Field-Cleanup Planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → **Field-Specific Review-State Planning** → **Field-Specific Review-State Documentation Contract (docs; pushed)** → **Developer-Only Field Review Registry Planning** → **Developer-Only Field Review Registry Documentation Contract (docs; pushed `6d8c117`)** → **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified) → **Field Review Validator Planning** → **Field Review Validator Documentation Contract** (pushed `95af15e`) → **Field Review Validator Implementation** (pushed `018a043`; production verified) → **Evidence Packet Registry Planning** → **Evidence Packet Registry Documentation Contract** (pushed `5afc546`) → **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified) → **Evidence Packet Validator Planning** → **Evidence Packet Validator Documentation Contract** (pushed `ba30064`) → **Evidence Packet Validator Implementation** (pushed `17cf753`; production verified) → **Blueberry Field-Cleanup Planning** (complete; `READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`) → **Blueberry Identity-Scope Evidence Planning** (current docs checkpoint) → Blueberry Identity-Scope Research Planning (separately gated; not begun) → Preference-versus-Tolerance / Sun-Token Modeling Planning (deferred) → Blueberry Sun/Water Evidence Packet Planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,9 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Evidence Packet Validator production verification** | Done (local docs) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime change; no manual deploy; no Netlify setting change; no real packets.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`17cf7538b8dc2a217cc144e8accf219e53596d35`**. **Module** `/modules/smart-recommendations/developer-evidence-packet-validator.js` HTTP **200** `application/javascript` (LF-normalized content matches committed file; version `0.1.0-sr-evidence-packet-validator`; capability `explicit_developer_evidence_packet_validation`). **Harness** `/tests/smart-rec-developer-evidence-packet-validator.test.html` HTTP **200** `text/html` (LF-normalized match; contains `SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS`, Run/Reset). **Registry module** remains HTTP **200** and LF-matched; `realPacketCount: 0`. **Normal app isolation (before):** home loads; **zero** requests for validator/registry modules/harnesses; no validator globals/UI; no GOS attributable to this work; `evaluateClimateSuitabilityV1` present; no validator storage keys. **Initial harness inertness:** `__SR_EVIDENCE_PACKET_VALIDATOR_BOOT.inert=true`; moduleLoaded false; summary absent; **0** assertion rows; idle status; validator/registry modules not requested before Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **86/86** / `SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS` / fixtureCount **47**; identical summaryFingerprint `0.1.0-sr-evidence-packet-validator\|0.1.0-sr-evidence-packet-registry\|1\|1\|0\|0\|1\|info:synthetic_fixture_only::::::`; storageMutationCount **0**; networkCount **0** (API); no console error/unhandled rejection; descriptor authority flags exact and frozen; findingCodes **43**; severities error/warning/info; empty real registry; synthetic-only fixtures; authority/AI/claim/context/copyright/fingerprint/lifecycle/duplicate/Field Review-reference assertions pass. **After:** fresh home — zero automatic validator/registry/harness/GOS load; no retained harness state; v1b still product path; SR chat/results unchanged; no filter UI; legacy **36/36/36** and **23** conflicts remain blocked; no field-specific product eligibility. **Verdict:** `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`. Docs commit local; push separately gated. **Next deferred:** Blueberry Field-Cleanup Planning (not begun). |
+| **Smart Recommendations — Blueberry Identity-Scope Evidence Planning** | Done (local docs) | **Documentation-only.** Freezes identity-scope evidence requirements for `blueberry` / `Vaccinium spp.` before any climate cleanup: four outcomes (keep-genus / narrow / split / permanently ineligible) with **no outcome selected**; identity-evidence fields; identity authority rules; later research questions; assignment freeze; climate-evidence sequencing; `morning_sun_part_shade` vocabulary gap; Field Review conceptual state; validator sequence; future identity-decision report; next checkpoint = Blueberry Identity-Scope Research Planning. **No** external research, evidence packet, identity narrowing/split, sun/water value selection, group/assignment/specific-metadata change, catalog/schema/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**); real packets **0**; real field-review records **0**. Verdict upstream planning: **`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`**. Docs commit local; push separately gated. |
+| **Smart Recommendations — Blueberry Field-Cleanup Planning** | Done (read-only) | **Read-only planning; no file modification.** Reproduced blueberry multi-group conflict exactly; confirmed identity scope is the first blocker; compared cleanup options without selecting values; assessed group blast radius; defined packet/Field Review/validator sequencing. Verdict: **`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`**. |
+| **Smart Recommendations — Evidence Packet Validator production verification** | Done (local docs) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime change; no manual deploy; no Netlify setting change; no real packets.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`17cf7538b8dc2a217cc144e8accf219e53596d35`**. **Module** `/modules/smart-recommendations/developer-evidence-packet-validator.js` HTTP **200** `application/javascript` (LF-normalized content matches committed file; version `0.1.0-sr-evidence-packet-validator`; capability `explicit_developer_evidence_packet_validation`). **Harness** `/tests/smart-rec-developer-evidence-packet-validator.test.html` HTTP **200** `text/html` (LF-normalized match; contains `SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS`, Run/Reset). **Registry module** remains HTTP **200** and LF-matched; `realPacketCount: 0`. **Normal app isolation (before):** home loads; **zero** requests for validator/registry modules/harnesses; no validator globals/UI; no GOS attributable to this work; `evaluateClimateSuitabilityV1` present; no validator storage keys. **Initial harness inertness:** `__SR_EVIDENCE_PACKET_VALIDATOR_BOOT.inert=true`; moduleLoaded false; summary absent; **0** assertion rows; idle status; validator/registry modules not requested before Run. **Explicit Run all only:** five consecutive production Reset→Run cycles all **86/86** / `SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS` / fixtureCount **47**; identical summaryFingerprint `0.1.0-sr-evidence-packet-validator\|0.1.0-sr-evidence-packet-registry\|1\|1\|0\|0\|1\|info:synthetic_fixture_only::::::`; storageMutationCount **0**; networkCount **0** (API); no console error/unhandled rejection; descriptor authority flags exact and frozen; findingCodes **43**; severities error/warning/info; empty real registry; synthetic-only fixtures; authority/AI/claim/context/copyright/fingerprint/lifecycle/duplicate/Field Review-reference assertions pass. **After:** fresh home — zero automatic validator/registry/harness/GOS load; no retained harness state; v1b still product path; SR chat/results unchanged; no filter UI; legacy **36/36/36** and **23** conflicts remain blocked; no field-specific product eligibility. **Verdict:** `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`. Docs pushed at `2994693`. **Next deferred (later completed):** Blueberry Field-Cleanup Planning → current: Blueberry Identity-Scope Evidence Planning. |
 | **Smart Recommendations — Evidence Packet Validator Implementation** | Done (pushed) | **Inert developer-only evidence packet validator + standalone harness only; no product runtime consumer.** Files: `modules/smart-recommendations/developer-evidence-packet-validator.js` (`0.1.0-sr-evidence-packet-validator`; capability `explicit_developer_evidence_packet_validation`), `tests/smart-rec-developer-evidence-packet-validator.test.html`, `PROJECT_STATUS.md`. **Descriptor:** `developerOnly`/`authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`packetMutation`/`catalogMutation`/`fieldReviewMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` exact; `activation: explicit_call_only`; `productConsumers: none`; supported registry `0.1.0-sr-evidence-packet-registry`; supported packet contract `0.1.0-sr-evidence-packet-contract`. **Exports:** `getSmartRecDeveloperEvidencePacketValidatorDescriptor`, `validateSmartRecDeveloperEvidencePacketRegistry`, plus version/capability/severity/finding-code constants. Reuses registry `buildEvidencePacketSourceFingerprint` / `buildEvidencePacketContentFingerprint` and `validateAndBuildEvidencePacketRegistry`; adds copyright/excerpt policy, lifecycle/supersession, source-snapshot, and optional synthetic Field Review reference checks. Finding codes **43**; severities error/warning/info. Empty real registry; synthetic fixtures only; `realPacketCount` **0**. **Harness:** **86/86**; fixtureCount **47**; verdict `SR_EVIDENCE_PACKET_VALIDATOR_HARNESS_PASS`; five identical local Reset→Run; identical summaryFingerprint `0.1.0-sr-evidence-packet-validator\|0.1.0-sr-evidence-packet-registry\|1\|1\|0\|0\|1\|info:synthetic_fixture_only::::::`; storage/network **0**; no console error/unhandled rejection. Non-regression: Evidence Packet Registry **84/84**; Field Review Validator **76/76**; Field Review Registry **85/85**; merge **89/89**; schema **69/69**; identity recon **158** total / **156** PASS / **2** EXPECTED_QUARANTINED_CONFLICT / **0** unexpected; resolver **108/108**; `git diff --check` clean. Evidence Packet Registry + Field Review foundations + `index.html` **byte-identical** vs `ba30064`. Product isolation: `index.html` does not reference validator module/harness; registry/FR modules do not import it. No schema/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no real packet; no external research; no value selection. Pushed at `17cf753`. **Production verification later completed** — see production verification checkpoint (`SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`). |
 | **Smart Recommendations — Evidence Packet Validator Documentation Contract** | Done (pushed) | **Documentation-only.** Freezes separate developer-only validator structure and authority (`modules/smart-recommendations/developer-evidence-packet-validator.js` + standalone harness), authority descriptor (`explicit_developer_evidence_packet_validation`; supported registry `0.1.0-sr-evidence-packet-registry`; supported packet contract `0.1.0-sr-evidence-packet-contract`), first-proof input contract, deterministic frozen report model, error/warning/info severities, blocking finding-code inventory, warnings/info, canonical/alias rules, authority/AI rules, claim/context rules, copyright-safe checks, fingerprint/version reuse of registry builders, lifecycle validation, duplicate/overlap validation, Field Review reference boundary, synthetic-only first population, test strategy, exact three-file implementation scope with Evidence Packet Registry **byte-identical**, local/production gates, stop conditions, and next two deferred checkpoints (Validator Implementation; Blueberry Field-Cleanup Planning) — **without** creating a validator module/harness, modifying the Evidence Packet Registry, modifying Field Review foundations, creating real packets, researching, selecting values, or changing schema/catalog/`needsReview`/eligibility/matcher/UI. Baseline preserved: Evidence Packet Registry **84/84** / `realPacketCount` **0**; Field Review Validator **76/76**; Field Review Registry **85/85**; canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**). Pushed at `ba30064`. **Implementation later completed locally** — see Evidence Packet Validator Implementation row. |
 | **Smart Recommendations — Evidence Packet Validator Planning** | Done (read-only) | **Read-only planning; no file modification.** Recommended separate developer-only validator module (not registry-module expansion / harness-only / Node-only / `index.html`). Keep closed Evidence Packet Registry byte-identical; reuse registry fingerprint builders; optional synthetic Field Review reference checks only; full real decision↔packet compatibility deferred to a later Field Review Validator Reference Amendment. Verdict: **`READY_FOR_EVIDENCE_PACKET_VALIDATOR_DOCUMENTATION_CONTRACT`**. |
@@ -336,7 +338,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + Evidence Packet Registry (pushed `a3b35ca`; production verified) + Evidence Packet Validator Planning + Documentation Contract (pushed `ba30064`) + **Evidence Packet Validator Implementation** (pushed `17cf753`; production verified `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`; **86/86**; fixtureCount **47**); catalog task **B Frozen (v1)**; Evidence Packet Registry remains empty/non-authoritative; Evidence Packet Validator developer-only/non-authoritative; **36/36/36** unchanged; all **23** conflicts blocked; blueberry cleanup deferred; matcher/UI blocked; GOS paused; next = Blueberry Field-Cleanup Planning (separately gated), then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + Evidence Packet Validator Implementation (pushed `17cf753`; production verified `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`; **86/86**; fixtureCount **47**) + **Blueberry Field-Cleanup Planning** (complete; `READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`) + **Blueberry Identity-Scope Evidence Planning** (current docs checkpoint); catalog task **B Frozen (v1)**; Field Review and Evidence Packet foundations closed/empty/non-authoritative; **36/36/36** unchanged; all **23** conflicts blocked; blueberry remains blocked; identity scope is first blueberry blocker; no external research or data change authorized; matcher/UI blocked; GOS paused; next = Blueberry Identity-Scope Research Planning (separately gated), then deferred preference/tolerance + sun/water packet planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -353,7 +355,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`), **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified; `realRecordCount` **0**), **Field Review Validator Planning**, **Field Review Validator Documentation Contract** (pushed `95af15e`), **Field Review Validator Implementation** (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**), **Evidence Packet Registry Planning**, **Evidence Packet Registry Documentation Contract** (pushed `5afc546`), **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; `realPacketCount` **0**), **Evidence Packet Validator Planning** (complete), and **Evidence Packet Validator Documentation Contract** (docs; this checkpoint) are done. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; field-review registry remains empty/non-authoritative; Field Review Validator is developer-only / non-authoritative; Evidence Packet Registry remains empty/non-authoritative; real SR evidence packets **0**; no schema or product authority. Matcher/UI remain **blocked**. **GOS remains paused.** Blueberry cleanup remains deferred. **Next:** Evidence Packet Validator Implementation (separately gated), then Blueberry Field-Cleanup Planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), **Field-Specific Review-State Planning**, **Field-Specific Review-State Documentation Contract** (pushed `0c02f5d`), **Developer-Only Field Review Registry Planning**, **Developer-Only Field Review Registry Documentation Contract** (pushed `6d8c117`), **Developer-Only Field Review Registry Implementation** (pushed `565e12c`; production verified; `realRecordCount` **0**), **Field Review Validator Planning**, **Field Review Validator Documentation Contract** (pushed `95af15e`), **Field Review Validator Implementation** (pushed `018a043`; production verified `SR_FIELD_REVIEW_VALIDATOR_PRODUCTION_VERIFIED`; **76/76**; fixtureCount **40**), **Evidence Packet Registry Planning**, **Evidence Packet Registry Documentation Contract** (pushed `5afc546`), **Evidence Packet Registry Implementation** (pushed `a3b35ca`; production verified `SR_EVIDENCE_PACKET_REGISTRY_PRODUCTION_VERIFIED`; **84/84**; `realPacketCount` **0**), **Evidence Packet Validator Planning**, **Evidence Packet Validator Documentation Contract** (pushed `ba30064`), **Evidence Packet Validator Implementation** (pushed `17cf753`; production verified `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`; **86/86**; fixtureCount **47**), **Blueberry Field-Cleanup Planning** (complete; `READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`), and **Blueberry Identity-Scope Evidence Planning** (current docs checkpoint) are done or current. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain in scope; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; blueberry remains blocked; identity scope is the first blueberry blocker; field-review registry remains empty/non-authoritative; Field Review Validator is developer-only / non-authoritative; Evidence Packet Registry remains empty/non-authoritative; Evidence Packet Validator is developer-only / non-authoritative; real SR evidence packets **0**; no schema or product authority; **no** external research or data change authorized. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Blueberry Identity-Scope Research Planning (separately gated; not begun), then deferred Preference-versus-Tolerance / Sun-Token Modeling Planning and Blueberry Sun/Water Evidence Packet Planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -2476,7 +2478,7 @@ Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Me
 
 # Smart Recommendations UX Scope
 
-**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** is closed (pushed). **Field-Specific Review-State Planning** is complete. **Field-Specific Review-State Documentation Contract** is closed (pushed `0c02f5d`). **Developer-Only Field Review Registry Planning** is complete. **Developer-Only Field Review Registry Documentation Contract** (below) freezes inert developer-only registry structure; **no** module/harness/schema/runtime/validator/matcher/UI authorization; zero real records initially. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
+**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** is closed (pushed). Field Review and Evidence Packet foundations are closed (empty/non-authoritative). **Blueberry Field-Cleanup Planning** is complete (`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`). **Blueberry Identity-Scope Evidence Planning** is the current docs checkpoint; identity scope is the first blueberry blocker; no external research or data change is authorized; blueberry and all **23** conflicts remain blocked; matchers/UI remain blocked; GOS remains paused. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
 
 ### Input experience (future UX phase)
 
@@ -3311,7 +3313,7 @@ Documentation-only closure — see Completed Checkpoints production-verification
 
 ### Next cleanup phase
 
-Canonical conflict inventory, Source-Evidence Contract, Field-Specific Review-State Documentation Contract, Developer-Only Field Review Registry Documentation Contract, Registry Implementation (production verified), Field Review Validator Planning, Field Review Validator Documentation Contract, Field Review Validator Implementation, Field Review Validator production verification, Evidence Packet Registry Planning, Evidence Packet Registry Documentation Contract, Evidence Packet Registry Implementation, Evidence Packet Registry production verification, and Evidence Packet Validator Planning are **closed**. **Evidence Packet Validator Documentation Contract** is the current docs checkpoint. Evidence Packet Validator Implementation remains separately gated and is **not** begun. First population remains empty and synthetic-only; no external research or real packet exists; no schema or product authority is authorized. Blueberry cleanup planning remains deferred. Targeted cleanup batches remain separately gated after evidence packets + review authority + validators. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validator remains non-authoritative; Evidence Packet Registry remains empty/non-authoritative; legacy **36/36/36** unchanged; all **23** conflicts remain blocked; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
+Field Review Registry/Validator, Evidence Packet Registry/Validator, and Blueberry Field-Cleanup Planning are **closed**. **Blueberry Identity-Scope Evidence Planning** is the current docs checkpoint. Identity scope is the first blueberry blocker; no external research or data change is authorized. First population remains empty and synthetic-only; no real packet or field-review record exists; no schema or product authority is authorized. Blueberry remains blocked with all **23** conflicts. Targeted cleanup batches remain separately gated after identity-scope acceptance + evidence packets + review authority + validators. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validators remain non-authoritative; Evidence Packet Registry remains empty/non-authoritative; legacy **36/36/36** unchanged; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
 
 ---
 
@@ -6153,7 +6155,7 @@ This Documentation Contract does **not** authorize:
 
 **Production verification:** completed — see `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`.
 
-**Next deferred gate:** Blueberry Field-Cleanup Planning (not begun). No runtime/schema/catalog/matcher/UI/eligibility authorization.
+**Next deferred gate (historical at implementation close; superseded):** Blueberry Field-Cleanup Planning — later completed; current docs checkpoint is Blueberry Identity-Scope Evidence Planning. No runtime/schema/catalog/matcher/UI/eligibility authorization.
 
 ---
 
@@ -6220,7 +6222,317 @@ Trusted-location / missing-meta / global `needsReview` unchanged; legacy **36/36
 
 ## Next deferred gate
 
-**Blueberry Field-Cleanup Planning** remains separately gated and is **not** begun. No runtime/schema/catalog/matcher/UI/eligibility authorization from this production verification.
+**Blueberry Field-Cleanup Planning** later completed (`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`). Current docs checkpoint: **Blueberry Identity-Scope Evidence Planning**. No runtime/schema/catalog/matcher/UI/eligibility authorization from this production verification.
+
+---
+
+# Smart Recommendations — Blueberry Identity-Scope Evidence Planning
+
+**Checkpoint type:** documentation / planning only. **File:** `PROJECT_STATUS.md` only.
+**Verdict identity (docs):** `SR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING_COMPLETE`.
+**Upstream planning verdict (preserved):** `READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`.
+
+**This checkpoint defines identity-scope evidence requirements only.**
+
+It performs **no** external research.
+It creates **no** evidence packet.
+It does **not** narrow, split, or rename the identity.
+It does **not** change `sunNeeds` or `waterNeeds`.
+It does **not** modify assignments, groups, or specific metadata.
+It does **not** clear `needsReview`.
+It creates **no** eligibility.
+Every later research or data change remains **separately gated**.
+
+### 1. Frozen blueberry baseline (do not rewrite)
+
+| Fact | Value |
+|------|-------|
+| Canonical key | `blueberry` |
+| Common / display name | Blueberry |
+| Scientific identity | `Vaccinium spp.` |
+| Climate aliases | none |
+| Assignment order | `acid-soil-cool-moisture` → `cool-moist-berry` |
+| Group sun values | `morning_sun_part_shade` → `full_sun_to_part_shade` |
+| Group water values | `medium` → `high` |
+| Specific sun/water override | none |
+| Seed `climateTraits` | none |
+| Current resolved values | `sunNeeds = full_sun_to_part_shade`; `waterNeeds = high` |
+| Current resolution | deterministic last-explicit-wins |
+| Global `needsReview` | true |
+| Real evidence packets | **0** |
+| Real field-review records | **0** |
+| Repository evidence sufficient to choose a value | **no** |
+
+### 2. Frozen product-safety baseline (do not rewrite)
+
+| Metric | Count |
+|--------|------:|
+| Canonical climate identities | **77** |
+| Alias rows | **7** |
+| Global `needsReview` | **48** |
+| Legacy sun / water / both | **36 / 36 / 36** |
+| Conflicted canonical identities | **23** |
+| Conflicted identities blocked | **23** |
+| Conflict leakage | **0** |
+
+### 3. Why identity scope is the first blocker
+
+- `Vaccinium spp.` represents a broad genus-level identity.
+- The repository does not define a blueberry species, cultivar, or regional subtype.
+- Multiple commercially and horticulturally distinct blueberry types may be collapsed into one record.
+- Species-level evidence cannot silently become genus-wide evidence (Source-Evidence Contract §6).
+- The sun/water conflict cannot be resolved honestly until either:
+  - genuinely genus-wide evidence is accepted;
+  - the identity is narrowed;
+  - the identity is split;
+  - or the broad record remains ineligible.
+
+**Current last-explicit-wins values are not evidence.** They are deterministic merge precedence only and must not be treated as reviewed filter evidence.
+
+### 4. Four identity outcomes (no outcome selected)
+
+**Outcome A — Keep the broad genus-level record.**
+
+Requirements:
+
+- evidence must genuinely apply across the intended Vaccinium scope;
+- context and exceptions must be understood;
+- one species cannot serve as a proxy for the entire genus;
+- otherwise the record remains `needsReview` and filter-ineligible.
+
+**Outcome B — Narrow to one species.**
+
+Requirements:
+
+- product intent must identify which species “Blueberry” represents;
+- identity evidence must support the species;
+- scientific/common-name mapping must be stable;
+- aliases and existing references must be inventoried;
+- climate evidence must then be species-scoped.
+
+**Outcome C — Split into multiple canonical identities.**
+
+Requirements:
+
+- evidence must show that relevant blueberry types require distinct identities;
+- each identity needs a stable canonical key and scientific name;
+- assignments, aliases, and later climate evidence must be separated;
+- no silent migration of existing user plants is authorized.
+
+**Outcome D — Keep broad and permanently ineligible.**
+
+Requirements:
+
+- document that the identity cannot support one honest sun/water decision;
+- retain global `needsReview` or equivalent umbrella protection;
+- allow display only under existing safe behavior;
+- no filter eligibility.
+
+**No outcome is selected in this checkpoint.**
+
+### 5. Identity-evidence requirements
+
+A later identity evidence packet or identity review must record:
+
+- current canonical key
+- current scientific identity
+- intended product meaning of “Blueberry”
+- taxonomic scope: genus / species / cultivar / commercial type
+- whether the evidence is genus-wide or narrower
+- source authority
+- source identity / reference
+- region or cultivation scope
+- common-name mapping
+- ambiguity and exclusions
+- reviewer conclusion
+- unresolved limitations
+
+**Do not create the packet in this checkpoint.**
+
+### 6. Acceptable identity authority
+
+Use repository identity and Source-Evidence rules.
+
+Strong identity evidence may include conceptually:
+
+- recognized botanical or taxonomic institutions
+- government or university horticultural references
+- authoritative botanical databases
+- formal cultivar or breeder documentation where cultivar-specific
+- other repository-approved Tier A/B authorities
+
+Rules:
+
+- ordinary commercial pages cannot establish genus-wide identity alone;
+- AI summaries are non-authoritative;
+- multiple weak sources do not outweigh one directly scoped authoritative source;
+- conflicting authoritative identity evidence remains unresolved.
+
+**Do not name or research external sources in this checkpoint.**
+
+### 7. Decision questions for the later evidence phase
+
+The later research phase must answer:
+
+- What does the CRUVIT product record “Blueberry” intend to represent?
+- Is it a generic shopping/common-name category or one botanical identity?
+- Is one genus-level sun/water profile botanically honest?
+- Are the two assigned groups valid for all intended blueberry types?
+- Do fruiting goals require a narrower identity than survival/general care?
+- Does regional climate materially change the identity recommendation?
+- Would a split create meaningful product value or only complexity?
+- How would existing user records be handled if identity changes later?
+
+### 8. Assignment handling during identity review
+
+Until identity scope is accepted:
+
+- both current group assignments remain unchanged;
+- no assignment is removed;
+- no group value is changed;
+- no specific override is added;
+- no assignment is treated as incorrect merely because values conflict;
+- group blast radius remains documented:
+  - `acid-soil-cool-moisture` affects `camellia`, `azalea`, `blueberry`, and the seed traits path for `japanese-maple`;
+  - `cool-moist-berry` affects `raspberry` and `blueberry`.
+
+### 9. Climate evidence sequencing
+
+Do **not** collect or approve final sun/water packets before identity scope is accepted.
+
+After identity scope is accepted, later packet planning must separate:
+
+- sun preference
+- sun tolerated range
+- water preference
+- flowering/fruiting objective
+- container versus ground
+- regional/climate context
+
+State:
+
+- one omnibus packet is insufficient;
+- tolerance cannot become preference;
+- genus-wide evidence is required for a genus-wide identity;
+- evidence packets alone do not create `reviewed_supported` status.
+
+### 10. Vocabulary / modeling gap
+
+- The current acid-soil group uses: `morning_sun_part_shade`.
+- The current Evidence Packet proposed-value vocabulary does **not** currently represent this exact token (`full_sun`, `full_sun_to_part_shade`, `part_shade`, `full_shade` only).
+- This does **not** authorize changing either vocabulary.
+- A later Preference-versus-Tolerance / Sun-Token Modeling checkpoint must determine:
+  - whether `morning_sun_part_shade` is a preference, tolerated context, or distinct token;
+  - whether packet vocabulary requires extension;
+  - whether scalar `sunNeeds` can represent the distinction honestly.
+
+### 11. Field Review behavior (blueberry now)
+
+| Concern | Conceptual state |
+|---------|------------------|
+| sun | unresolved |
+| water | unresolved |
+| identity | `identity_ambiguous` |
+| preference / tolerance | unresolved |
+| context | unresolved |
+| global `needsReview` | remains true |
+| product eligibility | none |
+
+No `reviewed_supported` state may be created before:
+
+- identity scope accepted;
+- evidence packets validated;
+- Field Review decision validated;
+- unresolved conflicts addressed;
+- later global-`needsReview` gate approved.
+
+### 12. Future identity-decision report
+
+A later identity-scope research checkpoint should return:
+
+- evidence sources reviewed
+- authority tiers
+- taxonomic scope of each source
+- product-intent interpretation
+- keep / narrow / split / ineligible option comparison
+- recommended identity outcome
+- affected files
+- alias / user-record impact
+- climate-data implications
+- unresolved risks
+- whether preference/tolerance modeling is required
+- explicit statement that implementation remains separately gated
+
+### 13. Validator sequence
+
+Before any blueberry identity or climate data change:
+
+1. Identity evidence is collected under an approved research checkpoint.
+2. Identity decision is explicitly approved.
+3. Evidence packets pass Evidence Packet Validator.
+4. Field Review records pass Field Review Validator.
+5. No unresolved conflict is marked `reviewed_supported`.
+6. Global `needsReview` remains until a later explicit gate.
+7. Group blast radius is rechecked.
+8. Conflict inventory is rerun.
+9. Canonical/alias counts are checked.
+10. Product behavior remains fail-closed until separately approved.
+
+### 14. Exact next checkpoint
+
+After this documentation checkpoint is separately pushed, the next checkpoint should be:
+
+**Smart Recommendations — Blueberry Identity-Scope Research Planning**
+
+Purpose: Plan a bounded external-research task that compares keep-genus, narrow, split, and permanent-ineligible outcomes without changing data.
+
+Expected initial file scope: `PROJECT_STATUS.md` only.
+
+External research: planning only in that checkpoint; actual research must remain explicitly gated.
+
+**Do not begin it in this checkpoint.**
+
+### 15. Next two deferred checkpoints
+
+1. **Blueberry Preference-versus-Tolerance / Sun-Token Modeling Planning**
+2. **Blueberry Sun/Water Evidence Packet Planning**
+
+Do **not** authorize them now.
+
+### 16. Explicit non-authorization
+
+This checkpoint does **not** authorize:
+
+- external botanical research
+- evidence packet creation
+- identity narrowing, split, or rename
+- sun/water value selection
+- group, assignment, or specific-metadata change
+- catalog / schema / runtime change
+- `needsReview` or eligibility change
+- matcher / UI
+- GOS / v1b
+- push / deploy / production testing from this docs commit alone
+
+### 17. Documentation checklist
+
+| Check | Result |
+|-------|--------|
+| `Vaccinium spp.` treated as broad identity | **PASS** |
+| No species evidence generalized | **PASS** |
+| Four outcomes frozen | **PASS** |
+| No outcome selected | **PASS** |
+| Identity evidence requirements defined | **PASS** |
+| Assignments unchanged | **PASS** |
+| No climate packet before identity acceptance | **PASS** |
+| Preference/tolerance token gap recorded | **PASS** |
+| `needsReview` preserved | **PASS** |
+| No eligibility | **PASS** |
+| Validator sequence preserved | **PASS** |
+| Research remains separately gated | **PASS** |
+| Matchers/UI blocked | **PASS** |
+
+**Checklist result: all PASS.**
 
 ---
 
@@ -6229,7 +6541,7 @@ Trusted-location / missing-meta / global `needsReview` unchanged; legacy **36/36
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — Field Review Registry/Validator closed; Evidence Packet Registry closed/empty (`a3b35ca` / `3b719e4`; **84/84**; `realPacketCount` **0**); Evidence Packet Validator Documentation Contract pushed (`ba30064`); Evidence Packet Validator Implementation pushed (`17cf753`) and production verified (`SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`; **86/86**; fixtureCount **47**); **36/36/36** legacy only; **23** conflicts remain blocked; blueberry cleanup deferred; matchers/UI blocked; GOS paused; next: Blueberry Field-Cleanup Planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — Field Review and Evidence Packet foundations closed/empty/non-authoritative; Evidence Packet Validator pushed (`17cf753`) and production verified (`SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`; **86/86**; fixtureCount **47**); Blueberry Field-Cleanup Planning complete (`READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`); **Blueberry Identity-Scope Evidence Planning** is the current docs checkpoint; identity scope is the first blueberry blocker; no external research or data change authorized; **36/36/36** legacy only; **23** conflicts remain blocked; blueberry remains blocked; matchers/UI blocked; GOS paused; next: Blueberry Identity-Scope Research Planning → deferred preference/tolerance + sun/water packet planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -6338,13 +6650,15 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review Registry + Field Review Validator + Evidence Packet Registry (`a3b35ca` / prod `3b719e4`) + Evidence Packet Validator Documentation Contract (`ba30064`) + Evidence Packet Validator Implementation (`17cf753`).
+**Done (pushed):** Field Review Registry + Field Review Validator + Evidence Packet Registry (`a3b35ca` / prod `3b719e4`) + Evidence Packet Validator Documentation Contract (`ba30064`) + Evidence Packet Validator Implementation (`17cf753`) + Evidence Packet Validator production verification docs (`2994693`).
 
-**Done (local docs):** Evidence Packet Validator production verification — `SR_EVIDENCE_PACKET_VALIDATOR_PRODUCTION_VERIFIED`. Production HTTP/content verification **PASS**; harness inert until Run; five identical production runs (**86/86**; fixtureCount **47**); identical summaryFingerprint; storage/network **0**; empty real registry; product isolation before/after; no runtime authority; **36/36/36** unchanged; all **23** conflicts still blocked. Docs push pending.
+**Done (read-only):** Blueberry Field-Cleanup Planning — verdict `READY_FOR_BLUEBERRY_IDENTITY_SCOPE_EVIDENCE_PLANNING`.
 
-**Next (separately gated, not started):** Blueberry Field-Cleanup Planning — begin the first real conflict-cleanup planning only after evidence and review foundations are complete.
+**Done (local docs):** Blueberry Identity-Scope Evidence Planning — identity-scope evidence requirements frozen; four outcomes documented with no outcome selected; no research/packet/data change. Docs push pending.
 
-**Then (separately gated):** evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused. Do **not** add real review records or evidence packets, clear needsReview, edit catalog/schema/`index.html`, resolve botanical values, implement sun/water matchers, enable filter UI, or begin cleanup planning without separate approval.
+**Next (separately gated, not started):** Smart Recommendations — Blueberry Identity-Scope Research Planning — plan a bounded external-research task comparing keep-genus / narrow / split / permanent-ineligible without changing data (`PROJECT_STATUS.md` only initially; actual research remains explicitly gated).
+
+**Then (deferred, not authorized):** Blueberry Preference-versus-Tolerance / Sun-Token Modeling Planning → Blueberry Sun/Water Evidence Packet Planning → evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused. Do **not** add real review records or evidence packets, clear needsReview, edit catalog/schema/`index.html`, resolve botanical values, narrow/split blueberry, implement sun/water matchers, enable filter UI, or begin research without separate approval.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
