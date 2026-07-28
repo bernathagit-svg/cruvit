@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Field Review and Evidence Packet foundations closed; Blueberry identity outcome documented (split + broad unknown parent, not implemented); Preference-versus-Tolerance / Sun-Token Modeling Planning complete (`READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`); Preference-versus-Tolerance Modeling Documentation Contract is the current docs checkpoint (global staged hybrid model; legacy runtime unchanged); no token/schema/validator amendment yet; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused**
+Status: **Active — Field Review and Evidence Packet foundations closed; Blueberry identity outcome documented (split + broad unknown parent, not implemented); Preference-versus-Tolerance Modeling Documentation Contract closed (pushed `ff54015`); Evidence Packet / Field Review Reference Amendment Planning complete (`READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`); Evidence Packet / Field Review Reference Amendment Documentation Contract is the current docs checkpoint (shared EP/FR reference semantics frozen; no module/version/token/schema amendment yet); blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`) → **Preference-versus-Tolerance / Sun-Token Modeling Planning** (read-only; complete) → **Preference-versus-Tolerance Modeling Documentation Contract** (current docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry remains empty/non-authoritative; Evidence Packet Validator is developer-only/inert/non-authoritative; **no** schema or product authority; **no** token/schema/validator amendment, identity implementation, group/assignment/climate change, catalog/`needsReview`/eligibility change, matcher, or UI is authorized. Preference/tolerance gap is **global** (not Blueberry-only); staged hybrid model frozen conceptually; legacy `sunNeeds`/`waterNeeds` remain compatibility-only. **GOS synthetic stack paused** after GOS-5G closure.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`) → **Preference-versus-Tolerance Modeling Documentation Contract** (pushed `ff54015`) → **Evidence Packet / Field Review Reference Amendment Planning** (read-only; complete) → **Evidence Packet / Field Review Reference Amendment Documentation Contract** (current docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** and remains non-authoritative. Real Smart Recommendations evidence packets: **0**. Evidence packet registry remains empty/non-authoritative; Evidence Packet Validator is developer-only/inert/non-authoritative; **no** Evidence Packet or Field Review amendment exists yet; **no** schema or product authority; **no** token/schema/validator/registry amendment, identity implementation, group/assignment/climate change, catalog/`needsReview`/eligibility change, matcher, or UI is authorized. Preference/tolerance gap is **global**; staged hybrid model + coordinated EP/FR reference semantics frozen conceptually; legacy `sunNeeds`/`waterNeeds` remain compatibility-only. **GOS synthetic stack paused** after GOS-5G closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Field Review and Evidence Packet foundations closed; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract current; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; Field Review and Evidence Packet foundations closed; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; Reference Amendment Documentation Contract current; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → Field Review + Evidence Packet foundations (closed) → Evidence Packet Validator (pushed `17cf753`; production verified) → Blueberry Field-Cleanup / Identity-Scope Evidence Planning (pushed `4361021`) → Blueberry Identity-Scope Research / Bounded Research → **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`) → Preference-versus-Tolerance / Sun-Token Modeling Planning (complete; `READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`) → **Preference-versus-Tolerance Modeling Documentation Contract** (current docs checkpoint) → Evidence Packet / Field Review Reference Amendment Planning (next; separately gated) → Reference Amendments (deferred) → Inert Structured Climate Profile / Global Climate Schema Planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → browse-eligibility gate fix (`4724626`) → Filter and Data-Readiness Audit → **SR filter taxonomy schema foundation (additive)** → **Sun/Water Filter Readiness Contract (docs)** → **Sun/Water Structured Coverage Audit (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`)** → **Targeted Sun/Water Cleanup Plan (docs)** → **Merge-Pollution Repair** (pushed `eab1800`; production verified) → **Canonical Conflict Inventory** (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`) → **Source-Evidence Contract (docs; pushed)** → Field Review + Evidence Packet foundations (closed) → Evidence Packet Validator (pushed `17cf753`; production verified) → Blueberry Field-Cleanup / Identity-Scope Evidence Planning (pushed `4361021`) → Blueberry Identity-Scope Research / Bounded Research → **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`) → Preference-versus-Tolerance / Sun-Token Modeling Planning (complete) → **Preference-versus-Tolerance Modeling Documentation Contract** (pushed `ff54015`) → Evidence Packet / Field Review Reference Amendment Planning (complete; `READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`) → **Evidence Packet / Field Review Reference Amendment Documentation Contract** (current docs checkpoint) → Evidence Packet Reference Amendment (next; separately gated) → Field Review Reference Amendment (deferred) → Inert Structured Climate Profile / Global Climate Schema Planning (deferred) → targeted cleanup batches (each separately gated) → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,9 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Preference-versus-Tolerance Modeling Documentation Contract** | Done (local docs) | **Documentation-only; global reusable model.** Freezes staged hybrid architecture (legacy scalars A + structured evidence/review B + future reviewed climate profile C + product-safe derived scalar D); preference≠tolerance; Growth Outcome alignment without competing GOS model; `morning_sun_part_shade` compound-legacy decomposition rules; `bright_shade` context distinction; water scalar limitations; Evidence Packet / Field Review impact and amendment triggers; data ownership; backward compatibility; token governance; contradiction rules; validation architecture; Blueberry sequencing (parent remains blocked; children required before real child climate values). **No** token add/remove/rename; **no** schema/validator/registry/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; **no** packets or Field Review records. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**); real packets **0**; real field-review records **0**. Upstream planning: **`READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`**. Next: Evidence Packet / Field Review Reference Amendment Planning. Docs commit local; push separately gated. |
+| **Smart Recommendations — Evidence Packet / Field Review Reference Amendment Documentation Contract** | Done (local docs) | **Documentation-only; coordinated EP/FR shared reference semantics.** Freezes shared-reference objective; semantic ownership classes A–H; compound-token policy (`morning_sun_part_shade`, `bright_shade`); primary-value policy; claim-semantic rules; context-reference rules; Growth Outcome alignment; conceptual reference shape; Evidence Packet and Field Review amendment boundaries; coordinated versioning/fingerprint rules; contradiction checks; synthetic fixture strategy; compatibility boundary (EP **84/84** / **86/86** / fixtureCount **47**; FR **85/85** / **76/76**; realPacketCount **0**; realRecordCount **0**); schema dependency (developer-only amendments allowed before Global Climate Profile schema); separate implementation sequencing (EP first, FR second); Blueberry sequencing (parent remains blocked; synthetic trigger only). **No** shared JS module; **no** token add/remove/rename; **no** schema/validator/registry/harness/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; **no** packets or Field Review records; **no** version change. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**). Upstream planning: **`READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`**. Next: Evidence Packet Reference Amendment (separately gated). Docs commit local; push separately gated. |
+| **Smart Recommendations — Evidence Packet / Field Review Reference Amendment Planning** | Done (read-only) | **Read-only planning; no file modification.** Inventoried EP/FR foundations; built vocabulary matrix; reproduced compound-token and context gaps; compared amendment architectures; recommended docs-first Sequence C with separate EP then FR implementation checkpoints. Verdict: **`READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`**. |
+| **Smart Recommendations — Preference-versus-Tolerance Modeling Documentation Contract** | Done (pushed) | **Documentation-only; global reusable model.** Freezes staged hybrid architecture (legacy scalars A + structured evidence/review B + future reviewed climate profile C + product-safe derived scalar D); preference≠tolerance; Growth Outcome alignment without competing GOS model; `morning_sun_part_shade` compound-legacy decomposition rules; `bright_shade` context distinction; water scalar limitations; Evidence Packet / Field Review impact and amendment triggers; data ownership; backward compatibility; token governance; contradiction rules; validation architecture; Blueberry sequencing (parent remains blocked; children required before real child climate values). **No** token add/remove/rename; **no** schema/validator/registry/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; **no** packets or Field Review records. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**); real packets **0**; real field-review records **0**. Upstream planning: **`READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`**. Pushed at `ff54015`. Superseded next-gate: Evidence Packet / Field Review Reference Amendment Planning (complete) → Reference Amendment Documentation Contract (current). |
 | **Smart Recommendations — Preference-versus-Tolerance / Sun-Token Modeling Planning** | Done (read-only) | **Read-only modeling planning; no file modification.** Inventoried sun/water vocabularies across runtime/seed/schema/evidence/FR; confirmed global (not Blueberry-only) preference/tolerance gap; assessed compound `morning_sun_part_shade`; compared modeling options; recommended staged hybrid. Verdict: **`READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`**. |
 | **Smart Recommendations — Blueberry Identity Outcome Documentation Contract** | Done (pushed) | **Documentation-only.** Records bounded-research recommendation: one universal climate identity for `Vaccinium spp.` is not sufficiently honest for a global product; **do not** silently replace the broad record with one species; recommended long-term direction is **split product-relevant blueberry growing identities while retaining a broad parent/unknown record** (filter-ineligible; non-authoritative for climate). Five research-only candidates documented (not canonical): Northern highbush (`Vaccinium corymbosum`); Rabbiteye (`Vaccinium virgatum`; historical synonym handling may later need `Vaccinium ashei`); Southern highbush (horticultural hybrid group); Lowbush (primarily associated with `Vaccinium angustifolium`; do not claim every lowbush is one species without later evidence); Half-high (hybrid horticultural group). Freezes migration safety (no silent child assignment), assignment freeze, climate/GOS behavior, preference/tolerance handoff, later evidence sequence, broad-parent safe behavior, and non-claims. **No** identity/data implementation, child keys, aliases, packets, Field Review records, group/assignment/value/`needsReview`/eligibility/matcher/UI/GOS/v1b change. Baseline preserved: canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**); real packets **0**; real field-review records **0**. Pushed at `b235782`. |
 | **Smart Recommendations — Blueberry Identity-Scope Bounded Research** | Done (read-only research) | **Bounded external research; no file modification in the research task.** Compared keep-genus / narrow / split / permanently-ineligible. Conclusion: one universal climate identity for `Vaccinium spp.` is not sufficiently honest for a global product; do not silently map to one species; recommend split + broad unknown parent. Recommendation documented in Outcome Documentation Contract; **not implemented**. |
@@ -343,7 +345,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + Blueberry Identity Outcome Documentation Contract (pushed `b235782`) + Preference-versus-Tolerance / Sun-Token Modeling Planning (complete) + **Preference-versus-Tolerance Modeling Documentation Contract** (current docs checkpoint: global staged hybrid; legacy runtime unchanged; no token/schema/validator amendment yet); catalog task **B Frozen (v1)**; Field Review and Evidence Packet foundations closed/empty/non-authoritative; **36/36/36** unchanged; all **23** conflicts blocked; blueberry parent remains blocked; real packets **0**; real field-review records **0**; matchers/UI blocked; GOS paused; next = Evidence Packet / Field Review Reference Amendment Planning (separately gated), then deferred Reference Amendments + Inert Structured Climate Profile / Global Climate Schema Planning, then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through … + Blueberry Identity Outcome Documentation Contract (pushed `b235782`) + Preference-versus-Tolerance Modeling Documentation Contract (pushed `ff54015`) + Evidence Packet / Field Review Reference Amendment Planning (complete) + **Evidence Packet / Field Review Reference Amendment Documentation Contract** (current docs checkpoint: shared EP/FR reference semantics frozen; no module/version/token/schema amendment yet); catalog task **B Frozen (v1)**; Field Review and Evidence Packet foundations closed/empty/non-authoritative; **36/36/36** unchanged; all **23** conflicts blocked; blueberry parent remains blocked; real packets **0**; real field-review records **0**; matchers/UI blocked; GOS paused; next = Evidence Packet Reference Amendment (separately gated), then Field Review Reference Amendment + Inert Structured Climate Profile / Global Climate Schema Planning (deferred), then evidence-backed cleanup batches + re-audit, then matcher (separately gated), then **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -360,7 +362,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 ### Phase notes (brief)
 
 - **4 — Climate Suitability Engine v1:** done through v1b — snapshot helpers (`a7f6df6`) and climate-only `evaluateClimateSuitabilityV1()` (`c8a76bc`) without rewriting SR rules. **v1e frost refinement done (`4092627`):** `climateSuitabilityV1IsFrostFreeGrowingClimate()` + conservative penalties and level caps in `climateSuitabilityV1FromSnapshot()` only — high frost-sensitive tropical/warm plants (e.g. coconut, papaya, banana, mango) no longer receive optimistic `good` when scored against unconfirmed internal fallback Mediterranean profile; frost warnings and `notRecommended`/`risky` outcomes when frost-free climate is not clear; lavender and olive remain `good` in confirmed Mediterranean conditions; `indoorShelter: true` lifts/reduces conservative cap for protected/indoor growing. **Runtime tests passed:** coconut/papaya/banana/mango `notRecommended` with frost warning; lavender/olive `good`; coconut + `indoorShelter` → `good`; no console errors; My Garden/tasks dashboard renders.
-- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), Field Review + Evidence Packet foundations (closed/empty/non-authoritative), **Evidence Packet Validator** (pushed `17cf753`; production verified), Blueberry Field-Cleanup / Identity-Scope Evidence Planning (pushed `4361021`), Blueberry Identity-Scope Research / Bounded Research, **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`), Preference-versus-Tolerance / Sun-Token Modeling Planning (complete), and **Preference-versus-Tolerance Modeling Documentation Contract** (current docs checkpoint) are done or current. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain legacy compatibility; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; blueberry parent remains blocked; preference/tolerance gap is **global**; staged hybrid model frozen conceptually (no token/schema/validator amendment yet); field-review registry remains empty/non-authoritative; Evidence Packet Registry remains empty/non-authoritative; real SR evidence packets **0**; real field-review records **0**; no schema or product authority. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Evidence Packet / Field Review Reference Amendment Planning (separately gated), then deferred Reference Amendments and Inert Structured Climate Profile / Global Climate Schema Planning, then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
+- **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), Field Review + Evidence Packet foundations (closed/empty/non-authoritative), **Evidence Packet Validator** (pushed `17cf753`; production verified), Blueberry Field-Cleanup / Identity-Scope Evidence Planning (pushed `4361021`), Blueberry Identity-Scope Research / Bounded Research, **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`), Preference-versus-Tolerance / Sun-Token Modeling Planning (complete), **Preference-versus-Tolerance Modeling Documentation Contract** (pushed `ff54015`), Evidence Packet / Field Review Reference Amendment Planning (complete; `READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`), and **Evidence Packet / Field Review Reference Amendment Documentation Contract** (current docs checkpoint) are done or current. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain legacy compatibility; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; blueberry parent remains blocked; preference/tolerance gap is **global**; staged hybrid model + coordinated EP/FR reference semantics frozen conceptually (no module/version/token/schema amendment yet; no Evidence Packet or Field Review amendment exists yet); field-review registry remains empty/non-authoritative; Evidence Packet Registry remains empty/non-authoritative; real SR evidence packets **0**; real field-review records **0**; no schema or product authority. Matcher/UI remain **blocked**. **GOS remains paused.** **Next:** Evidence Packet Reference Amendment (separately gated), then Field Review Reference Amendment and Inert Structured Climate Profile / Global Climate Schema Planning (deferred), then evidence-backed cleanup batches + re-audit, then matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
 - **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
@@ -2483,7 +2485,7 @@ Related roadmap foundations include Per-user Plant Library v1, Garden Photo / Me
 
 # Smart Recommendations UX Scope
 
-**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** is closed (pushed). Field Review and Evidence Packet foundations are closed (empty/non-authoritative). Blueberry identity outcome is documented (split + broad unknown parent; not implemented). Preference-versus-Tolerance modeling planning is complete. **Preference-versus-Tolerance Modeling Documentation Contract** is the current docs checkpoint (global staged hybrid; legacy scalars unchanged; no token/schema/validator amendment yet); blueberry parent remains blocked; all **23** conflicts remain blocked; matchers/UI remain blocked; GOS remains paused. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
+**Status:** Locked product decision — **documented only**. Do **not** implement filters or redesign the results table yet. Browse eligibility (accuracy task A) is **done**. **Filter and Data-Readiness Audit is complete:** only `sunNeeds` and `waterNeeds` were candidates for the first filter family; other approved groups require structured catalog fields and enrichment. **Schema foundation is additive** (`growingEnvironments`, `plantingMethods`, `gardenStyles`, `gardenPurposes`, `maintenanceLevel`, `filterTaxonomyMeta` on `PlantCatalogItem`) and does **not** enable filters yet. **Sun/Water Filter Readiness Contract** freezes matcher readiness semantics. **Sun/Water Structured Coverage Audit** completed with verdict `NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`. **Targeted Sun/Water Cleanup Plan** freezes cleanup sequencing. **Merge-Pollution Repair** is closed (production verified). **Canonical Conflict Inventory** is complete (`NEEDS_SOURCE_EVIDENCE_CONTRACT_FIRST`). **Source-Evidence Contract** is closed (pushed). Field Review and Evidence Packet foundations are closed (empty/non-authoritative). Blueberry identity outcome is documented (split + broad unknown parent; not implemented). Preference-versus-Tolerance Modeling Documentation Contract is closed (pushed `ff54015`). Reference Amendment Planning is complete. **Evidence Packet / Field Review Reference Amendment Documentation Contract** is the current docs checkpoint (shared EP/FR reference semantics frozen; no Evidence Packet or Field Review amendment exists yet); blueberry parent remains blocked; all **23** conflicts remain blocked; matchers/UI remain blocked; GOS remains paused. Existing chat and results table remain unchanged. Canonical identity task B is **Frozen (v1)**.
 
 ### Input experience (future UX phase)
 
@@ -3318,7 +3320,7 @@ Documentation-only closure — see Completed Checkpoints production-verification
 
 ### Next cleanup phase
 
-Field Review Registry/Validator, Evidence Packet Registry/Validator, Blueberry identity-scope track through Identity Outcome Documentation Contract, and Preference-versus-Tolerance / Sun-Token Modeling Planning are **closed**. **Preference-versus-Tolerance Modeling Documentation Contract** is the current docs checkpoint: global staged hybrid model frozen conceptually; legacy runtime unchanged; no token/schema/validator amendment yet. Blueberry parent remains blocked; five child candidates remain research-only. Next separately gated task is Evidence Packet / Field Review Reference Amendment Planning. First population remains empty and synthetic-only; no real packet or field-review record exists; no schema or product authority is authorized. All **23** conflicts remain blocked. Targeted cleanup batches remain separately gated after modeling amendments + identity/evidence/review gates. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validators remain non-authoritative; Evidence Packet Registry remains empty/non-authoritative; legacy **36/36/36** unchanged; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
+Field Review Registry/Validator, Evidence Packet Registry/Validator, Blueberry identity-scope track through Identity Outcome Documentation Contract, Preference-versus-Tolerance Modeling Documentation Contract (pushed `ff54015`), and Evidence Packet / Field Review Reference Amendment Planning are **closed**. **Evidence Packet / Field Review Reference Amendment Documentation Contract** is the current docs checkpoint: shared EP/FR reference semantics frozen conceptually; no Evidence Packet or Field Review amendment exists yet; no module/version/token/schema change. Blueberry parent remains blocked; five child candidates remain research-only. Next separately gated task is Evidence Packet Reference Amendment. Field Review Reference Amendment remains separately deferred. First population remains empty and synthetic-only; no real packet or field-review record exists; no schema or product authority is authorized. All **23** conflicts remain blocked. Targeted cleanup batches remain separately gated after reference amendments + identity/evidence/review gates. Then canonical/alias-aware re-audit. **No matcher or filter UI is authorized.** Field-review registry remains empty/non-authoritative; validators remain non-authoritative; Evidence Packet Registry remains empty/non-authoritative; legacy **36/36/36** unchanged; GOS remains paused. Commerce/data agents may later draft packets but cannot approve them.
 
 ---
 
@@ -7250,6 +7252,8 @@ Proposed sequence:
 
 ### 22. Exact next checkpoint
 
+**Status note (superseded by later docs):** Reference Amendment Planning is **complete** (`READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`). The current docs checkpoint is **Evidence Packet / Field Review Reference Amendment Documentation Contract**. Historical next-checkpoint text below is preserved for audit trail.
+
 After this documentation commit is separately pushed:
 
 **Smart Recommendations — Evidence Packet / Field Review Reference Amendment Planning**
@@ -7261,6 +7265,8 @@ Expected scope: read-only planning; no contract or validator modification; no pa
 **Do not begin it in this checkpoint.**
 
 ### 23. Next two deferred checkpoints
+
+**Status note (superseded by later docs):** Deferred sequence after Reference Amendment Documentation Contract is: Evidence Packet Reference Amendment → Field Review Reference Amendment → Inert Structured Climate Profile / Global Climate Schema Planning. Historical text below is preserved for audit trail.
 
 1. **Evidence Packet / Field Review Reference Amendments**
 2. **Inert Structured Climate Profile / Global Climate Schema Planning**
@@ -7306,12 +7312,515 @@ This checkpoint does **not** authorize:
 
 ---
 
+# Smart Recommendations — Evidence Packet / Field Review Reference Amendment Documentation Contract
+
+**Checkpoint type:** documentation only. **File:** `PROJECT_STATUS.md` only.
+**Verdict identity (docs):** `SR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT_COMPLETE`.
+**Upstream planning verdict (preserved):** `READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`.
+
+**This checkpoint freezes shared semantic reference rules only.**
+
+It changes **no** Evidence Packet module.
+It changes **no** Field Review module.
+It changes **no** contract or implementation version.
+It changes **no** validator.
+It changes **no** registry.
+It changes **no** fixture or harness.
+It adds **no** token.
+It creates **no** shared JavaScript module.
+It creates **no** schema.
+It creates **no** packet.
+It creates **no** Field Review record.
+It changes **no** product runtime.
+It changes **no** `needsReview` or eligibility.
+Every amendment remains **separately gated**.
+
+### 1. Frozen product-safety baseline (do not rewrite)
+
+| Metric | Count |
+|--------|------:|
+| Canonical climate identities | **77** |
+| Alias rows | **7** |
+| Global `needsReview` | **48** |
+| Legacy sun / water / both | **36 / 36 / 36** |
+| Conflicted canonical identities | **23** |
+| Conflicted identities blocked | **23** |
+| Conflict leakage | **0** |
+| Real evidence packets | **0** |
+| Real Field Review records | **0** |
+
+v1b remains the product climate path. GOS remains paused.
+
+### 2. Frozen foundation baselines (do not rewrite)
+
+**Evidence Packet**
+
+| Item | Value |
+|------|-------|
+| Registry version | `0.1.0-sr-evidence-packet-registry` |
+| Packet Contract version | `0.1.0-sr-evidence-packet-contract` |
+| Validator version | `0.1.0-sr-evidence-packet-validator` |
+| Registry harness | **84/84** |
+| Validator harness | **86/86** |
+| Validator fixtureCount | **47** |
+| Registry finding codes | **45** |
+| Validator finding codes | **43** |
+| `realPacketCount` | **0** |
+
+**Field Review**
+
+| Item | Value |
+|------|-------|
+| Registry version | `0.1.0-sr-field-review-registry` |
+| Contract version | `0.1.0-sr-field-review-contract` |
+| Validator version | `0.1.0-sr-field-review-validator` |
+| Registry harness | **85/85** |
+| Validator harness | **76/76** |
+| `realRecordCount` | **0** |
+
+### 3. Shared-reference objective
+
+Evidence Packet and Field Review must later agree on the meaning of:
+
+- canonical identity
+- field
+- claim semantic
+- proposed or reviewed value
+- structured context
+- growth objective
+- regional applicability
+- packet references
+- review status
+- contract/reference version
+
+Rules:
+
+- Evidence Packet records source-backed claims.
+- Field Review records reviewer decisions.
+- Evidence existence is not approval.
+- A reviewer decision cannot claim stronger semantics than its supporting evidence.
+- Product eligibility remains separate from both layers.
+- The future structured climate profile remains a later layer.
+
+### 4. Semantic ownership classes (conceptual only)
+
+**A. Primary field**
+
+- `sun`
+- `water`
+
+**B. Claim semantic**
+
+- preference
+- optimum
+- tolerance
+- survival minimum
+- general guidance
+
+**C. Primary reviewed or proposed value**
+
+Examples only from existing vocabularies (not a new allowlist):
+
+Sun: `full_sun`, `full_sun_to_part_shade`, `part_shade`, `full_shade`
+
+Water: `low`, `medium`, `high`, `very_high`
+
+**D. Structured context qualifier**
+
+Examples conceptually: indoor/outdoor; container/ground; establishment/mature; daypart; morning exposure; afternoon heat protection; season; region or climate; humidity; drainage; protected cultivation.
+
+**E. Growth-outcome qualifier**
+
+- survival
+- vegetative growth
+- flowering
+- fruiting/yield
+- long-term reliability
+
+**F. Review status**
+
+Examples from existing Field Review semantics: `reviewed_supported`, `preference_tolerance_ambiguous`, `context_ambiguous`, `modeling_gap`, `identity_ambiguous`, `unsupported_token`, `remains_ineligible`.
+
+**G. Structured-profile reference**
+
+- future only
+- not created in this checkpoint
+
+**H. Legacy compatibility token**
+
+- runtime/seed token retained for compatibility but not automatically promoted to reviewed truth
+
+Do **not** create constants or fields.
+
+### 5. Compound-token policy
+
+- `morning_sun_part_shade` remains a legacy compound token.
+- It must **not** automatically become an atomic Evidence Packet proposed value.
+- It must **not** automatically become an atomic Field Review reviewed value.
+- Its meaning should later be represented through:
+  - primary sun value or range
+  - daypart context
+  - afternoon heat-protection context
+  - regional context where relevant
+
+- `bright_shade` also remains context-sensitive and legacy-compatible.
+- It must **not** be silently treated as equivalent to `part_shade`, `full_shade`, or indoor bright indirect light.
+- Later reference policy must distinguish indoor/outdoor context.
+
+No token is added, removed, renamed, or mapped here.
+
+Observed presence (legacy only; unchanged): `data/plants.seed.json` and `index.html` still carry these runtime/seed tokens; Evidence Packet proposed-value allowlists and Field Review harness reviewed-value lists do not coordinate them as atomic reviewed truth.
+
+### 6. Primary-value policy
+
+- primary values must remain narrow and reusable;
+- plant-specific compound values should not be added when structured context can preserve meaning;
+- Evidence Packet proposed-value vocabulary and Field Review reviewed-value vocabulary must be synchronized deliberately;
+- Field Review must not rely permanently on ad-hoc caller token lists;
+- no token becomes reviewed-supported without contract support, validator support, synthetic fixtures, and explicit versioning.
+
+Do **not** select future exact allowlists.
+
+### 7. Claim-semantic rules
+
+- Field Review must later be capable of distinguishing what it reviews: preference, tolerance, optimum, survival minimum.
+- A preference decision cannot rely only on tolerance evidence.
+- An optimum decision cannot rely only on survival-minimum evidence.
+- General guidance cannot automatically approve a precise value.
+- Multiple packets with the same value but different claim semantics are not interchangeable.
+- Claim semantics must remain part of deterministic references and validation.
+
+### 8. Context-reference rules
+
+Later coordinated context must support at least:
+
+- setting: indoor / outdoor
+- planting: container / ground
+- maturity: establishment / mature
+- objective: flowering / fruiting and later Growth Outcome alignment
+- daypart
+- heat protection
+- season
+- climate or region
+- humidity where material
+- drainage where material
+- protected cultivation where material
+
+Rules:
+
+- Evidence Packet and Field Review must compare semantically aligned context.
+- Opaque context strings are insufficient for reviewed-supported decisions.
+- Optional free-form notes may remain explanatory but cannot replace canonical context.
+- Missing material context remains explicit ambiguity.
+- A context-specific claim cannot be generalized silently.
+
+Do **not** define final enum values.
+
+### 9. Growth Outcome alignment
+
+- objective references must align with the locked Growth Outcome Suitability architecture;
+- no competing Field Review-only outcome taxonomy is allowed;
+- current Evidence Packet objective support is only a starting point;
+- a survival claim cannot approve reliable fruiting;
+- a fruiting claim does not automatically define a survival minimum;
+- exact structured-profile ownership remains deferred;
+- GOS remains paused;
+- v1b remains unchanged.
+
+### 10. Future shared-reference shape (conceptual)
+
+**Required:**
+
+- canonical identity
+- field
+- claim semantic
+- proposed or reviewed value
+- context
+- contract/reference version
+
+**Conditionally required:**
+
+- growth objective when outcome-specific
+- regional applicability when region-specific
+- evidence packet references for reviewed-supported decisions
+
+**Field Review only:**
+
+- review status
+- reviewer decision
+- supporting packet references
+
+**Deferred:**
+
+- structured climate profile reference
+- product-derived scalar reference
+- numeric environmental ranges
+- regional matrices
+
+Ambiguity must remain explicit rather than omitted.
+
+Exact production schema and field names are **not** approved here.
+
+### 11. Evidence Packet amendment boundary
+
+Smallest future Evidence Packet amendment direction (not authorized now):
+
+- coordinate structured context needed by Field Review;
+- add explicit support for daypart and heat-protection semantics;
+- define seasonal and regional-reference policy;
+- preserve narrow proposed-value allowlists;
+- define compound-token policy;
+- prepare optional future structured-profile reference without product authority;
+- preserve non-authoritative packet behavior;
+- version any semantic change;
+- include semantic changes in deterministic fingerprints;
+- preserve or version-test legacy `0.1.0` fixtures;
+- no real `0.1.0` packet migration is needed because `realPacketCount` is **0**.
+
+Do **not** approve exact new tokens, versions, or file edits here.
+
+### 12. Field Review amendment boundary
+
+Smallest future Field Review amendment direction (not authorized now):
+
+- represent reviewed claim semantic explicitly;
+- align structured context with Evidence Packet;
+- align outcome and regional references;
+- define whether multiple reviewed claims per field are allowed;
+- replace permanent ad-hoc caller token policy with coordinated reference rules;
+- preserve ambiguity and unsupported-token states;
+- compare evidence claim semantic, not only evidenceId/field/context blob;
+- prepare optional future structured-profile reference;
+- version semantic changes;
+- preserve or version-test legacy `0.1.0` fixtures;
+- no real `0.1.0` record migration is needed because `realRecordCount` is **0**.
+
+Do **not** approve exact implementation structure here.
+
+### 13. Coordinated versioning rules
+
+- Evidence Packet and Field Review do not need the same version string.
+- Their contract versions remain independent.
+- Implementation versions remain distinct from contract versions.
+- A semantic reference change requires an explicit contract-version decision.
+- Registry and validator versions should advance with their own implementation changes.
+- Each layer must declare supported peer-reference versions.
+- Exact matching is preferred initially.
+- Version ranges remain deferred.
+- Older validators fail closed on unsupported forward versions.
+- Newer Field Review may reference an older Evidence Packet only when subset compatibility is explicit.
+- Context or reference-version changes that alter meaning must affect fingerprints.
+- No silent rewrite or automatic migration occurs.
+
+No version is changed now.
+
+### 14. Contradiction and mismatch rules
+
+A future coordinated validator strategy must detect:
+
+- missing evidence packet
+- evidence packet for another identity
+- evidence packet for another field
+- preference supported only by tolerance evidence
+- optimum supported only by survival-minimum evidence
+- context mismatch
+- objective or outcome mismatch
+- regional mismatch
+- unsupported primary value
+- unsupported context
+- unsupported forward version
+- contradictory reviewed values
+- stale / rejected / withdrawn / superseded packet used as active support
+- unresolved identity scope marked reviewed-supported
+- compound legacy token treated as atomic reviewed truth without explicit policy
+
+No validator is created or changed.
+
+### 15. Synthetic fixture strategy
+
+A future Evidence Packet amendment should eventually test:
+
+- valid preference claim
+- valid tolerance claim
+- valid daypart context
+- valid heat-protection context
+- establishment versus mature
+- flowering versus fruiting
+- regional applicability
+- compound-token rejection or legacy policy
+- deterministic fingerprint
+- no mutation
+- no storage/network/runtime authority
+- legacy contract compatibility
+- unsupported forward version
+
+A future Field Review amendment should eventually test:
+
+- valid preference reference
+- valid tolerance reference
+- valid preference plus tolerance evidence
+- wrong identity / wrong field / missing packet
+- context / outcome / regional mismatch
+- preference-from-tolerance failure
+- optimum-from-survival failure
+- stale/rejected/withdrawn/superseded support
+- unsupported value/context/version
+- unresolved identity scope
+- no mutation
+- no storage/network/runtime authority
+- legacy contract compatibility
+
+Do **not** create fixtures.
+
+### 16. Compatibility boundary
+
+Any future amendment must preserve or explicitly version-rebaseline:
+
+| Foundation | Baseline |
+|------------|----------|
+| Evidence Packet Registry harness | **84/84** |
+| Evidence Packet Validator harness | **86/86** |
+| Evidence Packet Validator fixtureCount | **47** |
+| Field Review Registry harness | **85/85** |
+| Field Review Validator harness | **76/76** |
+
+And always preserve:
+
+- `realPacketCount` **0**
+- `realRecordCount` **0**
+- no product consumer
+- no runtime authority
+- no persistence
+- no external/API network
+- no automatic execution
+- no catalog mutation
+- no `needsReview` mutation
+- no eligibility change
+- no GOS/v1b invocation
+- no matcher/UI change
+
+### 17. Schema dependency
+
+- Reference amendments can remain developer-only before a Global Climate Profile schema exists.
+- Schema-first work would unnecessarily block evidence and review preparation.
+- Reference semantics must not prejudge exact production schema field names.
+- Product schema, numeric ranges, regional matrices, and derived compatibility values remain deferred.
+- A future shared JavaScript reference module may be considered only after this documentation contract and separately gated planning.
+- No shared module is authorized here.
+
+### 18. Implementation sequencing
+
+Approved future sequence, **not yet authorized**:
+
+1. Reference Amendment Documentation Contract *(this checkpoint)*
+2. Evidence Packet Reference Amendment
+3. Field Review Reference Amendment
+4. Inert Structured Climate Profile / Global Climate Schema Planning
+5. Optional shared inert reference module only if later analysis proves it useful
+6. Synthetic structured model/validator work
+7. One real approved child-identity evidence batch
+8. Field Review
+9. Product-read adapter planning
+10. Product integration only after explicit approval
+
+### 19. Combined-versus-separate decision
+
+- Evidence Packet and Field Review implementation amendments must be **separate** checkpoints.
+- They share **one** documentation contract.
+- Evidence Packet changes **first**.
+- Field Review changes **second**.
+- Reasons: smaller review surface; isolated harnesses; simpler rollback; clear version responsibility; easier failure diagnosis; strict small-change workflow.
+- The documentation contract prevents semantic drift between the separate implementations.
+- A single combined implementation commit is **not** authorized.
+
+### 20. Blueberry sequencing
+
+- Blueberry remains a synthetic trigger case only during reference amendment work.
+- The broad `Vaccinium spp.` parent remains `needsReview` and filter-ineligible.
+- No real Blueberry packet is created before a child identity scope is approved.
+- No current Blueberry assignment changes.
+- No current Blueberry scalar changes.
+- No Blueberry identity implementation.
+- Global reference work may proceed before child identities exist.
+- Child identities are required before real child-specific climate values.
+
+### 21. Exact next checkpoint
+
+After this documentation commit is separately pushed:
+
+**Smart Recommendations — Evidence Packet Reference Amendment**
+
+Purpose: Implement the smallest inert Evidence Packet contract/registry/validator/harness amendment required by this documentation contract.
+
+Expected candidate files (future only; exact scope must first be planned read-only in that checkpoint):
+
+- `modules/smart-recommendations/developer-evidence-packet-registry.js`
+- `modules/smart-recommendations/developer-evidence-packet-validator.js`
+- `tests/smart-rec-developer-evidence-packet-registry.test.html`
+- `tests/smart-rec-developer-evidence-packet-validator.test.html`
+- `PROJECT_STATUS.md`
+
+**Do not begin it in this checkpoint.**
+
+### 22. Next two deferred checkpoints
+
+1. **Field Review Reference Amendment**
+2. **Inert Structured Climate Profile / Global Climate Schema Planning**
+
+Do **not** authorize them now.
+
+### 23. Explicit non-authorization
+
+This checkpoint does **not** authorize:
+
+- Evidence Packet or Field Review module/harness amendment
+- shared JavaScript reference module
+- external research
+- evidence packets or Field Review records
+- identity implementation or child identity creation
+- token addition, removal, or rename
+- schema / validator / registry / version change
+- catalog / group / assignment / runtime change
+- `needsReview` or eligibility change
+- matcher / UI
+- GOS / v1b
+- push / deploy / production testing from this docs commit alone
+- beginning the Evidence Packet Reference Amendment
+
+### 24. Documentation checklist
+
+| Check | Result |
+|-------|--------|
+| Shared EP/FR semantics frozen | **PASS** |
+| No shared module created | **PASS** |
+| No token added | **PASS** |
+| Compound-token policy documented | **PASS** |
+| Claim semantics coordinated | **PASS** |
+| Context semantics coordinated | **PASS** |
+| Growth Outcome alignment preserved | **PASS** |
+| Versions unchanged | **PASS** |
+| Validators unchanged | **PASS** |
+| Separate implementation checkpoints frozen | **PASS** |
+| Evidence Packet first | **PASS** |
+| Field Review second | **PASS** |
+| Schema not required first | **PASS** |
+| Blueberry parent blocked | **PASS** |
+| Real registries empty | **PASS** |
+| All 23 conflicts blocked | **PASS** |
+| No eligibility | **PASS** |
+| Matcher/UI blocked | **PASS** |
+| GOS paused | **PASS** |
+
+**Checklist result: all PASS.**
+
+---
+
 # Future Roadmap (priority buckets)
 
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — Field Review and Evidence Packet foundations closed/empty/non-authoritative; Blueberry identity outcome documented (pushed `b235782`; split + broad unknown parent, not implemented); Preference-versus-Tolerance modeling planning complete; **Preference-versus-Tolerance Modeling Documentation Contract** is the current docs checkpoint (global staged hybrid; legacy runtime unchanged; no token/schema/validator amendment yet); blueberry parent remains blocked; real packets **0**; real field-review records **0**; **36/36/36** legacy only; **23** conflicts remain blocked; matchers/UI blocked; GOS paused; next: Evidence Packet / Field Review Reference Amendment Planning → deferred Reference Amendments + Inert Structured Climate Profile / Global Climate Schema Planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — Field Review and Evidence Packet foundations closed/empty/non-authoritative; Blueberry identity outcome documented (pushed `b235782`; split + broad unknown parent, not implemented); Preference-versus-Tolerance Modeling Documentation Contract closed (pushed `ff54015`); Reference Amendment Planning complete; **Evidence Packet / Field Review Reference Amendment Documentation Contract** is the current docs checkpoint (shared EP/FR reference semantics frozen; no Evidence Packet or Field Review amendment exists yet); blueberry parent remains blocked; real packets **0**; real field-review records **0**; **36/36/36** legacy only; **23** conflicts remain blocked; matchers/UI blocked; GOS paused; next: Evidence Packet Reference Amendment → deferred Field Review Reference Amendment + Inert Structured Climate Profile / Global Climate Schema Planning → evidence-backed cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -7420,15 +7929,15 @@ Never rewrite a working external module immediately after importing it.
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator (`17cf753` / prod docs `2994693`) + Blueberry Identity-Scope Evidence Planning (`4361021`) + Blueberry Identity Outcome Documentation Contract (`b235782`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator (`17cf753` / prod docs `2994693`) + Blueberry Identity-Scope Evidence Planning (`4361021`) + Blueberry Identity Outcome Documentation Contract (`b235782`) + Preference-versus-Tolerance Modeling Documentation Contract (`ff54015`).
 
-**Done (read-only):** Blueberry Field-Cleanup Planning; Blueberry Identity-Scope Research Planning / Bounded Research; Preference-versus-Tolerance / Sun-Token Modeling Planning (`READY_FOR_PREFERENCE_TOLERANCE_DOCUMENTATION_CONTRACT`).
+**Done (read-only):** Blueberry Field-Cleanup Planning; Blueberry Identity-Scope Research Planning / Bounded Research; Preference-versus-Tolerance / Sun-Token Modeling Planning; Evidence Packet / Field Review Reference Amendment Planning (`READY_FOR_REFERENCE_AMENDMENT_DOCUMENTATION_CONTRACT`).
 
-**Done (local docs):** Preference-versus-Tolerance Modeling Documentation Contract — freezes global staged hybrid model; legacy scalars preserved; no token/schema/validator/runtime change. Docs push pending.
+**Done (local docs):** Evidence Packet / Field Review Reference Amendment Documentation Contract — freezes shared EP/FR reference semantics, claim/context coordination, compound-token policy, versioning/fingerprint rules, contradiction checks, and separate EP-then-FR amendment sequence; no module/schema/runtime implementation. Docs push pending.
 
-**Next (separately gated, not started):** Smart Recommendations — Evidence Packet / Field Review Reference Amendment Planning — determine the smallest coordinated amendment for context vocabulary, proposed-value policy, reviewed-value references, version compatibility, and validator synchronization (read-only planning; no modifications).
+**Next (separately gated, not started):** Smart Recommendations — Evidence Packet Reference Amendment — implement the smallest inert Evidence Packet contract/registry/validator/harness amendment required by the Reference Amendment Documentation Contract (exact scope must first be planned read-only in that checkpoint).
 
-**Then (deferred, not authorized):** Evidence Packet / Field Review Reference Amendments → Inert Structured Climate Profile / Global Climate Schema Planning → evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused. Do **not** add tokens, amend validators, create packets or Field Review records, clear needsReview, edit catalog/schema/`index.html`, implement Blueberry children, implement sun/water matchers, enable filter UI, or begin reference-amendment planning without separate approval.
+**Then (deferred, not authorized):** Field Review Reference Amendment → Inert Structured Climate Profile / Global Climate Schema Planning → evidence-backed cleanup batches → re-audit → matcher. UI remains blocked. GOS remains paused. Do **not** amend Evidence Packet or Field Review modules, add tokens, create packets or Field Review records, clear needsReview, edit catalog/schema/`index.html`, implement Blueberry children, implement sun/water matchers, enable filter UI, or begin the Evidence Packet amendment without separate approval.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
