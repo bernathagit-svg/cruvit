@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Structured Climate Profile foundation production-verified (docs local/unpushed); implementation pushed (`b5ce82a`); Documentation Contract pushed (`37f9ce3`); Field Review Reference Amendment pushed (`414fb59`) and production-verified (docs `40fbc58`); Evidence Packet Reference Amendment pushed (`d3a53ac`) and production-verified; Preference-versus-Tolerance Modeling Documentation Contract closed (pushed `ff54015`); blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; Layer C developer-only proof with `realProfileCount` 0 — no catalog schema / product consumer / runtime authority**
+Status: **Active — First Real Evidence Batch lavender sun-preference research closed (docs local/unpushed; `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`); First Real Evidence Batch Planning complete; Structured Climate Profile foundation production-verified (pushed `7dbc207` / impl `b5ce82a`); EP/FR Reference Amendments closed; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; realPacketCount/realRecordCount/realProfileCount remain 0 — no real artifacts / catalog schema / product consumer**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Preference-versus-Tolerance docs (`ff54015`) → EP/FR Reference Amendments (pushed + production-verified) → Structured Climate Profile Documentation Contract (pushed `37f9ce3`) → Implementation Planning → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`) → **Structured Climate Profile foundation production verification** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** (FR **0.2.0**). Real Smart Recommendations evidence packets: **0** (EP **0.2.0**). Layer C Profile Registry/Validator/harnesses exist as **developer-only inert proof** (`realProfileCount` **0**); **no** `reviewedClimateProfile` catalog schema; **no** product consumer. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. Preference/tolerance gap is **global**. **GOS synthetic stack paused**. Matchers/UI not authorized.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Structured Climate Profile Implementation (`b5ce82a`) + production verification (`7dbc207`) → First Real Evidence Batch Planning (read-only) → **Lavender Sun Preference Bounded Research Closure** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Field-review registry has **zero real records** (FR **0.2.0**). Real Smart Recommendations evidence packets: **0** (EP **0.2.0**). Layer C Profile Registry/Validator/harnesses exist as **developer-only inert proof** (`realProfileCount` **0**); **no** `reviewedClimateProfile` catalog schema; **no** product consumer; **no** reviewed-data directory. Research supports later lavender `sun`/`preference`/`full_sun` batch planning only — **no** packets/records/Profiles created. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. **GOS synthetic stack paused**. Matchers/UI not authorized.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR Reference Amendments closed; Structured Climate Profile foundation production-verified; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; lavender first-real research closed with no real artifacts; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → Preference-versus-Tolerance Modeling Documentation Contract (pushed `ff54015`) → Evidence Packet / Field Review Reference Amendment Documentation Contract → **Evidence Packet Reference Amendment** (pushed `d3a53ac`; production verified) → **Field Review Reference Amendment** (pushed `414fb59`; production verified; docs `40fbc58`) → Inert Structured Climate Profile / Global Climate Schema Planning (complete) → **Structured Climate Profile Documentation Contract** (pushed `37f9ce3`) → Implementation Planning (complete) → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified) → push this production-verification documentation commit → First Real Evidence Batch Planning (deferred; not begun) → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified `7dbc207`) → First Real Evidence Batch Planning (complete) → **Lavender Sun Preference Bounded Research Closure** (this docs checkpoint; `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`) → Real Data Container Documentation Contract (next after docs push) → deferred First Real Evidence Batch Implementation Planning → Implementation → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Structured Climate Profile foundation production verification** | Done (local docs) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR change; no manual deploy; no Netlify setting change; no real profiles/packets/records.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`b5ce82a9f0840f22f72afe6462fc20603841f919`** (`feat: add inert Structured Climate Profile foundation`). **HTTP/content:** app **200** `text/html`; Profile Registry module **200** `application/javascript` (LF-normalized exact match; Contract `0.1.0-sr-structured-climate-profile-contract`; Registry `0.1.0-sr-structured-climate-profile-registry`); Profile Validator module **200** `application/javascript` (LF match; `0.1.0-sr-structured-climate-profile-validator`); Registry harness **200** `text/html` (LF match; contains `SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS`, Run/Reset); Validator harness **200** `text/html` (LF match; contains `SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS`, Run/Reset); FR Registry dependency **200** `application/javascript` (LF match); EP Registry dependency **200** `application/javascript` (LF match). **App isolation (before):** home loads; **zero** requests for Profile registry/validator modules or harnesses or FR/EP attributable to Profile; no Profile/FR/EP UI; no Profile storage keys; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; Smart Recommendations + My Garden entry unchanged. **Registry inertness:** `__SR_SCP_REGISTRY_BOOT.inert=true`; moduleLoaded false; idle; Profile/FR/EP modules not requested before Run. **Registry five production Reset→Run:** all **75/75** / fixtureCount **44** / `SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS` / summaryFingerprint `75/75#44:1817`; storage **0**; external/API network **0**; console/unhandled **0**. **Registry authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`; `realProfileCount: 0`; fields `sun`/`water`; seven stored statuses; claim types preference/optimum/tolerance/survival_minimum; FR peer **0.2.0 only**; reasons **40**. **Validator inertness:** boot inert; Profile Registry/Validator + FR/EP not loaded before Run. **Validator five production Reset→Run:** all **40/40** / fixtureCount **25** / `SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS` / summaryFingerprint `40/40#25:920`; storage **0**; network **0**; console/unhandled **0**. **Validator authority:** same inert flags; finding codes **28**; `realProfileCount: 0`. **After:** fresh home — zero automatic Profile/FR/EP/harness/GOS load; no Profile storage residue; v1b product path; SR/My Garden unchanged; no filter UI; legacy **36/36/36**; **23** conflicts blocked; leak **0**; broad `Vaccinium spp.` parent remains blocked; no Blueberry children; no schema/`reviewedClimateProfile` consumer. **Verdict:** `STRUCTURED_CLIMATE_PROFILE_PRODUCTION_VERIFIED`. Docs commit local (unpushed). **Next:** push this production-verification documentation commit; then First Real Evidence Batch Planning (deferred; not begun). |
+| **Smart Recommendations — First Real Evidence Batch Lavender Sun Preference Research Closure** | Done (local docs) | **Documentation-only research closure; no Evidence Packet / Field Review / Structured Climate Profile / reviewed-data container / schema / module / harness / loader / real-data file; no catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no additional external research in this docs commit.** Freezes first-batch identity `lavender` / *Lavandula angustifolia* (Kew POWO accepted species; registry `needsReview: false`; not among the 23 conflicts). Research question: outdoor ground-grown mature sun preference for `full_sun` vs mere tolerance. **Sources (recorded, not captured as packets):** identity — Kew Plants of the World Online; planned Tier A packet A — Colorado State University Extension (*Growing Lavender in Colorado*); planned Tier A packet B — North Carolina State University Extension (*Lavandula angustifolia* profile; full sun as preference; partial shade treated as possible tolerance/context only); Tier B corroboration — Royal Horticultural Society (optional). **Conclusion:** research supports proceeding; `full_sun` remains the reviewed hypothesis; partial-shade language must not become “partial shade impossible”; no material regional qualifier required for this narrow claim; no new token / second field / GOS / identity split / conflict or eligibility clearance. Planned later counts only: **2** EP / **1** FR / **1** Profile. Real counts remain **0**. Verdict: **`READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`**. **Next after docs push:** Real Data Container Documentation Contract. Deferred: First Real Evidence Batch Implementation Planning → Implementation. |
+| **Smart Recommendations — Structured Climate Profile foundation production verification** | Done (pushed) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR change; no manual deploy; no Netlify setting change; no real profiles/packets/records.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`b5ce82a9f0840f22f72afe6462fc20603841f919`** (`feat: add inert Structured Climate Profile foundation`). **HTTP/content:** app **200** `text/html`; Profile Registry module **200** `application/javascript` (LF-normalized exact match; Contract `0.1.0-sr-structured-climate-profile-contract`; Registry `0.1.0-sr-structured-climate-profile-registry`); Profile Validator module **200** `application/javascript` (LF match; `0.1.0-sr-structured-climate-profile-validator`); Registry harness **200** `text/html` (LF match; contains `SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS`, Run/Reset); Validator harness **200** `text/html` (LF match; contains `SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS`, Run/Reset); FR Registry dependency **200** `application/javascript` (LF match); EP Registry dependency **200** `application/javascript` (LF match). **App isolation (before):** home loads; **zero** requests for Profile registry/validator modules or harnesses or FR/EP attributable to Profile; no Profile/FR/EP UI; no Profile storage keys; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; Smart Recommendations + My Garden entry unchanged. **Registry inertness:** `__SR_SCP_REGISTRY_BOOT.inert=true`; moduleLoaded false; idle; Profile/FR/EP modules not requested before Run. **Registry five production Reset→Run:** all **75/75** / fixtureCount **44** / `SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS` / summaryFingerprint `75/75#44:1817`; storage **0**; external/API network **0**; console/unhandled **0**. **Registry authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`; `realProfileCount: 0`; fields `sun`/`water`; seven stored statuses; claim types preference/optimum/tolerance/survival_minimum; FR peer **0.2.0 only**; reasons **40**. **Validator inertness:** boot inert; Profile Registry/Validator + FR/EP not loaded before Run. **Validator five production Reset→Run:** all **40/40** / fixtureCount **25** / `SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS` / summaryFingerprint `40/40#25:920`; storage **0**; network **0**; console/unhandled **0**. **Validator authority:** same inert flags; finding codes **28**; `realProfileCount: 0`. **After:** fresh home — zero automatic Profile/FR/EP/harness/GOS load; no Profile storage residue; v1b product path; SR/My Garden unchanged; no filter UI; legacy **36/36/36**; **23** conflicts blocked; leak **0**; broad `Vaccinium spp.` parent remains blocked; no Blueberry children; no schema/`reviewedClimateProfile` consumer. **Verdict:** `STRUCTURED_CLIMATE_PROFILE_PRODUCTION_VERIFIED`. Docs pushed at `7dbc207`. **Later completed:** First Real Evidence Batch Planning + Lavender Sun Preference Research Closure — see research-closure checkpoint. |
 | **Smart Recommendations — Inert Structured Climate Profile Implementation** | Done (pushed; production verified) | **Inert developer-only Layer C proof only; no product runtime consumer; no catalog schema; no real profiles.** Exact five-file scope: `modules/smart-recommendations/developer-structured-climate-profile-registry.js` (Contract `0.1.0-sr-structured-climate-profile-contract`; Registry `0.1.0-sr-structured-climate-profile-registry`; capability `explicit_developer_structured_climate_profile_registry`), `modules/smart-recommendations/developer-structured-climate-profile-validator.js` (Validator `0.1.0-sr-structured-climate-profile-validator`; capability `explicit_developer_structured_climate_profile_validation`), `tests/smart-rec-developer-structured-climate-profile-registry.test.html`, `tests/smart-rec-developer-structured-climate-profile-validator.test.html`, `PROJECT_STATUS.md`. **Authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`; `realProfileCount: 0`. **Fields:** `sun`/`water` only. **Statuses:** `reviewed_supported` / `reviewed_conflicting` / `remains_ineligible` / `modeling_gap` / `identity_ambiguous` / `context_ambiguous` / `preference_tolerance_ambiguous`. **Claim types:** `preference` / `optimum` / `tolerance` / `survival_minimum` (`general_guidance` cannot create precise Profile). **Shape:** `profileId`, `profileContractVersion`, `canonicalKey`, `field`, `profileStatus`, `contextScope`, `fieldReviewReference`, `evidenceRefs`, `unresolvedLimitations`, `profileFingerprint`; `reviewedClaimType`+`reviewedValue` required for `reviewed_supported`; no confidence/timestamp/eligibility/scalar fields. **FR peer:** Field Review **0.2.0 only**. Compact EP provenance: `{evidenceId, packetContractVersion, expectedContentFingerprint}`. One active Profile per `canonicalKey`+`field`. Semantic fingerprint excludes `profileId`. Registry reasons **40**; Validator findings **28**. **Harnesses (five identical local Reset→Run):** Registry **75/75** / fixtureCount **44** / `SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS` / summaryFingerprint `75/75#44:1817`; Validator **40/40** / fixtureCount **25** / `SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS` / summaryFingerprint `40/40#25:920`; storage/network/console/unhandled **0**. **FR/EP non-regression (byte-identical):** FR **125/125** (36) / **112/112** (73); EP **117/117** (65) / **99/99** (59); `realRecordCount` **0**; `realPacketCount` **0**. Broader: merge **89/89**; schema **69/69**; recon **158** / **156** PASS / **2** EXPECTED / **0** unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leak **0**. Pushed at `b5ce82a`. **Production verification later completed** — see production verification checkpoint (`STRUCTURED_CLIMATE_PROFILE_PRODUCTION_VERIFIED`). |
 | **Smart Recommendations — Structured Climate Profile Documentation Contract** | Done (pushed) | **Documentation-only; Layer C architecture freeze before any profile module/schema/registry/validator/harness/real data.** Freezes four-layer A–D model; staged ownership (docs → inert developer proof → validator/harness → synthetic FR→profile handoff → later catalog sibling `reviewedClimateProfile` beside `climateTraits` → separately gated product adapter); first scope field-agnostic sun+water (populate one field at a time); one active profile per `canonicalKey`+`field`; conceptual content/claim semantics/authority statuses; legacy scalar inert coexistence; Layer D derivation gates; Growth Outcome boundary; confidence/provenance; versioning/fingerprinting; contradiction checks; schema strategy (**no** `plant-catalog.schema.json` change next; **do not** repurpose `PlantSunPlacementProfile` / `PlantWaterNeedsProfile`); synthetic test strategy; real-data sequence; first-real-identity criteria; Blueberry/`Vaccinium spp.` excluded as first real profile; remaining-filter relationship. Upstream planning: **`READY_FOR_STRUCTURED_CLIMATE_PROFILE_DOCUMENTATION_CONTRACT`**. Verdict identity: **`SR_STRUCTURED_CLIMATE_PROFILE_DOCUMENTATION_CONTRACT_COMPLETE`**. **No** profile object/registry/validator/harness/JSON Schema/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change at docs time; **no** packets/records/real data. Baseline preserved: EP **0.2.0** / `realPacketCount` **0**; FR **0.2.0** / `realRecordCount` **0**; canonical **77** / aliases **7** / NR **48** / legacy **36/36/36** / conflicted **23** (all blocked; leak **0**). Pushed at `37f9ce3`. **Implementation later completed locally** — see Inert Structured Climate Profile Implementation row. |
 | **Smart Recommendations — Field Review Reference Amendment production verification** | Done (pushed) | **Documentation-only after production verification; no module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/Evidence Packet change; no manual deploy; no Netlify setting change; no real packets/records.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`414fb59258f5012e6364ac64a61fa0b218a67105`** (`feat: amend Smart Recommendations field review references`). **HTTP/content:** app **200** `text/html`; FR Registry module **200** `application/javascript` (LF-normalized exact match; versions `0.2.0-sr-field-review-registry` / `0.2.0-sr-field-review-contract`); FR Validator module **200** `application/javascript` (LF match; version `0.2.0-sr-field-review-validator`); FR Registry harness **200** `text/html` (LF match; contains `SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS`, Run/Reset); FR Validator harness **200** `text/html` (LF match; contains `SR_FIELD_REVIEW_VALIDATOR_HARNESS_PASS`, Run/Reset); EP Registry dependency **200** `application/javascript` (LF match; unchanged). **App isolation (before):** home loads; **zero** requests for FR registry/validator modules or harnesses or EP attributable to FR; no FR/EP UI; no FR storage keys; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; GOS eval absent; Smart Recommendations + My Garden entry unchanged. **Registry inertness:** `__SR_FIELD_REVIEW_BOOT.inert=true`; moduleLoaded false; **0** rows; idle; modules not requested before Run. **Registry five production Reset→Run:** all **125/125** / fixtureCount **36** / `SR_FIELD_REVIEW_REGISTRY_HARNESS_PASS`; identical assertionFingerprint; storage **0**; external/API network **0**; no console/unhandled. **Registry authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`; `realRecordCount: 0`; descriptor frozen. **Compatibility:** explicit FR 0.1.0 + 0.2.0; explicit EP Contract/Registry 0.1.0 + 0.2.0; unsupported forward fail closed; no silent rewrite. **reviewedClaimType / compact refs / EP context reuse / compounds / semantic+lifecycle rules:** verified via production harness fixtures (preference/tolerance/optimum/survival match; preference←tolerance / optimum←survival / guidance-only fail; missing/wrong identity/field/claim/value/context/daypart/heat/objective/region/fingerprint; stale/withdrawn/rejected/superseded; compound `morning_sun_part_shade`/`bright_shade` → `unsupported_reviewed_value`/`compound_legacy_token`). Registry reasons **34**. **Validator inertness:** boot inert; FR validator/registry + EP not loaded before Run. **Validator five production Reset→Run:** all **112/112** / fixtureCount **73** / `SR_FIELD_REVIEW_VALIDATOR_HARNESS_PASS` / summaryFingerprint `0.2.0-sr-field-review-validator\|0.2.0-sr-field-review-registry\|1\|1\|0\|0\|0\|`; storage **0**; network **0**; console/unhandled **0**. **Validator authority:** same inert flags; finding codes **38**; `realRecordCount: 0`; `realPacketCount: 0`. **After:** fresh home — zero automatic FR/EP/harness/GOS load; no FR storage residue; v1b product path; SR/My Garden unchanged; no filter UI; legacy **36/36/36**; **23** conflicts blocked; leak **0**; broad `Vaccinium spp.` parent remains blocked; no Blueberry children; no schema implementation. **Verdict:** `SR_FIELD_REVIEW_REFERENCE_AMENDMENT_PRODUCTION_VERIFIED`. Docs commit local (unpushed). **Next:** push this production-verification documentation commit; then Inert Structured Climate Profile / Global Climate Schema Planning (deferred; not begun). |
@@ -352,7 +353,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **2** | **Plant Data Foundation v1** | **Done** — `PlantProfileV1` / `UserPlantV1` mappers and fields |
 | **3** | **Plant Library Integration v1a** | **Done** — `resolvePlantProfileRaw()` read bridge (`3c70c20`) |
 | **4** | Climate Suitability Engine v1 | **Done (v1a + v1b + v1e frost refinement)** — snapshot helpers (`a7f6df6`); scoring layer (`c8a76bc`); frost-risk refinement (`4092627`) |
-| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Blueberry Identity Outcome (`b235782`) + Preference-versus-Tolerance docs (`ff54015`) + EP/FR Reference Amendments (pushed `d3a53ac` / `414fb59`; prod docs `40fbc58`) + Structured Climate Profile Documentation Contract (pushed `37f9ce3`) + **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified) + production-verification docs (local/unpushed); catalog task **B Frozen (v1)**; EP/FR empty/non-authoritative (`realPacketCount` **0** / `realRecordCount` **0**); Layer C developer-only proof (`realProfileCount` **0**; no catalog schema / product consumer); **36/36/36** unchanged; all **23** conflicts blocked; blueberry parent remains blocked; matchers/UI blocked; GOS paused; next = push production-verification docs → deferred First Real Evidence Batch Planning → evidence-backed cleanup batches + re-audit → matcher (separately gated) → **C–E** |
+| **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Structured Climate Profile Implementation (`b5ce82a`; prod-verify docs `7dbc207`) + First Real Evidence Batch Planning + **Lavender Sun Preference Research Closure** (local docs; `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`); catalog task **B Frozen (v1)**; EP/FR/Profile empty (`realPacketCount` **0** / `realRecordCount` **0** / `realProfileCount` **0**); no reviewed-data directory / catalog schema / product consumer; **36/36/36** unchanged; all **23** conflicts blocked; blueberry parent remains blocked; matchers/UI blocked; GOS paused; next = push this research-closure docs commit → Real Data Container Documentation Contract → deferred Implementation Planning → Implementation → cleanup batches + re-audit → matcher (separately gated) → **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
 | **8** | Garden Photo / Media Library Foundation | Planned |
@@ -7831,7 +7832,7 @@ This checkpoint does **not** authorize:
 Legacy buckets retained for quick scanning. See numbered roadmap above for execution order.
 
 ## High
-- **Smart Recommendations sun/water readiness** — Structured Climate Profile foundation production-verified (docs local); implementation pushed (`b5ce82a`); Documentation Contract pushed (`37f9ce3`); EP/FR Reference Amendments closed (`d3a53ac` / `414fb59` / prod docs `40fbc58`); Preference-versus-Tolerance docs closed (`ff54015`); blueberry parent remains blocked; real packets **0**; real field-review records **0**; `realProfileCount` **0**; no catalog schema / product consumer; **36/36/36** legacy only; **23** conflicts remain blocked; matchers/UI blocked; GOS paused; next: push this production-verification documentation commit → deferred First Real Evidence Batch Planning → cleanup batches → re-audit → matcher (each separately gated; UI not started)
+- **Smart Recommendations sun/water readiness** — Lavender sun-preference research closed (docs local; `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`); First Real Evidence Batch Planning complete; Structured Climate Profile foundation production-verified (`7dbc207` / impl `b5ce82a`); EP/FR Reference Amendments closed; blueberry parent remains blocked; real packets **0**; real field-review records **0**; `realProfileCount` **0**; no reviewed-data directory / catalog schema / product consumer; **36/36/36** legacy only; **23** conflicts remain blocked; matchers/UI blocked; GOS paused; next: push this research-closure docs commit → Real Data Container Documentation Contract → deferred Implementation Planning → Implementation → cleanup batches → re-audit → matcher (each separately gated; UI not started)
 - Remaining climate accuracy tasks **C–E** (after controlled sun/water cleanup sequence; missing climate fields; survival/thrive/flower/fruit separation; small-batch catalog validation)
 - Enrichment of optional SR filter taxonomy fields (after sun/water path; when approved)
 - Growth Outcome Suitability — **GOS-5G production verified**; **synthetic GOS paused**; mapper→adapter / real-region / My Garden GOS consumer deferred; no product UI/ranking/persistence
@@ -8690,21 +8691,200 @@ Authority/descriptor: same inert flags; finding codes **28**; `realProfileCount:
 
 ### Next checkpoint
 
+**Status note (superseded):** Production-verification documentation was pushed at `7dbc207`. First Real Evidence Batch Planning and Lavender Sun Preference Bounded Research Closure later completed — see research-closure section below. Historical next-checkpoint text preserved for audit trail.
+
 **Push this production-verification documentation commit.** Then **First Real Evidence Batch Planning** (deferred; not begun). Catalog `reviewedClimateProfile` Schema Planning remains deferred. Do **not** begin either in this checkpoint.
+
+---
+
+# First Real Evidence Batch — Lavender Sun Preference Bounded Research Closure
+
+**Checkpoint type:** documentation only. **File:** `PROJECT_STATUS.md` only.
+**Verdict identity:** `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT`.
+**Upstream planning:** First Real Evidence Batch Planning (read-only; complete).
+
+**External research is complete for this narrow question.** This checkpoint records the research result only.
+
+- It creates **no** Evidence Packet.
+- It creates **no** Field Review record.
+- It creates **no** Structured Climate Profile.
+- It creates **no** real-data container or reviewed-data directory.
+- It changes **no** catalog value.
+- It changes **no** legacy scalar.
+- It creates **no** eligibility.
+- It clears **no** `needsReview`.
+- Implementation remains **separately gated**.
+
+### 1. Frozen identity decision
+
+| Item | Value |
+|------|-------|
+| canonicalKey | `lavender` |
+| Common name | Lavender |
+| Accepted scientific identity | *Lavandula angustifolia* |
+| Identity authority | Kew Plants of the World Online |
+| Identity scope | Accepted species-level identity |
+| Broad `spp.` scope | **no** |
+| Identity split | **not required** |
+| Unresolved alias collision in repository | **none identified** |
+| Registry acceptance | Existing canonical registry only (`needsReview: false`; plantId present); **registry not modified** |
+
+### 2. Research question and answer
+
+**Question:** For canonical identity `lavender` / *Lavandula angustifolia*, in outdoor, ground-grown, mature context, does authoritative horticultural evidence support `full_sun` as a sun preference rather than merely a tolerated condition?
+
+**Answer:**
+
+- Supported sufficiently to proceed to real-batch container and implementation planning.
+- `full_sun` is the reviewed hypothesis.
+- Partial-shade language must remain interpreted as possible tolerance/context, not as the preferred value.
+- Partial shade must **not** be converted into a claim that partial shade is impossible.
+- No Field Review approval exists yet.
+- No Evidence Packet or Profile exists yet.
+
+### 3. Source classification (recorded; not captured)
+
+| Role | Source | Class | Notes |
+|------|--------|-------|-------|
+| Identity | Kew Plants of the World Online | taxonomic / identity authority | *Lavandula angustifolia* Mill. accepted species |
+| Planned packet A | Colorado State University Extension — *Growing Lavender in Colorado* | **Tier A** | Independent horticultural guidance; directly supports full sun as preferred growing position |
+| Planned packet B | North Carolina State University Extension — *Lavandula angustifolia* plant profile | **Tier A** | Independent horticultural guidance; narrative requires full sun; broader cultural listing also includes partial shade → prefer full sun; treat partial shade as possible tolerance/context only |
+| Additional corroboration | Royal Horticultural Society — *Lavandula angustifolia* / English lavender guidance | **Tier B** | Optional support only; not one of the two core packets |
+
+**Rules:** Original source references are required later. Search snippets and AI summaries are not evidence. Only copyright-safe short excerpts may later be captured. Normalized claims remain distinct from source wording. Source references do **not** become packets through this documentation section.
+
+### 4. Planned batch counts (later only)
+
+| Artifact | Count |
+|----------|------:|
+| Evidence Packets | **2** |
+| Field Review records | **1** |
+| Structured Climate Profiles | **1** |
+
+No count changes occur in this task. Current: `realPacketCount` **0**; `realRecordCount` **0**; `realProfileCount` **0**.
+
+### 5. Planned Evidence Packet claim (both packets; not created)
+
+| Field | Value |
+|-------|-------|
+| canonicalKey | `lavender` |
+| field | `sun` |
+| claimType | `preference` |
+| proposedValue | `full_sun` |
+| contextScope.setting | `outdoor` |
+| contextScope.planting | `ground` |
+| contextScope.maturity | `mature` |
+| contextScope.objective | `general` |
+| daypart / heatProtection / climateOrRegion | omitted |
+| Packet Contract | `0.2.0-sr-evidence-packet-contract` |
+
+Packet IDs, fingerprints, and excerpts are **not** created yet.
+
+### 6. Future Field Review decision boundary (not decided)
+
+If future packets pass validation and remain consistent:
+
+- reviewStatus candidate: `reviewed_supported`
+- reviewedClaimType: `preference`
+- reviewedValue: `full_sun`
+
+Fail closed to unresolved/blocked if: evidence is tolerance-only; source identity is narrower or different; context differs materially; the two sources conflict; regional applicability becomes material; evidence is only general guidance; packet fingerprints or versions mismatch.
+
+No review decision is made now.
+
+### 7. Future Profile boundary (not created)
+
+If Field Review later succeeds:
+
+- profileStatus candidate: `reviewed_supported`
+- field / reviewedClaimType / reviewedValue: `sun` / `preference` / `full_sun`
+- context: Field Review-normalized outdoor / ground / mature / general
+- outcomeApplicability: **omitted**
+- real Profile remains inert; no scalar derivation; no product eligibility
+
+### 8. Why the batch is low risk
+
+- Species-level identity
+- One field only (`sun`)
+- One claim semantic only (`preference`)
+- Atomic existing EP vocabulary value (`full_sun`)
+- No compound sun token
+- No water/drought interpretation
+- No flowering/fruiting / GOS dependency
+- No regional matrix required for this narrow claim
+- No identity split
+- Not one of the 23 conflicts
+- No current product behavior needs to change
+- Tiny assignment blast radius (single `humid-sensitive-mediterranean` group; specific meta does not override sun)
+
+### 9. Stop conditions for implementation
+
+Stop before creating real artifacts if:
+
+- authoritative source details differ from this research summary
+- source scope does not match *Lavandula angustifolia*
+- evidence supports only tolerance
+- context becomes region-dependent
+- another field is required
+- a new token is required
+- a Growth Outcome claim is required
+- storage design would create product authority
+- existing `needsReview` or eligibility would need modification
+
+### 10. Exact next checkpoint
+
+After this documentation commit is separately pushed:
+
+**Real Data Container Documentation Contract**
+
+Purpose: Freeze developer-only storage and batch-manifest rules for the first two packets, one Field Review record, and one Structured Climate Profile.
+
+Likely ownership direction (to be frozen there): dedicated developer-only reviewed-data directory; JSON data separated from modules and harness fixtures; explicit developer-only loading; no `index.html` import; no catalog schema ownership; no product consumer.
+
+Exact paths and file names remain to be frozen in that checkpoint. **Do not begin it in this checkpoint.**
+
+### 11. Next two deferred checkpoints
+
+1. **First Real Evidence Batch Implementation Planning**
+2. **First Real Evidence Batch Implementation**
+
+Do **not** authorize them now.
+
+### 12. Documentation checklist
+
+| Check | Result |
+|-------|--------|
+| lavender identity recorded | **PASS** |
+| research question recorded | **PASS** |
+| source classes recorded | **PASS** |
+| research conclusion recorded | **PASS** |
+| preference distinguished from tolerance | **PASS** |
+| exact batch counts frozen | **PASS** |
+| no packet created | **PASS** |
+| no review created | **PASS** |
+| no Profile created | **PASS** |
+| no data container created | **PASS** |
+| no product authority | **PASS** |
+| next container contract named | **PASS** |
+| Blueberry excluded | **PASS** |
+| all 23 conflicts blocked | **PASS** |
+| GOS paused | **PASS** |
+
+**Checklist result: all PASS.**
 
 ---
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator (`17cf753` / prod docs `2994693`) + Blueberry Identity-Scope Evidence Planning (`4361021`) + Blueberry Identity Outcome Documentation Contract (`b235782`) + Preference-versus-Tolerance Modeling Documentation Contract (`ff54015`) + Evidence Packet Reference Amendment (`d3a53ac`) + Field Review Reference Amendment (`414fb59`) + Field Review Reference Amendment production verification docs (`40fbc58`) + Structured Climate Profile Documentation Contract (`37f9ce3`) + Inert Structured Climate Profile Implementation (`b5ce82a`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator (`17cf753` / prod docs `2994693`) + Blueberry Identity-Scope Evidence Planning (`4361021`) + Blueberry Identity Outcome Documentation Contract (`b235782`) + Preference-versus-Tolerance Modeling Documentation Contract (`ff54015`) + Evidence Packet Reference Amendment (`d3a53ac`) + Field Review Reference Amendment (`414fb59`) + Field Review Reference Amendment production verification docs (`40fbc58`) + Structured Climate Profile Documentation Contract (`37f9ce3`) + Inert Structured Climate Profile Implementation (`b5ce82a`) + Structured Climate Profile foundation production verification (`7dbc207`).
 
-**Done (read-only):** Blueberry Field-Cleanup Planning; Blueberry Identity-Scope Research Planning / Bounded Research; Preference-versus-Tolerance / Sun-Token Modeling Planning; Evidence Packet / Field Review Reference Amendment Planning; Evidence Packet Reference Amendment Planning; Field Review Reference Amendment Planning; Inert Structured Climate Profile / Global Climate Schema Planning; Inert Structured Climate Profile Implementation Planning (`READY_FOR_INERT_STRUCTURED_CLIMATE_PROFILE_IMPLEMENTATION`).
+**Done (read-only):** Blueberry Field-Cleanup Planning; Blueberry Identity-Scope Research Planning / Bounded Research; Preference-versus-Tolerance / Sun-Token Modeling Planning; Evidence Packet / Field Review Reference Amendment Planning; Evidence Packet Reference Amendment Planning; Field Review Reference Amendment Planning; Inert Structured Climate Profile / Global Climate Schema Planning; Inert Structured Climate Profile Implementation Planning; First Real Evidence Batch Planning (`READY_FOR_FIRST_REAL_EVIDENCE_BATCH_BOUNDED_RESEARCH`).
 
-**Done (local docs):** Structured Climate Profile foundation production verification — deployed `b5ce82a`; Registry **75/75** ×5 / Validator **40/40** ×5; `realProfileCount` **0**; product isolation; `STRUCTURED_CLIMATE_PROFILE_PRODUCTION_VERIFIED` (this docs commit; unpushed).
+**Done (local docs):** First Real Evidence Batch — Lavender Sun Preference Bounded Research Closure — identity *Lavandula angustifolia*; `sun`/`preference`/`full_sun` hypothesis; two planned Tier A sources; planned counts 2 EP / 1 FR / 1 Profile; real counts remain **0**; verdict `READY_FOR_LAVENDER_REAL_BATCH_CONTAINER_CONTRACT` (this docs commit; unpushed).
 
-**Next (separately gated):** Push this Structured Climate Profile foundation production-verification documentation commit.
+**Next (separately gated):** Push this Lavender research-closure documentation commit.
 
-**Then (deferred, not authorized / not begun):** First Real Evidence Batch Planning → evidence-backed cleanup batches → re-audit → matcher. Catalog `reviewedClimateProfile` Schema Planning remains deferred. UI remains blocked. GOS remains paused. Do **not** create real Profiles, packets, or Field Review records; clear needsReview; edit catalog/schema/`index.html`; implement Blueberry children; implement sun/water matchers; or enable filter UI without separate approval.
+**Then (deferred, not authorized / not begun):** Real Data Container Documentation Contract → First Real Evidence Batch Implementation Planning → First Real Evidence Batch Implementation. UI remains blocked. GOS remains paused. Blueberry remains excluded. All **23** conflicts remain blocked. Do **not** create real Profiles, packets, or Field Review records; clear needsReview; edit catalog/schema/`index.html`; implement Blueberry children; implement sun/water matchers; or enable filter UI without separate approval.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
