@@ -1,0 +1,49 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "lavender-sun-preference-v1",
+  "artifactType": "structured_climate_profiles",
+  "artifactContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+  "records": [
+    {
+      "profileId": "scp-lavender-sun-preference-v1",
+      "profileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+      "canonicalKey": "lavender",
+      "field": "sun",
+      "profileStatus": "reviewed_supported",
+      "reviewedClaimType": "preference",
+      "reviewedValue": "full_sun",
+      "contextScope": {
+        "setting": "outdoor",
+        "planting": "ground",
+        "maturity": "mature",
+        "objective": "general"
+      },
+      "fieldReviewReference": {
+        "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+        "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+        "canonicalKey": "lavender",
+        "field": "sun",
+        "reviewStatus": "reviewed_supported",
+        "valueFingerprint": "lavender|sun|preference|full_sun|evidence_derived_override|ep-lavender-sun-preference-csu-v1,ep-lavender-sun-preference-ncsu-v1|ep-lavender-sun-preference-csu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract",
+        "reviewedClaimType": "preference",
+        "reviewedValue": "full_sun"
+      },
+      "evidenceRefs": [
+        {
+          "evidenceId": "ep-lavender-sun-preference-csu-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        },
+        {
+          "evidenceId": "ep-lavender-sun-preference-ncsu-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        }
+      ],
+      "unresolvedLimitations": [
+        "partial_shade_listed_as_possible_tolerance_or_context_only_not_a_second_reviewed_claim"
+      ],
+      "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|lavender|sun|reviewed_supported|preference|full_sun|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|__null__|0.2.0-sr-field-review-contract|0.2.0-sr-field-review-registry|reviewed_supported|lavender|sun|preference|full_sun|evidence_derived_override|ep-lavender-sun-preference-csu-v1,ep-lavender-sun-preference-ncsu-v1|ep-lavender-sun-preference-csu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract|ep-lavender-sun-preference-csu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|partial_shade_listed_as_possible_tolerance_or_context_only_not_a_second_reviewed_claim|__null__"
+    }
+  ]
+}
