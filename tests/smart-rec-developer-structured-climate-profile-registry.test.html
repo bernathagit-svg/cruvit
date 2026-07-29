@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Structured Climate Profile Registry</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Structured Climate Profile Registry</h1>
+  <p class="sub">
+    Developer-only Layer C proof. <strong>Synthetic fixtures only</strong>.
+    Module loads only after explicit Run. No product consumer / schema / real profiles.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Registry module not requested. Synthetic fixtures execute only after
+    <strong>Run all registry checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all registry checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  var runActive = false;
+  var storageMutationCount = 0;
+  var networkCount = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+  var fixtureCount = 0;
+
+  window.__SR_SCP_REGISTRY_BOOT = Object.freeze({ inert: true, moduleLoaded: false });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    networkCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      networkCount++;
+      return Promise.reject(new Error('network_disabled_in_scp_registry_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      networkCount++;
+      throw new Error('xhr_disabled_in_scp_registry_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(console, arguments);
+    };
+    window.__SR_SCP_REGISTRY_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_SCP_REGISTRY_ON_UNHANDLED);
+    window.__SR_SCP_REGISTRY_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_SCP_REGISTRY_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_SCP_REGISTRY_RESTORE === 'function') {
+      window.__SR_SCP_REGISTRY_RESTORE();
+      window.__SR_SCP_REGISTRY_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function baseContext() {
+    return {
+      setting: 'outdoor',
+      planting: 'ground',
+      maturity: 'mature',
+      objective: 'general',
+      daypart: 'unknown',
+      heatProtection: 'unknown'
+    };
+  }
+
+  function makeFrFp(fr, opts) {
+    return fr.buildFieldReviewValueFingerprint({
+      canonicalKey: opts.canonicalKey,
+      field: opts.field,
+      reviewedClaimType: opts.reviewedClaimType,
+      reviewedValue: opts.reviewedValue,
+      sourceKind: 'canonical_catalog_record',
+      sourceIds: ['syn-catalog-' + opts.canonicalKey],
+      evidenceRefs: opts.evidenceRefs,
+      contextScope: opts.contextScope,
+      reviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION
+    });
+  }
+
+  function makeEvidenceRefs(ids) {
+    return (ids || ['ev-syn-001']).map(function (id) {
+      return {
+        evidenceId: id,
+        packetContractVersion: '0.2.0-sr-evidence-packet-contract',
+        expectedContentFingerprint: 'epfp-' + id
+      };
+    });
+  }
+
+  function makeSupportedProfile(fr, mod, extra) {
+    var o = Object.assign({
+      profileId: 'scp-syn-001',
+      canonicalKey: 'syn-climate-alpha',
+      field: 'sun',
+      profileStatus: 'reviewed_supported',
+      reviewedClaimType: 'preference',
+      reviewedValue: 'full_sun',
+      contextScope: baseContext(),
+      evidenceRefs: makeEvidenceRefs(['ev-syn-001']),
+      unresolvedLimitations: [],
+      outcomeApplicability: null
+    }, extra || {});
+
+    var fp = makeFrFp(fr, {
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewedClaimType: o.reviewedClaimType,
+      reviewedValue: o.reviewedValue,
+      evidenceRefs: o.evidenceRefs,
+      contextScope: o.contextScope
+    });
+    o.fieldReviewReference = {
+      fieldReviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION,
+      fieldReviewRegistryVersion: fr.SR_FIELD_REVIEW_REGISTRY_VERSION,
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewStatus: 'reviewed_supported',
+      valueFingerprint: fp.fingerprint,
+      reviewedClaimType: o.reviewedClaimType,
+      reviewedValue: o.reviewedValue
+    };
+    o.profileContractVersion = mod.SR_STRUCTURED_CLIMATE_PROFILE_CONTRACT_VERSION;
+    var pfp = mod.buildStructuredClimateProfileFingerprint(o);
+    o.profileFingerprint = pfp.fingerprint;
+    return o;
+  }
+
+  function makeBlockedProfile(fr, mod, extra) {
+    var o = Object.assign({
+      profileId: 'scp-blocked-001',
+      canonicalKey: 'syn-climate-blocked',
+      field: 'sun',
+      profileStatus: 'remains_ineligible',
+      reviewedClaimType: null,
+      reviewedValue: null,
+      contextScope: baseContext(),
+      evidenceRefs: [],
+      unresolvedLimitations: ['blocked_synthetic'],
+      outcomeApplicability: null
+    }, extra || {});
+    o.fieldReviewReference = {
+      fieldReviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION,
+      fieldReviewRegistryVersion: fr.SR_FIELD_REVIEW_REGISTRY_VERSION,
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewStatus: o.profileStatus,
+      valueFingerprint: 'fr-blocked-fp-' + o.canonicalKey + '-' + o.field,
+      reviewedClaimType: null,
+      reviewedValue: null
+    };
+    o.profileContractVersion = mod.SR_STRUCTURED_CLIMATE_PROFILE_CONTRACT_VERSION;
+    var pfp = mod.buildStructuredClimateProfileFingerprint(o);
+    o.profileFingerprint = pfp.fingerprint;
+    return o;
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    renderRows();
+    var names = results.map(function (r) { return (r.pass ? 'P:' : 'F:') + r.name; }).join('|');
+    lastSummary = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      verdict: verdict,
+      fixtureCount: fixtureCount,
+      storageMutationCount: storageMutationCount,
+      networkCount: networkCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledCount: unhandledCount,
+      moduleLoaded: moduleLoaded,
+      reasonCount: null,
+      summaryFingerprint: String(passed) + '/' + results.length + '#' + fixtureCount + ':' + names.length
+    });
+    window.__SR_SCP_REGISTRY_SUMMARY = lastSummary;
+    setStatus('State: complete · moduleLoaded=1 · storageMutationCount=' + storageMutationCount +
+      ' · networkCount=' + networkCount + ' · fixtureCount=' + fixtureCount);
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    fixtureCount = 0;
+    $('btn-run-all').disabled = true;
+    $('banner').textContent = 'Running synthetic registry checks…';
+    setStatus('State: running…');
+    installGuards();
+    var lsBefore = Object.keys(localStorage || {}).slice().sort().join(',');
+    var ssBefore = Object.keys(sessionStorage || {}).slice().sort().join(',');
+    var cookieBefore = String(document.cookie || '');
+
+    try {
+      var fr = await import('../modules/smart-recommendations/developer-field-review-registry.js');
+      var mod = await import('../modules/smart-recommendations/developer-structured-climate-profile-registry.js');
+      moduleLoaded = true;
+      window.__SR_SCP_REGISTRY_BOOT = Object.freeze({ inert: false, moduleLoaded: true });
+
+      var desc = mod.getSmartRecDeveloperStructuredClimateProfileRegistryDescriptor();
+      expect('descriptor frozen', isFrozenDeep(desc), '');
+      expect('developerOnly', desc.developerOnly === true, '');
+      expect('authoritative false', desc.authoritative === false, '');
+      expect('productConsumer false', desc.productConsumer === false, '');
+      expect('runtimeEligibilityAuthority false', desc.runtimeEligibilityAuthority === false, '');
+      expect('persistence false', desc.persistence === false, '');
+      expect('network false', desc.network === false, '');
+      expect('catalogMutation false', desc.catalogMutation === false, '');
+      expect('evidenceMutation false', desc.evidenceMutation === false, '');
+      expect('fieldReviewMutation false', desc.fieldReviewMutation === false, '');
+      expect('profileMutation false', desc.profileMutation === false, '');
+      expect('needsReviewMutation false', desc.needsReviewMutation === false, '');
+      expect('activation explicit_call_only', desc.activation === 'explicit_call_only', '');
+      expect('productConsumers none', desc.productConsumers === 'none', '');
+      expect('realProfileCount 0', desc.realProfileCount === 0, String(desc.realProfileCount));
+      expect('contract version', desc.profileContractVersion === '0.1.0-sr-structured-climate-profile-contract', desc.profileContractVersion);
+      expect('registry version', desc.registryVersion === '0.1.0-sr-structured-climate-profile-registry', desc.registryVersion);
+      expect('capability', desc.capability === mod.SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_CAPABILITY, '');
+      expect('reason inventory size', mod.SR_STRUCTURED_CLIMATE_PROFILE_REASONS.length >= 30, String(mod.SR_STRUCTURED_CLIMATE_PROFILE_REASONS.length));
+      lastSummary = lastSummary; // placeholder; reasonCount set below
+      window.__SR_SCP_REGISTRY_REASON_COUNT = mod.SR_STRUCTURED_CLIMATE_PROFILE_REASONS.length;
+
+      var empty = mod.getEmptySmartRecDeveloperStructuredClimateProfileRegistry();
+      expect('empty frozen', isFrozenDeep(empty), '');
+      expect('empty profiles', Object.keys(empty.profiles).length === 0, '');
+      expect('empty identity stable', empty === mod.getEmptySmartRecDeveloperStructuredClimateProfileRegistry(), '');
+      fixtureCount++;
+
+      expect('fields sun/water', JSON.stringify(mod.SR_STRUCTURED_CLIMATE_PROFILE_FIELDS) === JSON.stringify(['sun','water']), '');
+      expect('statuses 7', mod.SR_STRUCTURED_CLIMATE_PROFILE_STATUSES.length === 7, String(mod.SR_STRUCTURED_CLIMATE_PROFILE_STATUSES.length));
+      expect('claim types 4', mod.SR_STRUCTURED_CLIMATE_PROFILE_CLAIM_TYPES.length === 4, '');
+      expect('no general_guidance claim', mod.SR_STRUCTURED_CLIMATE_PROFILE_CLAIM_TYPES.indexOf('general_guidance') < 0, '');
+      fixtureCount++;
+
+      // Valid preference
+      var pref = makeSupportedProfile(fr, mod, { profileId: 'scp-pref', reviewedClaimType: 'preference', reviewedValue: 'full_sun' });
+      var prefRes = mod.validateStructuredClimateProfile(pref);
+      expect('valid preference', prefRes.valid === true, (prefRes.reasons || []).join(','));
+      fixtureCount++;
+
+      // Valid tolerance (water)
+      var tol = makeSupportedProfile(fr, mod, {
+        profileId: 'scp-tol', canonicalKey: 'syn-climate-beta', field: 'water',
+        reviewedClaimType: 'tolerance', reviewedValue: 'medium'
+      });
+      expect('valid tolerance', mod.validateStructuredClimateProfile(tol).valid === true, '');
+      fixtureCount++;
+
+      // Optimum / survival_minimum
+      var opt = makeSupportedProfile(fr, mod, {
+        profileId: 'scp-opt', canonicalKey: 'syn-climate-gamma',
+        reviewedClaimType: 'optimum', reviewedValue: 'full_sun_to_part_shade'
+      });
+      expect('valid optimum', mod.validateStructuredClimateProfile(opt).valid === true, '');
+      fixtureCount++;
+      var surv = makeSupportedProfile(fr, mod, {
+        profileId: 'scp-surv', canonicalKey: 'syn-climate-delta',
+        reviewedClaimType: 'survival_minimum', reviewedValue: 'part_shade'
+      });
+      expect('valid survival_minimum', mod.validateStructuredClimateProfile(surv).valid === true, '');
+      fixtureCount++;
+
+      // Blocked / ambiguous statuses
+      var blocked = makeBlockedProfile(fr, mod, { profileId: 'scp-inelig', profileStatus: 'remains_ineligible' });
+      expect('valid remains_ineligible', mod.validateStructuredClimateProfile(blocked).valid === true, '');
+      fixtureCount++;
+      var idAmb = makeBlockedProfile(fr, mod, {
+        profileId: 'scp-idamb', canonicalKey: 'syn-id-amb', profileStatus: 'identity_ambiguous',
+        unresolvedLimitations: ['identity_ambiguous']
+      });
+      expect('valid identity_ambiguous', mod.validateStructuredClimateProfile(idAmb).valid === true, '');
+      fixtureCount++;
+      var ctxAmb = makeBlockedProfile(fr, mod, {
+        profileId: 'scp-ctxamb', canonicalKey: 'syn-ctx-amb', profileStatus: 'context_ambiguous',
+        unresolvedLimitations: ['context_ambiguous']
+      });
+      expect('valid context_ambiguous', mod.validateStructuredClimateProfile(ctxAmb).valid === true, '');
+      fixtureCount++;
+      var ptAmb = makeBlockedProfile(fr, mod, {
+        profileId: 'scp-ptamb', canonicalKey: 'syn-pt-amb', profileStatus: 'preference_tolerance_ambiguous',
+        unresolvedLimitations: ['preference_tolerance_ambiguous']
+      });
+      expect('valid preference_tolerance_ambiguous', mod.validateStructuredClimateProfile(ptAmb).valid === true, '');
+      fixtureCount++;
+
+      // Missing claim/value on supported
+      var missClaim = makeSupportedProfile(fr, mod, { profileId: 'scp-mc' });
+      delete missClaim.reviewedClaimType;
+      missClaim.fieldReviewReference.reviewedClaimType = null;
+      var mcFp = mod.buildStructuredClimateProfileFingerprint(missClaim);
+      missClaim.profileFingerprint = mcFp.fingerprint;
+      expect('supported missing claim fails', mod.validateStructuredClimateProfile(missClaim).valid === false, '');
+      expect('missing claim reason', mod.validateStructuredClimateProfile(missClaim).reasons.indexOf('reviewed_claim_type_required') >= 0, '');
+      fixtureCount++;
+
+      var missVal = makeSupportedProfile(fr, mod, { profileId: 'scp-mv' });
+      delete missVal.reviewedValue;
+      missVal.fieldReviewReference.reviewedValue = null;
+      var mvFp = mod.buildStructuredClimateProfileFingerprint(missVal);
+      missVal.profileFingerprint = mvFp.fingerprint;
+      expect('supported missing value fails', mod.validateStructuredClimateProfile(missVal).valid === false, '');
+      fixtureCount++;
+
+      // Unsupported claim / value / field
+      var badClaim = makeSupportedProfile(fr, mod, { profileId: 'scp-bc', reviewedClaimType: 'general_guidance' });
+      expect('general_guidance fails', mod.validateStructuredClimateProfile(badClaim).reasons.indexOf('general_guidance_not_approvable') >= 0 ||
+        mod.validateStructuredClimateProfile(badClaim).reasons.indexOf('unsupported_reviewed_claim_type') >= 0, '');
+      fixtureCount++;
+
+      var badVal = makeSupportedProfile(fr, mod, { profileId: 'scp-bv', reviewedValue: 'morning_sun_part_shade' });
+      expect('compound value fails', mod.validateStructuredClimateProfile(badVal).reasons.indexOf('unsupported_reviewed_value') >= 0, '');
+      fixtureCount++;
+
+      var badField = makeSupportedProfile(fr, mod, { profileId: 'scp-bf', field: 'heat' });
+      expect('unsupported field fails', mod.validateStructuredClimateProfile(badField).reasons.indexOf('unsupported_field') >= 0, '');
+      fixtureCount++;
+
+      // Invalid context
+      var badCtx = makeSupportedProfile(fr, mod, { profileId: 'scp-bctx', contextScope: { setting: 'not-a-setting' } });
+      expect('invalid context fails', mod.validateStructuredClimateProfile(badCtx).valid === false, '');
+      fixtureCount++;
+
+      // Invalid FR ref / legacy FR version
+      var badFr = makeSupportedProfile(fr, mod, { profileId: 'scp-bfr' });
+      badFr.fieldReviewReference = null;
+      expect('invalid FR ref', mod.validateStructuredClimateProfile(badFr).reasons.indexOf('invalid_field_review_reference') >= 0, '');
+      fixtureCount++;
+
+      var legacyFr = makeSupportedProfile(fr, mod, { profileId: 'scp-leg' });
+      legacyFr.fieldReviewReference.fieldReviewContractVersion = fr.SR_FIELD_REVIEW_CONTRACT_VERSION_V01;
+      var legFp = mod.buildStructuredClimateProfileFingerprint(legacyFr);
+      // fingerprint builder may fail FR version via validate path
+      expect('legacy FR insufficient', mod.validateStructuredClimateProfile(legacyFr).reasons.indexOf('legacy_field_review_insufficient') >= 0 ||
+        mod.validateStructuredClimateProfile(legacyFr).reasons.indexOf('unsupported_field_review_version') >= 0 ||
+        mod.validateStructuredClimateProfile(legacyFr).reasons.indexOf('invalid_field_review_reference') >= 0 ||
+        mod.validateStructuredClimateProfile(legacyFr).reasons.indexOf('fingerprint_inputs_incomplete') >= 0, '');
+      fixtureCount++;
+
+      // FR mismatches
+      var idMis = makeSupportedProfile(fr, mod, { profileId: 'scp-idm' });
+      idMis.fieldReviewReference.canonicalKey = 'other-key';
+      expect('FR identity mismatch', mod.validateStructuredClimateProfile(idMis).reasons.indexOf('field_review_identity_mismatch') >= 0, '');
+      fixtureCount++;
+      var fMis = makeSupportedProfile(fr, mod, { profileId: 'scp-fm' });
+      fMis.fieldReviewReference.field = 'water';
+      expect('FR field mismatch', mod.validateStructuredClimateProfile(fMis).reasons.indexOf('field_review_field_mismatch') >= 0, '');
+      fixtureCount++;
+      var cMis = makeSupportedProfile(fr, mod, { profileId: 'scp-cm' });
+      cMis.fieldReviewReference.reviewedClaimType = 'tolerance';
+      expect('FR claim mismatch', mod.validateStructuredClimateProfile(cMis).reasons.indexOf('field_review_claim_mismatch') >= 0, '');
+      fixtureCount++;
+      var vMis = makeSupportedProfile(fr, mod, { profileId: 'scp-vm' });
+      vMis.fieldReviewReference.reviewedValue = 'part_shade';
+      expect('FR value mismatch', mod.validateStructuredClimateProfile(vMis).reasons.indexOf('field_review_value_mismatch') >= 0, '');
+      fixtureCount++;
+
+      var ctxMis = makeSupportedProfile(fr, mod, { profileId: 'scp-cxm' });
+      var resCtx = mod.validateStructuredClimateProfile(ctxMis, {
+        fieldReviewContextScope: Object.assign({}, baseContext(), { planting: 'container' })
+      });
+      expect('FR context mismatch', resCtx.reasons.indexOf('field_review_context_mismatch') >= 0, '');
+      fixtureCount++;
+
+      var fpMis = makeSupportedProfile(fr, mod, { profileId: 'scp-fpm' });
+      fpMis.profileFingerprint = 'wrong-fp';
+      expect('profile fingerprint mismatch', mod.validateStructuredClimateProfile(fpMis).reasons.indexOf('fingerprint_mismatch') >= 0, '');
+      fixtureCount++;
+
+      // Registry duplicates
+      var a1 = makeSupportedProfile(fr, mod, { profileId: 'dup-id', canonicalKey: 'syn-dup-a' });
+      var a2 = makeSupportedProfile(fr, mod, { profileId: 'dup-id', canonicalKey: 'syn-dup-b' });
+      var dupId = mod.validateAndBuildStructuredClimateProfileRegistry([a1, a2]);
+      expect('duplicate profileId', dupId.valid === false && dupId.reasons.indexOf('duplicate_profile_id') >= 0, '');
+      fixtureCount++;
+
+      var s1 = makeSupportedProfile(fr, mod, { profileId: 'sem-1', canonicalKey: 'syn-sem' });
+      var s2 = makeSupportedProfile(fr, mod, { profileId: 'sem-2', canonicalKey: 'syn-sem' });
+      // same semantic content except profileId → same fingerprint → semantic_duplicate
+      var sem = mod.validateAndBuildStructuredClimateProfileRegistry([s1, s2]);
+      expect('semantic duplicate', sem.valid === false && (sem.reasons.indexOf('semantic_duplicate') >= 0 || sem.reasons.indexOf('duplicate_active_canonical_field') >= 0), sem.reasons.join(','));
+      fixtureCount++;
+
+      var d1 = makeSupportedProfile(fr, mod, { profileId: 'act-1', canonicalKey: 'syn-act', reviewedValue: 'full_sun' });
+      var d2 = makeSupportedProfile(fr, mod, {
+        profileId: 'act-2', canonicalKey: 'syn-act', reviewedClaimType: 'tolerance', reviewedValue: 'full_sun_to_part_shade'
+      });
+      var act = mod.validateAndBuildStructuredClimateProfileRegistry([d1, d2]);
+      expect('duplicate active canonical+field', act.valid === false && act.reasons.indexOf('duplicate_active_canonical_field') >= 0, act.reasons.join(','));
+      fixtureCount++;
+
+      var selfSup = makeSupportedProfile(fr, mod, { profileId: 'self-sup', supersedesProfileId: 'self-sup', canonicalKey: 'syn-self' });
+      expect('invalid self supersession', mod.validateStructuredClimateProfile(selfSup).reasons.indexOf('invalid_supersession') >= 0, '');
+      fixtureCount++;
+      var missSup = makeSupportedProfile(fr, mod, { profileId: 'miss-sup', supersedesProfileId: 'missing-target', canonicalKey: 'syn-miss-sup' });
+      var missBuild = mod.validateAndBuildStructuredClimateProfileRegistry([missSup]);
+      expect('missing supersession target', missBuild.valid === false && missBuild.reasons.indexOf('invalid_supersession') >= 0, '');
+      fixtureCount++;
+
+      // Fingerprint determinism / sensitivity
+      var fBase = makeSupportedProfile(fr, mod, { profileId: 'fp-base', canonicalKey: 'syn-fp' });
+      var fBase2 = makeSupportedProfile(fr, mod, { profileId: 'fp-base-2', canonicalKey: 'syn-fp' });
+      expect('deterministic semantic fp', fBase.profileFingerprint === fBase2.profileFingerprint, '');
+      fixtureCount++;
+
+      var ctxEq1 = makeSupportedProfile(fr, mod, { profileId: 'ctx-eq-1', canonicalKey: 'syn-ctxeq' });
+      var ctxEq2 = makeSupportedProfile(fr, mod, {
+        profileId: 'ctx-eq-2', canonicalKey: 'syn-ctxeq',
+        contextScope: { planting: 'ground', setting: 'outdoor', maturity: 'mature', objective: 'general', heatProtection: 'unknown', daypart: 'unknown' }
+      });
+      expect('normalized equivalent context same fp', ctxEq1.profileFingerprint === ctxEq2.profileFingerprint, '');
+      fixtureCount++;
+
+      var chClaim = makeSupportedProfile(fr, mod, { profileId: 'ch-c', canonicalKey: 'syn-ch', reviewedClaimType: 'tolerance' });
+      expect('changed claim changes fp', fBase.profileFingerprint !== chClaim.profileFingerprint, '');
+      fixtureCount++;
+      var chVal = makeSupportedProfile(fr, mod, { profileId: 'ch-v', canonicalKey: 'syn-chv', reviewedValue: 'part_shade' });
+      expect('changed value changes fp', makeSupportedProfile(fr, mod, { profileId: 'ch-v0', canonicalKey: 'syn-chv' }).profileFingerprint !== chVal.profileFingerprint, '');
+      fixtureCount++;
+      var chCtx = makeSupportedProfile(fr, mod, {
+        profileId: 'ch-x', canonicalKey: 'syn-chx',
+        contextScope: Object.assign({}, baseContext(), { planting: 'container' })
+      });
+      expect('changed context changes fp', makeSupportedProfile(fr, mod, { profileId: 'ch-x0', canonicalKey: 'syn-chx' }).profileFingerprint !== chCtx.profileFingerprint, '');
+      fixtureCount++;
+
+      var chFr = makeSupportedProfile(fr, mod, { profileId: 'ch-fr', canonicalKey: 'syn-chfr' });
+      chFr.fieldReviewReference.valueFingerprint = chFr.fieldReviewReference.valueFingerprint + '-x';
+      var chFrFp = mod.buildStructuredClimateProfileFingerprint(chFr);
+      expect('changed FR fp changes profile fp', chFrFp.ok && chFrFp.fingerprint !== makeSupportedProfile(fr, mod, { profileId: 'ch-fr0', canonicalKey: 'syn-chfr' }).profileFingerprint, '');
+      fixtureCount++;
+
+      var chEp = makeSupportedProfile(fr, mod, {
+        profileId: 'ch-ep', canonicalKey: 'syn-chep',
+        evidenceRefs: makeEvidenceRefs(['ev-syn-001']).map(function (r) {
+          return Object.assign({}, r, { expectedContentFingerprint: 'epfp-changed' });
+        })
+      });
+      expect('changed EP expected fp changes profile fp',
+        chEp.profileFingerprint !== makeSupportedProfile(fr, mod, { profileId: 'ch-ep0', canonicalKey: 'syn-chep' }).profileFingerprint, '');
+      fixtureCount++;
+
+      var order1 = makeSupportedProfile(fr, mod, {
+        profileId: 'ord-1', canonicalKey: 'syn-ord',
+        evidenceRefs: makeEvidenceRefs(['ev-b', 'ev-a'])
+      });
+      var order2 = makeSupportedProfile(fr, mod, {
+        profileId: 'ord-2', canonicalKey: 'syn-ord',
+        evidenceRefs: makeEvidenceRefs(['ev-a', 'ev-b'])
+      });
+      expect('evidence order independent', order1.profileFingerprint === order2.profileFingerprint, '');
+      fixtureCount++;
+
+      var out1 = makeSupportedProfile(fr, mod, {
+        profileId: 'out-1', canonicalKey: 'syn-out',
+        outcomeApplicability: ['fruiting', 'survival']
+      });
+      var out2 = makeSupportedProfile(fr, mod, {
+        profileId: 'out-2', canonicalKey: 'syn-out',
+        outcomeApplicability: ['survival', 'fruiting']
+      });
+      expect('outcome order independent', out1.profileFingerprint === out2.profileFingerprint, '');
+      fixtureCount++;
+
+      var fwd = makeSupportedProfile(fr, mod, { profileId: 'fwd' });
+      fwd.profileContractVersion = '9.9.9-sr-structured-climate-profile-contract';
+      expect('unsupported forward version', mod.validateStructuredClimateProfile(fwd).reasons.indexOf('unsupported_profile_contract_version') >= 0, '');
+      fixtureCount++;
+
+      // Empty registry build + no mutation
+      var emptyBuild = mod.validateAndBuildStructuredClimateProfileRegistry([]);
+      expect('empty registry build ok', emptyBuild.valid === true, '');
+      fixtureCount++;
+
+      var mutIn = [makeSupportedProfile(fr, mod, { profileId: 'mut-1', canonicalKey: 'syn-mut' })];
+      var before = JSON.stringify(mutIn);
+      var mutBuild = mod.validateAndBuildStructuredClimateProfileRegistry(mutIn);
+      expect('build valid', mutBuild.valid === true, mutBuild.reasons.join(','));
+      expect('no input mutation', JSON.stringify(mutIn) === before, '');
+      fixtureCount++;
+
+      expect('realProfileCount still 0', mod.getSmartRecDeveloperStructuredClimateProfileRegistryDescriptor().realProfileCount === 0, '');
+      fixtureCount++;
+
+      // Product load detection — harness itself is not index.html
+      expect('not product index', !/\/index\.html$/i.test(location.pathname) && location.pathname.indexOf('smart-rec-developer-structured-climate-profile-registry') >= 0, location.pathname);
+      fixtureCount++;
+
+      var lsAfter = Object.keys(localStorage || {}).slice().sort().join(',');
+      var ssAfter = Object.keys(sessionStorage || {}).slice().sort().join(',');
+      expect('no localStorage mutation', lsAfter === lsBefore && storageMutationCount === 0, String(storageMutationCount));
+      expect('no sessionStorage mutation', ssAfter === ssBefore, '');
+      expect('no cookie mutation', String(document.cookie || '') === cookieBefore, '');
+      expect('zero network', networkCount === 0, String(networkCount));
+      expect('zero console errors', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('zero unhandled', unhandledCount === 0, String(unhandledCount));
+      fixtureCount++;
+
+      var failed = results.some(function (r) { return !r.pass; });
+      finishSummary(failed ? 'SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_FAIL' : 'SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_PASS');
+      if (window.__SR_SCP_REGISTRY_SUMMARY) {
+        window.__SR_SCP_REGISTRY_SUMMARY = Object.freeze(Object.assign({}, window.__SR_SCP_REGISTRY_SUMMARY, {
+          reasonCount: mod.SR_STRUCTURED_CLIMATE_PROFILE_REASONS.length,
+          summaryFingerprint: window.__SR_SCP_REGISTRY_SUMMARY.summaryFingerprint
+        }));
+      }
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      finishSummary('SR_STRUCTURED_CLIMATE_PROFILE_REGISTRY_HARNESS_FAIL');
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    fixtureCount = 0;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    networkCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    lastSummary = null;
+    window.__SR_SCP_REGISTRY_BOOT = Object.freeze({ inert: true, moduleLoaded: false });
+    window.__SR_SCP_REGISTRY_SUMMARY = null;
+    $('rows').innerHTML = '';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('banner').textContent = 'Idle. Registry module not requested. Synthetic fixtures execute only after Run all registry checks.';
+    setStatus('State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0');
+    $('btn-run-all').disabled = false;
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>

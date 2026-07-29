@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Structured Climate Profile Validator</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Structured Climate Profile Validator</h1>
+  <p class="sub">
+    Developer-only Layer C audit. Synthetic Profiles + Field Review snapshots only.
+    Modules load only after explicit Run.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Registry/Validator not requested. Synthetic fixtures execute only after
+    <strong>Run all validator checks</strong>.
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run all validator checks</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var results = [];
+  var runActive = false;
+  var storageMutationCount = 0;
+  var networkCount = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var fixtureCount = 0;
+
+  window.__SR_SCP_VALIDATOR_BOOT = Object.freeze({ inert: true, moduleLoaded: false });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(report, code) {
+    return (report.findings || []).some(function (f) { return f.code === code; });
+  }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    networkCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      networkCount++;
+      return Promise.reject(new Error('network_disabled_in_scp_validator_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      networkCount++;
+      throw new Error('xhr_disabled_in_scp_validator_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(console, arguments);
+    };
+    window.__SR_SCP_VALIDATOR_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_SCP_VALIDATOR_ON_UNHANDLED);
+    window.__SR_SCP_VALIDATOR_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_SCP_VALIDATOR_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_SCP_VALIDATOR_RESTORE === 'function') {
+      window.__SR_SCP_VALIDATOR_RESTORE();
+      window.__SR_SCP_VALIDATOR_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function baseContext() {
+    return {
+      setting: 'outdoor',
+      planting: 'ground',
+      maturity: 'mature',
+      objective: 'general',
+      daypart: 'unknown',
+      heatProtection: 'unknown'
+    };
+  }
+
+  function makeEvidenceRefs(ids) {
+    return (ids || ['ev-syn-001']).map(function (id) {
+      return {
+        evidenceId: id,
+        packetContractVersion: '0.2.0-sr-evidence-packet-contract',
+        expectedContentFingerprint: 'epfp-' + id
+      };
+    });
+  }
+
+  function makePair(fr, reg, opts) {
+    var o = Object.assign({
+      profileId: 'scp-v-001',
+      canonicalKey: 'syn-val-alpha',
+      field: 'sun',
+      profileStatus: 'reviewed_supported',
+      reviewedClaimType: 'preference',
+      reviewedValue: 'full_sun',
+      contextScope: baseContext(),
+      evidenceRefs: makeEvidenceRefs(['ev-syn-001']),
+      unresolvedLimitations: [],
+      outcomeApplicability: null
+    }, opts || {});
+
+    var frFp = fr.buildFieldReviewValueFingerprint({
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewedClaimType: o.reviewedClaimType,
+      reviewedValue: o.reviewedValue,
+      sourceKind: 'canonical_catalog_record',
+      sourceIds: ['syn-catalog-' + o.canonicalKey],
+      evidenceRefs: o.evidenceRefs,
+      contextScope: o.contextScope,
+      reviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION
+    });
+
+    o.fieldReviewReference = {
+      fieldReviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION,
+      fieldReviewRegistryVersion: fr.SR_FIELD_REVIEW_REGISTRY_VERSION,
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewStatus: 'reviewed_supported',
+      valueFingerprint: frFp.fingerprint,
+      reviewedClaimType: o.reviewedClaimType,
+      reviewedValue: o.reviewedValue
+    };
+    o.profileContractVersion = reg.SR_STRUCTURED_CLIMATE_PROFILE_CONTRACT_VERSION;
+    var pfp = reg.buildStructuredClimateProfileFingerprint(o);
+    o.profileFingerprint = pfp.fingerprint;
+
+    var snap = {
+      canonicalKey: o.canonicalKey,
+      field: o.field,
+      reviewStatus: 'reviewed_supported',
+      reviewedClaimType: o.reviewedClaimType,
+      reviewedValue: o.reviewedValue,
+      contextScope: clone(o.contextScope),
+      evidenceRefs: clone(o.evidenceRefs),
+      valueFingerprint: frFp.fingerprint,
+      reviewContractVersion: fr.SR_FIELD_REVIEW_CONTRACT_VERSION
+    };
+
+    var epSnaps = (o.evidenceRefs || []).map(function (r) {
+      return {
+        evidenceId: r.evidenceId,
+        contentFingerprint: r.expectedContentFingerprint,
+        packetContractVersion: r.packetContractVersion
+      };
+    });
+
+    return { profile: o, snapshot: snap, evidencePacketSnapshots: epSnaps };
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    renderRows();
+    var names = results.map(function (r) { return (r.pass ? 'P:' : 'F:') + r.name; }).join('|');
+    var summary = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      verdict: verdict,
+      fixtureCount: fixtureCount,
+      storageMutationCount: storageMutationCount,
+      networkCount: networkCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledCount: unhandledCount,
+      moduleLoaded: moduleLoaded,
+      summaryFingerprint: String(passed) + '/' + results.length + '#' + fixtureCount + ':' + names.length,
+      findingCount: window.__SR_SCP_VALIDATOR_FINDING_COUNT || null
+    });
+    window.__SR_SCP_VALIDATOR_SUMMARY = summary;
+    setStatus('State: complete · moduleLoaded=1 · storageMutationCount=' + storageMutationCount +
+      ' · networkCount=' + networkCount + ' · fixtureCount=' + fixtureCount);
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    fixtureCount = 0;
+    $('btn-run-all').disabled = true;
+    $('banner').textContent = 'Running synthetic validator checks…';
+    setStatus('State: running…');
+    installGuards();
+    var lsBefore = Object.keys(localStorage || {}).slice().sort().join(',');
+
+    try {
+      var fr = await import('../modules/smart-recommendations/developer-field-review-registry.js');
+      var reg = await import('../modules/smart-recommendations/developer-structured-climate-profile-registry.js');
+      var val = await import('../modules/smart-recommendations/developer-structured-climate-profile-validator.js');
+      moduleLoaded = true;
+      window.__SR_SCP_VALIDATOR_BOOT = Object.freeze({ inert: false, moduleLoaded: true });
+      window.__SR_SCP_VALIDATOR_FINDING_COUNT = val.SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_FINDING_CODES.length;
+
+      var desc = val.getSmartRecDeveloperStructuredClimateProfileValidatorDescriptor();
+      expect('descriptor frozen', isFrozenDeep(desc), '');
+      expect('validator version', desc.validatorVersion === '0.1.0-sr-structured-climate-profile-validator', desc.validatorVersion);
+      expect('capability', desc.capability === val.SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_CAPABILITY, '');
+      expect('developerOnly', desc.developerOnly === true, '');
+      expect('authoritative false', desc.authoritative === false, '');
+      expect('runtimeEligibilityAuthority false', desc.runtimeEligibilityAuthority === false, '');
+      expect('realProfileCount 0', desc.realProfileCount === 0, '');
+      expect('finding inventory size', val.SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_FINDING_CODES.length >= 20, String(val.SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_FINDING_CODES.length));
+      fixtureCount++;
+
+      // Valid matching pairs
+      var pref = makePair(fr, reg, { profileId: 'v-pref', reviewedClaimType: 'preference' });
+      var r1 = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [pref.profile],
+        fieldReviewSnapshots: [pref.snapshot],
+        evidencePacketSnapshots: pref.evidencePacketSnapshots
+      });
+      expect('valid preference with FR snapshot', r1.valid === true, (r1.findings || []).map(function (f) { return f.code; }).join(','));
+      fixtureCount++;
+
+      var tol = makePair(fr, reg, {
+        profileId: 'v-tol', canonicalKey: 'syn-val-beta', field: 'water',
+        reviewedClaimType: 'tolerance', reviewedValue: 'medium'
+      });
+      expect('valid tolerance', val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [tol.profile], fieldReviewSnapshots: [tol.snapshot], evidencePacketSnapshots: tol.evidencePacketSnapshots
+      }).valid === true, '');
+      fixtureCount++;
+
+      var opt = makePair(fr, reg, {
+        profileId: 'v-opt', canonicalKey: 'syn-val-gamma',
+        reviewedClaimType: 'optimum', reviewedValue: 'full_sun_to_part_shade'
+      });
+      expect('valid optimum', val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [opt.profile], fieldReviewSnapshots: [opt.snapshot], evidencePacketSnapshots: opt.evidencePacketSnapshots
+      }).valid === true, '');
+      fixtureCount++;
+
+      var surv = makePair(fr, reg, {
+        profileId: 'v-surv', canonicalKey: 'syn-val-delta',
+        reviewedClaimType: 'survival_minimum', reviewedValue: 'part_shade'
+      });
+      expect('valid survival_minimum', val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [surv.profile], fieldReviewSnapshots: [surv.snapshot], evidencePacketSnapshots: surv.evidencePacketSnapshots
+      }).valid === true, '');
+      fixtureCount++;
+
+      // Missing FR snapshot
+      var miss = makePair(fr, reg, { profileId: 'v-miss', canonicalKey: 'syn-val-miss' });
+      var rMiss = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [miss.profile], fieldReviewSnapshots: [], evidencePacketSnapshots: miss.evidencePacketSnapshots
+      });
+      expect('missing FR snapshot', rMiss.valid === false && hasCode(rMiss, 'missing_field_review_reference'), '');
+      fixtureCount++;
+
+      // Wrong identity / field / status / claim / value / context / fingerprint
+      var wrongId = makePair(fr, reg, { profileId: 'v-wid', canonicalKey: 'syn-val-wid' });
+      var snapWrongId = clone(wrongId.snapshot);
+      snapWrongId.canonicalKey = 'other-identity';
+      var rWid = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongId.profile],
+        fieldReviewSnapshots: [snapWrongId],
+        evidencePacketSnapshots: wrongId.evidencePacketSnapshots
+      });
+      expect('wrong identity', rWid.valid === false && (hasCode(rWid, 'missing_field_review_reference') || hasCode(rWid, 'field_review_identity_mismatch')), '');
+      fixtureCount++;
+
+      var wrongField = makePair(fr, reg, { profileId: 'v-wf', canonicalKey: 'syn-val-wf' });
+      var snapWf = clone(wrongField.snapshot);
+      snapWf.field = 'water';
+      expect('wrong field', (function () {
+        var r = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+          profiles: [wrongField.profile], fieldReviewSnapshots: [snapWf], evidencePacketSnapshots: wrongField.evidencePacketSnapshots
+        });
+        return r.valid === false && (hasCode(r, 'missing_field_review_reference') || hasCode(r, 'field_review_field_mismatch'));
+      })(), '');
+      fixtureCount++;
+
+      var wrongStatus = makePair(fr, reg, { profileId: 'v-ws', canonicalKey: 'syn-val-ws' });
+      var snapWs = clone(wrongStatus.snapshot);
+      snapWs.reviewStatus = 'remains_ineligible';
+      var rWs = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongStatus.profile], fieldReviewSnapshots: [snapWs], evidencePacketSnapshots: wrongStatus.evidencePacketSnapshots
+      });
+      expect('wrong reviewStatus', rWs.valid === false && (hasCode(rWs, 'field_review_status_mismatch') || hasCode(rWs, 'profile_stronger_than_field_review')), '');
+      fixtureCount++;
+
+      var wrongClaim = makePair(fr, reg, { profileId: 'v-wc', canonicalKey: 'syn-val-wc' });
+      var snapWc = clone(wrongClaim.snapshot);
+      snapWc.reviewedClaimType = 'tolerance';
+      var rWc = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongClaim.profile], fieldReviewSnapshots: [snapWc], evidencePacketSnapshots: wrongClaim.evidencePacketSnapshots
+      });
+      expect('wrong claim', rWc.valid === false && hasCode(rWc, 'field_review_claim_mismatch'), '');
+      fixtureCount++;
+
+      var wrongVal = makePair(fr, reg, { profileId: 'v-wv', canonicalKey: 'syn-val-wv' });
+      var snapWv = clone(wrongVal.snapshot);
+      snapWv.reviewedValue = 'part_shade';
+      var rWv = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongVal.profile], fieldReviewSnapshots: [snapWv], evidencePacketSnapshots: wrongVal.evidencePacketSnapshots
+      });
+      expect('wrong value', rWv.valid === false && hasCode(rWv, 'field_review_value_mismatch'), '');
+      fixtureCount++;
+
+      var wrongCtx = makePair(fr, reg, { profileId: 'v-wx', canonicalKey: 'syn-val-wx' });
+      var snapWx = clone(wrongCtx.snapshot);
+      snapWx.contextScope = Object.assign({}, baseContext(), { planting: 'container' });
+      var rWx = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongCtx.profile], fieldReviewSnapshots: [snapWx], evidencePacketSnapshots: wrongCtx.evidencePacketSnapshots
+      });
+      expect('wrong context', rWx.valid === false && hasCode(rWx, 'field_review_context_mismatch'), '');
+      fixtureCount++;
+
+      var wrongFp = makePair(fr, reg, { profileId: 'v-wfp', canonicalKey: 'syn-val-wfp' });
+      var snapWfp = clone(wrongFp.snapshot);
+      snapWfp.valueFingerprint = snapWfp.valueFingerprint + '-x';
+      var rWfp = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [wrongFp.profile], fieldReviewSnapshots: [snapWfp], evidencePacketSnapshots: wrongFp.evidencePacketSnapshots
+      });
+      expect('wrong FR fingerprint', rWfp.valid === false && hasCode(rWfp, 'field_review_fingerprint_mismatch'), '');
+      fixtureCount++;
+
+      // EP ref / content fingerprint mismatch
+      var epMis = makePair(fr, reg, { profileId: 'v-epm', canonicalKey: 'syn-val-epm' });
+      var badEp = clone(epMis.evidencePacketSnapshots);
+      badEp[0].contentFingerprint = 'wrong-ep-fp';
+      var rEp = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [epMis.profile], fieldReviewSnapshots: [epMis.snapshot], evidencePacketSnapshots: badEp
+      });
+      expect('EP content fingerprint mismatch', rEp.valid === false && hasCode(rEp, 'evidence_content_fingerprint_mismatch'), '');
+      fixtureCount++;
+
+      var epRefMis = makePair(fr, reg, { profileId: 'v-epr', canonicalKey: 'syn-val-epr' });
+      var snapEpr = clone(epRefMis.snapshot);
+      snapEpr.evidenceRefs = makeEvidenceRefs(['ev-other']);
+      var rEpr = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [epRefMis.profile], fieldReviewSnapshots: [snapEpr], evidencePacketSnapshots: epRefMis.evidencePacketSnapshots
+      });
+      expect('EP refs mismatch', rEpr.valid === false && hasCode(rEpr, 'evidence_reference_mismatch'), '');
+      fixtureCount++;
+
+      // Unsupported FR version / profile version
+      var leg = makePair(fr, reg, { profileId: 'v-leg', canonicalKey: 'syn-val-leg' });
+      leg.profile.fieldReviewReference.fieldReviewContractVersion = fr.SR_FIELD_REVIEW_CONTRACT_VERSION_V01;
+      var rLeg = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [leg.profile], fieldReviewSnapshots: [leg.snapshot], evidencePacketSnapshots: leg.evidencePacketSnapshots
+      });
+      expect('unsupported/legacy FR version', rLeg.valid === false && (hasCode(rLeg, 'legacy_field_review_insufficient') || hasCode(rLeg, 'unsupported_field_review_reference_version') || hasCode(rLeg, 'registry_build_failed')), '');
+      fixtureCount++;
+
+      var fwd = makePair(fr, reg, { profileId: 'v-fwd', canonicalKey: 'syn-val-fwd' });
+      fwd.profile.profileContractVersion = '9.9.9-sr-structured-climate-profile-contract';
+      var rFwd = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [fwd.profile], fieldReviewSnapshots: [fwd.snapshot], evidencePacketSnapshots: fwd.evidencePacketSnapshots
+      });
+      expect('unsupported profile version', rFwd.valid === false && (hasCode(rFwd, 'unsupported_profile_contract_version') || hasCode(rFwd, 'registry_build_failed')), '');
+      fixtureCount++;
+
+      // Unresolved FR used for reviewed_supported
+      var unres = makePair(fr, reg, { profileId: 'v-unr', canonicalKey: 'syn-val-unr' });
+      var snapUn = clone(unres.snapshot);
+      snapUn.reviewStatus = 'modeling_gap';
+      unres.profile.fieldReviewReference.reviewStatus = 'modeling_gap';
+      var rUn = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [unres.profile], fieldReviewSnapshots: [snapUn], evidencePacketSnapshots: unres.evidencePacketSnapshots
+      });
+      expect('unresolved FR for supported', rUn.valid === false && (hasCode(rUn, 'profile_stronger_than_field_review') || hasCode(rUn, 'stale_or_inactive_support')), '');
+      fixtureCount++;
+
+      // identity_ambiguous promoted
+      var idp = makePair(fr, reg, { profileId: 'v-idp', canonicalKey: 'syn-val-idp' });
+      var snapIdp = clone(idp.snapshot);
+      snapIdp.reviewStatus = 'identity_ambiguous';
+      idp.profile.fieldReviewReference.reviewStatus = 'identity_ambiguous';
+      var rIdp = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [idp.profile], fieldReviewSnapshots: [snapIdp], evidencePacketSnapshots: idp.evidencePacketSnapshots
+      });
+      expect('identity_ambiguous promotion', rIdp.valid === false && (hasCode(rIdp, 'identity_ambiguity_conflict') || hasCode(rIdp, 'profile_stronger_than_field_review')), '');
+      fixtureCount++;
+
+      // general_guidance promotion
+      var gg = makePair(fr, reg, { profileId: 'v-gg', canonicalKey: 'syn-val-gg', reviewedClaimType: 'general_guidance' });
+      // rebuild may fail registry; still expect findings
+      var rGg = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [gg.profile], fieldReviewSnapshots: [gg.snapshot], evidencePacketSnapshots: gg.evidencePacketSnapshots
+      });
+      expect('general_guidance promotion blocked', rGg.valid === false && (hasCode(rGg, 'general_guidance_not_approvable') || hasCode(rGg, 'registry_build_failed') || hasCode(rGg, 'unsupported_reviewed_claim')), '');
+      fixtureCount++;
+
+      // Stronger-than-review already covered; duplicate active
+      var d1 = makePair(fr, reg, { profileId: 'v-d1', canonicalKey: 'syn-val-dup', reviewedValue: 'full_sun' });
+      var d2 = makePair(fr, reg, {
+        profileId: 'v-d2', canonicalKey: 'syn-val-dup', reviewedClaimType: 'tolerance', reviewedValue: 'full_sun_to_part_shade'
+      });
+      var rDup = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [d1.profile, d2.profile],
+        fieldReviewSnapshots: [d1.snapshot, d2.snapshot],
+        evidencePacketSnapshots: d1.evidencePacketSnapshots.concat(d2.evidencePacketSnapshots)
+      });
+      expect('duplicate active profile', rDup.valid === false && (hasCode(rDup, 'duplicate_active_profile') || hasCode(rDup, 'registry_build_failed')), '');
+      fixtureCount++;
+
+      // Invalid supersession
+      var sup = makePair(fr, reg, { profileId: 'v-sup', canonicalKey: 'syn-val-sup', supersedesProfileId: 'missing' });
+      var rSup = val.validateSmartRecDeveloperStructuredClimateProfileRegistry({
+        profiles: [sup.profile], fieldReviewSnapshots: [sup.snapshot], evidencePacketSnapshots: sup.evidencePacketSnapshots
+      });
+      expect('invalid supersession', rSup.valid === false && (hasCode(rSup, 'invalid_supersession') || hasCode(rSup, 'registry_build_failed')), '');
+      fixtureCount++;
+
+      // Determinism
+      var det = makePair(fr, reg, { profileId: 'v-det', canonicalKey: 'syn-val-det' });
+      var inputA = {
+        profiles: [clone(det.profile)],
+        fieldReviewSnapshots: [clone(det.snapshot)],
+        evidencePacketSnapshots: clone(det.evidencePacketSnapshots)
+      };
+      var inputB = {
+        profiles: [clone(det.profile)],
+        fieldReviewSnapshots: [clone(det.snapshot)],
+        evidencePacketSnapshots: clone(det.evidencePacketSnapshots)
+      };
+      var detA = val.validateSmartRecDeveloperStructuredClimateProfileRegistry(inputA);
+      var detB = val.validateSmartRecDeveloperStructuredClimateProfileRegistry(inputB);
+      expect('deterministic valid', detA.valid === detB.valid && detA.valid === true, '');
+      expect('deterministic summaryFingerprint', detA.summaryFingerprint === detB.summaryFingerprint && !!detA.summaryFingerprint, detA.summaryFingerprint);
+      fixtureCount++;
+
+      // No mutation of inputs
+      var mut = makePair(fr, reg, { profileId: 'v-mut', canonicalKey: 'syn-val-mut' });
+      var pBefore = JSON.stringify(mut.profile);
+      var fBefore = JSON.stringify(mut.snapshot);
+      var eBefore = JSON.stringify(mut.evidencePacketSnapshots);
+      var mutIn = {
+        profiles: [mut.profile],
+        fieldReviewSnapshots: [mut.snapshot],
+        evidencePacketSnapshots: mut.evidencePacketSnapshots
+      };
+      val.validateSmartRecDeveloperStructuredClimateProfileRegistry(mutIn);
+      expect('profile not mutated', JSON.stringify(mut.profile) === pBefore, '');
+      expect('FR snapshot not mutated', JSON.stringify(mut.snapshot) === fBefore, '');
+      expect('EP snapshot not mutated', JSON.stringify(mut.evidencePacketSnapshots) === eBefore, '');
+      fixtureCount++;
+
+      expect('zero storage', storageMutationCount === 0, String(storageMutationCount));
+      expect('zero network', networkCount === 0, String(networkCount));
+      expect('zero console errors', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('zero unhandled', unhandledCount === 0, String(unhandledCount));
+      expect('no localStorage keys added', Object.keys(localStorage || {}).slice().sort().join(',') === lsBefore, '');
+      expect('not product index', location.pathname.indexOf('smart-rec-developer-structured-climate-profile-validator') >= 0, location.pathname);
+      fixtureCount++;
+
+      var failed = results.some(function (r) { return !r.pass; });
+      finishSummary(failed ? 'SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_FAIL' : 'SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_PASS');
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      finishSummary('SR_STRUCTURED_CLIMATE_PROFILE_VALIDATOR_HARNESS_FAIL');
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    fixtureCount = 0;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    networkCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_SCP_VALIDATOR_BOOT = Object.freeze({ inert: true, moduleLoaded: false });
+    window.__SR_SCP_VALIDATOR_SUMMARY = null;
+    $('rows').innerHTML = '';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('banner').textContent = 'Idle. Registry/Validator not requested. Synthetic fixtures execute only after Run all validator checks.';
+    setStatus('State: idle · moduleLoaded=0 · storageMutationCount=0 · networkCount=0');
+    $('btn-run-all').disabled = false;
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>
