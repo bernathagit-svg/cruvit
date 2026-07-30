@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Second real Rosemary reviewed-data batch production-verified (deployed `c5a64d1`; docs closure this checkpoint); Rosemary research closed (pushed `aa48885`); Lavender first real batch production-verified and closed (pushed `586bf8f` / impl `4a5f3ad`); repeatability proof now includes two real identities / two fields / two 2/1/1 chains with no shared-validator modification; Batch Automation Documentation Contract is the next separately gated checkpoint (not begun); blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no catalog schema / product consumer / eligibility authority**
+Status: **Active — Reviewed-Data Batch Automation Documentation Contract complete (this docs checkpoint; no automation code); Lavender + Rosemary production-verified and closed (`586bf8f` / `4a5f3ad`; `9808630` / `c5a64d1`); two-batch repeatability proof complete; automation readiness satisfied; Deterministic Batch Draft Generator Implementation Planning is next (not begun); Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no catalog schema / product consumer / eligibility authority**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable; separate Rosemary explicit-run harness. **No** `index.html` import; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. **GOS synthetic stack paused**. Matchers/UI not authorized.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable; separate Rosemary explicit-run harness. **No** automation module/harness/fixture; **no** `index.html` import; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. **GOS synthetic stack paused**. Matchers/UI not authorized.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (this docs checkpoint); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract complete (no automation code); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
 
-**Catalog / climate strategy note:** … → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified `7dbc207`) → First Real Evidence Batch Planning (complete) → Lavender research (pushed `7a7415e`) → Reviewed-Data Container Contract (pushed `1d03e26`) → Implementation Planning → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (this docs checkpoint) → deferred Batch Automation Documentation Contract → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified `7dbc207`) → First Real Evidence Batch Planning (complete) → Lavender research (pushed `7a7415e`) → Reviewed-Data Container Contract (pushed `1d03e26`) → Implementation Planning → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (this docs checkpoint) → deferred Deterministic Batch Draft Generator Implementation Planning → deferred Source Scout / Research Agent Planning → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog `reviewedClimateProfile` Schema Planning → Product Adapter Planning → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Second Real Rosemary Reviewed-Data Batch production verification** | Done (local docs) | **Documentation-only after production verification; no JSON/module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR/Profile foundation/Lavender/shared-validator change; no manual deploy; no Netlify setting change; no third batch/plant/field; Batch Automation Documentation Contract not begun.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`c5a64d15547d3952886580f6df1385c9a69e0abf`** (`feat: add second real rosemary reviewed-data batch`). **URLs:** app `/`; shared batch validator `/modules/smart-recommendations/developer-reviewed-data-batch-validator.js`; Rosemary harness `/tests/smart-rec-developer-reviewed-data-rosemary-batch-validator.test.html`; Rosemary JSON `/data/smart-recommendations-reviewed/batches/rosemary-water-preference-v1/{batch.manifest.json,evidence-packets.json,field-review-records.json,structured-climate-profiles.json}`; Lavender harness `/tests/smart-rec-developer-reviewed-data-batch-validator.test.html`; six EP/FR/Profile foundation modules under `/modules/smart-recommendations/`. **HTTP/content:** app **200** `text/html`; shared Batch Validator **200** `application/javascript` (LF-normalized exact match); Rosemary harness **200** `text/html` (LF match; markers `rosemary-water-preference-v1`, `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`, `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT`, `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`, Run/Reset); four Rosemary JSON **200** `application/json` (LF exact match each); Lavender harness **200** `text/html` (LF exact match); six foundation modules **200** `application/javascript` (LF exact match each). **App isolation (before):** home loads; Smart Recommendations entry present; **zero** Rosemary/Lavender JSON / reviewed-data harness / batch-validator / automatic EP-FR-Profile load attributable to batches; no reviewed-data / EP / FR / Profile UI; no batch storage; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; GOS eval absent; My Garden entry unchanged. **Rosemary harness inertness:** `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT.inert=true`; marker `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`; shared validator / EP-FR-Profile / Rosemary JSON not loaded before Run; idle. **Five production Reset→Run:** all **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / finding inventory **20** / verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|rosemary-water-preference-v1`; exactly **4** same-origin static JSON requests per Run (`batch.manifest.json`, `evidence-packets.json`, `field-review-records.json`, `structured-climate-profiles.json`); external/API **0**; storage/console/unhandled **0**; Reset fetches **0**; no UC ANR / NCSU / Kew / Lavender / OpenAI / Anthropic / cross-origin request. **Batch/artifacts:** `rosemary-water-preference-v1` / `rosemary` / *Salvia rosmarinus* / `water` / `preference` / `low` / outdoor·ground·mature·general; IDs `ep-rosemary-water-preference-ucanr-v1`, `ep-rosemary-water-preference-ncsu-v1`, FR `rosemary`+`water`, `scp-rosemary-water-preference-v1`. **Sources:** UC ANR *Rosemary* (`https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; publicationDate `2023-02-14`; verifiedAt `2026-07-30`; establishment-year watering outside mature context); NCSU *Salvia rosmarinus* (`https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; publication/update dates omitted; verifiedAt `2026-07-30`; dry-to-medium wording retained as limitation). **No medium reviewed claim; no tolerance claim.** **Fingerprints:** EP source/content via live builders; FR `valueFingerprint`; Profile `profileFingerprint` — EP→FR→Profile chain intact; wrappers/manifest validate; no placeholder / copied Lavender / invented fingerprint. **Manifest/wrappers:** Container `0.1.0-sr-reviewed-data-container`; expected counts **2 / 1 / 1**; productIsolation flags false; unknown keys fail closed. **Descriptor authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`. **Foundation defaults remain 0 / 0 / 0**; loaded counts local to explicit Rosemary report only. **Negatives (harness fixtures):** count/batchId/identity/field/claim/value/context/establishment/medium/tolerance/invalid UC ANR/NCSU packets/EP-FR-Profile fingerprint/product-isolation/unsupported version/unknown keys/mutation/nondeterministic report — covered; real JSON unmodified; successful batch findingCount **0**. **Lavender production non-regression:** inert boot; one cycle **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / inventory **20** / verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|lavender-sun-preference-v1`; **4** static JSON; external/API/storage/console/unhandled **0**; Lavender harness + artifacts remain committed matches. **After:** fresh home — zero automatic Rosemary/Lavender batch/JSON/harness/EP-FR-Profile load; no reviewed-data UI; no storage residue; v1b product path; SR/My Garden unchanged; legacy **36/36/36**; **23** conflicts blocked; leak **0**; Blueberry excluded; no schema/scalar/`needsReview`/eligibility change; GOS remains paused. **Repeatability proof:** two real identities; two fields (sun + water); two **2 / 1 / 1** chains; no shared-validator modification. **Automation-readiness gate satisfied; Batch Automation Documentation Contract not begun.** Second real batch remains developer-only and inert. **Verdict:** `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`. |
+| **Smart Recommendations — Reviewed-Data Batch Automation Documentation Contract** | Done (local docs) | **Documentation-only; creates no automation module, source-capture module, draft generator, validator, harness, fixture, JSON, third batch, agent, script, queue, schema, UI, or product adapter; no Lavender/Rosemary/shared-validator/EP/FR/Profile foundation/`index.html`/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no external research.** Grounded in two production-verified real batches: `lavender-sun-preference-v1` (*Lavandula angustifolia* / `sun` / `preference` / `full_sun` / **2 / 1 / 1** / prod **64/64**) and `rosemary-water-preference-v1` (*Salvia rosmarinus* / `water` / `preference` / `low` / **2 / 1 / 1** / prod **64/64**); shared validator unchanged for batch two; foundation defaults **0 / 0 / 0**; no product consumer. **Contract IDs:** Automation `0.1.0-sr-reviewed-data-batch-automation-contract`; conceptual Source Capture `0.1.0-sr-reviewed-data-source-capture-contract` (docs only; no module). **Principle:** automation may prepare/normalize/generate/fingerprint/validate/report; may not decide botanical truth or grant authority. **Architecture:** human-approved Source Capture Packet → deterministic Batch Draft Generator → independent EP/FR/Profile validation → independent shared Batch Validator → human commit/push; generator must not self-certify. **Capability:** complete non-authoritative in-memory batch draft; no research/browse/source selection/excerpt invention/FR approval/product write/commit/push/deploy. **Gates A–E** frozen; workflow states through `product_authority_not_granted`; **26** hard fail-closed categories; excerpt max **280**; network/external API/persistence/filesystemWrite/auto-exec **false**; placement `modules/smart-recommendations/`. **Next:** Deterministic Batch Draft Generator Implementation Planning (not begun). **Deferred:** Deterministic Batch Draft Generator Implementation; Future Source Scout / Research Agent Planning. Verdict: **`REVIEWED_DATA_BATCH_AUTOMATION_DOCUMENTATION_CONTRACT_DEFINED`**. |
+| **Smart Recommendations — Second Real Rosemary Reviewed-Data Batch production verification** | Done (pushed) | **Documentation-only after production verification; no JSON/module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR/Profile foundation/Lavender/shared-validator change; no manual deploy; no Netlify setting change; no third batch/plant/field.** Docs pushed at `9808630`. **Later completed:** Reviewed-Data Batch Automation Documentation Contract — see automation-contract checkpoint. **Original verification notes:** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`c5a64d15547d3952886580f6df1385c9a69e0abf`** (`feat: add second real rosemary reviewed-data batch`). **URLs:** app `/`; shared batch validator `/modules/smart-recommendations/developer-reviewed-data-batch-validator.js`; Rosemary harness `/tests/smart-rec-developer-reviewed-data-rosemary-batch-validator.test.html`; Rosemary JSON `/data/smart-recommendations-reviewed/batches/rosemary-water-preference-v1/{batch.manifest.json,evidence-packets.json,field-review-records.json,structured-climate-profiles.json}`; Lavender harness `/tests/smart-rec-developer-reviewed-data-batch-validator.test.html`; six EP/FR/Profile foundation modules under `/modules/smart-recommendations/`. **HTTP/content:** app **200** `text/html`; shared Batch Validator **200** `application/javascript` (LF-normalized exact match); Rosemary harness **200** `text/html` (LF match; markers `rosemary-water-preference-v1`, `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`, `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT`, `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`, Run/Reset); four Rosemary JSON **200** `application/json` (LF exact match each); Lavender harness **200** `text/html` (LF exact match); six foundation modules **200** `application/javascript` (LF exact match each). **App isolation (before):** home loads; Smart Recommendations entry present; **zero** Rosemary/Lavender JSON / reviewed-data harness / batch-validator / automatic EP-FR-Profile load attributable to batches; no reviewed-data / EP / FR / Profile UI; no batch storage; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; GOS eval absent; My Garden entry unchanged. **Rosemary harness inertness:** `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT.inert=true`; marker `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`; shared validator / EP-FR-Profile / Rosemary JSON not loaded before Run; idle. **Five production Reset→Run:** all **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / finding inventory **20** / verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|rosemary-water-preference-v1`; exactly **4** same-origin static JSON requests per Run (`batch.manifest.json`, `evidence-packets.json`, `field-review-records.json`, `structured-climate-profiles.json`); external/API **0**; storage/console/unhandled **0**; Reset fetches **0**; no UC ANR / NCSU / Kew / Lavender / OpenAI / Anthropic / cross-origin request. **Batch/artifacts:** `rosemary-water-preference-v1` / `rosemary` / *Salvia rosmarinus* / `water` / `preference` / `low` / outdoor·ground·mature·general; IDs `ep-rosemary-water-preference-ucanr-v1`, `ep-rosemary-water-preference-ncsu-v1`, FR `rosemary`+`water`, `scp-rosemary-water-preference-v1`. **Sources:** UC ANR *Rosemary* (`https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; publicationDate `2023-02-14`; verifiedAt `2026-07-30`; establishment-year watering outside mature context); NCSU *Salvia rosmarinus* (`https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; publication/update dates omitted; verifiedAt `2026-07-30`; dry-to-medium wording retained as limitation). **No medium reviewed claim; no tolerance claim.** **Fingerprints:** EP source/content via live builders; FR `valueFingerprint`; Profile `profileFingerprint` — EP→FR→Profile chain intact; wrappers/manifest validate; no placeholder / copied Lavender / invented fingerprint. **Manifest/wrappers:** Container `0.1.0-sr-reviewed-data-container`; expected counts **2 / 1 / 1**; productIsolation flags false; unknown keys fail closed. **Descriptor authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`. **Foundation defaults remain 0 / 0 / 0**; loaded counts local to explicit Rosemary report only. **Negatives (harness fixtures):** count/batchId/identity/field/claim/value/context/establishment/medium/tolerance/invalid UC ANR/NCSU packets/EP-FR-Profile fingerprint/product-isolation/unsupported version/unknown keys/mutation/nondeterministic report — covered; real JSON unmodified; successful batch findingCount **0**. **Lavender production non-regression:** inert boot; one cycle **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / inventory **20** / verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|lavender-sun-preference-v1`; **4** static JSON; external/API/storage/console/unhandled **0**; Lavender harness + artifacts remain committed matches. **After:** fresh home — zero automatic Rosemary/Lavender batch/JSON/harness/EP-FR-Profile load; no reviewed-data UI; no storage residue; v1b product path; SR/My Garden unchanged; legacy **36/36/36**; **23** conflicts blocked; leak **0**; Blueberry excluded; no schema/scalar/`needsReview`/eligibility change; GOS remains paused. **Repeatability proof:** two real identities; two fields (sun + water); two **2 / 1 / 1** chains; no shared-validator modification. **Automation-readiness gate satisfied.** Second real batch remains developer-only and inert. **Verdict:** `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`. |
 | **Smart Recommendations — Second Real Rosemary Reviewed-Data Batch Implementation** | Done (pushed; production verified) | **Developer-only inert second real Evidence Packet → Field Review → Structured Climate Profile batch; no product authority.** Exact six-file scope: `data/smart-recommendations-reviewed/batches/rosemary-water-preference-v1/{batch.manifest.json,evidence-packets.json,field-review-records.json,structured-climate-profiles.json}`, `tests/smart-rec-developer-reviewed-data-rosemary-batch-validator.test.html`, `PROJECT_STATUS.md`. Shared batch validator, EP/FR/Profile foundations, Lavender JSON, and Lavender harness remain **byte-identical**. **Batch:** `rosemary-water-preference-v1` / `rosemary` / *Salvia rosmarinus* / `water` / `preference` / `low` / outdoor·ground·mature·general. **IDs:** `ep-rosemary-water-preference-ucanr-v1`, `ep-rosemary-water-preference-ncsu-v1`, FR key `rosemary`+`water`, `scp-rosemary-water-preference-v1`. **Sources:** UC ANR / UC Cooperative Extension Master Gardeners of San Luis Obispo County — *Rosemary* (`https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; Tier A; publicationDate `2023-02-14`; verifiedAt `2026-07-30`; direct low-water guidance after establishment); North Carolina Extension Gardener Plant Toolbox — *Salvia rosmarinus* (`https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; Tier A; publication/update dates omitted; verifiedAt `2026-07-30`; dry-to-medium wording retained as limitation, not a second `medium` claim). Kew POWO identity reference documented separately only. Both packets `proposedValue: low`; no tolerance promotion; no compound/new water token; establishment-year and container watering outside frozen mature/ground context. **Fingerprints (live builders):** UC ANR source `university_extension\|Rosemary\|University of California Agriculture and Natural Resources\|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary\|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; NCSU source `university_extension\|Salvia rosmarinus\|North Carolina Extension Gardener Plant Toolbox\|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/\|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; EP content fingerprints include normalized claims + outdoor/ground/mature/general context + `preference` + contract `0.2.0`; FR `valueFingerprint` and Profile `profileFingerprint` continue the EP→FR→Profile chain. **Loaded counts:** **2 / 1 / 1**. **Foundation defaults remain 0 / 0 / 0**. **Harness:** separate explicit-run Rosemary file; boot `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT` / marker `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`; after Run exactly **4** same-origin static JSON requests; external/API **0**; storage/console/unhandled **0**; assertion total **64/64**; findingCount **0**; finding inventory **20**; verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`; summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|rosemary-water-preference-v1`; five identical Reset→Run cycles. **Lavender non-regression:** **64/64**; loaded **2 / 1 / 1**; verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS`; existing summaryFingerprint unchanged. **Foundation non-regression:** EP **117/117** (65) / **99/99** (59); FR **125/125** (36) / **112/112** (73); Profile **75/75** (44) / **40/40** (25). **Broader:** merge **89/89**; schema **69/69**; recon **158** / **156** PASS / **2** EXPECTED_QUARANTINED_CONFLICT / **0** unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leak **0**. **Product isolation (local):** normal app — zero Rosemary JSON / Rosemary harness / batch-validator / automatic EP-FR-Profile load attributable to Rosemary; no reviewed-data UI; no batch storage residue; no OpenAI/Anthropic/GOS; v1b remains product climate authority; GOS paused; My Garden unchanged. Blueberry excluded. **No** schema/catalog/seed/identity/group/assignment/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/shared-validator change. Pushed at `c5a64d1`. **Production verification later completed** — see production verification checkpoint (`SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`). |
 | **Smart Recommendations — Second Real Reviewed-Data Batch Rosemary Water Preference Bounded Research Closure** | Done (pushed) | **Documentation-only research + exact source-reference capture closure; creates no second reviewed-data directory / JSON / manifest / Evidence Packet / Field Review / Structured Climate Profile / validator / harness / loader / automation agent; no Lavender artifact or batch-validator change; no catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no additional external research in this docs commit.** Freezes second-batch identity `rosemary` / *Salvia rosmarinus* (historic synonym *Rosmarinus officinalis*; registry `needsReview: false`; not among the 23 conflicts; single group `humid-sensitive-mediterranean`). Proposed batchId `rosemary-water-preference-v1`. Research question: outdoor ground-grown mature water preference for atomic `low` vs drought-tolerance-only, establishment-only watering, or unresolved low-to-medium range. **Identity (not an EP):** Kew Plants of the World Online — *Salvia rosmarinus* Spenn.; URL `https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:457138-1`; accepted species; synonym *Rosmarinus officinalis* L.; identity confirmation only. **Packet A (Tier A):** UC ANR / UC Cooperative Extension Master Gardeners of San Luis Obispo County — *Rosemary* (Polly Nelson, UCCE Master Gardener); URL `https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; published `2023-02-14`; source-update date omitted (not displayed); verifiedAt `2026-07-30`; directly identifies *Salvia rosmarinus*; excerpt candidate “Water needs: Low, after first year.”; supporting “Allow soil to dry out between waterings.”; normalizedClaim candidate: mature ground-grown *Salvia rosmarinus* has a low preferred water requirement and should dry between waterings; context limitation: after establishment year. **Packet B (Tier A):** North Carolina Extension Gardener Plant Toolbox — *Salvia rosmarinus*; URL `https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; publicationDate / sourceUpdateDate omitted (not displayed); verifiedAt `2026-07-30`; directly scoped; excerpt candidate “Rosemary does best in light, slightly acidic, dry to medium, well-drained soils.”; normalizedClaim candidate paraphrases preferred relatively dry well-drained conditions and low tolerance for persistently wet soil; **low-to-medium range must remain an explicit Field Review limitation** — no silent second `medium` claim; overwatering warned as common decline cause. **Optional Tier B corroboration (not a third packet):** RHS *How to Grow Rosemary* (`https://www.rhs.org.uk/herbs/rosemary/grow-your-own`) — established ground-grown rosemary generally needs little or no additional watering. **Preference vs tolerance:** UC ANR is direct low-water need after year one; NC State preferred dry-to-medium ≠ drought-tolerance-only label; tolerance must not silently become preference; establishment and containers outside frozen mature/ground context. **Planned later counts only:** **2** EP / **1** FR / **1** Profile; Packet Contract `0.2.0-sr-evidence-packet-contract`; field `water` / claim `preference` / value `low` / outdoor·ground·mature·general; daypart/heatProtection/climateOrRegion/outcomeApplicability omitted. Future FR success candidate `reviewed_supported`+`preference`+`low` only if both packets validate and NC State range is judged compatible with atomic `low`; else fail closed to `preference_tolerance_ambiguous` / `context_ambiguous` / `reviewed_conflicting` / `remains_ineligible` / `modeling_gap`. Future Profile mirrors FR if approved; no scalar/eligibility/confidence. **Coverage:** Lavender proved sun/`full_sun`; Rosemary planned to prove water/`low`; second species + second field; same **2 / 1 / 1** shape; batch validator needs no amendment; separate Rosemary explicit-run harness preferred. **Automation gate:** planning only after Rosemary implemented, locally validated, pushed, production-verified, and closed — two identities, sun+water fields, same authority chain, no batch-specific validator change, human approval for excerpts/claims/FR, no product authority. Real counts remain **0**. No Rosemary artifacts exist. Verdict: **`READY_FOR_SECOND_REAL_ROSEMARY_BATCH_IMPLEMENTATION_PLANNING`**. **Next after docs push:** Second Real Rosemary Batch Implementation Planning (not begun). Deferred: Rosemary Implementation; Batch Automation Documentation Contract (after Rosemary prod-verify). |
 | **Smart Recommendations — First Real Lavender Reviewed-Data Batch production verification** | Done (pushed) | **Documentation-only after production verification; no JSON/module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR/Profile foundation change; no manual deploy; no Netlify setting change; no second batch/plant/field.** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`4a5f3ad681e5f77912b83a6f20d958bed92b3623`** (`feat: add first real lavender reviewed-data batch`). **HTTP/content:** app **200** `text/html`; Batch Validator module **200** `application/javascript` (LF-normalized exact match; Container `0.1.0-sr-reviewed-data-container`; Batch Validator `0.1.0-sr-reviewed-data-batch-validator`; capability `explicit_developer_reviewed_data_batch_validation`); harness **200** `text/html` (LF match; contains `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS`, Run/Reset); four Lavender JSON artifacts **200** `application/json` (LF exact match each); six EP/FR/Profile foundation dependency modules **200** `application/javascript` (LF exact match each). **App isolation (before):** home loads; Smart Recommendations opens; **zero** requests for batch validator / harness / four Lavender JSON / EP-FR-Profile modules attributable to batch; no reviewed-data / EP / FR / Profile UI; no batch storage; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; GOS eval absent; My Garden entry unchanged. **Harness inertness:** `__SR_REVIEWED_DATA_BATCH_BOOT.inert=true`; moduleLoaded false; jsonFetched false; marker `SR_REVIEWED_DATA_BATCH_HARNESS_INERT`; **0** JSON/module requests before Run; idle. **Five production Reset→Run:** all **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / finding inventory **20** / verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|lavender-sun-preference-v1`; exactly **4** same-origin static JSON requests per Run (`batch.manifest.json`, `evidence-packets.json`, `field-review-records.json`, `structured-climate-profiles.json`); external/API **0**; storage/console/unhandled **0**; Reset fetches **0**; no CSU/NCSU/Kew source-page request; no cross-origin. **Batch/artifacts:** `lavender-sun-preference-v1` / `lavender` / *Lavandula angustifolia* / `sun` / `preference` / `full_sun` / outdoor·ground·mature·general; IDs `ep-lavender-sun-preference-csu-v1`, `ep-lavender-sun-preference-ncsu-v1`, FR `lavender`+`sun`, `scp-lavender-sun-preference-v1`. **Sources:** CSU *Growing Lavender in Colorado* (`https://extension.colostate.edu/resource/growing-lavender-in-colorado/`; verifiedAt `2026-07-29`; month-level dates only in `reviewerSummary`); NCSU *Lavandula angustifolia* (`https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/`; verifiedAt `2026-07-29`; publication/update dates omitted). Kew identity reference documented separately only. **Fingerprints:** EP source/content via builders; FR `valueFingerprint`; Profile `profileFingerprint` — EP→FR→Profile chain intact; Profile FR reference matches final FR fingerprint. **Manifest/wrappers:** Container `0.1.0-sr-reviewed-data-container`; expected counts **2 / 1 / 1**; productIsolation flags false; unknown keys fail closed. **Descriptor authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`. **Foundation defaults remain 0 / 0 / 0**; loaded counts local to explicit validation only. **Negatives (harness fixtures):** count/batchId/missing wrapper/unknown keys/wrong versions/identity/field/claim/context/invalid EP/FR+Profile fingerprint/partial set/product-isolation/unsupported forward/mutation/deterministic repeat — all covered; real JSON unmodified; successful batch findingCount **0**. **After:** fresh home + My Garden — zero automatic batch/JSON/harness/EP-FR-Profile load; no reviewed-data UI; no storage residue; v1b product path; SR/My Garden unchanged; legacy **36/36/36**; **23** conflicts blocked; leak **0**; Blueberry excluded; no schema/scalar/eligibility. **Verdict:** `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`. First real batch remains developer-only and inert. Docs pushed at `586bf8f`. **Later completed:** Second Real Batch Repeatability Planning + Rosemary Water Preference Bounded Research Closure — see Rosemary research-closure checkpoint. |
@@ -9689,19 +9690,299 @@ Identity is sufficiently stable. Research supports proceeding with `water` / `pr
 
 **Next after this docs commit is separately pushed:** Second Real Rosemary Batch Implementation Planning — freeze exact Rosemary directory, JSON shapes, deterministic IDs, fingerprints, source fields, second explicit-run harness, and exact file scope; batch validator remains unchanged unless planning discovers a real blocker. **Not begun now.**
 
-**Deferred (not authorized):** (1) Second Real Rosemary Reviewed-Data Batch Implementation; (2) Batch Automation Documentation Contract — only after Rosemary production verification and closure.
+**Historical note:** At research-closure time, Rosemary implementation and Batch Automation Documentation Contract were deferred. Both later completed (implementation `c5a64d1`; Rosemary production docs `9808630`; Automation Documentation Contract this docs commit).
+
+---
+
+# Smart Recommendations — Reviewed-Data Batch Automation Documentation Contract
+
+**Checkpoint type:** documentation only. **File:** `PROJECT_STATUS.md` only.
+**Contract identifier:** `0.1.0-sr-reviewed-data-batch-automation-contract`
+**Conceptual Source Capture Contract identifier (docs only; no module):** `0.1.0-sr-reviewed-data-source-capture-contract`
+**Upstream planning verdict:** `READY_FOR_BATCH_AUTOMATION_DOCUMENTATION_CONTRACT`
+**Closure verdict identity:** `REVIEWED_DATA_BATCH_AUTOMATION_DOCUMENTATION_CONTRACT_DEFINED`
+
+## 1. Scope and non-claims
+
+This is a **developer-only automation contract**.
+
+It is **not**:
+
+- a product-runtime contract;
+- a botanical-authority contract;
+- a source-research agent contract;
+- commerce automation;
+- Garden Design or My Garden automation;
+- normal application runtime automation.
+
+This checkpoint **creates no automation code**. It grants **no** catalog, schema, scalar, `needsReview`, or eligibility authority.
+
+It is grounded in two production-verified real batches:
+
+| Batch | Identity | Field | Claim | Value | Chain | Prod harness |
+|-------|----------|-------|-------|-------|-------|--------------|
+| `lavender-sun-preference-v1` | *Lavandula angustifolia* | `sun` | `preference` | `full_sun` | **2 / 1 / 1** | **64/64** |
+| `rosemary-water-preference-v1` | *Salvia rosmarinus* | `water` | `preference` | `low` | **2 / 1 / 1** | **64/64** |
+
+Shared proof: two identities; two fields; same shared batch validator (`0.1.0-sr-reviewed-data-batch-validator`) with **no** batch-two amendment; deterministic EP → FR → Profile fingerprints; four same-origin JSON requests per Run; external/API **0**; foundation defaults **0 / 0 / 0**; no product consumer / runtime / eligibility authority.
+
+Frozen peer contracts already in use: Container `0.1.0-sr-reviewed-data-container`; EP `0.2.0-sr-evidence-packet-contract`; FR `0.2.0-sr-field-review-contract`; Profile `0.1.0-sr-structured-climate-profile-contract`.
+
+## 2. Fundamental automation principle
+
+**Automation may prepare, normalize, generate, fingerprint, validate and report.**
+
+**Automation may not decide botanical truth or grant authority.**
+
+A structurally valid artifact is **not** automatically:
+
+- botanically correct;
+- human approved;
+- production verified;
+- product eligible.
+
+## 3. First-stage architecture
+
+```
+Human-approved Source Capture Packet
+  → deterministic Batch Draft Generator
+  → independent EP / FR / Profile validation
+  → independent shared Batch Validator
+  → human commit and push approval
+```
+
+Classification:
+
+- one deterministic generator boundary;
+- internally separated deterministic functions;
+- **no** large autonomous end-to-end agent;
+- **no** research agent in the first stage;
+- **no** external workflow platform;
+- **no** direct product integration.
+
+The generator **must not certify itself**. Existing independent EP / FR / Profile validators and the shared batch validator remain the final validation authorities for **developer data structure only**.
+
+## 4. First-stage capability
+
+The first stage may generate a complete **non-authoritative** batch draft from approved input:
+
+- manifest; artifact wrappers; Evidence Packet drafts; EP source/content fingerprints; compact Field Review references; Field Review draft; FR `valueFingerprint` **after Gate C**; Structured Climate Profile draft; Profile fingerprint; batch-validation report; proposed file contents **in memory**.
+
+It must **not**: research; browse; select sources; classify source authority autonomously; invent excerpts; invent normalized claims; approve Field Review; write directly to product data; grant product eligibility; commit; push; deploy.
+
+## 5. Source Capture Packet conceptual contract
+
+**Identifier:** `0.1.0-sr-reviewed-data-source-capture-contract` (conceptual; **no module or JSON in this checkpoint**).
+
+### Required top-level fields
+
+`captureContractVersion`, `batchId`, `canonicalKey`, `acceptedScientificName`, `identityReference`, `field`, `reviewedClaimType`, `proposedValue`, `contextScope`, `expectedArtifactCounts`, `sources`, `humanApproval`.
+
+### Required `identityReference` concepts
+
+`institution`, `sourceTitle`, `sourceReference`, `acceptedIdentity`, `knownSynonyms` where material.
+
+### Required `sources[]` concepts (every record)
+
+`institution`, `publisher`, `sourceType`, `authorityTier`, `sourceTitle`, `sourceReference`, `sourceIdentity`, `verifiedAt`, `shortExcerpt`, `normalizedClaim`, `reviewerSummary`, `limitations`, `activeSupport`.
+
+### Optional / omit when unknown
+
+`publicationDate`, `sourceUpdateDate`, `author`, `program`, `daypart`, `heatProtection`, `climateOrRegion`, `season`, other context qualifiers.
+
+### Required `humanApproval` concepts
+
+`approvalVersion`, `approvedAt`, `approverRole`, `approvedGates`, `approved: true`.
+
+Do **not** store a person’s name, email, or account identifier merely to prove approval. Role / version / timestamp only.
+
+## 6. Source Capture Packet validation rules
+
+- unknown keys fail closed;
+- unsupported contract versions fail closed;
+- deterministic source ordering; deterministic limitation ordering;
+- source references must be exact;
+- short excerpts, normalized claims, and required limitations must be present;
+- atomic values must already exist in foundation allowlists;
+- no new token may be invented;
+- no source may be accepted without human approval;
+- missing approval stops generation;
+- identity, field, claim, value, and context must match the approved scope.
+
+**Recommended ordering:** sources sorted by `sourceReference`, then by evidence role / proposed evidenceId when needed; limitations sorted and deduplicated.
+
+## 7. Source Capture Packet fingerprinting
+
+Require a deterministic **capture-packet content fingerprint** proving the human-approved capture has not changed before generation.
+
+Must cover meaning-bearing approved input: identity, field, claim type, proposed value, context, expected counts, source references, excerpts, normalized claims, limitations, active-support state, approval version.
+
+No manual fingerprint value and no builder are created in this docs task.
+
+## 8. Human approval gates
+
+### Gate A — Candidate Scope Approval
+
+- **Input:** canonical identity; field; reviewed claim type; atomic value hypothesis; context.
+- **Output:** `scope_approved`.
+- **Automation may:** validate against allowlists; normalize formatting.
+- **Automation may not:** select or approve the scope.
+- **Missing approval:** stop with `missing_human_approval`.
+
+### Gate B — Source Capture Approval
+
+- **Input:** exact references; authority tiers; excerpts; normalized claims; identity applicability; limitations.
+- **Output:** `sources_approved`.
+- **Automation may:** validate shape; enforce excerpt length; normalize ordering; detect missing fields.
+- **Automation may not:** invent source content; approve source authority; approve excerpts or claims.
+- **Missing approval:** stop.
+
+### Gate C — Field Review Decision Approval
+
+- **Input:** validated Evidence Packets; drafted Field Review; reason; unresolved limitations; proposed review status, claim, and value.
+- **Output:** `field_review_approved`.
+- **Automation may:** generate the draft; validate compact references; prepare deterministic fingerprints.
+- **Automation may not:** independently set `reviewed_supported`; resolve botanical ambiguity; convert tolerance evidence into preference.
+- **Missing approval:** stop before final FR fingerprint and final Profile generation.
+
+### Gate D — Commit and Push Approval
+
+- **Input:** independently validated batch draft; proposed files; validation report; documentation intent.
+- **Output:** explicit human Git authorization.
+- **Automation may:** report proposed file scope.
+- **Automation may not:** commit; push; amend; force push; deploy.
+
+### Gate E — Future Product Authority Approval
+
+Outside this automation contract. The reviewed-data automation track may **never** grant product eligibility, schema authority, runtime authority, scalar authority, or GOS outcome authority.
+
+## 9. Developer workflow state machine
+
+Developer-only states (distinct from product eligibility):
+
+`scope_pending` → `scope_approved` → `sources_pending` → `sources_captured` → `sources_approved` → `batch_draft_generated` → `batch_draft_valid` → `field_review_approval_required` → `field_review_approved` → `profile_draft_generated` → `batch_ready_for_commit` → `production_verification_pending` → `production_verified` → `product_authority_not_granted`.
+
+Rules: captured ≠ approved; approved ≠ validated; validated ≠ production verified; production verified ≠ product eligible. **`product_authority_not_granted`** is the terminal state for this automation track.
+
+## 10. Fail-closed categories
+
+**Hard errors (26):** `missing_human_approval`, `unsupported_contract_version`, `invalid_identity`, `identity_ambiguous`, `source_scope_ambiguous`, `unsupported_field`, `unsupported_claim_type`, `unsupported_atomic_value`, `new_token_required`, `context_ambiguous`, `preference_tolerance_ambiguous`, `source_conflict`, `source_not_independent`, `source_reference_incomplete`, `excerpt_missing`, `excerpt_too_long`, `normalized_claim_missing`, `limitation_missing`, `fingerprint_failure`, `foundation_validation_failure`, `batch_validation_failure`, `mutation_detected`, `product_authority_attempt`, `automatic_execution_attempt`, `external_network_attempt`, `persistence_attempt`.
+
+**Human-review stops:** identity ambiguity; preference-versus-tolerance ambiguity; materially incomplete source context; conflicting sources; establishment/container/region limitations that cannot be represented honestly; unknown dates when dates are material to the claim.
+
+Warnings may never suppress errors or create approval. Optional corroboration absent may be a warning only when the minimum approved-source requirement is independently satisfied.
+
+## 11. Provenance and copyright
+
+- EP short excerpts remain minimal; max length aligns with existing EP validator default **280** characters (`SR_EVIDENCE_PACKET_VALIDATOR_DEFAULT_MAX_SHORT_EXCERPT_CHARS`);
+- no full web page, complete article, PDF archive, page screenshot as evidence storage, or large copied passage;
+- `normalizedClaim` must be paraphrased;
+- exact URL, institution, and publisher retained; known dates retained; unknown dates omitted (never invented);
+- source text only in Source Capture / EP layers; FR and Profile use compact provenance only;
+- AI output is not evidence; search snippets are not evidence; generated summaries are non-authoritative;
+- human approval metadata uses role, version, and timestamp without unnecessary PII.
+
+## 12. Research and external-model boundaries
+
+First-stage automation **prohibits:** web search; opening source pages; source discovery; source selection; authority-tier approval; excerpt extraction; autonomous normalized-claim drafting; OpenAI / Anthropic / other external-model calls.
+
+First automation begins only after a human-approved Source Capture Packet exists. A future Source Scout is a **separate** checkpoint.
+
+## 13. Network, persistence, and execution
+
+| Flag | Value |
+|------|-------|
+| `developerOnly` | true |
+| `authoritative` | false |
+| `network` | false |
+| `externalApi` | false |
+| `persistence` | false |
+| `automaticExecution` | false |
+| `activation` | `explicit_developer_call_only` |
+| `indexHtmlImport` | false |
+| `productRuntimeImport` | false |
+| `productConsumer` | false |
+| `runtimeEligibilityAuthority` | false |
+| `filesystemWrite` | false (first implementation stage) |
+| `gitCommit` / `gitPush` / `deploy` | false |
+
+Initial output must be **in-memory** draft objects and reports. Direct file-writing helpers are deferred.
+
+## 14. Placement
+
+First deterministic no-network layer planned for:
+
+`modules/smart-recommendations/`
+
+Reason: reuse existing EP / FR / Profile builders; compatibility with existing developer harness import patterns; existing product-isolation model; no `index.html` import; straightforward local and production verification.
+
+Placement of a future networked Source Scout remains undecided and separately gated.
+
+## 15. Conceptual module boundaries (not created)
+
+Future candidates only:
+
+- `modules/smart-recommendations/developer-reviewed-data-source-capture-contract.js`
+- `modules/smart-recommendations/developer-reviewed-data-batch-draft-generator.js`
+- optional `modules/smart-recommendations/developer-reviewed-data-automation-validator.js`
+- `tests/smart-rec-developer-reviewed-data-automation-harness.test.html`
+- optional synthetic approved-input fixture
+- `PROJECT_STATUS.md`
+
+Prefer one source-capture contract module, one deterministic draft-generator module, one explicit-run harness, and optional internal functions rather than many separate deployables. The shared batch validator remains independent and unchanged.
+
+## 16. Deterministic generator responsibilities
+
+**May:** normalize an approved capture packet; validate contract versions and approval presence; validate existing atomic values; derive deterministic artifact IDs; generate manifest/wrappers/EP drafts; call existing EP fingerprint builders and EP validators; create compact FR references; generate an FR draft; stop for Gate C; after Gate C generate FR fingerprint, Profile draft, Profile fingerprint; call existing Profile validators and the shared batch validator; return proposed file contents and a validation report.
+
+**Must not:** mutate its input; mutate global Registries; modify foundation descriptors; write files; import the normal app; create a product consumer; clear `needsReview`; grant eligibility; derive a product scalar; invoke GOS or v1b; self-certify without independent validators.
+
+## 17. Future harness requirements
+
+First implementation harness must prove: inert startup; explicit Run only; no network / external API / persistence / filesystem write; approved synthetic input only; missing approval fails closed; deterministic repeated outputs; input not mutated; altered approved source data invalidates fingerprints; excerpts over the limit fail; tolerance-only evidence cannot become preference; source conflict cannot become `reviewed_supported`; product-authority fields rejected; independent EP / FR / Profile / shared batch validation; normal application remains isolated.
+
+Exact assertion count is **not** frozen yet.
+
+## 18. Future Source Scout relationship
+
+A later Source Scout may produce only **untrusted** candidates (titles, URLs, dates, authority classifications, excerpt/claim drafts, duplicate/independence/freshness warnings).
+
+It may **not:** approve Gate B; write directly into approved Source Capture Packets; create authoritative Evidence Packets; approve Field Review; create product eligibility; modify catalog or runtime.
+
+Flow: untrusted Source Scout output → mandatory human review → approved Source Capture Packet → deterministic generator.
+
+Source Scout planning is a separate future checkpoint.
+
+## 19. Product and catalog boundaries
+
+Automation outputs remain developer-only, intermediate, and non-authoritative to product; outside catalog schema, runtime, eligibility, scalar authority, and GOS outcome authority.
+
+Keep separately gated: `reviewedClimateProfile` Catalog Schema Planning; Product Adapter Planning; eligibility integration; user-facing display; filter and matcher integration.
+
+## 20. Readiness and rollback
+
+**Already satisfied:** two production-verified real batches; stable **2 / 1 / 1** workflow; reusable existing builders; independent shared validator.
+
+**Frozen here; not implemented:** versioned Source Capture Packet contract module; explicit Gates A–E in code; zero network/persistence/explicit execution only; deterministic outputs; fail-closed ambiguity; no product authority; product isolation; stable error inventory; rollback through a small isolated Git commit.
+
+## 21. Next and deferred checkpoints
+
+**Next (separately gated; not begun):** Deterministic Batch Draft Generator Implementation Planning — read-only planning to freeze exact source-capture module shape, generator API, Gate C pause/resume boundary, synthetic approved-input fixtures, independent validator calls, deterministic output shape, harness behavior, and exact file scope. No implementation code; no external research; no network; no product change.
+
+**Deferred (not authorized):**
+
+1. Deterministic Batch Draft Generator Implementation
+2. Future Source Scout / Research Agent Planning
 
 ---
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator (`17cf753` / prod docs `2994693`) + Blueberry Identity-Scope Evidence Planning (`4361021`) + Blueberry Identity Outcome Documentation Contract (`b235782`) + Preference-versus-Tolerance Modeling Documentation Contract (`ff54015`) + Evidence Packet Reference Amendment (`d3a53ac`) + Field Review Reference Amendment (`414fb59`) + Field Review Reference Amendment production verification docs (`40fbc58`) + Structured Climate Profile Documentation Contract (`37f9ce3`) + Inert Structured Climate Profile Implementation (`b5ce82a`) + Structured Climate Profile foundation production verification (`7dbc207`) + First Real Evidence Batch — Lavender Sun Preference Bounded Research Closure (`7a7415e`) + First Real Reviewed-Data Container Documentation Contract (`1d03e26`) + Lavender Source Reference Capture Closure (`7c9fed5`) + First Real Lavender Reviewed-Data Batch Implementation (`4a5f3ad`) + First Real Lavender Reviewed-Data Batch production verification (`586bf8f`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator; Blueberry Identity Outcome + Preference-versus-Tolerance docs; Evidence Packet / Field Review Reference Amendments; Structured Climate Profile foundation; First Real Lavender Reviewed-Data Batch (`4a5f3ad`) + production verification (`586bf8f`); Second Real Rosemary research (`aa48885`) + implementation (`c5a64d1`) + production verification (`9808630`).
 
-**Done (pushed):** Second Real Reviewed-Data Batch — Rosemary Water Preference Bounded Research Closure (`aa48885`) — *Salvia rosmarinus*; UC ANR + NC State exact references; mature outdoor-ground `water` / `preference` / `low` hypothesis; low-to-medium limitation; preference-versus-tolerance boundary; planned **2 / 1 / 1**.
+**Done (local docs; this commit):** Reviewed-Data Batch Automation Documentation Contract — `0.1.0-sr-reviewed-data-batch-automation-contract`; conceptual Source Capture `0.1.0-sr-reviewed-data-source-capture-contract`; human-approved capture → deterministic no-network draft generator; Gates A–E; no automation code; no product authority.
 
-**Done (local; unpushed):** Second Real Rosemary Reviewed-Data Batch Implementation — inert `rosemary-water-preference-v1`; six-file scope; loaded **2 / 1 / 1**; foundation defaults **0 / 0 / 0**; Rosemary harness **64/64**; verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`; summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator|0.1.0-sr-reviewed-data-container|1|2|1|1|0|0|0||passed|rosemary-water-preference-v1`; five identical cycles; Lavender/foundation/broader non-regression green; local product isolation confirmed; no shared-validator/schema/runtime/eligibility change.
-
-**Next (separately gated):** Push the Rosemary implementation commit. Then Rosemary production verification (not begun). Automation remains deferred until Rosemary production verification and closure. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. Do **not** clear needsReview; edit catalog/schema/`index.html`; grant product eligibility; implement Blueberry children; implement sun/water matchers; or enable filter UI without separate approval.
+**Next (separately gated):** Deterministic Batch Draft Generator Implementation Planning — freeze exact module/API/Gate C/harness/file-scope plan only. Do **not** begin Source Scout; do **not** create automation modules; do **not** create a third batch; do **not** grant product eligibility. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. Catalog `reviewedClimateProfile` Schema Planning and Product Adapter Planning remain deferred.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
