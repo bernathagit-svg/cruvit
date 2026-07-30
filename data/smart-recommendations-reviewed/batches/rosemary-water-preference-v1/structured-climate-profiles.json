@@ -1,0 +1,51 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "rosemary-water-preference-v1",
+  "artifactType": "structured_climate_profiles",
+  "artifactContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+  "records": [
+    {
+      "profileId": "scp-rosemary-water-preference-v1",
+      "profileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+      "canonicalKey": "rosemary",
+      "field": "water",
+      "profileStatus": "reviewed_supported",
+      "reviewedClaimType": "preference",
+      "reviewedValue": "low",
+      "contextScope": {
+        "setting": "outdoor",
+        "planting": "ground",
+        "maturity": "mature",
+        "objective": "general"
+      },
+      "fieldReviewReference": {
+        "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+        "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+        "canonicalKey": "rosemary",
+        "field": "water",
+        "reviewStatus": "reviewed_supported",
+        "valueFingerprint": "rosemary|water|preference|low|evidence_derived_override|ep-rosemary-water-preference-ncsu-v1,ep-rosemary-water-preference-ucanr-v1|ep-rosemary-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-water-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract",
+        "reviewedClaimType": "preference",
+        "reviewedValue": "low"
+      },
+      "evidenceRefs": [
+        {
+          "evidenceId": "ep-rosemary-water-preference-ucanr-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        },
+        {
+          "evidenceId": "ep-rosemary-water-preference-ncsu-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        }
+      ],
+      "unresolvedLimitations": [
+        "ncsu_dry_to_medium_band_is_not_a_second_reviewed_medium_claim",
+        "establishment_year_watering_is_outside_the_mature_context",
+        "container_watering_is_outside_the_ground_context"
+      ],
+      "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|rosemary|water|reviewed_supported|preference|low|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|__null__|0.2.0-sr-field-review-contract|0.2.0-sr-field-review-registry|reviewed_supported|rosemary|water|preference|low|evidence_derived_override|ep-rosemary-water-preference-ncsu-v1,ep-rosemary-water-preference-ucanr-v1|ep-rosemary-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-water-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract|ep-rosemary-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-water-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|container_watering_is_outside_the_ground_context,establishment_year_watering_is_outside_the_mature_context,ncsu_dry_to_medium_band_is_not_a_second_reviewed_medium_claim|__null__"
+    }
+  ]
+}

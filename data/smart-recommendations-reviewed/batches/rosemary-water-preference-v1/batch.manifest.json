@@ -1,0 +1,43 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "rosemary-water-preference-v1",
+  "canonicalKey": "rosemary",
+  "acceptedScientificName": "Salvia rosmarinus",
+  "field": "water",
+  "reviewedClaimType": "preference",
+  "researchHypothesis": "low",
+  "contextScope": {
+    "setting": "outdoor",
+    "planting": "ground",
+    "maturity": "mature",
+    "objective": "general"
+  },
+  "artifactFiles": {
+    "evidencePackets": "evidence-packets.json",
+    "fieldReviewRecords": "field-review-records.json",
+    "structuredClimateProfiles": "structured-climate-profiles.json"
+  },
+  "expectedArtifactCounts": {
+    "evidencePackets": 2,
+    "fieldReviewRecords": 1,
+    "structuredClimateProfiles": 1
+  },
+  "requiredContractVersions": {
+    "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+    "evidencePacketContractVersion": "0.2.0-sr-evidence-packet-contract",
+    "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+    "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+    "structuredClimateProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract"
+  },
+  "productIsolation": {
+    "importedByIndexHtml": false,
+    "productConsumer": false,
+    "runtimeEligibilityAuthority": false,
+    "automaticExecution": false
+  },
+  "batchStatus": "developer_reviewed_data_pending_product",
+  "unresolvedLimitations": [
+    "ncsu_dry_to_medium_band_is_not_a_second_reviewed_medium_claim",
+    "establishment_year_watering_is_outside_the_mature_context"
+  ]
+}
