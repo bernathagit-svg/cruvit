@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Reviewed-Data Batch Draft Generator</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Reviewed-Data Batch Draft Generator</h1>
+  <p class="sub">
+    Developer-only deterministic Stage-1 / Stage-2 automation. Embedded synthetic fixture only.
+    No network research. No filesystem writes. No product authority.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Automation modules not loaded. Fixture not executed. No draft generated.
+    Inert boot marker: <strong id="bootMarker">SR_REVIEWED_DATA_AUTOMATION_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run automation harness</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageActivity=0 · filesystemWriteAttempts=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'DETERMINISTIC_REVIEWED_DATA_BATCH_DRAFT_GENERATOR_PASS';
+  var CAPTURE_MOD = '../modules/smart-recommendations/developer-reviewed-data-source-capture-contract.js';
+  var GEN_MOD = '../modules/smart-recommendations/developer-reviewed-data-batch-draft-generator.js';
+  var EP_REG = '../modules/smart-recommendations/developer-evidence-packet-registry.js';
+  var EP_VAL = '../modules/smart-recommendations/developer-evidence-packet-validator.js';
+  var FR_REG = '../modules/smart-recommendations/developer-field-review-registry.js';
+  var FR_VAL = '../modules/smart-recommendations/developer-field-review-validator.js';
+  var SCP_REG = '../modules/smart-recommendations/developer-structured-climate-profile-registry.js';
+  var SCP_VAL = '../modules/smart-recommendations/developer-structured-climate-profile-validator.js';
+  var BATCH_VAL = '../modules/smart-recommendations/developer-reviewed-data-batch-validator.js';
+
+  var results = [];
+  var runActive = false;
+  var storageActivity = 0;
+  var filesystemWriteAttempts = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_REVIEWED_DATA_AUTOMATION_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixtureExecuted: false,
+    draftGenerated: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(report, code) {
+    return (report.findings || []).some(function (f) { return f.code === code; });
+  }
+
+  function installGuards() {
+    storageActivity = 0;
+    filesystemWriteAttempts = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageActivity++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_automation_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_automation_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_RDA_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_RDA_ON_UNHANDLED);
+    window.__SR_RDA_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_RDA_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_RDA_RESTORE === 'function') {
+      window.__SR_RDA_RESTORE();
+      window.__SR_RDA_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function buildMeaningBearingCapture() {
+    return {
+      captureContractVersion: '0.1.0-sr-reviewed-data-source-capture-contract',
+      batchId: 'synthetic-herb-sun-preference-v1',
+      canonicalKey: 'synthetic-herb',
+      acceptedScientificName: 'Testus herbaceus',
+      identityReference: {
+        institution: 'Synthetic Extension Example Alpha',
+        sourceTitle: 'Testus herbaceus cultural notes (synthetic)',
+        sourceReference: 'https://alpha.extension.example/plants/testus-herbaceus/',
+        acceptedIdentity: 'Testus herbaceus',
+        knownSynonyms: ['Herbaceus testus']
+      },
+      field: 'sun',
+      reviewedClaimType: 'preference',
+      proposedValue: 'full_sun',
+      contextScope: {
+        setting: 'outdoor',
+        planting: 'ground',
+        maturity: 'mature',
+        objective: 'general'
+      },
+      expectedArtifactCounts: {
+        evidencePackets: 2,
+        fieldReviewRecords: 1,
+        structuredClimateProfiles: 1
+      },
+      sources: [
+        {
+          sourceRole: 'alpha-ext',
+          institution: 'Synthetic Extension Example Alpha',
+          publisher: 'Alpha Extension Example Press',
+          sourceType: 'university_extension',
+          authorityTier: 'A',
+          sourceTitle: 'Testus herbaceus cultural notes (synthetic)',
+          sourceReference: 'https://alpha.extension.example/plants/testus-herbaceus/',
+          sourceIdentity: 'https://alpha.extension.example/plants/testus-herbaceus/',
+          verifiedAt: '2026-07-22',
+          shortExcerpt: 'Testus herbaceus prefers full sun in open outdoor plantings once established.',
+          normalizedClaim: 'Testus herbaceus is described as preferring full sun outdoors.',
+          reviewerSummary: 'Synthetic Alpha extension page supports full_sun preference for mature outdoor ground culture.',
+          limitations: ['synthetic_fixture_only_not_botanical_authority'],
+          activeSupport: true
+        },
+        {
+          sourceRole: 'beta-ext',
+          institution: 'Synthetic Horticulture Example Beta',
+          publisher: 'Beta Horticulture Example Bureau',
+          sourceType: 'university_extension',
+          authorityTier: 'A',
+          sourceTitle: 'Growing Testus herbaceus (synthetic guide)',
+          sourceReference: 'https://beta.hort.example/guides/testus-herbaceus-sun/',
+          sourceIdentity: 'https://beta.hort.example/guides/testus-herbaceus-sun/',
+          verifiedAt: '2026-07-22',
+          shortExcerpt: 'Provide full sun exposure for best growth of Testus herbaceus in garden beds.',
+          normalizedClaim: 'Testus herbaceus requires full sun as preferred exposure in garden beds.',
+          reviewerSummary: 'Synthetic Beta horticulture guide independently supports full_sun preference outdoors.',
+          limitations: ['synthetic_fixture_only_not_botanical_authority'],
+          activeSupport: true
+        }
+      ]
+    };
+  }
+
+  function buildApprovedCapture(captureMod) {
+    var content = buildMeaningBearingCapture();
+    var fp = captureMod.buildReviewedDataCaptureContentFingerprint(content);
+    if (!fp.ok) throw new Error('capture_fingerprint_failed:' + JSON.stringify(fp.reasons));
+    content.humanApproval = {
+      approvalVersion: '1',
+      approvedAt: '2026-07-22',
+      approverRole: 'developer_reviewer',
+      approvedGates: ['A', 'B'],
+      approved: true,
+      expectedCaptureContentFingerprint: fp.fingerprint,
+      sourcesIndependenceDeclared: true,
+      excerptsHumanVerified: true
+    };
+    return { packet: content, captureContentFingerprint: fp.fingerprint };
+  }
+
+  function buildGateC(prepared, status) {
+    return {
+      gateContractVersion: '0.1.0-sr-reviewed-data-field-review-gate-c',
+      batchId: prepared.batchId,
+      canonicalKey: prepared.canonicalKey,
+      field: prepared.field,
+      proposedReviewStatus: status || 'reviewed_supported',
+      reviewedClaimType: prepared.reviewedClaimType,
+      reviewedValue: prepared.proposedValue,
+      reason: 'Two independent synthetic Tier A extension-style sources support full_sun preference for Testus herbaceus in outdoor ground mature general context.',
+      unresolvedLimitations: ['synthetic_fixture_only_not_botanical_authority'],
+      approvalVersion: '1',
+      approvedAt: '2026-07-22',
+      approverRole: 'developer_reviewer',
+      approved: true,
+      expectedPreparedDraftFingerprint: prepared.preparedDraftFingerprint
+    };
+  }
+
+  function finishSummary(verdict, metrics) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.className = failed === 0 ? 'pass' : 'fail';
+    host.textContent = 'RESULT: ' + (failed === 0 ? 'PASS' : 'FAIL') +
+      ' · ' + passed + '/' + results.length +
+      ' · verdict=' + verdict;
+    $('metrics').textContent = JSON.stringify(metrics, null, 2);
+    lastSummary = {
+      verdict: verdict,
+      assertionTotal: results.length,
+      passed: passed,
+      failed: failed,
+      metrics: metrics
+    };
+    window.__SR_REVIEWED_DATA_AUTOMATION_LAST = Object.freeze(clone(lastSummary));
+    renderRows();
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    $('btn-run-all').disabled = true;
+    installGuards();
+    setStatus('State: running…');
+
+    try {
+      var bootEl = $('bootMarker');
+      expect('inert boot marker present before load',
+        !!bootEl && bootEl.textContent === 'SR_REVIEWED_DATA_AUTOMATION_HARNESS_INERT',
+        bootEl ? bootEl.textContent : 'bootMarker_missing');
+      expect('boot object inert before load',
+        window.__SR_REVIEWED_DATA_AUTOMATION_BOOT &&
+        window.__SR_REVIEWED_DATA_AUTOMATION_BOOT.inert === true &&
+        window.__SR_REVIEWED_DATA_AUTOMATION_BOOT.moduleLoaded === false, '');
+
+      var captureMod = await import(CAPTURE_MOD + '?t=' + Date.now());
+      var genMod = await import(GEN_MOD + '?t=' + Date.now());
+      var epReg = await import(EP_REG + '?t=' + Date.now());
+      var epVal = await import(EP_VAL + '?t=' + Date.now());
+      var frReg = await import(FR_REG + '?t=' + Date.now());
+      var frVal = await import(FR_VAL + '?t=' + Date.now());
+      var scpReg = await import(SCP_REG + '?t=' + Date.now());
+      var scpVal = await import(SCP_VAL + '?t=' + Date.now());
+      var batchVal = await import(BATCH_VAL + '?t=' + Date.now());
+      moduleLoaded = true;
+
+      expect('capture contract version',
+        captureMod.SR_REVIEWED_DATA_SOURCE_CAPTURE_CONTRACT_VERSION ===
+          '0.1.0-sr-reviewed-data-source-capture-contract', '');
+      expect('generator version',
+        genMod.SR_REVIEWED_DATA_BATCH_DRAFT_GENERATOR_VERSION ===
+          '0.1.0-sr-reviewed-data-batch-draft-generator', '');
+      expect('gate c version',
+        genMod.SR_REVIEWED_DATA_FIELD_REVIEW_GATE_C_VERSION ===
+          '0.1.0-sr-reviewed-data-field-review-gate-c', '');
+      expect('prepare capability',
+        genMod.SR_REVIEWED_DATA_BATCH_DRAFT_PREPARE_CAPABILITY ===
+          'explicit_developer_reviewed_data_batch_draft_prepare', '');
+      expect('finalize capability',
+        genMod.SR_REVIEWED_DATA_BATCH_DRAFT_FINALIZE_CAPABILITY ===
+          'explicit_developer_reviewed_data_batch_draft_finalize', '');
+
+      var desc = genMod.getSmartRecDeveloperReviewedDataBatchDraftGeneratorDescriptor();
+      expect('descriptor developerOnly', desc.developerOnly === true, '');
+      expect('descriptor no product consumer', desc.productConsumer === false, '');
+      expect('descriptor no network', desc.network === false && desc.externalApi === false, '');
+      expect('descriptor no filesystem write', desc.filesystemWrite === false, '');
+      expect('descriptor no git', desc.gitCommit === false && desc.gitPush === false, '');
+      expect('finding code inventory 34',
+        captureMod.SR_REVIEWED_DATA_SOURCE_CAPTURE_FINDING_CODES.length === 34, String(captureMod.SR_REVIEWED_DATA_SOURCE_CAPTURE_FINDING_CODES.length));
+
+      var built = buildApprovedCapture(captureMod);
+      var packet = built.packet;
+      var captureFp = built.captureContentFingerprint;
+      var packetSnapshot = JSON.stringify(packet);
+
+      var stage1 = genMod.prepareReviewedDataBatchDraft(clone(packet));
+      expect('stage1 ok', stage1.ok === true, JSON.stringify(stage1.findings || []).slice(0, 500));
+      expect('stage1 workflow',
+        stage1.workflowState === 'field_review_approval_required', stage1.workflowState);
+      expect('stage1 capture fingerprint',
+        stage1.captureContentFingerprint === captureFp, '');
+      expect('stage1 prepared fingerprint present',
+        !!stage1.preparedDraftFingerprint, '');
+      expect('stage1 two EPs',
+        stage1.evidencePackets && stage1.evidencePackets.length === 2, '');
+      expect('stage1 field review approval required',
+        stage1.fieldReviewApprovalRequired === true, '');
+      expect('stage1 no final FR status',
+        stage1.fieldReviewDraft && stage1.fieldReviewDraft.reviewStatus == null, '');
+      expect('stage1 no FR fingerprint',
+        stage1.fieldReviewDraft && stage1.fieldReviewDraft.valueFingerprint == null, '');
+      expect('stage1 input unchanged',
+        stage1.mutationCheck && stage1.mutationCheck.inputUnchanged === true, '');
+      expect('stage1 packet snapshot unchanged',
+        JSON.stringify(packet) === packetSnapshot, '');
+
+      var ids = stage1.generatedIds;
+      expect('batch id convention',
+        packet.batchId === 'synthetic-herb-sun-preference-v1', '');
+      expect('evidence id alpha',
+        ids.evidenceIds.indexOf('ep-synthetic-herb-sun-preference-alpha-ext-v1') >= 0, JSON.stringify(ids.evidenceIds));
+      expect('evidence id beta',
+        ids.evidenceIds.indexOf('ep-synthetic-herb-sun-preference-beta-ext-v1') >= 0, '');
+      expect('profile id',
+        ids.profileId === 'scp-synthetic-herb-sun-preference-v1', ids.profileId);
+
+      var epBuild = epReg.validateAndBuildEvidencePacketRegistry(clone(stage1.evidencePackets), {
+        knownCanonicalKeys: ['synthetic-herb'],
+        syntheticFixtureOnly: true
+      });
+      expect('independent EP registry build', epBuild.valid === true, JSON.stringify(epBuild.findings || []).slice(0, 300));
+      var epReport = epVal.validateSmartRecDeveloperEvidencePacketRegistry({
+        registry: epReg.getEmptySmartRecDeveloperEvidencePacketRegistry(),
+        registryDescriptor: epReg.getSmartRecDeveloperEvidencePacketRegistryDescriptor(),
+        candidatePackets: clone(stage1.evidencePackets),
+        knownCanonicalKeys: ['synthetic-herb'],
+        syntheticFixtureOnly: true
+      });
+      expect('independent EP validator', epReport.valid === true, epReport.summaryFingerprint);
+
+      var gateC = buildGateC(stage1.preparedDraft, 'reviewed_supported');
+      var stage2 = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), clone(gateC));
+      expect('stage2 ok', stage2.ok === true, JSON.stringify(stage2.findings || []).slice(0, 600));
+      expect('stage2 workflow',
+        stage2.workflowState === 'batch_ready_for_commit', stage2.workflowState);
+      expect('stage2 final FR present',
+        stage2.finalFieldReview && stage2.finalFieldReview.reviewStatus === 'reviewed_supported', '');
+      expect('stage2 profile mirrors FR',
+        stage2.structuredClimateProfile &&
+        stage2.structuredClimateProfile.profileStatus === 'reviewed_supported', '');
+      expect('stage2 profile not stronger',
+        stage2.structuredClimateProfile.profileStatus === stage2.finalFieldReview.reviewStatus, '');
+      expect('stage2 proposed files 4',
+        stage2.proposedFiles && stage2.proposedFiles.length === 4, '');
+      expect('stage2 batch valid',
+        stage2.independentBatchValidation && stage2.independentBatchValidation.valid === true,
+        JSON.stringify((stage2.independentBatchValidation && stage2.independentBatchValidation.findings) || []).slice(0, 400));
+      expect('stage2 authority false',
+        stage2.authorityBoundary &&
+        stage2.authorityBoundary.productAuthority === false &&
+        stage2.authorityBoundary.gitCommitPermission === false, '');
+      expect('stage2 findings 0', stage2.errorCount === 0, String(stage2.errorCount));
+      expect('stage2 warnings 0', stage2.warningCount === 0, String(stage2.warningCount));
+
+      var texts1 = stage2.proposedFiles.map(function (f) { return f.canonicalJsonText; });
+      var stage2b = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), clone(gateC));
+      var texts2 = stage2b.proposedFiles.map(function (f) { return f.canonicalJsonText; });
+      expect('canonical JSON identical on repeat',
+        JSON.stringify(texts1) === JSON.stringify(texts2), '');
+      expect('summary fingerprint identical on repeat',
+        stage2.summaryFingerprint === stage2b.summaryFingerprint, '');
+      expect('prepared fingerprint stable',
+        stage1.preparedDraftFingerprint === stage2.preparedDraftFingerprint, '');
+
+      // Independent shared batch validator
+      var batchReport = batchVal.validateSmartRecDeveloperReviewedDataBatch({
+        manifest: clone(stage2.batchManifest),
+        evidencePacketWrapper: clone(stage2.wrappers.evidencePackets),
+        fieldReviewWrapper: clone(stage2.wrappers.fieldReviewRecords),
+        structuredClimateProfileWrapper: clone(stage2.wrappers.structuredClimateProfiles),
+        knownCanonicalKeys: ['synthetic-herb'],
+        canonicalIdentitySnapshot: {
+          knownCanonicalKeys: ['synthetic-herb'],
+          acceptedScientificName: 'Testus herbaceus'
+        }
+      });
+      expect('shared batch validator independent', batchReport.valid === true,
+        JSON.stringify(batchReport.findings || []).slice(0, 400));
+
+      // Negatives (deep clones only)
+      function neg(name, fn) {
+        try {
+          var r = fn();
+          expect(name, r === true, '');
+        } catch (e) {
+          expect(name, false, String(e && e.message || e));
+        }
+      }
+
+      neg('neg missing Gate A', function () {
+        var p = clone(packet);
+        p.humanApproval.approvedGates = ['B'];
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'invalid_approval_gate');
+      });
+      neg('neg missing Gate B', function () {
+        var p = clone(packet);
+        p.humanApproval.approvedGates = ['A'];
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'invalid_approval_gate');
+      });
+      neg('neg stale capture approval', function () {
+        var p = clone(packet);
+        p.sources[0].shortExcerpt = 'Altered excerpt after approval must fail closed immediately.';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'stale_capture_approval');
+      });
+      neg('neg wrong capture fingerprint', function () {
+        var p = clone(packet);
+        p.humanApproval.expectedCaptureContentFingerprint = 'wrong-fingerprint';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && (hasCode(r, 'capture_fingerprint_mismatch') || hasCode(r, 'stale_capture_approval'));
+      });
+      neg('neg unsupported capture version', function () {
+        var p = clone(packet);
+        p.captureContractVersion = '9.9.9-bad';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'unsupported_contract_version');
+      });
+      neg('neg unknown top-level key', function () {
+        var p = clone(packet);
+        p.extraKey = 'nope';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'foundation_validation_failure');
+      });
+      neg('neg invalid identity', function () {
+        var p = clone(packet);
+        p.identityReference.acceptedIdentity = 'Wrong name';
+        // rebuild approval would be needed; without it stale/fingerprint or identity fails
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && (hasCode(r, 'invalid_identity') || hasCode(r, 'stale_capture_approval'));
+      });
+      neg('neg mismatched batchId', function () {
+        var p = clone(packet);
+        p.batchId = 'synthetic-herb-sun-preference-full-sun-v1';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false;
+      });
+      neg('neg unsupported field', function () {
+        var p = clone(packet);
+        p.field = 'soil';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'unsupported_field');
+      });
+      neg('neg unsupported claim type', function () {
+        var p = clone(packet);
+        p.reviewedClaimType = 'made_up_claim';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'unsupported_claim_type');
+      });
+      neg('neg unsupported atomic value', function () {
+        var p = clone(packet);
+        p.proposedValue = 'blazing_sun';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'unsupported_atomic_value');
+      });
+      neg('neg compound legacy token', function () {
+        var p = clone(packet);
+        p.proposedValue = 'morning_sun_part_shade';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && (hasCode(r, 'new_token_required') || hasCode(r, 'unsupported_atomic_value'));
+      });
+      neg('neg duplicate sourceRole', function () {
+        var p = clone(packet);
+        p.sources[1].sourceRole = p.sources[0].sourceRole;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'deterministic_id_collision');
+      });
+      neg('neg duplicate sourceReference', function () {
+        var p = clone(packet);
+        p.sources[1].sourceReference = p.sources[0].sourceReference;
+        p.sources[1].sourceIdentity = p.sources[0].sourceIdentity;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && (hasCode(r, 'duplicate_source_reference') || hasCode(r, 'source_not_independent'));
+      });
+      neg('neg duplicate hostname', function () {
+        var p = clone(packet);
+        p.sources[1].sourceReference = 'https://alpha.extension.example/other/page/';
+        p.sources[1].sourceIdentity = p.sources[1].sourceReference;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'source_not_independent');
+      });
+      neg('neg duplicate publisher', function () {
+        var p = clone(packet);
+        p.sources[1].publisher = p.sources[0].publisher;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'source_not_independent');
+      });
+      neg('neg duplicate institution', function () {
+        var p = clone(packet);
+        p.sources[1].institution = p.sources[0].institution;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'source_not_independent');
+      });
+      neg('neg missing excerpt', function () {
+        var p = clone(packet);
+        p.sources[0].shortExcerpt = '';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'excerpt_missing');
+      });
+      neg('neg excerpt over 280', function () {
+        var p = clone(packet);
+        p.sources[0].shortExcerpt = new Array(282).join('x');
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'excerpt_too_long');
+      });
+      neg('neg html excerpt', function () {
+        var p = clone(packet);
+        p.sources[0].shortExcerpt = '<p>Testus herbaceus prefers full sun outdoors.</p>';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'excerpt_too_long');
+      });
+      neg('neg multi-paragraph excerpt', function () {
+        var p = clone(packet);
+        p.sources[0].shortExcerpt = 'First paragraph prefers full sun.\n\nSecond paragraph continues.';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'excerpt_too_long');
+      });
+      neg('neg missing normalizedClaim', function () {
+        var p = clone(packet);
+        p.sources[0].normalizedClaim = '';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'normalized_claim_missing');
+      });
+      neg('neg claim equals excerpt', function () {
+        var p = clone(packet);
+        p.sources[0].normalizedClaim = p.sources[0].shortExcerpt;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'normalized_claim_missing');
+      });
+      neg('neg missing limitation', function () {
+        var p = clone(packet);
+        p.sources[0].limitations = [];
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'limitation_missing');
+      });
+      neg('neg duplicate excerpt conflict', function () {
+        var p = clone(packet);
+        p.sources[1].shortExcerpt = p.sources[0].shortExcerpt;
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        return r.ok === false && hasCode(r, 'source_conflict');
+      });
+      neg('neg tolerance as preference token path', function () {
+        // Using a valid preference token but claim type tolerance with preference value still allowed by allowlists;
+        // force unsupported by inventing preference_tolerance ambiguity via claim type change after approval.
+        var p = clone(packet);
+        p.reviewedClaimType = 'tolerance';
+        p.batchId = 'synthetic-herb-sun-tolerance-v1';
+        var r = genMod.prepareReviewedDataBatchDraft(p);
+        // Without rebinding fingerprint this fails closed (stale or claim/batch mismatch).
+        return r.ok === false;
+      });
+      neg('neg stage2 before stage1', function () {
+        var r = genMod.finalizeReviewedDataBatchDraft({ preparedDraftVersion: 'bad' }, buildGateC(stage1.preparedDraft));
+        return r.ok === false && hasCode(r, 'unsupported_workflow_transition');
+      });
+      neg('neg missing Gate C', function () {
+        var r = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), null);
+        return r.ok === false && hasCode(r, 'missing_human_approval');
+      });
+      neg('neg stale Gate C', function () {
+        var g = buildGateC(stage1.preparedDraft);
+        g.expectedPreparedDraftFingerprint = 'stale-prepared-fingerprint';
+        var r = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), g);
+        return r.ok === false && hasCode(r, 'stale_field_review_approval');
+      });
+      neg('neg wrong prepared fingerprint', function () {
+        var g = buildGateC(stage1.preparedDraft);
+        g.expectedPreparedDraftFingerprint = 'wrong';
+        var r = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), g);
+        return r.ok === false && hasCode(r, 'prepared_draft_fingerprint_mismatch');
+      });
+      neg('neg changed FR decision after approval', function () {
+        var g = buildGateC(stage1.preparedDraft);
+        g.reviewedValue = 'part_sun';
+        var r = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), g);
+        return r.ok === false && hasCode(r, 'invalid_approval_gate');
+      });
+      neg('neg unsupported final FR status', function () {
+        var g = buildGateC(stage1.preparedDraft);
+        g.proposedReviewStatus = 'evidence_collected';
+        var r = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), g);
+        return r.ok === false && hasCode(r, 'unsupported_workflow_transition');
+      });
+      neg('neg product authority attempt', function () {
+        var r = genMod.prepareReviewedDataBatchDraft(clone(packet), { productAuthorityAttempt: true });
+        return r.ok === false && hasCode(r, 'product_authority_attempt');
+      });
+      neg('neg automatic execution attempt', function () {
+        var r = genMod.prepareReviewedDataBatchDraft(clone(packet), { automaticExecutionAttempt: true });
+        return r.ok === false && hasCode(r, 'automatic_execution_attempt');
+      });
+      neg('neg network attempt', function () {
+        var r = genMod.prepareReviewedDataBatchDraft(clone(packet), { networkAttempt: true });
+        return r.ok === false && hasCode(r, 'external_network_attempt');
+      });
+      neg('neg persistence attempt', function () {
+        var r = genMod.prepareReviewedDataBatchDraft(clone(packet), { persistenceAttempt: true });
+        return r.ok === false && hasCode(r, 'persistence_attempt');
+      });
+      neg('neg filesystem write attempt', function () {
+        var r = genMod.prepareReviewedDataBatchDraft(clone(packet), { filesystemWriteAttempt: true });
+        return r.ok === false && hasCode(r, 'persistence_attempt');
+      });
+
+      // Honest non-supported Gate C path
+      var gateConflict = buildGateC(stage1.preparedDraft, 'reviewed_conflicting');
+      gateConflict.reason = 'Synthetic sources remain conflicting for product authority; hypothesis retained for batch alignment only.';
+      gateConflict.unresolvedLimitations = [
+        'synthetic_fixture_only_not_botanical_authority',
+        'reviewed_conflicting_no_product_authority'
+      ];
+      var stage2Conflict = genMod.finalizeReviewedDataBatchDraft(clone(stage1.preparedDraft), gateConflict);
+      expect('non-supported path ok', stage2Conflict.ok === true,
+        JSON.stringify(stage2Conflict.findings || []).slice(0, 500));
+      expect('non-supported FR status',
+        stage2Conflict.finalFieldReview &&
+        stage2Conflict.finalFieldReview.reviewStatus === 'reviewed_conflicting', '');
+      expect('non-supported profile mirrors FR',
+        stage2Conflict.structuredClimateProfile.profileStatus === 'reviewed_conflicting', '');
+      expect('non-supported hypothesis retained',
+        stage2Conflict.finalFieldReview.reviewedValue === 'full_sun' &&
+        stage2Conflict.batchManifest.researchHypothesis === 'full_sun', '');
+
+      expect('externalApiRequests 0', externalApiRequests === 0, String(externalApiRequests));
+      expect('storageActivity 0', storageActivity === 0, String(storageActivity));
+      expect('filesystemWriteAttempts 0', filesystemWriteAttempts === 0, String(filesystemWriteAttempts));
+      expect('consoleErrors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandledRejections 0', unhandledCount === 0, String(unhandledCount));
+      expect('empty EP registry still empty',
+        Array.isArray(epReg.getEmptySmartRecDeveloperEvidencePacketRegistry().packets) &&
+        epReg.getEmptySmartRecDeveloperEvidencePacketRegistry().packets.length === 0 &&
+        epReg.getSmartRecDeveloperEvidencePacketRegistryDescriptor().realPacketCount === 0, '');
+      expect('empty FR registry still empty',
+        frReg.getEmptySmartRecDeveloperFieldReviewRegistry().records &&
+        Object.keys(frReg.getEmptySmartRecDeveloperFieldReviewRegistry().records).length === 0 &&
+        frReg.getSmartRecDeveloperFieldReviewRegistryDescriptor().realRecordCount === 0, '');
+      expect('empty SCP registry still empty',
+        scpReg.getEmptySmartRecDeveloperStructuredClimateProfileRegistry().profiles &&
+        Object.keys(scpReg.getEmptySmartRecDeveloperStructuredClimateProfileRegistry().profiles).length === 0 &&
+        scpReg.getSmartRecDeveloperStructuredClimateProfileRegistryDescriptor().realProfileCount === 0, '');
+
+      var failed = results.filter(function (r) { return !r.pass; }).length;
+      var verdict = failed === 0 ? PASS_VERDICT : 'DETERMINISTIC_REVIEWED_DATA_BATCH_DRAFT_GENERATOR_FAIL';
+      var metrics = {
+        verdict: verdict,
+        assertionTotal: results.length,
+        stage1WorkflowState: stage1.workflowState,
+        stage2WorkflowState: stage2.workflowState,
+        evidencePacketCount: stage1.evidencePackets.length,
+        fieldReviewCount: stage2.finalFieldReview ? 1 : 0,
+        profileCount: stage2.structuredClimateProfile ? 1 : 0,
+        independentBatchValid: stage2.independentBatchValidation.valid === true,
+        captureContentFingerprint: stage1.captureContentFingerprint,
+        preparedDraftFingerprint: stage1.preparedDraftFingerprint,
+        summaryFingerprint: stage2.summaryFingerprint,
+        findingCount: stage2.errorCount,
+        warningCount: stage2.warningCount,
+        proposedFileCount: stage2.proposedFiles.length,
+        externalApiRequests: externalApiRequests,
+        storageActivity: storageActivity,
+        filesystemWriteAttempts: filesystemWriteAttempts,
+        consoleErrors: consoleErrorCount,
+        unhandledRejections: unhandledCount
+      };
+      finishSummary(verdict, metrics);
+      setStatus('State: complete · moduleLoaded=1 · assertions=' + results.length);
+      $('banner').textContent = 'Run complete. Modules loaded only after explicit Run. In-memory drafts only.';
+    } catch (err) {
+      expect('harness execution', false, String(err && err.stack || err));
+      finishSummary('DETERMINISTIC_REVIEWED_DATA_BATCH_DRAFT_GENERATOR_FAIL', {
+        error: String(err && err.message || err)
+      });
+      setStatus('State: error');
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    results = [];
+    moduleLoaded = false;
+    lastSummary = null;
+    window.__SR_REVIEWED_DATA_AUTOMATION_LAST = null;
+    window.__SR_REVIEWED_DATA_AUTOMATION_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixtureExecuted: false,
+      draftGenerated: false
+    });
+    $('banner').innerHTML =
+      'Idle. Automation modules not loaded. Fixture not executed. No draft generated. ' +
+      'Inert boot marker: <strong id="bootMarker">SR_REVIEWED_DATA_AUTOMATION_HARNESS_INERT</strong>';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageActivity=0 · filesystemWriteAttempts=0');
+    renderRows();
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
