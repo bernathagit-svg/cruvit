@@ -76,6 +76,327 @@
       },
       "additionalProperties": true
     },
+    "ReviewedClimateProfileContextScope": {
+      "type": "object",
+      "description": "Inert snapshot of EP/FR 0.2.0 context tokens for a compact reviewedClimateProfile field snapshot. Does not grant product authority.",
+      "required": ["setting", "planting", "maturity", "objective"],
+      "properties": {
+        "setting": {
+          "type": "string",
+          "enum": ["indoor", "outdoor", "unknown"]
+        },
+        "planting": {
+          "type": "string",
+          "enum": ["container", "ground", "unknown"]
+        },
+        "maturity": {
+          "type": "string",
+          "enum": ["establishment", "mature", "unknown"]
+        },
+        "objective": {
+          "type": "string",
+          "enum": ["general", "flowering", "fruiting", "unknown"]
+        },
+        "daypart": {
+          "type": "string",
+          "enum": ["morning", "afternoon", "all_day", "unknown"]
+        },
+        "heatProtection": {
+          "type": "string",
+          "enum": ["required", "beneficial", "not_required", "unknown"]
+        },
+        "climateOrRegion": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          ]
+        },
+        "season": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReviewedClimateProfileFieldReviewReference": {
+      "type": "object",
+      "description": "Compact Field Review fingerprint binding only. No Field Review body, excerpt, or source text.",
+      "required": [
+        "fieldReviewContractVersion",
+        "fieldReviewRegistryVersion",
+        "canonicalKey",
+        "field",
+        "reviewStatus",
+        "valueFingerprint"
+      ],
+      "properties": {
+        "fieldReviewContractVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldReviewRegistryVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonicalKey": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "field": {
+          "type": "string",
+          "enum": ["sun", "water"]
+        },
+        "reviewStatus": {
+          "type": "string",
+          "minLength": 1
+        },
+        "valueFingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewedClaimType": {
+          "type": "string",
+          "enum": ["preference", "optimum", "tolerance", "survival_minimum"]
+        },
+        "reviewedValue": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReviewedClimateProfileFieldSnapshot": {
+      "type": "object",
+      "description": "Compact per-field inert reviewed Structured Climate Profile snapshot for catalog overlay proof.",
+      "required": [
+        "profileId",
+        "sourceProfileContractVersion",
+        "field",
+        "profileStatus",
+        "contextScope",
+        "profileFingerprint",
+        "fieldReviewReference",
+        "evidenceRefCount",
+        "unresolvedLimitations",
+        "sourceBatchId",
+        "sourceBatchValidationFingerprint",
+        "integrationStatus"
+      ],
+      "properties": {
+        "profileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceProfileContractVersion": {
+          "type": "string",
+          "const": "0.1.0-sr-structured-climate-profile-contract"
+        },
+        "field": {
+          "type": "string",
+          "enum": ["sun", "water"]
+        },
+        "profileStatus": {
+          "type": "string",
+          "enum": [
+            "reviewed_supported",
+            "reviewed_conflicting",
+            "remains_ineligible",
+            "modeling_gap",
+            "identity_ambiguous",
+            "context_ambiguous",
+            "preference_tolerance_ambiguous"
+          ]
+        },
+        "reviewedClaimType": {
+          "type": "string",
+          "enum": ["preference", "optimum", "tolerance", "survival_minimum"]
+        },
+        "reviewedValue": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contextScope": {
+          "$ref": "#/definitions/ReviewedClimateProfileContextScope"
+        },
+        "profileFingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldReviewReference": {
+          "$ref": "#/definitions/ReviewedClimateProfileFieldReviewReference"
+        },
+        "evidenceRefCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolvedLimitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sourceBatchId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceBatchValidationFingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "integrationStatus": {
+          "type": "string",
+          "enum": ["inert_imported", "inert_blocked", "stale"]
+        },
+        "outcomeApplicability": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["survival", "vegetative", "flowering", "fruiting", "reliability"]
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "supersedesProfileId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lastReviewed": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "profileStatus": {
+                "const": "reviewed_supported"
+              }
+            },
+            "required": ["profileStatus"]
+          },
+          "then": {
+            "required": ["reviewedClaimType", "reviewedValue"]
+          }
+        }
+      ]
+    },
+    "ReviewedClimateProfileFields": {
+      "type": "object",
+      "description": "Field-keyed compact reviewedClimateProfile snapshots. v1 supports sun and water only.",
+      "properties": {
+        "sun": {
+          "$ref": "#/definitions/ReviewedClimateProfileFieldSnapshot"
+        },
+        "water": {
+          "$ref": "#/definitions/ReviewedClimateProfileFieldSnapshot"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    },
+    "ReviewedClimateProfileIdentityBinding": {
+      "type": "object",
+      "description": "Import-time identity binding for inert reviewedClimateProfile. Does not clear needsReview or resolve identity conflicts.",
+      "required": [
+        "canonicalKey",
+        "acceptedScientificName",
+        "identityRegistryVersion",
+        "identityBindingFingerprint",
+        "needsReviewAtImport",
+        "identityConflictAtImport"
+      ],
+      "properties": {
+        "canonicalKey": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "acceptedScientificName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identityRegistryVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "identityBindingFingerprint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "needsReviewAtImport": {
+          "type": "boolean"
+        },
+        "identityConflictAtImport": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ReviewedClimateProfileIntegration": {
+      "type": "object",
+      "description": "Inert catalog sibling for reviewed Structured Climate Profile compact snapshots. Explicit authority flags must remain false.",
+      "required": [
+        "integrationContractVersion",
+        "integrationStatus",
+        "productAuthority",
+        "eligibilityAuthority",
+        "scalarAuthority",
+        "runtimeRecommendationAuthority",
+        "GOSOutcomeAuthority",
+        "identityBinding",
+        "fields"
+      ],
+      "properties": {
+        "integrationContractVersion": {
+          "type": "string",
+          "const": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract"
+        },
+        "integrationStatus": {
+          "type": "string",
+          "enum": ["inert_imported", "inert_blocked", "stale"]
+        },
+        "productAuthority": {
+          "type": "boolean",
+          "const": false
+        },
+        "eligibilityAuthority": {
+          "type": "boolean",
+          "const": false
+        },
+        "scalarAuthority": {
+          "type": "boolean",
+          "const": false
+        },
+        "runtimeRecommendationAuthority": {
+          "type": "boolean",
+          "const": false
+        },
+        "GOSOutcomeAuthority": {
+          "type": "boolean",
+          "const": false
+        },
+        "identityBinding": {
+          "$ref": "#/definitions/ReviewedClimateProfileIdentityBinding"
+        },
+        "fields": {
+          "$ref": "#/definitions/ReviewedClimateProfileFields"
+        }
+      },
+      "additionalProperties": false
+    },
     "PlantSoilCompatibility": {
       "type": "object",
       "description": "Soil requirements and location-fit notes (Layer 1 and/or neighbor context in Layer 2).",
@@ -610,6 +931,10 @@
         "climateTraits": {
           "$ref": "#/definitions/PlantClimateTraits",
           "description": "Layer 1 environment suitability sidecar (v1a top-level field)."
+        },
+        "reviewedClimateProfile": {
+          "$ref": "#/definitions/ReviewedClimateProfileIntegration",
+          "description": "Optional inert developer-only compact reviewed Structured Climate Profile snapshot sibling to climateTraits. Never nested inside climateTraits. Grants no product, eligibility, scalar, recommendation, or GOS authority."
         },
         "environmentSuitability": {
           "$ref": "#/definitions/PlantEnvironmentSuitability",

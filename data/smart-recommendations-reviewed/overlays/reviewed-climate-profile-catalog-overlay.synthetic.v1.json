@@ -1,0 +1,112 @@
+{
+  "overlayContractVersion": "0.1.0-sr-reviewed-climate-profile-catalog-overlay",
+  "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+  "catalogSchemaVersion": 1,
+  "identityRegistryVersion": "1.5.0",
+  "generatedFrom": "synthetic_fixture",
+  "records": {
+    "synthetic-rcp-sun-agree": {
+      "reviewedClimateProfile": {
+        "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+        "integrationStatus": "inert_imported",
+        "productAuthority": false,
+        "eligibilityAuthority": false,
+        "scalarAuthority": false,
+        "runtimeRecommendationAuthority": false,
+        "GOSOutcomeAuthority": false,
+        "identityBinding": {
+          "canonicalKey": "synthetic-rcp-sun-agree",
+          "acceptedScientificName": "Testus syntheticus sun-agree",
+          "identityRegistryVersion": "1.5.0",
+          "identityBindingFingerprint": "synthetic-rcp-sun-agree|Testus syntheticus sun-agree|1.5.0|false|false",
+          "needsReviewAtImport": false,
+          "identityConflictAtImport": false
+        },
+        "fields": {
+          "sun": {
+            "profileId": "scp-synthetic-rcp-sun-agree-sun-v1",
+            "sourceProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+            "field": "sun",
+            "profileStatus": "reviewed_supported",
+            "reviewedClaimType": "preference",
+            "reviewedValue": "full_sun",
+            "contextScope": {
+              "setting": "outdoor",
+              "planting": "ground",
+              "maturity": "mature",
+              "objective": "general"
+            },
+            "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|synthetic-rcp-sun-agree|sun|reviewed_supported|preference|full_sun|outdoor/ground/mature/general|fr-fp-synthetic-rcp-sun-agree-sun|2|synthetic-rcp-sun-agree-batch-v1|batch-fp-synthetic-rcp-sun-agree-v1",
+            "fieldReviewReference": {
+              "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+              "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+              "canonicalKey": "synthetic-rcp-sun-agree",
+              "field": "sun",
+              "reviewStatus": "reviewed_supported",
+              "valueFingerprint": "fr-fp-synthetic-rcp-sun-agree-sun",
+              "reviewedClaimType": "preference",
+              "reviewedValue": "full_sun"
+            },
+            "evidenceRefCount": 2,
+            "unresolvedLimitations": [
+              "synthetic_fixture_only_not_botanical_authority"
+            ],
+            "sourceBatchId": "synthetic-rcp-sun-agree-batch-v1",
+            "sourceBatchValidationFingerprint": "batch-fp-synthetic-rcp-sun-agree-v1",
+            "integrationStatus": "inert_imported"
+          }
+        }
+      }
+    },
+    "synthetic-rcp-water-conflict-blocked": {
+      "reviewedClimateProfile": {
+        "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+        "integrationStatus": "inert_blocked",
+        "productAuthority": false,
+        "eligibilityAuthority": false,
+        "scalarAuthority": false,
+        "runtimeRecommendationAuthority": false,
+        "GOSOutcomeAuthority": false,
+        "identityBinding": {
+          "canonicalKey": "synthetic-rcp-water-conflict-blocked",
+          "acceptedScientificName": "Testus syntheticus water-blocked",
+          "identityRegistryVersion": "1.5.0",
+          "identityBindingFingerprint": "synthetic-rcp-water-conflict-blocked|Testus syntheticus water-blocked|1.5.0|true|false",
+          "needsReviewAtImport": true,
+          "identityConflictAtImport": false
+        },
+        "fields": {
+          "water": {
+            "profileId": "scp-synthetic-rcp-water-conflict-blocked-water-v1",
+            "sourceProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+            "field": "water",
+            "profileStatus": "modeling_gap",
+            "contextScope": {
+              "setting": "outdoor",
+              "planting": "ground",
+              "maturity": "mature",
+              "objective": "general"
+            },
+            "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|synthetic-rcp-water-conflict-blocked|water|modeling_gap|__null__|__null__|outdoor/ground/mature/general|fr-fp-synthetic-rcp-water-blocked-water|0|synthetic-rcp-water-conflict-blocked-batch-v1|batch-fp-synthetic-rcp-water-blocked-v1",
+            "fieldReviewReference": {
+              "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+              "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+              "canonicalKey": "synthetic-rcp-water-conflict-blocked",
+              "field": "water",
+              "reviewStatus": "modeling_gap",
+              "valueFingerprint": "fr-fp-synthetic-rcp-water-blocked-water"
+            },
+            "evidenceRefCount": 0,
+            "unresolvedLimitations": [
+              "synthetic_fixture_only_not_botanical_authority",
+              "needs_review_active_at_import"
+            ],
+            "sourceBatchId": "synthetic-rcp-water-conflict-blocked-batch-v1",
+            "sourceBatchValidationFingerprint": "batch-fp-synthetic-rcp-water-blocked-v1",
+            "integrationStatus": "inert_blocked"
+          }
+        }
+      }
+    }
+  }
+}

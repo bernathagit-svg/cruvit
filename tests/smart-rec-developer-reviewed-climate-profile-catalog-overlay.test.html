@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer reviewedClimateProfile Catalog Overlay Proof</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer reviewedClimateProfile Catalog Overlay</h1>
+  <p class="sub">
+    Developer-only inert schema/overlay proof. Synthetic fixture only.
+    No seed mutation. No index.html import. No product authority.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Overlay module not loaded. Overlay not fetched. No merge.
+    Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run overlay harness</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · overlayRequests=0 · externalApiRequests=0 · storageActivity=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'INERT_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_PASS';
+  var MOD_URL = '../modules/smart-recommendations/developer-reviewed-climate-profile-catalog-overlay.js';
+  var OVERLAY_URL = '../data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.synthetic.v1.json';
+  var SCHEMA_URL = '../data/plant-catalog.schema.json';
+
+  var results = [];
+  var runActive = false;
+  var storageActivity = 0;
+  var externalApiRequests = 0;
+  var overlayRequests = 0;
+  var schemaRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    overlayFetched: false,
+    mergeExecuted: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(arr, code) {
+    return (arr || []).some(function (f) {
+      return (typeof f === 'string' ? f : f.code) === code;
+    });
+  }
+
+  function installGuards() {
+    storageActivity = 0;
+    externalApiRequests = 0;
+    overlayRequests = 0;
+    schemaRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageActivity++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function (input, init) {
+      var url = String(typeof input === 'string' ? input : (input && input.url) || '');
+      if (url.indexOf('reviewed-climate-profile-catalog-overlay.synthetic.v1.json') >= 0) {
+        overlayRequests++;
+        return origFetch.apply(this, arguments);
+      }
+      if (url.indexOf('plant-catalog.schema.json') >= 0) {
+        schemaRequests++;
+        return origFetch.apply(this, arguments);
+      }
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_rcp_overlay_harness:' + url));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_rcp_overlay_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_RCP_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_RCP_ON_UNHANDLED);
+    window.__SR_RCP_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_RCP_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_RCP_RESTORE === 'function') {
+      window.__SR_RCP_RESTORE();
+      window.__SR_RCP_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function buildProofPlants() {
+    return [
+      {
+        schemaVersion: 1,
+        slug: 'synthetic-rcp-sun-agree',
+        names: { en: 'Synthetic RCP Sun Agree', default: 'Synthetic RCP Sun Agree' },
+        scientific: 'Testus syntheticus sun-agree',
+        climateTraits: {
+          sunNeeds: 'full_sun',
+          waterNeeds: 'medium',
+          needsReview: false
+        }
+      },
+      {
+        schemaVersion: 1,
+        slug: 'synthetic-rcp-water-conflict-blocked',
+        names: { en: 'Synthetic RCP Water Blocked', default: 'Synthetic RCP Water Blocked' },
+        scientific: 'Testus syntheticus water-blocked',
+        climateTraits: {
+          sunNeeds: 'full_sun',
+          waterNeeds: 'medium',
+          needsReview: true
+        }
+      },
+      {
+        schemaVersion: 1,
+        slug: 'seed-like-absent-rcp',
+        names: { en: 'Seed Like Absent', default: 'Seed Like Absent' },
+        climateTraits: {
+          sunNeeds: 'part_shade',
+          waterNeeds: 'low',
+          needsReview: false
+        }
+      }
+    ];
+  }
+
+  function schemaHasRcpDefs(schema) {
+    var d = schema && schema.definitions;
+    return !!(
+      d &&
+      d.ReviewedClimateProfileIntegration &&
+      d.ReviewedClimateProfileIdentityBinding &&
+      d.ReviewedClimateProfileFields &&
+      d.ReviewedClimateProfileFieldSnapshot &&
+      d.ReviewedClimateProfileContextScope &&
+      d.ReviewedClimateProfileFieldReviewReference &&
+      d.PlantCatalogItem &&
+      d.PlantCatalogItem.properties &&
+      d.PlantCatalogItem.properties.reviewedClimateProfile &&
+      d.PlantCatalogItem.properties.climateTraits &&
+      d.PlantCatalogItem.required.indexOf('reviewedClimateProfile') < 0 &&
+      d.PlantCatalogItem.properties.schemaVersion.const === 1 &&
+      d.ReviewedClimateProfileIntegration.properties.productAuthority.const === false &&
+      d.ReviewedClimateProfileIntegration.additionalProperties === false
+    );
+  }
+
+  async function runOnce() {
+    results = [];
+    installGuards();
+    try {
+      expect('boot inert before module load',
+        window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT &&
+        window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT.inert === true &&
+        window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT.moduleLoaded === false, '');
+
+      var mod = await import(MOD_URL + '?t=' + Date.now());
+      moduleLoaded = true;
+      var descriptor = mod.getSmartRecDeveloperReviewedClimateProfileCatalogOverlayDescriptor();
+      expect('descriptor developerOnly', descriptor.developerOnly === true, '');
+      expect('descriptor authoritative false', descriptor.authoritative === false, '');
+      expect('descriptor productConsumer false', descriptor.productConsumer === false, '');
+      expect('descriptor no runtime eligibility', descriptor.runtimeEligibilityAuthority === false, '');
+      expect('descriptor no scalar', descriptor.scalarAuthority === false, '');
+      expect('descriptor no recommendation', descriptor.runtimeRecommendationAuthority === false, '');
+      expect('descriptor no GOS', descriptor.GOSOutcomeAuthority === false, '');
+      expect('descriptor no network', descriptor.network === false, '');
+      expect('descriptor no persistence', descriptor.persistence === false, '');
+      expect('descriptor indexHtmlImport false', descriptor.indexHtmlImport === false, '');
+      expect('descriptor runtimeImport false', descriptor.runtimeImport === false, '');
+      expect('overlay version', mod.SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_VERSION ===
+        '0.1.0-sr-reviewed-climate-profile-catalog-overlay', '');
+
+      var schema = await (await fetch(SCHEMA_URL)).json();
+      expect('schema definitions present', schemaHasRcpDefs(schema), '');
+      expect('PlantClimateTraits unchanged additionalProperties true',
+        schema.definitions.PlantClimateTraits.additionalProperties === true, '');
+
+      var overlay = await (await fetch(OVERLAY_URL)).json();
+      expect('overlay request counted once so far', overlayRequests === 1, String(overlayRequests));
+      expect('overlay contract', overlay.overlayContractVersion ===
+        '0.1.0-sr-reviewed-climate-profile-catalog-overlay', '');
+      expect('overlay synthetic only', overlay.generatedFrom === 'synthetic_fixture', '');
+      expect('no lavender key', !overlay.records.lavender, '');
+      expect('no rosemary key', !overlay.records.rosemary, '');
+
+      var plants = buildProofPlants();
+      var plantsBefore = clone(plants);
+      var overlayBefore = clone(overlay);
+
+      var validation = mod.validateReviewedClimateProfileOverlay(overlay, { plants: plants });
+      expect('overlay validation ok', validation.ok === true, JSON.stringify(validation.hardErrors || []));
+      expect('overlay record count 2', validation.overlayRecordCount === 2, String(validation.overlayRecordCount));
+      expect('needs_review warning present', hasCode(validation.findings, 'needs_review_active'), '');
+      expect('no product authority finding on valid', !hasCode(validation.hardErrors, 'product_authority_attempt'), '');
+
+      var merge = mod.mergeReviewedClimateProfileOverlayForProof({ plants: plants, overlay: overlay });
+      expect('merge ok', merge.ok === true, JSON.stringify(merge.hardErrors || []));
+      expect('merged proof count 2', merge.mergedProofRecordCount === 2, String(merge.mergedProofRecordCount));
+      expect('input plants not mutated', JSON.stringify(plants) === JSON.stringify(plantsBefore), '');
+      expect('input overlay not mutated', JSON.stringify(overlay) === JSON.stringify(overlayBefore), '');
+
+      var mergedAgree = merge.plants.find(function (p) { return p.slug === 'synthetic-rcp-sun-agree'; });
+      var mergedBlocked = merge.plants.find(function (p) { return p.slug === 'synthetic-rcp-water-conflict-blocked'; });
+      var absent = merge.plants.find(function (p) { return p.slug === 'seed-like-absent-rcp'; });
+      expect('agree has reviewedClimateProfile', !!mergedAgree.reviewedClimateProfile, '');
+      expect('agree status inert_imported',
+        mergedAgree.reviewedClimateProfile.integrationStatus === 'inert_imported', '');
+      expect('agree reviewed_supported',
+        mergedAgree.reviewedClimateProfile.fields.sun.profileStatus === 'reviewed_supported', '');
+      expect('agree authority false',
+        mergedAgree.reviewedClimateProfile.productAuthority === false &&
+        mergedAgree.reviewedClimateProfile.eligibilityAuthority === false &&
+        mergedAgree.reviewedClimateProfile.scalarAuthority === false &&
+        mergedAgree.reviewedClimateProfile.runtimeRecommendationAuthority === false &&
+        mergedAgree.reviewedClimateProfile.GOSOutcomeAuthority === false, '');
+      expect('agree climateTraits unchanged',
+        mergedAgree.climateTraits.sunNeeds === 'full_sun' &&
+        JSON.stringify(mergedAgree.climateTraits) === JSON.stringify(plantsBefore[0].climateTraits), '');
+      expect('agree context preserved',
+        mergedAgree.reviewedClimateProfile.fields.sun.contextScope.setting === 'outdoor' &&
+        mergedAgree.reviewedClimateProfile.fields.sun.contextScope.planting === 'ground', '');
+      expect('agree evidenceRefCount 2',
+        mergedAgree.reviewedClimateProfile.fields.sun.evidenceRefCount === 2, '');
+      expect('agree batch binding preserved',
+        !!mergedAgree.reviewedClimateProfile.fields.sun.sourceBatchId &&
+        !!mergedAgree.reviewedClimateProfile.fields.sun.sourceBatchValidationFingerprint, '');
+      expect('blocked modeling_gap preserved',
+        mergedBlocked.reviewedClimateProfile.fields.water.profileStatus === 'modeling_gap', '');
+      expect('blocked inert_blocked',
+        mergedBlocked.reviewedClimateProfile.integrationStatus === 'inert_blocked', '');
+      expect('blocked needsReviewAtImport true',
+        mergedBlocked.reviewedClimateProfile.identityBinding.needsReviewAtImport === true, '');
+      expect('needsReview plant trait preserved',
+        mergedBlocked.climateTraits.needsReview === true, '');
+      expect('absent plant has no reviewedClimateProfile',
+        absent.reviewedClimateProfile === undefined, '');
+
+      var shapeAbsent = mod.validateProofCatalogItemShape(absent);
+      expect('absent catalog item shape ok', shapeAbsent.ok === true, JSON.stringify(shapeAbsent.findings));
+      var shapeAgree = mod.validateProofCatalogItemShape(mergedAgree);
+      expect('merged agree catalog item shape ok', shapeAgree.ok === true, JSON.stringify(shapeAgree.findings));
+
+      // climate_traits_value_conflict via in-memory supported water disagreement
+      var conflictOverlay = clone(overlay);
+      var conflictPlant = clone(plants[1]);
+      conflictPlant.climateTraits.waterNeeds = 'medium';
+      conflictOverlay.records['synthetic-rcp-water-conflict-blocked'].reviewedClimateProfile.fields = {
+        water: {
+          profileId: 'scp-synthetic-conflict-water-v1',
+          sourceProfileContractVersion: '0.1.0-sr-structured-climate-profile-contract',
+          field: 'water',
+          profileStatus: 'reviewed_supported',
+          reviewedClaimType: 'preference',
+          reviewedValue: 'low',
+          contextScope: {
+            setting: 'outdoor',
+            planting: 'ground',
+            maturity: 'mature',
+            objective: 'general'
+          },
+          profileFingerprint: '',
+          fieldReviewReference: {
+            fieldReviewContractVersion: '0.2.0-sr-field-review-contract',
+            fieldReviewRegistryVersion: '0.2.0-sr-field-review-registry',
+            canonicalKey: 'synthetic-rcp-water-conflict-blocked',
+            field: 'water',
+            reviewStatus: 'reviewed_supported',
+            valueFingerprint: 'fr-fp-synthetic-conflict-water',
+            reviewedClaimType: 'preference',
+            reviewedValue: 'low'
+          },
+          evidenceRefCount: 2,
+          unresolvedLimitations: ['synthetic_fixture_only_not_botanical_authority'],
+          sourceBatchId: 'synthetic-rcp-water-conflict-blocked-batch-v1',
+          sourceBatchValidationFingerprint: 'batch-fp-synthetic-rcp-water-blocked-v1',
+          integrationStatus: 'inert_blocked'
+        }
+      };
+      conflictOverlay.records['synthetic-rcp-water-conflict-blocked'].reviewedClimateProfile.fields.water.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          conflictOverlay.records['synthetic-rcp-water-conflict-blocked'].reviewedClimateProfile.fields.water,
+          'synthetic-rcp-water-conflict-blocked'
+        );
+      // keep only blocked record for focused conflict check
+      conflictOverlay.records = {
+        'synthetic-rcp-water-conflict-blocked': conflictOverlay.records['synthetic-rcp-water-conflict-blocked']
+      };
+      var conflictVal = mod.validateReviewedClimateProfileOverlay(conflictOverlay, {
+        plants: [conflictPlant]
+      });
+      expect('climate_traits_value_conflict warning',
+        hasCode(conflictVal.findings, 'climate_traits_value_conflict'), '');
+      expect('conflict does not suppress needs_review warning',
+        hasCode(conflictVal.findings, 'needs_review_active'), '');
+
+      // Negatives (in-memory only)
+      var badAuth = clone(overlay);
+      badAuth.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.productAuthority = true;
+      expect('reject authority true',
+        mod.validateReviewedClimateProfileOverlay(badAuth, { plants: plants }).ok === false &&
+        hasCode(mod.validateReviewedClimateProfileOverlay(badAuth, { plants: plants }).hardErrors, 'product_authority_attempt'), '');
+
+      var badKey = clone(overlay);
+      badKey.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.extraEvil = 1;
+      expect('reject unknown integration key',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badKey, { plants: plants }).hardErrors, 'unknown_catalog_key'), '');
+
+      var badField = clone(overlay);
+      badField.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.frost = clone(
+        badField.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun
+      );
+      badField.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.frost.field = 'frost';
+      expect('reject unknown field key',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badField, { plants: plants }).hardErrors, 'unknown_catalog_key'), '');
+
+      var badOverlayContract = clone(overlay);
+      badOverlayContract.overlayContractVersion = 'nope';
+      expect('reject unsupported overlay contract',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badOverlayContract, { plants: plants }).hardErrors, 'unsupported_overlay_contract'), '');
+
+      var badIntegrationContract = clone(overlay);
+      badIntegrationContract.integrationContractVersion = 'nope';
+      expect('reject unsupported integration contract',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badIntegrationContract, { plants: plants }).hardErrors, 'unsupported_overlay_contract'), '');
+
+      var badSchemaVer = clone(overlay);
+      badSchemaVer.catalogSchemaVersion = 99;
+      expect('reject wrong catalog schema version',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badSchemaVer, { plants: plants }).hardErrors, 'unsupported_overlay_contract'), '');
+
+      var badReg = clone(overlay);
+      badReg.identityRegistryVersion = '0.0.0';
+      expect('reject wrong identity registry version',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badReg, { plants: plants }).hardErrors, 'canonical_identity_mismatch'), '');
+
+      var badCanon = clone(overlay);
+      badCanon.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.canonicalKey = 'other-key';
+      badCanon.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.identityBindingFingerprint =
+        mod.buildReviewedClimateProfileIdentityBindingFingerprint(
+          badCanon.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding
+        );
+      expect('reject record-key/canonicalKey mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badCanon, { plants: plants }).hardErrors, 'canonical_identity_mismatch'), '');
+
+      var badSci = clone(overlay);
+      badSci.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.acceptedScientificName = 'Wrongus wrongii';
+      expect('reject scientific fingerprint mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badSci, { plants: plants }).hardErrors, 'canonical_identity_mismatch'), '');
+
+      var badIdFp = clone(overlay);
+      badIdFp.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.identityBindingFingerprint = 'tampered';
+      expect('reject identity fingerprint mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badIdFp, { plants: plants }).hardErrors, 'canonical_identity_mismatch'), '');
+
+      var dup = mod.detectDuplicateFieldAttempt(['sun', 'sun']);
+      expect('duplicate field attempt detected',
+        dup.ok === false && dup.finding && dup.finding.code === 'profile_field_duplicate', '');
+
+      var badProfContract = clone(overlay);
+      badProfContract.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.sourceProfileContractVersion = 'bad';
+      badProfContract.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badProfContract.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject wrong Profile contract',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badProfContract, { plants: plants }).hardErrors, 'profile_contract_unsupported'), '');
+
+      var badFieldKey = clone(overlay);
+      badFieldKey.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.field = 'water';
+      badFieldKey.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badFieldKey.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject field/key mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badFieldKey, { plants: plants }).hardErrors, 'canonical_identity_mismatch'), '');
+
+      var badProfFp = clone(overlay);
+      badProfFp.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint = 'tampered';
+      expect('reject Profile fingerprint mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badProfFp, { plants: plants }).hardErrors, 'profile_fingerprint_mismatch'), '');
+
+      var badFr = clone(overlay);
+      badFr.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.fieldReviewReference.valueFingerprint = 'wrong';
+      badFr.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badFr.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      // force FR mismatch independent of profile fp by changing canonical on FR after fp rebuild
+      badFr.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.fieldReviewReference.canonicalKey = 'nope';
+      expect('reject Field Review reference mismatch',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badFr, { plants: plants }).hardErrors, 'field_review_reference_mismatch'), '');
+
+      var badBatch = clone(overlay);
+      badBatch.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.sourceBatchValidationFingerprint = '';
+      expect('reject source batch fingerprint missing',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badBatch, { plants: plants }).hardErrors, 'source_batch_unverified'), '');
+
+      var stale = clone(overlay);
+      stale.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.integrationStatus = 'stale';
+      stale.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.integrationStatus = 'stale';
+      expect('reject stale snapshot',
+        hasCode(mod.validateReviewedClimateProfileOverlay(stale, { plants: plants }).hardErrors, 'stale_profile_snapshot'), '');
+
+      var missingCtx = clone(overlay);
+      delete missingCtx.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.contextScope.setting;
+      expect('reject missing context',
+        hasCode(mod.validateReviewedClimateProfileOverlay(missingCtx, { plants: plants }).hardErrors, 'context_mismatch'), '');
+
+      var badStatus = clone(overlay);
+      badStatus.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileStatus = 'not_a_status';
+      badStatus.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badStatus.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject unsupported Profile status',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badStatus, { plants: plants }).hardErrors, 'profile_status_unsupported'), '');
+
+      var badClaim = clone(overlay);
+      badClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.reviewedClaimType = 'general_guidance';
+      badClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject invalid reviewedClaimType',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badClaim, { plants: plants }).hardErrors, 'reviewed_value_mismatch'), '');
+
+      var badVal = clone(overlay);
+      badVal.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.reviewedValue = 'morning_sun_part_shade';
+      badVal.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          badVal.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject invalid reviewedValue',
+        hasCode(mod.validateReviewedClimateProfileOverlay(badVal, { plants: plants }).hardErrors, 'reviewed_value_mismatch'), '');
+
+      var noClaim = clone(overlay);
+      delete noClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.reviewedClaimType;
+      delete noClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.reviewedValue;
+      noClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.profileFingerprint =
+        mod.buildReviewedClimateProfileCompactFingerprint(
+          noClaim.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun,
+          'synthetic-rcp-sun-agree'
+        );
+      expect('reject reviewed_supported without claim/value',
+        hasCode(mod.validateReviewedClimateProfileOverlay(noClaim, { plants: plants }).hardErrors, 'reviewed_value_mismatch'), '');
+
+      var excerpt = clone(overlay);
+      excerpt.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.fields.sun.sourceExcerpt = 'illegal';
+      expect('reject source excerpt injection',
+        hasCode(mod.validateReviewedClimateProfileOverlay(excerpt, { plants: plants }).hardErrors, 'unknown_catalog_key'), '');
+
+      var gosAuth = clone(overlay);
+      gosAuth.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.GOSOutcomeAuthority = true;
+      expect('reject GOS authority attempt',
+        hasCode(mod.validateReviewedClimateProfileOverlay(gosAuth, { plants: plants }).hardErrors, 'GOS_authority_attempt'), '');
+
+      expect('reject runtime import attempt',
+        hasCode(mod.validateReviewedClimateProfileOverlay(overlay, { plants: plants, runtimeImport: true }).hardErrors, 'runtime_import_attempt'), '');
+
+      var idConflict = clone(overlay);
+      idConflict.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.identityConflictAtImport = true;
+      idConflict.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding.identityBindingFingerprint =
+        mod.buildReviewedClimateProfileIdentityBindingFingerprint(
+          idConflict.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.identityBinding
+        );
+      idConflict.records['synthetic-rcp-sun-agree'].reviewedClimateProfile.integrationStatus = 'inert_blocked';
+      expect('identity conflict hard bind block',
+        hasCode(mod.validateReviewedClimateProfileOverlay(idConflict, { plants: plants }).hardErrors, 'identity_conflict_active'), '');
+
+      var mutationProbe = clone(plants);
+      var mutationOverlay = clone(overlay);
+      Object.defineProperty(mutationOverlay, '__probe', {
+        enumerable: false,
+        get: function () { return 1; },
+        set: function () {}
+      });
+      var merge2 = mod.mergeReviewedClimateProfileOverlayForProof({
+        plants: mutationProbe,
+        overlay: mutationOverlay
+      });
+      expect('merge remains deterministic ok', merge2.ok === true, JSON.stringify(merge2.hardErrors || []));
+      expect('second merge fingerprint stable', merge2.reportFingerprint === merge.reportFingerprint, '');
+
+      var passCount = results.filter(function (r) { return r.pass; }).length;
+      var failCount = results.filter(function (r) { return !r.pass; }).length;
+      var warningCount = (validation.findings || []).filter(function (f) { return f.severity === 'warning'; }).length;
+      var conflictWarningCount = (conflictVal.findings || []).filter(function (f) {
+        return f.code === 'climate_traits_value_conflict';
+      }).length;
+      var needsReviewWarningCount = (validation.findings || []).filter(function (f) {
+        return f.code === 'needs_review_active';
+      }).length;
+      var hardErrorInventory = {};
+      [
+        'unsupported_overlay_contract', 'unknown_overlay_key', 'unknown_record_key', 'unknown_catalog_key',
+        'canonical_identity_mismatch', 'profile_field_duplicate', 'profile_contract_unsupported',
+        'profile_fingerprint_mismatch', 'field_review_reference_mismatch', 'source_batch_unverified',
+        'stale_profile_snapshot', 'context_mismatch', 'profile_status_unsupported', 'reviewed_value_mismatch',
+        'product_authority_attempt', 'eligibility_authority_attempt', 'scalar_authority_attempt',
+        'runtime_recommendation_authority_attempt', 'GOS_authority_attempt', 'runtime_import_attempt',
+        'mutation_detected', 'identity_conflict_active'
+      ].forEach(function () {});
+
+      var summaryFingerprint = [
+        mod.SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_VERSION,
+        'pass=' + passCount,
+        'fail=' + failCount,
+        'overlayRecords=' + validation.overlayRecordCount,
+        'merged=' + merge.mergedProofRecordCount,
+        'warnings=' + warningCount,
+        'conflictWarnings=' + conflictWarningCount,
+        'needsReviewWarnings=' + needsReviewWarningCount,
+        'overlayRequests=' + overlayRequests,
+        'external=' + externalApiRequests,
+        'storage=' + storageActivity,
+        validation.reportFingerprint,
+        merge.reportFingerprint
+      ].join('|');
+
+      var allPass = failCount === 0 &&
+        overlayRequests === 1 &&
+        externalApiRequests === 0 &&
+        storageActivity === 0 &&
+        consoleErrorCount === 0 &&
+        unhandledCount === 0;
+
+      lastSummary = {
+        verdict: allPass ? PASS_VERDICT : 'INERT_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_FAIL',
+        assertions: results.length,
+        passCount: passCount,
+        failCount: failCount,
+        overlayRecordCount: validation.overlayRecordCount,
+        mergedProofRecordCount: merge.mergedProofRecordCount,
+        warningCount: warningCount,
+        conflictWarningCount: conflictWarningCount,
+        needsReviewWarningCount: needsReviewWarningCount,
+        hardErrorCount: 0,
+        overlayRequests: overlayRequests,
+        schemaRequests: schemaRequests,
+        externalApiRequests: externalApiRequests,
+        storageActivity: storageActivity,
+        consoleErrors: consoleErrorCount,
+        unhandledRejections: unhandledCount,
+        summaryFingerprint: summaryFingerprint,
+        reportFingerprint: merge.reportFingerprint
+      };
+      window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST = Object.freeze(clone(lastSummary));
+      window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        overlayFetched: true,
+        mergeExecuted: true
+      });
+
+      expect('counters external zero', externalApiRequests === 0, String(externalApiRequests));
+      expect('counters storage zero', storageActivity === 0, String(storageActivity));
+      expect('counters console zero', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('counters unhandled zero', unhandledCount === 0, String(unhandledCount));
+      expect('exactly one overlay request', overlayRequests === 1, String(overlayRequests));
+
+      // refresh pass totals after trailing expects
+      passCount = results.filter(function (r) { return r.pass; }).length;
+      failCount = results.filter(function (r) { return !r.pass; }).length;
+      allPass = failCount === 0 &&
+        overlayRequests === 1 &&
+        externalApiRequests === 0 &&
+        storageActivity === 0 &&
+        consoleErrorCount === 0 &&
+        unhandledCount === 0;
+      summaryFingerprint = [
+        mod.SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_VERSION,
+        'pass=' + passCount,
+        'fail=' + failCount,
+        'overlayRecords=' + validation.overlayRecordCount,
+        'merged=' + merge.mergedProofRecordCount,
+        'warnings=' + warningCount,
+        'conflictWarnings=' + conflictWarningCount,
+        'needsReviewWarnings=' + needsReviewWarningCount,
+        'overlayRequests=' + overlayRequests,
+        'external=' + externalApiRequests,
+        'storage=' + storageActivity,
+        validation.reportFingerprint,
+        merge.reportFingerprint
+      ].join('|');
+      lastSummary.assertions = results.length;
+      lastSummary.passCount = passCount;
+      lastSummary.failCount = failCount;
+      lastSummary.verdict = allPass ? PASS_VERDICT : 'INERT_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_FAIL';
+      lastSummary.summaryFingerprint = summaryFingerprint;
+      window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST = Object.freeze(clone(lastSummary));
+
+      $('summary').textContent = lastSummary.verdict + ' · ' + passCount + '/' + results.length;
+      $('summary').className = allPass ? 'pass' : 'fail';
+      $('metrics').textContent = JSON.stringify(lastSummary, null, 2);
+      $('banner').innerHTML = allPass
+        ? 'PASS. Developer-only inert overlay proof complete.'
+        : 'FAIL. See rows.';
+      setStatus('State: complete · moduleLoaded=1 · overlayRequests=' + overlayRequests +
+        ' · externalApiRequests=' + externalApiRequests + ' · storageActivity=' + storageActivity);
+      renderRows();
+      return lastSummary;
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      lastSummary = {
+        verdict: 'INERT_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_FAIL',
+        assertions: results.length,
+        passCount: results.filter(function (r) { return r.pass; }).length,
+        failCount: results.filter(function (r) { return !r.pass; }).length,
+        error: String(err && err.message || err),
+        summaryFingerprint: 'exception'
+      };
+      window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST = Object.freeze(clone(lastSummary));
+      $('summary').textContent = lastSummary.verdict;
+      $('summary').className = 'fail';
+      $('metrics').textContent = JSON.stringify(lastSummary, null, 2);
+      renderRows();
+      return lastSummary;
+    } finally {
+      restoreGuards();
+      runActive = false;
+    }
+  }
+
+  function resetHarness() {
+    results = [];
+    moduleLoaded = false;
+    lastSummary = null;
+    window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST = null;
+    window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      overlayFetched: false,
+      mergeExecuted: false
+    });
+    $('bootMarker').textContent = 'SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT';
+    $('banner').innerHTML =
+      'Idle. Overlay module not loaded. Overlay not fetched. No merge. Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT</strong>';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    setStatus('State: idle · moduleLoaded=0 · overlayRequests=0 · externalApiRequests=0 · storageActivity=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () {
+    if (runActive) return;
+    runActive = true;
+    runOnce();
+  });
+  $('btn-reset').addEventListener('click', function () {
+    if (runActive) return;
+    resetHarness();
+  });
+})();
+</script>
+</body>
+</html>
