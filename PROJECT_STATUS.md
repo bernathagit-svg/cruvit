@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Reviewed-Data Batch Automation Documentation Contract complete (this docs checkpoint; no automation code); Lavender + Rosemary production-verified and closed (`586bf8f` / `4a5f3ad`; `9808630` / `c5a64d1`); two-batch repeatability proof complete; automation readiness satisfied; Deterministic Batch Draft Generator Implementation Planning is next (not begun); Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no catalog schema / product consumer / eligibility authority**
+Status: **Active — Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment complete (this docs checkpoint; documentation-only; no media code); Deterministic Batch Draft Generator Implementation remains the next active technical checkpoint (not begun in this commit); Source Scout / Media Source Scout remain future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no catalog schema / product consumer / eligibility authority; no media implementation**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable; separate Rosemary explicit-run harness. **No** automation module/harness/fixture; **no** `index.html` import; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. **GOS synthetic stack paused**. Matchers/UI not authorized.
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (this docs checkpoint). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable; separate Rosemary explicit-run harness. **No** automation module/harness/fixture created by this media docs commit; **no** media taxonomy/schema/ImageAsset/Coverage Matrix/source scout/UI; **no** `index.html` import; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` remain Layer A compatibility-only. **GOS synthetic stack paused**. Matchers/UI not authorized. **Active technical sequence unchanged:** Deterministic Batch Draft Generator Implementation → separate push → isolated production verification → documentation closure.
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract complete (no automation code); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment complete (docs only; no media code); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
 
-**Catalog / climate strategy note:** … → **Inert Structured Climate Profile Implementation** (pushed `b5ce82a`; production verified `7dbc207`) → First Real Evidence Batch Planning (complete) → Lavender research (pushed `7a7415e`) → Reviewed-Data Container Contract (pushed `1d03e26`) → Implementation Planning → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (this docs checkpoint) → deferred Deterministic Batch Draft Generator Implementation Planning → deferred Source Scout / Research Agent Planning → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog `reviewedClimateProfile` Schema Planning → Product Adapter Planning → catalog tasks **C–E** → broader taxonomy enrichment → backend/database migration.
+**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (this docs checkpoint) → **Deterministic Batch Draft Generator Implementation** (active next; not begun here) → deferred Source Scout / Research Agent Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog `reviewedClimateProfile` Schema Planning → Product Adapter Planning → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Reviewed-Data Batch Automation Documentation Contract** | Done (local docs) | **Documentation-only; creates no automation module, source-capture module, draft generator, validator, harness, fixture, JSON, third batch, agent, script, queue, schema, UI, or product adapter; no Lavender/Rosemary/shared-validator/EP/FR/Profile foundation/`index.html`/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no external research.** Grounded in two production-verified real batches: `lavender-sun-preference-v1` (*Lavandula angustifolia* / `sun` / `preference` / `full_sun` / **2 / 1 / 1** / prod **64/64**) and `rosemary-water-preference-v1` (*Salvia rosmarinus* / `water` / `preference` / `low` / **2 / 1 / 1** / prod **64/64**); shared validator unchanged for batch two; foundation defaults **0 / 0 / 0**; no product consumer. **Contract IDs:** Automation `0.1.0-sr-reviewed-data-batch-automation-contract`; conceptual Source Capture `0.1.0-sr-reviewed-data-source-capture-contract` (docs only; no module). **Principle:** automation may prepare/normalize/generate/fingerprint/validate/report; may not decide botanical truth or grant authority. **Architecture:** human-approved Source Capture Packet → deterministic Batch Draft Generator → independent EP/FR/Profile validation → independent shared Batch Validator → human commit/push; generator must not self-certify. **Capability:** complete non-authoritative in-memory batch draft; no research/browse/source selection/excerpt invention/FR approval/product write/commit/push/deploy. **Gates A–E** frozen; workflow states through `product_authority_not_granted`; **26** hard fail-closed categories; excerpt max **280**; network/external API/persistence/filesystemWrite/auto-exec **false**; placement `modules/smart-recommendations/`. **Next:** Deterministic Batch Draft Generator Implementation Planning (not begun). **Deferred:** Deterministic Batch Draft Generator Implementation; Future Source Scout / Research Agent Planning. Verdict: **`REVIEWED_DATA_BATCH_AUTOMATION_DOCUMENTATION_CONTRACT_DEFINED`**. |
+| **Media Evidence Pipeline + CRUVIT Media Library — Corrected Roadmap Alignment** | Done (local docs) | **Documentation-only; creates no media module, taxonomy, ImageAsset schema, Coverage Matrix, Source Scout, harness, image/video asset, download, network client, Admin/Owner Console UI, Garden Design change, automation module, third batch, or product adapter.** Identifier: `0.1.0-cruvit-media-evidence-roadmap-alignment`. Freezes Media Evidence Pipeline + CRUVIT Media Library as a **formal future** platform layer that is the internal evidence, validation, and asset-management engine of the future Garden Photo/Media Library; a **sibling** to the textual Reviewed-Data evidence pipeline; **not** a new active track; **not** inserted before Deterministic Batch Draft Generator Implementation. Dependency placement: after Shared Plant Picker and inside Garden Photo/Media Library foundations; before Garden Design Studio 2.0 and Contextual Smart Video Guidance. Freezes global/regional media intelligence, trust/unknown/`needsReview` metadata, conceptual Media State Taxonomy, ImageAsset/provenance requirements, Media Coverage Matrix states and phased coverage, untrusted Media Source Scout boundary, Admin/Owner Console ownership of review queues, CRUVIT Media Library asset classes, consumer boundaries, Disease/Pest compact media references, Garden Design Studio 2.0 gate, contextual Smart Video Guidance, cost-control ownership, and hard execution prohibitions (network/search/download/API/vision/persistence/filesystem/catalog/runtime/UI/auto-exec/product authority all prohibited until separately authorized). **Active technical sequence unchanged:** Deterministic Batch Draft Generator Implementation → separate push → isolated production verification → documentation closure. **Next after this docs push:** Deterministic Batch Draft Generator Implementation. **Two future media checkpoints (not authorized):** Media State Taxonomy Documentation Contract; ImageAsset & Provenance Documentation Contract. Blueberry remains excluded from current reviewed-data batches; all **23** conflicts remain blocked; GOS remains paused. Verdict: **`MEDIA_EVIDENCE_ROADMAP_ALIGNED`**. |
+| **Smart Recommendations — Reviewed-Data Batch Automation Documentation Contract** | Done (pushed) | **Documentation-only; creates no automation module, source-capture module, draft generator, validator, harness, fixture, JSON, third batch, agent, script, queue, schema, UI, or product adapter; no Lavender/Rosemary/shared-validator/EP/FR/Profile foundation/`index.html`/catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no external research.** Grounded in two production-verified real batches: `lavender-sun-preference-v1` (*Lavandula angustifolia* / `sun` / `preference` / `full_sun` / **2 / 1 / 1** / prod **64/64**) and `rosemary-water-preference-v1` (*Salvia rosmarinus* / `water` / `preference` / `low` / **2 / 1 / 1** / prod **64/64**); shared validator unchanged for batch two; foundation defaults **0 / 0 / 0**; no product consumer. **Contract IDs:** Automation `0.1.0-sr-reviewed-data-batch-automation-contract`; conceptual Source Capture `0.1.0-sr-reviewed-data-source-capture-contract` (docs only; no module). **Principle:** automation may prepare/normalize/generate/fingerprint/validate/report; may not decide botanical truth or grant authority. **Architecture:** human-approved Source Capture Packet → deterministic Batch Draft Generator → independent EP/FR/Profile validation → independent shared Batch Validator → human commit/push; generator must not self-certify. **Capability:** complete non-authoritative in-memory batch draft; no research/browse/source selection/excerpt invention/FR approval/product write/commit/push/deploy. **Gates A–E** frozen; workflow states through `product_authority_not_granted`; **26** hard fail-closed categories; excerpt max **280**; network/external API/persistence/filesystemWrite/auto-exec **false**; placement `modules/smart-recommendations/`. Pushed at `7bba825`. **Later completed:** Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment — see media-roadmap checkpoint. **Next:** Deterministic Batch Draft Generator Implementation (active; not begun in the media docs commit). **Deferred:** Future Source Scout / Research Agent Planning; Media State Taxonomy / ImageAsset & Provenance Documentation Contracts. Verdict: **`REVIEWED_DATA_BATCH_AUTOMATION_DOCUMENTATION_CONTRACT_DEFINED`**. |
 | **Smart Recommendations — Second Real Rosemary Reviewed-Data Batch production verification** | Done (pushed) | **Documentation-only after production verification; no JSON/module/harness/`index.html`/catalog/schema/matcher/UI/GOS/v1b/runtime/EP/FR/Profile foundation/Lavender/shared-validator change; no manual deploy; no Netlify setting change; no third batch/plant/field.** Docs pushed at `9808630`. **Later completed:** Reviewed-Data Batch Automation Documentation Contract — see automation-contract checkpoint. **Original verification notes:** Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed commit **`c5a64d15547d3952886580f6df1385c9a69e0abf`** (`feat: add second real rosemary reviewed-data batch`). **URLs:** app `/`; shared batch validator `/modules/smart-recommendations/developer-reviewed-data-batch-validator.js`; Rosemary harness `/tests/smart-rec-developer-reviewed-data-rosemary-batch-validator.test.html`; Rosemary JSON `/data/smart-recommendations-reviewed/batches/rosemary-water-preference-v1/{batch.manifest.json,evidence-packets.json,field-review-records.json,structured-climate-profiles.json}`; Lavender harness `/tests/smart-rec-developer-reviewed-data-batch-validator.test.html`; six EP/FR/Profile foundation modules under `/modules/smart-recommendations/`. **HTTP/content:** app **200** `text/html`; shared Batch Validator **200** `application/javascript` (LF-normalized exact match); Rosemary harness **200** `text/html` (LF match; markers `rosemary-water-preference-v1`, `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`, `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT`, `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`, Run/Reset); four Rosemary JSON **200** `application/json` (LF exact match each); Lavender harness **200** `text/html` (LF exact match); six foundation modules **200** `application/javascript` (LF exact match each). **App isolation (before):** home loads; Smart Recommendations entry present; **zero** Rosemary/Lavender JSON / reviewed-data harness / batch-validator / automatic EP-FR-Profile load attributable to batches; no reviewed-data / EP / FR / Profile UI; no batch storage; no OpenAI/Anthropic/GOS attributable; `evaluateClimateSuitabilityV1` present; GOS eval absent; My Garden entry unchanged. **Rosemary harness inertness:** `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT.inert=true`; marker `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`; shared validator / EP-FR-Profile / Rosemary JSON not loaded before Run; idle. **Five production Reset→Run:** all **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / finding inventory **20** / verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|rosemary-water-preference-v1`; exactly **4** same-origin static JSON requests per Run (`batch.manifest.json`, `evidence-packets.json`, `field-review-records.json`, `structured-climate-profiles.json`); external/API **0**; storage/console/unhandled **0**; Reset fetches **0**; no UC ANR / NCSU / Kew / Lavender / OpenAI / Anthropic / cross-origin request. **Batch/artifacts:** `rosemary-water-preference-v1` / `rosemary` / *Salvia rosmarinus* / `water` / `preference` / `low` / outdoor·ground·mature·general; IDs `ep-rosemary-water-preference-ucanr-v1`, `ep-rosemary-water-preference-ncsu-v1`, FR `rosemary`+`water`, `scp-rosemary-water-preference-v1`. **Sources:** UC ANR *Rosemary* (`https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; publicationDate `2023-02-14`; verifiedAt `2026-07-30`; establishment-year watering outside mature context); NCSU *Salvia rosmarinus* (`https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; publication/update dates omitted; verifiedAt `2026-07-30`; dry-to-medium wording retained as limitation). **No medium reviewed claim; no tolerance claim.** **Fingerprints:** EP source/content via live builders; FR `valueFingerprint`; Profile `profileFingerprint` — EP→FR→Profile chain intact; wrappers/manifest validate; no placeholder / copied Lavender / invented fingerprint. **Manifest/wrappers:** Container `0.1.0-sr-reviewed-data-container`; expected counts **2 / 1 / 1**; productIsolation flags false; unknown keys fail closed. **Descriptor authority:** `developerOnly` true; `authoritative`/`productConsumer`/`runtimeEligibilityAuthority`/`catalogMutation`/`evidenceMutation`/`fieldReviewMutation`/`profileMutation`/`needsReviewMutation`/`persistence`/`network`/`automaticExecution` false; `activation: explicit_call_only`; `productConsumers: none`. **Foundation defaults remain 0 / 0 / 0**; loaded counts local to explicit Rosemary report only. **Negatives (harness fixtures):** count/batchId/identity/field/claim/value/context/establishment/medium/tolerance/invalid UC ANR/NCSU packets/EP-FR-Profile fingerprint/product-isolation/unsupported version/unknown keys/mutation/nondeterministic report — covered; real JSON unmodified; successful batch findingCount **0**. **Lavender production non-regression:** inert boot; one cycle **64/64** / batchCount **1** / loaded **2 / 1 / 1** / findingCount **0** / inventory **20** / verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS` / summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|lavender-sun-preference-v1`; **4** static JSON; external/API/storage/console/unhandled **0**; Lavender harness + artifacts remain committed matches. **After:** fresh home — zero automatic Rosemary/Lavender batch/JSON/harness/EP-FR-Profile load; no reviewed-data UI; no storage residue; v1b product path; SR/My Garden unchanged; legacy **36/36/36**; **23** conflicts blocked; leak **0**; Blueberry excluded; no schema/scalar/`needsReview`/eligibility change; GOS remains paused. **Repeatability proof:** two real identities; two fields (sun + water); two **2 / 1 / 1** chains; no shared-validator modification. **Automation-readiness gate satisfied.** Second real batch remains developer-only and inert. **Verdict:** `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`. |
 | **Smart Recommendations — Second Real Rosemary Reviewed-Data Batch Implementation** | Done (pushed; production verified) | **Developer-only inert second real Evidence Packet → Field Review → Structured Climate Profile batch; no product authority.** Exact six-file scope: `data/smart-recommendations-reviewed/batches/rosemary-water-preference-v1/{batch.manifest.json,evidence-packets.json,field-review-records.json,structured-climate-profiles.json}`, `tests/smart-rec-developer-reviewed-data-rosemary-batch-validator.test.html`, `PROJECT_STATUS.md`. Shared batch validator, EP/FR/Profile foundations, Lavender JSON, and Lavender harness remain **byte-identical**. **Batch:** `rosemary-water-preference-v1` / `rosemary` / *Salvia rosmarinus* / `water` / `preference` / `low` / outdoor·ground·mature·general. **IDs:** `ep-rosemary-water-preference-ucanr-v1`, `ep-rosemary-water-preference-ncsu-v1`, FR key `rosemary`+`water`, `scp-rosemary-water-preference-v1`. **Sources:** UC ANR / UC Cooperative Extension Master Gardeners of San Luis Obispo County — *Rosemary* (`https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; Tier A; publicationDate `2023-02-14`; verifiedAt `2026-07-30`; direct low-water guidance after establishment); North Carolina Extension Gardener Plant Toolbox — *Salvia rosmarinus* (`https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; Tier A; publication/update dates omitted; verifiedAt `2026-07-30`; dry-to-medium wording retained as limitation, not a second `medium` claim). Kew POWO identity reference documented separately only. Both packets `proposedValue: low`; no tolerance promotion; no compound/new water token; establishment-year and container watering outside frozen mature/ground context. **Fingerprints (live builders):** UC ANR source `university_extension\|Rosemary\|University of California Agriculture and Natural Resources\|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary\|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; NCSU source `university_extension\|Salvia rosmarinus\|North Carolina Extension Gardener Plant Toolbox\|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/\|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; EP content fingerprints include normalized claims + outdoor/ground/mature/general context + `preference` + contract `0.2.0`; FR `valueFingerprint` and Profile `profileFingerprint` continue the EP→FR→Profile chain. **Loaded counts:** **2 / 1 / 1**. **Foundation defaults remain 0 / 0 / 0**. **Harness:** separate explicit-run Rosemary file; boot `__SR_ROSEMARY_REVIEWED_DATA_BATCH_BOOT` / marker `SR_ROSEMARY_REVIEWED_DATA_BATCH_HARNESS_INERT`; after Run exactly **4** same-origin static JSON requests; external/API **0**; storage/console/unhandled **0**; assertion total **64/64**; findingCount **0**; finding inventory **20**; verdict `SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PASS`; summaryFingerprint `0.1.0-sr-reviewed-data-batch-validator\|0.1.0-sr-reviewed-data-container\|1\|2\|1\|1\|0\|0\|0\|\|passed\|rosemary-water-preference-v1`; five identical Reset→Run cycles. **Lavender non-regression:** **64/64**; loaded **2 / 1 / 1**; verdict `FIRST_REAL_LAVENDER_REVIEWED_DATA_BATCH_PASS`; existing summaryFingerprint unchanged. **Foundation non-regression:** EP **117/117** (65) / **99/99** (59); FR **125/125** (36) / **112/112** (73); Profile **75/75** (44) / **40/40** (25). **Broader:** merge **89/89**; schema **69/69**; recon **158** / **156** PASS / **2** EXPECTED_QUARANTINED_CONFLICT / **0** unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leak **0**. **Product isolation (local):** normal app — zero Rosemary JSON / Rosemary harness / batch-validator / automatic EP-FR-Profile load attributable to Rosemary; no reviewed-data UI; no batch storage residue; no OpenAI/Anthropic/GOS; v1b remains product climate authority; GOS paused; My Garden unchanged. Blueberry excluded. **No** schema/catalog/seed/identity/group/assignment/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/shared-validator change. Pushed at `c5a64d1`. **Production verification later completed** — see production verification checkpoint (`SECOND_REAL_ROSEMARY_REVIEWED_DATA_BATCH_PRODUCTION_VERIFIED`). |
 | **Smart Recommendations — Second Real Reviewed-Data Batch Rosemary Water Preference Bounded Research Closure** | Done (pushed) | **Documentation-only research + exact source-reference capture closure; creates no second reviewed-data directory / JSON / manifest / Evidence Packet / Field Review / Structured Climate Profile / validator / harness / loader / automation agent; no Lavender artifact or batch-validator change; no catalog/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b change; no additional external research in this docs commit.** Freezes second-batch identity `rosemary` / *Salvia rosmarinus* (historic synonym *Rosmarinus officinalis*; registry `needsReview: false`; not among the 23 conflicts; single group `humid-sensitive-mediterranean`). Proposed batchId `rosemary-water-preference-v1`. Research question: outdoor ground-grown mature water preference for atomic `low` vs drought-tolerance-only, establishment-only watering, or unresolved low-to-medium range. **Identity (not an EP):** Kew Plants of the World Online — *Salvia rosmarinus* Spenn.; URL `https://powo.science.kew.org/taxon/urn:lsid:ipni.org:names:457138-1`; accepted species; synonym *Rosmarinus officinalis* L.; identity confirmation only. **Packet A (Tier A):** UC ANR / UC Cooperative Extension Master Gardeners of San Luis Obispo County — *Rosemary* (Polly Nelson, UCCE Master Gardener); URL `https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary`; published `2023-02-14`; source-update date omitted (not displayed); verifiedAt `2026-07-30`; directly identifies *Salvia rosmarinus*; excerpt candidate “Water needs: Low, after first year.”; supporting “Allow soil to dry out between waterings.”; normalizedClaim candidate: mature ground-grown *Salvia rosmarinus* has a low preferred water requirement and should dry between waterings; context limitation: after establishment year. **Packet B (Tier A):** North Carolina Extension Gardener Plant Toolbox — *Salvia rosmarinus*; URL `https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/`; publicationDate / sourceUpdateDate omitted (not displayed); verifiedAt `2026-07-30`; directly scoped; excerpt candidate “Rosemary does best in light, slightly acidic, dry to medium, well-drained soils.”; normalizedClaim candidate paraphrases preferred relatively dry well-drained conditions and low tolerance for persistently wet soil; **low-to-medium range must remain an explicit Field Review limitation** — no silent second `medium` claim; overwatering warned as common decline cause. **Optional Tier B corroboration (not a third packet):** RHS *How to Grow Rosemary* (`https://www.rhs.org.uk/herbs/rosemary/grow-your-own`) — established ground-grown rosemary generally needs little or no additional watering. **Preference vs tolerance:** UC ANR is direct low-water need after year one; NC State preferred dry-to-medium ≠ drought-tolerance-only label; tolerance must not silently become preference; establishment and containers outside frozen mature/ground context. **Planned later counts only:** **2** EP / **1** FR / **1** Profile; Packet Contract `0.2.0-sr-evidence-packet-contract`; field `water` / claim `preference` / value `low` / outdoor·ground·mature·general; daypart/heatProtection/climateOrRegion/outcomeApplicability omitted. Future FR success candidate `reviewed_supported`+`preference`+`low` only if both packets validate and NC State range is judged compatible with atomic `low`; else fail closed to `preference_tolerance_ambiguous` / `context_ambiguous` / `reviewed_conflicting` / `remains_ineligible` / `modeling_gap`. Future Profile mirrors FR if approved; no scalar/eligibility/confidence. **Coverage:** Lavender proved sun/`full_sun`; Rosemary planned to prove water/`low`; second species + second field; same **2 / 1 / 1** shape; batch validator needs no amendment; separate Rosemary explicit-run harness preferred. **Automation gate:** planning only after Rosemary implemented, locally validated, pushed, production-verified, and closed — two identities, sun+water fields, same authority chain, no batch-specific validator change, human approval for excerpts/claims/FR, no product authority. Real counts remain **0**. No Rosemary artifacts exist. Verdict: **`READY_FOR_SECOND_REAL_ROSEMARY_BATCH_IMPLEMENTATION_PLANNING`**. **Next after docs push:** Second Real Rosemary Batch Implementation Planning (not begun). Deferred: Rosemary Implementation; Batch Automation Documentation Contract (after Rosemary prod-verify). |
@@ -364,7 +365,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 | **5** | Global Plant Catalog Foundation v1 | **In progress** — foundations through Structured Climate Profile Implementation (`b5ce82a`; prod-verify docs `7dbc207`) + Lavender research (`7a7415e`) + Reviewed-Data Container Contract (`1d03e26`) + source-reference capture (`7c9fed5`) + **First Real Lavender Reviewed-Data Batch Implementation** (local; unpushed); catalog task **B Frozen (v1)**; foundation Registry defaults remain **0 / 0 / 0**; inert reviewed-data batch loaded counts **2 / 1 / 1** via explicit developer harness only; no catalog schema / product consumer / eligibility; **36/36/36** unchanged; all **23** conflicts blocked; blueberry parent remains blocked; matchers/UI blocked; GOS paused; next = push this implementation commit → deferred Production Verification and Closure → cleanup batches + re-audit → matcher (separately gated) → **C–E** |
 | **6** | Per-user Plant Library v1 | Planned |
 | **7** | Shared Plant Picker v1 | Planned |
-| **8** | Garden Photo / Media Library Foundation | Planned |
+| **8** | Garden Photo / Media Library Foundation | Planned — includes future Media Evidence Pipeline + CRUVIT Media Library as internal evidence/validation/asset engine (docs aligned; not begun) |
 | **9** | Plant Identifier Integration | Planned |
 | **10** | Smart Recommendations Integration | Planned |
 | **11** | Garden Design Plant Visual Upgrade | Planned |
@@ -381,7 +382,7 @@ Ordered sequence. Do not skip ahead without explicit approval.
 - **5 — Global Plant Catalog Foundation v1:** scalable global knowledge base before deep Per-user Plant Library work. Foundations through Location Reliability Enforcement (`17ed381`), Plant Climate Data Coverage Audit, Smart Rec missing-metadata safety patch (`e9fbb20`), **Smart Recommendations browse-eligibility gate fix**, **Filter and Data-Readiness Audit**, **SR filter taxonomy schema foundation** (additive; filters not enabled), **Sun/Water Filter Readiness Contract** (docs; `b60ebd1`), **Sun/Water Structured Coverage Audit** (`NEEDS_TARGETED_CATALOG_CLEANUP_FIRST`), **Targeted Sun/Water Cleanup Plan** (docs; `b1c2c1f`), **Sun/Water Merge-Pollution Repair** (pushed `eab1800`; production verified), **Canonical Conflict Inventory** (**23** conflicts, all NR, leak **0**), **Source-Evidence Contract** (pushed `64f0e95`), Field Review + Evidence Packet foundations (closed/empty/non-authoritative), **Evidence Packet Validator** (pushed `17cf753`; production verified), Blueberry Field-Cleanup / Identity-Scope Evidence Planning (pushed `4361021`), Blueberry Identity-Scope Research / Bounded Research, **Blueberry Identity Outcome Documentation Contract** (pushed `b235782`), Preference-versus-Tolerance / Sun-Token Modeling Planning (complete), **Preference-versus-Tolerance Modeling Documentation Contract** (pushed `ff54015`), Evidence Packet / Field Review Reference Amendment Planning + Documentation Contract, **Evidence Packet Reference Amendment** (pushed `d3a53ac`; production verified), **Field Review Reference Amendment** (pushed `414fb59`; production verified; docs `40fbc58`), Inert Structured Climate Profile / Global Climate Schema Planning (complete; `READY_FOR_STRUCTURED_CLIMATE_PROFILE_DOCUMENTATION_CONTRACT`), and **Structured Climate Profile Documentation Contract** (pushed `37f9ce3`) and **Inert Structured Climate Profile Implementation** (local; unpushed) are done or current. **Browse Eligibility Audit / gate fix** facts unchanged (task **A Done**). Catalog task **B Frozen (v1)**. **Filter data readiness:** structured `sunNeeds` / `waterNeeds` remain legacy compatibility; merge-default pollution is **0**; **36/36/36** is legacy eligibility only; all **23** conflicts remain globally blocked; blueberry parent remains blocked; preference/tolerance gap is **global**; EP/FR Reference Amendments closed (versions **0.2.0**; harnesses **117/117** / **99/99** and **125/125** / **112/112**); Layer C developer-only proof exists (`realProfileCount` **0**; no catalog schema / product consumer); field-review registry remains empty/non-authoritative; Evidence Packet Registry remains empty/non-authoritative; real SR evidence packets **0**; real field-review records **0**; no product authority from Layer C. Matcher/UI remain **blocked**. **GOS remains paused.** Evidence Packet and Field Review Reference Amendments are **closed**. Inert Structured Climate Profile / Global Climate Schema Planning is **complete**. **Structured Climate Profile Documentation Contract** is **pushed** (`37f9ce3`). **Inert Structured Climate Profile Implementation** is **pushed** and production-verified (`b5ce82a` / docs `7dbc207`; developer-only Layer C proof; `realProfileCount` **0**; no catalog schema / product consumer). Lavender research is **pushed** (`7a7415e`). **First Real Reviewed-Data Container Documentation Contract** is the current docs checkpoint (layout/authority freeze only; no reviewed-data directory / JSON / loader / real artifacts). **Next:** push this container-contract docs commit → First Real Evidence Batch Implementation Planning → deferred Implementation → Production Verification and Closure → evidence-backed cleanup batches + re-audit → matcher (each separately gated). Catalog tasks **C–E** remain after the controlled sun/water cleanup sequence → broader taxonomy enrichment → backend/API migration.
 - **6 — Per-user Plant Library v1:** user's saved/catalog plants as first-class data; still separate from global catalog mutations.
 - **7 — Shared Plant Picker v1:** one picker UX/data path for Add Plant, Smart Rec, Design — after catalog + library foundations are stable.
-- **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs.
+- **8 — Garden Photo / Media Library:** garden and plant media tied to `data`, not module-local blobs. **Corrected roadmap alignment:** the future Media Evidence Pipeline + CRUVIT Media Library is the internal evidence, validation, and asset-management engine of this foundation (identifier `0.1.0-cruvit-media-evidence-roadmap-alignment`). It is a sibling to the textual Reviewed-Data evidence pipeline, not a replacement for it, and not the active technical track. Exact Media State Taxonomy / ImageAsset / Coverage Matrix / Source Scout / Admin/Owner Console media UI remain separately gated documentation and implementation checkpoints. Serious Garden Design Studio 2.0 remains blocked until Shared Plant Picker, this media foundation, licensing, deterministic selection, and the Design Excellence Gate are complete.
 - **9–10 — Identifier / Smart Rec integration:** wire modules through shared plant + climate layer; preserve existing detection/scoring quality. **Smart Recommendations UX Scope (locked):** future filter-based input replaces chat; filters only where structured data is reliable; schema foundation for taxonomy fields is additive only (does not enable filters); **preserve current results table/columns/cards/ordering during filter redesign**; results-table redesign is a later separate phase; keep chat until filter flow is verified (additive/reversible).
 - **11 — Garden Design visual upgrade:** plant visuals only; not full Studio redesign.
 - **12 — Wishlist:** filter/status inside Plant Library; no parallel wishlist store.
@@ -7850,7 +7851,7 @@ Legacy buckets retained for quick scanning. See numbered roadmap above for execu
 ## Medium
 - Confidence-aware scoring refinements (stale/low climate/weather confidence; location trust already enforced)
 - Product/Care Schedule runtime planning
-- Garden Photo / Media Library Foundation
+- Garden Photo / Media Library Foundation (future; Media Evidence Pipeline documented as internal engine — not begun)
 - Plant Identifier Integration
 - Smart Recommendations Integration
 - Smart Recommendations filter-based UX (locked; schema foundation additive only; audit complete — sun/water only safe today; preserve chat + results table — see UX Scope)
@@ -7859,7 +7860,8 @@ Legacy buckets retained for quick scanning. See numbered roadmap above for execu
 
 ## Low
 - Shopify Smart Connection (includes User Product Outcome Memory)
-- Garden Design Studio 2.0
+- Garden Design Studio 2.0 (blocked until Shared Plant Picker + Garden Photo/Media Library foundations including Media Evidence Pipeline gate + Design Excellence Gate)
+- Contextual Smart Video Guidance (later; contextual only — not a general video library)
 - AI Garden Coach
 
 ## Strategic future (foundation-gated)
@@ -9967,22 +9969,344 @@ Keep separately gated: `reviewedClimateProfile` Catalog Schema Planning; Product
 
 ## 21. Next and deferred checkpoints
 
-**Next (separately gated; not begun):** Deterministic Batch Draft Generator Implementation Planning — read-only planning to freeze exact source-capture module shape, generator API, Gate C pause/resume boundary, synthetic approved-input fixtures, independent validator calls, deterministic output shape, harness behavior, and exact file scope. No implementation code; no external research; no network; no product change.
+**Active technical next (unchanged by media docs):** Deterministic Batch Draft Generator Implementation — not begun in the media-roadmap documentation commit. Sequence remains: Implementation → separate push → isolated production verification → documentation closure.
 
-**Deferred (not authorized):**
+**Deferred (not authorized by this automation contract):**
+
+1. Future Source Scout / Research Agent Planning
+2. Media State Taxonomy Documentation Contract (media track; separately gated)
+3. ImageAsset & Provenance Documentation Contract (media track; separately gated)
+
+**Media track note:** Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment (`0.1.0-cruvit-media-evidence-roadmap-alignment`) freezes placement only. It does **not** cancel, replace, reorder, or begin Deterministic Batch Draft Generator Implementation. Media remains future and separately gated after the generator checkpoint is fully closed.
+
+---
+
+# Media Evidence Pipeline + CRUVIT Media Library — Corrected Roadmap Alignment
+
+**Checkpoint type:** documentation only. **File:** `PROJECT_STATUS.md` only.
+**Roadmap alignment identifier:** `0.1.0-cruvit-media-evidence-roadmap-alignment`
+**Closure verdict identity:** `MEDIA_EVIDENCE_ROADMAP_ALIGNED`
+
+## 1. Formal layer definition
+
+**Media Evidence Pipeline + CRUVIT Media Library** is a formal **future** CRUVIT platform layer.
+
+It is:
+
+- the internal evidence, validation, and asset-management engine of the future Garden Photo/Media Library;
+- a **sibling** to the textual Reviewed-Data evidence pipeline;
+- **not** a new active track;
+- **not** inserted before the current Reviewed-Data automation work;
+- a manager of media evidence and reusable approved assets once separately authorized.
+
+It creates **no** code, schema, network access, storage, UI, or runtime authority in this checkpoint.
+
+It does **not** authorize image sourcing, downloading, classification, caching, or publishing now.
+
+## 2. Dependency placement (map only — not authorization)
+
+High-level dependency order:
+
+```
+Canonical Plant Identity
+→ Global Plant Catalog
+→ Accuracy and Trust Foundations
+→ Global Localization and Regional Intelligence
+→ Plant Library and core user workflows
+→ Plant Identification / Plant Doctor / Disease Intelligence
+→ Smart Recommendations and cumulative learning foundations
+→ Shared Plant Picker
+→ Garden Photo/Media Library
+   → Media Evidence Pipeline
+   → Media State Taxonomy
+   → ImageAsset and Provenance
+   → Media Coverage Matrix
+   → Admin/Owner review workflows
+   → CRUVIT Media Library
+→ Garden Design Studio 2.0
+→ Contextual Smart Video Guidance
+→ later advanced coaching and solo-scale operations
+```
+
+This is a **dependency map**, not authorization to begin the media track. Exact numbered roadmap phases already frozen elsewhere are not silently rewritten. The current Deterministic Batch Draft Generator checkpoint remains active.
+
+Corrected placement summary: after Shared Plant Picker; inside Garden Photo/Media Library foundations; before Garden Design Studio 2.0 and Contextual Smart Video Guidance.
+
+## 3. Sibling relationship to textual Reviewed-Data
+
+**Textual knowledge pipeline:**
+
+```
+Human-approved sources
+→ Evidence Packets
+→ Field Review
+→ Structured Climate Profile
+```
+
+**Future media pipeline:**
+
+```
+Media requirement or coverage gap
+→ untrusted candidate media
+→ source, license and provenance review
+→ identity and state classification
+→ quality and duplicate review
+→ human approval
+→ CRUVIT Media Library
+```
+
+**Shared principles:** canonical identity; exact provenance; deterministic fingerprints; candidate is not approved; valid structure is not authority; confidence and unknown states; human approval; stale-approval invalidation; immutable reviewed snapshots; fail-closed ambiguity; no automatic product authority; no random runtime web search; reusable approved assets instead of repeated paid API calls.
+
+Reviewed-Data text automation remains the active track. Media Evidence Pipeline is a formal future sibling system sitting inside the Garden Photo/Media Library foundation.
+
+## 4. Global and regional media intelligence
+
+Future media metadata and coverage must support, when material:
+
+- country; region; hemisphere; season; climate context; local growth conditions;
+- regional disease and pest applicability; regional phenotype or appearance variation;
+- indoor/outdoor context; ground/container context;
+- language and local-name context; legal or licensing territory restrictions;
+- regional consumer suitability; Country/Region Readiness contribution.
+
+Requirements:
+
+- one region’s asset coverage must not be treated as global coverage;
+- Swiss, Dutch, American, or Israeli coverage does not prove worldwide readiness;
+- regional limitations must remain explicit;
+- assets inappropriate for a region or context must not be silently reused globally.
+
+Country/Region Readiness logic is **not** implemented now.
+
+## 5. Media trust metadata
+
+Every future candidate or approved asset should conceptually track:
+
+canonical identity; accepted scientific identity; source; creator or rights holder when known; license status; permitted uses; attribution requirements; verification status; verification date; last reviewed date; region applicability; climate/context applicability; source confidence; identity confidence; state-classification confidence; provenance confidence; approval status; `needsReview` state; unknown state; content fingerprint; perceptual duplicate fingerprint where appropriate; limitations; rejection reason when rejected; permitted consumers.
+
+Trust rules:
+
+- unknown rights remain unknown;
+- missing evidence must not be guessed;
+- low-confidence identity or state must remain candidate/`needsReview`;
+- an accessible image is not automatically legally reusable;
+- AI confidence is not botanical, legal, or licensing authority;
+- search thumbnails are not approved assets;
+- approval binds to the asset and its meaning-bearing metadata.
+
+## 6. Media State Taxonomy (conceptual only)
+
+Conceptual dimensions should include, when relevant:
+
+canonical plant identity; plant part; whole-plant habit/form; growth stage; phenological stage; flowering state; fruiting state; healthy state; environmental stress; nutrient issue; disease; pest; severity/progression; season; region; climate applicability; indoor/outdoor; ground/container; full plant / close-up / diagnostic-detail / scale view; intended consumer.
+
+This is **conceptual only**. No exact token list or schema is authorized now. Consumer suitability is distinct from botanical classification.
+
+Examples: a catalog image may be representative but not diagnostically useful; a diagnostic image may be unsuitable for Garden Design; a Garden Design cutout requires purpose-specific perspective, masking, scale, and licensing.
+
+## 7. ImageAsset and provenance (conceptual only)
+
+Every future asset must conceptually preserve:
+
+immutable original reference; original URL; source institution or publisher; creator/rights holder; license; attribution; commercial-use permission; modification permission; display/redistribution permission; platform/territory restrictions; verification date; asset fingerprint; dimensions and technical quality; media-state classification; confidence; approval; approved consumers; derived renditions and crops; revocation/replacement history.
+
+Fail closed when: rights are unknown; license is absent; intended use conflicts with the license; attribution cannot be preserved; identity or state is unresolved; the asset cannot be used by the requested consumer.
+
+No ImageAsset schema is created now.
+
+## 8. Media Coverage Matrix
+
+Coverage must be tracked per: canonical plant; required state; context; region; intended consumer; license suitability.
+
+Conceptual states: `not_required`, `required`, `missing`, `candidate_found`, `license_review_required`, `identity_review_required`, `state_review_required`, `regional_review_required`, `quality_review_required`, `approved`, `rejected`, `outdated`, `replacement_required`.
+
+The matrix must expose real gaps rather than implying completeness. It should support questions such as: which plants lack an approved whole-plant image; which lack leaf/flower/fruit coverage; which diseases lack early and advanced examples; which regions lack representative imagery; which assets cannot legally be used by Garden Design or commerce; which approved assets need replacement.
+
+Full coverage of every theoretical state for every plant is **not** a launch requirement. CRUVIT should deliver value from partial reviewed coverage while exposing missing states honestly. Coverage should expand systematically in phases.
+
+### Initial future coverage phases (quotas not frozen)
+
+| Phase | Scope |
+|-------|--------|
+| **1** | healthy representative whole plant; leaf; flower where relevant; fruit where relevant; juvenile/mature distinction where materially different |
+| **2** | common environmental stress; common nutrient issues; common diseases; common pests; early versus advanced symptoms |
+| **3** | regional variants; uncommon conditions; look-alikes; additional seasons and growth stages; purpose-specific Garden Design and diagnostic assets |
+
+Exact plant quotas are **not** established now. No Coverage Matrix is implemented now.
+
+## 9. Media Source Scout authority
+
+The future Media Source Scout may produce **untrusted candidates only**.
+
+It may propose: candidate URL; possible source; possible creator; possible license; possible identity; possible plant part or state; possible region applicability; possible quality score; possible duplicate relation; coverage gap it may address.
+
+It may **not**: approve identity; approve state; approve diagnosis; approve licensing; approve commercial use; store or publish an asset as approved; add an image to the catalog; bypass human review; grant product authority; treat AI output or search snippets as evidence.
+
+Source Scout, network access, and research agents remain separately gated. No Source Scout is created now.
+
+## 10. License and usage validation boundaries
+
+Future validation must distinguish: public visibility; legal reuse; commercial reuse; modification permission; attribution; platform restrictions; territory restrictions; editorial/research-only use; caching permission; redistribution permission.
+
+No automatic legal conclusion is authorized. Uncertain licensing fails closed.
+
+## 11. Vision-classification boundaries
+
+Future vision analysis may propose: identity; plant part; growth stage; flowering/fruiting stage; health state; disease/pest candidate; environmental/nutrient candidate; severity; quality; duplicate relation.
+
+Require: model/version provenance; confidence; human approval; fail-closed ambiguity; distinction between possible and approved diagnostic examples; no licensing conclusion from visual AI; reusable validated classification snapshots to avoid repeated paid calls.
+
+Computer vision is prohibited until separately authorized.
+
+## 12. Quality and duplicate validation
+
+Future controls may include: exact fingerprint; perceptual duplicate detection; near-duplicate grouping; resolution; compression/artifact quality; crop/framing; background; scale/context; watermark/text overlay; diagnostic visibility; plant-part visibility; caption/image mismatch; rejected-source reuse prevention.
+
+Purpose-specific quality must remain explicit.
+
+## 13. Human approval and Admin/Owner Console ownership
+
+All operational media-management workflows belong to a future **Admin/Owner Console**, not the normal user interface.
+
+Future owner/admin surfaces may include: candidate review queue; license review queue; identity/state review queue; regional applicability review; duplicate/quality review; rejected assets; stale licenses; replacement-required assets; Coverage Matrix gaps; attribution requirements; storage/API cost visibility; exception and failure queues.
+
+Normal users should see only approved, context-appropriate media. No Admin/Owner Console media UI is created now.
+
+## 14. CRUVIT Media Library asset classes
+
+The future Media Library must distinguish:
+
+- untrusted external candidate;
+- reviewed external reference;
+- approved remotely hosted asset;
+- approved CRUVIT-cached asset;
+- CRUVIT-created asset;
+- user-owned private garden photo;
+- diagnostic scan input;
+- Garden Design working asset;
+- consumer-specific derived rendition.
+
+Private user images must not automatically enter the shared library. Candidate assets must not appear as approved assets. No downloading or caching is authorized now.
+
+## 15. Future consumers
+
+Through separate future adapters, approved media may support: Global Plant Catalog; My Garden; Plant Identification; Plant Doctor; Disease/Pest Knowledge Base; Garden-Level Disease Intelligence; Smart Recommendations; Treatment Calendar; Shared Plant Picker; Garden Design; educational content; onboarding/discovery; separately approved commerce/marketing uses.
+
+Every consumer requires its own suitability and permission checks. No consumer adapter is created now.
+
+## 16. Disease/Pest integration
+
+Future Disease/Pest records should reference compact approved media references rather than duplicating full provenance.
+
+Disease coverage should distinguish: healthy comparison; early symptoms; moderate symptoms; advanced symptoms; affected plant part; look-alikes; visible pest organism; environmental/nutrient mimics; region and season applicability.
+
+User diagnosis images and shared reference media remain distinct classes.
+
+## 17. Garden Design Studio 2.0 gate (reaffirmed)
+
+Serious Garden Design Studio 2.0 remains blocked until:
+
+- canonical identity and Plant Library are stable;
+- Shared Plant Picker exists;
+- Garden Photo/Media Library is defined;
+- Media State Taxonomy is defined;
+- ImageAsset and provenance are defined;
+- licensing rules are defined;
+- deterministic asset selection is defined;
+- quality, masking, perspective, and scale rules are defined;
+- Design Excellence Gate is passed.
+
+Garden Design must use approved, purpose-suitable assets. It must not perform random runtime image search.
+
+## 18. Contextual Smart Video Guidance
+
+Smart Video Guidance remains a later contextual layer. It is **not** a general video library.
+
+Future video may appear only in a clear user context such as: a care task; Plant Doctor; treatment instruction; product preparation/use; plant card; Garden Design instruction; educational explanation.
+
+Video assets must later follow the same provenance, licensing, regional, trust, and approval principles. No video sourcing or implementation is authorized now.
+
+## 19. Cost-control and ownership
+
+Require: CRUVIT owns canonical media metadata; approved classification/provenance snapshots are reusable; normal display does not call AI repeatedly; stored approved media is preferred where sufficient; paid AI/API use is reserved for candidate analysis, difficult classification, or revalidation; coverage gaps drive targeted sourcing; cached assets must respect license restrictions and revocation; no runtime image search.
+
+## 20. Execution boundaries (until separately authorized)
+
+| Capability | Status |
+|------------|--------|
+| network | prohibited |
+| search | prohibited |
+| download | prohibited |
+| external API | prohibited |
+| computer vision | prohibited |
+| persistence | prohibited |
+| filesystem / object-storage writes | prohibited |
+| catalog import | prohibited |
+| runtime import | prohibited |
+| UI | prohibited |
+| automatic execution | prohibited |
+| product authority | none |
+
+## 21. Corrected roadmap sequencing
+
+**Active work remains:**
 
 1. Deterministic Batch Draft Generator Implementation
-2. Future Source Scout / Research Agent Planning
+2. separate push
+3. isolated production verification
+4. documentation closure
+
+The media layer becomes eligible for separate planning only after the current generator checkpoint is fully closed. It does **not** become automatically next.
+
+**Future media foundation sequence (not begun):**
+
+1. Media State Taxonomy Documentation Contract
+2. ImageAsset & Provenance Documentation Contract
+3. Media Coverage Matrix Documentation Contract
+4. Garden Photo/Media Library Foundation Planning
+5. deterministic no-network media-validation foundations
+6. Admin/Owner Console media-review workflow planning
+7. Media Source Scout planning
+8. license/provenance workflow implementation
+9. vision classification and quality/duplicate workflow
+10. human approval workflow
+11. CRUVIT Media Library implementation
+12. separately gated consumer adapters
+13. Garden Design Studio 2.0 only after its complete gate
+
+## 22. Re-baseline agreements
+
+- Reviewed-Data text automation remains the active track.
+- Media Evidence Pipeline is a formal future sibling system inside Garden Photo/Media Library.
+- Shared Plant Picker precedes serious Garden Design.
+- Global/regional context and trust apply to media.
+- Admin/Owner Console owns review and coverage operations.
+- Smart Video Guidance remains later and contextual.
+- Full media coverage is not required before value can be delivered.
+- no media implementation has begun;
+- no product behavior changes;
+- Blueberry remains excluded from current reviewed-data batches;
+- all **23** conflicts remain blocked;
+- GOS remains paused.
+
+## 23. Next active and future media checkpoints
+
+**Next active checkpoint (after this documentation commit is separately pushed):** Deterministic Batch Draft Generator Implementation. Do **not** begin it in this docs task.
+
+**Two future media checkpoints (not authorized):**
+
+1. Media State Taxonomy Documentation Contract
+2. ImageAsset & Provenance Documentation Contract
 
 ---
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator; Blueberry Identity Outcome + Preference-versus-Tolerance docs; Evidence Packet / Field Review Reference Amendments; Structured Climate Profile foundation; First Real Lavender Reviewed-Data Batch (`4a5f3ad`) + production verification (`586bf8f`); Second Real Rosemary research (`aa48885`) + implementation (`c5a64d1`) + production verification (`9808630`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator; Blueberry Identity Outcome + Preference-versus-Tolerance docs; Evidence Packet / Field Review Reference Amendments; Structured Climate Profile foundation; First Real Lavender Reviewed-Data Batch (`4a5f3ad`) + production verification (`586bf8f`); Second Real Rosemary research (`aa48885`) + implementation (`c5a64d1`) + production verification (`9808630`); Reviewed-Data Batch Automation Documentation Contract (`7bba825`).
 
-**Done (local docs; this commit):** Reviewed-Data Batch Automation Documentation Contract — `0.1.0-sr-reviewed-data-batch-automation-contract`; conceptual Source Capture `0.1.0-sr-reviewed-data-source-capture-contract`; human-approved capture → deterministic no-network draft generator; Gates A–E; no automation code; no product authority.
+**Done (local docs; this commit):** Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment — `0.1.0-cruvit-media-evidence-roadmap-alignment`. Freezes Media Evidence Pipeline as the future Garden Photo/Media Library evidence engine; sibling to textual Reviewed-Data; placement after Shared Plant Picker and before Garden Design Studio 2.0; no media implementation; no active-roadmap reorder.
 
-**Next (separately gated):** Deterministic Batch Draft Generator Implementation Planning — freeze exact module/API/Gate C/harness/file-scope plan only. Do **not** begin Source Scout; do **not** create automation modules; do **not** create a third batch; do **not** grant product eligibility. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. Catalog `reviewedClimateProfile` Schema Planning and Product Adapter Planning remain deferred.
+**Next (active technical checkpoint; not begun here):** Deterministic Batch Draft Generator Implementation. Do **not** begin Media State Taxonomy / ImageAsset & Provenance Documentation Contracts; do **not** begin Media Source Scout; do **not** create media modules, schemas, images, downloads, or Admin/Owner Console UI; do **not** create a third reviewed-data batch; do **not** grant product eligibility. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. Catalog `reviewedClimateProfile` Schema Planning and Product Adapter Planning remain deferred.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
