@@ -1,0 +1,117 @@
+{
+  "overlayContractVersion": "0.1.0-sr-reviewed-climate-profile-catalog-overlay",
+  "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+  "catalogSchemaVersion": 1,
+  "identityRegistryVersion": "1.5.0",
+  "generatedFrom": "real_reviewed_batch_pilot",
+  "records": {
+    "lavender": {
+      "reviewedClimateProfile": {
+        "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+        "integrationStatus": "inert_imported",
+        "productAuthority": false,
+        "eligibilityAuthority": false,
+        "scalarAuthority": false,
+        "runtimeRecommendationAuthority": false,
+        "GOSOutcomeAuthority": false,
+        "identityBinding": {
+          "canonicalKey": "lavender",
+          "acceptedScientificName": "Lavandula angustifolia",
+          "identityRegistryVersion": "1.5.0",
+          "identityBindingFingerprint": "lavender|Lavandula angustifolia|1.5.0|false|false",
+          "needsReviewAtImport": false,
+          "identityConflictAtImport": false
+        },
+        "fields": {
+          "sun": {
+            "profileId": "scp-lavender-sun-preference-v1",
+            "sourceProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+            "field": "sun",
+            "profileStatus": "reviewed_supported",
+            "reviewedClaimType": "preference",
+            "reviewedValue": "full_sun",
+            "contextScope": {
+              "setting": "outdoor",
+              "planting": "ground",
+              "maturity": "mature",
+              "objective": "general"
+            },
+            "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|lavender|sun|reviewed_supported|preference|full_sun|outdoor/ground/mature/general|lavender|sun|preference|full_sun|evidence_derived_override|ep-lavender-sun-preference-csu-v1,ep-lavender-sun-preference-ncsu-v1|ep-lavender-sun-preference-csu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract|2|lavender-sun-preference-v1|0.1.0-sr-reviewed-data-batch-validator|0.1.0-sr-reviewed-data-container|1|2|1|1|0|0|0||passed|lavender-sun-preference-v1",
+            "fieldReviewReference": {
+              "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+              "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+              "canonicalKey": "lavender",
+              "field": "sun",
+              "reviewStatus": "reviewed_supported",
+              "valueFingerprint": "lavender|sun|preference|full_sun|evidence_derived_override|ep-lavender-sun-preference-csu-v1,ep-lavender-sun-preference-ncsu-v1|ep-lavender-sun-preference-csu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-csu-v1|lavender|sun|Lavandula angustifolia is described as preferring full sun in outdoor cultivation.|full_sun|A|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|https://extension.colostate.edu/resource/growing-lavender-in-colorado/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-sun-preference-ncsu-v1|lavender|sun|Lavandula angustifolia requires full sun as its preferred light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract",
+              "reviewedClaimType": "preference",
+              "reviewedValue": "full_sun"
+            },
+            "evidenceRefCount": 2,
+            "unresolvedLimitations": [
+              "partial_shade_listed_as_possible_tolerance_or_context_only_not_a_second_reviewed_claim"
+            ],
+            "sourceBatchId": "lavender-sun-preference-v1",
+            "sourceBatchValidationFingerprint": "0.1.0-sr-reviewed-data-batch-validator|0.1.0-sr-reviewed-data-container|1|2|1|1|0|0|0||passed|lavender-sun-preference-v1",
+            "integrationStatus": "inert_imported"
+          }
+        }
+      }
+    },
+    "rosemary": {
+      "reviewedClimateProfile": {
+        "integrationContractVersion": "0.1.0-sr-catalog-reviewed-climate-profile-integration-contract",
+        "integrationStatus": "inert_imported",
+        "productAuthority": false,
+        "eligibilityAuthority": false,
+        "scalarAuthority": false,
+        "runtimeRecommendationAuthority": false,
+        "GOSOutcomeAuthority": false,
+        "identityBinding": {
+          "canonicalKey": "rosemary",
+          "acceptedScientificName": "Salvia rosmarinus",
+          "identityRegistryVersion": "1.5.0",
+          "identityBindingFingerprint": "rosemary|Salvia rosmarinus|1.5.0|false|false",
+          "needsReviewAtImport": false,
+          "identityConflictAtImport": false
+        },
+        "fields": {
+          "water": {
+            "profileId": "scp-rosemary-water-preference-v1",
+            "sourceProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+            "field": "water",
+            "profileStatus": "reviewed_supported",
+            "reviewedClaimType": "preference",
+            "reviewedValue": "low",
+            "contextScope": {
+              "setting": "outdoor",
+              "planting": "ground",
+              "maturity": "mature",
+              "objective": "general"
+            },
+            "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|rosemary|water|reviewed_supported|preference|low|outdoor/ground/mature/general|rosemary|water|preference|low|evidence_derived_override|ep-rosemary-water-preference-ncsu-v1,ep-rosemary-water-preference-ucanr-v1|ep-rosemary-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-water-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract|2|rosemary-water-preference-v1|0.1.0-sr-reviewed-data-batch-validator|0.1.0-sr-reviewed-data-container|1|2|1|1|0|0|0||passed|rosemary-water-preference-v1",
+            "fieldReviewReference": {
+              "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+              "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+              "canonicalKey": "rosemary",
+              "field": "water",
+              "reviewStatus": "reviewed_supported",
+              "valueFingerprint": "rosemary|water|preference|low|evidence_derived_override|ep-rosemary-water-preference-ncsu-v1,ep-rosemary-water-preference-ucanr-v1|ep-rosemary-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-water-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-water-preference-ucanr-v1|rosemary|water|Mature, ground-grown Salvia rosmarinus has a low preferred water requirement and should dry between waterings.|low|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract",
+              "reviewedClaimType": "preference",
+              "reviewedValue": "low"
+            },
+            "evidenceRefCount": 2,
+            "unresolvedLimitations": [
+              "container_watering_is_outside_the_ground_context",
+              "establishment_year_watering_is_outside_the_mature_context",
+              "ncsu_dry_to_medium_band_is_not_a_second_reviewed_medium_claim"
+            ],
+            "sourceBatchId": "rosemary-water-preference-v1",
+            "sourceBatchValidationFingerprint": "0.1.0-sr-reviewed-data-batch-validator|0.1.0-sr-reviewed-data-container|1|2|1|1|0|0|0||passed|rosemary-water-preference-v1",
+            "integrationStatus": "inert_imported"
+          }
+        }
+      }
+    }
+  }
+}

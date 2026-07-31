@@ -8,7 +8,8 @@
  *  - Explicit-call-only; no DOM, storage, timers, persistence, or writes.
  *  - Does not grant product, eligibility, scalar, recommendation, or GOS authority.
  *  - Does not mutate plants.seed.json, climateTraits, needsReview, or identity conflicts.
- *  - Synthetic overlay only; does not load Lavender/Rosemary reviewed-data batches.
+ *  - Supports synthetic_fixture and real_reviewed_batch_pilot developer overlays only.
+ *  - Does not auto-load Lavender/Rosemary reviewed-data batches into product runtime.
  */
 
 export const SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_VERSION =
@@ -26,6 +27,11 @@ export const SR_STRUCTURED_CLIMATE_PROFILE_CONTRACT_VERSION_FOR_OVERLAY =
 export const SR_REVIEWED_CLIMATE_PROFILE_CATALOG_SCHEMA_VERSION = 1;
 
 export const SR_REVIEWED_CLIMATE_PROFILE_IDENTITY_REGISTRY_VERSION = '1.5.0';
+
+export const SR_REVIEWED_CLIMATE_PROFILE_GENERATED_FROM_ALLOWLIST = Object.freeze([
+  'synthetic_fixture',
+  'real_reviewed_batch_pilot'
+]);
 
 export const SR_REVIEWED_CLIMATE_PROFILE_INTEGRATION_STATUSES = Object.freeze([
   'inert_imported',
@@ -957,7 +963,8 @@ export function normalizeReviewedClimateProfileOverlay(overlay) {
       String(input.identityRegistryVersion)
     );
   }
-  if (input.generatedFrom !== 'synthetic_fixture') {
+  const generatedFrom = String(input.generatedFrom || '');
+  if (SR_REVIEWED_CLIMATE_PROFILE_GENERATED_FROM_ALLOWLIST.indexOf(generatedFrom) < 0) {
     pushFinding(
       findings,
       'unsupported_overlay_contract',
@@ -1011,7 +1018,7 @@ export function normalizeReviewedClimateProfileOverlay(overlay) {
     integrationContractVersion: SR_CATALOG_REVIEWED_CLIMATE_PROFILE_INTEGRATION_CONTRACT_VERSION,
     catalogSchemaVersion: SR_REVIEWED_CLIMATE_PROFILE_CATALOG_SCHEMA_VERSION,
     identityRegistryVersion: SR_REVIEWED_CLIMATE_PROFILE_IDENTITY_REGISTRY_VERSION,
-    generatedFrom: 'synthetic_fixture',
+    generatedFrom: generatedFrom,
     records: records
   };
   return freezeDeep({
