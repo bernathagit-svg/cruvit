@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Developer-Only Reviewed Climate Profile Product Adapter Implementation pushed (`e011c4e`) and production-verified (this docs commit); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout / Media Source Scout remain future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
+Status: **Active — Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Documentation Contract defined (this docs commit); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout / Media Source Scout remain future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **production verification** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. **No** media taxonomy/schema/ImageAsset/Coverage Matrix/source scout/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Next:** select separately (Real Lavender/Rosemary Catalog Overlay Planning remains deferred; Source Scout deferred).
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** (`READY_FOR_REAL_REVIEWED_PROFILE_OVERLAY_DOCUMENTATION_CONTRACT`) → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Lavender + Rosemary classified **`inert_import_candidate`** for a future separate real-pilot overlay — **no real overlay JSON exists yet**; `generatedFrom` allowlist change planned but **not** implemented. **No** media taxonomy/schema/ImageAsset/Coverage Matrix/source scout/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Next:** Real Lavender/Rosemary Catalog Overlay Implementation Planning (separately gated; Source Scout deferred).
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (this docs commit; developer-only; no product authority); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract defined (this docs commit; no overlay JSON/module/harness yet); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
 
-**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (this docs commit) → deferred Real Lavender/Rosemary Catalog Overlay Planning → deferred Source Scout / Research Agent Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
+**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (this docs commit) → deferred Real Overlay Implementation Planning → deferred Real Overlay → Product Adapter Bridge Planning → deferred Source Scout / Research Agent Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
 
 ---
 
@@ -144,7 +144,8 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **Smart Recommendations — Developer-Only Reviewed Climate Profile Product Adapter production verification** | Done (local) | **Documentation-only after production verification; no adapter module/harness/schema/seed/overlay/`index.html`/identity/real-batch/foundation/shared-validator/Batch Draft Generator/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no real Lavender/Rosemary overlay; no manual deploy; no Netlify setting change; no push in this docs commit.** Deployed implementation: **`e011c4e4182327411b7ccae682663641ac85e2ee`** (`feat: add developer-only reviewed climate profile product adapter`). Production: https://friendly-taiyaki-64aacb.netlify.app/. **URLs:** app `/`; adapter module `/modules/smart-recommendations/developer-reviewed-climate-profile-product-adapter.js`; adapter harness `/tests/smart-rec-developer-reviewed-climate-profile-product-adapter.test.html`; overlay harness; Batch Draft Generator harness; Lavender/Rosemary harnesses. **HTTP/content:** all **200** with expected types; LF-normalized exact match vs `e011c4e` for adapter module, adapter harness, overlay harness, Batch Draft Generator harness, Lavender harness, Rosemary harness. Module contains versions `0.1.0-sr-reviewed-climate-profile-product-adapter` / contracts `…-product-adapter-contract` / `…-product-adapter-result` / capability `explicit_developer_reviewed_climate_profile_product_adapter_analysis` and public exports (descriptor, normalize, validate, analyze, input fingerprint builder, finding/status enums). Harness contains PASS/FAIL verdicts, `__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT` / `_LAST`, `bannerStatus`, `bootMarker`, Run/Reset, `Not run yet.`. **App isolation before:** no adapter-module/harness request; no Product Adapter boot/state; v1b present; GOS absent; no OpenAI/Anthropic. **Harness inert:** `boot.inert` true; LAST null; `#banner`/`#bannerStatus`/`#bootMarker` present; summary `Not run yet.`; no module request before Run. **Five complete Reset→Run→Reset production cycles:** identical; **112/112**; verdict `DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PASS`; findingInventory **36**; counters external/storage/console/unhandled/runtime/v1b/GOS/smartRec all **0**; Reset zero-fetch + idempotent inert restore; PASS keeps `#bootMarker`/`#bannerStatus`; first Run triggers same-origin module import only (no overlay/Lavender/Rosemary/external). **summaryFingerprint** identical across 5 cycles (agreement `adapterResult|…status":"reviewed_supported_agreement"…`; sha256 prefix `4c4c8c724d6b`). Probe: agreement candidateAvailable true / productUseAllowed false / humanReviewRequired false; conflict humanReviewRequired true / productUseAllowed false; absent candidateAvailable false; no forbidden effective/resolved/final/recommended keys in outputs; descriptor all authority flags false; activation `explicit_developer_call_only`; `indexHtmlImport` false. **Non-regression:** overlay **98/98**; Batch Draft Generator **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; recon **158**/156 PASS/2 EXPECTED_QUARANTINED/0 unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leakage **0**; registryVersion **1.5.0**; foundation defaults **0/0/0**; GOS paused; v1b authority. **App isolation after:** no adapter residue. Adapter remains developer-only and inert from the product’s perspective. **Next checkpoint must be selected separately.** Verdict: **`DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PRODUCTION_VERIFIED`**. |
+| **Smart Recommendations — Real Lavender and Rosemary Reviewed Climate Profile Catalog Overlay Documentation Contract** | Done (local) | **Documentation-only; creates no real overlay JSON, overlay-module change, real-pilot harness, Product Adapter change, schema/seed/`index.html`/batch/foundation/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no research; no Source Scout.** Conceptual artifact `0.1.0-sr-reviewed-climate-profile-catalog-overlay-real-pilot`; reuses overlay contract `0.1.0-sr-reviewed-climate-profile-catalog-overlay` + integration `0.1.0-sr-catalog-reviewed-climate-profile-integration-contract`. Packaging: preserve synthetic overlay byte-identical; future path `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` with exactly two records (`lavender` sun / `rosemary` water). Classifications: both **`inert_import_candidate`** (overlay-only; not product/runtime/recommendation/catalog/v1b authority). `generatedFrom` future allowlist `{synthetic_fixture, real_reviewed_batch_pilot}` — provenance only; not implemented. Record keys must equal canonicalKey. Compact fingerprint layers A/B/C non-interchangeable. All authority flags false; context outdoor/ground/mature/general; region omitted; climateTraits agreement informational only. Sequence: overlay proof → separate Adapter bridge → authority much later. Expected later four-file scope; separate real-pilot harness; synthetic harness untouched. Verdict: **`REAL_REVIEWED_PROFILE_OVERLAY_DOCUMENTATION_CONTRACT_DEFINED`**. |
+| **Smart Recommendations — Developer-Only Reviewed Climate Profile Product Adapter production verification** | Done (pushed) | **Documentation-only after production verification; no adapter module/harness/schema/seed/overlay/`index.html`/identity/real-batch/foundation/shared-validator/Batch Draft Generator/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no real Lavender/Rosemary overlay; no manual deploy; no Netlify setting change; no push in this docs commit.** Deployed implementation: **`e011c4e4182327411b7ccae682663641ac85e2ee`** (`feat: add developer-only reviewed climate profile product adapter`). Production: https://friendly-taiyaki-64aacb.netlify.app/. **URLs:** app `/`; adapter module `/modules/smart-recommendations/developer-reviewed-climate-profile-product-adapter.js`; adapter harness `/tests/smart-rec-developer-reviewed-climate-profile-product-adapter.test.html`; overlay harness; Batch Draft Generator harness; Lavender/Rosemary harnesses. **HTTP/content:** all **200** with expected types; LF-normalized exact match vs `e011c4e` for adapter module, adapter harness, overlay harness, Batch Draft Generator harness, Lavender harness, Rosemary harness. Module contains versions `0.1.0-sr-reviewed-climate-profile-product-adapter` / contracts `…-product-adapter-contract` / `…-product-adapter-result` / capability `explicit_developer_reviewed_climate_profile_product_adapter_analysis` and public exports (descriptor, normalize, validate, analyze, input fingerprint builder, finding/status enums). Harness contains PASS/FAIL verdicts, `__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT` / `_LAST`, `bannerStatus`, `bootMarker`, Run/Reset, `Not run yet.`. **App isolation before:** no adapter-module/harness request; no Product Adapter boot/state; v1b present; GOS absent; no OpenAI/Anthropic. **Harness inert:** `boot.inert` true; LAST null; `#banner`/`#bannerStatus`/`#bootMarker` present; summary `Not run yet.`; no module request before Run. **Five complete Reset→Run→Reset production cycles:** identical; **112/112**; verdict `DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PASS`; findingInventory **36**; counters external/storage/console/unhandled/runtime/v1b/GOS/smartRec all **0**; Reset zero-fetch + idempotent inert restore; PASS keeps `#bootMarker`/`#bannerStatus`; first Run triggers same-origin module import only (no overlay/Lavender/Rosemary/external). **summaryFingerprint** identical across 5 cycles (agreement `adapterResult|…status":"reviewed_supported_agreement"…`; sha256 prefix `4c4c8c724d6b`). Probe: agreement candidateAvailable true / productUseAllowed false / humanReviewRequired false; conflict humanReviewRequired true / productUseAllowed false; absent candidateAvailable false; no forbidden effective/resolved/final/recommended keys in outputs; descriptor all authority flags false; activation `explicit_developer_call_only`; `indexHtmlImport` false. **Non-regression:** overlay **98/98**; Batch Draft Generator **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; recon **158**/156 PASS/2 EXPECTED_QUARANTINED/0 unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leakage **0**; registryVersion **1.5.0**; foundation defaults **0/0/0**; GOS paused; v1b authority. **App isolation after:** no adapter residue. Adapter remains developer-only and inert from the product’s perspective. **Next checkpoint must be selected separately.** Verdict: **`DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PRODUCTION_VERIFIED`**. |
 | **Smart Recommendations — Developer-Only Reviewed Climate Profile Product Adapter Implementation** | Done (pushed; production verified) | **Exact three-file developer-only analysis adapter proof; pushed at `e011c4e`.** Adapter version `0.1.0-sr-reviewed-climate-profile-product-adapter`; capability `explicit_developer_reviewed_climate_profile_product_adapter_analysis`; contracts `0.1.0-sr-reviewed-climate-profile-product-adapter-contract` / `0.1.0-sr-reviewed-climate-profile-product-adapter-result`. Shape B reviewed snapshot + `{ absent: true }` sentinel; legacy `legacyObservedValue` vs non-authoritative `reviewedCandidateValue`; **`productUseAllowed` / all authority flags always false**; finding inventory **36**. Synthetic fixtures only. Harness Reset-safe; local **112/112**; verdict `DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PASS`. **Later completed:** isolated production verification — see production-verification checkpoint. Verdict: **`DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_IMPLEMENTED_LOCALLY`**. |
 | **Smart Recommendations — Reviewed Climate Profile Product Adapter Documentation Contract** | Done (pushed) | **Documentation-only; creates no Product Adapter module/harness/fixture/output JSON/runtime loader; no schema/catalog/seed/overlay/reviewed-data/foundation/shared-validator/Batch Draft Generator/`index.html`/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no external research.** Adapter Contract `0.1.0-sr-reviewed-climate-profile-product-adapter-contract`; Result Contract `0.1.0-sr-reviewed-climate-profile-product-adapter-result`. Freezes developer-only explicit-call-only in-memory analysis adapter: normalized legacy field snapshot + inert reviewed Profile snapshot + current identity state + target context (+ optional region) → agreement/conflict/blocked/stale report + optional non-authoritative `reviewedCandidateValue`; **`productUseAllowed` always false**. Terminology: `legacyObservedValue` / `reviewedCandidateValue` / `agreementStatus` — **never** `effectiveValue` / `resolvedValue` / `finalValue` / `recommendedValue`. Gates: current `needsReview` / identity conflict / genus-parent scope / exact context equality / region unknown≠compatible / stale fingerprint hard-block. Does **not** call `hasTrustedAppLocation`, v1b, Smart Recommendations, or GOS. Synthetic-only first proof. Placement: `modules/smart-recommendations/developer-reviewed-climate-profile-product-adapter.js` + harness; no `index.html` import. v1b + `climateTraits` remain product climate authority; GOS paused; real Lavender/Rosemary catalog overlay deferred; Source Scout deferred. Pushed at `e3019cc`. **Later completed:** Developer-Only Product Adapter Implementation — see implementation checkpoint. Verdict: **`REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_DOCUMENTATION_CONTRACT_DEFINED`**. |
 | **Smart Recommendations — Inert reviewedClimateProfile Schema Implementation production verification** | Done (pushed) | **Documentation-only after production verification; no schema/overlay/module/harness/seed/`index.html`/identity/real-batch/foundation/shared-validator/Batch Draft Generator/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no Product Adapter; no manual deploy; no Netlify setting change.** Docs pushed at `891c5c3`. Production: https://friendly-taiyaki-64aacb.netlify.app/ corresponding to deployed proof **`b281818ff8e81a2201f50e756f5ac432fdc63887`** (`feat: add inert reviewed climate profile catalog proof`) plus harness Reset fix **`dbcc2e6a7d2d4a2f13839baead0853820a04b2e5`** (`fix: restore inert overlay harness reset state`). **URLs:** app `/`; schema `/data/plant-catalog.schema.json`; synthetic overlay `/data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.synthetic.v1.json`; overlay module `/modules/smart-recommendations/developer-reviewed-climate-profile-catalog-overlay.js`; proof harness `/tests/smart-rec-developer-reviewed-climate-profile-catalog-overlay.test.html`; Batch Draft Generator harness; Lavender/Rosemary harnesses. **HTTP/content:** all **200** with expected types; LF-normalized exact match vs `dbcc2e6` for schema, overlay, module, updated harness, and protected non-regression harnesses; Reset helpers present (`bannerStatus`, `bootMarker`, `ensureHarnessBannerStructure`, `setBannerState`, `restoreInertUi`). **App isolation before:** no overlay/module/harness request; no reviewedClimateProfile runtime boot; no Product Adapter; no storage/external/GOS attributable; v1b product path; My Garden unchanged. **Harness inert:** `boot.inert` true; LAST null; `#banner`/`#bannerStatus`/`#bootMarker` present; summary `Not run yet.`; no overlay fetch/module load before Run. **Root cause / fix:** initial prod-verify on `b281818` failed Reset DOM only (PASS `innerHTML` deleted `#bootMarker`); pushed `dbcc2e6` preserves/recreates banner structure and restores visible inert UI. **Five complete Reset→Run→Reset production cycles:** identical; **98/98**; verdict `INERT_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_PASS`; overlay/merged **2/2**; warnings **1** / conflictWarnings **1** / needsReviewWarnings **1** / hard errors **0**; overlay requests **1**/Run and **0**/Reset; external/storage/console/unhandled **0**; PASS keeps `#bootMarker`/`#bannerStatus`; Reset idempotent; summaryFingerprint exact frozen `0.1.0-sr-reviewed-climate-profile-catalog-overlay\|pass=98\|fail=0\|overlayRecords=2\|merged=2\|warnings=1\|conflictWarnings=1\|needsReviewWarnings=1\|overlayRequests=1\|external=0\|storage=0\|0.1.0-sr-reviewed-climate-profile-catalog-overlay\|\|needs_review_active\|synthetic-rcp-sun-agree,synthetic-rcp-water-conflict-blocked\|0.1.0-sr-reviewed-climate-profile-catalog-overlay\|\|needs_review_active,needs_review_active\|2`. **Schema:** draft-07; `schemaVersion` **1**; optional sibling `reviewedClimateProfile`; authority flags `const false`; sun/water only. **Synthetic:** `synthetic-rcp-sun-agree` / `synthetic-rcp-water-conflict-blocked`; identity registry **1.5.0**; climateTraits coexistence; expected `needs_review_active` + `climate_traits_value_conflict`. **Seed/index:** unchanged; no runtime overlay load. **Non-regression:** merge **89/89**; Batch Draft Generator **92/92**; Lavender **64/64**; Rosemary **64/64**; recon **158/156/2/0**; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leakage **0**; foundation defaults **0/0/0**; GOS paused; v1b authority. **App isolation after:** fresh home — no overlay residue. Proof remains developer-only and inert. **Next checkpoint must be selected separately.** Verdict: **`INERT_REVIEWED_CLIMATE_PROFILE_SCHEMA_PRODUCTION_VERIFIED`**. |
@@ -11198,28 +11199,263 @@ Preserve: inert schema proof **98/98**; Batch Draft Generator **92/92**; Lavende
 
 Stop before implementation if: output could be mistaken for product authority; effective/resolved value required; `climateTraits`/reviewed Profile must mutate; runtime import required; trusted-location must be bypassed; v1b/GOS/matcher/filter/eligibility/UI must change; stale cannot be blocked; context/region cannot be preserved; `needsReview`/conflicts weaken; file scope cannot stay isolated.
 
-## Roadmap baseline after this contract
+## Roadmap baseline after Product Adapter Documentation Contract
 
 - Inert reviewedClimateProfile schema proof: production-verified and closed.
 - Product Adapter Documentation Contract: complete (pushed `e3019cc`).
-- Developer-Only Product Adapter Implementation: pushed (`e011c4e`) and production-verified (this docs commit).
+- Developer-Only Product Adapter Implementation: pushed (`e011c4e`) and production-verified (`e133d22`).
 - v1b remains product climate authority; adapter remains developer-only and non-authoritative.
-- Real Lavender/Rosemary catalog overlay: deferred.
+- Real Lavender/Rosemary catalog overlay contract: see next section (this docs commit).
 - Source Scout: deferred.
 - Media roadmap: future.
 - GOS: paused.
 
 ---
 
+# Real Lavender and Rosemary Reviewed Climate Profile Catalog Overlay Documentation Contract
+
+**Checkpoint type:** documentation-only. **Verdict:** `REAL_REVIEWED_PROFILE_OVERLAY_DOCUMENTATION_CONTRACT_DEFINED`.
+
+This contract defines a **future developer-only real-pilot overlay**. It is **not** a runtime catalog integration; **not** a `plants.seed.json` integration; **not** product-authority activation; **not** Product Adapter runtime consumption; **not** Smart Recommendations integration; **not** v1b integration; **not** GOS integration; **not** automated research or import. **No implementation code or JSON is created in this checkpoint.**
+
+## Import eligibility
+
+| Plant | Classification | Meaning |
+|---|---|---|
+| Lavender | **`inert_import_candidate`** | Eligible only for representation in a developer-only inert overlay |
+| Rosemary | **`inert_import_candidate`** | Same |
+
+Does **not** mean product eligibility, runtime eligibility, recommendation eligibility, catalog authority, v1b authority, or Product Adapter `productUseAllowed`.
+
+## Packaging model
+
+- Preserve the production-verified synthetic overlay **byte-identical**.
+- Create **one** separate real-pilot overlay containing Lavender and Rosemary together.
+- Do **not** mix synthetic and real records; do **not** write Profiles into `plants.seed.json`; do **not** create build-time catalog output; do **not** create one file per batch.
+
+**Future path:** `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json`
+
+## Artifact and contract identities
+
+| Identity | Value |
+|---|---|
+| Overlay contract (reuse) | `0.1.0-sr-reviewed-climate-profile-catalog-overlay` |
+| Integration contract (reuse) | `0.1.0-sr-catalog-reviewed-climate-profile-integration-contract` |
+| Conceptual real-pilot artifact | `0.1.0-sr-reviewed-climate-profile-catalog-overlay-real-pilot` |
+
+Do **not** introduce a new authority contract.
+
+## generatedFrom
+
+Current production module accepts only `synthetic_fixture`.
+
+Future **minimal generic** allowlist must accept exactly:
+
+- `synthetic_fixture`
+- `real_reviewed_batch_pilot`
+
+Rules: synthetic overlay remains `generatedFrom: synthetic_fixture`; real-pilot must use `generatedFrom: real_reviewed_batch_pilot`; no other v1 value; provenance only — grants **no** authority, changes **no** runtime behavior, permits **no** automatic import. Future module change limited to this allowlist unless implementation planning proves another strictly necessary generic change.
+
+## Record keys
+
+Existing overlay validator requires `recordKey === identityBinding.canonicalKey`.
+
+**Exact keys:** `lavender` · `rosemary`
+
+Do **not** use `lavender-sun-preference-reviewed-v1`, `rosemary-water-preference-reviewed-v1`, random IDs, or batch IDs as record keys. Field differentiation remains under `fields.sun` / `fields.water`.
+
+## Overlay-level shape
+
+Reuse the existing overlay contract top-level shape (no new top-level fields unless implementation planning confirms they are required by the existing generic contract):
+
+- `overlayContractVersion`
+- `integrationContractVersion`
+- `catalogSchemaVersion`
+- `identityRegistryVersion`
+- `generatedFrom`
+- `records`
+- deterministic `reportFingerprint` / `summaryFingerprint` (or existing module equivalent)
+
+Conceptual `authoritative: false` / `automaticImport: false` / `developerOnly` where the contract already represents them (record/integration authority flags). Do **not** invent unsupported top-level keys solely for this pilot.
+
+## Record shape
+
+Each record: `reviewedClimateProfile` with `integrationContractVersion`, `integrationStatus`, all **false** authority flags, `identityBinding`, `fields`.
+
+| Record | Key | Field snapshot |
+|---|---|---|
+| Lavender | `lavender` | `fields.sun` |
+| Rosemary | `rosemary` | `fields.water` |
+
+Compact field snapshot may contain only: `profileId`, `sourceProfileContractVersion`, `field`, `profileStatus`, `reviewedClaimType`, `reviewedValue`, `contextScope`, `profileFingerprint` (**compact** catalog fingerprint), `fieldReviewReference`, `evidenceRefCount`, `unresolvedLimitations`, `sourceBatchId`, `sourceBatchValidationFingerprint`, field `integrationStatus`; `outcomeApplicability` / `supersedesProfileId` when present; `lastReviewed` only when permitted by the current compact contract.
+
+**Reject:** source excerpts; full Evidence Packets; full Field Reviews; raw source bodies; recommendation/eligibility/matcher/suitability scores; user-facing prose.
+
+## Lavender record freeze
+
+| Binding | Value |
+|---|---|
+| canonicalKey / scientific | `lavender` / *Lavandula angustifolia* |
+| identityRegistryVersion | `1.5.0` |
+| needsReview / conflict | `false` / `false` |
+| planned identityBindingFingerprint | `lavender\|Lavandula angustifolia\|1.5.0\|false\|false` |
+| sourceBatchId | `lavender-sun-preference-v1` |
+| profileId | `scp-lavender-sun-preference-v1` |
+| sourceProfileContractVersion | `0.1.0-sr-structured-climate-profile-contract` |
+| field / status / claim / value | `sun` / `reviewed_supported` / `preference` / `full_sun` |
+| evidenceRefCount | `2` |
+| context | outdoor / ground / mature / general |
+| region | **absent** |
+| unresolvedLimitations | `partial_shade_listed_as_possible_tolerance_or_context_only_not_a_second_reviewed_claim` |
+| integrationStatus | `inert_imported` |
+| legacy relationship | informational agreement with current `full_sun` metadata only |
+
+## Rosemary record freeze
+
+| Binding | Value |
+|---|---|
+| canonicalKey / scientific | `rosemary` / *Salvia rosmarinus* |
+| identityRegistryVersion | `1.5.0` |
+| needsReview / conflict | `false` / `false` |
+| planned identityBindingFingerprint | `rosemary\|Salvia rosmarinus\|1.5.0\|false\|false` |
+| sourceBatchId | `rosemary-water-preference-v1` |
+| profileId | `scp-rosemary-water-preference-v1` |
+| sourceProfileContractVersion | `0.1.0-sr-structured-climate-profile-contract` |
+| field / status / claim / value | `water` / `reviewed_supported` / `preference` / `low` |
+| evidenceRefCount | `2` |
+| context | outdoor / ground / mature / general |
+| region | **absent** |
+| unresolvedLimitations | `ncsu_dry_to_medium_band_is_not_a_second_reviewed_medium_claim`; `establishment_year_watering_is_outside_the_mature_context`; `container_watering_is_outside_the_ground_context` |
+| integrationStatus | `inert_imported` |
+| legacy relationship | informational agreement with current `low` water metadata only |
+
+## Authority flags
+
+Wherever contractually represented (overlay/record/field): `authoritative`, `productAuthority`, `eligibilityAuthority`, `scalarAuthority`, `runtimeRecommendationAuthority`, `GOSOutcomeAuthority`, `automaticImport` — all **false**; `runtimeConsumptionAllowed` **false** where supported. Any **true** is invalid. Agreement with legacy data does **not** grant authority.
+
+## Identity rules
+
+- `recordKey` equals `canonicalKey`; registry scientific name + version match; identityBindingFingerprint recomputes via existing overlay module function (not an independently invented formula).
+- Current identity rechecked at validation; aliases/genus/spp./parent cannot inherit Profiles; overlay import cannot clear `needsReview` or resolve conflicts.
+- `inert_blocked` when current needsReview or identity conflict blocks import; `stale` when identity/fingerprint/contract bindings drift.
+
+## Context and region
+
+Both Profiles preserve exactly outdoor / ground / mature / general. Do **not** generalize to indoor, container, seedling, propagation, flowering, fruiting, harvest, or other objectives; no fuzzy/subset inference.
+
+Neither Profile has `climateOrRegion` — **omit** region; do not invent country, zone, climate class, coordinates, or hemisphere. Product Adapter region gate remains `not_applicable` only when both target and Profile omit region. Future runtime use still requires separate trusted-location / regional-intelligence gates.
+
+## climateTraits coexistence
+
+| Plant | Legacy observed | Reviewed candidate |
+|---|---|---|
+| Lavender | `full_sun` | `full_sun` |
+| Rosemary | `low` | `low` |
+
+Agreement is informational only: no overwrite, mutation, group-metadata removal, seed update, `effectiveValue` / `resolvedValue` / `recommendedValue`, or automatic authority promotion. v1b and current merged climate metadata remain product authority.
+
+## Three fingerprint layers (non-interchangeable)
+
+| Layer | Role |
+|---|---|
+| **A. Source SCP fingerprint** | Committed Structured Climate Profile content proof |
+| **B. Compact field fingerprint** | Existing compact catalog fingerprint function; binds only the compact snapshot |
+| **C. Source batch validation fingerprint** | Deterministic reviewed-data batch validator `summaryFingerprint` for the committed batch |
+
+Mismatch in any required layer fails closed. Overlay stores/validates **B** in `profileFingerprint`; binds **C** via `sourceBatchValidationFingerprint`; **A** remains on the source Profile artifacts.
+
+## Identity-binding fingerprinting
+
+Planning expectation for this pilot: `canonicalKey|acceptedScientificName|identityRegistryVersion|currentNeedsReview|currentIdentityConflict`. Exact future implementation must use the existing overlay module’s deterministic identity-binding function after implementation planning confirms its API.
+
+## Overlay fingerprinting
+
+Per-record and overlay summary fingerprints include meaning-bearing data: overlay/artifact version, `generatedFrom`, sorted record keys, canonical identity, field, Profile fingerprint reference, compact field fingerprint, FR reference fingerprint, source-batch validation fingerprint, integration status, exact context, authority flags, unresolved limitations. Exclude wall-clock time, file path, DOM state, runtime counters, test-cycle number, randomness. Deterministic sorting required.
+
+## Validation-module delta
+
+Production module is generic except `generatedFrom === synthetic_fixture` hard lock. Future implementation may make **one** minimal generic provenance change:
+
+`generatedFrom ∈ { synthetic_fixture, real_reviewed_batch_pilot }`
+
+Must **not** weaken synthetic validation/behavior; add product authority, runtime import, automatic execution, new vocabularies; or alter compact-field / identity / fingerprint semantics. Any additional module change requires explicit justification in implementation planning.
+
+## Harness strategy
+
+Create a **separate** explicit-run real-pilot overlay harness. Do **not** modify the production-verified synthetic overlay harness unless a generic non-regression assertion is strictly necessary and separately approved.
+
+Real-pilot harness must: remain inert before Run; dynamically load only after explicit Run; fetch only the real-pilot overlay; validate exactly two records; bind source/batch/identity/context/fingerprints; prove all authority flags false; prove informational legacy agreement; prove zero product/runtime use; support stable idempotent Reset; support ≥ five identical Reset → Run → Reset cycles.
+
+## Implementation sequence
+
+1. Real overlay implementation and isolated validation proof.
+2. Separate real overlay → Product Adapter bridge planning and proof.
+3. Authority activation planning much later.
+
+Do **not** combine stages. First implementation checkpoint must **not** modify the Product Adapter.
+
+## Expected later file scope
+
+1. `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json`
+2. `modules/smart-recommendations/developer-reviewed-climate-profile-catalog-overlay.js` (minimal `generatedFrom` allowlist only)
+3. `tests/smart-rec-developer-reviewed-climate-profile-catalog-overlay-real-pilot.test.html`
+4. `PROJECT_STATUS.md`
+
+No schema, `plants.seed.json`, `index.html`, Product Adapter, batch, or foundation change.
+
+## Authenticity
+
+Every future real-overlay value must derive only from committed Lavender batch, Rosemary batch, identity registry, existing compact catalog contract, and existing deterministic validators. Do **not** perform new research; manually alter botanical conclusions; invent region/context; copy source prose; add unsupported confidence/scores; or change committed limitations.
+
+## Invalid / stale cases (fail closed)
+
+Unsupported overlay contract / `generatedFrom` / artifact version; duplicate record key or canonical field; canonical identity / scientific-name / identity-binding mismatch; unsupported Profile contract; source Profile fingerprint mismatch; compact field fingerprint mismatch; FR reference mismatch; source-batch validation fingerprint mismatch; stale integration; authority flag true; missing required context; field mismatch; unsupported reviewed value; source-excerpt / full EP / full FR injection; product-score / eligibility / matcher-value injection; runtime-consumption attempt; mutation; nondeterministic fingerprint.
+
+## Success cases
+
+Exactly two records (`lavender` sun + `rosemary` water); both `inert_imported`; both authority-free; identity-, Profile-, FR-, and batch-validation-bound; exact context preserved; neither invents region; both informationally agree with current legacy climate metadata; zero product authority; zero runtime use.
+
+## Product isolation
+
+Normal application: no real-overlay / synthetic-overlay / overlay-module (runtime) / Product Adapter request; no `reviewedClimateProfile` runtime read; no recommendation, score/ranking, filter/matcher/eligibility, UI, v1b, or GOS change; no storage or external API attributable to the overlay.
+
+## Protected non-regression
+
+Product Adapter **112/112**; synthetic overlay **98/98**; Batch Draft Generator **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; identity reconciliation **158 / 156 / 2 / 0**; resolver **108/108**; legacy **36/36/36**; all **23** conflicts blocked; leakage **0**; identity registry **1.5.0**; foundation defaults **0/0/0**; trusted-location and missing-meta unchanged; v1b product authority; GOS paused.
+
+## Relationship to automation
+
+This pilot enables later automation by proving EP → FR → SCP → compact catalog candidate traceability; real batch validation can bind a catalog overlay record; real artifacts can use the same compact catalog contract as synthetic proof; future Source Scout / Draft Generator outputs have a frozen target format; two real records can later exercise the Product Adapter.
+
+It does **not** yet automate research or import; approve data automatically; write to the seed; create runtime authority; or create product eligibility.
+
+## Stop conditions
+
+Stop before implementation if either source chain cannot be deterministically bound; identity binding is stale/ambiguous; current needsReview/conflict blocks import; existing overlay contract cannot represent the records; schema/seed/`index.html`/runtime import is required; authority flags cannot remain false; current climate metadata must be mutated; source prose or region must be invented; production-verified synthetic harness must be weakened; or file scope cannot stay isolated.
+
+## Roadmap baseline after this contract
+
+- Both Profiles are approved **`inert_import_candidate`** records.
+- Real-pilot overlay contract is documented.
+- **No** real overlay artifact exists yet.
+- `generatedFrom` allowlist change is planned but **not** implemented.
+- Product Adapter remains unchanged and production-verified (**112/112**).
+- Synthetic overlay remains unchanged and production-verified (**98/98**).
+- v1b remains product climate authority.
+- Source Scout remains deferred.
+- Real-overlay **implementation planning** is the next separately gated checkpoint.
+
+---
+
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator; Blueberry Identity Outcome + Preference-versus-Tolerance docs; Evidence Packet / Field Review Reference Amendments; Structured Climate Profile foundation; First Real Lavender Reviewed-Data Batch (`4a5f3ad`) + production verification (`586bf8f`); Second Real Rosemary research (`aa48885`) + implementation (`c5a64d1`) + production verification (`9808630`); Reviewed-Data Batch Automation Documentation Contract (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment (`c01c028`); Deterministic Batch Draft Generator Implementation (`f814d3d`); Deterministic Batch Draft Generator production verification (`4842846`); Catalog Reviewed Climate Profile Documentation Contract (`fca925c`); Inert reviewedClimateProfile Schema Implementation (`b281818`); Overlay Harness Reset-State Fix (`dbcc2e6`); Inert reviewedClimateProfile Schema Implementation production verification (`891c5c3`); Reviewed Climate Profile Product Adapter Documentation Contract (`e3019cc`); Developer-Only Reviewed Climate Profile Product Adapter Implementation (`e011c4e`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Evidence Packet Validator; Blueberry Identity Outcome + Preference-versus-Tolerance docs; Evidence Packet / Field Review Reference Amendments; Structured Climate Profile foundation; First Real Lavender Reviewed-Data Batch (`4a5f3ad`) + production verification (`586bf8f`); Second Real Rosemary research (`aa48885`) + implementation (`c5a64d1`) + production verification (`9808630`); Reviewed-Data Batch Automation Documentation Contract (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment (`c01c028`); Deterministic Batch Draft Generator Implementation (`f814d3d`); Deterministic Batch Draft Generator production verification (`4842846`); Catalog Reviewed Climate Profile Documentation Contract (`fca925c`); Inert reviewedClimateProfile Schema Implementation (`b281818`); Overlay Harness Reset-State Fix (`dbcc2e6`); Inert reviewedClimateProfile Schema Implementation production verification (`891c5c3`); Reviewed Climate Profile Product Adapter Documentation Contract (`e3019cc`); Developer-Only Reviewed Climate Profile Product Adapter Implementation (`e011c4e`); Product Adapter production verification (`e133d22`).
 
-**Done (local; this commit):** Developer-Only Reviewed Climate Profile Product Adapter production verification — deployed `e011c4e`; five identical production Reset→Run→Reset cycles **112/112**; verdict `DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PASS`; Reset-safe inert restore; product isolation before/after; full protected non-regression; no runtime integration. Verdict: `DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PRODUCTION_VERIFIED`.
+**Done (local; this commit):** Real Lavender and Rosemary Reviewed Climate Profile Catalog Overlay Documentation Contract — freeze separate real-pilot overlay packaging, record keys `lavender`/`rosemary`, `generatedFrom: real_reviewed_batch_pilot`, compact fingerprint layers, source-batch binding, all authority flags false, exact context, omitted region, informational climateTraits agreement, separate real-pilot harness, no runtime/Product Adapter integration. Verdict: `REAL_REVIEWED_PROFILE_OVERLAY_DOCUMENTATION_CONTRACT_DEFINED`.
 
-**Next (exactly one):** **Real Lavender/Rosemary Catalog Overlay Planning** (read-only planning only; freeze the smallest safe inert catalog overlay path for real Lavender/Rosemary reviewedClimateProfile snapshots without product authority; **no implementation**; **no schema/seed/runtime change**). Do **not** begin it in this commit. Do **not** begin Source Scout, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority. Product Adapter remains developer-only and non-authoritative.
+**Next (exactly one):** **Real Lavender/Rosemary Catalog Overlay Implementation Planning** (read-only planning; **no code or JSON**; confirm exact current overlay module APIs; freeze minimal `generatedFrom` delta; freeze exact real JSON values and fingerprints; freeze real harness assertions and Reset behavior; freeze exact four-file scope). Do **not** begin it in this commit. Do **not** begin real overlay implementation, Product Adapter bridge, Source Scout, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority. Product Adapter remains developer-only and non-authoritative. Synthetic overlay remains production-verified and untouched.
 
-**Deferred (not authorized):** (1) Source Scout / Research Agent Planning; (2) adapter→v1b / Smart Recommendations / GOS integration.
+**Deferred (not authorized):** (1) Real Overlay → Product Adapter Bridge Planning; (2) Source Scout Documentation Contract.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
