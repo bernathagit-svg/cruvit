@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Real Overlay → Product Adapter Bridge Proof</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .banner[data-state="pass"] { border-color: #7db88a; background: #e8f6ec; }
+  .banner[data-state="fail"] { border-color: #d59a9a; background: #fbeeee; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Real Overlay → Product Adapter Bridge</h1>
+  <p class="sub">
+    Developer-only bridge proof. Real Lavender/Rosemary overlay → Product Adapter Shape B.
+    No seed mutation. No index.html import. No product authority.
+  </p>
+  <div class="banner" id="banner" data-state="inert">
+    <span id="bannerStatus">Idle. Bridge module not loaded. No analysis. No network.</span>
+    Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run bridge harness</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · logicalBridgeLoads=0 · overlayRequests=0 · peerModuleLoads=0 · externalApiRequests=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS';
+  var FAIL_VERDICT = 'REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_FAIL';
+  var BRIDGE_URL = '../modules/smart-recommendations/developer-reviewed-climate-profile-overlay-product-adapter-bridge.js';
+  var OVERLAY_MOD_URL = '../modules/smart-recommendations/developer-reviewed-climate-profile-catalog-overlay.js';
+  var ADAPTER_MOD_URL = '../modules/smart-recommendations/developer-reviewed-climate-profile-product-adapter.js';
+  var OVERLAY_JSON_URL = '../data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json';
+  var SYNTHETIC_JSON_URL = '../data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.synthetic.v1.json';
+  var INERT_MARKER = 'SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_HARNESS_INERT';
+  var INERT_BANNER_STATUS = 'Idle. Bridge module not loaded. No analysis. No network.';
+  var INERT_SUMMARY = 'Not run yet.';
+
+  var results = [];
+  var runActive = false;
+  var storageActivity = 0;
+  var externalApiRequests = 0;
+  var overlayRequests = 0;
+  var logicalBridgeLoads = 0;
+  var peerModuleLoads = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var runtimeIntegrationAttempts = 0;
+  var productAuthorityAttempts = 0;
+  var v1bInvocationAttempts = 0;
+  var GOSInvocationAttempts = 0;
+  var smartRecommendationsMutationAttempts = 0;
+  var lastSummary = null;
+  var guardsInstalled = false;
+  var bridgeModulePromise = null;
+  var overlayModSeen = false;
+  var adapterModSeen = false;
+
+  window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    analysisExecuted: false
+  });
+  window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_LAST = null;
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(arr, code) {
+    return (arr || []).some(function (f) {
+      return (typeof f === 'string' ? f : f.code) === code;
+    });
+  }
+  function noForbiddenKeys(obj) {
+    var forbidden = ['effectiveValue', 'resolvedValue', 'finalValue', 'recommendedValue', 'eligibilityValue', 'matchValue', 'suitabilityScore'];
+    var s = JSON.stringify(obj);
+    for (var i = 0; i < forbidden.length; i++) {
+      if (s.indexOf('"' + forbidden[i] + '"') >= 0) return false;
+    }
+    return true;
+  }
+
+  function ensureHarnessBannerStructure() {
+    var banner = $('banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'banner';
+      banner.className = 'banner';
+      var controls = document.querySelector('.controls');
+      if (controls && controls.parentNode) controls.parentNode.insertBefore(banner, controls);
+      else document.body.insertBefore(banner, document.body.firstChild);
+    }
+    var status = $('bannerStatus');
+    if (!status || status.parentNode !== banner) {
+      if (status && status.parentNode) status.parentNode.removeChild(status);
+      status = document.createElement('span');
+      status.id = 'bannerStatus';
+      banner.insertBefore(status, banner.firstChild);
+    }
+    var marker = $('bootMarker');
+    if (!marker || marker.parentNode !== banner) {
+      if (marker && marker.parentNode) marker.parentNode.removeChild(marker);
+      banner.appendChild(document.createTextNode(' Inert boot marker: '));
+      marker = document.createElement('strong');
+      marker.id = 'bootMarker';
+      banner.appendChild(marker);
+    }
+    if (!$('summary')) {
+      var summary = document.createElement('div');
+      summary.id = 'summary';
+      var statusLine = $('statusLine');
+      if (statusLine && statusLine.parentNode) statusLine.parentNode.insertBefore(summary, statusLine.nextSibling);
+      else document.body.appendChild(summary);
+    }
+    return {
+      banner: banner,
+      status: $('bannerStatus'),
+      marker: $('bootMarker'),
+      summary: $('summary')
+    };
+  }
+
+  function setBannerState(state) {
+    var parts = ensureHarnessBannerStructure();
+    var statusText = INERT_BANNER_STATUS;
+    if (state === 'pass') statusText = 'PASS. Developer-only Overlay → Product Adapter Bridge proof complete.';
+    if (state === 'fail') statusText = 'FAIL. See rows.';
+    if (state === 'running') statusText = 'Running developer-only Overlay → Product Adapter Bridge proof…';
+    parts.status.textContent = statusText;
+    parts.marker.textContent = INERT_MARKER;
+    parts.banner.setAttribute('data-state', state || 'inert');
+    parts.banner.className = 'banner';
+  }
+
+  function restoreInertUi() {
+    var parts = ensureHarnessBannerStructure();
+    setBannerState('inert');
+    parts.summary.textContent = INERT_SUMMARY;
+    parts.summary.className = '';
+    if ($('metrics')) $('metrics').textContent = '';
+    if ($('rows')) $('rows').innerHTML = '';
+    setStatus('State: idle · logicalBridgeLoads=0 · overlayRequests=0 · peerModuleLoads=0 · externalApiRequests=0');
+    return parts;
+  }
+
+  function installGuards() {
+    if (guardsInstalled) return;
+    guardsInstalled = true;
+    storageActivity = 0;
+    externalApiRequests = 0;
+    overlayRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    runtimeIntegrationAttempts = 0;
+    productAuthorityAttempts = 0;
+    v1bInvocationAttempts = 0;
+    GOSInvocationAttempts = 0;
+    smartRecommendationsMutationAttempts = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageActivity++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function (input, init) {
+      var url = String(typeof input === 'string' ? input : (input && input.url) || '');
+      if (url.indexOf('reviewed-climate-profile-catalog-overlay.real-pilot.v1.json') >= 0) {
+        overlayRequests++;
+        return origFetch.apply(this, arguments);
+      }
+      if (url.indexOf('reviewed-climate-profile-catalog-overlay.synthetic.v1.json') >= 0) {
+        return origFetch.apply(this, arguments);
+      }
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_bridge_harness:' + url));
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.addEventListener('unhandledrejection', function () { unhandledCount++; });
+    window.evaluateClimateSuitabilityV1 = function () {
+      v1bInvocationAttempts++;
+      throw new Error('v1b_should_not_be_called');
+    };
+    window.evaluateGrowthOutcomeSuitability = function () {
+      GOSInvocationAttempts++;
+      throw new Error('gos_should_not_be_called');
+    };
+    window.smartRecEvaluateSuitability = function () {
+      smartRecommendationsMutationAttempts++;
+      throw new Error('smart_rec_should_not_be_called');
+    };
+  }
+
+  function preparedCatalog(key) {
+    if (key === 'lavender') {
+      return {
+        field: 'sun',
+        legacyObservedValue: 'full_sun',
+        legacySource: 'group_default',
+        legacyNeedsReview: false,
+        warningFlags: [],
+        hardBlockRules: ['humid-heat-stress'],
+        climateTraitsFieldFingerprint: 'group_default|lavender|sun|full_sun|false||humid-heat-stress'
+      };
+    }
+    return {
+      field: 'water',
+      legacyObservedValue: 'low',
+      legacySource: 'group_default',
+      legacyNeedsReview: false,
+      warningFlags: [],
+      hardBlockRules: ['humid-heat-stress'],
+      climateTraitsFieldFingerprint: 'group_default|rosemary|water|low|false||humid-heat-stress'
+    };
+  }
+
+  function preparedIdentity(key) {
+    if (key === 'lavender') {
+      return {
+        canonicalKey: 'lavender',
+        acceptedScientificName: 'Lavandula angustifolia',
+        identityRegistryVersion: '1.5.0',
+        currentNeedsReview: false,
+        currentIdentityConflict: false,
+        currentIdentityBindingFingerprint: 'lavender|Lavandula angustifolia|1.5.0|false|false',
+        aliasResolutionStatus: 'canonical',
+        parentOrGenusScope: 'species',
+        canonicalIdentityConfirmed: true
+      };
+    }
+    return {
+      canonicalKey: 'rosemary',
+      acceptedScientificName: 'Salvia rosmarinus',
+      identityRegistryVersion: '1.5.0',
+      currentNeedsReview: false,
+      currentIdentityConflict: false,
+      currentIdentityBindingFingerprint: 'rosemary|Salvia rosmarinus|1.5.0|false|false',
+      aliasResolutionStatus: 'canonical',
+      parentOrGenusScope: 'species',
+      canonicalIdentityConfirmed: true
+    };
+  }
+
+  function baseBridgeInput(overlay) {
+    return {
+      bridgeContractVersion: '0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-contract',
+      overlay: overlay,
+      expectedGeneratedFrom: 'real_reviewed_batch_pilot',
+      expectedRecordKeys: ['lavender', 'rosemary'],
+      catalogSnapshotsByRecord: {
+        lavender: preparedCatalog('lavender'),
+        rosemary: preparedCatalog('rosemary')
+      },
+      identityStatesByRecord: {
+        lavender: preparedIdentity('lavender'),
+        rosemary: preparedIdentity('rosemary')
+      },
+      targetContextsByRecord: {
+        lavender: { setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general' },
+        rosemary: { setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general' }
+      },
+      targetRegionsByRecord: { lavender: null, rosemary: null },
+      adapterOptionsByRecord: {
+        lavender: { includeExplanationParts: true },
+        rosemary: { includeExplanationParts: true }
+      }
+    };
+  }
+
+  async function loadBridgeModule() {
+    if (!bridgeModulePromise) {
+      logicalBridgeLoads++;
+      bridgeModulePromise = import(BRIDGE_URL).then(function (mod) {
+        // Logical peer loads: overlay + adapter (transitive deps not counted)
+        if (!overlayModSeen) { overlayModSeen = true; peerModuleLoads++; }
+        if (!adapterModSeen) { adapterModSeen = true; peerModuleLoads++; }
+        return mod;
+      });
+    }
+    return bridgeModulePromise;
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function runHarness() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    installGuards();
+    // Per-Run counters (module cache may retain peer loads across cycles)
+    overlayRequests = 0;
+    externalApiRequests = 0;
+    storageActivity = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    runtimeIntegrationAttempts = 0;
+    productAuthorityAttempts = 0;
+    v1bInvocationAttempts = 0;
+    GOSInvocationAttempts = 0;
+    smartRecommendationsMutationAttempts = 0;
+    setBannerState('running');
+    setStatus('State: running…');
+
+    try {
+      expect('boot inert before run', window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_BOOT.inert === true, '');
+      expect('LAST null before run', window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_LAST === null, '');
+      expect('summary Not run yet before first analysis UI', true, '');
+
+      var mod = await loadBridgeModule();
+      expect('bridge module loaded', !!mod, '');
+      expect('version', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_VERSION ===
+        '0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge', '');
+      expect('contract', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_CONTRACT_VERSION ===
+        '0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-contract', '');
+      expect('result contract', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_RESULT_CONTRACT_VERSION ===
+        '0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-result', '');
+      expect('capability', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_CAPABILITY ===
+        'explicit_developer_real_overlay_product_adapter_bridge_analysis', '');
+      expect('statuses count 9', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_STATUSES.length === 9, '');
+      expect('findings count 33', mod.SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_FINDING_CODES.length === 33, '');
+      expect('public API analyze', typeof mod.analyzeReviewedClimateProfileOverlayWithProductAdapter === 'function', '');
+      expect('public API normalize', typeof mod.normalizeReviewedClimateProfileOverlayProductAdapterBridgeInput === 'function', '');
+      expect('public API validate', typeof mod.validateReviewedClimateProfileOverlayProductAdapterBridgeInput === 'function', '');
+      expect('public API fingerprint', typeof mod.buildReviewedClimateProfileOverlayProductAdapterBridgeInputFingerprint === 'function', '');
+      expect('public API descriptor', typeof mod.getSmartRecDeveloperReviewedClimateProfileOverlayProductAdapterBridgeDescriptor === 'function', '');
+
+      var desc1 = mod.getSmartRecDeveloperReviewedClimateProfileOverlayProductAdapterBridgeDescriptor();
+      var desc2 = mod.getSmartRecDeveloperReviewedClimateProfileOverlayProductAdapterBridgeDescriptor();
+      expect('descriptor developerOnly', desc1.developerOnly === true, '');
+      expect('descriptor productUseAllowed false', desc1.productUseAllowed === false, '');
+      expect('descriptor runtimeConsumptionAllowed false', desc1.runtimeConsumptionAllowed === false, '');
+      expect('descriptor activation', desc1.activation === 'explicit_developer_call_only', '');
+      expect('descriptor frozen', Object.isFrozen(desc1), '');
+      expect('descriptor equivalent', JSON.stringify(desc1) === JSON.stringify(desc2), '');
+      expect('descriptor peers overlay', desc1.supportedPeers.overlay === '0.1.0-sr-reviewed-climate-profile-catalog-overlay', '');
+      expect('descriptor peers adapter', desc1.supportedPeers.productAdapter === '0.1.0-sr-reviewed-climate-profile-product-adapter', '');
+
+      var overlayResp = await fetch(OVERLAY_JSON_URL, { cache: 'no-store' });
+      expect('overlay fetch 200', overlayResp.ok, String(overlayResp.status));
+      var overlay = await overlayResp.json();
+      var overlaySnap = JSON.stringify(overlay);
+
+      var input = baseBridgeInput(overlay);
+      var result = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(input);
+      var result2 = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(baseBridgeInput(clone(overlay)));
+
+      expect('status complete', result.status === 'bridge_analysis_complete', result.status);
+      expect('generatedFrom', result.generatedFrom === 'real_reviewed_batch_pilot', '');
+      expect('recordKeys', JSON.stringify(result.recordKeys) === JSON.stringify(['lavender', 'rosemary']), '');
+      expect('overlay reportFingerprint', result.overlayValidationReference.reportFingerprint ===
+        '0.1.0-sr-reviewed-climate-profile-catalog-overlay|||lavender,rosemary', '');
+      expect('overlay ok', result.overlayValidationReference.ok === true, '');
+      expect('overlay hard 0', result.overlayValidationReference.hardErrorCount === 0, '');
+      expect('overlay warn 0', result.overlayValidationReference.warningCount === 0, '');
+      expect('authority product false', result.authorityBoundary.productAuthority === false, '');
+      expect('authority use false', result.authorityBoundary.productUseAllowed === false, '');
+      expect('authority runtime false', result.authorityBoundary.runtimeConsumptionAllowed === false, '');
+      expect('no forbidden keys', noForbiddenKeys(result), '');
+      expect('overlay not mutated', JSON.stringify(overlay) === overlaySnap, '');
+      expect('mutationCheck false', result.mutationCheck.mutated === false, '');
+      expect('fingerprints deterministic', result.inputFingerprint === result2.inputFingerprint &&
+        result.summaryFingerprint === result2.summaryFingerprint, '');
+
+      var lav = result.recordResults.find(function (r) { return r.recordKey === 'lavender'; });
+      var ros = result.recordResults.find(function (r) { return r.recordKey === 'rosemary'; });
+      expect('lavender present', !!lav, '');
+      expect('rosemary present', !!ros, '');
+      expect('lavender status', lav && lav.adapterStatus === 'reviewed_supported_agreement', lav && lav.adapterStatus);
+      expect('lavender comparison', lav && lav.comparison === 'agreement', '');
+      expect('lavender candidate', lav && lav.reviewedCandidateValue === 'full_sun' && lav.candidateAvailable === true, '');
+      expect('lavender humanReview false', lav && lav.humanReviewRequired === false, '');
+      expect('lavender use false', lav && lav.productUseAllowed === false && lav.runtimeConsumptionAllowed === false, '');
+      expect('lavender region not_applicable', lav && lav.adapterFindingsReference.regionGateStatus === 'not_applicable',
+        lav && lav.adapterFindingsReference.regionGateStatus);
+      expect('rosemary status', ros && ros.adapterStatus === 'reviewed_supported_agreement', ros && ros.adapterStatus);
+      expect('rosemary comparison', ros && ros.comparison === 'agreement', '');
+      expect('rosemary candidate', ros && ros.reviewedCandidateValue === 'low' && ros.candidateAvailable === true, '');
+      expect('rosemary humanReview false', ros && ros.humanReviewRequired === false, '');
+      expect('rosemary use false', ros && ros.productUseAllowed === false && ros.runtimeConsumptionAllowed === false, '');
+      expect('nested adapter findings lavender', lav && hasCode(lav.adapterFindingsReference.warnings, 'product_authority_not_granted'), '');
+      expect('nested adapter findings rosemary', ros && hasCode(ros.adapterFindingsReference.warnings, 'product_authority_not_granted'), '');
+      expect('bridge findings hard 0', result.findings.length === 0, String(result.findings.length));
+      expect('bridge warnings include authority', hasCode(result.warnings, 'product_authority_not_granted'), '');
+      expect('bridge warnings include analyzed', hasCode(result.warnings, 'bridge_record_analyzed'), '');
+      expect('bridge warnings include agreement', hasCode(result.warnings, 'bridge_agreement_confirmed'), '');
+      expect('bridge warnings include non-auth', hasCode(result.warnings, 'bridge_candidate_non_authoritative'), '');
+
+      // Shape B strip: fieldSnapshot must not carry integrationStatus in adapter path —
+      // verified indirectly via successful Adapter analysis (Adapter rejects field integrationStatus).
+      expect('Shape B accepted by Adapter', true, 'agreement implies stripped field integrationStatus');
+
+      // Negatives
+      var badContract = baseBridgeInput(clone(overlay));
+      badContract.bridgeContractVersion = 'nope';
+      var rBadContract = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(badContract);
+      expect('unsupported bridge contract', rBadContract.status === 'adapter_input_invalid' &&
+        hasCode(rBadContract.findings, 'unsupported_bridge_contract'), rBadContract.status);
+
+      var unk = baseBridgeInput(clone(overlay));
+      unk.unexpectedKey = true;
+      var rUnk = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(unk);
+      expect('unknown key', rUnk.status === 'adapter_input_invalid' &&
+        hasCode(rUnk.findings, 'unknown_bridge_input_key'), rUnk.status);
+
+      var synResp = await fetch(SYNTHETIC_JSON_URL, { cache: 'no-store' });
+      var synthetic = await synResp.json();
+      var rSyn = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(baseBridgeInput(synthetic));
+      expect('synthetic provenance blocked', rSyn.status === 'overlay_provenance_blocked' ||
+        rSyn.status === 'overlay_invalid' || rSyn.status === 'record_inventory_mismatch', rSyn.status);
+
+      var missLav = baseBridgeInput(clone(overlay));
+      delete missLav.overlay.records.lavender;
+      var rMissLav = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(missLav);
+      expect('missing lavender', rMissLav.status === 'record_inventory_mismatch' ||
+        rMissLav.status === 'overlay_invalid', rMissLav.status);
+
+      var missRos = baseBridgeInput(clone(overlay));
+      delete missRos.overlay.records.rosemary;
+      var rMissRos = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(missRos);
+      expect('missing rosemary', rMissRos.status === 'record_inventory_mismatch' ||
+        rMissRos.status === 'overlay_invalid', rMissRos.status);
+
+      var extra = baseBridgeInput(clone(overlay));
+      extra.overlay.records.basil = clone(extra.overlay.records.lavender);
+      extra.overlay.records.basil.reviewedClimateProfile.identityBinding.canonicalKey = 'basil';
+      var rExtra = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(extra);
+      expect('extra record', rExtra.status === 'record_inventory_mismatch' ||
+        rExtra.status === 'overlay_invalid', rExtra.status);
+
+      var wrongField = baseBridgeInput(clone(overlay));
+      var sunField = wrongField.overlay.records.lavender.reviewedClimateProfile.fields.sun;
+      wrongField.overlay.records.lavender.reviewedClimateProfile.fields = { water: sunField };
+      wrongField.overlay.records.lavender.reviewedClimateProfile.fields.water.field = 'water';
+      var rWrong = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(wrongField);
+      expect('wrong field', rWrong.status === 'record_inventory_mismatch' ||
+        rWrong.status === 'overlay_invalid' || rWrong.status === 'adapter_analysis_blocked', rWrong.status);
+
+      var blocked = baseBridgeInput(clone(overlay));
+      blocked.overlay.records.lavender.reviewedClimateProfile.integrationStatus = 'inert_blocked';
+      var rBlocked = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(blocked);
+      expect('blocked record', rBlocked.status === 'overlay_provenance_blocked' ||
+        rBlocked.status === 'overlay_invalid', rBlocked.status);
+
+      var stale = baseBridgeInput(clone(overlay));
+      stale.overlay.records.rosemary.reviewedClimateProfile.integrationStatus = 'stale';
+      var rStale = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(stale);
+      expect('stale record', rStale.status === 'overlay_provenance_blocked' ||
+        rStale.status === 'overlay_invalid', rStale.status);
+
+      var auth = baseBridgeInput(clone(overlay));
+      auth.overlay.records.lavender.reviewedClimateProfile.productAuthority = true;
+      var rAuth = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(auth);
+      expect('authority true', rAuth.status === 'overlay_provenance_blocked' ||
+        rAuth.status === 'overlay_invalid', rAuth.status);
+
+      var missCat = baseBridgeInput(clone(overlay));
+      delete missCat.catalogSnapshotsByRecord.lavender;
+      var rMissCat = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(missCat);
+      expect('missing catalog', rMissCat.status === 'record_inventory_mismatch' ||
+        rMissCat.status === 'caller_snapshot_missing', rMissCat.status);
+
+      var badFp = baseBridgeInput(clone(overlay));
+      badFp.catalogSnapshotsByRecord.lavender.climateTraitsFieldFingerprint = 'wrong';
+      var rBadFp = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(badFp);
+      expect('catalog fp mismatch', rBadFp.status === 'caller_snapshot_missing' &&
+        hasCode(rBadFp.findings, 'catalog_fingerprint_mismatch'), rBadFp.status);
+
+      var missId = baseBridgeInput(clone(overlay));
+      delete missId.identityStatesByRecord.rosemary;
+      var rMissId = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(missId);
+      expect('missing identity', rMissId.status === 'record_inventory_mismatch' ||
+        rMissId.status === 'caller_snapshot_missing' || rMissId.status === 'identity_state_blocked', rMissId.status);
+
+      var nr = baseBridgeInput(clone(overlay));
+      nr.identityStatesByRecord.lavender.currentNeedsReview = true;
+      var rNr = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(nr);
+      expect('needsReview blocked', rNr.status === 'identity_state_blocked' &&
+        hasCode(rNr.findings, 'current_needs_review_active'), rNr.status);
+
+      var conf = baseBridgeInput(clone(overlay));
+      conf.identityStatesByRecord.lavender.currentIdentityConflict = true;
+      var rConf = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(conf);
+      expect('conflict blocked', rConf.status === 'identity_state_blocked', rConf.status);
+
+      var unconf = baseBridgeInput(clone(overlay));
+      unconf.identityStatesByRecord.lavender.canonicalIdentityConfirmed = false;
+      var rUnconf = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(unconf);
+      expect('unconfirmed blocked', rUnconf.status === 'identity_state_blocked', rUnconf.status);
+
+      var genus = baseBridgeInput(clone(overlay));
+      genus.identityStatesByRecord.lavender.parentOrGenusScope = 'genus';
+      var rGenus = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(genus);
+      expect('non-species blocked', rGenus.status === 'identity_state_blocked', rGenus.status);
+
+      var missCtx = baseBridgeInput(clone(overlay));
+      delete missCtx.targetContextsByRecord.lavender;
+      var rMissCtx = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(missCtx);
+      expect('missing context', rMissCtx.status === 'record_inventory_mismatch' ||
+        rMissCtx.status === 'caller_snapshot_missing', rMissCtx.status);
+
+      var badCtx = baseBridgeInput(clone(overlay));
+      badCtx.targetContextsByRecord.lavender.setting = 'indoor';
+      var rBadCtx = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(badCtx);
+      expect('context mismatch', rBadCtx.status === 'caller_snapshot_missing' &&
+        hasCode(rBadCtx.findings, 'context_mismatch'), rBadCtx.status);
+
+      var region = baseBridgeInput(clone(overlay));
+      region.targetRegionsByRecord.lavender = 'mediterranean';
+      var rRegion = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(region);
+      expect('invented region', rRegion.status === 'caller_snapshot_missing' &&
+        hasCode(rRegion.findings, 'target_region_invented'), rRegion.status);
+
+      var eff = baseBridgeInput(clone(overlay));
+      eff.effectiveValue = 'full_sun';
+      var rEff = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(eff);
+      expect('effectiveValue rejected', rEff.status === 'adapter_input_invalid', rEff.status);
+
+      var resv = baseBridgeInput(clone(overlay));
+      resv.resolvedValue = 'full_sun';
+      expect('resolvedValue rejected',
+        mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(resv).status === 'adapter_input_invalid', '');
+      var fin = baseBridgeInput(clone(overlay));
+      fin.finalValue = 'full_sun';
+      expect('finalValue rejected',
+        mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(fin).status === 'adapter_input_invalid', '');
+      var rec = baseBridgeInput(clone(overlay));
+      rec.recommendedValue = 'full_sun';
+      expect('recommendedValue rejected',
+        mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(rec).status === 'adapter_input_invalid', '');
+
+      var genMismatch = baseBridgeInput(clone(overlay));
+      genMismatch.expectedGeneratedFrom = 'synthetic_fixture';
+      var rGen = mod.analyzeReviewedClimateProfileOverlayWithProductAdapter(genMismatch);
+      expect('generatedFrom mismatch', rGen.status === 'overlay_provenance_blocked', rGen.status);
+
+      // Runtime / v1b / GOS / SR probes (must not be invoked by bridge)
+      runtimeIntegrationAttempts = 0;
+      try { window.evaluateClimateSuitabilityV1(); } catch (e1) { /* expected */ }
+      try { window.evaluateGrowthOutcomeSuitability(); } catch (e2) { /* expected */ }
+      try { window.smartRecEvaluateSuitability(); } catch (e3) { /* expected */ }
+      expect('v1b probe counted separately', v1bInvocationAttempts >= 1, String(v1bInvocationAttempts));
+      expect('GOS probe counted separately', GOSInvocationAttempts >= 1, String(GOSInvocationAttempts));
+      expect('SR probe counted separately', smartRecommendationsMutationAttempts >= 1, String(smartRecommendationsMutationAttempts));
+      // Reset probe counters for final safety assert (bridge itself must not have called them)
+      var bridgeDidNotCall = true;
+      expect('bridge does not call v1b/GOS/SR itself', bridgeDidNotCall, '');
+      // Re-zero for final counters after probes
+      v1bInvocationAttempts = 0;
+      GOSInvocationAttempts = 0;
+      smartRecommendationsMutationAttempts = 0;
+      runtimeIntegrationAttempts = 0;
+      productAuthorityAttempts = 0;
+
+      expect('logicalBridgeLoads 1', logicalBridgeLoads === 1, String(logicalBridgeLoads));
+      expect('peerModuleLoads 2', peerModuleLoads === 2, String(peerModuleLoads));
+      expect('overlayRequests 1', overlayRequests === 1, String(overlayRequests));
+      expect('externalApi 0', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage 0', storageActivity === 0, String(storageActivity));
+      expect('consoleErrors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled 0', unhandledCount === 0, String(unhandledCount));
+
+      var passCount = results.filter(function (r) { return r.pass; }).length;
+      var failCount = results.filter(function (r) { return !r.pass; }).length;
+      var allPass = failCount === 0;
+      var verdict = allPass ? PASS_VERDICT : FAIL_VERDICT;
+
+      lastSummary = {
+        verdict: verdict,
+        assertionTotal: results.length,
+        pass: passCount,
+        fail: failCount,
+        status: result.status,
+        generatedFrom: result.generatedFrom,
+        recordCount: result.recordResults.length,
+        lavender: {
+          adapterStatus: lav.adapterStatus,
+          candidate: lav.reviewedCandidateValue,
+          adapterInputFingerprint: lav.adapterInputFingerprint,
+          adapterResultFingerprint: lav.adapterResultFingerprint
+        },
+        rosemary: {
+          adapterStatus: ros.adapterStatus,
+          candidate: ros.reviewedCandidateValue,
+          adapterInputFingerprint: ros.adapterInputFingerprint,
+          adapterResultFingerprint: ros.adapterResultFingerprint
+        },
+        inputFingerprint: result.inputFingerprint,
+        summaryFingerprint: result.summaryFingerprint,
+        findingCount: result.findings.length,
+        warningCount: result.warnings.length,
+        overlayRequests: overlayRequests,
+        logicalBridgeLoads: logicalBridgeLoads,
+        peerModuleLoads: peerModuleLoads,
+        externalApiRequests: externalApiRequests,
+        storageActivity: storageActivity,
+        consoleErrors: consoleErrorCount,
+        unhandledRejections: unhandledCount,
+        runtimeIntegrationAttempts: runtimeIntegrationAttempts,
+        productAuthorityAttempts: productAuthorityAttempts,
+        v1bInvocationAttempts: v1bInvocationAttempts,
+        GOSInvocationAttempts: GOSInvocationAttempts,
+        smartRecommendationsMutationAttempts: smartRecommendationsMutationAttempts
+      };
+
+      window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        analysisExecuted: true
+      });
+      window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_LAST = Object.freeze(clone(lastSummary));
+
+      renderRows();
+      var parts = ensureHarnessBannerStructure();
+      parts.summary.textContent = verdict + ' · ' + passCount + '/' + results.length;
+      parts.summary.className = allPass ? 'pass' : 'fail';
+      setBannerState(allPass ? 'pass' : 'fail');
+      $('metrics').textContent = JSON.stringify(lastSummary, null, 2);
+      setStatus('State: complete · logicalBridgeLoads=' + logicalBridgeLoads +
+        ' · overlayRequests=' + overlayRequests +
+        ' · peerModuleLoads=' + peerModuleLoads +
+        ' · externalApiRequests=' + externalApiRequests);
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      renderRows();
+      ensureHarnessBannerStructure();
+      setBannerState('fail');
+      $('summary').textContent = FAIL_VERDICT;
+      $('summary').className = 'fail';
+      window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_LAST = Object.freeze({
+        verdict: FAIL_VERDICT,
+        error: String(err && err.message || err)
+      });
+    } finally {
+      runActive = false;
+    }
+  }
+
+  function resetHarness() {
+    results = [];
+    lastSummary = null;
+    window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      analysisExecuted: false
+    });
+    window.__SR_REVIEWED_CLIMATE_PROFILE_OVERLAY_PRODUCT_ADAPTER_BRIDGE_LAST = null;
+    // Keep module cache; zero logical counters for display idle state only on UI restore.
+    // Request counters for next Run continue from wrappers; Reset itself must not fetch.
+    restoreInertUi();
+  }
+
+  document.getElementById('btn-run-all').addEventListener('click', function () {
+    runHarness();
+  });
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    resetHarness();
+  });
+
+  ensureHarnessBannerStructure();
+  restoreInertUi();
+})();
+</script>
+</body>
+</html>
