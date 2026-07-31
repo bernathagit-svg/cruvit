@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer reviewedClimateProfile Product Adapter Proof</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .banner[data-state="pass"] { border-color: #7db88a; background: #e8f6ec; }
+  .banner[data-state="fail"] { border-color: #d59a9a; background: #fbeeee; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer reviewedClimateProfile Product Adapter</h1>
+  <p class="sub">
+    Developer-only analysis adapter proof. Synthetic fixtures only.
+    No seed mutation. No index.html import. No product authority.
+  </p>
+  <div class="banner" id="banner" data-state="inert">
+    <span id="bannerStatus">Idle. Adapter module not loaded. No analysis. No network.</span>
+    Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run adapter harness</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageActivity=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_PASS';
+  var MOD_URL = '../modules/smart-recommendations/developer-reviewed-climate-profile-product-adapter.js';
+  var INERT_MARKER = 'SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_HARNESS_INERT';
+  var INERT_BANNER_STATUS = 'Idle. Adapter module not loaded. No analysis. No network.';
+  var INERT_SUMMARY = 'Not run yet.';
+
+  var results = [];
+  var runActive = false;
+  var storageActivity = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var runtimeIntegrationAttempts = 0;
+  var v1bInvocationAttempts = 0;
+  var GOSInvocationAttempts = 0;
+  var smartRecommendationsMutationAttempts = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+  var guardsInstalled = false;
+  var origFetch = null;
+  var origSetItem = null;
+  var origConsoleError = null;
+  var origV1b = null;
+
+  window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    analysisExecuted: false
+  });
+  window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_LAST = null;
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(arr, code) {
+    return (arr || []).some(function (f) {
+      return (typeof f === 'string' ? f : f.code) === code;
+    });
+  }
+  function noForbiddenKeys(obj) {
+    var forbidden = ['effectiveValue', 'resolvedValue', 'finalValue', 'recommendedValue', 'eligibilityValue', 'matchValue', 'suitabilityScore'];
+    var s = JSON.stringify(obj);
+    for (var i = 0; i < forbidden.length; i++) {
+      if (s.indexOf('"' + forbidden[i] + '"') >= 0) return false;
+    }
+    return true;
+  }
+
+  function ensureHarnessBannerStructure() {
+    var banner = $('banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'banner';
+      banner.className = 'banner';
+      var controls = document.querySelector('.controls');
+      if (controls && controls.parentNode) controls.parentNode.insertBefore(banner, controls);
+      else document.body.insertBefore(banner, document.body.firstChild);
+    }
+    var status = $('bannerStatus');
+    if (!status || status.parentNode !== banner) {
+      if (status && status.parentNode) status.parentNode.removeChild(status);
+      status = document.createElement('span');
+      status.id = 'bannerStatus';
+      banner.insertBefore(status, banner.firstChild);
+    }
+    var marker = $('bootMarker');
+    if (!marker || marker.parentNode !== banner) {
+      if (marker && marker.parentNode) marker.parentNode.removeChild(marker);
+      banner.appendChild(document.createTextNode(' Inert boot marker: '));
+      marker = document.createElement('strong');
+      marker.id = 'bootMarker';
+      banner.appendChild(marker);
+    }
+    if (!$('summary')) {
+      var summary = document.createElement('div');
+      summary.id = 'summary';
+      var statusLine = $('statusLine');
+      if (statusLine && statusLine.parentNode) statusLine.parentNode.insertBefore(summary, statusLine.nextSibling);
+      else document.body.appendChild(summary);
+    }
+    return {
+      banner: banner,
+      status: $('bannerStatus'),
+      marker: $('bootMarker'),
+      summary: $('summary')
+    };
+  }
+
+  function setBannerState(state) {
+    var parts = ensureHarnessBannerStructure();
+    var statusText = INERT_BANNER_STATUS;
+    if (state === 'pass') statusText = 'PASS. Developer-only Product Adapter proof complete.';
+    if (state === 'fail') statusText = 'FAIL. See rows.';
+    if (state === 'running') statusText = 'Running developer-only Product Adapter proof…';
+    parts.status.textContent = statusText;
+    parts.marker.textContent = INERT_MARKER;
+    parts.banner.setAttribute('data-state', state || 'inert');
+    parts.banner.className = 'banner';
+  }
+
+  function restoreInertUi() {
+    var parts = ensureHarnessBannerStructure();
+    setBannerState('inert');
+    parts.summary.textContent = INERT_SUMMARY;
+    parts.summary.className = '';
+    if ($('metrics')) $('metrics').textContent = '';
+    if ($('rows')) $('rows').innerHTML = '';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageActivity=0');
+    return parts;
+  }
+
+  function installGuards() {
+    if (guardsInstalled) return;
+    guardsInstalled = true;
+    storageActivity = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    runtimeIntegrationAttempts = 0;
+    v1bInvocationAttempts = 0;
+    GOSInvocationAttempts = 0;
+    smartRecommendationsMutationAttempts = 0;
+    origSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageActivity++;
+      return origSetItem.apply(this, arguments);
+    };
+    origFetch = window.fetch;
+    window.fetch = function (input) {
+      var url = String(typeof input === 'string' ? input : (input && input.url) || '');
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_product_adapter_harness:' + url));
+    };
+    origConsoleError = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origConsoleError.apply(this, arguments);
+    };
+    window.addEventListener('unhandledrejection', function () { unhandledCount++; });
+    origV1b = typeof window.evaluateClimateSuitabilityV1 === 'function'
+      ? window.evaluateClimateSuitabilityV1
+      : null;
+    window.evaluateClimateSuitabilityV1 = function () {
+      v1bInvocationAttempts++;
+      if (origV1b) return origV1b.apply(this, arguments);
+      throw new Error('v1b_should_not_be_called');
+    };
+    window.evaluateGrowthOutcomeSuitability = function () {
+      GOSInvocationAttempts++;
+      throw new Error('gos_should_not_be_called');
+    };
+    window.smartRecEvaluateSuitability = function () {
+      smartRecommendationsMutationAttempts++;
+      throw new Error('smart_rec_should_not_be_called');
+    };
+  }
+
+  function baseContext() {
+    return { setting: 'outdoor', planting: 'ground', maturity: 'mature', objective: 'general' };
+  }
+
+  function baseLegacy(field, value, source) {
+    return {
+      field: field,
+      legacyObservedValue: source === 'missing' ? null : value,
+      legacySource: source || 'merged',
+      legacyNeedsReview: false,
+      warningFlags: [],
+      hardBlockRules: [],
+      climateTraitsFieldFingerprint: 'legacy-fp-' + field + '-' + (value || 'missing')
+    };
+  }
+
+  function baseIdentity() {
+    return {
+      canonicalKey: 'synthetic-adapter-sun',
+      acceptedScientificName: 'Testus adapterus',
+      identityRegistryVersion: '1.5.0',
+      currentNeedsReview: false,
+      currentIdentityConflict: false,
+      currentIdentityBindingFingerprint: 'bind-fp-synthetic-adapter-sun',
+      aliasResolutionStatus: 'canonical',
+      parentOrGenusScope: 'species',
+      canonicalIdentityConfirmed: true
+    };
+  }
+
+  function baseReviewed(overrides) {
+    var snap = {
+      integrationContractVersion: '0.1.0-sr-catalog-reviewed-climate-profile-integration-contract',
+      integrationStatus: 'inert_imported',
+      productAuthority: false,
+      eligibilityAuthority: false,
+      scalarAuthority: false,
+      runtimeRecommendationAuthority: false,
+      GOSOutcomeAuthority: false,
+      identityBinding: {
+        canonicalKey: 'synthetic-adapter-sun',
+        acceptedScientificName: 'Testus adapterus',
+        identityRegistryVersion: '1.5.0',
+        identityBindingFingerprint: 'bind-fp-synthetic-adapter-sun',
+        needsReviewAtImport: false,
+        identityConflictAtImport: false
+      },
+      fieldSnapshot: {
+        profileId: 'scp-synthetic-adapter-sun-v1',
+        sourceProfileContractVersion: '0.1.0-sr-structured-climate-profile-contract',
+        field: 'sun',
+        profileStatus: 'reviewed_supported',
+        reviewedClaimType: 'preference',
+        reviewedValue: 'full_sun',
+        contextScope: baseContext(),
+        profileFingerprint: 'profile-fp-synthetic-adapter-sun',
+        fieldReviewReference: {
+          fieldReviewContractVersion: '0.2.0-sr-field-review-contract',
+          fieldReviewRegistryVersion: '0.2.0-sr-field-review-registry',
+          canonicalKey: 'synthetic-adapter-sun',
+          field: 'sun',
+          reviewStatus: 'reviewed_supported',
+          valueFingerprint: 'fr-fp-synthetic-adapter-sun',
+          reviewedClaimType: 'preference',
+          reviewedValue: 'full_sun'
+        },
+        evidenceRefCount: 2,
+        unresolvedLimitations: ['synthetic_fixture_only'],
+        sourceBatchId: 'synthetic-adapter-sun-batch-v1',
+        sourceBatchValidationFingerprint: 'batch-fp-synthetic-adapter-sun'
+      }
+    };
+    if (overrides) {
+      if (overrides.integrationStatus) snap.integrationStatus = overrides.integrationStatus;
+      if (overrides.profileStatus) snap.fieldSnapshot.profileStatus = overrides.profileStatus;
+      if (overrides.reviewedValue !== undefined) snap.fieldSnapshot.reviewedValue = overrides.reviewedValue;
+      if (overrides.reviewedClaimType !== undefined) snap.fieldSnapshot.reviewedClaimType = overrides.reviewedClaimType;
+      if (overrides.contextScope) snap.fieldSnapshot.contextScope = overrides.contextScope;
+      if (overrides.profileFingerprint) snap.fieldSnapshot.profileFingerprint = overrides.profileFingerprint;
+      if (overrides.deleteClaimValue) {
+        delete snap.fieldSnapshot.reviewedClaimType;
+        delete snap.fieldSnapshot.reviewedValue;
+      }
+    }
+    return snap;
+  }
+
+  function baseInput(overrides) {
+    var input = {
+      adapterContractVersion: '0.1.0-sr-reviewed-climate-profile-product-adapter-contract',
+      canonicalKey: 'synthetic-adapter-sun',
+      acceptedScientificName: 'Testus adapterus',
+      field: 'sun',
+      catalogClimateTraitsSnapshot: baseLegacy('sun', 'full_sun', 'merged'),
+      reviewedClimateProfileSnapshot: baseReviewed(),
+      identityState: baseIdentity(),
+      targetContext: baseContext(),
+      adapterOptions: {},
+      expectedProfileFingerprint: 'profile-fp-synthetic-adapter-sun',
+      expectedSourceBatchValidationFingerprint: 'batch-fp-synthetic-adapter-sun',
+      expectedCatalogSnapshotFingerprint: 'legacy-fp-sun-full_sun',
+      expectedIdentityBindingFingerprint: 'bind-fp-synthetic-adapter-sun'
+    };
+    if (!overrides) return input;
+    if (overrides.legacy) input.catalogClimateTraitsSnapshot = overrides.legacy;
+    if (overrides.reviewed) input.reviewedClimateProfileSnapshot = overrides.reviewed;
+    if (overrides.identity) input.identityState = Object.assign(baseIdentity(), overrides.identity);
+    if (overrides.targetContext) input.targetContext = overrides.targetContext;
+    if (overrides.targetRegion !== undefined) input.targetRegion = overrides.targetRegion;
+    if (overrides.adapterOptions) input.adapterOptions = overrides.adapterOptions;
+    if (overrides.adapterContractVersion) input.adapterContractVersion = overrides.adapterContractVersion;
+    if (overrides.expectedProfileFingerprint) input.expectedProfileFingerprint = overrides.expectedProfileFingerprint;
+    if (overrides.expectedSourceBatchValidationFingerprint) {
+      input.expectedSourceBatchValidationFingerprint = overrides.expectedSourceBatchValidationFingerprint;
+    }
+    if (overrides.expectedCatalogSnapshotFingerprint) {
+      input.expectedCatalogSnapshotFingerprint = overrides.expectedCatalogSnapshotFingerprint;
+    }
+    if (overrides.expectedIdentityBindingFingerprint) {
+      input.expectedIdentityBindingFingerprint = overrides.expectedIdentityBindingFingerprint;
+    }
+    if (overrides.extraKey) input.unexpectedKey = true;
+    if (overrides.field) input.field = overrides.field;
+    if (overrides.canonicalKey) input.canonicalKey = overrides.canonicalKey;
+    if (overrides.acceptedScientificName) input.acceptedScientificName = overrides.acceptedScientificName;
+    if (overrides.dropExpected) {
+      delete input.expectedProfileFingerprint;
+      delete input.expectedSourceBatchValidationFingerprint;
+      delete input.expectedCatalogSnapshotFingerprint;
+      delete input.expectedIdentityBindingFingerprint;
+    }
+    return input;
+  }
+
+  function checkAuthority(result, label) {
+    var b = result.authorityBoundary || {};
+    expect(label + ' productAuthority false', b.productAuthority === false, '');
+    expect(label + ' eligibilityAuthority false', b.eligibilityAuthority === false, '');
+    expect(label + ' scalarAuthority false', b.scalarAuthority === false, '');
+    expect(label + ' runtimeRecommendationAuthority false', b.runtimeRecommendationAuthority === false, '');
+    expect(label + ' GOSOutcomeAuthority false', b.GOSOutcomeAuthority === false, '');
+    expect(label + ' productUseAllowed false',
+      b.productUseAllowed === false && result.candidate.productUseAllowed === false, '');
+    expect(label + ' runtimeConsumptionAllowed false', b.runtimeConsumptionAllowed === false, '');
+    expect(label + ' no forbidden terminology', noForbiddenKeys(result), '');
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    for (var i = 0; i < results.length; i++) {
+      var r = results[i];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/</g, '&lt;') + '</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  async function runOnce() {
+    results = [];
+    ensureHarnessBannerStructure();
+    setBannerState('running');
+    $('summary').textContent = 'Running…';
+    $('summary').className = '';
+    installGuards();
+    var mod = null;
+    try {
+      mod = await import(MOD_URL + '?t=' + Date.now());
+      moduleLoaded = true;
+    } catch (e) {
+      expect('dynamic import adapter module', false, String(e && e.message || e));
+      finish(false);
+      return;
+    }
+
+    window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT = Object.freeze({
+      inert: false,
+      moduleLoaded: true,
+      analysisExecuted: true
+    });
+
+    try {
+      var desc = mod.getSmartRecDeveloperReviewedClimateProfileProductAdapterDescriptor();
+      expect('descriptor developerOnly', desc.developerOnly === true, '');
+      expect('descriptor productUseAllowed false', desc.productUseAllowed === false, '');
+      expect('descriptor runtimeConsumptionAllowed false', desc.runtimeConsumptionAllowed === false, '');
+      expect('descriptor activation', desc.activation === 'explicit_developer_call_only', '');
+      expect('descriptor indexHtmlImport false', desc.indexHtmlImport === false, '');
+      expect('descriptor network false', desc.network === false && desc.externalApi === false, '');
+      expect('finding inventory 36', desc.findingCodeCount === 36 &&
+        mod.SR_PRODUCT_ADAPTER_FINDING_CODES.length === 36, String(desc.findingCodeCount));
+      expect('adapter version',
+        mod.SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_VERSION ===
+          '0.1.0-sr-reviewed-climate-profile-product-adapter', '');
+      expect('contract version',
+        mod.SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_CONTRACT_VERSION ===
+          '0.1.0-sr-reviewed-climate-profile-product-adapter-contract', '');
+      expect('result contract version',
+        mod.SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_RESULT_CONTRACT_VERSION ===
+          '0.1.0-sr-reviewed-climate-profile-product-adapter-result', '');
+      expect('capability',
+        mod.SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_CAPABILITY ===
+          'explicit_developer_reviewed_climate_profile_product_adapter_analysis', '');
+
+      // 1 agreement
+      var agreeIn = baseInput();
+      var agreeSnap = clone(agreeIn);
+      var agree = mod.analyzeReviewedClimateProfileProductCandidate(agreeIn);
+      expect('agreement status', agree.status === 'reviewed_supported_agreement', agree.status);
+      expect('agreement comparison', agree.comparison === 'agreement', agree.comparison);
+      expect('agreement candidate',
+        agree.candidate.candidateAvailable === true &&
+          agree.candidate.reviewedCandidateValue === 'full_sun', '');
+      expect('agreement no mutation',
+        agree.mutationCheck.mutated === false && JSON.stringify(agreeIn) === JSON.stringify(agreeSnap), '');
+      checkAuthority(agree, 'agreement');
+      var fp1 = agree.summaryFingerprint;
+      var agree2 = mod.analyzeReviewedClimateProfileProductCandidate(clone(agreeSnap));
+      expect('agreement deterministic fingerprint', agree2.summaryFingerprint === fp1, '');
+      expect('agreement input fingerprint stable', agree.inputFingerprint === agree2.inputFingerprint, '');
+
+      // 2 conflict
+      var conflictIn = baseInput({ legacy: baseLegacy('sun', 'part_shade', 'merged') });
+      conflictIn.expectedCatalogSnapshotFingerprint = 'legacy-fp-sun-part_shade';
+      var conflict = mod.analyzeReviewedClimateProfileProductCandidate(conflictIn);
+      expect('conflict status', conflict.status === 'reviewed_supported_conflict', conflict.status);
+      expect('conflict candidate available', conflict.candidate.candidateAvailable === true, '');
+      expect('conflict humanReviewRequired', conflict.humanReviewRequired === true, '');
+      expect('conflict productUseAllowed false', conflict.candidate.productUseAllowed === false, '');
+      checkAuthority(conflict, 'conflict');
+
+      // 3 legacy missing
+      var legacyMissingIn = baseInput({ legacy: baseLegacy('sun', null, 'missing') });
+      legacyMissingIn.expectedCatalogSnapshotFingerprint = 'legacy-fp-sun-missing';
+      var legacyMissing = mod.analyzeReviewedClimateProfileProductCandidate(legacyMissingIn);
+      expect('legacy missing status', legacyMissing.status === 'legacy_missing', legacyMissing.status);
+      expect('legacy missing candidate', legacyMissing.candidate.candidateAvailable === true, '');
+      checkAuthority(legacyMissing, 'legacy_missing');
+
+      // 4 reviewed missing
+      var reviewedMissing = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        reviewed: { absent: true },
+        dropExpected: true
+      }));
+      expect('reviewed missing status', reviewedMissing.status === 'reviewed_profile_absent', reviewedMissing.status);
+      expect('reviewed missing no candidate', reviewedMissing.candidate.candidateAvailable === false, '');
+      checkAuthority(reviewedMissing, 'reviewed_missing');
+
+      // 5 non-supported
+      var nonSup = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        reviewed: baseReviewed({ profileStatus: 'modeling_gap', deleteClaimValue: true })
+      }));
+      expect('non-supported status', nonSup.status === 'reviewed_non_supported', nonSup.status);
+      expect('non-supported no candidate', nonSup.candidate.candidateAvailable === false, '');
+      expect('non-supported finding', hasCode(nonSup.findings, 'profile_status_blocked'), '');
+
+      // 6 needsReview blocked
+      var nr = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        identity: { currentNeedsReview: true }
+      }));
+      expect('needsReview blocked', nr.status === 'needs_review_blocked', nr.status);
+      expect('needsReview finding', hasCode(nr.findings, 'needs_review_active'), '');
+      expect('needsReview no candidate', nr.candidate.candidateAvailable === false, '');
+
+      // 7 identity conflict
+      var ic = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        identity: { currentIdentityConflict: true }
+      }));
+      expect('identity conflict blocked', ic.status === 'identity_blocked', ic.status);
+      expect('identity conflict finding', hasCode(ic.findings, 'identity_conflict_active'), '');
+
+      // 8 genus/spp blocked
+      var genus = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        identity: { parentOrGenusScope: 'genus' }
+      }));
+      expect('genus blocked', genus.status === 'identity_blocked', genus.status);
+      expect('genus finding', hasCode(genus.findings, 'genus_or_parent_scope_blocked'), '');
+
+      // 9 stale profile
+      var stale = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        expectedProfileFingerprint: 'stale-wrong-fp'
+      }));
+      expect('stale fingerprint hard error',
+        hasCode(stale.findings, 'reviewed_profile_fingerprint_mismatch'), '');
+      expect('stale status', stale.status === 'reviewed_profile_stale', stale.status);
+      expect('stale no candidate', stale.candidate.candidateAvailable === false, '');
+
+      // 10 context compatible covered by agreement
+
+      // 11 context incompatible
+      var ctxBad = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        targetContext: { setting: 'indoor', planting: 'ground', maturity: 'mature', objective: 'general' }
+      }));
+      expect('context incompatible', ctxBad.status === 'context_incompatible', ctxBad.status);
+      expect('context incompatible no candidate', ctxBad.candidate.candidateAvailable === false, '');
+
+      // 12 region unknown (target provided, profile has none)
+      var regionUnknown = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        targetRegion: 'mediterranean'
+      }));
+      expect('region unknown', regionUnknown.status === 'region_unknown', regionUnknown.status);
+      expect('region unknown no candidate', regionUnknown.candidate.candidateAvailable === false, '');
+
+      // 13 region mismatch — context must still match (profile climateOrRegion mirrored on targetContext)
+      var regionScope = Object.assign(baseContext(), { climateOrRegion: 'mediterranean' });
+      var regionMismatch = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        reviewed: baseReviewed({ contextScope: regionScope }),
+        targetContext: Object.assign(baseContext(), { climateOrRegion: 'mediterranean' }),
+        targetRegion: 'tropical'
+      }));
+      expect('region incompatible', regionMismatch.status === 'region_incompatible', regionMismatch.status);
+      expect('region incompatible no candidate', regionMismatch.candidate.candidateAvailable === false, '');
+
+      // Negatives
+      var badVersion = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        adapterContractVersion: '9.9.9-bad'
+      }));
+      expect('unsupported version hard error',
+        hasCode(badVersion.findings, 'unsupported_adapter_contract'), '');
+
+      var unknownKey = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({ extraKey: true }));
+      expect('unknown input key', hasCode(unknownKey.findings, 'unknown_input_key'), '');
+
+      var authTrue = baseInput();
+      authTrue.reviewedClimateProfileSnapshot.productAuthority = true;
+      var authRes = mod.analyzeReviewedClimateProfileProductCandidate(authTrue);
+      expect('authority flag true rejected', hasCode(authRes.findings, 'product_authority_attempt'), '');
+
+      var runtimeOpt = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        adapterOptions: { runtimeConsumptionRequested: true }
+      }));
+      expect('runtime consumption attempt',
+        hasCode(runtimeOpt.findings, 'runtime_consumption_attempt'), '');
+
+      var gosOpt = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        adapterOptions: { GOSAuthorityRequested: true }
+      }));
+      expect('GOS authority attempt', hasCode(gosOpt.findings, 'GOS_authority_attempt'), '');
+
+      var forbidden = baseInput();
+      forbidden.effectiveValue = 'full_sun';
+      var forbRes = mod.analyzeReviewedClimateProfileProductCandidate(forbidden);
+      expect('effectiveValue injection rejected',
+        hasCode(forbRes.findings, 'product_authority_attempt'), '');
+
+      var idMismatch = baseInput({ canonicalKey: 'other-key' });
+      idMismatch.identityState.canonicalKey = 'other-key';
+      var idMis = mod.analyzeReviewedClimateProfileProductCandidate(idMismatch);
+      expect('canonical mismatch', hasCode(idMis.findings, 'canonical_identity_mismatch'), '');
+
+      var sciMis = baseInput({ acceptedScientificName: 'Wrongus nameus' });
+      sciMis.identityState.acceptedScientificName = 'Wrongus nameus';
+      var sciRes = mod.analyzeReviewedClimateProfileProductCandidate(sciMis);
+      expect('scientific name mismatch',
+        hasCode(sciRes.findings, 'accepted_scientific_name_mismatch'), '');
+
+      var batchStale = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        expectedSourceBatchValidationFingerprint: 'wrong-batch'
+      }));
+      expect('source batch unverified', hasCode(batchStale.findings, 'source_batch_unverified'), '');
+
+      var catalogStale = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        expectedCatalogSnapshotFingerprint: 'wrong-catalog'
+      }));
+      expect('catalog fingerprint mismatch',
+        hasCode(catalogStale.findings, 'catalog_snapshot_fingerprint_mismatch'), '');
+
+      var badCtx = mod.analyzeReviewedClimateProfileProductCandidate(baseInput({
+        targetContext: { setting: 'not-a-setting', planting: 'ground', maturity: 'mature', objective: 'general' }
+      }));
+      expect('invalid context token', hasCode(badCtx.findings, 'invalid_input'), '');
+
+      var unsupportedProfile = baseInput({
+        reviewed: baseReviewed()
+      });
+      unsupportedProfile.reviewedClimateProfileSnapshot.fieldSnapshot.sourceProfileContractVersion =
+        '9.9.9-bad-profile';
+      var unsProf = mod.analyzeReviewedClimateProfileProductCandidate(unsupportedProfile);
+      expect('unsupported profile contract',
+        hasCode(unsProf.findings, 'reviewed_profile_contract_unsupported'), '');
+
+      // Deterministic five-cycle analyze identity (in-memory)
+      var cycleFp = [];
+      for (var c = 0; c < 5; c++) {
+        cycleFp.push(mod.analyzeReviewedClimateProfileProductCandidate(baseInput()).summaryFingerprint);
+      }
+      expect('five-cycle fingerprint identical',
+        cycleFp.every(function (fp) { return fp === fp1; }), cycleFp.join('|'));
+
+      expect('zero external API', externalApiRequests === 0, String(externalApiRequests));
+      expect('zero storage', storageActivity === 0, String(storageActivity));
+      expect('zero console errors', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('zero unhandled', unhandledCount === 0, String(unhandledCount));
+      expect('zero v1b invocations', v1bInvocationAttempts === 0, String(v1bInvocationAttempts));
+      expect('zero GOS invocations', GOSInvocationAttempts === 0, String(GOSInvocationAttempts));
+      expect('zero smartRec invocations',
+        smartRecommendationsMutationAttempts === 0, String(smartRecommendationsMutationAttempts));
+      expect('zero runtime integration',
+        runtimeIntegrationAttempts === 0, String(runtimeIntegrationAttempts));
+
+      expect('PASS keeps bootMarker', !!$('bootMarker'), '');
+      expect('PASS keeps bannerStatus', !!$('bannerStatus'), '');
+      setBannerState('pass');
+
+      // Reset-after-PASS regression (preserve assertion rows)
+      var savedResults = results.slice();
+      var externalBeforeReset = externalApiRequests;
+      var storageBeforeReset = storageActivity;
+      var consoleBeforeReset = consoleErrorCount;
+      var unhandledBeforeReset = unhandledCount;
+      var fpBeforeReset = fp1;
+      resetHarness();
+      var resetAsserts = [];
+      function expectReset(name, pass, detail) {
+        resetAsserts.push({ name: name, pass: !!pass, detail: detail || '' });
+      }
+      expectReset('Reset-after-PASS boot.inert',
+        !!(window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT &&
+          window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT.inert === true), '');
+      expectReset('Reset-after-PASS LAST null',
+        window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_LAST == null, '');
+      expectReset('Reset-after-PASS marker',
+        !!$('bootMarker') && $('bootMarker').textContent === INERT_MARKER, '');
+      expectReset('Reset-after-PASS summary',
+        !!$('summary') && $('summary').textContent === INERT_SUMMARY, '');
+      expectReset('Reset-after-PASS banner inert',
+        !!$('bannerStatus') && $('bannerStatus').textContent === INERT_BANNER_STATUS, '');
+      expectReset('Reset-after-PASS data-state',
+        !!$('banner') && $('banner').getAttribute('data-state') === 'inert', '');
+      expectReset('Reset-after-PASS zero fetch delta',
+        externalApiRequests === externalBeforeReset, String(externalApiRequests));
+      expectReset('Reset-after-PASS zero storage delta',
+        storageActivity === storageBeforeReset, String(storageActivity));
+      expectReset('Reset-after-PASS zero console delta',
+        consoleErrorCount === consoleBeforeReset, String(consoleErrorCount));
+      expectReset('Reset-after-PASS zero unhandled delta',
+        unhandledCount === unhandledBeforeReset, String(unhandledCount));
+
+      // Next analyze after Reset (module already in memory from prior import; re-import OK)
+      mod = await import(MOD_URL + '?t=' + Date.now());
+      var again = mod.analyzeReviewedClimateProfileProductCandidate(baseInput());
+      expectReset('next run agreement', again.status === 'reviewed_supported_agreement', again.status);
+      expectReset('next run fingerprint stable', again.summaryFingerprint === fpBeforeReset, '');
+      expectReset('next run productUseAllowed false', again.candidate.productUseAllowed === false, '');
+
+      results = savedResults.concat(resetAsserts);
+
+      var passCount = results.filter(function (r) { return r.pass; }).length;
+      var failCount = results.filter(function (r) { return !r.pass; }).length;
+      var allPass = failCount === 0 &&
+        externalApiRequests === 0 &&
+        storageActivity === 0 &&
+        consoleErrorCount === 0 &&
+        unhandledCount === 0 &&
+        v1bInvocationAttempts === 0 &&
+        GOSInvocationAttempts === 0 &&
+        smartRecommendationsMutationAttempts === 0;
+
+      lastSummary = {
+        verdict: allPass ? PASS_VERDICT : 'DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_FAIL',
+        assertions: results.length,
+        passCount: passCount,
+        failCount: failCount,
+        summaryFingerprint: fp1,
+        agreementFingerprint: fp1,
+        externalApiRequests: externalApiRequests,
+        storageActivity: storageActivity,
+        consoleErrors: consoleErrorCount,
+        unhandledRejections: unhandledCount,
+        runtimeIntegrationAttempts: runtimeIntegrationAttempts,
+        v1bInvocationAttempts: v1bInvocationAttempts,
+        GOSInvocationAttempts: GOSInvocationAttempts,
+        smartRecommendationsMutationAttempts: smartRecommendationsMutationAttempts,
+        findingInventory: 36
+      };
+      window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_LAST = Object.freeze(clone(lastSummary));
+      window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        analysisExecuted: true
+      });
+      finish(allPass);
+    } catch (err) {
+      expect('harness exception', false, String(err && err.stack || err));
+      lastSummary = {
+        verdict: 'DEVELOPER_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_FAIL',
+        assertions: results.length,
+        passCount: results.filter(function (r) { return r.pass; }).length,
+        failCount: results.filter(function (r) { return !r.pass; }).length,
+        error: String(err && err.message || err)
+      };
+      window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_LAST = Object.freeze(clone(lastSummary));
+      finish(false);
+    }
+  }
+
+  function finish(allPass) {
+    renderRows();
+    setBannerState(allPass ? 'pass' : 'fail');
+    var s = lastSummary || {};
+    $('summary').textContent = (allPass ? 'PASS' : 'FAIL') + ' · ' + (s.passCount || 0) + '/' +
+      (s.assertions || 0) + ' · ' + (s.verdict || '');
+    $('summary').className = allPass ? 'pass' : 'fail';
+    $('metrics').textContent = JSON.stringify(s, null, 2);
+    setStatus('State: complete · moduleLoaded=1 · externalApiRequests=' + externalApiRequests +
+      ' · storageActivity=' + storageActivity);
+    runActive = false;
+  }
+
+  function resetHarness() {
+    results = [];
+    runActive = false;
+    moduleLoaded = false;
+    lastSummary = null;
+    window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_LAST = null;
+    window.__SR_REVIEWED_CLIMATE_PROFILE_PRODUCT_ADAPTER_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      analysisExecuted: false
+    });
+    ensureHarnessBannerStructure();
+    restoreInertUi();
+  }
+
+  $('btn-run-all').addEventListener('click', function () {
+    if (runActive) return;
+    runActive = true;
+    runOnce();
+  });
+  $('btn-reset').addEventListener('click', function () {
+    if (runActive) return;
+    resetHarness();
+  });
+  ensureHarnessBannerStructure();
+  restoreInertUi();
+})();
+</script>
+</body>
+</html>
