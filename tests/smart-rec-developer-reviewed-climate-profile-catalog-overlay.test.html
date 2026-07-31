@@ -10,6 +10,8 @@
   h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
   p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
   .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .banner[data-state="pass"] { border-color: #7db88a; background: #e8f6ec; }
+  .banner[data-state="fail"] { border-color: #d59a9a; background: #fbeeee; }
   .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
   button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
   button.secondary { background: #fff; color: #3d5c3d; }
@@ -29,8 +31,8 @@
     Developer-only inert schema/overlay proof. Synthetic fixture only.
     No seed mutation. No index.html import. No product authority.
   </p>
-  <div class="banner" id="banner">
-    Idle. Overlay module not loaded. Overlay not fetched. No merge.
+  <div class="banner" id="banner" data-state="inert">
+    <span id="bannerStatus">Idle. Overlay module not loaded. Overlay not fetched. No merge.</span>
     Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT</strong>
   </div>
   <div class="controls">
@@ -72,6 +74,10 @@
     mergeExecuted: false
   });
 
+  var INERT_MARKER = 'SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT';
+  var INERT_BANNER_STATUS = 'Idle. Overlay module not loaded. Overlay not fetched. No merge.';
+  var INERT_SUMMARY = 'Not run yet.';
+
   function $(id) { return document.getElementById(id); }
   function expect(name, pass, detail) {
     results.push({ name: name, pass: !!pass, detail: detail || '' });
@@ -82,6 +88,78 @@
     return (arr || []).some(function (f) {
       return (typeof f === 'string' ? f : f.code) === code;
     });
+  }
+
+  function ensureHarnessBannerStructure() {
+    var banner = $('banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'banner';
+      banner.className = 'banner';
+      var controls = document.querySelector('.controls');
+      if (controls && controls.parentNode) {
+        controls.parentNode.insertBefore(banner, controls);
+      } else {
+        document.body.insertBefore(banner, document.body.firstChild);
+      }
+    }
+    var status = $('bannerStatus');
+    if (!status || status.parentNode !== banner) {
+      if (status && status.parentNode) status.parentNode.removeChild(status);
+      status = document.createElement('span');
+      status.id = 'bannerStatus';
+      banner.insertBefore(status, banner.firstChild);
+    }
+    var marker = $('bootMarker');
+    if (!marker || marker.parentNode !== banner) {
+      if (marker && marker.parentNode) marker.parentNode.removeChild(marker);
+      // Keep a stable text node label before the marker when recreating.
+      if (!banner.lastChild || banner.lastChild === status) {
+        banner.appendChild(document.createTextNode(' Inert boot marker: '));
+      }
+      marker = document.createElement('strong');
+      marker.id = 'bootMarker';
+      banner.appendChild(marker);
+    }
+    if (!$('summary')) {
+      var summary = document.createElement('div');
+      summary.id = 'summary';
+      var statusLine = $('statusLine');
+      if (statusLine && statusLine.parentNode) {
+        statusLine.parentNode.insertBefore(summary, statusLine.nextSibling);
+      } else {
+        document.body.appendChild(summary);
+      }
+    }
+    return {
+      banner: banner,
+      status: $('bannerStatus'),
+      marker: $('bootMarker'),
+      summary: $('summary')
+    };
+  }
+
+  function setBannerState(state) {
+    var parts = ensureHarnessBannerStructure();
+    var statusText = INERT_BANNER_STATUS;
+    if (state === 'pass') statusText = 'PASS. Developer-only inert overlay proof complete.';
+    if (state === 'fail') statusText = 'FAIL. See rows.';
+    if (state === 'running') statusText = 'Running developer-only inert overlay proof…';
+    parts.status.textContent = statusText;
+    parts.marker.textContent = INERT_MARKER;
+    parts.banner.setAttribute('data-state', state || 'inert');
+    parts.banner.className = 'banner';
+  }
+
+  function restoreInertUi() {
+    var parts = ensureHarnessBannerStructure();
+    setBannerState('inert');
+    parts.summary.textContent = INERT_SUMMARY;
+    parts.summary.className = '';
+    if ($('metrics')) $('metrics').textContent = '';
+    if ($('rows')) $('rows').innerHTML = '';
+    setStatus('State: idle · moduleLoaded=0 · overlayRequests=0 · externalApiRequests=0 · storageActivity=0');
+    return parts;
   }
 
   function installGuards() {
@@ -550,6 +628,74 @@
       expect('merge remains deterministic ok', merge2.ok === true, JSON.stringify(merge2.hardErrors || []));
       expect('second merge fingerprint stable', merge2.reportFingerprint === merge.reportFingerprint, '');
 
+      // Render PASS with stable banner structure (must not delete #bootMarker).
+      setBannerState('pass');
+      expect('PASS render keeps bootMarker in DOM', !!$('bootMarker'), '');
+      expect('PASS render keeps bannerStatus in DOM', !!$('bannerStatus'), '');
+      expect('PASS banner status text',
+        $('bannerStatus').textContent.indexOf('PASS. Developer-only inert overlay proof complete.') === 0, '');
+
+      // Reset-after-PASS regression: exercise real resetHarness() and prove next proof run.
+      var savedResults = results.slice();
+      var overlayRequestsBeforeReset = overlayRequests;
+      var schemaRequestsBeforeReset = schemaRequests;
+      var externalBeforeReset = externalApiRequests;
+      var storageBeforeReset = storageActivity;
+      var consoleBeforeReset = consoleErrorCount;
+      var unhandledBeforeReset = unhandledCount;
+      var mergeFpBeforeReset = merge.reportFingerprint;
+
+      resetHarness();
+
+      var resetAsserts = [];
+      function expectReset(name, pass, detail) {
+        resetAsserts.push({ name: name, pass: !!pass, detail: detail || '' });
+      }
+      expectReset('Reset-after-PASS boot.inert true',
+        !!(window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT &&
+          window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_BOOT.inert === true), '');
+      expectReset('Reset-after-PASS LAST null',
+        window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST == null, '');
+      expectReset('Reset-after-PASS bootMarker exists', !!$('bootMarker'), '');
+      expectReset('Reset-after-PASS bootMarker text',
+        !!$('bootMarker') && $('bootMarker').textContent === INERT_MARKER, '');
+      expectReset('Reset-after-PASS summary Not run yet.',
+        !!$('summary') && $('summary').textContent === INERT_SUMMARY, '');
+      expectReset('Reset-after-PASS summary class cleared',
+        !!$('summary') && $('summary').className === '', '');
+      expectReset('Reset-after-PASS banner inert status',
+        !!$('bannerStatus') && $('bannerStatus').textContent === INERT_BANNER_STATUS, '');
+      expectReset('Reset-after-PASS banner data-state inert',
+        !!$('banner') && $('banner').getAttribute('data-state') === 'inert', '');
+      expectReset('Reset-after-PASS zero overlay fetch',
+        overlayRequests === overlayRequestsBeforeReset, String(overlayRequests));
+      expectReset('Reset-after-PASS zero schema fetch',
+        schemaRequests === schemaRequestsBeforeReset, String(schemaRequests));
+      expectReset('Reset-after-PASS zero external delta',
+        externalApiRequests === externalBeforeReset, String(externalApiRequests));
+      expectReset('Reset-after-PASS zero storage delta',
+        storageActivity === storageBeforeReset, String(storageActivity));
+      expectReset('Reset-after-PASS zero console delta',
+        consoleErrorCount === consoleBeforeReset, String(consoleErrorCount));
+      expectReset('Reset-after-PASS zero unhandled delta',
+        unhandledCount === unhandledBeforeReset, String(unhandledCount));
+
+      // Next proof run after Reset (in-memory; no additional overlay fetch).
+      var mergeAfterReset = mod.mergeReviewedClimateProfileOverlayForProof({
+        plants: plants,
+        overlay: overlay
+      });
+      expectReset('next Run after Reset merge ok', mergeAfterReset.ok === true,
+        JSON.stringify(mergeAfterReset.hardErrors || []));
+      expectReset('next Run after Reset fingerprint identical',
+        mergeAfterReset.reportFingerprint === mergeFpBeforeReset, '');
+      expectReset('next Run after Reset did not fetch overlay',
+        overlayRequests === overlayRequestsBeforeReset, String(overlayRequests));
+
+      results = savedResults.concat(resetAsserts);
+      // Re-render PASS for final UI after Reset regression.
+      setBannerState('pass');
+
       var passCount = results.filter(function (r) { return r.pass; }).length;
       var failCount = results.filter(function (r) { return !r.pass; }).length;
       var warningCount = (validation.findings || []).filter(function (f) { return f.severity === 'warning'; }).length;
@@ -661,9 +807,7 @@
       $('summary').textContent = lastSummary.verdict + ' · ' + passCount + '/' + results.length;
       $('summary').className = allPass ? 'pass' : 'fail';
       $('metrics').textContent = JSON.stringify(lastSummary, null, 2);
-      $('banner').innerHTML = allPass
-        ? 'PASS. Developer-only inert overlay proof complete.'
-        : 'FAIL. See rows.';
+      setBannerState(allPass ? 'pass' : 'fail');
       setStatus('State: complete · moduleLoaded=1 · overlayRequests=' + overlayRequests +
         ' · externalApiRequests=' + externalApiRequests + ' · storageActivity=' + storageActivity);
       renderRows();
@@ -679,9 +823,11 @@
         summaryFingerprint: 'exception'
       };
       window.__SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_LAST = Object.freeze(clone(lastSummary));
+      ensureHarnessBannerStructure();
       $('summary').textContent = lastSummary.verdict;
       $('summary').className = 'fail';
       $('metrics').textContent = JSON.stringify(lastSummary, null, 2);
+      setBannerState('fail');
       renderRows();
       return lastSummary;
     } finally {
@@ -701,14 +847,8 @@
       overlayFetched: false,
       mergeExecuted: false
     });
-    $('bootMarker').textContent = 'SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT';
-    $('banner').innerHTML =
-      'Idle. Overlay module not loaded. Overlay not fetched. No merge. Inert boot marker: <strong id="bootMarker">SR_REVIEWED_CLIMATE_PROFILE_CATALOG_OVERLAY_HARNESS_INERT</strong>';
-    $('summary').textContent = 'Not run yet.';
-    $('summary').className = '';
-    $('metrics').textContent = '';
-    $('rows').innerHTML = '';
-    setStatus('State: idle · moduleLoaded=0 · overlayRequests=0 · externalApiRequests=0 · storageActivity=0');
+    ensureHarnessBannerStructure();
+    restoreInertUi();
   }
 
   $('btn-run-all').addEventListener('click', function () {
