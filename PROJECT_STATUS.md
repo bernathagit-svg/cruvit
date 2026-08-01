@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Source Scout → Batch Draft Generator Integration production-verified (docs this commit; implementation pushed `5d22a66`); Integration Documentation Contract defined (`0b0dae3`); Source Scout production-verified (pushed `710af6f`; implementation `69eaf52`); Source Scout Documentation Contract pushed (`ab5e75c`); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation complete this commit (synthetic-only module+harness; no live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
+Status: **Active — Live Source Provider Documentation Contract defined (docs this commit); Source Scout → Batch Draft Generator Integration production-verified (pushed `c064c5e`; implementation `5d22a66`); Integration Documentation Contract defined (`0b0dae3`); Source Scout production-verified (pushed `710af6f`; implementation `69eaf52`); Source Scout Documentation Contract pushed (`ab5e75c`); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation complete this commit (synthetic-only module+harness; no live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Developer Product Adapter Bridge Documentation Contract** (pushed :9bf99) → **Real Overlay → Product Adapter Bridge Implementation** (pushed eb125e5) → **Bridge production verification** (pushed c4eb0d7) → **Reviewed Data Source Scout Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Real-pilot overlay at `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` (`generatedFrom: real_reviewed_batch_pilot`; records `lavender`,`rosemary`) with separate explicit-run harness — **production-verified; developer-only, inert, non-authoritative; absent from `index.html`/runtime/`plants.seed.json`; Product Adapter bridge module/harness production-verified (eb125e5 / docs c4eb0d7); developer-only, non-authoritative. Source Scout processor/harness are production-verified synthetic-only developer proofs (no live provider). Scout→Batch integration module/harness are production-verified developer-only proofs (pushed `5d22a66`; docs this commit; no Gate C/finalize/artifacts; no live provider). **No** media taxonomy/schema/ImageAsset/Coverage Matrix/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Bridge production verification closed (`c4eb0d7`). Source Scout Documentation Contract pushed (`ab5e75c`). Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`). Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Integration Implementation pushed (`5d22a66`) and production-verified (this docs commit). Live Source Provider and Owner Review Queue remain deferred. Product Authority Activation remains deferred.**
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Developer Product Adapter Bridge Documentation Contract** (pushed :9bf99) → **Real Overlay → Product Adapter Bridge Implementation** (pushed eb125e5) → **Bridge production verification** (pushed c4eb0d7) → **Reviewed Data Source Scout Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Real-pilot overlay at `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` (`generatedFrom: real_reviewed_batch_pilot`; records `lavender`,`rosemary`) with separate explicit-run harness — **production-verified; developer-only, inert, non-authoritative; absent from `index.html`/runtime/`plants.seed.json`; Product Adapter bridge module/harness production-verified (eb125e5 / docs c4eb0d7); developer-only, non-authoritative. Source Scout processor/harness are production-verified synthetic-only developer proofs (no live provider). Scout→Batch integration module/harness are production-verified developer-only proofs (pushed `5d22a66`; docs `c064c5e`; no Gate C/finalize/artifacts). Live Source Provider remains documentation-only (no module/harness/live adapter yet). **No** media taxonomy/schema/ImageAsset/Coverage Matrix/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Bridge production verification closed (`c4eb0d7`). Source Scout Documentation Contract pushed (`ab5e75c`). Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`). Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Integration Implementation pushed (`5d22a66`) and production-verified (`c064c5e`). Live Source Provider Documentation Contract defined this commit (no provider module/harness/executor/adapter/credentials/live network). Owner Review Queue remains deferred. Product Authority Activation remains deferred.**
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (`c4eb0d7`; developer-only; no runtime authority); Reviewed Data Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`); Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Source Scout → Batch Draft Integration Implementation pushed (`5d22a66`) and production-verified (this docs commit; **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (`c4eb0d7`; developer-only; no runtime authority); Reviewed Data Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`); Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Source Scout → Batch Draft Integration Implementation pushed (`5d22a66`) and production-verified (`c064c5e`; **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`); Live Source Provider Documentation Contract defined this commit; foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
 
-**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (pushed `c4eb0d7`) → **Reviewed Data Source Scout Documentation Contract** (pushed `ab5e75c`) → **Source Scout Processor Implementation** (pushed `69eaf52`) → **Source Scout production verification** (pushed `710af6f`) → **Source Scout → Batch Draft Integration Documentation Contract** (`0b0dae3`) → **Source Scout → Batch Draft Integration Implementation** (pushed `5d22a66`) → **production verification** (this docs commit) → deferred Live Source Provider Documentation Contract → deferred Owner Review Queue Documentation Contract → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
+**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (pushed `c4eb0d7`) → **Reviewed Data Source Scout Documentation Contract** (pushed `ab5e75c`) → **Source Scout Processor Implementation** (pushed `69eaf52`) → **Source Scout production verification** (pushed `710af6f`) → **Source Scout → Batch Draft Integration Documentation Contract** (`0b0dae3`) → **Source Scout → Batch Draft Integration Implementation** (pushed `5d22a66`) → **production verification** (pushed `c064c5e`) → **Live Source Provider Documentation Contract** (this docs commit) → next: Live Source Provider Implementation Planning → deferred Live Provider Adapter Transport/Security Documentation Contract → deferred Owner Review Queue Documentation Contract → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
 
 ---
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Smart Recommendations — Live Source Provider Documentation Contract** | Done (local docs; unpushed) | **Documentation-only; creates no provider module, harness, search/fetch/extraction executor, provider adapter, Netlify function, backend, CLI, replay fixture, environment/credential file, Source Capture/EP/FR/SCP/batch artifact, Owner Review Queue, runtime/catalog/commerce agent; no Source Scout/Capture/Generator peer change; no live network/model; no push in this docs commit.** Freezes developer-only provider-neutral orchestration **before** Source Scout with injected executors. Identities: implementation `0.1.0-sr-live-source-provider`; contract `0.1.0-sr-live-source-provider-contract`; result `0.1.0-sr-live-source-provider-result`; capability `explicit_developer_live_source_discovery_preparation`; optional deferred extraction capability `explicit_developer_untrusted_claim_span_extraction` (disabled in first proof). Future path `modules/smart-recommendations/developer-reviewed-data-live-source-provider.js` + harness `tests/smart-rec-developer-reviewed-data-live-source-provider.test.html` + `PROJECT_STATUS.md` only for mock/replay proof. Entrypoint `prepareReviewedDataLiveSourceProviderDiscovery(input, executors)` + `adaptLiveProviderResultsToSourceScoutDiscoveryResults`. Adapts to existing Scout `syntheticDiscoveryResults` / `syntheticResultId` without Scout peer rename. Statuses **13**; findings **32** (23 hard + 9 informational). First proof: Phase 1 only; mock/replay; real search/fetch/model **0**; secrets out of browser/fingerprints; SSRF/budget/MIME/copyright frozen. Never approves claims, invents Gates A/B/C, calls Capture/Generator/finalize, or grants catalog/product/commerce authority. Next: Live Source Provider Implementation Planning. Deferred: Live Provider Adapter Transport/Security Documentation Contract; Owner Review Queue Documentation Contract. Verdict: **`LIVE_SOURCE_PROVIDER_DOCUMENTATION_CONTRACT_DEFINED`**. |
 | **Smart Recommendations — Source Scout → Batch Draft Generator Integration production verification** | Done (local docs; unpushed) | **Documentation-only after production verification; no integration module/harness/Source Scout/Source Capture/Batch Draft Generator/Batch Validator/EP/FR/SCP foundation/reviewed-artifact/catalog/overlay/Product Adapter/Bridge/`index.html`/schema/seed/identity/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media/commerce change; no Live Provider; no Owner Review Queue; no Gate C; no `finalizeReviewedDataBatchDraft`; no artifact write; no manual deploy; no Netlify setting change; no push in this docs commit.** Deployed implementation: **`5d22a664c97ecdcb27785ad96b2b33187e060164`** (`feat: add source scout batch draft integration`). Production: https://friendly-taiyaki-64aacb.netlify.app/. **URLs:** app `/`; integration module `/modules/smart-recommendations/developer-source-scout-batch-draft-integration.js`; integration harness `/tests/smart-rec-developer-source-scout-batch-draft-integration.test.html`; protected Source Scout / Bridge / real-overlay / Product Adapter / synthetic-overlay / Batch Draft / Lavender / Rosemary harnesses. **HTTP/content:** all **200**; HTML for app/harnesses; JavaScript for integration module; LF-normalized exact match vs `5d22a66` for integration module + integration harness + protected harnesses; module markers `0.1.0-sr-source-scout-batch-draft-integration` / contract / result / capability `explicit_developer_source_scout_batch_draft_preparation` / `prepareSourceScoutBatchDraftIntegration` / exact **11** statuses / **29** hard / **8** informational findings; no finalize import/call; harness markers PASS/FAIL/BOOT/LAST/bannerStatus/bootMarker/Run/Reset/`Not run yet.`. **App isolation before/after:** zero integration module/harness/Scout/Capture/Generator/provider/model/Owner Review Queue/runtime/catalog/reviewed-data/recommendation/storage/v1b/GOS/commerce requests attributable to normal app load; `index.html` unchanged. **Initial inert:** boot.inert true; LAST null; banner/bootMarker; visible inert marker; summary exactly `Not run yet.`; PASS/failure styling absent; report empty; integration/Scout/Capture/Generator peers not loaded until Run; counters 0. **Explicit-run boundary:** same-origin static loads of integration + Scout + Capture + Generator peers (+ allowed static deps) only; synthetic fixtures embedded; Reset creates zero new requests; no live search/source pages/artifacts/Gate C/finalize/external models/Shopify. **Five identical Reset→Run→Reset cycles:** **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`; pending `source_capture_draft_ready` (map 1 / validate 0 / prepare 0); approved `batch_draft_prepared` + nested Generator `field_review_approval_required` / `fieldReviewApprovalRequired` true (map 1 / validate 1 / prepare 1); totals/Run mappings **2** / validations **1** / preparations **1**; audit rejected **5** / conflicts **1** / Capture-active **2**; emitted findings pending **5** / approved **8**; inventory **11** statuses / **37** findings (29 hard + 8 info); fingerprints sha256 scoutSummary `6bbab65f4690335d6a0e8c992c8c122c1e179dd885827b0312f142d9564e1ea2`, scoutHandoff `6e20f2a8989ab20c816fa9651678b07ea4e3212644f77adfbf2321a2e150ec58`, scoutAssign `cb8f1a836e0546a82766b2393bd69d7798c51c92775383da0ec55d755f472fd4`, capture `1d012d28d236c777c8a7d8ae824524abd451d89829157c2a85d1cfa968e066eb`, prepared `6388559ac9c1f39bc506e05bad04019676dfe78eab766f26697241549d8f5447`, pendingInput `43615edd45b5eccfb079f771d2fc8aec0d7bfed4139155dbe41b60a93b99ecf4`, pendingSummary `fd5921c1c2196b4a185daba8ed58392a74fbbc820dc01f934c749adbfa680a12`, approvedInput `3264b392893a53253045e3c24a598c07f0ab33ffe9d09fd79167830178a89eeb`, approvedSummary `399a3d4742f96a1cd9d7b43bad2f198d4820658271f1b581c8f91166a135e9c6`; all safety counters **0**; Reset idempotent. **API/descriptor:** public exports confirmed; descriptor authority/finalization/network/persistence/runtime/catalog/product/git/deploy flags false; activation `explicit_developer_call_only`. **Non-regression:** Integration 83/83; Scout 57/57; Bridge 95/95; real 118/118; Adapter 112/112; synthetic 98/98; Batch 92/92; Lav/Ros 64/64; merge 89/89; recon 158/156/2/0; resolver 108/108; legacy 36/36/36; 23 conflicts blocked; registry 1.5.0; foundations 0/0/0; v1b authority; GOS paused. **Boundaries:** no Gate C/finalize/artifacts; all authority false; product/commerce isolation held. Verdict: **`SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PRODUCTION_VERIFIED`**. |
 | **Smart Recommendations — Source Scout → Batch Draft Generator Integration Implementation** | Done (pushed; production verified) | **Exact three-file developer-only stateless Scout → Capture → `prepareReviewedDataBatchDraft` seam; no peer/foundation/artifact/catalog/overlay/Adapter/Bridge/`index.html`/runtime/commerce change; no Gate C; no `finalizeReviewedDataBatchDraft`; no network/model; no push/deploy/production verification in this commit.** Module `modules/smart-recommendations/developer-source-scout-batch-draft-integration.js` (`0.1.0-sr-source-scout-batch-draft-integration`; contract/result `…-contract` / `…-result`; capability `explicit_developer_source_scout_batch_draft_preparation`). Harness `tests/smart-rec-developer-source-scout-batch-draft-integration.test.html`. Entrypoint `prepareSourceScoutBatchDraftIntegration(input)`. Imports public Scout / Capture / Generator APIs only. Harness generates production-shaped Scout once (Lavender sun; 12 fixtures); recomputes handoff fingerprint via `ss-handoff|` + Capture `stableSerialize`; selects Capture-active preferred agreement pair (extension + government `full_sun`); preserves rejected (**5**) + conflict (**1**) in audit; deterministic roles `primary`/`corroborating-1`; explicit human annotations; two-step A/B content-fingerprint binding. Path A pending → `source_capture_draft_ready` (prepare **0**). Path B approved → `batch_draft_prepared` with nested Generator `field_review_approval_required` (prepare **1**). Per Run totals: mappings **2** / validations **1** / preparations **1**. Statuses **11**; findings **37** (29 hard + 8 info). Local five identical Reset→Run→Reset cycles **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`; all safety counters **0**. Non-regression: Scout **57/57**; Bridge **95/95**; real overlay **118/118**; Adapter **112/112**; synthetic **98/98**; Batch Draft **92/92**; Lav/Ros **64/64**; merge **89/89**; recon **158**/156/2/0; resolver **108/108**; `index.html` git-identical; no integration load on app. Next checkpoint: push + production verification. Deferred: Live Provider; Owner Review Queue. Verdict: **`SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_IMPLEMENTED`**. |
 | **Smart Recommendations — Source Scout → Batch Draft Generator Integration Documentation Contract** | Done (pushed `0b0dae3`) | **Documentation-only; creates no integration module, harness, Source Capture packet, EP/FR/SCP, reviewed-data batch, Batch Draft artifact, Live Provider, network/model executor, owner review queue, runtime/catalog/commerce agent; no peer/foundation change.** Freezes developer-only stateless in-memory Scout → Capture → `prepareReviewedDataBatchDraft` seam. Identities: implementation `0.1.0-sr-source-scout-batch-draft-integration`; contract `0.1.0-sr-source-scout-batch-draft-integration-contract`; result `0.1.0-sr-source-scout-batch-draft-integration-result`; capability `explicit_developer_source_scout_batch_draft_preparation`. Path `modules/smart-recommendations/developer-source-scout-batch-draft-integration.js` + harness `tests/smart-rec-developer-source-scout-batch-draft-integration.test.html` + `PROJECT_STATUS.md` only. Imports public Scout / Capture / Generator APIs only. Requires Scout `human_review_required` + `ready_for_source_capture_validation` + fingerprint match; Capture-legal mapping with unique roles; human `verifiedAt`/`reviewerSummary` annotations; explicit Gates A/B before prepare; stops at `field_review_approval_required`; never Gate C / finalize / artifact write. Statuses **11**; findings **37** (29 hard + 8 informational). All authority flags false. Offline synthetic two-path proof. **Later completed:** Integration Implementation — see implementation checkpoint. Verdict: **`SOURCE_SCOUT_BATCH_INTEGRATION_DOCUMENTATION_CONTRACT_DEFINED`**. |
@@ -13348,19 +13349,604 @@ Post-harness normal app load: no integration/Scout/Capture/Generator runtime beh
 
 ## Next checkpoint
 
-Must be selected separately. Deferred candidates remain: Live Source Provider Documentation Contract; Owner Review Queue Documentation Contract. Do **not** begin Gate C, `finalizeReviewedDataBatchDraft`, artifact writing, live web research, external-model integration, catalog/runtime integration, or commerce agents from this closure.
+Live Source Provider Documentation Contract — complete (see section below).
+
+---
+
+# Live Source Provider Documentation Contract
+
+**Status:** Defined (documentation-only; this commit).
+**Verdict:** `LIVE_SOURCE_PROVIDER_DOCUMENTATION_CONTRACT_DEFINED`
+
+## Nature of this contract
+
+This is a **provider-neutral developer contract**.
+
+It is:
+- explicit-call-only;
+- developer-only;
+- outside normal application runtime;
+- positioned **before** Source Scout;
+- executor-injected and provider-neutral.
+
+It is **not**:
+- a Source Scout replacement;
+- a claim-approval contract;
+- a Source Capture contract;
+- a human-review or Gate A/B/C contract;
+- catalog or product authority;
+- a commerce Supplier Discovery Agent;
+- authorization for live network execution yet.
+
+**This checkpoint creates no** provider module, harness, search/fetch/extraction executor, provider adapter, Netlify function, backend, CLI, replay fixture, environment file, API-key configuration, Source Capture/EP/FR/SCP/batch artifact, Owner Review Queue, runtime integration, catalog integration, or commerce agent.
+
+## Selected architecture
+
+**Separate developer-only provider orchestration before Source Scout**, combined with **injected provider-neutral executors**.
+
+Pipeline position:
+
+```
+Live Source Provider
+→ Reviewed Data Source Scout
+→ Source Capture
+→ Batch Draft preparation
+→ mandatory human review
+```
+
+Orchestration remains outside:
+- Source Scout;
+- Source Scout → Batch integration;
+- Source Capture;
+- Batch Draft Generator;
+- `index.html`;
+- normal application runtime;
+- commerce intelligence.
+
+**Prohibited architectures:**
+- adding fetch/search directly into Source Scout;
+- adding provider behavior to Batch integration;
+- browser-side calls to secret-bearing APIs;
+- harness-only mapping with no reusable contract;
+- provider logic in `index.html`;
+- automatic background research;
+- direct Provider → Source Capture;
+- direct Provider → Batch Draft Generator;
+- shared commerce-provider authority.
+
+## Conceptual identities
+
+| Identity | Value |
+|----------|-------|
+| Implementation | `0.1.0-sr-live-source-provider` |
+| Contract | `0.1.0-sr-live-source-provider-contract` |
+| Result | `0.1.0-sr-live-source-provider-result` |
+| Capability | `explicit_developer_live_source_discovery_preparation` |
+| Optional extraction capability | `explicit_developer_untrusted_claim_span_extraction` |
+
+Extraction capability rules:
+- separate from discovery capability;
+- **disabled** in the first provider-neutral proof;
+- grants **no** approval authority;
+- does **not** permit an external model to change the Scout query plan.
+
+## Future provider-neutral module path
+
+`modules/smart-recommendations/developer-reviewed-data-live-source-provider.js`
+
+Requirements:
+- developer-only;
+- explicit-call-only;
+- stateless;
+- provider-neutral;
+- executor-injected;
+- in-memory;
+- no automatic execution;
+- no browser credentials;
+- no `index.html` import;
+- no runtime import;
+- no persistent cache;
+- no catalog write;
+- no product authority;
+- no commerce authority.
+
+## Preferred public API
+
+Exports (exact or equivalent):
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_VERSION`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_CONTRACT_VERSION`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_RESULT_CONTRACT_VERSION`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_CAPABILITY`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_STATUSES`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_HARD_FINDINGS`
+- `SR_REVIEWED_DATA_LIVE_SOURCE_PROVIDER_INFO_FINDINGS`
+- `getSmartRecDeveloperReviewedDataLiveSourceProviderDescriptor()`
+- `normalizeReviewedDataLiveSourceProviderInput(input)`
+- `validateReviewedDataLiveSourceProviderInput(input)`
+- `buildReviewedDataLiveSourceProviderInputFingerprint(input)`
+- `adaptLiveProviderResultsToSourceScoutDiscoveryResults(result)`
+
+Sole preferred orchestration entrypoint:
+
+`prepareReviewedDataLiveSourceProviderDiscovery(input, executors)`
+
+Rules:
+- serializable input and injected executor capabilities remain separate;
+- executor functions, secrets and closures must **not** enter deterministic input fingerprints;
+- no class, singleton, registry or automatic cache.
+
+## Two trust phases
+
+### Phase 1 — required
+- deterministic query preparation;
+- bounded public-source search;
+- URL normalization;
+- bounded retrieval;
+- metadata normalization;
+- compact source-content normalization;
+- duplicate/copy hints;
+- accessibility and hostile-content metadata;
+- mapping to Source Scout input.
+
+### Phase 2 — optional and separately controlled
+- proposed declared claim spans;
+- structured output only;
+- untrusted model/extractor output;
+- exact quotation-span binding to retrieved text;
+- required locators;
+- no approval;
+- no query-plan mutation;
+- no invented evidence or URLs.
+
+### First provider-neutral implementation and proof
+- Phase 1 only;
+- extraction capability disabled;
+- external-model calls: **0**.
+
+## Preserve existing Source Scout contract
+
+Provider results adapt into the existing discovery-result shape **without modifying Source Scout**:
+
+- `syntheticResultId`
+- `url`
+- `publisher`
+- `title`
+- `author`
+- `publicationDate`
+- `lastUpdatedDate`
+- `language`
+- `sourceClass`
+- `sourceText`
+- `sourceLocator`
+- `geographicScope`
+- `plantIdentityScope`
+- `fieldHints`
+- `contextHints`
+- `accessibilityState`
+- `probableCopyOf`
+- `hostileContentFlags`
+- `declaredClaimSpans`
+
+Scout wrapper remains exactly `{ assignment, syntheticDiscoveryResults }`.
+
+`syntheticResultId` is retained for compatibility. For provider results:
+- generate it deterministically from normalized URL, metadata fingerprint and content fingerprint;
+- treat it as an **adapter-owned compatibility ID**;
+- do **not** modify Source Scout merely to rename it.
+
+`declaredClaimSpans`:
+- empty array when extraction is disabled;
+- untrusted structured proposals when later extraction capability is enabled.
+
+**Prohibit passing into Source Scout:** secrets; cookies; raw provider API responses; model prompts; model reasoning; billing/account identifiers; full fetched pages; provider-specific authority decisions.
+
+Scout remains `network: false`, `externalApi: false`, `externalModel: false`. Successful Scout baseline remains **57/57** with status `human_review_required` and handoffState `ready_for_source_capture_validation`.
+
+## Provider input shape
+
+Required concepts:
+- `providerContractVersion`
+- `sourceScoutQueryPlan`
+- `expectedQueryPlanFingerprint`
+- `approvedAssignmentSnapshot`
+- `approvedIdentitySnapshot`
+- `providerConfigurationReference`
+- `networkPolicy`
+- `sourcePolicy`
+- `executionBudget`
+- `languagePolicy`
+- `extractionPolicy`
+
+Optional:
+- `expectedProviderInputFingerprint`
+
+Unknown keys **fail closed**.
+
+**Prohibit input containing:** API keys; access tokens; passwords; cookies; authenticated sessions; login credentials; private documents; conversation history; Gate A/B/C approval; finalization instructions; catalog-write instructions; product authority; Git/deploy instructions; Shopify instructions; commerce-agent instructions.
+
+## Scout query-plan boundary
+
+The existing Source Scout query plan remains unchanged and may continue to state:
+- `networkRequests: 0`
+- `liveFetch: false`
+- `externalModel: false`
+- `pages: 'synthetic_only'`
+
+These values describe **Scout’s own** authority and behavior and must **not** be mutated.
+
+A separately approved provider `networkPolicy` and `executionBudget` would authorize a future **explicit provider execution outside Scout**.
+
+The provider may use query templates, scientific name, approved aliases, field, claim types, questions, context, target region, source-class allow/deny policies, and language preferences from the frozen plan.
+
+The provider must verify `expectedQueryPlanFingerprint` before doing any work.
+
+## Configuration and secret handling
+
+- API keys must never be committed.
+- Secret values must never enter browser JavaScript.
+- Secrets must never appear in provider input, output, findings, logs, fingerprints, `PROJECT_STATUS.md`, harness fixtures, `localStorage`, or IndexedDB.
+- `providerConfigurationReference` must be non-secret.
+- Secret-bearing execution only in an explicitly approved local developer process or separately approved server-side adapter.
+- Normal CRUVIT runtime must never receive provider credentials.
+
+**First provider-neutral proof:** in-repository orchestration; injected mock/replay executors; zero secrets; zero real network.
+
+**Future live adapter:** local developer runner or server-side transport; never browser-side; separately documented, implemented and approved.
+
+## Public-source policy
+
+**Permit only:** publicly accessible unauthenticated http/https sources; policy-allowed domains; content relevant to the approved plant assignment.
+
+**Prohibit:** login; cookie/session use; paywall/CAPTCHA bypass; credential submission; private portals; personal cloud documents; social-account scraping; hidden crawling; unrelated browsing; arbitrary user-selected internal targets; commerce supplier discovery.
+
+## SSRF and network protections
+
+**Block:** localhost; loopback; private IPv4/IPv6; link-local; cloud metadata endpoints; credential-bearing URLs; `file:` / `data:` / `javascript:` / `ftp:` / unsupported schemes; redirects into blocked networks; DNS rebinding; arbitrary direct IP targets unless separately allowlisted.
+
+**Require:**
+- hostname and resolved-address validation before connection;
+- revalidation after every redirect;
+- maximum redirects: **3**;
+- connection timeout: **5 seconds**;
+- response/read timeout: **15 seconds**;
+- retries: maximum **1**, idempotent operations only;
+- cancellation support;
+- fail-closed handling for unsafe redirects.
+
+## MIME and content support
+
+**First version supports:** `text/html`, `text/plain`.
+
+**Deferred:** `application/pdf`; OCR; image extraction; screenshots; headless-browser interaction; JavaScript execution; form submission; arbitrary file downloads.
+
+**Absolute future live-adapter limits:**
+- assignments per run: **1**
+- search queries: maximum **6**
+- candidate URLs: maximum **12**
+- fetched pages: maximum **8**
+- fetched bytes per response: maximum **524288**
+- total fetched bytes per run: maximum **2097152**
+- normalized `sourceText` per result: maximum **8000** characters
+- redirects: maximum **3**
+- retries: maximum **1**
+- total run duration: maximum **90 seconds**
+
+Content truncation must be disclosed; preserve content hash, URL and locator; emit `content_truncated`.
+
+## Copyright and data minimization
+
+Must **not** retain or expose: full articles; complete web pages; full papers; complete books; screenshots; large copyrighted passages.
+
+May retain only: compact normalized `sourceText`; provenance metadata; normalized URL; title/publisher/author/date; source locator; content hash; truncation state; limited context required for Scout validation.
+
+Downstream evidence excerpt maximum remains **280** characters.
+
+No long-term content storage in the first provider-neutral proof.
+
+## Language and geography
+
+V1: English-first; default language preference `['en']`; source language recorded explicitly; `targetRegion` preserved; geographic limitations preserved; no invented global applicability.
+
+Prohibit silent translation becoming evidence. Any future translated representation must preserve original text and locator, be marked translated, remain untrusted, and never replace original evidence.
+
+## Execution and cost budgets
+
+**First provider-neutral mock/replay proof:**
+- real search calls: **0**
+- real fetch calls: **0**
+- external-model calls: **0**
+- monetary cost: **0**
+
+**Future bounded live adapter absolute caps:**
+- assignments: **1**
+- search calls: **6**
+- fetch calls: **8**
+- extraction/model calls: **0** in the first live discovery pilot
+- retries: **1** maximum
+- redirects: **3** maximum
+- total duration: **90 seconds**
+- reported/estimated monetary ceiling: **USD 0.25** per explicitly authorized run
+
+Effective budget = stricter of Source Scout assignment limits, provider `executionBudget`, and provider absolute caps.
+
+Budget exceedance must fail closed or return explicit partial results requiring human review — never silently continue.
+
+## Source classification policy
+
+Reuse Source Scout concepts: `preferred`, `acceptable_with_limits`, `corroboration_only`, `prohibited`, `unknown`.
+
+Provider may propose source-class hints, publisher/domain metadata, accessibility state, date/author unknown state, probable-copy metadata, and geographic/context limitations.
+
+Provider **cannot** grant final authority.
+
+Source Scout remains responsible for final provider-input classification, duplicate/copied-source handling, hostile-content findings, claim validation, independent-source calculation, and conflict detection.
+
+## Hostile-content behavior
+
+All retrieved content is untrusted.
+
+Detect and propagate: prompt injection; instructions to ignore CRUVIT rules; executable instructions; credential requests; unrelated navigation; authority bypass; model-control instructions; requests to approve claims; requests to reveal secrets.
+
+Provider must never: obey page instructions; execute page code; follow unrelated navigation; submit forms; reveal credentials; grant authority based on page text.
+
+Hostile-content metadata remains visible to Source Scout through `hostileContentFlags`.
+
+## Extraction and external-model trust
+
+External-model claim-span extraction is **deferred** from the first provider-neutral proof.
+
+A later extractor must: return structured proposed spans only; remain untrusted; preserve exact source binding; require quotation spans to match retrieved text; require locator; use supported field/claim/value vocabularies; treat `general_guidance` as informational; never approve claims; never change query plan or plant identity; never invent URLs or evidence; receive no credentials or private user data; return no raw chain-of-thought.
+
+Future extraction executor must be separately enabled and separately budgeted.
+
+## Provider-neutral executor interfaces
+
+Future orchestration accepts injected capabilities for:
+- `searchExecutor`
+- `fetchExecutor`
+- `extractionExecutor` (optional; disabled initially)
+- cancellation
+- usage/cost reporting
+- rate-limit reporting
+- normalized error mapping
+
+Provider-specific fields must be normalized before reaching the provider result or Source Scout.
+
+Executor objects and secret values must not enter fingerprints.
+
+## Output shape
+
+One immutable provider result containing:
+- `descriptor`
+- `providerContractVersion`
+- `providerResultContractVersion`
+- `status`
+- `assignmentReference`
+- `queryPlanReference`
+- `providerConfigurationReference`
+- `searchExecutionReference`
+- `fetchExecutionReferences`
+- `extractionExecutionReferences`
+- `sourceScoutDiscoveryResults`
+- `rejectedProviderResults`
+- `findings`
+- `warnings`
+- `usageSummary`
+- `authorityBoundary`
+- `inputFingerprint`
+- `normalizedRunFingerprint`
+- `replayFingerprint`
+- `mutationCheck`
+
+Do **not** return: secrets; full provider API responses; full web pages; model prompts; model reasoning; approved claims; Source Capture results; Batch Draft results; catalog values; product-authoritative values.
+
+## Exact provider statuses (13)
+
+1. `provider_not_run`
+2. `provider_input_invalid`
+3. `provider_configuration_blocked`
+4. `query_plan_invalid`
+5. `budget_blocked`
+6. `search_unavailable`
+7. `no_results`
+8. `partial_retrieval`
+9. `retrieval_blocked`
+10. `extraction_incomplete`
+11. `results_ready_for_source_scout`
+12. `human_review_required`
+13. `provider_failed`
+
+**Deterministic priority:**
+1. `provider_failed`
+2. `provider_input_invalid`
+3. `provider_configuration_blocked`
+4. `query_plan_invalid`
+5. `budget_blocked`
+6. `search_unavailable`
+7. `retrieval_blocked`
+8. `no_results`
+9. `extraction_incomplete`
+10. `partial_retrieval`
+11. `human_review_required`
+12. `results_ready_for_source_scout`
+13. `provider_not_run`
+
+Expected successful mock/replay primary status: `results_ready_for_source_scout`.
+
+## Exact provider findings (32)
+
+**Hard — exactly 23:**
+- `unsupported_provider_contract`
+- `unknown_provider_input_key`
+- `invalid_query_plan_fingerprint`
+- `unsupported_provider_configuration`
+- `secret_material_detected`
+- `budget_exceeded`
+- `rate_limited`
+- `timeout`
+- `blocked_url_scheme`
+- `private_network_target`
+- `unsafe_redirect`
+- `inaccessible_source`
+- `authentication_required`
+- `paywall_or_captcha`
+- `unsupported_mime`
+- `response_too_large`
+- `robots_or_source_policy_blocked`
+- `hostile_content`
+- `extraction_schema_invalid`
+- `quotation_mismatch`
+- `missing_locator`
+- `unsupported_candidate_value`
+- `external_model_unavailable`
+
+**Informational — exactly 9:**
+- `content_truncated`
+- `duplicate_url`
+- `probable_copied_source`
+- `extraction_unavailable`
+- `external_model_output_untrusted`
+- `no_relevant_sources`
+- `partial_results`
+- `results_prepared_for_scout`
+- `product_authority_not_granted`
+
+Do not duplicate the entire Source Scout finding inventory.
+
+Provider findings sorted deterministically by: (1) code, (2) path, (3) detail.
+
+## Authority boundary
+
+Every provider descriptor and result must preserve all of the following as **false**:
+`authoritative`, `approvalAuthority`, `identityAuthority`, `evidencePacketAuthority`, `fieldReviewAuthority`, `structuredProfileAuthority`, `batchAuthority`, `batchFinalizationAllowed`, `artifactWriteAllowed`, `catalogAuthority`, `productAuthority`, `eligibilityAuthority`, `scalarAuthority`, `runtimeRecommendationAuthority`, `GOSOutcomeAuthority`, `productUseAllowed`, `runtimeConsumptionAllowed`.
+
+Provider-neutral mock/replay orchestration: `network: false`, `externalModel: false`.
+
+A future live adapter may report `network: true` only during an explicitly invoked developer/server-side execution.
+
+Network must remain **false** on module import, in the normal app, during Reset, in mock/replay proof, and in normal production runtime.
+
+## Runtime isolation
+
+Normal CRUVIT must not: import provider orchestration or adapters; call search/fetch/model APIs; contain provider credentials; load provider harnesses; begin background research; store provider results; change Smart Recommendations / v1b / GOS; initiate provider activity from `index.html`.
+
+The provider remains developer-only until a separately approved owner workflow exists.
+
+## Deterministic and replay fingerprints
+
+Live acquisition is time-varying and must not be described as fully deterministic.
+
+Separate:
+- **Acquisition metadata:** retrieval timestamps; provider request references; rate-limit metadata; duration.
+- **Normalized meaning:** normalized queries; normalized URLs; content hashes; metadata; accessibility state; hostile flags; declared spans; findings.
+
+Fingerprints:
+- `inputFingerprint` — binds serializable contract input and policies
+- `normalizedRunFingerprint` — binds normalized meaning, not wall-clock acquisition data
+- `replayFingerprint` — binds frozen mock/replay executor results and normalized output
+
+Exclude from deterministic fingerprints: credentials; executor object identity; current time; runtime counters; DOM; storage; random values; sensitive provider identifiers.
+
+Changes between live runs must be surfaced explicitly rather than hidden.
+
+## Usage reporting
+
+`usageSummary` may include: queries attempted; search/fetch/extraction calls; bytes retrieved; successful/failed sources; redirects; retries; rate-limit events; estimated/reported cost; remaining budget; duration bucket.
+
+Must **not** include: API keys; access tokens; account IDs; sensitive billing identifiers; private provider metadata.
+
+## First implementation and proof sequence
+
+1. Live Source Provider Documentation Contract *(this commit)*
+2. Live Source Provider Implementation Planning
+3. Provider-neutral orchestration with injected mock/replay executors
+4. Zero-real-network harness and production verification
+5. Separately approved live-adapter transport/security contract
+6. Separately approved server-side or local live adapter
+7. Bounded live-provider pilot
+
+This documentation commit authorizes **step 1 only**. Steps 2–7 are **not** begun here.
+
+First provider-neutral proof must: make zero real network/model calls; use mock/replay executors; prove provider → Source Scout input mapping; prove secret rejection; prove SSRF-policy behavior; prove budgets; prove statuses/findings; prove deterministic replay; remain inert before explicit Run.
+
+## Future provider-neutral implementation scope
+
+Exact three files for mock/replay proof:
+1. `modules/smart-recommendations/developer-reviewed-data-live-source-provider.js`
+2. `tests/smart-rec-developer-reviewed-data-live-source-provider.test.html`
+3. `PROJECT_STATUS.md`
+
+No fourth file for the provider-neutral mock/replay proof. No external fixture JSON unless later planning proves it necessary.
+
+A real secret-bearing live adapter **cannot** honestly be implemented as three browser files. A later live adapter may require: provider-specific adapter module; local/server-side transport; environment configuration documentation; optional replay fixtures; separate security verification.
+
+## Future placement
+
+- Provider-neutral orchestration: `modules/smart-recommendations/developer-reviewed-data-live-source-provider.js`
+- Future provider-specific adapters: `modules/smart-recommendations/adapters/live-source-provider/`
+- Possible future server-side transport: `netlify/functions/sr-live-source-*.mjs` or a separately approved local developer runner
+
+All provider paths remain separate from commerce intelligence, Supplier Discovery, Shopify, customer orders, and marketing agents.
+
+## Security-test requirements
+
+Future implementation and adapter tests must cover: secret leakage; secret-like input detection; SSRF; blocked schemes; private network targets; unsafe redirects; DNS rebinding policy; oversized responses; unsupported MIME; hostile content; prompt injection; budget overflow; timeout; rate limiting; malformed search/fetch response; fabricated quotation; missing locator; unsupported value; duplicate URLs; copied sources; partial results; mutation; replay nondeterminism; runtime-load attempt; catalog/product authority attempt; commerce-authority attempt.
+
+## Future harness behavior
+
+Harness: `tests/smart-rec-developer-reviewed-data-live-source-provider.test.html`
+
+**Before Run:** provider module not loaded; no executors called; no network/model/storage; `boot.inert` true; `LAST` null; summary exactly `Not run yet.`
+
+**After Run:** dynamically import provider-neutral orchestration; inject deterministic mock/replay search and fetch executors; extraction disabled; zero real network/model calls; generate Source Scout-compatible discovery results; verify exact mapping; support at least five identical Reset → Run → Reset cycles.
+
+Track logical executor calls separately from real network calls.
+
+## Protected non-regression
+
+Future provider work must preserve: Source Scout **57/57**; Source Scout → Batch integration **83/83**; Bridge **95/95**; real overlay **118/118**; Product Adapter **112/112**; synthetic overlay **98/98**; Batch Draft **92/92**; Lavender/Rosemary **64/64**; Smart Recommendations merge **89/89**; identity reconciliation **158/156/2/0**; identity resolver **108/108**; legacy **36/36/36**; all **23** conflicts blocked; leakage **0**; identity registry **1.5.0**; foundations **0/0/0**; trusted-location and missing-meta unchanged; v1b remains authority; GOS remains paused.
+
+## Product and commerce isolation
+
+This provider is exclusively for reviewed plant-information sourcing.
+
+It must never: discover suppliers; evaluate products; access Shopify; access customer orders; make marketing decisions; share commerce credentials; route supplier orders; become part of Commerce Intelligence.
+
+Normal application loads no provider.
+
+## Owner Review Queue relationship
+
+Owner Review Queue remains **downstream and deferred**.
+
+Provider output must still pass: Source Scout → Source Capture mapping → explicit human Gates A/B → Batch Draft preparation → `field_review_approval_required`.
+
+The provider must not: create an approval queue; mark work approved; assign Gate approval; finalize reviewed data.
+
+## Roadmap re-baseline
+
+- Live Source Provider contract: **defined** (this commit).
+- No provider implementation exists.
+- No provider harness exists.
+- No live adapter exists.
+- No credentials exist in this track.
+- No real network or model call has occurred in this track.
+- Source Scout remains unchanged and network-free.
+- Provider-neutral first proof will use mock/replay executors.
+- Phase-2 extraction remains disabled/deferred.
+- **Next checkpoint:** Live Source Provider Implementation Planning.
+- **Deferred checkpoints:** Live Provider Adapter Transport/Security Documentation Contract; Owner Review Queue Documentation Contract.
 
 ---
 
 # Next Recommended Task
 
-**Done (pushed):** Field Review + Evidence Packet foundations through Source Scout → Batch Draft Integration Implementation (`5d22a66`); Integration Documentation Contract (`0b0dae3`); Source Scout production verification (`710af6f`).
+**Done (pushed):** Field Review + Evidence Packet foundations through Source Scout → Batch Draft Integration production verification (`c064c5e`); Integration Implementation (`5d22a66`); Integration Documentation Contract (`0b0dae3`); Source Scout production verification (`710af6f`).
 
-**Done (local docs; this commit):** Source Scout → Batch Draft Generator Integration production verification — five identical production Reset→Run→Reset cycles **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`; pending `source_capture_draft_ready`; approved `batch_draft_prepared` + nested `field_review_approval_required`; deterministic Capture mapping + explicit Gates A/B; no Gate C/finalize/artifacts; all authority false; zero network/model/storage/runtime/catalog/product/v1b/GOS/commerce; protected non-regression + isolation held. Verdict: `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PRODUCTION_VERIFIED`.
+**Done (local docs; this commit):** Live Source Provider Documentation Contract — developer-only provider-neutral orchestration before Source Scout; injected search/fetch executors; deterministic existing Scout-input adapter; mock/replay-first proof; no real network/model in first implementation; secrets excluded from browser and fingerprints; SSRF, budgets, MIME and copyright boundaries; extraction capability disabled/deferred; no claim approval or Gate authority; no Source Capture/Batch/catalog/runtime/commerce integration. Verdict: `LIVE_SOURCE_PROVIDER_DOCUMENTATION_CONTRACT_DEFINED`.
 
-**Next (exactly one):** Must be selected separately. Do **not** begin Live Source Provider, Owner Review Queue, Gate C/finalization, artifact writing, Product Authority Activation, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility in this docs commit. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Real-pilot overlay and bridge remain developer-only and non-authoritative. Source Scout remains developer-only synthetic proof (no live provider). Integration remains developer-only non-authoritative. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority.
+**Next (exactly one):** **Live Source Provider Implementation Planning**. Do **not** begin provider module/harness/executor/adapter, Netlify/backend, credentials, live search/fetch/model, Owner Review Queue, Gate C/finalization, artifact writing, Product Authority Activation, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility in this docs commit. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Real-pilot overlay and bridge remain developer-only and non-authoritative. Source Scout remains developer-only synthetic proof (network-free). Integration remains developer-only non-authoritative. Live Provider remains documentation-only until Implementation Planning + later mock/replay implementation are separately approved. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority.
 
-**Deferred (not authorized):** (1) Live Source Provider Documentation Contract; (2) Owner Review Queue Documentation Contract.
+**Deferred (not authorized):** (1) Live Provider Adapter Transport/Security Documentation Contract; (2) Owner Review Queue Documentation Contract.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
