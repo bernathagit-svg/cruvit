@@ -62,9 +62,9 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Real Overlay → Developer Product Adapter Bridge production-verified (docs this commit; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout / Media Source Scout remain future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
+Status: **Active — Reviewed Data Source Scout Documentation Contract defined (docs this commit; no Source Scout implementation); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract defined this commit (no processor/harness/live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
 Priority: High
-Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Developer Product Adapter Bridge Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Real-pilot overlay at `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` (`generatedFrom: real_reviewed_batch_pilot`; records `lavender`,`rosemary`) with separate explicit-run harness — **production-verified; developer-only, inert, non-authoritative; absent from `index.html`/runtime/`plants.seed.json`; Product Adapter bridge contract documented only — **no bridge module/harness**. **No** media taxonomy/schema/ImageAsset/Coverage Matrix/source scout/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Bridge production verification complete this docs commit; next checkpoint must be selected separately. Source Scout and Product Authority Activation remain deferred.**
+Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Developer Product Adapter Bridge Documentation Contract** (pushed :9bf99) → **Real Overlay → Product Adapter Bridge Implementation** (pushed eb125e5) → **Bridge production verification** (pushed c4eb0d7) → **Reviewed Data Source Scout Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Real-pilot overlay at `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` (`generatedFrom: real_reviewed_batch_pilot`; records `lavender`,`rosemary`) with separate explicit-run harness — **production-verified; developer-only, inert, non-authoritative; absent from `index.html`/runtime/`plants.seed.json`; Product Adapter bridge module/harness production-verified (eb125e5 / docs c4eb0d7); developer-only, non-authoritative. Source Scout remains documentation-only (no processor/harness/live provider). **No** media taxonomy/schema/ImageAsset/Coverage Matrix/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Bridge production verification closed (`c4eb0d7`). Source Scout Documentation Contract defined this commit; next separately gated checkpoint is Source Scout Processor Implementation Planning (not begun). Live Source Provider and Source Scout → Batch Draft integration remain deferred. Product Authority Activation remains deferred.**
 
 **Plant Climate Data Coverage Audit:** Done (read-only). Highest immediate risk was Smart Rec null-meta fallback returning `suitabilityScore: 60` / `recommendationLevel: 'good'`. That risk is now patched (see Completed Checkpoints).
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (this docs commit; developer-only; no runtime authority); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (`c4eb0d7`; developer-only; no runtime authority); Reviewed Data Source Scout Documentation Contract defined this commit (no processor); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
 
-**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (this docs commit) → next: selected separately → deferred Source Scout Documentation Contract → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
+**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (pushed `c4eb0d7`) → **Reviewed Data Source Scout Documentation Contract** (this docs commit) → next: Source Scout Processor Implementation Planning (not begun) → deferred Live Source Provider Documentation Contract → deferred Source Scout → Batch Draft Generator Integration Planning → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
 
 ---
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Smart Recommendations — Reviewed Data Source Scout Documentation Contract** | Done (local docs; unpushed) | **Documentation-only; creates no Source Scout module, harness, live network executor, search/model provider, source queue, Evidence Packet/Field Review/SCP artifact, reviewed-data batch, catalog overlay, runtime integration, Admin Console, commerce/Shopify agent; no research; no push in this docs commit.** Freezes developer-only scout-only draft-only non-authoritative human-gated Source Scout. Contract `0.1.0-sr-reviewed-data-source-scout-contract`; result `0.1.0-sr-reviewed-data-source-scout-result`; capability `explicit_developer_reviewed_data_source_scout_draft`. Architecture: one deterministic orchestration contract with internal discovery/classification then claim-extraction/draft-preparation phases; nested `sourceCandidate`/`claimCandidate` shapes (no separate candidate modules). Future synthetic processor path `modules/smart-recommendations/developer-reviewed-data-source-scout.js` (network/external-model disabled). Fields `sun`/`water` only; claim types `preference`/`optimum`/`tolerance`/`survival_minimum` (`general_guidance` informational only). Statuses **13**; findings **39** (24 hard + 15 informational). Evidence excerpt max **280**. Independent-source rule: ≥2 independent acceptable + ≥1 preferred. Handoff: Scout draft → Source Capture Gates A/B → Batch Draft Generator → validators; no approval authority. First proof synthetic-only. Commerce agents remain separate. Verdict: **`REVIEWED_DATA_SOURCE_SCOUT_DOCUMENTATION_CONTRACT_DEFINED`**. |
 | **Smart Recommendations — Real Reviewed Climate Profile Catalog Overlay → Developer Product Adapter Bridge production verification** | Done (local docs; unpushed) | **Documentation-only after production verification; no bridge module/harness/overlay/Product Adapter/schema/seed/`index.html`/identity/batch/foundation/shared-validator/Batch Draft Generator/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no Source Scout; no Product Authority Activation; no manual deploy; no Netlify setting change; no push in this docs commit.** Deployed implementation: **`eb125e5ccad1d7dda1e7325e0696fe795d468e42`** (`feat: add real overlay product adapter bridge`). Production: https://friendly-taiyaki-64aacb.netlify.app/. **URLs:** app `/`; bridge module `/modules/smart-recommendations/developer-reviewed-climate-profile-overlay-product-adapter-bridge.js`; bridge harness `/tests/smart-rec-developer-reviewed-climate-profile-overlay-product-adapter-bridge.test.html`; real-pilot overlay; overlay module; Product Adapter module; protected real/synthetic/adapter/auto/Lavender/Rosemary harnesses. **HTTP/content:** all **200** with expected types; LF-normalized exact match vs `eb125e5` for bridge module/harness and protected peers. Module markers: versions `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge` / contracts / capability `explicit_developer_real_overlay_product_adapter_bridge_analysis`; statuses **9**; findings **33**; `analyzeReviewedClimateProfileOverlayWithProductAdapter`. Harness markers: PASS/FAIL, BOOT/LAST, bannerStatus, bootMarker, Run/Reset, `Not run yet.`. **App isolation before:** zero bridge-module/harness/real-overlay/overlay-module/Product Adapter requests; title `Cruvit — My Garden OS`; no bridge state. **Harness inert:** boot.inert true; LAST null; banner structure present; summary `Not run yet.`; moduleLoaded/analysisExecuted false. **Five complete Reset→Run→Reset production cycles:** identical; **95/95**; verdict `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`; status `bridge_analysis_complete`; records **2**; findings **0** / warnings **7**; Lavender/Rosemary `reviewed_supported_agreement` candidates `full_sun`/`low`; `productUseAllowed`/`runtimeConsumptionAllowed` false; Adapter+bridge fingerprints identical to local baseline (summaryFingerprint sha256 prefix `d66c2aae5e5be3c1`); counters overlayRequests **1** / logicalBridgeLoads **1** / peerModuleLoads **2** / external/storage/console/unhandled/runtime/product/v1b/GOS/SR-mutation **0**; Reset idempotent inert restore. **Non-regression:** real overlay **118/118**; Product Adapter **112/112**; synthetic **98/98**; Batch Draft **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; recon **158**/156/2/0; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; registry **1.5.0**; foundations **0/0/0**; v1b authority; GOS paused. **App isolation after:** zero bridge/overlay/adapter residue; no harness boot. No Source Scout; no Product Authority Activation; no runtime integration. Verdict: **`REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PRODUCTION_VERIFIED`**. |
 | **Smart Recommendations — Real Reviewed Climate Profile Catalog Overlay → Developer Product Adapter Bridge Implementation** | Done (pushed; production verified) | **Exact three-file developer-only stateless bridge proof; no peer/overlay/Product Adapter/schema/seed/`index.html`/identity/batch/foundation/shared-validator/Batch Draft Generator/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no Source Scout; no Product Authority Activation; no research; no push/deploy/production verification in this commit.** Module `modules/smart-recommendations/developer-reviewed-climate-profile-overlay-product-adapter-bridge.js`; harness `tests/smart-rec-developer-reviewed-climate-profile-overlay-product-adapter-bridge.test.html`; docs `PROJECT_STATUS.md`. Versions: implementation `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge`; contract `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-contract`; result `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-result`; capability `explicit_developer_real_overlay_product_adapter_bridge_analysis`. Public API: descriptor, normalize/validate, input fingerprint, `analyzeReviewedClimateProfileOverlayWithProductAdapter`. Imports overlay + Product Adapter public APIs only. Shape B mapping strips field-level `integrationStatus`. Prepared catalog FPs: Lavender `group_default\|lavender\|sun\|full_sun\|false\|\|humid-heat-stress`; Rosemary `group_default\|rosemary\|water\|low\|false\|\|humid-heat-stress`. Identity FPs: `lavender\|Lavandula angustifolia\|1.5.0\|false\|false` / `rosemary\|Salvia rosmarinus\|1.5.0\|false\|false`. Context outdoor/ground/mature/general; region null→omit; options `includeExplanationParts: true`. Statuses **9**; findings **33** (25 hard + 8 informational). Local harness: five identical Reset→Run→Reset cycles; **95/95**; verdict `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`; primary status `bridge_analysis_complete`; both `reviewed_supported_agreement` (`full_sun`/`low`); `candidateAvailable` true; `humanReviewRequired` false; `productUseAllowed`/`runtimeConsumptionAllowed` false; findings **0** / warnings **7**; counters overlayRequests **1** / logicalBridgeLoads **1** / peerModuleLoads **2** / external/storage/console/unhandled/runtime/product/v1b/GOS/SR-mutation **0**. Non-regression: real overlay **118/118**; Product Adapter **112/112**; synthetic **98/98**; Batch Draft **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; recon **158**/156 PASS/2 quarantined/0 unexpected; resolver **108/108**; legacy **36/36/36**; **23** conflicts blocked; leakage **0**; registry **1.5.0**; foundations **0/0/0**; v1b authority; GOS paused. Product isolation: `index.html` unchanged; no bridge/runtime requests. **Later completed:** isolated production verification — see production-verification checkpoint. Verdict: **`REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_IMPLEMENTED`**. |
 | **Smart Recommendations — Real Reviewed Climate Profile Catalog Overlay → Developer Product Adapter Bridge Documentation Contract** | Done (pushed) | **Documentation-only; creates no bridge module, bridge harness, bridge contract module, fixture JSON, generated adapter inputs, overlay change, Product Adapter change, schema/seed/`index.html`/batch/foundation/runtime/`needsReview`/eligibility/matcher/UI/GOS/v1b/media change; no Source Scout; no Product Authority Activation; no research; no push in this docs commit.** Freezes developer-only bridge architecture importing public APIs of production-verified overlay (`0.1.0-sr-reviewed-climate-profile-catalog-overlay`; real-pilot `generatedFrom: real_reviewed_batch_pilot`; **118/118**) and Product Adapter (`0.1.0-sr-reviewed-climate-profile-product-adapter`; **112/112**) only. Bridge identities: implementation `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge`; contract `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-contract`; result `0.1.0-sr-reviewed-climate-profile-overlay-product-adapter-bridge-result`; capability `explicit_developer_real_overlay_product_adapter_bridge_analysis`. Future path: `modules/smart-recommendations/developer-reviewed-climate-profile-overlay-product-adapter-bridge.js` + harness `tests/smart-rec-developer-reviewed-climate-profile-overlay-product-adapter-bridge.test.html` + `PROJECT_STATUS.md` only. Shape B mapping strips field-level `integrationStatus`. Prepared legacy fingerprints: Lavender `group_default\|lavender\|sun\|full_sun\|false\|\|humid-heat-stress`; Rosemary `group_default\|rosemary\|water\|low\|false\|\|humid-heat-stress`. Expected both `reviewed_supported_agreement` with `candidateAvailable` true and `productUseAllowed`/`runtimeConsumptionAllowed` false. Finding inventory **33** (25 hard + 8 informational). Request budget **4** same-origin logical resources on first Run. All authority flags false. **Later completed:** Real Overlay → Product Adapter Bridge Implementation — see implementation checkpoint. Verdict: **`REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_DOCUMENTATION_CONTRACT_DEFINED`**. |
@@ -11452,9 +11453,9 @@ Stop before implementation if either source chain cannot be deterministically bo
 - Real Overlay → Developer Product Adapter Bridge Implementation: pushed (`eb125e5`) and production-verified (this docs commit).
 - Bridge remains developer-only; peers unchanged.
 - Production five-cycle harness **95/95** / `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`.
-- Source Scout remains deferred.
+- Reviewed Data Source Scout Documentation Contract: complete (this docs commit).
 - Product Authority Activation remains deferred.
-- **Next checkpoint:** must be selected separately.
+- **Next checkpoint after Source Scout docs:** Source Scout Processor Implementation Planning (not begun).
 
 ---
 
@@ -12173,7 +12174,371 @@ No runtime integration; no Source Scout; no Product Authority Activation; peers/
 
 ## Next checkpoint
 
-Must be selected separately.
+Reviewed Data Source Scout Documentation Contract — complete (see section below).
+
+---
+
+# Reviewed Data Source Scout Documentation Contract
+
+**Status:** Defined (documentation-only; this commit).
+**Verdict:** `REVIEWED_DATA_SOURCE_SCOUT_DOCUMENTATION_CONTRACT_DEFINED`
+
+## Nature of this contract
+
+This is a **developer-only Source Scout contract**.
+
+It is:
+- scout-only;
+- draft-only;
+- non-authoritative;
+- human-gated.
+
+It is **not**:
+- a live-network contract;
+- a model-provider contract;
+- an approval contract;
+- an Evidence Packet approval contract;
+- a Field Review approval contract;
+- a Structured Climate Profile approval contract;
+- a catalog-import contract;
+- product authority;
+- runtime integration;
+- a commerce or Shopify agent.
+
+No Source Scout code, harness, provider, or research artifact is created in this checkpoint.
+
+## Selected architecture
+
+One developer-only **deterministic Source Scout orchestration contract** with two internal phases:
+
+1. source discovery and classification;
+2. claim extraction and draft preparation.
+
+Primary output is **structured result data**, not unstructured research notes.
+
+The Source Scout must **not**:
+- approve or import data;
+- decide final botanical truth;
+- replace Source Capture;
+- replace Batch Draft Generator;
+- replace validators;
+- merge into the runtime;
+- modify Git;
+- contact third parties;
+- modify Shopify.
+
+Existing Source Capture, Batch Draft Generator, validators, and human review remain the authority gates.
+
+## Conceptual identities
+
+| Identity | Value |
+|----------|-------|
+| Source Scout Contract | `0.1.0-sr-reviewed-data-source-scout-contract` |
+| Source Scout Result Contract | `0.1.0-sr-reviewed-data-source-scout-result` |
+| Capability | `explicit_developer_reviewed_data_source_scout_draft` |
+
+Nested v1 shapes (not separate modules):
+
+- `sourceCandidate`
+- `claimCandidate`
+
+## Future synthetic processor placement
+
+Path: `modules/smart-recommendations/developer-reviewed-data-source-scout.js`
+
+Requirements:
+
+- developer-only;
+- explicit-call-only;
+- network disabled;
+- external API disabled;
+- external-model disabled;
+- no browser runtime import;
+- no `index.html` import;
+- no persistence;
+- no catalog writes;
+- no Git actions.
+
+Live discovery execution is deferred to a separate provider/service contract.
+
+## Assignment input
+
+Conceptual immutable assignment.
+
+**Required:** `sourceScoutContractVersion`, `assignmentId`, `canonicalKey`, `acceptedScientificName`, `identityRegistryVersion`, `currentIdentityBindingFingerprint`, `currentNeedsReview`, `currentIdentityConflict`, `canonicalIdentityConfirmed`, `parentOrGenusScope`, `targetField`, `targetClaimTypes`, `targetQuestions`, `targetContext`, `allowedSourceClasses`, `prohibitedSourceClasses`, `maximumCandidateSources`, `maximumClaimsPerSource`, `citationRequirements`, `expectedAssignmentFingerprint`.
+
+**Optional:** `targetRegion`, `languagePreferences`, `approvedAliasesForSearch`, `freshnessRequirements`, `providerConfigurationReference`.
+
+**Prohibited:** entire application state; runtime user object; credentials; cookies; product-authority / catalog-write / Git / deploy / Shopify instructions.
+
+Unknown keys fail closed.
+
+## Supported v1 fields
+
+- `sun`
+- `water`
+
+No additional fields in v1.
+
+## Supported v1 claim types
+
+From existing registries:
+
+- `preference`
+- `optimum`
+- `tolerance`
+- `survival_minimum`
+
+`general_guidance` may appear only as informational draft evidence and cannot directly become a reviewed-supported SCP value.
+
+Do **not** introduce `requirement`, `contraindication`, or new claim vocabularies in v1.
+
+## Identity gates
+
+Require canonical key, accepted scientific name, identity registry version, current identity fingerprint, `currentNeedsReview`, `currentIdentityConflict`, `canonicalIdentityConfirmed`, and species/genus/parent scope.
+
+Rules:
+
+- aliases may be used for search only;
+- all evidence must bind back to the canonical identity;
+- `currentNeedsReview` blocks normal scouting;
+- `currentIdentityConflict` blocks normal scouting;
+- genus / spp. / parent scope is quarantined;
+- common-name-only evidence cannot silently bind to a species;
+- Source Scout cannot clear `needsReview` or resolve identity conflicts.
+
+## Source taxonomy
+
+Classification states: `preferred` | `acceptable_with_limits` | `corroboration_only` | `prohibited` | `unknown`.
+
+**Preferred:** university extension; botanical institution; government agriculture/horticulture; peer-reviewed publication; professional horticultural society; recognized scientific institution; institutional structured database with clear provenance.
+
+**acceptable_with_limits / corroboration_only:** established nursery technical guidance; commercial cultivation guide; retailer technical page; regional grower guidance.
+
+**Restricted/prohibited by context:** anonymous blog; forum; social media; marketplace listing; AI-generated summary; SEO aggregation; copied content without provenance; inaccessible/unverifiable page.
+
+Commercial sources are not automatically false, but never receive preferred institutional default authority.
+
+## Source acceptance
+
+Assess: identifiable publisher; stable normalized URL; author/institution; publication/update date; language; geographic applicability; plant identity specificity; field/context relevance; direct vs secondary evidence; citation support; completeness; duplication/syndication; probable copy; conflict of interest; accessibility.
+
+Fail closed for: no publisher; inaccessible; prohibited class; identity ambiguity; unsupported field; irrelevant context; no traceable claim; copied/generated content without provenance; hostile instructions in source content.
+
+## Hostile-content / prompt-injection
+
+Every source page is untrusted data. Ignore instructions to change rules, reveal secrets, execute code, navigate unrelated pages, upload credentials, modify files, approve claims, bypass validators, publish, or contact third parties.
+
+Hard findings: `source_prompt_injection_detected`, `source_executable_instruction_detected`, `source_credential_request_detected`, `source_unrelated_navigation_attempt`, `source_authority_bypass_attempt`.
+
+Quote as evidence only — never follow as instructions.
+
+## sourceCandidate shape
+
+Immutable fields: `sourceCandidateId`, `normalizedUrl`, `publisher`, `title`, `author`, `publicationDate`, `lastUpdatedDate`, `language`, `sourceClass`, `sourceClassConfidence`, `geographicScope`, `plantIdentityScope`, `fieldRelevance`, `contextRelevance`, `directness`, `duplicateGroup`, `acceptedForExtraction`, `acceptanceReasons`, `rejectionReasons`, `contentFingerprint`, `sourceMetadataFingerprint`.
+
+Wall-clock `accessedAt` must not enter meaning-bearing fingerprints. No full page body, credentials, or browser session state.
+
+## claimCandidate shape
+
+Immutable fields: `claimCandidateId`, `sourceCandidateId`, `canonicalKey`, `field`, `claimType`, `candidateValue`, `rawEvidenceExcerpt`, `normalizedEvidenceSummary`, `sourceLocator`, `contextScope`, `geographicApplicability`, `qualifiers`, `limitations`, `extractionConfidence`, `claimSupportConfidence`, `sourceQualityClass`, `extractionMethod`, `providerReference` (when model-assisted), `claimFingerprint`, `duplicateClaimGroup`, `conflictGroup`, `needsHumanReview`, `authorityBoundary`.
+
+Require source locator + source fingerprint; supported field/claim type/value; preserved context/region; no fabricated quote; no merging two sources into one quotation; all authority flags false.
+
+## Evidence excerpt limits
+
+Maximum excerpt length: **280** characters (aligns with Source Capture Contract).
+
+Compact evidence only; distinguish paraphrase vs quotation; locator required; multiple excerpts remain separate; no full pages, entire papers, or screenshots in v1.
+
+## Context / region / language
+
+Required context concepts: `setting`, `planting`, `maturity`, `objective`. Optional: `daypart`, `heatProtection`, `climateOrRegion`, `season`, `outcomeApplicability`.
+
+Unknown remains unknown. No fuzzy universalization. Container ≠ ground; seedling ≠ mature; establishment watering ≠ mature watering; regional ≠ global; preference ≠ tolerance; silence ≠ evidence.
+
+V1: English claim extraction; optional multilingual discovery metadata; preserve original text separately from any normalized translation; no domain→region inference; no invented global applicability. Live multilingual extraction deferred.
+
+## Query plan / deduplication / extraction / conflicts
+
+Deterministic query plan before discovery from scientific name, canonical key, aliases, field, claim types, questions, context/region tokens, allowed classes, domain filters, and limits. An external model may not redefine the assignment. First implementation uses synthetic query results only.
+
+Dedup: URL normalization, canonical URL, tracking-parameter removal, mirrors, translated copies, syndication, duplicate publisher pages, probable-copy flags, original-source preference, independent-source counting. Copied/syndicated pages do not count as independent corroboration.
+
+Extractor: locate supporting text; classify claim type; normalize only supported values; preserve qualifiers/uncertainty/context/region; state when no relevant claim exists; avoid example→rule, range collapse, preference/tolerance merge, silence-as-evidence.
+
+Conflict classes (detect only; Field Review resolves): value; preference-versus-tolerance; context; region; life-stage; source-quality; identity; stale-source; copied-source false corroboration.
+
+## Source quality and confidence
+
+Transparent dimensions: institutional authority; identity specificity; directness; context match; regional match; recency; citation support; independence; commercial-bias risk.
+
+Optional aggregate class: `high` | `medium` | `low` | `insufficient` — must not hide a hard blocking defect.
+
+Keep separate: extraction confidence; claim-support confidence; source quality; consensus state; **product authority (always false)**. No single vague overall confidence number.
+
+## Exact statuses (13)
+
+- `scout_not_run`
+- `assignment_invalid`
+- `identity_blocked`
+- `query_plan_ready`
+- `no_sources_found`
+- `sources_discovered`
+- `sources_rejected`
+- `extraction_incomplete`
+- `claims_extracted`
+- `claim_conflict_detected`
+- `draft_ready_for_validation`
+- `human_review_required`
+- `source_scout_failed`
+
+Do not use: `approved`, `authoritative`, `catalog_ready`, `product_ready`, `published`.
+
+## Exact finding inventory (39)
+
+Hard — **24**: `unsupported_source_scout_contract`, `invalid_assignment`, `unknown_assignment_key`, `identity_binding_mismatch`, `current_needs_review_active`, `current_identity_conflict_active`, `unsupported_field`, `unsupported_claim_type`, `prohibited_source_class`, `source_inaccessible`, `source_identity_ambiguous`, `source_context_irrelevant`, `source_prompt_injection_detected`, `source_executable_instruction_detected`, `source_credential_request_detected`, `source_unrelated_navigation_attempt`, `source_authority_bypass_attempt`, `unsupported_candidate_value`, `fabricated_evidence_detected`, `missing_source_locator`, `source_fingerprint_mismatch`, `claim_fingerprint_mismatch`, `output_mutation_detected`, `nondeterministic_output`.
+
+Informational/warning — **15**: `source_discovered`, `source_duplicate_detected`, `probable_copied_source`, `lower_quality_source`, `regional_scope_limited`, `context_scope_limited`, `source_date_unknown`, `author_unknown`, `claim_extracted`, `claim_not_found`, `claim_conflict_detected`, `corroboration_insufficient`, `draft_candidate_created`, `human_review_required`, `product_authority_not_granted`.
+
+Sort by code, then path, then detail.
+
+## Result shape
+
+Immutable result: `descriptor`, `sourceScoutContractVersion`, `resultContractVersion`, `status`, `assignmentReference`, `queryPlan`, `sourceCandidates`, `claimCandidates`, `duplicateSourceGroups`, `duplicateClaimGroups`, `conflictGroups`, `rejectedSources`, `findings`, `warnings`, `draftEvidencePacketInput`, `sourceCaptureHandoffDraft`, `handoffState`, `authorityBoundary`, `inputFingerprint`, `summaryFingerprint`, `mutationCheck`.
+
+Do not include full downloaded pages, browser sessions, credentials, hidden chain-of-thought, or product-authoritative values.
+
+## Source Capture / Evidence Packet handoff
+
+Scout may produce draft-only: source metadata; evidence references; compact excerpts; claim candidates; context; geographic limitations; unresolved conflicts; provenance fingerprints; Source Capture-compatible input.
+
+Must not produce: approved Evidence Packet / Field Review / Structured Climate Profile; final reviewed value; batch-ready approval; catalog value.
+
+No foundation change required for the first synthetic proof.
+
+## Batch Draft Generator relationship
+
+```
+Source Scout
+→ Source Capture-compatible draft
+→ human Gates A/B
+→ prepareReviewedDataBatchDraft
+→ Gate C
+→ finalizeReviewedDataBatchDraft
+→ batch validator
+```
+
+Source Scout does not replace the Generator. The Generator does not discover sources. Finalized batches remain non-product-authoritative. Catalog overlay and Product Adapter gates remain separate.
+
+## Human-review gates
+
+Mandatory human review when: identity ambiguous; sources conflict; only low-quality sources; region mismatch; incomplete context; claim-type ambiguity; uncertain value normalization; missing excerpt/locator; probable copy; prompt injection; unsupported vocabulary expansion; insufficient independent corroboration.
+
+Severe cases are hard blocks, not ordinary review items.
+
+## Independent-source requirement
+
+For a future `reviewed_supported` draft candidate:
+
+- at least two independent acceptable sources;
+- at least one preferred/high institutional source;
+- copied/mirrored/syndicated pages do not count as independent;
+- a single commercial source is insufficient;
+- conflicting sources require Field Review;
+- Source Scout may report insufficiency but may not waive it.
+
+## Network staging
+
+1. Documentation Contract (this commit)
+2. Synthetic deterministic processor
+3. Live Source Provider Documentation Contract
+4. Bounded live-network scout
+5. Owner review queue
+
+First processor: no live network; no browser-side fetching; embedded synthetic fixtures only.
+
+## External-model boundary
+
+Future models may draft-only propose query plans, source classifications, candidate claim extraction, compact translation, and limitation summaries.
+
+Must not: approve claims; fabricate missing evidence; alter URLs; hide conflicts; create final reviewed values; bypass validators; modify Git/runtime/catalog.
+
+Model-assisted extraction must record provider, model, version, prompt/template version, and extraction method. No external-model call in the first implementation.
+
+## Cost / rate-limit / privacy / security
+
+Future live executor: max candidate sources/pages/content bytes/model calls; bounded retries; per-domain delays; timeout; circuit breaker; source cache reuse; duplicate avoidance; `budget_exceeded` status. No uncontrolled recursive browsing.
+
+V1 public sources only. Prohibit login/paywall bypass, credential storage, personal user data to sources, executable downloads, arbitrary file execution, hidden form submission, contacting publishers, posting comments, or sending email.
+
+## Determinism and fingerprints
+
+**Input fingerprint** binds: assignment; canonical identity; target field/claims; context; region; source policy; provider configuration; query plan; limits.
+
+**Source candidate fingerprint** binds: normalized URL; publisher/title/date/language; content fingerprint; source class; geographic scope; identity scope.
+
+**Claim fingerprint** binds: source fingerprint; locator; field; claim type; candidate value; context; region; qualifiers; limitations.
+
+**Summary fingerprint** binds: status; accepted/rejected source IDs; claim IDs; duplicate/conflict groups; findings; handoff draft fingerprint; authority boundary.
+
+Exclude wall-clock runtime, counters, random IDs, object identity, UI state.
+
+## Synthetic proof fixtures
+
+First synthetic processor proof must cover: two independent preferred agreeing sources; duplicate copied source; lower-quality commercial source; context mismatch; regional limitation; ambiguous identity; conflicting claim; prompt-injection source; source with no relevant claim; inaccessible source; unsupported candidate value.
+
+No live network. No external model.
+
+## Future synthetic harness
+
+Before Run: processor not loaded; fixtures not executed; no draft/network/storage; inert marker; summary exactly `Not run yet.`
+
+After explicit Run: dynamically import processor; execute synthetic assignment; classify sources; extract claims; group duplicates/conflicts; build Source Capture-compatible draft; prove all authority flags false; ≥5 identical Reset → Run → Reset cycles.
+
+Do not freeze assertion total.
+
+## Initial implementation scope (future; not begun)
+
+1. `modules/smart-recommendations/developer-reviewed-data-source-scout.js`
+2. `tests/smart-rec-developer-reviewed-data-source-scout.test.html`
+3. `PROJECT_STATUS.md`
+
+No fourth file. No live provider. No network executor. Embedded synthetic fixtures only. No foundation change.
+
+## Protected non-regression (future implementation)
+
+Bridge **95/95**; real overlay **118/118**; Product Adapter **112/112**; synthetic overlay **98/98**; Batch Draft Generator **92/92**; Lavender **64/64**; Rosemary **64/64**; merge **89/89**; recon **158**/156 PASS/2 quarantined/0 unexpected; resolver **108/108**; legacy **36/36/36**; all **23** conflicts blocked; leakage **0**; registry **1.5.0**; foundations **0/0/0**; trusted-location/missing-meta unchanged; v1b authority; GOS paused.
+
+## Product isolation
+
+Normal app must request no Source Scout module/harness, live provider, research artifacts, overlay, Product Adapter, or Bridge. No runtime research; no catalog mutation; no recommendation/UI/v1b/GOS change.
+
+## Commerce separation
+
+This Source Scout is only for reviewed plant knowledge. It is **not** a Supplier Discovery Agent, Product Evaluation Agent, Shopify agent, marketing agent, or commerce crawler. Commerce automation remains a separate repository and authority track.
+
+## Roadmap baseline after this documentation contract
+
+- Source Scout contract is defined.
+- No Source Scout processor exists.
+- No live network/provider exists.
+- First implementation will be synthetic-only.
+- Existing Source Capture / Batch Draft / validator gates remain unchanged.
+- No authority is granted.
+- **Next separately gated checkpoint:** Source Scout Processor Implementation Planning (read-only; not begun now).
+- Live Source Provider and Source Scout → Batch Draft Generator Integration remain deferred.
+
+## Next checkpoint (not begun)
+
+**Source Scout Processor Implementation Planning**
+
+Mode: read-only; no implementation; freeze exact module API; freeze exact assignment/result shapes; freeze 13 statuses and 39 findings; freeze embedded fixtures; freeze deterministic draft handoff; freeze exact three-file implementation scope.
+
+## Exactly two deferred checkpoints (not authorized)
+
+1. Live Source Provider Documentation Contract
+2. Source Scout → Batch Draft Generator Integration Planning
 
 ---
 
@@ -12191,11 +12556,13 @@ Must be selected separately.
 
 **Done (pushed):** Real Overlay → Developer Product Adapter Bridge Implementation (`eb125e5`) — three-file developer-only stateless bridge; real overlay → Product Adapter Shape B; Lavender/Rosemary agreement analyses; local **95/95** / `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`. Verdict: `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_IMPLEMENTED`.
 
-**Done (local; this commit):** Real Overlay → Developer Product Adapter Bridge production verification — deployed `eb125e5` production-verified; five identical production Reset→Run→Reset cycles **95/95** / `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`; full non-regression and product isolation. Verdict: `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PRODUCTION_VERIFIED`.
+**Done (pushed):** Real Overlay → Developer Product Adapter Bridge production verification (`c4eb0d7`) — deployed `eb125e5` production-verified; five identical production Reset→Run→Reset cycles **95/95** / `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PASS`. Verdict: `REAL_OVERLAY_PRODUCT_ADAPTER_BRIDGE_PRODUCTION_VERIFIED`.
 
-**Next (exactly one):** **Select the next separately gated checkpoint** after bridge production verification (do **not** begin Source Scout, Product Authority Activation, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility in this commit). UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Real-pilot overlay and bridge remain developer-only and non-authoritative. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority. Product Adapter remains developer-only and non-authoritative. Synthetic overlay remains production-verified and untouched.
+**Done (local; this commit):** Reviewed Data Source Scout Documentation Contract — freezes developer-only scout-only draft-only Source Scout architecture (discovery + extraction phases), nested source/claim candidates, sun/water only, 13 statuses / 39 findings, 280-char excerpt cap, two-independent-source rule, Source Capture/Batch Draft handoff, synthetic-only first proof, no live network/model/approval/product authority; commerce agents remain separate. Verdict: `REVIEWED_DATA_SOURCE_SCOUT_DOCUMENTATION_CONTRACT_DEFINED`.
 
-**Deferred (not authorized):** (1) Source Scout Documentation Contract; (2) Product Authority Activation Planning.
+**Next (exactly one):** **Source Scout Processor Implementation Planning** (read-only; no implementation; freeze exact module API, assignment/result shapes, 13 statuses / 39 findings, embedded fixtures, deterministic draft handoff, exact three-file implementation scope). Do **not** begin Source Scout processor implementation, live provider, Batch Draft integration, Product Authority Activation, media track, third reviewed-data batch, adapter→v1b/Smart Recommendations/GOS integration, or product eligibility in this commit. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Real-pilot overlay and bridge remain developer-only and non-authoritative. Source Scout remains documentation-only until a later processor checkpoint. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority.
+
+**Deferred (not authorized):** (1) Live Source Provider Documentation Contract; (2) Source Scout → Batch Draft Generator Integration Planning.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
