@@ -62,7 +62,7 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
-Status: **Active — Live Provider Vendor Research and Conditional Selection Record defined (this docs commit; Tavily conditional primary); Live Provider Deployment Exposure and Ignore Protection verified (docs `1d98b60`; impl pushed `cf5f934`); Deployment Exposure and Ignore Protection Documentation Contract defined (`d66aa5a`); Local Secret-Free Live Provider Adapter/Transport Proof combined static/Node verified (docs `5edf4ad`; impl pushed `8198a20`); Live Provider Adapter Transport/Security Documentation Contract defined (`5bc08bb`); Live Source Provider mock/replay production-verified (pushed `95becf0`; implementation `9e560a5`); Live Source Provider Documentation Contract defined (`5b51426`); Source Scout → Batch Draft Generator Integration production-verified (pushed `c064c5e`; implementation `5d22a66`); Integration Documentation Contract defined (`0b0dae3`); Source Scout production-verified (pushed `710af6f`; implementation `69eaf52`); Source Scout Documentation Contract pushed (`ab5e75c`); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation complete this commit (synthetic-only module+harness; no live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
+Status: **Active — Tavily Vendor Terms and Use Clarification Gate defined (this docs commit; Tavily still not approved); Live Provider Vendor Research and Conditional Selection Record defined (`85c737a`; Tavily conditional primary); Live Provider Deployment Exposure and Ignore Protection verified (docs `1d98b60`; impl pushed `cf5f934`); Deployment Exposure and Ignore Protection Documentation Contract defined (`d66aa5a`); Local Secret-Free Live Provider Adapter/Transport Proof combined static/Node verified (docs `5edf4ad`; impl pushed `8198a20`); Live Provider Adapter Transport/Security Documentation Contract defined (`5bc08bb`); Live Source Provider mock/replay production-verified (pushed `95becf0`; implementation `9e560a5`); Live Source Provider Documentation Contract defined (`5b51426`); Source Scout → Batch Draft Generator Integration production-verified (pushed `c064c5e`; implementation `5d22a66`); Integration Documentation Contract defined (`0b0dae3`); Source Scout production-verified (pushed `710af6f`; implementation `69eaf52`); Source Scout Documentation Contract pushed (`ab5e75c`); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation complete this commit (synthetic-only module+harness; no live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
 Priority: High
 Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter taxonomy fields is additive only. **Completed track:** … → Lavender Source Reference Capture Closure (pushed `7c9fed5`) → **First Real Lavender Reviewed-Data Batch Implementation** (pushed `4a5f3ad`) → **Lavender production verification** (pushed `586bf8f`) → Second Real Batch Repeatability Planning (`READY_FOR_SECOND_REAL_BATCH_BOUNDED_RESEARCH`) → **Rosemary Water Preference Bounded Research Closure** (pushed `aa48885`) → **Second Real Rosemary Reviewed-Data Batch Implementation** (pushed `c5a64d1`) → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`; production-verified `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Developer Product Adapter Bridge Documentation Contract** (pushed :9bf99) → **Real Overlay → Product Adapter Bridge Implementation** (pushed eb125e5) → **Bridge production verification** (pushed c4eb0d7) → **Reviewed Data Source Scout Documentation Contract** (this docs commit). Catalog task **B** is **Frozen (v1)**. All **23** conflicted identities remain globally blocked; **36/36/36** remains legacy eligibility only. Foundation empty Registries remain **0 / 0 / 0**. Explicit developer-loaded Lavender and Rosemary batch counts each **2 / 1 / 1**. Shared batch validator unchanged and reusable. Optional catalog sibling `reviewedClimateProfile` exists with developer-only synthetic overlay proof — **production-verified; remains developer-only and inert**. Product Adapter module/harness are **production-verified developer-only explicit-call-only** analysis proof — **no** `index.html` import; **no** runtime consumer; authority flags remain `const false` / `productUseAllowed false`; synthetic fixtures only. Real-pilot overlay at `data/smart-recommendations-reviewed/overlays/reviewed-climate-profile-catalog-overlay.real-pilot.v1.json` (`generatedFrom: real_reviewed_batch_pilot`; records `lavender`,`rosemary`) with separate explicit-run harness — **production-verified; developer-only, inert, non-authoritative; absent from `index.html`/runtime/`plants.seed.json`; Product Adapter bridge module/harness production-verified (eb125e5 / docs c4eb0d7); developer-only, non-authoritative. Source Scout processor/harness are production-verified synthetic-only developer proofs (no live provider). Scout→Batch integration module/harness are production-verified developer-only proofs (pushed `5d22a66`; docs `c064c5e`; no Gate C/finalize/artifacts). Live Source Provider mock/replay module+harness are production-verified developer-only proofs (pushed `9e560a5`; docs `95becf0`; zero real network/model; no live adapter yet). Local Secret-Free Live Provider Adapter/Transport Proof implemented (`8198a20`; deterministic injected vendor/DNS/HTTP/TLS metadata only; zero network/DNS/socket/TLS/credentials/cost) and combined static/Node verified (this docs commit). **No** media taxonomy/schema/ImageAsset/Coverage Matrix/UI; **no** product consumer; **no** `needsReview`/eligibility/scalar/matcher/UI/GOS/v1b change. Legacy `sunNeeds`/`waterNeeds` and v1b remain current product climate authority. **GOS synthetic stack paused**. Matchers/UI not authorized. **Bridge production verification closed (`c4eb0d7`). Source Scout Documentation Contract pushed (`ab5e75c`). Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`). Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Integration Implementation pushed (`5d22a66`) and production-verified (`c064c5e`). Live Source Provider Documentation Contract at `5b51426`; mock/replay Implementation pushed (`9e560a5`) and production-verified (`95becf0`). Live Provider Adapter Transport/Security Documentation Contract at `5bc08bb`. Local Secret-Free Adapter/Transport Proof pushed `8198a20` and combined-verified this docs commit. Owner Review Queue remains deferred. Product Authority Activation remains deferred. Deployment Exposure and Ignore Protection Contract defined (this docs commit; no `.gitignore`/prune/`netlify.toml` change yet). Live Provider Vendor Research and Selection remains deferred until protection implementation and verification close. Secret-bearing work remains blocked until both Git-secret and deployment-exposure protections are implemented and verified.**
 
@@ -82,9 +82,9 @@ Scope: Filter **UI and logic are not enabled yet**. Schema foundation for filter
 | **D** | Separate survival, thriving, flowering, and fruiting outcomes | Planned |
 | **E** | Global catalog validation in small plant batches | Planned |
 
-**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (`c4eb0d7`; developer-only; no runtime authority); Reviewed Data Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`); Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Source Scout → Batch Draft Integration Implementation pushed (`5d22a66`) and production-verified (`c064c5e`; **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`); Live Source Provider Documentation Contract defined (`5b51426`); Live Source Provider mock/replay Implementation pushed (`9e560a5`) and production-verified (`95becf0`); Live Provider Adapter Transport/Security Documentation Contract defined (`5bc08bb`); Local Secret-Free Live Provider Adapter/Transport Proof implemented (`8198a20`) and combined static/Node verified (`5edf4ad`); Live Provider Deployment Exposure and Ignore Protection Documentation Contract defined (`d66aa5a`); Implementation pushed (`cf5f934`) and verified (`1d98b60`); Live Provider Vendor Research and Conditional Selection Record defined (this docs commit; Tavily conditional primary); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
+**Other backlog:** confidence-aware scoring refinements; Product/Care Schedule runtime; **Smart Recommendations filter-based UX** (locked — schema foundation additive; chat and results table unchanged; EP/FR/Profile foundations closed; inert Lavender reviewed-data batch pushed (`4a5f3ad`) and production-verified (`586bf8f`); inert Rosemary reviewed-data batch pushed (`c5a64d1`) and production-verified (`9808630`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline roadmap alignment pushed (`c01c028`); Deterministic Batch Draft Generator Implementation pushed (`f814d3d`) and production-verified (`4842846`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Inert reviewedClimateProfile Schema Implementation pushed (`b281818`); Overlay Harness Reset-State Fix pushed (`dbcc2e6`); inert catalog proof production-verified (pushed `891c5c3`); Product Adapter Documentation Contract pushed (`e3019cc`); Developer-Only Product Adapter Implementation pushed (`e011c4e`) and production-verified (`e133d22`; developer-only; no product authority); Real Lavender/Rosemary Catalog Overlay Documentation Contract pushed (`94779ff`); Real Lavender/Rosemary Catalog Overlay Pilot Implementation pushed (`54bc086`) and production-verified (`8dc58cd`; developer-only inert real-pilot overlay + harness); Real Overlay → Product Adapter Bridge Documentation Contract pushed (`729bf99`); Real Overlay → Product Adapter Bridge Implementation pushed (`eb125e5`) and production-verified (`c4eb0d7`; developer-only; no runtime authority); Reviewed Data Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation pushed (`69eaf52`) and production-verified (`710af6f`); Source Scout → Batch Draft Integration Documentation Contract at `0b0dae3`; Source Scout → Batch Draft Integration Implementation pushed (`5d22a66`) and production-verified (`c064c5e`; **83/83** / `SOURCE_SCOUT_BATCH_DRAFT_INTEGRATION_PASS`); Live Source Provider Documentation Contract defined (`5b51426`); Live Source Provider mock/replay Implementation pushed (`9e560a5`) and production-verified (`95becf0`); Live Provider Adapter Transport/Security Documentation Contract defined (`5bc08bb`); Local Secret-Free Live Provider Adapter/Transport Proof implemented (`8198a20`) and combined static/Node verified (`5edf4ad`); Live Provider Deployment Exposure and Ignore Protection Documentation Contract defined (`d66aa5a`); Implementation pushed (`cf5f934`) and verified (`1d98b60`); Live Provider Vendor Research and Conditional Selection Record defined (`85c737a`; Tavily conditional primary); Tavily Vendor Terms and Use Clarification Gate defined (this docs commit; Tavily still not approved); foundation Registry defaults remain **0**; Blueberry identity outcome documented; Preference-versus-Tolerance Modeling Documentation Contract closed; matchers/UI not authorized); **Growth Outcome Suitability** (GOS-5G production verified — `GOS_5G_PRODUCTION_VERIFIED`; **synthetic GOS expansion paused**; mapper→adapter seam deferred; no real region; no product UI / ranking / runtime consumer until separately approved); **Garden Photo / Media Library** (future foundation only; Media Evidence Pipeline documented as its internal evidence/validation/asset engine — not begun).
 
-**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (pushed `c4eb0d7`) → **Reviewed Data Source Scout Documentation Contract** (pushed `ab5e75c`) → **Source Scout Processor Implementation** (pushed `69eaf52`) → **Source Scout production verification** (pushed `710af6f`) → **Source Scout → Batch Draft Integration Documentation Contract** (`0b0dae3`) → **Source Scout → Batch Draft Integration Implementation** (pushed `5d22a66`) → **production verification** (pushed `c064c5e`) → **Live Source Provider Documentation Contract** (`5b51426`) → **Live Source Provider Mock/Replay Implementation** (pushed `9e560a5`) → **production verification** (pushed `95becf0`) → **Live Provider Adapter Transport/Security Documentation Contract** (`5bc08bb`) → **Local Secret-Free Live Provider Adapter/Transport Proof** (pushed `8198a20`) → **Combined Static/Node Verification** (docs `5edf4ad`) → **Live Provider Deployment Exposure and Ignore Protection Documentation Contract** (pushed `d66aa5a`) → **Implementation** (pushed `cf5f934`) → **Verification** (pushed `1d98b60`) → **Live Provider Vendor Research and Conditional Selection Record** (this docs commit; Tavily conditional primary; Exa backup; Brave rejected) → next: Vendor terms/use clarification gate → deferred Owner Review Queue Documentation Contract → deferred future Netlify/server-side transport decision → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
+**Catalog / climate strategy note:** … → **Rosemary production verification** (pushed `9808630`) → **Reviewed-Data Batch Automation Documentation Contract** (pushed `7bba825`) → **Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment** (pushed `c01c028`) → **Deterministic Batch Draft Generator Implementation** (pushed `f814d3d`) → **Deterministic Batch Draft Generator production verification** (pushed `4842846`) → **Catalog Reviewed Climate Profile Documentation Contract** (pushed `fca925c`) → **Inert reviewedClimateProfile Schema Implementation** (pushed `b281818`) → production verification initially failed (harness Reset DOM only) → **Overlay Harness Reset-State Fix** (pushed `dbcc2e6`) → **production verification** (pushed `891c5c3`) → **Product Adapter Documentation Contract** (pushed `e3019cc`) → **Developer-Only Product Adapter Implementation** (pushed `e011c4e`) → **Product Adapter production verification** (pushed `e133d22`) → **Real Lavender/Rosemary Catalog Overlay Planning** → **Real Lavender/Rosemary Catalog Overlay Documentation Contract** (pushed `94779ff`) → **Real Lavender/Rosemary Catalog Overlay Pilot Implementation** (pushed `54bc086`) → **production verification** (pushed `8dc58cd`) → **Real Overlay → Product Adapter Bridge Documentation Contract** (pushed `729bf99`) → **Real Overlay → Product Adapter Bridge Implementation** (pushed `eb125e5`) → **production verification** (pushed `c4eb0d7`) → **Reviewed Data Source Scout Documentation Contract** (pushed `ab5e75c`) → **Source Scout Processor Implementation** (pushed `69eaf52`) → **Source Scout production verification** (pushed `710af6f`) → **Source Scout → Batch Draft Integration Documentation Contract** (`0b0dae3`) → **Source Scout → Batch Draft Integration Implementation** (pushed `5d22a66`) → **production verification** (pushed `c064c5e`) → **Live Source Provider Documentation Contract** (`5b51426`) → **Live Source Provider Mock/Replay Implementation** (pushed `9e560a5`) → **production verification** (pushed `95becf0`) → **Live Provider Adapter Transport/Security Documentation Contract** (`5bc08bb`) → **Local Secret-Free Live Provider Adapter/Transport Proof** (pushed `8198a20`) → **Combined Static/Node Verification** (docs `5edf4ad`) → **Live Provider Deployment Exposure and Ignore Protection Documentation Contract** (pushed `d66aa5a`) → **Implementation** (pushed `cf5f934`) → **Verification** (pushed `1d98b60`) → **Live Provider Vendor Research and Conditional Selection Record** (pushed `85c737a`; Tavily conditional primary; Exa backup; Brave rejected) → **Tavily Vendor Terms and Use Clarification Gate** (this docs commit) → next after push: prepare/send written Tavily clarification request (not begun) → deferred Owner Review Queue Documentation Contract → deferred future Netlify/server-side transport decision → deferred Product Authority Activation Planning → deferred Media State Taxonomy / ImageAsset & Provenance Documentation Contracts → targeted cleanup batches → canonical/alias-aware re-audit → matcher scope decision → matcher planning/implementation (separately gated) → catalog tasks **C–E** → broader taxonomy enrichment → Shared Plant Picker → Garden Photo/Media Library foundations → Garden Design Studio 2.0 (after complete gate) → Contextual Smart Video Guidance → backend/database migration.
 
 ---
 
@@ -144,6 +144,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
+| **Smart Recommendations — Tavily Vendor Terms and Use Clarification Gate** | Done (local docs; this commit; unpushed) | **Documentation-only; creates no Tavily account, API key, credential, environment variable, .env, vendor adapter, live mode, network runner, test, Netlify Function, package/dependency, legal acceptance record, payment method, or subscription; no contact/email/dashboard access; no terms acceptance; no Tavily Search/Extract/Crawl/Map/Research; no network/API/model; no amend/push/deploy/implementation.** Freezes unresolved contractual/privacy/storage/usage/billing questions that must receive satisfactory **written** clarification before account creation, Platform Terms acceptance, API key, env var, Tavily adapter, provider-neutral live mode, real API request, or bounded Lavender pilot. Explicit: Tavily is **not approved**; conditional selection is **not** contractual approval; no account/key/terms acceptance/integration/API call authorized; this record is **not legal advice** and does not replace vendor confirmation. Official-terms concern categories (without long vendor-term copies): **(A)** Customer Input rights (broad collect/store/use/process/copy/analyze/derivative/share/improvement rights) — CRUVIT mitigation: generic botanical queries only; no PII/user IDs/private garden/proprietary datasets/unpublished catalog/credentials/uploaded docs. **(B)** AI functionality/training (input/output retention, improvement, third-party AI, possible training) — mitigation: no generated answers/Research/AI summaries; Search-only unless separately approved; require `include_answer=false`, `include_raw_content=false`, `include_images=false`, `auto_parameters=false`. **(C)** Third-party search providers (query sharing) — mitigation: generic plant-research wording; no exact private location/user history/private/account/payment data in queries. **(D)** Output reliability/third-party rights (no accuracy/completeness/legality/non-infringement guarantee) — treat results as candidate links only; independent fetch/validate/derive; human review; never vendor answers as canonical. **(E)** Output-storage rights **ambiguity** — written vendor confirmation required; do **not** claim storage prohibited or unrestricted. Fourteen frozen written clarification questions (URL storage; basic result metadata; original-source processing; canonical knowledge separation; snippets/raw payloads transient handling; Search-only AI avoidance; query retention; training/improvement/opt-out; third-party providers; internal research/commercial knowledge-database use with no user exposure/resale/result-DB copy; free-plan pilot; billing protection; cancellation/deletion; age/authority). Critical acceptance gate: URL/provenance storage; independent original-source fetch; independently derived facts may be stored canonically; snippets/raw payloads need not be retained; generic search-only use permitted; no user/private data required; hard billing controls; authorized-adult acceptance. Privacy-critical: Search-only not used for third-party AI training **or** suitable opt-out/no-training **or** generic-query-only design formally accepted after owner review. Failure: if Tavily denies URL retention / independent fetch / independently derived fact storage / avoidance of persistent vendor-output storage / uncontrolled-billing prevention → reject for pilot; if unclear/incomplete → remains conditional; no account/key/integration; Exa terms clarification becomes next vendor-comparison checkpoint. If gate later passes, pilot remains: owner-triggered; local; Lavender; basic Search only; 1–2 searches; small result count; answer/raw/images/auto_parameters false; no Extract unless separately approved; no Crawl/Map/Research; no user data; no normal-runtime dependency; max **USD 0.10**. Next operational step after this record is pushed: prepare and send one written clarification request to Tavily support/legal — **not** in this task; no account before response review. Blocked: account/key/secret naming/credential provisioning/live-mode/Tavily adapter/security verification/Lavender pilot. Deferred: Owner Review Queue Documentation Contract; Exa integration or full terms review. Verdict: **`TAVILY_TERMS_USE_CLARIFICATION_GATE_DEFINED`**. |
 | **Smart Recommendations — Live Provider Vendor Research and Conditional Selection Record** | Done (local docs; this commit; unpushed) | **Documentation-only; creates no vendor account, API key, environment variable, .env, credential, vendor adapter, live mode, network request, test, runner, Netlify Function, package or dependency; no `.gitignore`/prune/`netlify.toml`/application/adapter/transport/provider-neutral/Scout/Capture/Generator/runtime/catalog/commerce change; no amend/push/deploy.** Freezes conditional vendor research after Deployment Exposure protection closed on main (`1d98b60` / impl `cf5f934`). **Primary conditional candidate: Tavily Search and Extract APIs** — 1,000 free credits/month; no credit card for free allocation; basic search 1 credit; advanced search 2 credits; basic extraction 1 credit per 5 successful URL extractions; domain/country/date filtering; URLs, relevance scoring, usage reporting; suitable for bounded owner-triggered source discovery. **Backup: Exa Search API** — strong semantic search/content retrieval; future quality comparison/fallback; higher expected cost; not enabled/selected for first pilot. **Rejected: Brave Search API** — standard terms prohibit storing/caching/creating a database of Search Results; conflicts with CRUVIT canonical knowledge architecture and cumulative-learning model; low price does not override legal/architectural incompatibility. **Architecture:** vendor is transient URL-discovery only — Vendor search → candidate source URLs → CRUVIT-controlled direct source fetch → Source Scout → Source Capture → human review → independently derived structured facts → canonical CRUVIT storage. **May persist after independent verification:** original source URL; source title from original page; retrieval timestamp; classification; provenance; confidence; independently extracted human-reviewed structured facts; validation findings. **Must not persist as canonical knowledge:** vendor-generated answers/summaries/snippets/relevance prose; raw vendor response payloads; copied vendor search-result databases. Transient in-memory handling permitted subject to final vendor terms. **Privacy:** never send user identity, email, garden id, exact private location, uploaded user content, personal garden history, health/payment info, credentials, or private app data; queries must be generic botanical/horticultural research only. **Runtime:** no search from normal user runtime; no request on screen open; no API dependency for existing recommendations; no client-side credential; no browser live invoke; no public endpoint; no automatic background billing; no continuous monitoring; owner-triggered local execution only for first pilot. **Cost:** first bounded Lavender pilot absolute max USD 0.10; expected Tavily pilot 1–2 basic searches and ≤5 selected URL extractions; no advanced/research endpoint unless separately approved; no pay-as-you-go / plan upgrade without explicit owner approval. **Legal/account:** terms must be reviewed at account creation; acceptance only by a person legally permitted (Tavily current terms: ≥18 / age of majority); no account or credential authorized in this docs task; if storage/derived-data rights remain unclear, obtain written vendor clarification before the pilot. **Conditional status:** Tavily preferred for bounded discovery-only pilot — not contracted, subscribed, credentialed, integrated, approved for persistent vendor-output storage, normal app runtime, or autonomous execution. **Next sequence:** (1) this record ← done; (2) Vendor terms/use clarification gate; (3) adult-authorized account creation only after approval; (4) Secret naming documentation; (5) Credential provisioning outside Git; (6) Provider-neutral additive live-mode; (7) Tavily-specific local adapter; (8) Security and cost verification; (9) Bounded Lavender pilot; (10) Review before wider use. **Deferred:** Owner Review Queue Documentation Contract; full autonomous scheduling; production user-facing live search; Exa integration; commerce work. Verdict: **`LIVE_PROVIDER_VENDOR_CONDITIONAL_SELECTION_RECORDED`**. |
 | **Smart Recommendations — Live Provider Deployment Exposure and Ignore Protection Verification** | Done (local docs; this commit; unpushed) | **Documentation-only after deployment + local-regression verification; no `.gitignore`/prune-script/Node-test/`netlify.toml`/application/adapter/transport/runner/provider-neutral/Scout/Capture/Generator/foundation/artifact/catalog/overlay/Product Adapter/Bridge/`index.html`/Netlify Function/runtime/commerce change in this docs commit; no credentials/env/vendor research/live mode; no amend/push/manual deploy.** Deployed implementation: **`cf5f93487c60434a98b3c29d4dc9309fe96f2e74`** (`build: protect local provider files from deployment`). Strategy: root Git-ignore + Netlify build-time deploy pruning under `publish = "."` (`command = node tools/deployment/prune-netlify-static-deploy.mjs --netlify-deploy-prune`; version `0.1.0-live-provider-deployment-protection`). Production: https://friendly-taiyaki-64aacb.netlify.app/. **Preserved HTTP 200 / LF-exact vs `cf5f934`:** `/` (`index.html`); `styles.css`; `garden-modes.js`; provider-neutral `/modules/smart-recommendations/developer-reviewed-data-live-source-provider.js` (markers intact; no imports from adapter/`tools`/`tests`); `scripts/plant-identifier-loader.js`; `modules/garden-design/index.html`; `modules/plant-doctor/index.html`; also 200: `assets/cruvit-logo.svg`, `data/plants.seed.json`. **Intentionally absent (HTTP 404; no source exposure):** `/tools/smart-recommendations/live-source-provider/run-local-transport-proof.mjs`; `/tools/deployment/prune-netlify-static-deploy.mjs`; `/tests/smart-rec-live-source-provider-adapter-transport.test.mjs`; `/tests/live-provider-deployment-protection.test.mjs`; `/modules/smart-recommendations/adapters/live-source-provider/developer-live-source-provider-adapter.mjs`; `/modules/smart-recommendations/adapters/live-source-provider/transport-security.mjs`; representative harness `/tests/smart-rec-developer-reviewed-data-live-source-provider.test.html`. **`tests/` is intentionally no longer publicly deployed** — not a product regression; historical harness verification records remain valid; future harness verification is local/separately authorized. **App inertness before/after:** title `Cruvit — My Garden OS`; forbidden resource hits for `tools/`/`tests`/local adapter = **[]**; `createLiveSourceProviderAdapter` undefined. **Local:** deployment-protection Node **16/16** (0 fail/skip/todo; fixtures only); apply without Netlify guards exit **1** `missing_env:NETLIFY` / no deletion; dry-run exit **0** / paths-only plan includes `tools`/`tests`/adapter tree / sentinels+Functions+provider-neutral preserved / no deletion. **Git-ignore:** `.env`/`.env.local`/`.tmp-*`/log/replay/proof samples ignored; `.env.example`/`.env.pilot.example` negated; `auth-config.mjs` trackable; docs/mockups/audit unignored; no `.env` tracked; ignored `.tmp-*` physical dirs remain. **Adapter proof:** **34/34** / 28 scenarios; five identical `LIVE_PROVIDER_ADAPTER_SECRET_FREE_PROOF_PASS`; fingerprint `lsp-local-proof\|d945698f\|348`; `--live` exit 1 / `flag_rejected:--live`; network/API/model/DNS/socket/TLS/credential/env/artifact/cost **0**. Functions/config preserved. Non-regression baselines preserved (Provider 64; Scout 57; integration 83; Bridge 95; real 118; Adapter 112; synth 98; Batch 92; Lav/Ros 64; merge 89; recon 158/156/2/0; resolver 108; registry 1.5.0; foundations 0/0/0; v1b; GOS paused). No credentials/vendor/live mode. Vendor research remains blocked until this docs closure is pushed. Next checkpoint must be selected separately. Verdict: **`LIVE_PROVIDER_DEPLOYMENT_EXPOSURE_IGNORE_VERIFIED`**. |
 | **Smart Recommendations — Live Provider Deployment Exposure and Ignore Protection Documentation Contract** | Done (local docs; this commit; unpushed) | **Documentation-only; creates no `.gitignore`, `.netlifyignore`, deploy-prune script, build script, `public`/`dist` directory, environment file, credential, provider configuration, vendor adapter, live runner, test, CI workflow, Netlify Function, backend, deployment exclusion, or vendor decision record; no `netlify.toml`/`index.html`/application/adapter/transport/runner/Node-test/provider-neutral/Scout/Capture/Generator/runtime/catalog/commerce change; no vendor research/selection/subscription; no credentials/.env; no live mode; no live pilot; no network/API/model; no amend/push/deploy/production verification in this docs commit.** Freezes two-layer protection **before** vendor research and credential creation: **(A) Git secret protection** (root `.gitignore` categories for env/credentials/local overrides/logs/replay/proof/temp/caches — not created yet) and **(B) Deployment exposure protection** (verified deploy-tree pruning under `publish = "."` via Netlify build command and optional small tracked prune script — not created yet). Explicit: `.gitignore` does **not** prevent tracked files from deploying; deployment pruning does **not** prevent secrets from being committed; **both** required and verified before credentials. Preferred strategy: keep `publish = "."`; verified prune in deploy workspace only (fail closed if protected paths remain); do **not** rely on `.netlifyignore` as sole/assumed mechanism; dedicated allowlisted publish directory is **fallback only** (not authorized here). Protected prune classes: `tools/`; `modules/smart-recommendations/adapters/live-source-provider/`; `tests/**/*.mjs`; preferably full `tests/` after inventory; future secret-bearing adapters/runners/transport/config; `.env*`; credentials; logs; replay/proof/coverage; `.tmp-*`; caches; editor/OS/Git metadata. Preserve: `index.html`; root CSS/JS; `assets/`; browser `data/`; browser-used `modules/`; app `scripts/`; provider-neutral `developer-reviewed-data-live-source-provider.js` (secret-free; mock/replay-default; no vendor endpoints/credentials; no local-adapter imports); Netlify Functions config/dir unchanged. Four secret-free proof `.mjs` files remain tracked/local-testable; future production URLs may 404 without invalidating Combined Static/Node history. HTML harnesses under `tests/` preferred local-only if prune-safe. Accidental-secret checks: `git check-ignore`; `git ls-files`; staged-diff inspection; excluded URLs 404; app 200; local Node **34/34** + proof PASS. Function boundary: no new Function; no adapter import into Functions; no endpoint; no CORS change; no browser live invoke. Roadmap: Contract (this) → Implementation Planning → implementation → verification/closure → Vendor Research → secret naming → additive live mode → secret-bearing adapter → security verification → bounded Lavender pilot → Owner Review Queue later. Next: **Live Provider Deployment Exposure and Ignore Protection Implementation Planning**. Deferred: Vendor Research and Selection; Owner Review Queue Documentation Contract. Verdict: **`LIVE_PROVIDER_DEPLOYMENT_EXPOSURE_IGNORE_DOCUMENTATION_CONTRACT_DEFINED`**. |
@@ -15019,7 +15020,7 @@ It is **not yet**:
 ## Required next sequence
 
 1. Vendor Research and Conditional Selection Record ← **this checkpoint**
-2. Vendor terms/use clarification gate
+2. Vendor terms/use clarification gate ← **defined in subsequent docs commit; written request not yet sent**
 3. Adult-authorized account creation, only after approval
 4. Secret naming documentation
 5. Credential provisioning outside Git
@@ -15039,15 +15040,232 @@ It is **not yet**:
 
 ---
 
+# Tavily Vendor Terms and Use Clarification Gate
+
+**Status:** Defined (documentation-only; this commit; unpushed).
+**Verdict:** `TAVILY_TERMS_USE_CLARIFICATION_GATE_DEFINED`
+
+## Nature of this gate
+
+- Tavily is **not approved** yet.
+- Conditional selection is **not** contractual approval.
+- No account creation is authorized.
+- No API key is authorized.
+- No terms acceptance is authorized.
+- No integration or API call is authorized.
+- **Written clarification is required** before proceeding.
+- This record is **not legal advice** and does not replace vendor confirmation.
+
+No Tavily account, credential, environment variable, adapter, live mode, network runner, test, Netlify Function, package, payment method, or subscription is created in this checkpoint.
+
+## Official-terms concern categories
+
+Recorded without copying long passages from the vendor terms.
+
+### A. Customer Input rights
+
+The current terms appear to grant Tavily and its affiliates broad rights to collect, store, use, process, copy, analyze, create derivative works from, share with service providers, and use for service and product improvement Customer Input submitted to the service.
+
+**CRUVIT mitigation:**
+
+- generic botanical queries only;
+- no personal information;
+- no user identifiers;
+- no private garden data;
+- no proprietary CRUVIT datasets;
+- no unpublished catalog content;
+- no credentials;
+- no uploaded documents.
+
+### B. AI functionality and training
+
+The current terms indicate that input and output associated with AI functionality may be retained, processed, used to improve systems, made accessible to third-party AI providers, and potentially used for model training.
+
+**CRUVIT mitigation:**
+
+- do not use generated-answer functionality;
+- do not use Tavily Research;
+- do not use Tavily AI summaries;
+- use Search only unless separately approved;
+- require:
+  - `include_answer = false`
+  - `include_raw_content = false`
+  - `include_images = false`
+  - `auto_parameters = false`
+
+### C. Third-party search providers
+
+The privacy documentation indicates that query data may sometimes be shared with third-party search-index providers.
+
+**CRUVIT mitigation:**
+
+- generic plant-research wording only;
+- no exact private location;
+- no user history;
+- no private content;
+- no account or payment data in a query.
+
+### D. Output reliability and third-party rights
+
+The vendor does not guarantee accuracy, completeness, legality, non-infringement, or suitability.
+
+**CRUVIT must:**
+
+- treat returned results only as candidate links;
+- fetch original sources independently;
+- validate every source;
+- derive facts independently;
+- retain human review;
+- never rely on vendor answers as canonical facts.
+
+### E. Output-storage rights ambiguity
+
+The currently reviewed public terms do not provide sufficiently clear confirmation regarding CRUVIT’s intended long-term treatment of:
+
+- returned URLs;
+- returned result titles;
+- timestamps;
+- result rankings or scores;
+- vendor request IDs;
+- temporary response payloads;
+- independently derived facts from original sources found through the service.
+
+This is an **ambiguity**.
+
+Do **not** document that storage is prohibited.
+Do **not** document that unrestricted storage is allowed.
+
+**Written vendor confirmation is required.**
+
+## Exact written clarification questions
+
+1. **URL storage** — May CRUVIT permanently store URLs returned by Tavily Search as provenance and source-discovery records?
+2. **Basic result metadata** — May CRUVIT store result title, URL, retrieval timestamp, source domain, and query-to-source relationship when used only to identify and later verify the original source?
+3. **Original-source processing** — May CRUVIT independently fetch the original public webpage found through Tavily and store structured facts independently derived from that original webpage, subject to the original publisher’s rights and applicable law?
+4. **Canonical knowledge separation** — Please confirm that independently derived and human-reviewed facts obtained from original sources are not treated as Tavily Output merely because Tavily helped discover the URL.
+5. **Snippets and raw payloads** — Please confirm whether Tavily permits transient in-memory processing of the API response, temporary validation, and deletion of vendor snippets and raw response payloads after validation, while retaining only approved URLs and independently derived provenance.
+6. **Search-only configuration** — Does using Search with `include_answer = false`, `include_raw_content = false`, `include_images = false`, and `auto_parameters = false` avoid Tavily’s generative AI functionality and associated AI-output processing/training provisions?
+7. **Query retention** — How long are Search API queries retained?
+8. **Training and improvement** — Are Search API queries or results used for model training, service improvement, product research, or third-party model training? Is an opt-out, no-training mode, or zero-retention option available?
+9. **Third-party providers** — Under what circumstances are Search API queries sent to third-party search-index or AI providers?
+10. **Internal research use** — Is owner-triggered source discovery for building and maintaining a commercial horticultural knowledge database an allowed internal-business use? Clarify that Tavily is not exposed directly to CRUVIT users; is not used during normal user runtime; results are not resold; no search-result database is copied; and CRUVIT validates original sources independently.
+11. **Free-plan pilot** — May the free Researcher plan be used for this small internal technical evaluation and bounded pilot?
+12. **Billing protection** — Can pay-as-you-go remain disabled, overage remain impossible, automatic upgrade remain disabled, and a hard account or project credit limit be enforced?
+13. **Cancellation** — Confirm the exact cancellation and account-deletion process and whether query data can be deleted or anonymized following account deletion.
+14. **Age and authority** — Confirm that the person accepting the agreement must be at least 18 or the applicable age of majority and legally authorized to bind the account holder.
+
+## Acceptable-answer gate
+
+Tavily may proceed only if written clarification confirms all critical items:
+
+**Critical:**
+
+- URL/provenance storage permitted;
+- independent original-source fetching permitted;
+- independently derived facts may be stored canonically;
+- vendor snippets/raw payloads need not be retained;
+- generic search-only use is permitted;
+- no user/private data is required;
+- hard billing controls are available;
+- account acceptance can be completed by an authorized adult.
+
+**Privacy-critical — either:**
+
+- Search-only queries are not used for third-party AI training; **or**
+- Tavily offers a suitable opt-out/no-training arrangement; **or**
+- the generic-query-only design is formally accepted as sufficient after owner review.
+
+## Failure outcomes
+
+If Tavily answers that CRUVIT may **not**:
+
+- retain discovered URLs;
+- independently fetch original sources;
+- store independently derived facts;
+- avoid persistent vendor-output storage;
+- prevent uncontrolled billing;
+
+then Tavily must be **rejected** for the pilot.
+
+If the answers remain unclear or incomplete:
+
+- Tavily remains conditional;
+- no account/key/integration is authorized;
+- Exa terms clarification becomes the next vendor-comparison checkpoint.
+
+## Frozen pilot scope if the gate later passes
+
+The first pilot must remain:
+
+- owner-triggered;
+- local only;
+- Lavender only;
+- basic Search only;
+- one or two searches;
+- small result count;
+- `include_answer` false;
+- `include_raw_content` false;
+- `include_images` false;
+- `auto_parameters` false;
+- no Extract unless separately approved;
+- no Crawl;
+- no Map;
+- no Research;
+- no user data;
+- no normal-runtime dependency;
+- maximum cost **USD 0.10**.
+
+## Next operational step
+
+After this documentation record is pushed, the next step is:
+
+**Prepare and send one written clarification request to Tavily support/legal.**
+
+Do **not** send it in this task.
+Do **not** create an account before receiving and reviewing a response.
+
+## Roadmap state
+
+**Completed:**
+
+- Deployment Exposure and Ignore Protection
+- Conditional Vendor Selection
+
+**Current:**
+
+- Tavily Terms and Use Clarification Gate
+
+**Next after this record is pushed:**
+
+- Tavily written clarification request
+
+**Blocked:**
+
+- account creation;
+- API key;
+- secret naming;
+- credential provisioning;
+- live-mode implementation;
+- Tavily adapter;
+- security verification;
+- Lavender pilot.
+
+**Deferred:**
+
+1. Owner Review Queue Documentation Contract
+2. Exa integration or full terms review
+
+---
+
 # Next Recommended Task
 
-**Done (pushed):** Live Provider Deployment Exposure and Ignore Protection Verification (`1d98b60`); Implementation (`cf5f934`); Documentation Contract (`d66aa5a`); Local Secret-Free Live Provider Adapter/Transport Proof (`8198a20`) and Combined Static/Node Verification docs (`5edf4ad`); Live Provider Adapter Transport/Security Documentation Contract (`5bc08bb`); Live Source Provider Mock/Replay production verification (`95becf0`); Live Source Provider Implementation (`9e560a5`); Live Source Provider Documentation Contract (`5b51426`); Source Scout → Batch Draft Integration production verification (`c064c5e`).
+**Done (pushed):** Live Provider Vendor Research and Conditional Selection Record (`85c737a`); Live Provider Deployment Exposure and Ignore Protection Verification (`1d98b60`); Implementation (`cf5f934`); Documentation Contract (`d66aa5a`); Local Secret-Free Live Provider Adapter/Transport Proof (`8198a20`) and Combined Static/Node Verification docs (`5edf4ad`); Live Provider Adapter Transport/Security Documentation Contract (`5bc08bb`); Live Source Provider Mock/Replay production verification (`95becf0`); Live Source Provider Implementation (`9e560a5`); Live Source Provider Documentation Contract (`5b51426`); Source Scout → Batch Draft Integration production verification (`c064c5e`).
 
-**Done (local docs; this commit):** Live Provider Vendor Research and Conditional Selection Record — Tavily Search/Extract as primary conditional discovery-only candidate; Exa as backup (not enabled); Brave rejected for Search Results storage/caching prohibition conflicting with CRUVIT canonical knowledge architecture; vendor is transient URL-discovery only; storage/privacy/runtime/cost/legal gates frozen; no account, credential, adapter, live mode, or network call. Verdict: `LIVE_PROVIDER_VENDOR_CONDITIONAL_SELECTION_RECORDED`.
+**Done (local docs; this commit):** Tavily Vendor Terms and Use Clarification Gate — Tavily remains conditional and not approved; freezes Customer Input/AI-training/third-party/output-reliability/output-storage ambiguity concerns; fourteen written clarification questions; critical acceptance and privacy gates; failure outcomes; search-only discovery pilot configuration if later approved; next operational step is prepare/send written clarification request after this docs push (not begun). Verdict: `TAVILY_TERMS_USE_CLARIFICATION_GATE_DEFINED`.
 
-**Next (exactly one):** **Vendor terms/use clarification gate**. Do **not** create a vendor account, API key, environment variable, .env, credential, vendor adapter, live mode, network request, test, runner, Netlify Function, package/dependency, secret-bearing adapter, bounded Lavender pilot, Owner Review Queue, Gate C/finalization, artifact writing, Product Authority Activation, media track, or product eligibility in this docs commit. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Source Scout remains developer-only synthetic proof (network-free). Integration remains developer-only non-authoritative. Live Source Provider remains developer-only mock/replay proof. Local adapter proof remains secret-free and locally executable. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority.
+**Next (exactly one):** **Prepare and send one written clarification request to Tavily support/legal** (only after this documentation commit is pushed). Do **not** create a Tavily account, accept Platform Terms, create an API key, environment variable, .env, credential, vendor adapter, live mode, network/API/model request, Extract/Crawl/Map/Research call, secret naming, credential provisioning, Tavily adapter implementation, security verification, bounded Lavender pilot, Owner Review Queue, Gate C/finalization, artifact writing, Product Authority Activation, media track, or product eligibility in this docs commit. UI remains blocked. GOS remains paused. Blueberry remains excluded. Lavender and Rosemary batches remain developer-only and inert. Source Scout remains developer-only synthetic proof (network-free). Integration remains developer-only non-authoritative. Live Source Provider remains developer-only mock/replay proof. Local adapter proof remains secret-free and locally executable. All **23** conflicts remain blocked. v1b + `climateTraits` remain product climate authority.
 
-**Deferred (not authorized):** (1) Owner Review Queue Documentation Contract; (2) full autonomous scheduling; production user-facing live search; Exa integration; commerce work.
+**Deferred (not authorized):** (1) Owner Review Queue Documentation Contract; (2) Exa integration or full terms review; full autonomous scheduling; production user-facing live search; commerce work.
 
 > Always keep exactly ONE recommended next task here.
 > When the next phase is chosen and planned, replace with the approved implementation task.
