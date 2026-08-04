@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Reviewed-Data Rosemary Sun Batch Validator</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Reviewed-Data Rosemary Sun Batch Validator</h1>
+  <p class="sub">
+    Developer-only third real Rosemary sun batch. Pure validator; four same-origin JSON artifacts load only after explicit Run.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Batch validator not loaded. No JSON fetched. No foundation module loaded for this batch.
+    Inert boot marker: <strong id="bootMarker">SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run batch validation</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · sameOriginStaticArtifactRequests=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var BATCH_BASE = '../data/smart-recommendations-reviewed/batches/rosemary-sun-preference-v1/';
+  var ARTIFACT_FILES = [
+    'batch.manifest.json',
+    'evidence-packets.json',
+    'field-review-records.json',
+    'structured-climate-profiles.json'
+  ];
+  var PASS_VERDICT = 'THIRD_REAL_ROSEMARY_SUN_REVIEWED_DATA_BATCH_PASS';
+  var FAIL_VERDICT = 'THIRD_REAL_ROSEMARY_SUN_REVIEWED_DATA_BATCH_FAIL';
+
+  var UCANR_URL = 'https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary';
+  var NCSU_URL = 'https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/';
+  var UCANR_ID = 'ep-rosemary-sun-preference-ucanr-v1';
+  var NCSU_ID = 'ep-rosemary-sun-preference-ncsu-v1';
+  var WATER_NCSU_ID = 'ep-rosemary-water-preference-ncsu-v1';
+  var WATER_UCANR_ID = 'ep-rosemary-water-preference-ucanr-v1';
+  var UCANR_CONTENT_FP =
+    'ep-rosemary-sun-preference-ucanr-v1|rosemary|sun|Mature outdoor Salvia rosmarinus is planted and grown in full sun.|full_sun|A|' +
+    UCANR_URL + '|' + UCANR_URL +
+    '|{"maturity":"mature","objective":"general","planting":"ground","setting":"outdoor"}|preference|0.2.0-sr-evidence-packet-contract';
+  var NCSU_CONTENT_FP =
+    'ep-rosemary-sun-preference-ncsu-v1|rosemary|sun|Salvia rosmarinus prefers full sun as its primary light exposure in outdoor cultivation.|full_sun|A|' +
+    NCSU_URL + '|' + NCSU_URL +
+    '|{"maturity":"mature","objective":"general","planting":"ground","setting":"outdoor"}|preference|0.2.0-sr-evidence-packet-contract';
+  var UCANR_SOURCE_FP =
+    'university_extension|Rosemary|University of California Agriculture and Natural Resources|' +
+    UCANR_URL + '|' + UCANR_URL;
+  var NCSU_SOURCE_FP =
+    'university_extension|Salvia rosmarinus|North Carolina Extension Gardener Plant Toolbox|' +
+    NCSU_URL + '|' + NCSU_URL;
+  var FR_VALUE_FP =
+    'rosemary|sun|preference|full_sun|evidence_derived_override|' +
+    NCSU_ID + ',' + UCANR_ID + '|' +
+    NCSU_ID + '~0.2.0-sr-evidence-packet-contract~' + NCSU_CONTENT_FP + ',' +
+    UCANR_ID + '~0.2.0-sr-evidence-packet-contract~' + UCANR_CONTENT_FP +
+    '|{"maturity":"mature","objective":"general","planting":"ground","setting":"outdoor"}|0.2.0-sr-field-review-contract';
+  var SCP_FP =
+    '0.1.0-sr-structured-climate-profile-contract|rosemary|sun|reviewed_supported|preference|full_sun|' +
+    '{"maturity":"mature","objective":"general","planting":"ground","setting":"outdoor"}|__null__|' +
+    '0.2.0-sr-field-review-contract|0.2.0-sr-field-review-registry|reviewed_supported|' +
+    FR_VALUE_FP + '|' +
+    NCSU_ID + '~0.2.0-sr-evidence-packet-contract~' + NCSU_CONTENT_FP + ',' +
+    UCANR_ID + '~0.2.0-sr-evidence-packet-contract~' + UCANR_CONTENT_FP +
+    '|humidity_wet_site_stress_does_not_change_full_sun_preference,indoor_container_overwintering_contexts_outside_outdoor_ground_mature_general,partial_shade_tolerated_not_preferred,regional_desert_heat_afternoon_shade_caveat_only,rosemary_water_packets_must_not_be_reused_as_sun_evidence|__null__';
+
+  var results = [];
+  var runActive = false;
+  var storageMutationCount = 0;
+  var sameOriginStaticArtifactRequests = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var batchCount = 0;
+  var lastSummary = null;
+  var realArtifactsSnapshot = null;
+
+  window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    jsonFetched: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function hasCode(report, code) {
+    return (report.findings || []).some(function (f) { return f.code === code; });
+  }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function limHas(arr, token) {
+    return Array.isArray(arr) && arr.indexOf(token) >= 0;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    sameOriginStaticArtifactRequests = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var abs;
+      try { abs = new URL(url, window.location.href); } catch (e) { abs = null; }
+      var sameOrigin = abs && abs.origin === window.location.origin;
+      var isArtifact = sameOrigin && ARTIFACT_FILES.some(function (f) {
+        return abs.pathname.indexOf('/data/smart-recommendations-reviewed/batches/rosemary-sun-preference-v1/' + f) >= 0
+          || String(url).indexOf(BATCH_BASE + f) >= 0
+          || String(url).endsWith('/' + f);
+      });
+      if (isArtifact) {
+        sameOriginStaticArtifactRequests++;
+        return origFetch.apply(this, arguments);
+      }
+      externalApiRequests++;
+      return Promise.reject(new Error('external_or_non_artifact_fetch_blocked'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_reviewed_data_batch_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_ROSEMARY_SUN_RDB_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_ROSEMARY_SUN_RDB_ON_UNHANDLED);
+    window.__SR_ROSEMARY_SUN_RDB_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_ROSEMARY_SUN_RDB_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_ROSEMARY_SUN_RDB_RESTORE === 'function') {
+      window.__SR_ROSEMARY_SUN_RDB_RESTORE();
+      window.__SR_ROSEMARY_SUN_RDB_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function fetchArtifacts() {
+    var out = {};
+    var manifest = await (await fetch(BATCH_BASE + 'batch.manifest.json', { cache: 'no-store' })).json();
+    var evidence = await (await fetch(BATCH_BASE + 'evidence-packets.json', { cache: 'no-store' })).json();
+    var fieldReview = await (await fetch(BATCH_BASE + 'field-review-records.json', { cache: 'no-store' })).json();
+    var profiles = await (await fetch(BATCH_BASE + 'structured-climate-profiles.json', { cache: 'no-store' })).json();
+    out.manifest = manifest;
+    out.evidencePacketWrapper = evidence;
+    out.fieldReviewWrapper = fieldReview;
+    out.structuredClimateProfileWrapper = profiles;
+    return out;
+  }
+
+  function baseInput(artifacts) {
+    return {
+      manifest: clone(artifacts.manifest),
+      evidencePacketWrapper: clone(artifacts.evidencePacketWrapper),
+      fieldReviewWrapper: clone(artifacts.fieldReviewWrapper),
+      structuredClimateProfileWrapper: clone(artifacts.structuredClimateProfileWrapper),
+      knownCanonicalKeys: ['rosemary'],
+      canonicalIdentitySnapshot: {
+        knownCanonicalKeys: ['rosemary'],
+        acceptedScientificName: 'Salvia rosmarinus'
+      }
+    };
+  }
+
+  function finishSummary(verdict, report) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    renderRows();
+    var metrics =
+      'assertionTotal=' + results.length + '\n' +
+      'batchCount=' + batchCount + '\n' +
+      'loadedEvidencePacketCount=' + (report && report.loadedEvidencePacketCount) + '\n' +
+      'loadedFieldReviewRecordCount=' + (report && report.loadedFieldReviewRecordCount) + '\n' +
+      'loadedStructuredClimateProfileCount=' + (report && report.loadedStructuredClimateProfileCount) + '\n' +
+      'findingCount=' + (report && report.findingCount) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'summaryFingerprint=' + (report && report.summaryFingerprint) + '\n' +
+      'sameOriginStaticArtifactRequests=' + sameOriginStaticArtifactRequests + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    $('metrics').textContent = metrics;
+    lastSummary = Object.freeze({
+      total: results.length,
+      passed: passed,
+      failed: failed,
+      verdict: verdict,
+      batchCount: batchCount,
+      findingCount: report ? report.findingCount : null,
+      summaryFingerprint: report ? report.summaryFingerprint : null,
+      loadedEvidencePacketCount: report ? report.loadedEvidencePacketCount : null,
+      loadedFieldReviewRecordCount: report ? report.loadedFieldReviewRecordCount : null,
+      loadedStructuredClimateProfileCount: report ? report.loadedStructuredClimateProfileCount : null,
+      sameOriginStaticArtifactRequests: sameOriginStaticArtifactRequests,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded,
+      foundationDefaults: report ? report.foundationDefaults : null
+    });
+    window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_SUMMARY = lastSummary;
+    setStatus(
+      'State: complete · moduleLoaded=1 · sameOriginStaticArtifactRequests=' +
+      sameOriginStaticArtifactRequests +
+      ' · externalApiRequests=' + externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+  }
+
+  async function runAll() {
+    if (runActive) return;
+    runActive = true;
+    results = [];
+    batchCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    $('btn-run-all').disabled = true;
+    setStatus('State: running…');
+    installGuards();
+    var lsBefore = Object.keys(localStorage || {}).slice().sort().join(',');
+    var ssBefore = Object.keys(sessionStorage || {}).slice().sort().join(',');
+    var cookieBefore = String(document.cookie || '');
+
+    try {
+      expect('boot inert before run', window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible', ($('bootMarker') && $('bootMarker').textContent) === 'SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_HARNESS_INERT', '');
+      $('banner').textContent = 'Running third real Rosemary sun reviewed-data batch checks…';
+
+      var mod = await import('../modules/smart-recommendations/developer-reviewed-data-batch-validator.js');
+      moduleLoaded = true;
+      window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        jsonFetched: false
+      });
+
+      var desc = mod.getSmartRecDeveloperReviewedDataBatchValidatorDescriptor();
+      expect('descriptor frozen + versions + isolation',
+        isFrozenDeep(desc) &&
+        desc.validatorVersion === mod.SR_REVIEWED_DATA_BATCH_VALIDATOR_VERSION &&
+        desc.containerContractVersion === mod.SR_REVIEWED_DATA_CONTAINER_CONTRACT_VERSION &&
+        desc.capability === mod.SR_REVIEWED_DATA_BATCH_VALIDATOR_CAPABILITY &&
+        desc.developerOnly === true &&
+        desc.productConsumer === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.persistence === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.activation === 'explicit_call_only', desc.validatorVersion);
+      expect('foundation defaults 0/0/0',
+        desc.foundationDefaults.realPacketCount === 0 &&
+        desc.foundationDefaults.realRecordCount === 0 &&
+        desc.foundationDefaults.realProfileCount === 0, '');
+
+      var artifacts = await fetchArtifacts();
+      realArtifactsSnapshot = {
+        manifest: JSON.stringify(artifacts.manifest),
+        evidence: JSON.stringify(artifacts.evidencePacketWrapper),
+        fieldReview: JSON.stringify(artifacts.fieldReviewWrapper),
+        profiles: JSON.stringify(artifacts.structuredClimateProfileWrapper)
+      };
+      window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        jsonFetched: true
+      });
+
+      expect('exactly four same-origin artifact fetches', sameOriginStaticArtifactRequests === 4, String(sameOriginStaticArtifactRequests));
+      expect('no external/API fetches during load', externalApiRequests === 0, String(externalApiRequests));
+
+      var m = artifacts.manifest;
+      var eps = artifacts.evidencePacketWrapper.records;
+      var fr = artifacts.fieldReviewWrapper.records[0];
+      var scp = artifacts.structuredClimateProfileWrapper.records[0];
+      var uc = eps.find(function (p) { return p.evidenceId === UCANR_ID; });
+      var nc = eps.find(function (p) { return p.evidenceId === NCSU_ID; });
+
+      expect('batchId rosemary-sun-preference-v1', m.batchId === 'rosemary-sun-preference-v1', m.batchId);
+      expect('canonical identity rosemary / Salvia rosmarinus',
+        m.canonicalKey === 'rosemary' && m.acceptedScientificName === 'Salvia rosmarinus', m.canonicalKey);
+      expect('field sun preference full_sun',
+        m.field === 'sun' && m.reviewedClaimType === 'preference' && m.researchHypothesis === 'full_sun', m.field);
+      expect('context outdoor/ground/mature/general',
+        m.contextScope.setting === 'outdoor' &&
+        m.contextScope.planting === 'ground' &&
+        m.contextScope.maturity === 'mature' &&
+        m.contextScope.objective === 'general', JSON.stringify(m.contextScope));
+      expect('exact two Evidence Packet IDs',
+        !!uc && !!nc && eps.length === 2, String(eps.map(function (p) { return p.evidenceId; })));
+      expect('source titles and URLs',
+        uc.sourceTitle === 'Rosemary' && uc.sourceReference === UCANR_URL &&
+        nc.sourceTitle === 'Salvia rosmarinus' && nc.sourceReference === NCSU_URL, '');
+      expect('publication and verifiedAt handling',
+        uc.publicationDate === '2023-02-14' &&
+        !Object.prototype.hasOwnProperty.call(nc, 'publicationDate') &&
+        !Object.prototype.hasOwnProperty.call(nc, 'sourceUpdateDate') &&
+        uc.verifiedAt === '2026-08-03' && nc.verifiedAt === '2026-08-03', '');
+      expect('preference full_sun no partial_shade preference',
+        uc.proposedValue === 'full_sun' && nc.proposedValue === 'full_sun' &&
+        uc.claimType === 'preference' && nc.claimType === 'preference' &&
+        fr.reviewedValue === 'full_sun' && scp.reviewedValue === 'full_sun' &&
+        fr.reviewedClaimType === 'preference' && scp.reviewedClaimType === 'preference' &&
+        uc.field === 'sun' && nc.field === 'sun' && fr.field === 'sun' && scp.field === 'sun', '');
+      expect('no rosemary water packet IDs in sun batch',
+        eps.every(function (p) {
+          return p.evidenceId !== WATER_NCSU_ID && p.evidenceId !== WATER_UCANR_ID &&
+            String(p.evidenceId).indexOf('-water-') < 0 && p.field !== 'water';
+        }) &&
+        fr.sourceIds.indexOf(WATER_NCSU_ID) < 0 &&
+        fr.sourceIds.indexOf(WATER_UCANR_ID) < 0 &&
+        !fr.evidenceRefs.some(function (r) {
+          return r.evidenceId === WATER_NCSU_ID || r.evidenceId === WATER_UCANR_ID;
+        }) &&
+        !scp.evidenceRefs.some(function (r) {
+          return r.evidenceId === WATER_NCSU_ID || r.evidenceId === WATER_UCANR_ID;
+        }), '');
+      expect('NCSU partial-shade tolerance limitation',
+        String(nc.reviewerSummary).indexOf('tolerates partial shade') >= 0 &&
+        String(nc.reviewerSummary).indexOf('tolerance/limitation only') >= 0 &&
+        limHas(fr.unresolvedLimitations, 'partial_shade_tolerated_not_preferred') &&
+        limHas(scp.unresolvedLimitations, 'partial_shade_tolerated_not_preferred') &&
+        limHas(m.unresolvedLimitations, 'partial_shade_tolerated_not_preferred'), '');
+      expect('context and stress limitations retained',
+        limHas(fr.unresolvedLimitations, 'indoor_container_overwintering_contexts_outside_outdoor_ground_mature_general') &&
+        limHas(fr.unresolvedLimitations, 'regional_desert_heat_afternoon_shade_caveat_only') &&
+        limHas(fr.unresolvedLimitations, 'humidity_wet_site_stress_does_not_change_full_sun_preference') &&
+        limHas(fr.unresolvedLimitations, 'rosemary_water_packets_must_not_be_reused_as_sun_evidence') &&
+        limHas(scp.unresolvedLimitations, 'indoor_container_overwintering_contexts_outside_outdoor_ground_mature_general') &&
+        limHas(scp.unresolvedLimitations, 'regional_desert_heat_afternoon_shade_caveat_only') &&
+        limHas(scp.unresolvedLimitations, 'humidity_wet_site_stress_does_not_change_full_sun_preference') &&
+        limHas(scp.unresolvedLimitations, 'rosemary_water_packets_must_not_be_reused_as_sun_evidence') &&
+        limHas(m.unresolvedLimitations, 'rosemary_water_packets_must_not_be_reused_as_sun_evidence'), '');
+      expect('productIsolation flags all false',
+        m.productIsolation.importedByIndexHtml === false &&
+        m.productIsolation.productConsumer === false &&
+        m.productIsolation.runtimeEligibilityAuthority === false &&
+        m.productIsolation.automaticExecution === false, JSON.stringify(m.productIsolation));
+      expect('EP source and content fingerprints',
+        uc.sourceFingerprint === UCANR_SOURCE_FP &&
+        uc.contentFingerprint === UCANR_CONTENT_FP &&
+        nc.sourceFingerprint === NCSU_SOURCE_FP &&
+        nc.contentFingerprint === NCSU_CONTENT_FP, '');
+      expect('FR valueFingerprint and compact refs',
+        fr.valueFingerprint === FR_VALUE_FP &&
+        fr.evidenceRefs.length === 2 &&
+        fr.evidenceRefs.some(function (r) { return r.evidenceId === UCANR_ID && r.expectedContentFingerprint === UCANR_CONTENT_FP; }) &&
+        fr.evidenceRefs.some(function (r) { return r.evidenceId === NCSU_ID && r.expectedContentFingerprint === NCSU_CONTENT_FP; }), '');
+      expect('Profile fingerprint and FR reference',
+        scp.profileFingerprint === SCP_FP &&
+        scp.profileId === 'scp-rosemary-sun-preference-v1' &&
+        scp.fieldReviewReference.valueFingerprint === FR_VALUE_FP &&
+        scp.fieldReviewReference.canonicalKey === 'rosemary' &&
+        scp.fieldReviewReference.field === 'sun', '');
+
+      var input = baseInput(artifacts);
+      var report = mod.validateSmartRecDeveloperReviewedDataBatch(input);
+      batchCount = 1;
+
+      expect('batch valid', report.valid === true, JSON.stringify(report.findings || []).slice(0, 400));
+      expect('loaded EP count 2', report.loadedEvidencePacketCount === 2, String(report.loadedEvidencePacketCount));
+      expect('loaded FR count 1', report.loadedFieldReviewRecordCount === 1, String(report.loadedFieldReviewRecordCount));
+      expect('loaded Profile count 1', report.loadedStructuredClimateProfileCount === 1, String(report.loadedStructuredClimateProfileCount));
+      expect('foundation defaults remain 0',
+        report.foundationDefaults.realPacketCount === 0 &&
+        report.foundationDefaults.realRecordCount === 0 &&
+        report.foundationDefaults.realProfileCount === 0, '');
+      expect('productIsolation passed', report.productIsolation === 'passed', report.productIsolation);
+      expect('report frozen', isFrozenDeep(report), '');
+      expect('findingCount 0', report.findingCount === 0, String(report.findingCount));
+      expect('summaryFingerprint present', typeof report.summaryFingerprint === 'string' && report.summaryFingerprint.length > 0, report.summaryFingerprint);
+      expect('batchId in report', report.batchId === 'rosemary-sun-preference-v1', report.batchId);
+      expect('input not mutated by successful validate',
+        JSON.stringify(input.manifest) === JSON.stringify(artifacts.manifest) &&
+        JSON.stringify(input.evidencePacketWrapper) === JSON.stringify(artifacts.evidencePacketWrapper) &&
+        JSON.stringify(input.fieldReviewWrapper) === JSON.stringify(artifacts.fieldReviewWrapper) &&
+        JSON.stringify(input.structuredClimateProfileWrapper) === JSON.stringify(artifacts.structuredClimateProfileWrapper), '');
+
+      var report2 = mod.validateSmartRecDeveloperReviewedDataBatch(baseInput(artifacts));
+      expect('deterministic repeated report', report.summaryFingerprint === report2.summaryFingerprint, report.summaryFingerprint + ' vs ' + report2.summaryFingerprint);
+
+      function neg(name, mutate, code) {
+        var n = baseInput(artifacts);
+        mutate(n);
+        var r = mod.validateSmartRecDeveloperReviewedDataBatch(n);
+        expect(name, r.valid === false && hasCode(r, code), code + ' · ' + (r.summaryFingerprint || ''));
+      }
+
+      neg('neg manifest count mismatch', function (n) {
+        n.manifest.expectedArtifactCounts.evidencePackets = 1;
+      }, 'artifact_count_mismatch');
+
+      neg('neg wrong batchId', function (n) {
+        n.manifest.batchId = 'wrong-batch';
+      }, 'batch_id_mismatch');
+
+      neg('neg wrong canonical identity', function (n) {
+        n.evidencePacketWrapper.records[0].canonicalKey = 'blueberry';
+      }, 'canonical_identity_mismatch');
+
+      neg('neg wrong field', function (n) {
+        n.fieldReviewWrapper.records[0].field = 'water';
+      }, 'field_mismatch');
+
+      neg('neg wrong reviewed claim', function (n) {
+        n.structuredClimateProfileWrapper.records[0].reviewedClaimType = 'tolerance';
+      }, 'reviewed_claim_mismatch');
+
+      neg('neg wrong proposed value', function (n) {
+        n.evidencePacketWrapper.records[0].proposedValue = 'part_shade';
+      }, 'evidence_packet_validation_failed');
+
+      neg('neg context mismatch', function (n) {
+        n.evidencePacketWrapper.records[0].contextScope.setting = 'indoor';
+      }, 'context_mismatch');
+
+      neg('neg accidental water-packet reuse', function (n) {
+        var p = n.evidencePacketWrapper.records.find(function (r) { return r.evidenceId === NCSU_ID; });
+        p.evidenceId = WATER_NCSU_ID;
+        p.field = 'water';
+        p.proposedValue = 'low';
+        p.contentFingerprint =
+          'ep-rosemary-water-preference-ncsu-v1|rosemary|water|Salvia rosmarinus prefers relatively dry, well-drained growing conditions and has low tolerance for persistently wet soil.|low|A|' +
+          NCSU_URL + '|' + NCSU_URL +
+          '|{"maturity":"mature","objective":"general","planting":"ground","setting":"outdoor"}|preference|0.2.0-sr-evidence-packet-contract';
+        n.fieldReviewWrapper.records[0].sourceIds = [WATER_NCSU_ID, UCANR_ID];
+        n.fieldReviewWrapper.records[0].evidenceRefs[0].evidenceId = WATER_NCSU_ID;
+        n.fieldReviewWrapper.records[0].evidenceRefs[0].expectedContentFingerprint = p.contentFingerprint;
+        n.structuredClimateProfileWrapper.records[0].evidenceRefs[0].evidenceId = WATER_NCSU_ID;
+        n.structuredClimateProfileWrapper.records[0].evidenceRefs[0].expectedContentFingerprint = p.contentFingerprint;
+      }, 'field_mismatch');
+
+      neg('neg missing partial-shade limitation', function (n) {
+        n.fieldReviewWrapper.records[0].unresolvedLimitations =
+          n.fieldReviewWrapper.records[0].unresolvedLimitations.filter(function (x) {
+            return x !== 'partial_shade_tolerated_not_preferred';
+          });
+        n.structuredClimateProfileWrapper.records[0].unresolvedLimitations =
+          n.structuredClimateProfileWrapper.records[0].unresolvedLimitations.filter(function (x) {
+            return x !== 'partial_shade_tolerated_not_preferred';
+          });
+      }, 'fingerprint_mismatch');
+
+      neg('neg silent partial_shade preference', function (n) {
+        n.fieldReviewWrapper.records[0].reviewedValue = 'part_shade';
+        n.structuredClimateProfileWrapper.records[0].reviewedValue = 'part_shade';
+      }, 'reviewed_claim_mismatch');
+
+      neg('neg tolerance-only promotion', function (n) {
+        n.evidencePacketWrapper.records[0].claimType = 'tolerance';
+        n.fieldReviewWrapper.records[0].reviewedClaimType = 'tolerance';
+        n.structuredClimateProfileWrapper.records[0].reviewedClaimType = 'tolerance';
+      }, 'reviewed_claim_mismatch');
+
+      neg('neg invalid UC ANR packet', function (n) {
+        var p = n.evidencePacketWrapper.records.find(function (r) { return r.evidenceId === UCANR_ID; });
+        p.authorityTier = 'Z';
+      }, 'evidence_packet_validation_failed');
+
+      neg('neg invalid NCSU packet', function (n) {
+        var p = n.evidencePacketWrapper.records.find(function (r) { return r.evidenceId === NCSU_ID; });
+        p.authorityTier = 'Z';
+      }, 'evidence_packet_validation_failed');
+
+      neg('neg EP fingerprint mismatch', function (n) {
+        n.evidencePacketWrapper.records[0].contentFingerprint = 'tampered-ep-fp';
+      }, 'fingerprint_mismatch');
+
+      neg('neg FR fingerprint mismatch', function (n) {
+        n.fieldReviewWrapper.records[0].valueFingerprint = 'tampered-fr-fp';
+      }, 'fingerprint_mismatch');
+
+      neg('neg SCP fingerprint mismatch', function (n) {
+        n.structuredClimateProfileWrapper.records[0].profileFingerprint = 'tampered-scp-fp';
+      }, 'fingerprint_mismatch');
+
+      neg('neg FR/SCP reference drift', function (n) {
+        n.structuredClimateProfileWrapper.records[0].fieldReviewReference.valueFingerprint = 'drifted-fr-fp';
+      }, 'fingerprint_mismatch');
+
+      neg('neg product-isolation violation', function (n) {
+        n.manifest.productIsolation.productConsumer = true;
+      }, 'product_isolation_violation');
+
+      neg('neg runtime eligibility isolation violation', function (n) {
+        n.manifest.productIsolation.runtimeEligibilityAuthority = true;
+      }, 'product_isolation_violation');
+
+      neg('neg unsupported contract version', function (n) {
+        n.manifest.containerContractVersion = '0.2.0-sr-reviewed-data-container';
+        n.evidencePacketWrapper.containerContractVersion = '0.2.0-sr-reviewed-data-container';
+        n.fieldReviewWrapper.containerContractVersion = '0.2.0-sr-reviewed-data-container';
+        n.structuredClimateProfileWrapper.containerContractVersion = '0.2.0-sr-reviewed-data-container';
+      }, 'unsupported_container_contract_version');
+
+      neg('neg unknown manifest key', function (n) {
+        n.manifest.extraKey = 'nope';
+      }, 'unknown_manifest_key');
+
+      neg('neg unknown wrapper key', function (n) {
+        n.evidencePacketWrapper.extraKey = 'nope';
+      }, 'unknown_wrapper_key');
+
+      var mutInput = baseInput(artifacts);
+      mutInput.mutationAttempt = true;
+      var mutReport = mod.validateSmartRecDeveloperReviewedDataBatch(mutInput);
+      expect('neg mutation_detected', mutReport.valid === false && hasCode(mutReport, 'mutation_detected'), '');
+
+      expect('real manifest unchanged', JSON.stringify(artifacts.manifest) === realArtifactsSnapshot.manifest, '');
+      expect('real evidence unchanged', JSON.stringify(artifacts.evidencePacketWrapper) === realArtifactsSnapshot.evidence, '');
+      expect('real field review unchanged', JSON.stringify(artifacts.fieldReviewWrapper) === realArtifactsSnapshot.fieldReview, '');
+      expect('real profiles unchanged', JSON.stringify(artifacts.structuredClimateProfileWrapper) === realArtifactsSnapshot.profiles, '');
+
+      var lsAfter = Object.keys(localStorage || {}).slice().sort().join(',');
+      var ssAfter = Object.keys(sessionStorage || {}).slice().sort().join(',');
+      var cookieAfter = String(document.cookie || '');
+      expect('no localStorage residue', lsAfter === lsBefore, '');
+      expect('no sessionStorage residue', ssAfter === ssBefore, '');
+      expect('no cookie residue', cookieAfter === cookieBefore, '');
+      expect('storageMutationCount 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('externalApiRequests still 0', externalApiRequests === 0, String(externalApiRequests));
+      expect('sameOriginStaticArtifactRequests still 4', sameOriginStaticArtifactRequests === 4, String(sameOriginStaticArtifactRequests));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      var failed = results.filter(function (r) { return !r.pass; }).length;
+      var verdict = failed === 0 ? PASS_VERDICT : FAIL_VERDICT;
+      finishSummary(verdict, report);
+      $('banner').textContent = failed === 0
+        ? 'Complete. ' + PASS_VERDICT
+        : 'Complete with failures.';
+    } catch (err) {
+      expect('harness execution', false, String(err && err.stack || err));
+      finishSummary(FAIL_VERDICT, null);
+      $('banner').textContent = 'Harness error: ' + String(err && err.message || err);
+    } finally {
+      restoreGuards();
+      runActive = false;
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    results = [];
+    batchCount = 0;
+    moduleLoaded = false;
+    lastSummary = null;
+    realArtifactsSnapshot = null;
+    sameOriginStaticArtifactRequests = 0;
+    externalApiRequests = 0;
+    storageMutationCount = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      jsonFetched: false
+    });
+    window.__SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_SUMMARY = null;
+    $('rows').innerHTML = '';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('banner').innerHTML =
+      'Idle. Batch validator not loaded. No JSON fetched. No foundation module loaded for this batch. ' +
+      'Inert boot marker: <strong id="bootMarker">SR_ROSEMARY_SUN_REVIEWED_DATA_BATCH_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · sameOriginStaticArtifactRequests=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+})();
+</script>
+</body>
+</html>

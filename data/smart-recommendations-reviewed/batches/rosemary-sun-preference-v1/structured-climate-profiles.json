@@ -1,0 +1,53 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "rosemary-sun-preference-v1",
+  "artifactType": "structured_climate_profiles",
+  "artifactContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+  "records": [
+    {
+      "profileId": "scp-rosemary-sun-preference-v1",
+      "profileContractVersion": "0.1.0-sr-structured-climate-profile-contract",
+      "canonicalKey": "rosemary",
+      "field": "sun",
+      "profileStatus": "reviewed_supported",
+      "reviewedClaimType": "preference",
+      "reviewedValue": "full_sun",
+      "contextScope": {
+        "setting": "outdoor",
+        "planting": "ground",
+        "maturity": "mature",
+        "objective": "general"
+      },
+      "fieldReviewReference": {
+        "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+        "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+        "canonicalKey": "rosemary",
+        "field": "sun",
+        "reviewStatus": "reviewed_supported",
+        "valueFingerprint": "rosemary|sun|preference|full_sun|evidence_derived_override|ep-rosemary-sun-preference-ncsu-v1,ep-rosemary-sun-preference-ucanr-v1|ep-rosemary-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ncsu-v1|rosemary|sun|Salvia rosmarinus prefers full sun as its primary light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-sun-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ucanr-v1|rosemary|sun|Mature outdoor Salvia rosmarinus is planted and grown in full sun.|full_sun|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract",
+        "reviewedClaimType": "preference",
+        "reviewedValue": "full_sun"
+      },
+      "evidenceRefs": [
+        {
+          "evidenceId": "ep-rosemary-sun-preference-ncsu-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-rosemary-sun-preference-ncsu-v1|rosemary|sun|Salvia rosmarinus prefers full sun as its primary light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        },
+        {
+          "evidenceId": "ep-rosemary-sun-preference-ucanr-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-rosemary-sun-preference-ucanr-v1|rosemary|sun|Mature outdoor Salvia rosmarinus is planted and grown in full sun.|full_sun|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        }
+      ],
+      "unresolvedLimitations": [
+        "partial_shade_tolerated_not_preferred",
+        "indoor_container_overwintering_contexts_outside_outdoor_ground_mature_general",
+        "regional_desert_heat_afternoon_shade_caveat_only",
+        "humidity_wet_site_stress_does_not_change_full_sun_preference",
+        "rosemary_water_packets_must_not_be_reused_as_sun_evidence"
+      ],
+      "profileFingerprint": "0.1.0-sr-structured-climate-profile-contract|rosemary|sun|reviewed_supported|preference|full_sun|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|__null__|0.2.0-sr-field-review-contract|0.2.0-sr-field-review-registry|reviewed_supported|rosemary|sun|preference|full_sun|evidence_derived_override|ep-rosemary-sun-preference-ncsu-v1,ep-rosemary-sun-preference-ucanr-v1|ep-rosemary-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ncsu-v1|rosemary|sun|Salvia rosmarinus prefers full sun as its primary light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-sun-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ucanr-v1|rosemary|sun|Mature outdoor Salvia rosmarinus is planted and grown in full sun.|full_sun|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract|ep-rosemary-sun-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ncsu-v1|rosemary|sun|Salvia rosmarinus prefers full sun as its primary light exposure in outdoor cultivation.|full_sun|A|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|https://plants.ces.ncsu.edu/plants/salvia-rosmarinus/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-rosemary-sun-preference-ucanr-v1~0.2.0-sr-evidence-packet-contract~ep-rosemary-sun-preference-ucanr-v1|rosemary|sun|Mature outdoor Salvia rosmarinus is planted and grown in full sun.|full_sun|A|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|https://ucanr.edu/blog/uc-master-gardeners-diggin-it-slo/article/rosemary|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|humidity_wet_site_stress_does_not_change_full_sun_preference,indoor_container_overwintering_contexts_outside_outdoor_ground_mature_general,partial_shade_tolerated_not_preferred,regional_desert_heat_afternoon_shade_caveat_only,rosemary_water_packets_must_not_be_reused_as_sun_evidence|__null__"
+    }
+  ]
+}
