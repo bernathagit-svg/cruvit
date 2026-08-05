@@ -1,0 +1,54 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "lavender-water-preference-v1",
+  "artifactType": "field_review_records",
+  "artifactContractVersion": "0.2.0-sr-field-review-contract",
+  "records": [
+    {
+      "canonicalKey": "lavender",
+      "field": "water",
+      "reviewStatus": "reviewed_supported",
+      "reviewedClaimType": "preference",
+      "reviewedValue": "low",
+      "contextScope": {
+        "setting": "outdoor",
+        "planting": "ground",
+        "maturity": "mature",
+        "objective": "general"
+      },
+      "reviewContractVersion": "0.2.0-sr-field-review-contract",
+      "evidenceRefs": [
+        {
+          "evidenceId": "ep-lavender-water-preference-ncsu-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-lavender-water-preference-ncsu-v1|lavender|water|Mature outdoor ground-grown Lavandula angustifolia prefers dry-side, well-drained culture and declines under persistently wet or overwatered conditions.|low|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        },
+        {
+          "evidenceId": "ep-lavender-water-preference-illinois-v1",
+          "packetContractVersion": "0.2.0-sr-evidence-packet-contract",
+          "expectedContentFingerprint": "ep-lavender-water-preference-illinois-v1|lavender|water|After establishment, mature outdoor ground-grown Lavandula angustifolia has a low preferred water need and should be watered only when the soil dries.|low|A|https://extension.illinois.edu/node/21429|https://extension.illinois.edu/node/21429|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract"
+        }
+      ],
+      "sourceKind": "evidence_derived_override",
+      "sourceIds": [
+        "ep-lavender-water-preference-illinois-v1",
+        "ep-lavender-water-preference-ncsu-v1"
+      ],
+      "reviewVersion": "1",
+      "reviewedAt": "2026-08-04",
+      "reason": "Two independent Tier A university-extension sources support low preferred water need for mature outdoor ground-grown Lavandula angustifolia.",
+      "unresolvedLimitations": [
+        "container_indoor_watering_is_outside_outdoor_ground_context",
+        "csu_usu_production_irrigation_does_not_create_medium",
+        "drought_tolerance_alone_does_not_prove_low_water_preference",
+        "establishment_year_watering_is_outside_the_mature_context",
+        "lavender_sun_packets_must_not_be_reused_as_water_evidence",
+        "multi_species_lavandin_sources_are_limitation_spare_only",
+        "rosemary_water_packets_must_not_be_reused_as_lavender_water_evidence",
+        "well_drained_soil_alone_does_not_prove_water_preference",
+        "wet_soil_root_rot_decline_is_stress_limitation_only"
+      ],
+      "valueFingerprint": "lavender|water|preference|low|evidence_derived_override|ep-lavender-water-preference-illinois-v1,ep-lavender-water-preference-ncsu-v1|ep-lavender-water-preference-illinois-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-water-preference-illinois-v1|lavender|water|After establishment, mature outdoor ground-grown Lavandula angustifolia has a low preferred water need and should be watered only when the soil dries.|low|A|https://extension.illinois.edu/node/21429|https://extension.illinois.edu/node/21429|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract,ep-lavender-water-preference-ncsu-v1~0.2.0-sr-evidence-packet-contract~ep-lavender-water-preference-ncsu-v1|lavender|water|Mature outdoor ground-grown Lavandula angustifolia prefers dry-side, well-drained culture and declines under persistently wet or overwatered conditions.|low|A|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|https://plants.ces.ncsu.edu/plants/lavandula-angustifolia/|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|preference|0.2.0-sr-evidence-packet-contract|{\"maturity\":\"mature\",\"objective\":\"general\",\"planting\":\"ground\",\"setting\":\"outdoor\"}|0.2.0-sr-field-review-contract"
+    }
+  ]
+}

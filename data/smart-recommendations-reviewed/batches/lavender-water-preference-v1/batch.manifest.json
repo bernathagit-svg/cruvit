@@ -1,0 +1,50 @@
+{
+  "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+  "batchId": "lavender-water-preference-v1",
+  "canonicalKey": "lavender",
+  "acceptedScientificName": "Lavandula angustifolia",
+  "field": "water",
+  "reviewedClaimType": "preference",
+  "researchHypothesis": "low",
+  "contextScope": {
+    "setting": "outdoor",
+    "planting": "ground",
+    "maturity": "mature",
+    "objective": "general"
+  },
+  "artifactFiles": {
+    "evidencePackets": "evidence-packets.json",
+    "fieldReviewRecords": "field-review-records.json",
+    "structuredClimateProfiles": "structured-climate-profiles.json"
+  },
+  "expectedArtifactCounts": {
+    "evidencePackets": 2,
+    "fieldReviewRecords": 1,
+    "structuredClimateProfiles": 1
+  },
+  "requiredContractVersions": {
+    "containerContractVersion": "0.1.0-sr-reviewed-data-container",
+    "evidencePacketContractVersion": "0.2.0-sr-evidence-packet-contract",
+    "fieldReviewContractVersion": "0.2.0-sr-field-review-contract",
+    "fieldReviewRegistryVersion": "0.2.0-sr-field-review-registry",
+    "structuredClimateProfileContractVersion": "0.1.0-sr-structured-climate-profile-contract"
+  },
+  "productIsolation": {
+    "importedByIndexHtml": false,
+    "productConsumer": false,
+    "runtimeEligibilityAuthority": false,
+    "automaticExecution": false
+  },
+  "batchStatus": "developer_reviewed_data_pending_product",
+  "unresolvedLimitations": [
+    "container_indoor_watering_is_outside_outdoor_ground_context",
+    "csu_usu_production_irrigation_does_not_create_medium",
+    "drought_tolerance_alone_does_not_prove_low_water_preference",
+    "establishment_year_watering_is_outside_the_mature_context",
+    "lavender_sun_packets_must_not_be_reused_as_water_evidence",
+    "multi_species_lavandin_sources_are_limitation_spare_only",
+    "rosemary_water_packets_must_not_be_reused_as_lavender_water_evidence",
+    "well_drained_soil_alone_does_not_prove_water_preference",
+    "wet_soil_root_rot_decline_is_stress_limitation_only"
+  ]
+}
