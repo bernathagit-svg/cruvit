@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Cross-Batch Evidence Packet ID Collision Lint</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Cross-Batch Evidence Packet ID Collision Lint</h1>
+  <p class="sub">
+    Developer-only read-only lint. Loads four same-origin evidence-packets.json files only after explicit Run.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Lint module not loaded. No JSON fetched.
+    Inert boot marker: <strong id="bootMarker">SR_CROSS_BATCH_EVIDENCE_ID_LINT_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run collision lint</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · sameOriginStaticArtifactRequests=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var BATCH_IDS = [
+    'lavender-sun-preference-v1',
+    'lavender-water-preference-v1',
+    'rosemary-sun-preference-v1',
+    'rosemary-water-preference-v1'
+  ];
+  var BATCH_BASE = '../data/smart-recommendations-reviewed/batches/';
+  var PASS_VERDICT = 'CROSS_BATCH_EVIDENCE_ID_COLLISION_LINT_PASS';
+  var FAIL_VERDICT = 'CROSS_BATCH_EVIDENCE_ID_COLLISION_LINT_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var sameOriginStaticArtifactRequests = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    jsonFetched: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    sameOriginStaticArtifactRequests = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      var abs;
+      try { abs = new URL(url, window.location.href); } catch (e) { abs = null; }
+      var sameOrigin = abs && abs.origin === window.location.origin;
+      var isArtifact = sameOrigin && BATCH_IDS.some(function (id) {
+        var needle = '/data/smart-recommendations-reviewed/batches/' + id + '/evidence-packets.json';
+        return (abs && abs.pathname.indexOf(needle) >= 0) ||
+          String(url).indexOf(BATCH_BASE + id + '/evidence-packets.json') >= 0 ||
+          String(url).endsWith('/' + id + '/evidence-packets.json');
+      });
+      if (isArtifact) {
+        sameOriginStaticArtifactRequests++;
+        return origFetch.apply(this, arguments);
+      }
+      externalApiRequests++;
+      return Promise.reject(new Error('external_or_non_artifact_fetch_blocked'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_cross_batch_evidence_id_lint_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_ON_UNHANDLED);
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_RESTORE === 'function') {
+      window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_RESTORE();
+      window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function fetchEvidencePackets() {
+    var batches = [];
+    for (var i = 0; i < BATCH_IDS.length; i++) {
+      var id = BATCH_IDS[i];
+      var url = BATCH_BASE + id + '/evidence-packets.json';
+      var wrapper = await (await fetch(url, { cache: 'no-store' })).json();
+      batches.push({ batchId: id, evidencePacketWrapper: wrapper });
+    }
+    return batches;
+  }
+
+  function finishSummary(verdict, report) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'batchesScanned=' + (report && report.batchesScanned) + '\n' +
+      'evidenceIdsScanned=' + (report && report.evidenceIdsScanned) + '\n' +
+      'uniqueEvidenceIdCount=' + (report && report.uniqueEvidenceIdCount) + '\n' +
+      'collisionCount=' + (report && report.collisionCount) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'summaryFingerprint=' + ((report && report.summaryFingerprint) || '') + '\n' +
+      'sameOriginStaticArtifactRequests=' + sameOriginStaticArtifactRequests + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      batchesScanned: report && report.batchesScanned,
+      evidenceIdsScanned: report && report.evidenceIdsScanned,
+      uniqueEvidenceIdCount: report && report.uniqueEvidenceIdCount,
+      collisionCount: report && report.collisionCount,
+      summaryFingerprint: report && report.summaryFingerprint,
+      sameOriginStaticArtifactRequests: sameOriginStaticArtifactRequests,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · sameOriginStaticArtifactRequests=' +
+      sameOriginStaticArtifactRequests +
+      ' · externalApiRequests=' + externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var report = null;
+    try {
+      expect('boot inert before run', window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible', ($('bootMarker') && $('bootMarker').textContent) === 'SR_CROSS_BATCH_EVIDENCE_ID_LINT_HARNESS_INERT', '');
+      $('banner').textContent = 'Running cross-batch Evidence Packet ID collision lint…';
+
+      var mod = await import('../modules/smart-recommendations/developer-reviewed-data-cross-batch-evidence-id-lint.js');
+      moduleLoaded = true;
+      window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        jsonFetched: false
+      });
+
+      var desc = mod.getSmartRecDeveloperCrossBatchEvidenceIdLintDescriptor();
+      expect('descriptor frozen + versions + isolation',
+        isFrozenDeep(desc) &&
+        desc.lintVersion === '0.1.0-sr-cross-batch-evidence-id-lint' &&
+        desc.capability === 'explicit_developer_cross_batch_evidence_id_collision_lint' &&
+        desc.developerOnly === true &&
+        desc.authoritative === false &&
+        desc.productConsumer === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.activation === 'explicit_call_only',
+        desc.lintVersion);
+
+      var batches = await fetchEvidencePackets();
+      window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        jsonFetched: true
+      });
+      expect('exactly four same-origin evidence-packets fetches', sameOriginStaticArtifactRequests === 4, String(sameOriginStaticArtifactRequests));
+      expect('no external/API fetches during load', externalApiRequests === 0, String(externalApiRequests));
+
+      report = mod.lintSmartRecDeveloperCrossBatchEvidencePacketIds({ batches: batches });
+      expect('report frozen', isFrozenDeep(report), '');
+      expect('lint valid true', report.valid === true, String(report.valid));
+      expect('batchesScanned 4', report.batchesScanned === 4, String(report.batchesScanned));
+      expect('evidenceIdsScanned 8', report.evidenceIdsScanned === 8, String(report.evidenceIdsScanned));
+      expect('uniqueEvidenceIdCount 8', report.uniqueEvidenceIdCount === 8, String(report.uniqueEvidenceIdCount));
+      expect('collisionCount 0', report.collisionCount === 0, String(report.collisionCount));
+      expect('collisionEvidenceIds empty', Array.isArray(report.collisionEvidenceIds) && report.collisionEvidenceIds.length === 0, '');
+      expect('batchIds include all four known batches',
+        BATCH_IDS.every(function (id) { return report.batchIdsScanned.indexOf(id) >= 0; }),
+        (report.batchIdsScanned || []).join(','));
+      expect('ownership has eight evidenceIds',
+        Object.keys(report.ownershipByEvidenceId || {}).length === 8, '');
+      expect('summaryFingerprint non-empty',
+        typeof report.summaryFingerprint === 'string' && report.summaryFingerprint.indexOf('0.1.0-sr-cross-batch-evidence-id-lint|1|4|8|8|0|') === 0,
+        report.summaryFingerprint);
+
+      // Negative: synthetic cross-batch collision must fail closed.
+      var colliding = clone(batches);
+      colliding[1].evidencePacketWrapper.records[0].evidenceId =
+        colliding[0].evidencePacketWrapper.records[0].evidenceId;
+      var neg = mod.lintSmartRecDeveloperCrossBatchEvidencePacketIds({ batches: colliding });
+      expect('neg collision invalid', neg.valid === false, String(neg.valid));
+      expect('neg collisionCount >= 1', neg.collisionCount >= 1, String(neg.collisionCount));
+      expect('neg reports colliding evidenceId',
+        (neg.collisionEvidenceIds || []).indexOf(colliding[0].evidencePacketWrapper.records[0].evidenceId) >= 0,
+        (neg.collisionEvidenceIds || []).join(','));
+
+      expect('empty input invalid',
+        mod.lintSmartRecDeveloperCrossBatchEvidencePacketIds({}).valid === false, '');
+
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Cross-batch Evidence Packet ID collision lint failed.'
+        : 'PASS. Cross-batch Evidence Packet ID collision lint complete. Developer-only; read-only; no product authority.';
+      finishSummary(verdict, report);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, report);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    sameOriginStaticArtifactRequests = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_SUMMARY = null;
+    window.__SR_CROSS_BATCH_EVIDENCE_ID_LINT_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      jsonFetched: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Lint module not loaded. No JSON fetched. Inert boot marker: <strong id="bootMarker">SR_CROSS_BATCH_EVIDENCE_ID_LINT_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · sameOriginStaticArtifactRequests=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
