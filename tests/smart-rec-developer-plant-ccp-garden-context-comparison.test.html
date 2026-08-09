@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Plant↔CCP↔Garden Context Comparison</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Plant↔CCP↔Garden Context Comparison</h1>
+  <p class="sub">
+    Developer-only synthetic three-way comparison. Fail-closed; no soft_fit; no plant suitability authority.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Plant↔CCP↔Garden comparison</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'PLANT_CCP_GARDEN_CONTEXT_COMPARISON_PASS';
+  var FAIL_VERDICT = 'PLANT_CCP_GARDEN_CONTEXT_COMPARISON_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function hasWarning(list, code) {
+    return hasCode(list, code);
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_plant_ccp_garden_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_plant_ccp_garden_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_ON_UNHANDLED);
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_RESTORE === 'function') {
+      window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_RESTORE();
+      window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.status) + '\n' +
+      'fixtureA_result=' + (extras && extras.A && extras.A.result) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.status) + '\n' +
+      'fixtureB_result=' + (extras && extras.B && extras.B.result) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.status) + '\n' +
+      'fixtureC_result=' + (extras && extras.C && extras.C.result) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.status) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.status) + '\n' +
+      'fixtureE_result=' + (extras && extras.E && extras.E.result) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.status) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.status) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.status) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null };
+    try {
+      expect('boot inert before run', window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Plant↔CCP↔Garden Context comparison…';
+
+      var mod = await import('../modules/smart-recommendations/developer-plant-ccp-garden-context-comparison.js');
+      moduleLoaded = true;
+      window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperPlantCcpGardenContextComparisonDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.comparisonVersion === '0.1.0-sr-plant-ccp-garden-context-comparison' &&
+        desc.capability === 'explicit_developer_plant_ccp_garden_context_comparison' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.activation === 'explicit_call_only',
+        desc.comparisonVersion);
+
+      var fixtures = mod.getSmartRecDeveloperPlantCcpGardenContextComparisonSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var reportA = mod.comparePlantCcpGardenContext(
+        clone(fixtures.A.plant), clone(fixtures.A.ccp), clone(fixtures.A.garden));
+      extras.A = { status: reportA.status, result: reportA.result, confidence: reportA.confidence };
+      expect('fixture A report frozen', isFrozenDeep(reportA), '');
+      expect('fixture A status comparable', reportA.status === 'comparable', String(reportA.status));
+      expect('fixture A cautious_axis_alignment or axis_comparable',
+        reportA.result === 'cautious_axis_alignment' || reportA.result === 'axis_comparable',
+        String(reportA.result));
+      expect('fixture A not soft_fit', reportA.result !== 'soft_fit', String(reportA.result));
+      expect('fixture A no plant suitability authority',
+        reportA.plantSuitabilityAuthority === false &&
+        reportA.notAuthority.plantSuitabilityAuthority === false, '');
+      expect('fixture A sun axis only',
+        reportA.axisResults.length === 1 && reportA.axisResults[0].axis === 'sun', '');
+
+      var reportB = mod.comparePlantCcpGardenContext(
+        clone(fixtures.B.plant), clone(fixtures.B.ccp), clone(fixtures.B.garden));
+      extras.B = { status: reportB.status, result: reportB.result, confidence: reportB.confidence };
+      expect('fixture B status comparable', reportB.status === 'comparable', String(reportB.status));
+      expect('fixture B cautious_axis_alignment or axis_comparable',
+        reportB.result === 'cautious_axis_alignment' || reportB.result === 'axis_comparable',
+        String(reportB.result));
+      expect('fixture B not soft_fit', reportB.result !== 'soft_fit', String(reportB.result));
+      expect('fixture B no plant suitability authority',
+        reportB.plantSuitabilityAuthority === false, '');
+      expect('fixture B water axis only',
+        reportB.axisResults.length === 1 && reportB.axisResults[0].axis === 'water', '');
+
+      var reportC = mod.comparePlantCcpGardenContext(
+        clone(fixtures.C.plant), clone(fixtures.C.ccp), clone(fixtures.C.garden));
+      extras.C = { status: reportC.status, result: reportC.result };
+      expect('fixture C status untrusted', reportC.status === 'untrusted', String(reportC.status));
+      expect('fixture C result untrusted_context',
+        reportC.result === 'untrusted_context', String(reportC.result));
+      expect('fixture C untrusted_context code',
+        hasCode(reportC.blockingReasons, 'untrusted_context'), '');
+
+      var reportD = mod.comparePlantCcpGardenContext(
+        clone(fixtures.D.plant), clone(fixtures.D.ccp), clone(fixtures.D.garden));
+      extras.D = { status: reportD.status, result: reportD.result };
+      expect('fixture D status blocked', reportD.status === 'blocked', String(reportD.status));
+      expect('fixture D CCP hard block wins',
+        hasCode(reportD.blockingReasons, 'ccp_hard_block_wins') ||
+        hasCode(reportD.blockingReasons, 'blocked'), '');
+
+      var reportE = mod.comparePlantCcpGardenContext(
+        fixtures.E.plant, clone(fixtures.E.ccp), clone(fixtures.E.garden));
+      extras.E = { status: reportE.status, result: reportE.result };
+      expect('fixture E status insufficient', reportE.status === 'insufficient', String(reportE.status));
+      expect('fixture E result insufficient_data',
+        reportE.result === 'insufficient_data', String(reportE.result));
+
+      var reportF = mod.comparePlantCcpGardenContext(
+        clone(fixtures.F.plant), clone(fixtures.F.ccp), clone(fixtures.F.garden));
+      extras.F = { status: reportF.status, result: reportF.result };
+      expect('fixture F not_comparable or insufficient',
+        reportF.status === 'not_comparable' || reportF.status === 'insufficient',
+        String(reportF.status));
+      expect('fixture F unsupported field',
+        hasCode(reportF.axisResults, 'unsupported_plant_field') ||
+        hasCode(reportF.blockingReasons, 'insufficient_data'), '');
+
+      var reportG = mod.comparePlantCcpGardenContext(
+        clone(fixtures.G.plant), clone(fixtures.G.ccp), clone(fixtures.G.garden));
+      extras.G = { status: reportG.status, result: reportG.result, confidence: reportG.confidence };
+      expect('fixture G status partial', reportG.status === 'partial', String(reportG.status));
+      expect('fixture G low confidence warning',
+        hasWarning(reportG.warnings, 'low_confidence_garden_context'), '');
+      expect('fixture G no suitability',
+        reportG.plantSuitabilityAuthority === false && reportG.result !== 'soft_fit', '');
+
+      var reportH = mod.comparePlantCcpGardenContext(
+        clone(fixtures.H.plant), clone(fixtures.H.ccp), clone(fixtures.H.garden));
+      extras.H = { status: reportH.status, result: reportH.result };
+      expect('fixture H status blocked', reportH.status === 'blocked', String(reportH.status));
+      expect('fixture H forbidden live keys',
+        hasCode(reportH.blockingReasons, 'forbidden_live_or_provider_keys'), '');
+
+      expect('no soft_fit on any path',
+        reportA.result !== 'soft_fit' &&
+        reportB.result !== 'soft_fit' &&
+        reportG.result !== 'soft_fit', '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Plant↔CCP↔Garden Context comparison failed.'
+        : 'PASS. Plant↔CCP↔Garden Context comparison complete. Developer-only; synthetic-only; no soft_fit; no plant suitability.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_SUMMARY = null;
+    window.__SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_PLANT_CCP_GARDEN_CONTEXT_COMPARISON_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
