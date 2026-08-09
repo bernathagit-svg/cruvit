@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Candidate Review Packet</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Candidate Review Packet</h1>
+  <p class="sub">
+    Developer-only synthetic review packet. Fail-closed; candidate review only; no automatic approval; no recommendation authority; no plant suitability.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Developer Candidate Review Packet</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'DEVELOPER_CANDIDATE_REVIEW_PACKET_PASS';
+  var FAIL_VERDICT = 'DEVELOPER_CANDIDATE_REVIEW_PACKET_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(packet) {
+    return packet &&
+      packet.productAuthority === false &&
+      packet.runtimeEligibilityAuthority === false &&
+      packet.recommendationAuthority === false &&
+      packet.overlayAuthority === false &&
+      packet.liveWeather === false &&
+      packet.gosConsumer === false &&
+      packet.network === false &&
+      packet.automaticExecution === false &&
+      packet.writesArtifacts === false &&
+      packet.plantSuitabilityAuthority === false &&
+      packet.commerceAuthority === false &&
+      packet.ownerApprovalAuthority === false &&
+      packet.notAuthority &&
+      packet.notAuthority.productAuthority === false &&
+      packet.notAuthority.recommendationAuthority === false &&
+      packet.notAuthority.plantSuitabilityAuthority === false &&
+      packet.notAuthority.ownerApprovalAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_candidate_review_packet_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_candidate_review_packet_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_ON_UNHANDLED);
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_RESTORE === 'function') {
+      window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_RESTORE();
+      window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.packetStatus) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.packetStatus) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.packetStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.packetStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.packetStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.packetStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.packetStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.packetStatus) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null };
+    try {
+      expect('boot inert before run', window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Developer Candidate Review Packet…';
+
+      var mod = await import('../modules/smart-recommendations/developer-candidate-review-packet.js');
+      moduleLoaded = true;
+      window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperCandidateReviewPacketDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.packetVersion === '0.1.0-sr-developer-candidate-review-packet' &&
+        desc.capability === 'explicit_developer_candidate_review_packet' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.ownerApprovalAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.candidateReviewOnly === true &&
+        desc.noAutomaticApproval === true,
+        desc.packetVersion);
+
+      var fixtures = mod.getSmartRecDeveloperCandidateReviewPacketSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var packetA = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.A));
+      extras.A = { packetStatus: packetA.packetStatus, ownerDecisionPlaceholder: packetA.ownerDecisionPlaceholder };
+      expect('fixture A packet frozen', isFrozenDeep(packetA), '');
+      expect('fixture A reviewable', packetA.packetStatus === 'reviewable', String(packetA.packetStatus));
+      expect('fixture A ownerDecisionPlaceholder not_reviewed',
+        packetA.ownerDecisionPlaceholder === 'not_reviewed', String(packetA.ownerDecisionPlaceholder));
+      expect('fixture A no automatic approval',
+        packetA.noAutomaticApproval === true &&
+        packetA.riskSummary.automaticApproval === false, '');
+      expect('fixture A no recommendation authority',
+        packetA.recommendationAuthority === false &&
+        packetA.notAuthority.recommendationAuthority === false, '');
+      expect('fixture A no plant suitability authority',
+        packetA.plantSuitabilityAuthority === false &&
+        packetA.notAuthority.plantSuitabilityAuthority === false, '');
+      expect('fixture A candidateReviewOnly', packetA.candidateReviewOnly === true, '');
+      expect('fixture A auth flags false', authFlagsFalse(packetA), '');
+
+      var packetB = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.B));
+      extras.B = { packetStatus: packetB.packetStatus, ownerDecisionPlaceholder: packetB.ownerDecisionPlaceholder };
+      expect('fixture B needs_more_data',
+        packetB.packetStatus === 'needs_more_data', String(packetB.packetStatus));
+      expect('fixture B not approval',
+        packetB.ownerDecisionPlaceholder === 'not_reviewed' &&
+        packetB.noAutomaticApproval === true, '');
+      expect('fixture B single-axis warning',
+        hasCode(packetB.warnings, 'single_axis_insufficient_for_approval'), '');
+
+      var packetC = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.C));
+      extras.C = { packetStatus: packetC.packetStatus };
+      expect('fixture C blocked', packetC.packetStatus === 'blocked', String(packetC.packetStatus));
+
+      var packetD = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.D));
+      extras.D = { packetStatus: packetD.packetStatus };
+      expect('fixture D untrusted', packetD.packetStatus === 'untrusted', String(packetD.packetStatus));
+
+      var packetE = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.E));
+      extras.E = { packetStatus: packetE.packetStatus };
+      expect('fixture E insufficient',
+        packetE.packetStatus === 'insufficient', String(packetE.packetStatus));
+
+      var packetF = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.F));
+      extras.F = { packetStatus: packetF.packetStatus };
+      expect('fixture F needs_more_data',
+        packetF.packetStatus === 'needs_more_data', String(packetF.packetStatus));
+      expect('fixture F low confidence warning',
+        hasCode(packetF.warnings, 'low_confidence_visible') ||
+        hasCode(packetF.warnings, 'low_confidence_demotion') ||
+        packetF.riskSummary.lowConfidence === true, '');
+
+      var packetG = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.G));
+      extras.G = { packetStatus: packetG.packetStatus };
+      expect('fixture G not_ready or blocked',
+        packetG.packetStatus === 'not_ready' || packetG.packetStatus === 'blocked',
+        String(packetG.packetStatus));
+      expect('fixture G missing readiness',
+        hasCode(packetG.blockingReasons, 'missing_readiness_report'), '');
+
+      var packetH = mod.buildDeveloperCandidateReviewPacket(clone(fixtures.H));
+      extras.H = { packetStatus: packetH.packetStatus };
+      expect('fixture H blocked', packetH.packetStatus === 'blocked', String(packetH.packetStatus));
+      expect('fixture H forbidden authority flag',
+        hasCode(packetH.blockingReasons, 'forbidden_authority_flag'), '');
+
+      expect('no automatic approval on any path',
+        packetA.noAutomaticApproval === true &&
+        packetB.noAutomaticApproval === true &&
+        packetF.noAutomaticApproval === true &&
+        packetA.ownerDecisionPlaceholder === 'not_reviewed' &&
+        packetB.ownerDecisionPlaceholder === 'not_reviewed', '');
+      expect('candidateReviewOnly on all packets',
+        packetA.candidateReviewOnly === true &&
+        packetB.candidateReviewOnly === true &&
+        packetC.candidateReviewOnly === true &&
+        packetG.candidateReviewOnly === true, '');
+      expect('no recommendation authority on any path',
+        packetA.recommendationAuthority === false &&
+        packetB.recommendationAuthority === false &&
+        packetF.recommendationAuthority === false, '');
+      expect('no plant suitability on any path',
+        packetA.plantSuitabilityAuthority === false &&
+        packetB.plantSuitabilityAuthority === false &&
+        packetF.plantSuitabilityAuthority === false, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Developer Candidate Review Packet failed.'
+        : 'PASS. Developer Candidate Review Packet complete. Developer-only; synthetic-only; candidate review only; no automatic approval; no recommendation authority; no plant suitability.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_SUMMARY = null;
+    window.__SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_DEVELOPER_CANDIDATE_REVIEW_PACKET_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
