@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Recommendation Readiness Report</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Recommendation Readiness Report</h1>
+  <p class="sub">
+    Developer-only synthetic readiness summarizer. Fail-closed; candidate review only; no recommendation authority; no plant suitability.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_RECOMMENDATION_READINESS_REPORT_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Recommendation Readiness Report</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'RECOMMENDATION_READINESS_REPORT_PASS';
+  var FAIL_VERDICT = 'RECOMMENDATION_READINESS_REPORT_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_RECOMMENDATION_READINESS_REPORT_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(report) {
+    return report &&
+      report.productAuthority === false &&
+      report.runtimeEligibilityAuthority === false &&
+      report.recommendationAuthority === false &&
+      report.overlayAuthority === false &&
+      report.liveWeather === false &&
+      report.gosConsumer === false &&
+      report.network === false &&
+      report.automaticExecution === false &&
+      report.writesArtifacts === false &&
+      report.plantSuitabilityAuthority === false &&
+      report.commerceAuthority === false &&
+      report.notAuthority &&
+      report.notAuthority.productAuthority === false &&
+      report.notAuthority.recommendationAuthority === false &&
+      report.notAuthority.plantSuitabilityAuthority === false &&
+      report.notAuthority.commerceAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_recommendation_readiness_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_recommendation_readiness_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_RECOMMENDATION_READINESS_REPORT_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_RECOMMENDATION_READINESS_REPORT_ON_UNHANDLED);
+    window.__SR_RECOMMENDATION_READINESS_REPORT_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_RECOMMENDATION_READINESS_REPORT_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_RECOMMENDATION_READINESS_REPORT_RESTORE === 'function') {
+      window.__SR_RECOMMENDATION_READINESS_REPORT_RESTORE();
+      window.__SR_RECOMMENDATION_READINESS_REPORT_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.readinessStatus) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.readinessStatus) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.readinessStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.readinessStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.readinessStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.readinessStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.readinessStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.readinessStatus) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_RECOMMENDATION_READINESS_REPORT_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_RECOMMENDATION_READINESS_REPORT_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null };
+    try {
+      expect('boot inert before run', window.__SR_RECOMMENDATION_READINESS_REPORT_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_RECOMMENDATION_READINESS_REPORT_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Recommendation Readiness Report…';
+
+      var mod = await import('../modules/smart-recommendations/developer-recommendation-readiness-report.js');
+      moduleLoaded = true;
+      window.__SR_RECOMMENDATION_READINESS_REPORT_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperRecommendationReadinessReportDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.reportVersion === '0.1.0-sr-recommendation-readiness-report' &&
+        desc.capability === 'explicit_developer_recommendation_readiness_report' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.candidateReviewOnly === true,
+        desc.reportVersion);
+
+      var fixtures = mod.getSmartRecDeveloperRecommendationReadinessReportSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var reportA = mod.buildRecommendationReadinessReport(clone(fixtures.A));
+      extras.A = { readinessStatus: reportA.readinessStatus, confidence: reportA.confidence };
+      expect('fixture A report frozen', isFrozenDeep(reportA), '');
+      expect('fixture A axis_ready', reportA.readinessStatus === 'axis_ready', String(reportA.readinessStatus));
+      expect('fixture A candidateReviewOnly', reportA.candidateReviewOnly === true, '');
+      expect('fixture A no recommendation authority',
+        reportA.recommendationAuthority === false &&
+        reportA.notAuthority.recommendationAuthority === false, '');
+      expect('fixture A no plant suitability authority',
+        reportA.plantSuitabilityAuthority === false &&
+        reportA.notAuthority.plantSuitabilityAuthority === false, '');
+      expect('fixture A covered sun only',
+        reportA.coveredAxes.length === 1 && reportA.coveredAxes[0] === 'sun',
+        String(reportA.coveredAxes));
+      expect('fixture A auth flags false', authFlagsFalse(reportA), '');
+
+      var reportB = mod.buildRecommendationReadinessReport(clone(fixtures.B));
+      extras.B = { readinessStatus: reportB.readinessStatus, confidence: reportB.confidence };
+      expect('fixture B candidate_review_ready',
+        reportB.readinessStatus === 'candidate_review_ready', String(reportB.readinessStatus));
+      expect('fixture B candidateReviewOnly', reportB.candidateReviewOnly === true, '');
+      expect('fixture B developer/owner review warning',
+        hasCode(reportB.warnings, 'candidate_review_only'), '');
+      expect('fixture B no user-facing recommendation',
+        reportB.recommendationAuthority === false &&
+        reportB.readinessStatus !== 'user_facing_ready', '');
+      expect('fixture B no recommendation authority',
+        reportB.recommendationAuthority === false, '');
+      expect('fixture B no plant suitability authority',
+        reportB.plantSuitabilityAuthority === false, '');
+      expect('fixture B sun+water covered',
+        reportB.coveredAxes.indexOf('sun') >= 0 && reportB.coveredAxes.indexOf('water') >= 0,
+        String(reportB.coveredAxes));
+      expect('fixture B auth flags false', authFlagsFalse(reportB), '');
+
+      var reportC = mod.buildRecommendationReadinessReport(clone(fixtures.C));
+      extras.C = { readinessStatus: reportC.readinessStatus };
+      expect('fixture C blocked', reportC.readinessStatus === 'blocked', String(reportC.readinessStatus));
+
+      var reportD = mod.buildRecommendationReadinessReport(clone(fixtures.D));
+      extras.D = { readinessStatus: reportD.readinessStatus };
+      expect('fixture D untrusted', reportD.readinessStatus === 'untrusted', String(reportD.readinessStatus));
+
+      var reportE = mod.buildRecommendationReadinessReport(clone(fixtures.E));
+      extras.E = { readinessStatus: reportE.readinessStatus };
+      expect('fixture E insufficient',
+        reportE.readinessStatus === 'insufficient', String(reportE.readinessStatus));
+
+      var reportF = mod.buildRecommendationReadinessReport(clone(fixtures.F));
+      extras.F = { readinessStatus: reportF.readinessStatus, confidence: reportF.confidence };
+      expect('fixture F axis_partial',
+        reportF.readinessStatus === 'axis_partial', String(reportF.readinessStatus));
+      expect('fixture F low confidence demotion warning',
+        hasCode(reportF.warnings, 'low_confidence_demotion') ||
+        hasCode(reportF.warnings, 'low_confidence_garden_context'), '');
+      expect('fixture F no suitability',
+        reportF.plantSuitabilityAuthority === false, '');
+
+      var reportG = mod.buildRecommendationReadinessReport(clone(fixtures.G));
+      extras.G = { readinessStatus: reportG.readinessStatus };
+      expect('fixture G blocked or not_ready',
+        reportG.readinessStatus === 'blocked' || reportG.readinessStatus === 'not_ready',
+        String(reportG.readinessStatus));
+      expect('fixture G missing comparator',
+        hasCode(reportG.blockingReasons, 'missing_comparator_report'), '');
+
+      var reportH = mod.buildRecommendationReadinessReport(clone(fixtures.H));
+      extras.H = { readinessStatus: reportH.readinessStatus };
+      expect('fixture H blocked', reportH.readinessStatus === 'blocked', String(reportH.readinessStatus));
+      expect('fixture H forbidden authority flag',
+        hasCode(reportH.blockingReasons, 'forbidden_authority_flag'), '');
+
+      expect('no recommendation authority on any path',
+        reportA.recommendationAuthority === false &&
+        reportB.recommendationAuthority === false &&
+        reportF.recommendationAuthority === false, '');
+      expect('no plant suitability on any path',
+        reportA.plantSuitabilityAuthority === false &&
+        reportB.plantSuitabilityAuthority === false &&
+        reportF.plantSuitabilityAuthority === false, '');
+      expect('candidateReviewOnly on all reports',
+        reportA.candidateReviewOnly === true &&
+        reportB.candidateReviewOnly === true &&
+        reportC.candidateReviewOnly === true &&
+        reportG.candidateReviewOnly === true, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_RECOMMENDATION_READINESS_REPORT_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Recommendation Readiness Report failed.'
+        : 'PASS. Recommendation Readiness Report complete. Developer-only; synthetic-only; candidate review only; no recommendation authority; no plant suitability.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_RECOMMENDATION_READINESS_REPORT_SUMMARY = null;
+    window.__SR_RECOMMENDATION_READINESS_REPORT_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_RECOMMENDATION_READINESS_REPORT_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
