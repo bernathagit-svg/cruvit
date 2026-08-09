@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Garden Context Profile Validator</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Garden Context Profile Validator</h1>
+  <p class="sub">
+    Developer-only synthetic Garden Context Profile validation. No live weather, no JSON fetch, no product authority.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_GARDEN_CONTEXT_PROFILE_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Garden Context validator</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'GARDEN_CONTEXT_PROFILE_PASS';
+  var FAIL_VERDICT = 'GARDEN_CONTEXT_PROFILE_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_GARDEN_CONTEXT_PROFILE_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_garden_context_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_garden_context_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_GARDEN_CONTEXT_PROFILE_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_GARDEN_CONTEXT_PROFILE_ON_UNHANDLED);
+    window.__SR_GARDEN_CONTEXT_PROFILE_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_GARDEN_CONTEXT_PROFILE_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_GARDEN_CONTEXT_PROFILE_RESTORE === 'function') {
+      window.__SR_GARDEN_CONTEXT_PROFILE_RESTORE();
+      window.__SR_GARDEN_CONTEXT_PROFILE_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_valid=' + (extras && extras.A && extras.A.valid) + '\n' +
+      'fixtureA_trusted=' + (extras && extras.A && extras.A.trusted) + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.profileStatus) + '\n' +
+      'fixtureB_valid=' + (extras && extras.B && extras.B.valid) + '\n' +
+      'fixtureB_trusted=' + (extras && extras.B && extras.B.trusted) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.profileStatus) + '\n' +
+      'fixtureC_valid=' + (extras && extras.C && extras.C.valid) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.profileStatus) + '\n' +
+      'fixtureD_valid=' + (extras && extras.D && extras.D.valid) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.profileStatus) + '\n' +
+      'fixtureE_valid=' + (extras && extras.E && extras.E.valid) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.profileStatus) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_GARDEN_CONTEXT_PROFILE_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_GARDEN_CONTEXT_PROFILE_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null };
+    try {
+      expect('boot inert before run', window.__SR_GARDEN_CONTEXT_PROFILE_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_GARDEN_CONTEXT_PROFILE_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Garden Context Profile validator…';
+
+      var mod = await import('../modules/smart-recommendations/developer-garden-context-profile.js');
+      moduleLoaded = true;
+      window.__SR_GARDEN_CONTEXT_PROFILE_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperGardenContextProfileDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.profileVersion === '0.1.0-sr-garden-context-profile' &&
+        desc.capability === 'explicit_developer_garden_context_profile_validation' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.authoritative === false &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.doesNotOverrideHardCcpClimateBlocks === true &&
+        desc.doesNotGrantPlantSuitabilityAlone === true,
+        desc.profileVersion);
+
+      var fixtures = mod.getSmartRecDeveloperGardenContextProfileSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var reportA = mod.validateGardenContextProfile(clone(fixtures.A));
+      extras.A = {
+        valid: reportA.valid,
+        trusted: reportA.trusted,
+        profileStatus: reportA.profileStatus
+      };
+      expect('fixture A report frozen', isFrozenDeep(reportA), '');
+      expect('fixture A valid true', reportA.valid === true, String(reportA.valid));
+      expect('fixture A trusted true', reportA.trusted === true, String(reportA.trusted));
+      expect('fixture A status ready', reportA.profileStatus === 'ready', String(reportA.profileStatus));
+      expect('fixture A syntheticOnly', reportA.syntheticOnly === true, '');
+      expect('fixture A does not grant suitability',
+        reportA.doesNotGrantPlantSuitabilityAlone === true, '');
+      expect('fixture A does not override CCP blocks',
+        reportA.doesNotOverrideHardCcpClimateBlocks === true, '');
+
+      var reportB = mod.validateGardenContextProfile(clone(fixtures.B));
+      extras.B = {
+        valid: reportB.valid,
+        trusted: reportB.trusted,
+        profileStatus: reportB.profileStatus
+      };
+      expect('fixture B valid true', reportB.valid === true, String(reportB.valid));
+      expect('fixture B trusted false', reportB.trusted === false, String(reportB.trusted));
+      expect('fixture B status untrusted', reportB.profileStatus === 'untrusted', String(reportB.profileStatus));
+
+      var reportC = mod.validateGardenContextProfile(clone(fixtures.C));
+      extras.C = {
+        valid: reportC.valid,
+        trusted: reportC.trusted,
+        profileStatus: reportC.profileStatus
+      };
+      expect('fixture C valid false', reportC.valid === false, String(reportC.valid));
+      expect('fixture C status insufficient or blocked',
+        reportC.profileStatus === 'insufficient' || reportC.profileStatus === 'blocked',
+        String(reportC.profileStatus));
+      expect('fixture C container size finding',
+        hasCode(reportC.findings, 'container_size_or_unknown_reason_required'), '');
+
+      var reportD = mod.validateGardenContextProfile(clone(fixtures.D));
+      extras.D = {
+        valid: reportD.valid,
+        trusted: reportD.trusted,
+        profileStatus: reportD.profileStatus
+      };
+      expect('fixture D valid true', reportD.valid === true, String(reportD.valid));
+      expect('fixture D status partial', reportD.profileStatus === 'partial', String(reportD.profileStatus));
+
+      var reportE = mod.validateGardenContextProfile(fixtures.E);
+      extras.E = {
+        valid: reportE.valid,
+        trusted: reportE.trusted,
+        profileStatus: reportE.profileStatus
+      };
+      expect('fixture E valid false', reportE.valid === false, String(reportE.valid));
+      expect('fixture E status blocked', reportE.profileStatus === 'blocked', String(reportE.profileStatus));
+      expect('fixture E invalid_input',
+        hasCode(reportE.findings, 'invalid_input'), '');
+
+      // Negatives
+      var negUnknownReason = clone(fixtures.A);
+      negUnknownReason.drainage = 'unknown';
+      negUnknownReason.unknownReasons = {};
+      var n1 = mod.validateGardenContextProfile(negUnknownReason);
+      expect('neg unknown without reason fails', n1.valid === false, String(n1.valid));
+      expect('neg unknown reason code',
+        hasCode(n1.findings, 'unknown_reason_required'), '');
+
+      var negPhoto = clone(fixtures.A);
+      negPhoto.source = 'inferred_from_photo';
+      negPhoto.confirmationStatus = 'unconfirmed';
+      negPhoto.confidence = 'high';
+      negPhoto.trusted = false;
+      negPhoto.profileStatus = 'untrusted';
+      var n2 = mod.validateGardenContextProfile(negPhoto);
+      expect('neg photo high confidence unconfirmed fails', n2.valid === false, String(n2.valid));
+      expect('neg photo confidence code',
+        hasCode(n2.findings, 'photo_inferred_requires_low_confidence'), '');
+
+      var negLive = clone(fixtures.A);
+      negLive.apiKey = 'secret-should-fail';
+      var n3 = mod.validateGardenContextProfile(negLive);
+      expect('neg live/provider key fails', n3.valid === false, String(n3.valid));
+      expect('neg forbidden key code',
+        hasCode(n3.findings, 'forbidden_live_or_provider_keys'), '');
+
+      var negTrustedUnconfirmed = clone(fixtures.B);
+      negTrustedUnconfirmed.trusted = true;
+      var n4 = mod.validateGardenContextProfile(negTrustedUnconfirmed);
+      expect('neg trusted+unconfirmed fails', n4.valid === false, String(n4.valid));
+      expect('neg trusted claim code',
+        hasCode(n4.findings, 'trusted_true_without_trust_rules'), '');
+
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_GARDEN_CONTEXT_PROFILE_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Garden Context Profile validator failed.'
+        : 'PASS. Garden Context Profile validator complete. Developer-only; synthetic-only; no live weather; no product authority.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_GARDEN_CONTEXT_PROFILE_SUMMARY = null;
+    window.__SR_GARDEN_CONTEXT_PROFILE_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_GARDEN_CONTEXT_PROFILE_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
