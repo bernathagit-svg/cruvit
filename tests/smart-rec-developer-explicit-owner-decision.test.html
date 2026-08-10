@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Explicit Owner Decision</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Explicit Owner Decision</h1>
+  <p class="sub">
+    Developer-only synthetic explicit owner decision recorder. Fail-closed; explicit manual action only; no automatic approval; no Owner Review Queue UI; no catalog/product application.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_EXPLICIT_OWNER_DECISION_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Explicit Owner Decision</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'EXPLICIT_OWNER_DECISION_PASS';
+  var FAIL_VERDICT = 'EXPLICIT_OWNER_DECISION_FAIL';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_EXPLICIT_OWNER_DECISION_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(item) {
+    return item &&
+      item.productAuthority === false &&
+      item.runtimeEligibilityAuthority === false &&
+      item.recommendationAuthority === false &&
+      item.overlayAuthority === false &&
+      item.liveWeather === false &&
+      item.gosConsumer === false &&
+      item.network === false &&
+      item.automaticExecution === false &&
+      item.writesArtifacts === false &&
+      item.plantSuitabilityAuthority === false &&
+      item.commerceAuthority === false &&
+      item.ownerApprovalAuthority === false &&
+      item.notAuthority &&
+      item.notAuthority.productAuthority === false &&
+      item.notAuthority.recommendationAuthority === false &&
+      item.notAuthority.plantSuitabilityAuthority === false &&
+      item.notAuthority.ownerApprovalAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_explicit_owner_decision_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_explicit_owner_decision_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_EXPLICIT_OWNER_DECISION_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_EXPLICIT_OWNER_DECISION_ON_UNHANDLED);
+    window.__SR_EXPLICIT_OWNER_DECISION_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_EXPLICIT_OWNER_DECISION_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_EXPLICIT_OWNER_DECISION_RESTORE === 'function') {
+      window.__SR_EXPLICIT_OWNER_DECISION_RESTORE();
+      window.__SR_EXPLICIT_OWNER_DECISION_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_decision=' + (extras && extras.A && extras.A.ownerDecision) + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.decisionStatus) + '\n' +
+      'fixtureB_decision=' + (extras && extras.B && extras.B.ownerDecision) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.decisionStatus) + '\n' +
+      'fixtureC_decision=' + (extras && extras.C && extras.C.ownerDecision) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.decisionStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.decisionStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.decisionStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.decisionStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.decisionStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.decisionStatus) + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_EXPLICIT_OWNER_DECISION_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_EXPLICIT_OWNER_DECISION_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null };
+    try {
+      expect('boot inert before run', window.__SR_EXPLICIT_OWNER_DECISION_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_EXPLICIT_OWNER_DECISION_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Explicit Owner Decision…';
+
+      var mod = await import('../modules/smart-recommendations/developer-explicit-owner-decision.js');
+      moduleLoaded = true;
+      window.__SR_EXPLICIT_OWNER_DECISION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperExplicitOwnerDecisionDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.decisionVersion === '0.1.0-sr-explicit-owner-decision' &&
+        desc.capability === 'explicit_developer_owner_decision' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.ownerApprovalAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.noAutomaticApproval === true &&
+        desc.explicitOwnerActionRequired === true &&
+        desc.doesNotProduceApprovedLaterAutomatically === true &&
+        desc.doesNotProduceRejectedLaterAutomatically === true,
+        desc.decisionVersion);
+
+      var fixtures = mod.getSmartRecDeveloperExplicitOwnerDecisionSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var itemA = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.A));
+      extras.A = { ownerDecision: itemA.ownerDecision, decisionStatus: itemA.decisionStatus };
+      expect('fixture A item frozen', isFrozenDeep(itemA), '');
+      expect('fixture A approved_later recorded',
+        itemA.decisionStatus === 'recorded' && itemA.ownerDecision === 'approved_later',
+        String(itemA.ownerDecision) + '/' + String(itemA.decisionStatus));
+      expect('fixture A no authority granted',
+        itemA.recommendationAuthority === false &&
+        itemA.plantSuitabilityAuthority === false &&
+        itemA.productAuthority === false &&
+        itemA.ownerApprovalAuthority === false, '');
+      expect('fixture A no activation flags',
+        itemA.automaticExecution === false &&
+        itemA.noAutomaticApproval === true &&
+        itemA.explicitOwnerActionRequired === true, '');
+      expect('fixture A auth flags false', authFlagsFalse(itemA), '');
+      expect('fixture A reversible audit',
+        itemA.reversible === true &&
+        (itemA.auditTrail || []).some(function (e) {
+          return e && e.event === 'explicit_owner_decision_recorded' && e.automaticApproval === false;
+        }), '');
+
+      var itemB = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.B));
+      extras.B = { ownerDecision: itemB.ownerDecision, decisionStatus: itemB.decisionStatus };
+      expect('fixture B rejected_later recorded',
+        itemB.decisionStatus === 'recorded' && itemB.ownerDecision === 'rejected_later',
+        String(itemB.ownerDecision));
+      expect('fixture B evidence preserved',
+        itemB.preservedEvidenceSummary != null &&
+        (itemB.preservedWarnings || []).length > 0, '');
+      expect('fixture B no activation',
+        itemB.automaticExecution === false &&
+        itemB.recommendationAuthority === false, '');
+
+      var itemC = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.C));
+      extras.C = { ownerDecision: itemC.ownerDecision, decisionStatus: itemC.decisionStatus };
+      expect('fixture C needs_more_data recorded',
+        itemC.decisionStatus === 'recorded' && itemC.ownerDecision === 'needs_more_data',
+        String(itemC.ownerDecision));
+      expect('fixture C preserves missingRequirements',
+        (itemC.preservedMissingRequirements || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C preserves warnings and blockingReasons',
+        hasCode(itemC.preservedWarnings, 'low_confidence_visible') &&
+        hasCode(itemC.preservedBlockingReasons, 'axis_gap'), '');
+      expect('fixture C requiredFollowUp present',
+        (itemC.requiredFollowUp || []).indexOf('additional_trusted_axis') >= 0, '');
+
+      var itemD = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.D));
+      extras.D = { ownerDecision: itemD.ownerDecision, decisionStatus: itemD.decisionStatus };
+      expect('fixture D blocked', itemD.decisionStatus === 'blocked', String(itemD.decisionStatus));
+      expect('fixture D missing decision code',
+        hasCode(itemD.blockingReasons, 'missing_explicit_owner_decision_request'), '');
+
+      var itemE = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.E));
+      extras.E = { ownerDecision: itemE.ownerDecision, decisionStatus: itemE.decisionStatus };
+      expect('fixture E blocked', itemE.decisionStatus === 'blocked', String(itemE.decisionStatus));
+      expect('fixture E invalid decision code',
+        hasCode(itemE.blockingReasons, 'invalid_owner_decision_value'), '');
+
+      var itemF = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.F));
+      extras.F = { ownerDecision: itemF.ownerDecision, decisionStatus: itemF.decisionStatus };
+      expect('fixture F blocked', itemF.decisionStatus === 'blocked', String(itemF.decisionStatus));
+      expect('fixture F missing reason code',
+        hasCode(itemF.blockingReasons, 'missing_owner_decision_reason'), '');
+
+      var itemG = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.G));
+      extras.G = { ownerDecision: itemG.ownerDecision, decisionStatus: itemG.decisionStatus };
+      expect('fixture G blocked', itemG.decisionStatus === 'blocked', String(itemG.decisionStatus));
+      expect('fixture G forbidden authority flag',
+        hasCode(itemG.blockingReasons, 'forbidden_authority_flag'), '');
+
+      var itemH = mod.buildDeveloperExplicitOwnerDecision(clone(fixtures.H));
+      extras.H = { ownerDecision: itemH.ownerDecision, decisionStatus: itemH.decisionStatus };
+      expect('fixture H blocked', itemH.decisionStatus === 'blocked', String(itemH.decisionStatus));
+      expect('fixture H explicit action required',
+        hasCode(itemH.blockingReasons, 'explicit_owner_action_required'), '');
+      expect('fixture H did not auto-approve',
+        itemH.ownerDecision !== 'approved_later', String(itemH.ownerDecision));
+
+      expect('approved_later only from explicit valid request',
+        itemA.ownerDecision === 'approved_later' &&
+        itemA.decisionSource === 'owner_manual' &&
+        itemA.explicitOwnerActionRequired === true &&
+        itemF.decisionStatus === 'blocked' &&
+        itemH.decisionStatus === 'blocked', '');
+      expect('rejected_later only from explicit valid request',
+        itemB.ownerDecision === 'rejected_later' &&
+        itemB.decisionSource === 'owner_manual' &&
+        itemB.explicitOwnerActionRequired === true, '');
+      expect('no automatic approval on any path',
+        itemA.noAutomaticApproval === true &&
+        itemB.noAutomaticApproval === true &&
+        itemC.noAutomaticApproval === true &&
+        itemH.noAutomaticApproval === true, '');
+      expect('no recommendation authority on any path',
+        itemA.recommendationAuthority === false &&
+        itemB.recommendationAuthority === false &&
+        itemC.recommendationAuthority === false, '');
+      expect('no plant suitability on any path',
+        itemA.plantSuitabilityAuthority === false &&
+        itemB.plantSuitabilityAuthority === false &&
+        itemC.plantSuitabilityAuthority === false, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_EXPLICIT_OWNER_DECISION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Explicit Owner Decision failed.'
+        : 'PASS. Explicit Owner Decision complete. Developer-only; synthetic-only; explicit manual action only; no UI; no automatic approval; no catalog/product application.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_EXPLICIT_OWNER_DECISION_SUMMARY = null;
+    window.__SR_EXPLICIT_OWNER_DECISION_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_EXPLICIT_OWNER_DECISION_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
