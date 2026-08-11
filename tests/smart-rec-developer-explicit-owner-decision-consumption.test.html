@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Explicit Owner Decision Consumption</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Explicit Owner Decision Consumption</h1>
+  <p class="sub">
+    Developer-only synthetic explicit owner decision consumer. Fail-closed; evidence-only; nextGateRequired required after approved_later; no activation; no UI; no catalog/product application.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Explicit Owner Decision Consumption</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'EXPLICIT_OWNER_DECISION_CONSUMPTION_PASS';
+  var FAIL_VERDICT = 'EXPLICIT_OWNER_DECISION_CONSUMPTION_FAIL';
+  var MODULE_URL = '../modules/smart-recommendations/developer-explicit-owner-decision-consumption.js';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastModuleHref = null;
+  var lastSummary = null;
+
+  window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(item) {
+    return item &&
+      item.productAuthority === false &&
+      item.runtimeEligibilityAuthority === false &&
+      item.recommendationAuthority === false &&
+      item.overlayAuthority === false &&
+      item.liveWeather === false &&
+      item.gosConsumer === false &&
+      item.network === false &&
+      item.automaticExecution === false &&
+      item.writesArtifacts === false &&
+      item.plantSuitabilityAuthority === false &&
+      item.commerceAuthority === false &&
+      item.ownerApprovalAuthority === false &&
+      item.userFacingRecommendation === false &&
+      item.catalogMutationAuthority === false &&
+      item.productEligibilityAuthority === false &&
+      item.notAuthority &&
+      item.notAuthority.productAuthority === false &&
+      item.notAuthority.recommendationAuthority === false &&
+      item.notAuthority.plantSuitabilityAuthority === false &&
+      item.notAuthority.ownerApprovalAuthority === false &&
+      item.notAuthority.userFacingRecommendation === false &&
+      item.notAuthority.catalogMutationAuthority === false &&
+      item.notAuthority.productEligibilityAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_explicit_owner_decision_consumption_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_explicit_owner_decision_consumption_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_ON_UNHANDLED);
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_RESTORE === 'function') {
+      window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_RESTORE();
+      window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_echo=' + (extras && extras.A && extras.A.ownerDecisionEcho) + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.consumptionStatus) + '\n' +
+      'fixtureB_echo=' + (extras && extras.B && extras.B.ownerDecisionEcho) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.consumptionStatus) + '\n' +
+      'fixtureC_echo=' + (extras && extras.C && extras.C.ownerDecisionEcho) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.consumptionStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.consumptionStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.consumptionStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.consumptionStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.consumptionStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.consumptionStatus) + '\n' +
+      'fixtureI_status=' + (extras && extras.I && extras.I.consumptionStatus) + '\n' +
+      'moduleHref=' + (lastModuleHref || '') + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      fixtureI: extras && extras.I,
+      moduleHref: lastModuleHref,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null, I: null };
+    try {
+      expect('boot inert before run', window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Explicit Owner Decision Consumption…';
+
+      var mod = await import(MODULE_URL);
+      moduleLoaded = true;
+      lastModuleHref = new URL(MODULE_URL, window.location.href).pathname;
+      window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperExplicitOwnerDecisionConsumptionDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.consumptionVersion === '0.1.0-sr-explicit-owner-decision-consumption' &&
+        desc.capability === 'explicit_developer_owner_decision_consumption' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.ownerApprovalAuthority === false &&
+        desc.userFacingRecommendation === false &&
+        desc.catalogMutationAuthority === false &&
+        desc.productEligibilityAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.noAutomaticApproval === true &&
+        desc.explicitOwnerActionRequired === true &&
+        desc.noActivation === true &&
+        desc.requiresNextGateEvenAfterApprovedLater === true,
+        desc.consumptionVersion);
+
+      var fixtures = mod.getSmartRecDeveloperExplicitOwnerDecisionConsumptionSyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var itemA = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.A));
+      extras.A = { ownerDecisionEcho: itemA.ownerDecisionEcho, consumptionStatus: itemA.consumptionStatus, nextGateRequired: itemA.nextGateRequired };
+      expect('fixture A item frozen', isFrozenDeep(itemA), '');
+      expect('fixture A developer_consumable approved_later',
+        itemA.consumptionStatus === 'developer_consumable' && itemA.ownerDecisionEcho === 'approved_later',
+        String(itemA.ownerDecisionEcho) + '/' + String(itemA.consumptionStatus));
+      expect('fixture A nextGateRequired present',
+        typeof itemA.nextGateRequired === 'string' && itemA.nextGateRequired.length > 0,
+        String(itemA.nextGateRequired));
+      expect('fixture A noActivation and no authority',
+        itemA.noActivation === true &&
+        itemA.recommendationAuthority === false &&
+        itemA.plantSuitabilityAuthority === false &&
+        itemA.productAuthority === false &&
+        itemA.runtimeEligibilityAuthority === false &&
+        itemA.productEligibilityAuthority === false &&
+        itemA.userFacingRecommendation === false, '');
+      expect('fixture A auth flags false', authFlagsFalse(itemA), '');
+
+      var itemB = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.B));
+      extras.B = { ownerDecisionEcho: itemB.ownerDecisionEcho, consumptionStatus: itemB.consumptionStatus };
+      expect('fixture B rejected_path',
+        itemB.consumptionStatus === 'rejected_path' && itemB.ownerDecisionEcho === 'rejected_later',
+        String(itemB.ownerDecisionEcho));
+      expect('fixture B evidence preserved',
+        hasCode(itemB.preservedWarnings, 'evidence_must_remain') &&
+        hasCode(itemB.preservedBlockingReasons, 'axis_gap') &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('fixture B no deletion / no activation',
+        itemB.noActivation === true &&
+        itemB.automaticExecution === false &&
+        itemB.recommendationAuthority === false, '');
+
+      var itemC = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.C));
+      extras.C = { ownerDecisionEcho: itemC.ownerDecisionEcho, consumptionStatus: itemC.consumptionStatus };
+      expect('fixture C needs_more_data',
+        itemC.consumptionStatus === 'needs_more_data' && itemC.ownerDecisionEcho === 'needs_more_data',
+        String(itemC.ownerDecisionEcho));
+      expect('fixture C preserves missingRequirements',
+        (itemC.preservedMissingRequirements || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C preserves warnings and blockingReasons',
+        hasCode(itemC.preservedWarnings, 'low_confidence_visible') &&
+        hasCode(itemC.preservedBlockingReasons, 'axis_gap'), '');
+      expect('fixture C requiredFollowUp present',
+        (itemC.requiredFollowUp || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C not converted to approval',
+        itemC.consumptionStatus !== 'developer_consumable' &&
+        itemC.ownerDecisionEcho !== 'approved_later', '');
+
+      var itemD = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.D));
+      extras.D = { ownerDecisionEcho: itemD.ownerDecisionEcho, consumptionStatus: itemD.consumptionStatus };
+      expect('fixture D blocked', itemD.consumptionStatus === 'blocked', String(itemD.consumptionStatus));
+      expect('fixture D missing decision code',
+        hasCode(itemD.blockingReasons, 'missing_decision_record'), '');
+
+      var itemE = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.E));
+      extras.E = { ownerDecisionEcho: itemE.ownerDecisionEcho, consumptionStatus: itemE.consumptionStatus };
+      expect('fixture E blocked', itemE.consumptionStatus === 'blocked', String(itemE.consumptionStatus));
+      expect('fixture E fingerprint mismatch code',
+        hasCode(itemE.blockingReasons, 'missing_or_mismatched_summary_fingerprint'), '');
+
+      var itemF = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.F));
+      extras.F = { ownerDecisionEcho: itemF.ownerDecisionEcho, consumptionStatus: itemF.consumptionStatus };
+      expect('fixture F blocked', itemF.consumptionStatus === 'blocked', String(itemF.consumptionStatus));
+      expect('fixture F missing reason code',
+        hasCode(itemF.blockingReasons, 'missing_owner_decision_reason'), '');
+
+      var itemG = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.G));
+      extras.G = { ownerDecisionEcho: itemG.ownerDecisionEcho, consumptionStatus: itemG.consumptionStatus };
+      expect('fixture G blocked', itemG.consumptionStatus === 'blocked', String(itemG.consumptionStatus));
+      expect('fixture G forbidden authority flag',
+        hasCode(itemG.blockingReasons, 'forbidden_authority_flag'), '');
+
+      var itemH = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.H));
+      extras.H = { ownerDecisionEcho: itemH.ownerDecisionEcho, consumptionStatus: itemH.consumptionStatus };
+      expect('fixture H blocked', itemH.consumptionStatus === 'blocked', String(itemH.consumptionStatus));
+      expect('fixture H noAutomaticApproval or explicitOwnerActionRequired',
+        hasCode(itemH.blockingReasons, 'no_automatic_approval_required') ||
+        hasCode(itemH.blockingReasons, 'explicit_owner_action_required'), '');
+
+      var itemI = mod.consumeDeveloperExplicitOwnerDecision(clone(fixtures.I));
+      extras.I = { ownerDecisionEcho: itemI.ownerDecisionEcho, consumptionStatus: itemI.consumptionStatus, nextGateRequired: itemI.nextGateRequired };
+      expect('fixture I blocked activation attempt',
+        itemI.consumptionStatus === 'blocked', String(itemI.consumptionStatus));
+      expect('fixture I activation forbidden code',
+        hasCode(itemI.blockingReasons, 'activation_or_authority_request_forbidden'), '');
+      expect('fixture I did not become activation',
+        itemI.noActivation === true &&
+        itemI.recommendationAuthority === false &&
+        itemI.productAuthority === false &&
+        itemI.automaticExecution === false, '');
+
+      expect('module imported from consumption path',
+        lastModuleHref === '/modules/smart-recommendations/developer-explicit-owner-decision-consumption.js',
+        String(lastModuleHref));
+      expect('approved_later only becomes developer_consumable with nextGate and no authority',
+        itemA.consumptionStatus === 'developer_consumable' &&
+        !!itemA.nextGateRequired &&
+        itemA.recommendationAuthority === false &&
+        itemE.consumptionStatus === 'blocked' &&
+        itemI.consumptionStatus === 'blocked', '');
+      expect('rejected_later only becomes rejected_path preserving evidence',
+        itemB.consumptionStatus === 'rejected_path' &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('needs_more_data preserves follow-up and evidence',
+        itemC.consumptionStatus === 'needs_more_data' &&
+        (itemC.requiredFollowUp || []).length > 0, '');
+      expect('no automatic approval on any path',
+        itemA.noAutomaticApproval === true &&
+        itemB.noAutomaticApproval === true &&
+        itemC.noAutomaticApproval === true &&
+        itemH.noAutomaticApproval === true, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Explicit Owner Decision Consumption failed.'
+        : 'PASS. Explicit Owner Decision Consumption complete. Developer-only; synthetic-only; evidence-only; nextGateRequired required; no UI; no automatic approval; no catalog/product application.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_SUMMARY = null;
+    window.__SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_EXPLICIT_OWNER_DECISION_CONSUMPTION_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
