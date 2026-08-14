@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Recommendation Policy</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Recommendation Policy</h1>
+  <p class="sub">
+    Developer-only synthetic Recommendation Policy gate. Fail-closed; developer_policy_candidate is not activation; no UI; no catalog/product application.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_RECOMMENDATION_POLICY_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Recommendation Policy</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'RECOMMENDATION_POLICY_PASS';
+  var FAIL_VERDICT = 'RECOMMENDATION_POLICY_FAIL';
+  var MODULE_URL = '../modules/smart-recommendations/developer-recommendation-policy.js';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastModuleHref = null;
+  var lastSummary = null;
+
+  window.__SR_RECOMMENDATION_POLICY_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(item) {
+    return item &&
+      item.productAuthority === false &&
+      item.runtimeEligibilityAuthority === false &&
+      item.recommendationAuthority === false &&
+      item.overlayAuthority === false &&
+      item.liveWeather === false &&
+      item.gosConsumer === false &&
+      item.network === false &&
+      item.automaticExecution === false &&
+      item.writesArtifacts === false &&
+      item.plantSuitabilityAuthority === false &&
+      item.commerceAuthority === false &&
+      item.ownerApprovalAuthority === false &&
+      item.userFacingRecommendation === false &&
+      item.catalogMutationAuthority === false &&
+      item.recommendationMutationAuthority === false &&
+      item.productMutationAuthority === false &&
+      item.productEligibilityAuthority === false &&
+      item.notAuthority &&
+      item.notAuthority.productAuthority === false &&
+      item.notAuthority.recommendationAuthority === false &&
+      item.notAuthority.plantSuitabilityAuthority === false &&
+      item.notAuthority.ownerApprovalAuthority === false &&
+      item.notAuthority.userFacingRecommendation === false &&
+      item.notAuthority.catalogMutationAuthority === false &&
+      item.notAuthority.recommendationMutationAuthority === false &&
+      item.notAuthority.productMutationAuthority === false &&
+      item.notAuthority.productEligibilityAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_recommendation_policy_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_recommendation_policy_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_RECOMMENDATION_POLICY_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_RECOMMENDATION_POLICY_ON_UNHANDLED);
+    window.__SR_RECOMMENDATION_POLICY_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_RECOMMENDATION_POLICY_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_RECOMMENDATION_POLICY_RESTORE === 'function') {
+      window.__SR_RECOMMENDATION_POLICY_RESTORE();
+      window.__SR_RECOMMENDATION_POLICY_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.recommendationPolicyStatus) + '\n' +
+      'fixtureA_nextGate=' + (extras && extras.A && extras.A.nextGateRequired) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.recommendationPolicyStatus) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.recommendationPolicyStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.recommendationPolicyStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.recommendationPolicyStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.recommendationPolicyStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.recommendationPolicyStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.recommendationPolicyStatus) + '\n' +
+      'fixtureI_status=' + (extras && extras.I && extras.I.recommendationPolicyStatus) + '\n' +
+      'fixtureJ_status=' + (extras && extras.J && extras.J.recommendationPolicyStatus) + '\n' +
+      'moduleHref=' + (lastModuleHref || '') + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      fixtureI: extras && extras.I,
+      fixtureJ: extras && extras.J,
+      moduleHref: lastModuleHref,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_RECOMMENDATION_POLICY_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    window.__SR_RECOMMENDATION_POLICY_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null, I: null, J: null };
+    try {
+      expect('boot inert before run', window.__SR_RECOMMENDATION_POLICY_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_RECOMMENDATION_POLICY_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Recommendation Policy…';
+
+      var mod = await import(MODULE_URL);
+      moduleLoaded = true;
+      lastModuleHref = new URL(MODULE_URL, window.location.href).pathname;
+      window.__SR_RECOMMENDATION_POLICY_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperRecommendationPolicyDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.recommendationPolicyVersion === '0.1.0-sr-recommendation-policy' &&
+        desc.capability === 'explicit_developer_recommendation_policy' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.ownerApprovalAuthority === false &&
+        desc.userFacingRecommendation === false &&
+        desc.catalogMutationAuthority === false &&
+        desc.recommendationMutationAuthority === false &&
+        desc.productMutationAuthority === false &&
+        desc.productEligibilityAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.noAutomaticApproval === true &&
+        desc.explicitOwnerActionRequired === true &&
+        desc.noRuntimeActivation === true &&
+        desc.noUserFacingRecommendation === true &&
+        desc.noPlantSuitabilityAuthority === true &&
+        desc.noProductAuthority === true &&
+        desc.noProductEligibility === true &&
+        desc.noCatalogMutation === true &&
+        desc.noRecommendationMutation === true &&
+        desc.noProductMutation === true &&
+        desc.developerPolicyCandidateIsNotActivation === true &&
+        desc.requiresNextGateEvenAfterDeveloperPolicyCandidate === true,
+        desc.recommendationPolicyVersion);
+
+      var fixtures = mod.getSmartRecDeveloperRecommendationPolicySyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var itemA = mod.buildDeveloperRecommendationPolicy(clone(fixtures.A));
+      extras.A = {
+        recommendationPolicyStatus: itemA.recommendationPolicyStatus,
+        nextGateRequired: itemA.nextGateRequired
+      };
+      expect('fixture A item frozen', isFrozenDeep(itemA), '');
+      expect('fixture A developer_policy_candidate',
+        itemA.recommendationPolicyStatus === 'developer_policy_candidate',
+        String(itemA.recommendationPolicyStatus));
+      expect('fixture A nextGateRequired present',
+        typeof itemA.nextGateRequired === 'string' && itemA.nextGateRequired.length > 0,
+        String(itemA.nextGateRequired));
+      expect('fixture A no runtime/UI/user-facing/product/suitability/eligibility/mutation',
+        itemA.noRuntimeActivation === true &&
+        itemA.noUserFacingRecommendation === true &&
+        itemA.noPlantSuitabilityAuthority === true &&
+        itemA.noProductAuthority === true &&
+        itemA.noProductEligibility === true &&
+        itemA.noCatalogMutation === true &&
+        itemA.noRecommendationMutation === true &&
+        itemA.noProductMutation === true &&
+        itemA.recommendationAuthority === false &&
+        itemA.plantSuitabilityAuthority === false &&
+        itemA.productAuthority === false &&
+        itemA.productEligibilityAuthority === false &&
+        itemA.userFacingRecommendation === false &&
+        itemA.catalogMutationAuthority === false &&
+        itemA.recommendationMutationAuthority === false &&
+        itemA.productMutationAuthority === false, '');
+      expect('fixture A auth flags false', authFlagsFalse(itemA), '');
+
+      var itemB = mod.buildDeveloperRecommendationPolicy(clone(fixtures.B));
+      extras.B = { recommendationPolicyStatus: itemB.recommendationPolicyStatus };
+      expect('fixture B blocked rejected_later',
+        itemB.recommendationPolicyStatus === 'blocked',
+        String(itemB.recommendationPolicyStatus));
+      expect('fixture B evidence preserved',
+        hasCode(itemB.preservedWarnings, 'evidence_must_remain') &&
+        hasCode(itemB.preservedBlockingReasons, 'axis_gap') &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('fixture B no deletion / no activation',
+        itemB.noRuntimeActivation === true &&
+        itemB.automaticExecution === false &&
+        itemB.recommendationAuthority === false &&
+        hasCode(itemB.blockingReasons, 'rejected_later_source'), '');
+
+      var itemC = mod.buildDeveloperRecommendationPolicy(clone(fixtures.C));
+      extras.C = { recommendationPolicyStatus: itemC.recommendationPolicyStatus };
+      expect('fixture C not_ready or blocked',
+        itemC.recommendationPolicyStatus === 'not_ready' ||
+        itemC.recommendationPolicyStatus === 'blocked',
+        String(itemC.recommendationPolicyStatus));
+      expect('fixture C preserves missingRequirements',
+        (itemC.preservedMissingRequirements || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C preserves warnings and blockingReasons',
+        hasCode(itemC.preservedWarnings, 'low_confidence_visible') &&
+        hasCode(itemC.preservedBlockingReasons, 'axis_gap'), '');
+      expect('fixture C requiredFollowUp present',
+        (itemC.requiredFollowUp || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C not converted to approval',
+        itemC.recommendationPolicyStatus !== 'developer_policy_candidate', '');
+
+      var itemD = mod.buildDeveloperRecommendationPolicy(clone(fixtures.D));
+      extras.D = { recommendationPolicyStatus: itemD.recommendationPolicyStatus };
+      expect('fixture D blocked', itemD.recommendationPolicyStatus === 'blocked', String(itemD.recommendationPolicyStatus));
+      expect('fixture D missing authority output code',
+        hasCode(itemD.blockingReasons, 'missing_recommendation_authority_output'), '');
+
+      var itemE = mod.buildDeveloperRecommendationPolicy(clone(fixtures.E));
+      extras.E = { recommendationPolicyStatus: itemE.recommendationPolicyStatus };
+      expect('fixture E blocked', itemE.recommendationPolicyStatus === 'blocked', String(itemE.recommendationPolicyStatus));
+      expect('fixture E nextGateRequired missing or wrong',
+        hasCode(itemE.blockingReasons, 'next_gate_required_missing_or_wrong'), '');
+
+      var itemF = mod.buildDeveloperRecommendationPolicy(clone(fixtures.F));
+      extras.F = { recommendationPolicyStatus: itemF.recommendationPolicyStatus };
+      expect('fixture F blocked', itemF.recommendationPolicyStatus === 'blocked', String(itemF.recommendationPolicyStatus));
+      expect('fixture F fingerprint mismatch code',
+        hasCode(itemF.blockingReasons, 'missing_or_mismatched_summary_fingerprint'), '');
+
+      var itemG = mod.buildDeveloperRecommendationPolicy(clone(fixtures.G));
+      extras.G = { recommendationPolicyStatus: itemG.recommendationPolicyStatus };
+      expect('fixture G blocked', itemG.recommendationPolicyStatus === 'blocked', String(itemG.recommendationPolicyStatus));
+      expect('fixture G forbidden authority flag',
+        hasCode(itemG.blockingReasons, 'forbidden_authority_flag'), '');
+
+      var itemH = mod.buildDeveloperRecommendationPolicy(clone(fixtures.H));
+      extras.H = { recommendationPolicyStatus: itemH.recommendationPolicyStatus };
+      expect('fixture H blocked activation attempt',
+        itemH.recommendationPolicyStatus === 'blocked', String(itemH.recommendationPolicyStatus));
+      expect('fixture H activation forbidden code',
+        hasCode(itemH.blockingReasons, 'activation_or_user_facing_request_forbidden'), '');
+      expect('fixture H did not become activation',
+        itemH.noRuntimeActivation === true &&
+        itemH.recommendationAuthority === false &&
+        itemH.userFacingRecommendation === false &&
+        itemH.automaticExecution === false, '');
+
+      var itemI = mod.buildDeveloperRecommendationPolicy(clone(fixtures.I));
+      extras.I = { recommendationPolicyStatus: itemI.recommendationPolicyStatus };
+      expect('fixture I blocked product/suitability/eligibility grant',
+        itemI.recommendationPolicyStatus === 'blocked', String(itemI.recommendationPolicyStatus));
+      expect('fixture I product/suitability forbidden code',
+        hasCode(itemI.blockingReasons, 'product_or_suitability_authority_request_forbidden'), '');
+      expect('fixture I did not grant product/suitability/eligibility',
+        itemI.noProductAuthority === true &&
+        itemI.noPlantSuitabilityAuthority === true &&
+        itemI.noProductEligibility === true &&
+        itemI.productAuthority === false &&
+        itemI.plantSuitabilityAuthority === false &&
+        itemI.productEligibilityAuthority === false, '');
+
+      var itemJ = mod.buildDeveloperRecommendationPolicy(clone(fixtures.J));
+      extras.J = { recommendationPolicyStatus: itemJ.recommendationPolicyStatus };
+      expect('fixture J blocked mutation attempt',
+        itemJ.recommendationPolicyStatus === 'blocked', String(itemJ.recommendationPolicyStatus));
+      expect('fixture J mutation forbidden code',
+        hasCode(itemJ.blockingReasons, 'catalog_recommendation_product_mutation_forbidden'), '');
+      expect('fixture J did not mutate catalog/recommendations/products',
+        itemJ.noCatalogMutation === true &&
+        itemJ.noRecommendationMutation === true &&
+        itemJ.noProductMutation === true &&
+        itemJ.catalogMutationAuthority === false &&
+        itemJ.recommendationMutationAuthority === false &&
+        itemJ.productMutationAuthority === false, '');
+
+      expect('module imported from recommendation policy path',
+        lastModuleHref === '/modules/smart-recommendations/developer-recommendation-policy.js',
+        String(lastModuleHref));
+      expect('developer_policy_candidate has nextGate and no authority',
+        itemA.recommendationPolicyStatus === 'developer_policy_candidate' &&
+        !!itemA.nextGateRequired &&
+        itemA.recommendationAuthority === false &&
+        itemA.noRuntimeActivation === true &&
+        itemH.recommendationPolicyStatus === 'blocked' &&
+        itemI.recommendationPolicyStatus === 'blocked' &&
+        itemJ.recommendationPolicyStatus === 'blocked', '');
+      expect('rejected_later blocked while preserving evidence',
+        itemB.recommendationPolicyStatus === 'blocked' &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('needs_more_data not converted to approval',
+        itemC.recommendationPolicyStatus !== 'developer_policy_candidate' &&
+        (itemC.requiredFollowUp || []).length > 0, '');
+      expect('no automatic approval on any path',
+        itemA.noAutomaticApproval === true &&
+        itemB.noAutomaticApproval === true &&
+        itemC.noAutomaticApproval === true &&
+        itemH.noAutomaticApproval === true, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_RECOMMENDATION_POLICY_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Recommendation Policy failed.'
+        : 'PASS. Recommendation Policy complete. Developer-only; synthetic-only; developer_policy_candidate is not activation; nextGateRequired required; no UI; no automatic approval; no catalog/product application.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_RECOMMENDATION_POLICY_SUMMARY = null;
+    window.__SR_RECOMMENDATION_POLICY_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_RECOMMENDATION_POLICY_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
