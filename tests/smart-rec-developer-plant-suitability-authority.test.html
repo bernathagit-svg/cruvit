@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Plant Suitability Authority</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Developer Plant Suitability Authority</h1>
+  <p class="sub">
+    Developer-only synthetic Plant Suitability Authority gate. Fail-closed; developer_suitability_candidate is not activation or final scoring; outcomes are not yes/no.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_PLANT_SUITABILITY_AUTHORITY_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Plant Suitability Authority</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'PLANT_SUITABILITY_AUTHORITY_PASS';
+  var FAIL_VERDICT = 'PLANT_SUITABILITY_AUTHORITY_FAIL';
+  var MODULE_URL = '../modules/smart-recommendations/developer-plant-suitability-authority.js';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastModuleHref = null;
+  var lastSummary = null;
+
+  window.__SR_PLANT_SUITABILITY_AUTHORITY_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function hasCode(list, code) {
+    return (list || []).some(function (x) { return x && x.code === code; });
+  }
+  function authFlagsFalse(item) {
+    return item &&
+      item.productAuthority === false &&
+      item.runtimeEligibilityAuthority === false &&
+      item.recommendationAuthority === false &&
+      item.overlayAuthority === false &&
+      item.liveWeather === false &&
+      item.gosConsumer === false &&
+      item.network === false &&
+      item.automaticExecution === false &&
+      item.writesArtifacts === false &&
+      item.plantSuitabilityAuthority === false &&
+      item.commerceAuthority === false &&
+      item.ownerApprovalAuthority === false &&
+      item.userFacingRecommendation === false &&
+      item.catalogMutationAuthority === false &&
+      item.recommendationMutationAuthority === false &&
+      item.productMutationAuthority === false &&
+      item.productEligibilityAuthority === false &&
+      item.notAuthority &&
+      item.notAuthority.productAuthority === false &&
+      item.notAuthority.recommendationAuthority === false &&
+      item.notAuthority.plantSuitabilityAuthority === false &&
+      item.notAuthority.ownerApprovalAuthority === false &&
+      item.notAuthority.userFacingRecommendation === false &&
+      item.notAuthority.catalogMutationAuthority === false &&
+      item.notAuthority.recommendationMutationAuthority === false &&
+      item.notAuthority.productMutationAuthority === false &&
+      item.notAuthority.productEligibilityAuthority === false;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_plant_suitability_authority_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_plant_suitability_authority_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_PLANT_SUITABILITY_AUTHORITY_ON_UNHANDLED);
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_PLANT_SUITABILITY_AUTHORITY_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_PLANT_SUITABILITY_AUTHORITY_RESTORE === 'function') {
+      window.__SR_PLANT_SUITABILITY_AUTHORITY_RESTORE();
+      window.__SR_PLANT_SUITABILITY_AUTHORITY_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict, extras) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var host = $('summary');
+    host.textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    host.className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'fixtureA_status=' + (extras && extras.A && extras.A.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureA_nextGate=' + (extras && extras.A && extras.A.nextGateRequired) + '\n' +
+      'fixtureB_status=' + (extras && extras.B && extras.B.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureC_status=' + (extras && extras.C && extras.C.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureD_status=' + (extras && extras.D && extras.D.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureE_status=' + (extras && extras.E && extras.E.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureF_status=' + (extras && extras.F && extras.F.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureG_status=' + (extras && extras.G && extras.G.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureH_status=' + (extras && extras.H && extras.H.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureI_status=' + (extras && extras.I && extras.I.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureJ_status=' + (extras && extras.J && extras.J.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureK_status=' + (extras && extras.K && extras.K.plantSuitabilityAuthorityStatus) + '\n' +
+      'fixtureL_status=' + (extras && extras.L && extras.L.plantSuitabilityAuthorityStatus) + '\n' +
+      'moduleHref=' + (lastModuleHref || '') + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = {
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      fixtureA: extras && extras.A,
+      fixtureB: extras && extras.B,
+      fixtureC: extras && extras.C,
+      fixtureD: extras && extras.D,
+      fixtureE: extras && extras.E,
+      fixtureF: extras && extras.F,
+      fixtureG: extras && extras.G,
+      fixtureH: extras && extras.H,
+      fixtureI: extras && extras.I,
+      fixtureJ: extras && extras.J,
+      fixtureK: extras && extras.K,
+      fixtureL: extras && extras.L,
+      moduleHref: lastModuleHref,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    };
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_SUMMARY = Object.freeze(clone(lastSummary));
+    setStatus(
+      'State: complete · moduleLoaded=1 · externalApiRequests=' +
+      externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount
+    );
+    renderRows();
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    var extras = { A: null, B: null, C: null, D: null, E: null, F: null, G: null, H: null, I: null, J: null, K: null, L: null };
+    try {
+      expect('boot inert before run', window.__SR_PLANT_SUITABILITY_AUTHORITY_BOOT.inert === true, '');
+      expect('module not loaded before run', moduleLoaded === false, '');
+      expect('inert marker visible',
+        ($('bootMarker') && $('bootMarker').textContent) === 'SR_PLANT_SUITABILITY_AUTHORITY_HARNESS_INERT', '');
+      $('banner').textContent = 'Running Plant Suitability Authority…';
+
+      var mod = await import(MODULE_URL);
+      moduleLoaded = true;
+      lastModuleHref = new URL(MODULE_URL, window.location.href).pathname;
+      window.__SR_PLANT_SUITABILITY_AUTHORITY_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperPlantSuitabilityAuthorityDescriptor();
+      expect('descriptor frozen + isolation',
+        isFrozenDeep(desc) &&
+        desc.plantSuitabilityAuthorityVersion === '0.1.0-sr-plant-suitability-authority' &&
+        desc.capability === 'explicit_developer_plant_suitability_authority' &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        desc.recommendationAuthority === false &&
+        desc.overlayAuthority === false &&
+        desc.liveWeather === false &&
+        desc.gosConsumer === false &&
+        desc.network === false &&
+        desc.automaticExecution === false &&
+        desc.writesArtifacts === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.commerceAuthority === false &&
+        desc.ownerApprovalAuthority === false &&
+        desc.userFacingRecommendation === false &&
+        desc.catalogMutationAuthority === false &&
+        desc.recommendationMutationAuthority === false &&
+        desc.productMutationAuthority === false &&
+        desc.productEligibilityAuthority === false &&
+        desc.activation === 'explicit_call_only' &&
+        desc.noAutomaticApproval === true &&
+        desc.explicitOwnerActionRequired === true &&
+        desc.outcomeSuitabilityRequired === true &&
+        desc.noYesNoCollapse === true &&
+        desc.noFinalPlantSuitabilityScoring === true &&
+        desc.noRuntimeActivation === true &&
+        desc.noUserFacingRecommendation === true &&
+        desc.noProductAuthority === true &&
+        desc.noProductEligibility === true &&
+        desc.noCatalogMutation === true &&
+        desc.noRecommendationMutation === true &&
+        desc.noProductMutation === true &&
+        desc.developerSuitabilityCandidateIsNotActivation === true &&
+        desc.requiresNextGateEvenAfterDeveloperSuitabilityCandidate === true,
+        desc.plantSuitabilityAuthorityVersion);
+
+      var fixtures = mod.getSmartRecDeveloperPlantSuitabilityAuthoritySyntheticFixtures();
+      expect('fixtures frozen', isFrozenDeep(fixtures), '');
+
+      var itemA = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.A));
+      extras.A = {
+        plantSuitabilityAuthorityStatus: itemA.plantSuitabilityAuthorityStatus,
+        nextGateRequired: itemA.nextGateRequired
+      };
+      expect('fixture A item frozen', isFrozenDeep(itemA), '');
+      expect('fixture A developer_suitability_candidate',
+        itemA.plantSuitabilityAuthorityStatus === 'developer_suitability_candidate',
+        String(itemA.plantSuitabilityAuthorityStatus));
+      expect('fixture A nextGateRequired static verification',
+        itemA.nextGateRequired === 'plant_suitability_authority_static_verification',
+        String(itemA.nextGateRequired));
+      expect('fixture A outcome flags',
+        itemA.outcomeSuitabilityRequired === true &&
+        itemA.outcomeDimensionsPreserved === true &&
+        itemA.noYesNoCollapse === true &&
+        itemA.noFinalPlantSuitabilityScoring === true &&
+        itemA.suitable !== true &&
+        itemA.suitable !== false, '');
+      expect('fixture A outcome dimensions present as constraints',
+        itemA.outcomeDimensions &&
+        itemA.outcomeDimensions.survival &&
+        itemA.outcomeDimensions.vegetativeGrowth &&
+        itemA.outcomeDimensions.flowering &&
+        itemA.outcomeDimensions.fruitOrYield &&
+        itemA.outcomeDimensions.longTermReliability &&
+        itemA.outcomeDimensions.survival.scored === false, '');
+      expect('fixture A no runtime/UI/product/mutation/authority',
+        itemA.noRuntimeActivation === true &&
+        itemA.noUserFacingRecommendation === true &&
+        itemA.noProductAuthority === true &&
+        itemA.noProductEligibility === true &&
+        itemA.noCatalogMutation === true &&
+        itemA.noRecommendationMutation === true &&
+        itemA.noProductMutation === true &&
+        itemA.plantSuitabilityAuthority === false &&
+        itemA.productAuthority === false &&
+        itemA.productEligibilityAuthority === false &&
+        itemA.userFacingRecommendation === false, '');
+      expect('fixture A auth flags false', authFlagsFalse(itemA), '');
+
+      var itemB = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.B));
+      extras.B = { plantSuitabilityAuthorityStatus: itemB.plantSuitabilityAuthorityStatus };
+      expect('fixture B blocked rejected_later',
+        itemB.plantSuitabilityAuthorityStatus === 'blocked',
+        String(itemB.plantSuitabilityAuthorityStatus));
+      expect('fixture B evidence preserved',
+        hasCode(itemB.preservedWarnings, 'evidence_must_remain') &&
+        hasCode(itemB.preservedBlockingReasons, 'axis_gap') &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('fixture B no deletion / no activation',
+        itemB.noRuntimeActivation === true &&
+        itemB.automaticExecution === false &&
+        itemB.plantSuitabilityAuthority === false &&
+        hasCode(itemB.blockingReasons, 'rejected_later_source'), '');
+
+      var itemC = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.C));
+      extras.C = { plantSuitabilityAuthorityStatus: itemC.plantSuitabilityAuthorityStatus };
+      expect('fixture C not_ready or blocked',
+        itemC.plantSuitabilityAuthorityStatus === 'not_ready' ||
+        itemC.plantSuitabilityAuthorityStatus === 'blocked',
+        String(itemC.plantSuitabilityAuthorityStatus));
+      expect('fixture C preserves missingRequirements',
+        (itemC.preservedMissingRequirements || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C preserves warnings and blockingReasons',
+        hasCode(itemC.preservedWarnings, 'low_confidence_visible') &&
+        hasCode(itemC.preservedBlockingReasons, 'axis_gap'), '');
+      expect('fixture C requiredFollowUp present',
+        (itemC.requiredFollowUp || []).indexOf('additional_trusted_axis') >= 0, '');
+      expect('fixture C not converted to approval',
+        itemC.plantSuitabilityAuthorityStatus !== 'developer_suitability_candidate', '');
+
+      var itemD = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.D));
+      extras.D = { plantSuitabilityAuthorityStatus: itemD.plantSuitabilityAuthorityStatus };
+      expect('fixture D blocked', itemD.plantSuitabilityAuthorityStatus === 'blocked', String(itemD.plantSuitabilityAuthorityStatus));
+      expect('fixture D missing policy output code',
+        hasCode(itemD.blockingReasons, 'missing_recommendation_policy_output'), '');
+
+      var itemE = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.E));
+      extras.E = { plantSuitabilityAuthorityStatus: itemE.plantSuitabilityAuthorityStatus };
+      expect('fixture E blocked', itemE.plantSuitabilityAuthorityStatus === 'blocked', String(itemE.plantSuitabilityAuthorityStatus));
+      expect('fixture E nextGateRequired missing or wrong',
+        hasCode(itemE.blockingReasons, 'next_gate_required_missing_or_wrong'), '');
+
+      var itemF = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.F));
+      extras.F = { plantSuitabilityAuthorityStatus: itemF.plantSuitabilityAuthorityStatus };
+      expect('fixture F blocked', itemF.plantSuitabilityAuthorityStatus === 'blocked', String(itemF.plantSuitabilityAuthorityStatus));
+      expect('fixture F fingerprint mismatch code',
+        hasCode(itemF.blockingReasons, 'missing_or_mismatched_summary_fingerprint'), '');
+
+      var itemG = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.G));
+      extras.G = { plantSuitabilityAuthorityStatus: itemG.plantSuitabilityAuthorityStatus };
+      expect('fixture G blocked', itemG.plantSuitabilityAuthorityStatus === 'blocked', String(itemG.plantSuitabilityAuthorityStatus));
+      expect('fixture G forbidden authority flag',
+        hasCode(itemG.blockingReasons, 'forbidden_authority_flag'), '');
+
+      var itemH = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.H));
+      extras.H = { plantSuitabilityAuthorityStatus: itemH.plantSuitabilityAuthorityStatus };
+      expect('fixture H not_ready or blocked',
+        itemH.plantSuitabilityAuthorityStatus === 'not_ready' ||
+        itemH.plantSuitabilityAuthorityStatus === 'blocked',
+        String(itemH.plantSuitabilityAuthorityStatus));
+      expect('fixture H missing outcome dimensions code',
+        hasCode(itemH.blockingReasons, 'missing_outcome_dimensions'), '');
+      expect('fixture H no confidence from missing data',
+        itemH.plantSuitabilityAuthorityStatus !== 'developer_suitability_candidate' &&
+        itemH.noAutomaticApproval === true &&
+        itemH.confidence == null, '');
+
+      var itemI = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.I));
+      extras.I = { plantSuitabilityAuthorityStatus: itemI.plantSuitabilityAuthorityStatus };
+      expect('fixture I blocked yes/no collapse',
+        itemI.plantSuitabilityAuthorityStatus === 'blocked', String(itemI.plantSuitabilityAuthorityStatus));
+      expect('fixture I collapse code',
+        hasCode(itemI.blockingReasons, 'outcome_dimensions_collapsed_into_yes_no'), '');
+
+      var itemJ = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.J));
+      extras.J = { plantSuitabilityAuthorityStatus: itemJ.plantSuitabilityAuthorityStatus };
+      expect('fixture J blocked activation attempt',
+        itemJ.plantSuitabilityAuthorityStatus === 'blocked', String(itemJ.plantSuitabilityAuthorityStatus));
+      expect('fixture J activation forbidden code',
+        hasCode(itemJ.blockingReasons, 'activation_or_user_facing_request_forbidden'), '');
+      expect('fixture J did not become activation',
+        itemJ.noRuntimeActivation === true &&
+        itemJ.plantSuitabilityAuthority === false &&
+        itemJ.userFacingRecommendation === false &&
+        itemJ.automaticExecution === false, '');
+
+      var itemK = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.K));
+      extras.K = { plantSuitabilityAuthorityStatus: itemK.plantSuitabilityAuthorityStatus };
+      expect('fixture K blocked product/eligibility grant',
+        itemK.plantSuitabilityAuthorityStatus === 'blocked', String(itemK.plantSuitabilityAuthorityStatus));
+      expect('fixture K product/eligibility forbidden code',
+        hasCode(itemK.blockingReasons, 'product_or_eligibility_authority_request_forbidden'), '');
+      expect('fixture K did not grant product/eligibility',
+        itemK.noProductAuthority === true &&
+        itemK.noProductEligibility === true &&
+        itemK.productAuthority === false &&
+        itemK.productEligibilityAuthority === false, '');
+
+      var itemL = mod.buildDeveloperPlantSuitabilityAuthority(clone(fixtures.L));
+      extras.L = { plantSuitabilityAuthorityStatus: itemL.plantSuitabilityAuthorityStatus };
+      expect('fixture L blocked mutation attempt',
+        itemL.plantSuitabilityAuthorityStatus === 'blocked', String(itemL.plantSuitabilityAuthorityStatus));
+      expect('fixture L mutation forbidden code',
+        hasCode(itemL.blockingReasons, 'catalog_recommendation_product_mutation_forbidden'), '');
+      expect('fixture L did not mutate catalog/recommendations/products',
+        itemL.noCatalogMutation === true &&
+        itemL.noRecommendationMutation === true &&
+        itemL.noProductMutation === true &&
+        itemL.catalogMutationAuthority === false &&
+        itemL.recommendationMutationAuthority === false &&
+        itemL.productMutationAuthority === false, '');
+
+      expect('module imported from plant suitability authority path',
+        lastModuleHref === '/modules/smart-recommendations/developer-plant-suitability-authority.js',
+        String(lastModuleHref));
+      expect('developer_suitability_candidate has nextGate and no authority',
+        itemA.plantSuitabilityAuthorityStatus === 'developer_suitability_candidate' &&
+        !!itemA.nextGateRequired &&
+        itemA.plantSuitabilityAuthority === false &&
+        itemA.noRuntimeActivation === true &&
+        itemJ.plantSuitabilityAuthorityStatus === 'blocked', '');
+      expect('rejected_later blocked while preserving evidence',
+        itemB.plantSuitabilityAuthorityStatus === 'blocked' &&
+        (itemB.preservedAuditTrail || []).length > 0, '');
+      expect('needs_more_data not converted to approval',
+        itemC.plantSuitabilityAuthorityStatus !== 'developer_suitability_candidate' &&
+        (itemC.requiredFollowUp || []).length > 0, '');
+      expect('no automatic approval on any path',
+        itemA.noAutomaticApproval === true &&
+        itemB.noAutomaticApproval === true &&
+        itemC.noAutomaticApproval === true &&
+        itemH.noAutomaticApproval === true &&
+        itemJ.noAutomaticApproval === true, '');
+      expect('no external/API fetches', externalApiRequests === 0, String(externalApiRequests));
+      expect('storage mutations 0', storageMutationCount === 0, String(storageMutationCount));
+      expect('console errors 0', consoleErrorCount === 0, String(consoleErrorCount));
+      expect('unhandled rejections 0', unhandledCount === 0, String(unhandledCount));
+
+      window.__SR_PLANT_SUITABILITY_AUTHORITY_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+
+      var failed = results.some(function (r) { return !r.pass; });
+      var verdict = failed ? FAIL_VERDICT : PASS_VERDICT;
+      $('banner').textContent = failed
+        ? 'FAIL. Plant Suitability Authority failed.'
+        : 'PASS. Plant Suitability Authority complete. Developer-only; synthetic-only; developer_suitability_candidate is not activation or final scoring; outcomes not collapsed to yes/no; nextGateRequired required.';
+      finishSummary(verdict, extras);
+    } catch (err) {
+      expect('run threw', false, String(err && err.message ? err.message : err));
+      $('banner').textContent = 'FAIL. Harness error.';
+      finishSummary(FAIL_VERDICT, extras);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  function resetAll() {
+    restoreGuards();
+    results = [];
+    lastSummary = null;
+    lastModuleHref = null;
+    moduleLoaded = false;
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_SUMMARY = null;
+    window.__SR_PLANT_SUITABILITY_AUTHORITY_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').innerHTML =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: <strong id="bootMarker">SR_PLANT_SUITABILITY_AUTHORITY_HARNESS_INERT</strong>';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  }
+
+  $('btn-run-all').addEventListener('click', function () { runAll(); });
+  $('btn-reset').addEventListener('click', function () { resetAll(); });
+  resetAll();
+})();
+</script>
+</body>
+</html>
