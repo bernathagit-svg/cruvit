@@ -44,7 +44,8 @@ const EXTRA_BASENAME_PATTERNS = Object.freeze([
   { kind: 'prefix', value: '.env.' },
   { kind: 'prefix', value: '.tmp-' },
   { kind: 'exact', value: 'coverage' },
-  { kind: 'exact', value: 'node_modules' },
+  // Keep root/function node_modules for Netlify Functions dependency resolution
+  // (@netlify/blobs). Netlify does not publish node_modules as static assets.
   { kind: 'exact', value: '.npm' },
   { kind: 'exact', value: '.cache' },
   { kind: 'exact', value: '.DS_Store' },
