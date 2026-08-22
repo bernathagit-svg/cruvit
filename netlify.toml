@@ -35,10 +35,18 @@
 [functions.pd-claude]
   timeout = 30
 
+[functions.wtp-premium-v1]
+  timeout = 10
+
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type, Cache-Control, Authorization"
+    Access-Control-Allow-Headers = "Content-Type, Cache-Control, Authorization, X-WTP-Internal"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Max-Age = "86400"
+
+[[headers]]
+  for = "/wtp-premium-v1/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

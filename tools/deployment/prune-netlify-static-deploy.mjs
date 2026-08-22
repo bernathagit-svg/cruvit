@@ -66,6 +66,8 @@ const NEVER_PRUNE_PREFIXES = Object.freeze([
   'modules/plant-identifier/',
   'modules/smart-rec/',
   'modules/suitability/',
+  'wtp-premium-v1/',
+  'privacy/',
 ]);
 
 const NEVER_PRUNE_EXACT = Object.freeze([
