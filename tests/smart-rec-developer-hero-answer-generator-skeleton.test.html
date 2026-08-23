@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Hero Answer Generator Skeleton</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Hero Answer Generator Skeleton</h1>
+  <p class="sub">
+    Developer-only plant-free Hero Answer skeleton harness. No live APIs, no production UI, no recommendation authority.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_HERO_ANSWER_GENERATOR_SKELETON_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Hero Answer Generator Skeleton</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'HERO_ANSWER_GENERATOR_SKELETON_PASS';
+  var FAIL_VERDICT = 'HERO_ANSWER_GENERATOR_SKELETON_FAIL';
+  var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
+  var FORBIDDEN_LABEL = 'מה CRUVIT עדיין לא יודעת';
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+
+  window.__SR_HERO_ANSWER_GENERATOR_SKELETON_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function serializedHasPlantRecommendation(obj) {
+    var s = JSON.stringify(obj || {}).toLowerCase();
+    return s.indexOf('final plant recommendation') >= 0 ||
+      s.indexOf('suitabilityscore') >= 0 ||
+      s.indexOf('suitability score') >= 0;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_hero_answer_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_hero_answer_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_HERO_ANSWER_GENERATOR_SKELETON_ON_UNHANDLED);
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_HERO_ANSWER_GENERATOR_SKELETON_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_HERO_ANSWER_GENERATOR_SKELETON_RESTORE === 'function') {
+      window.__SR_HERO_ANSWER_GENERATOR_SKELETON_RESTORE();
+      window.__SR_HERO_ANSWER_GENERATOR_SKELETON_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    $('summary').textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    $('summary').className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = Object.freeze({
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    });
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_SUMMARY = lastSummary;
+    setStatus('State: complete · moduleLoaded=1 · externalApiRequests=' + externalApiRequests);
+    renderRows();
+  }
+
+  function completeGardenMemory() {
+    return {
+      syntheticOnly: true,
+      growingContextType: 'balcony',
+      zoneLabel: 'south balcony',
+      plantingSurface: 'container',
+      primaryGoal: 'flowering',
+      outcomeDimension: 'flowering',
+      locationClimate: {
+        locationLevel: 'city',
+        climateInterpretation: 'mediterranean_coastal',
+        locationConfidence: 'medium'
+      },
+      siteConditions: {
+        sunExposure: 'full_sun',
+        drainage: 'good',
+        wateringMethod: 'manual'
+      },
+      preferencesConstraints: {
+        maintenanceTolerance: 'low',
+        floweringImportance: 'high',
+        evergreenDeciduous: 'evergreen_preferred'
+      },
+      knownUnknowns: ['orientation'],
+      sourceLabels: { sunExposure: 'user_provided' },
+      confidenceLabels: { sunExposure: 'high' }
+    };
+  }
+
+  function missingSiteGardenMemory() {
+    return {
+      syntheticOnly: true,
+      growingContextType: 'balcony',
+      zoneLabel: 'north balcony',
+      primaryGoal: 'flowering',
+      locationClimate: {
+        locationLevel: 'city',
+        locationConfidence: 'medium'
+      },
+      siteConditions: {
+        sunExposure: 'unknown',
+        drainage: 'unknown',
+        wateringMethod: 'unknown'
+      },
+      knownUnknowns: ['siteConditions.sunExposure']
+    };
+  }
+
+  function namedCandidateRiskGardenMemory() {
+    var base = completeGardenMemory();
+    base.showNamedCandidates = true;
+    base.namedPlantCandidates = ['example_candidate_only'];
+    return base;
+  }
+
+  function insufficientGardenMemory() {
+    return {
+      syntheticOnly: true,
+      growingContextType: 'unknown',
+      primaryGoal: 'unknown',
+      locationClimate: { locationConfidence: 'none' },
+      siteConditions: {}
+    };
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    try {
+      expect('boot inert before run', window.__SR_HERO_ANSWER_GENERATOR_SKELETON_BOOT.inert === true, '');
+      $('banner').textContent = 'Running Hero Answer Generator Skeleton harness…';
+
+      var mod = await import('../modules/smart-recommendations/developer-hero-answer-generator-skeleton.js');
+      moduleLoaded = true;
+      window.__SR_HERO_ANSWER_GENERATOR_SKELETON_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperHeroAnswerGeneratorSkeletonDescriptor();
+      expect('descriptor developer-only non-production',
+        isFrozenDeep(desc) &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.recommendationAuthority === false &&
+        desc.plantSuitabilityAuthority === false &&
+        desc.doesNotRecommendPlants === true &&
+        desc.doesNotNamePlantCandidates === true &&
+        desc.doesNotGrantFinalSuitability === true &&
+        desc.doesNotClaimSystemValidation === true,
+        desc.skeletonVersion);
+
+      var complete = mod.createHeroAnswerSkeleton(clone(completeGardenMemory()));
+      expect('1 complete context structured skeleton',
+        complete.reviewGate === 'proceed_low_confidence' &&
+        complete.goalUnderstood === 'flowering' &&
+        Array.isArray(complete.outcomeDimensions) &&
+        complete.outcomeDimensions.length > 0 &&
+        isFrozenDeep(complete),
+        complete.reviewGate);
+
+      var missing = mod.createHeroAnswerSkeleton(clone(missingSiteGardenMemory()));
+      expect('2 missing facts ask_progressive_intake',
+        missing.reviewGate === 'ask_progressive_intake' &&
+        missing.progressiveIntakeQuestions.length >= 1 &&
+        missing.progressiveIntakeQuestions.length <= 3,
+        missing.reviewGate + ' · q=' + missing.progressiveIntakeQuestions.length);
+
+      var review = mod.createHeroAnswerSkeleton(clone(namedCandidateRiskGardenMemory()));
+      expect('3 named-candidate risk requires_owner_review',
+        review.reviewGate === 'requires_owner_review',
+        review.reviewGate);
+
+      var stop = mod.createHeroAnswerSkeleton(clone(insufficientGardenMemory()));
+      expect('4 insufficient context stop_not_enough_information',
+        stop.reviewGate === 'stop_not_enough_information' &&
+        stop.confidence === 'not_enough_information',
+        stop.reviewGate);
+
+      expect('5 unknowns visible and reduce confidence',
+        complete.precisionGaps.indexOf('orientation') >= 0 &&
+        (complete.confidence === 'medium' || complete.confidence === 'low'),
+        complete.confidence + ' · gaps=' + complete.precisionGaps.join(','));
+
+      var normalized = mod.normalizeGardenMemory(clone(missingSiteGardenMemory()));
+      var gaps = mod.detectCriticalGaps(normalized);
+      expect('6 unknowns not invented',
+        gaps.some(function (g) { return g.field === 'siteConditions'; }) &&
+        normalized.siteConditions.sunExposure === 'unknown',
+        JSON.stringify(gaps));
+
+      expect('7 precision gaps label used',
+        complete.precisionGapsLabel === PRECISION_LABEL &&
+        missing.precisionGapsLabel === PRECISION_LABEL,
+        complete.precisionGapsLabel);
+
+      var allSerialized = JSON.stringify({ complete: complete, missing: missing, stop: stop });
+      expect('8 forbidden weakness label not used',
+        allSerialized.indexOf(FORBIDDEN_LABEL) === -1,
+        '');
+
+      expect('9 outcome feedback prompt included',
+        complete.feedbackOutcomePrompt &&
+        complete.feedbackOutcomePrompt.didUserAct &&
+        complete.feedbackOutcomePrompt.changeNextRecommendation &&
+        mod.buildOutcomeFeedbackPrompt().laterOutcome,
+        '');
+
+      expect('10 no plant recommendation generated',
+        complete.doesNotRecommendPlants === true &&
+        !serializedHasPlantRecommendation(complete),
+        '');
+
+      expect('11 no named plant candidate generated',
+        complete.doesNotNamePlantCandidates === true &&
+        JSON.stringify(complete).indexOf('example_candidate_only') === -1,
+        '');
+
+      expect('12 no final suitability score generated',
+        complete.doesNotGrantFinalSuitability === true &&
+        JSON.stringify(complete).toLowerCase().indexOf('suitabilityscore') === -1,
+        '');
+
+      expect('13 module remains developer-only explicit-call-only',
+        desc.activation === 'explicit_call_only' &&
+        complete.developerOnly === true &&
+        complete.transparencyLabel === 'developer_skeleton_not_system_validation',
+        desc.activation);
+
+      window.__SR_HERO_ANSWER_GENERATOR_SKELETON_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+      $('banner').textContent = 'Harness complete.';
+      finishSummary(results.every(function (r) { return r.pass; }) ? PASS_VERDICT : FAIL_VERDICT);
+    } catch (err) {
+      expect('harness uncaught error', false, err && (err.message || String(err)));
+      finishSummary(FAIL_VERDICT);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  $('btn-run-all').addEventListener('click', runAll);
+  $('btn-reset').addEventListener('click', function () {
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_SUMMARY = null;
+    window.__SR_HERO_ANSWER_GENERATOR_SKELETON_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').textContent =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: SR_HERO_ANSWER_GENERATOR_SKELETON_HARNESS_INERT';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  });
+})();
+</script>
+</body>
+</html>
