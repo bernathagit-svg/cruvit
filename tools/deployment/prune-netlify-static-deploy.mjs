@@ -69,6 +69,7 @@ const NEVER_PRUNE_PREFIXES = Object.freeze([
   'modules/suitability/',
   'wtp-premium-v1/',
   'privacy/',
+  'homepage-v1/',
 ]);
 
 const NEVER_PRUNE_EXACT = Object.freeze([
