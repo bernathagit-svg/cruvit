@@ -96,11 +96,20 @@ function aggregate(events) {
   const impressions = new Set();
   const ctas = new Set();
   const joins = new Set();
+  const impressionSourceBySession = new Map();
   for (const e of events) {
     if (e.syntheticTestOnly === true) continue;
     if (e.internalTraffic === true) continue;
     if (e.priceShownUsd !== PRICE) continue;
-    if (e.eventType === "offerPageView") impressions.add(e.sessionId);
+    if (e.eventType === "offerPageView") {
+      impressions.add(e.sessionId);
+      if (!impressionSourceBySession.has(e.sessionId)) {
+        impressionSourceBySession.set(
+          e.sessionId,
+          String(e.source || "unknown").toLowerCase(),
+        );
+      }
+    }
     if (e.eventType === "premiumCtaClick") ctas.add(e.sessionId);
     if (e.eventType === "earlyAccessCompletion") joins.add(e.sessionId);
   }
@@ -111,6 +120,11 @@ function aggregate(events) {
   const earlyAccessRateOnImpressions = qualifiedImpressions
     ? earlyAccessCompletions / qualifiedImpressions
     : null;
+  const trafficSourceCounts = {};
+  for (const src of impressionSourceBySession.values()) {
+    const key = src || "unknown";
+    trafficSourceCounts[key] = (trafficSourceCounts[key] || 0) + 1;
+  }
   return {
     qualifiedImpressions,
     ctaClicks,
@@ -119,6 +133,7 @@ function aggregate(events) {
     earlyAccessRateOnImpressions,
     earlyAccessRateOnCta: ctaClicks ? earlyAccessCompletions / ctaClicks : null,
     priceShownUsd: PRICE,
+    trafficSourceCounts,
   };
 }
 
@@ -155,22 +170,31 @@ function classify(agg) {
   };
 }
 
+function formatTrafficSources(counts) {
+  const entries = Object.entries(counts || {}).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) return ["(none yet)"];
+  return entries.map(([src, n]) => `${src}: ${n}`);
+}
+
 function formatSummary(result) {
   const a = result.aggregate;
   const pct = (r) => (r === null ? "n/a" : `${(r * 100).toFixed(1)}%`);
   return [
-    "Premium WTP Test",
+    "CRUVIT Premium WTP Test",
     "",
     `Qualified impressions: ${a.qualifiedImpressions}`,
     "",
-    `CTA clicks: ${a.ctaClicks}`,
+    `Premium CTA clicks: ${a.ctaClicks}`,
     `CTA rate: ${pct(a.ctaRate)}`,
     "",
-    `Early-access joins: ${a.earlyAccessCompletions}`,
-    `Join rate: ${pct(a.earlyAccessRateOnImpressions)}`,
+    `Early-access completions: ${a.earlyAccessCompletions}`,
+    `Completion rate: ${pct(a.earlyAccessRateOnImpressions)}`,
     "",
-    "Price tested:",
-    "$7.99 / month",
+    "Traffic source:",
+    ...formatTrafficSources(a.trafficSourceCounts),
+    "",
+    "Price shown:",
+    "$7.99/month",
     "",
     "Current signal:",
     result.signal,
@@ -247,12 +271,14 @@ export async function handler(event) {
     }
     const sessionId = String(body.sessionId || randomUUID());
     const source = String(body.source || "unknown");
+    const medium = body.medium ? String(body.medium) : null;
     const campaign = body.campaign ? String(body.campaign) : null;
     const row = {
       eventType,
       timestamp: new Date().toISOString(),
       sessionId,
       source,
+      medium,
       campaign,
       priceShownUsd: PRICE,
       internalTraffic: isInternal(body, headers, query),
@@ -274,6 +300,7 @@ export async function handler(event) {
     if (!email) return json(400, { ok: false, reason: "invalid_email" });
     const sessionId = String(body.sessionId || randomUUID());
     const source = String(body.source || "unknown");
+    const medium = body.medium ? String(body.medium) : null;
     const campaign = body.campaign ? String(body.campaign) : null;
     const internal = isInternal(body, headers, query);
     const ts = new Date().toISOString();
@@ -282,6 +309,7 @@ export async function handler(event) {
       timestamp: ts,
       sessionId,
       source,
+      medium,
       campaign,
       priceShownUsd: PRICE,
       internalTraffic: internal,
@@ -292,6 +320,7 @@ export async function handler(event) {
         timestamp: ts,
         sessionId,
         source,
+        medium,
         campaign,
         emailNormalized: email,
         consentAccepted: true,

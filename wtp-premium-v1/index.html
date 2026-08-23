@@ -247,8 +247,19 @@ Join the early-access list and we’ll let you know when Premium is ready.</p>
     (function () {
       const PRICE = 7.99;
       const params = new URLSearchParams(window.location.search);
-      const source = params.get("source") || "direct";
-      const campaign = params.get("campaign") || null;
+      // Prefer standard UTM (Meta destination); fall back to legacy source/campaign params.
+      const source =
+        params.get("utm_source") ||
+        params.get("source") ||
+        "direct";
+      const medium =
+        params.get("utm_medium") ||
+        params.get("medium") ||
+        null;
+      const campaign =
+        params.get("utm_campaign") ||
+        params.get("campaign") ||
+        null;
       const internalFlag = params.get("internal") === "1" || params.get("internal") === "true";
 
       // Local serve uses /api/wtp/* ; Netlify deploy uses function with action body.
@@ -292,6 +303,7 @@ Join the early-access list and we’ll let you know when Premium is ready.</p>
           eventType,
           sessionId: sessionId(),
           source,
+          medium,
           campaign,
           priceShownUsd: PRICE,
           internalTraffic: internalFlag,
@@ -334,6 +346,7 @@ Join the early-access list and we’ll let you know when Premium is ready.</p>
           consentAccepted: true,
           sessionId: sessionId(),
           source,
+          medium,
           campaign,
           internalTraffic: internalFlag,
         });
