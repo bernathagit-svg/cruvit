@@ -21,6 +21,7 @@ export const PROTECTED_DEPLOY_PATHS = Object.freeze([
 /** Browser/app assets that must remain after pruning. */
 export const REQUIRED_DEPLOY_SENTINELS = Object.freeze([
   'index.html',
+  'app.html',
   'styles.css',
   'garden-modes.js',
   'garden-modes.css',
@@ -33,6 +34,8 @@ export const REQUIRED_DEPLOY_SENTINELS = Object.freeze([
   'modules/plant-doctor/index.html',
   'modules/smart-recommendations/developer-reviewed-data-live-source-provider.js',
   'modules/identity/plant-identity-shadow.js',
+  'homepage-v1/index.html',
+  'homepage-v1/styles.css',
   'netlify.toml',
   'netlify/functions',
 ]);
@@ -74,6 +77,7 @@ const NEVER_PRUNE_PREFIXES = Object.freeze([
 
 const NEVER_PRUNE_EXACT = Object.freeze([
   'index.html',
+  'app.html',
   'styles.css',
   'garden-modes.js',
   'garden-modes.css',

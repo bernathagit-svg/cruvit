@@ -50,3 +50,14 @@
   for = "/wtp-premium-v1/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+# My Garden OS app entry (previous root homepage), kept reachable after Homepage V1 promotion.
+[[redirects]]
+  from = "/app"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/app/"
+  to = "/app.html"
+  status = 200
