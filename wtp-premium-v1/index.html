@@ -5,244 +5,156 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CRUVIT Premium Garden Intelligence — Early Access</title>
   <meta name="robots" content="noindex,nofollow" />
-  <style>
-    :root {
-      --bg: #f4f7f2;
-      --ink: #1c2a1f;
-      --muted: #4d5c50;
-      --card: #ffffff;
-      --accent: #2f6b4f;
-      --border: #d5e0d6;
-      --warn: #5a4a2a;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      background: linear-gradient(180deg, #eef5ea 0%, var(--bg) 40%, #f7f5ef 100%);
-      color: var(--ink);
-      line-height: 1.5;
-    }
-    main {
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 2rem 1.25rem 3rem;
-    }
-    .brand {
-      font-size: 0.85rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-    h1 {
-      font-size: clamp(1.55rem, 4vw, 2rem);
-      line-height: 1.2;
-      margin: 0 0 1rem;
-    }
-    .prop {
-      font-size: 1.05rem;
-      color: var(--muted);
-      margin: 0 0 1.5rem;
-    }
-    .benefits {
-      display: grid;
-      gap: 0.85rem;
-      margin: 0 0 1.75rem;
-    }
-    .benefit {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.9rem 1rem;
-    }
-    .benefit h2 {
-      margin: 0 0 0.35rem;
-      font-size: 1rem;
-    }
-    .benefit p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-    .price-block {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1rem 1.1rem;
-      margin-bottom: 1.25rem;
-    }
-    .price {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--ink);
-    }
-    .price-note {
-      margin: 0.35rem 0 0;
-      font-size: 0.85rem;
-      color: var(--warn);
-    }
-    .cta {
-      display: block;
-      width: 100%;
-      border: 0;
-      border-radius: 10px;
-      padding: 0.95rem 1rem;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      background: var(--accent);
-      color: #fff;
-      cursor: pointer;
-    }
-    .cta:hover { filter: brightness(1.05); }
-    .cta:disabled { opacity: 0.6; cursor: not-allowed; }
-    .panel {
-      display: none;
-      margin-top: 1.5rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.1rem;
-    }
-    .panel.visible { display: block; }
-    .panel p { white-space: pre-line; margin-top: 0; }
-    label {
-      display: block;
-      font-size: 0.9rem;
-      margin: 0.75rem 0 0.35rem;
-    }
-    input[type="email"] {
-      width: 100%;
-      padding: 0.7rem 0.75rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      font-size: 1rem;
-    }
-    .consent {
-      display: flex;
-      gap: 0.6rem;
-      align-items: flex-start;
-      margin: 0.9rem 0 1rem;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-    .consent input { margin-top: 0.2rem; }
-    .secondary {
-      display: block;
-      width: 100%;
-      border: 1px solid var(--accent);
-      background: #fff;
-      color: var(--accent);
-      border-radius: 10px;
-      padding: 0.8rem 1rem;
-      font-weight: 650;
-      cursor: pointer;
-    }
-    .fine {
-      margin-top: 1.25rem;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .error { color: #8a1f1f; font-size: 0.9rem; }
-    .ok { color: var(--accent); font-weight: 600; }
-    .privacy-at-collection {
-      margin: 0.85rem 0 1rem;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-    .privacy-at-collection a { color: var(--accent); font-weight: 600; }
-    footer.wtp-footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    footer.wtp-footer a { color: var(--accent); }
-  </style>
+  <meta name="description" content="CRUVIT Premium Garden Intelligence early access — garden-specific context, climate-aware guidance, and continuity for your garden." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/homepage-v1/styles.css" />
+  <link rel="stylesheet" href="/wtp-premium-v1/styles.css" />
 </head>
-<body>
-  <main>
-    <div class="brand">CRUVIT Premium Garden Intelligence · Early access validation</div>
-    <h1>Your garden is unique. Your intelligence should be too.</h1>
-    <p class="prop">
-      CRUVIT is designed around the context of your own garden, so guidance can be more relevant than generic gardening information.
-      The plants, conditions and garden context you choose to share help shape a personalized Garden Intelligence experience over time.
-    </p>
-    <p class="prop" style="margin-top:-0.75rem">
-      Not generic gardening advice. Intelligence shaped around your garden.
-    </p>
-    <p class="prop" style="margin-top:-0.75rem;font-size:0.95rem">
-      Private by design. You choose what garden information to share. CRUVIT is designed to use the minimum information needed to improve your garden experience — and to avoid unnecessary personal profiling.
-    </p>
+<body class="wtp-page">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-    <section class="benefits" aria-label="Premium themes">
-      <article class="benefit">
-        <h2>Garden-Specific Context</h2>
-        <p>Guidance shaped around your own garden context rather than generic advice.</p>
-      </article>
-      <article class="benefit">
-        <h2>Climate + Location Context</h2>
-        <p>Recommendations informed by where the garden actually exists — when you provide that context.</p>
-      </article>
-      <article class="benefit">
-        <h2>Continuity Over Time</h2>
-        <p>Garden context can be preserved so the experience is not a one-off generic interaction.</p>
-      </article>
-      <article class="benefit">
-        <h2>Learning from Outcomes</h2>
-        <p>Future guidance is designed to improve as you choose to report what worked and what did not. This is evolving Premium direction — not current guaranteed behavior.</p>
-      </article>
+  <header class="site-header">
+    <div class="shell wtp-header-inner">
+      <a class="brand" href="/" aria-label="CRUVIT home">
+        <img src="/homepage-v1/assets/cruvit-logo.svg" alt="" width="36" height="36" />
+        <span>CRUVIT</span>
+      </a>
+      <a class="wtp-back" href="/">Back to CRUVIT</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wtp-hero" id="hero">
+      <div class="hero-media" aria-hidden="true">
+        <img src="/homepage-v1/assets/hero-garden.jpg" alt="" />
+        <div class="hero-veil"></div>
+      </div>
+      <div class="shell hero-copy">
+        <p class="eyebrow">CRUVIT Premium Garden Intelligence</p>
+        <h1>Your garden is unique.<br />Your intelligence should be too.</h1>
+        <p class="lead">
+          CRUVIT builds Garden Intelligence around the context you choose to share —
+          designed to become more relevant to your garden over time.
+        </p>
+        <div class="wtp-hero-meta">
+          <p class="price">$7.99 / month <span>when available</span></p>
+          <p class="micro-inline">Early access · No payment today</p>
+        </div>
+        <div class="cta-row">
+          <button type="button" class="btn btn-primary" id="premiumCta">START CRUVIT PREMIUM</button>
+        </div>
+      </div>
     </section>
 
-    <div class="price-block">
-      <div class="price">$7.99 / month</div>
-      <p class="price-note">
-        Concept early-access validation price for interest measurement only.
-        This is not a live subscription and no payment is collected on this page.
-      </p>
-    </div>
+    <section class="section section-stone" id="why-premium" aria-label="Why Premium">
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Why Premium</p>
+          <h2>Deeper Garden Intelligence for the garden you actually grow.</h2>
+        </header>
+        <div class="card-grid four premium-grid">
+          <article class="soft-card">
+            <h3>Your Garden Context</h3>
+            <p>Guidance shaped around the plants and garden context you choose to share.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Climate-Aware Guidance</h3>
+            <p>Recommendations informed by your location and climate context where available.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Continuity Over Time</h3>
+            <p>Your garden context can stay part of the experience instead of every interaction starting from zero.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Evolving Garden Intelligence</h3>
+            <p>CRUVIT Premium is designed to become more useful as deeper Garden Intelligence capabilities develop. This is evolving Premium direction — not current guaranteed behavior.</p>
+          </article>
+        </div>
+        <p class="wtp-privacy-line">You choose what garden context to share.</p>
+      </div>
+    </section>
 
-    <button type="button" class="cta" id="premiumCta">START CRUVIT PREMIUM</button>
+    <section class="section section-ivory" id="product-proof">
+      <div class="shell split">
+        <div>
+          <header class="section-head left">
+            <p class="section-kicker">Real product foundation</p>
+            <h2>Built around your real garden</h2>
+            <p class="section-lead">
+              CRUVIT connects garden context, climate-aware guidance, care support and plant intelligence into one evolving experience.
+            </p>
+          </header>
+        </div>
+        <div class="product-proof" aria-label="CRUVIT My Garden product">
+          <figure class="device-frame laptop-frame">
+            <img src="/homepage-v1/assets/my-garden-desktop.png" alt="CRUVIT My Garden on desktop — plants, location context, tasks and recommendations" />
+            <figcaption>My Garden · desktop</figcaption>
+          </figure>
+          <figure class="device-frame phone-frame">
+            <img src="/homepage-v1/assets/my-garden-mobile.png" alt="CRUVIT My Garden on mobile" />
+            <figcaption>My Garden · mobile</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
 
-    <section class="panel" id="earlyAccessPanel" aria-live="polite">
-      <p id="earlyAccessCopy">Thanks — CRUVIT Premium early access is being prepared.
+    <section class="section wtp-convert" id="early-access">
+      <div class="shell wtp-convert-shell">
+        <div class="wtp-convert-panel">
+          <p class="premium-label">Premium Early Access</p>
+          <h2>CRUVIT Premium Garden Intelligence</h2>
+          <p class="convert-lead">Join the Premium early-access list.</p>
+          <p class="price">$7.99 / month <span>when available</span></p>
+          <p class="price-note">No payment is taken today. No card required.</p>
+          <div class="cta-row">
+            <button type="button" class="btn btn-primary" id="premiumCtaSecondary">START CRUVIT PREMIUM</button>
+          </div>
+          <div class="support-lines">
+            <p>Early access · No payment today</p>
+          </div>
+
+          <section class="panel" id="earlyAccessPanel" aria-live="polite">
+            <p id="earlyAccessCopy">CRUVIT Premium early access is being prepared.
 No payment was taken.
 
 Join the early-access list and we’ll let you know when Premium is ready.</p>
-      <form id="earlyAccessForm">
-        <label for="email">Email (for Premium early-access updates only)</label>
-        <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
-        <div class="consent">
-          <input id="consent" name="consent" type="checkbox" required />
-          <label for="consent" style="margin:0">
-            I agree to be contacted by email only about CRUVIT Premium early access. I will not be enrolled in unrelated marketing.
-          </label>
+            <form id="earlyAccessForm">
+              <label for="email">Email (for Premium early-access updates only)</label>
+              <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+              <div class="consent">
+                <input id="consent" name="consent" type="checkbox" required />
+                <label for="consent">
+                  I agree to be contacted by email only about CRUVIT Premium early access. I will not be enrolled in unrelated marketing.
+                </label>
+              </div>
+              <p class="privacy-at-collection" id="privacyAtCollection">
+                Your email will be used only for CRUVIT Premium early-access communication and this validation. No payment is taken. Garden information remains user-controlled; this form collects email for early-access contact only. See our <a href="/privacy/">Privacy Notice</a>.
+              </p>
+              <button type="submit" class="btn btn-ghost" id="joinBtn">Join early-access list</button>
+              <p class="error" id="formError" hidden></p>
+            </form>
+            <p class="ok" id="confirmMsg" hidden>You’re on the early-access list. No charge today.</p>
+          </section>
         </div>
-        <p class="privacy-at-collection" id="privacyAtCollection">
-          Your email will be used only for CRUVIT Premium early-access communication and this validation. No payment is taken. Garden information remains user-controlled; this form collects email for early-access contact only. See our <a href="/privacy/">Privacy Notice</a>.
+
+        <p class="wtp-fine">
+          Existing free CRUVIT capabilities are unchanged by this page.
+          No card details are requested. No charge occurs here.
+          Email is collected only for CRUVIT Premium early-access communication.
+          Premium early access is about Garden Intelligence — not store access or shopping discounts.
         </p>
-        <button type="submit" class="secondary" id="joinBtn">Join early-access list</button>
-        <p class="error" id="formError" hidden></p>
-      </form>
-      <p class="ok" id="confirmMsg" hidden>You’re on the early-access list. No charge today.</p>
+      </div>
     </section>
+  </main>
 
-    <p class="fine">
-      Existing free CRUVIT capabilities are unchanged by this page.
-      No card details are requested. No charge occurs here.
-      Email is collected only for CRUVIT Premium early-access communication.
-      Premium early access is about Garden Intelligence — not store access or shopping discounts.
-    </p>
-
-    <footer class="wtp-footer">
+  <footer class="wtp-footer">
+    <div class="shell">
       <a href="/privacy/">Privacy</a>
       · CRUVIT Premium early-access validation · No payment collected
-    </footer>
-  </main>
+    </div>
+  </footer>
 
   <script>
     (function () {
@@ -319,16 +231,29 @@ Join the early-access list and we’ll let you know when Premium is ready.</p>
       }
 
       const cta = document.getElementById("premiumCta");
+      const ctaSecondary = document.getElementById("premiumCtaSecondary");
       const panel = document.getElementById("earlyAccessPanel");
       const form = document.getElementById("earlyAccessForm");
       const confirmMsg = document.getElementById("confirmMsg");
       const formError = document.getElementById("formError");
 
-      cta.addEventListener("click", async function () {
-        cta.disabled = true;
+      async function openEarlyAccess(triggerBtn) {
+        if (panel.classList.contains("visible")) {
+          panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          return;
+        }
+        triggerBtn.disabled = true;
         await track("premiumCtaClick");
         panel.classList.add("visible");
-        cta.disabled = false;
+        triggerBtn.disabled = false;
+        panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      cta.addEventListener("click", function () {
+        openEarlyAccess(cta);
+      });
+      ctaSecondary.addEventListener("click", function () {
+        openEarlyAccess(ctaSecondary);
       });
 
       form.addEventListener("submit", async function (ev) {
