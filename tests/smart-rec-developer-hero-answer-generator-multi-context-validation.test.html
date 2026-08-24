@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Developer Hero Answer Multi-Context Synthetic Validation</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>Smart Recommendations — Hero Answer Multi-Context Synthetic Validation</h1>
+  <p class="sub">
+    Developer-only, manual-browser, synthetic-only multi-context validation harness.
+    No live APIs, no production UI, no recommendation authority, no plant names.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Module not loaded. No fixtures run.
+    Inert boot marker: <strong id="bootMarker">SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_HARNESS_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run-all">Run Multi-Context Validation</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+  <table>
+    <thead><tr><th>Status</th><th>Test</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'HERO_ANSWER_GENERATOR_MULTI_CONTEXT_SYNTHETIC_VALIDATION_PASS';
+  var FAIL_VERDICT = 'HERO_ANSWER_GENERATOR_MULTI_CONTEXT_SYNTHETIC_VALIDATION_FAIL';
+  var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
+  var FORBIDDEN_LABEL = 'מה CRUVIT עדיין לא יודעת';
+  var CANDIDATE_RISK_TOKEN = 'candidate_risk_token_do_not_emit';
+  var ALL_GATES = [
+    'proceed_low_confidence',
+    'ask_progressive_intake',
+    'requires_owner_review',
+    'stop_not_enough_information'
+  ];
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var consoleErrorCount = 0;
+  var unhandledCount = 0;
+  var moduleLoaded = false;
+  var lastSummary = null;
+  var gatesExercised = {};
+
+  window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    fixturesRun: false
+  });
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function setStatus(text) { $('statusLine').textContent = text; }
+  function isFrozenDeep(v, seen) {
+    seen = seen || new Set();
+    if (v === null || typeof v !== 'object') return true;
+    if (seen.has(v)) return true;
+    seen.add(v);
+    if (!Object.isFrozen(v)) return false;
+    if (Array.isArray(v)) {
+      for (var i = 0; i < v.length; i++) if (!isFrozenDeep(v[i], seen)) return false;
+      return true;
+    }
+    var keys = Object.keys(v);
+    for (var k = 0; k < keys.length; k++) if (!isFrozenDeep(v[keys[k]], seen)) return false;
+    return true;
+  }
+  function serializedHasForbiddenClaims(obj) {
+    var s = JSON.stringify(obj || {}).toLowerCase();
+    return s.indexOf('final plant recommendation') >= 0 ||
+      s.indexOf('suitabilityscore') >= 0 ||
+      s.indexOf('suitability score') >= 0 ||
+      s.indexOf('system validation') >= 0 ||
+      s.indexOf('smart recommendations live') >= 0 ||
+      s.indexOf('production readiness') >= 0 ||
+      s.indexOf('production-ready') >= 0;
+  }
+  function serializedHasRealPlantName(obj) {
+    var s = JSON.stringify(obj || {}).toLowerCase();
+    var plantTokens = ['lavender', 'rosemary', 'tomato', 'rose ', 'basil', 'mint'];
+    for (var i = 0; i < plantTokens.length; i++) {
+      if (s.indexOf(plantTokens[i]) >= 0) return true;
+    }
+    return false;
+  }
+  function recordGate(gate) {
+    if (gate) gatesExercised[gate] = true;
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    consoleErrorCount = 0;
+    unhandledCount = 0;
+    var origLs = Storage.prototype.setItem;
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_multi_context_harness'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_multi_context_harness');
+    };
+    var origErr = console.error;
+    console.error = function () {
+      consoleErrorCount++;
+      return origErr.apply(this, arguments);
+    };
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_ON_UNHANDLED = function () { unhandledCount++; };
+    window.addEventListener('unhandledrejection', window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_ON_UNHANDLED);
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_RESTORE = function () {
+      Storage.prototype.setItem = origLs;
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      console.error = origErr;
+      window.removeEventListener('unhandledrejection', window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_ON_UNHANDLED);
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_RESTORE === 'function') {
+      window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_RESTORE();
+      window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_RESTORE = null;
+    }
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + r.name + '</td><td>' + String(r.detail || '').replace(/[<>&]/g, '') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    var gateList = ALL_GATES.filter(function (g) { return gatesExercised[g]; });
+    $('summary').textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    $('summary').className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'passCount=' + passed + '\n' +
+      'failCount=' + failed + '\n' +
+      'gatesExercised=' + gateList.join(',') + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'consoleErrorCount=' + consoleErrorCount + '\n' +
+      'unhandledRejectionCount=' + unhandledCount;
+    lastSummary = Object.freeze({
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      gatesExercised: gateList.slice(),
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      consoleErrorCount: consoleErrorCount,
+      unhandledRejectionCount: unhandledCount,
+      moduleLoaded: moduleLoaded
+    });
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_SUMMARY = lastSummary;
+    setStatus('State: complete · moduleLoaded=1 · externalApiRequests=' + externalApiRequests);
+    renderRows();
+  }
+
+  function buildContextFamilies() {
+    return [
+      {
+        id: 'balcony_container',
+        label: 'balcony/container',
+        expectedGate: 'proceed_low_confidence',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'balcony',
+          zoneLabel: 'south balcony container',
+          plantingSurface: 'container',
+          primaryGoal: 'flowering',
+          outcomeDimension: 'flowering',
+          locationClimate: {
+            locationLevel: 'city',
+            climateInterpretation: 'mediterranean_coastal',
+            locationConfidence: 'medium'
+          },
+          siteConditions: {
+            sunExposure: 'full_sun',
+            drainage: 'good',
+            wateringMethod: 'manual'
+          },
+          preferencesConstraints: {
+            floweringImportance: 'high'
+          },
+          knownUnknowns: ['orientation']
+        }
+      },
+      {
+        id: 'in_ground_ornamental_coverage',
+        label: 'in-ground ornamental / coverage',
+        expectedGate: 'ask_progressive_intake',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'in_ground',
+          zoneLabel: 'back garden bed',
+          primaryGoal: 'privacy_coverage',
+          outcomeDimension: 'growth_coverage',
+          locationClimate: {
+            locationLevel: 'city',
+            locationConfidence: 'medium'
+          },
+          siteConditions: {
+            sunExposure: 'unknown',
+            drainage: 'unknown',
+            wateringMethod: 'unknown'
+          },
+          preferencesConstraints: {
+            evergreenDeciduous: 'evergreen_preferred'
+          },
+          knownUnknowns: ['siteConditions.sunExposure']
+        }
+      },
+      {
+        id: 'fruit_yield',
+        label: 'fruit/yield',
+        expectedGate: 'requires_owner_review',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'in_ground',
+          zoneLabel: 'orchard corner bed',
+          primaryGoal: 'fruit_yield',
+          outcomeDimension: 'fruit_yield',
+          locationClimate: {
+            locationLevel: 'city',
+            locationConfidence: 'medium',
+            frostExposureUnknown: true
+          },
+          siteConditions: {
+            sunExposure: 'full_sun',
+            drainage: 'good',
+            wateringMethod: 'drip'
+          },
+          showNamedCandidates: true,
+          namedPlantCandidates: [CANDIDATE_RISK_TOKEN]
+        }
+      },
+      {
+        id: 'low_maintenance',
+        label: 'low-maintenance',
+        expectedGate: 'proceed_low_confidence',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'balcony',
+          zoneLabel: 'easy care balcony',
+          plantingSurface: 'container',
+          primaryGoal: 'low_maintenance',
+          outcomeDimension: 'maintenance_burden',
+          locationClimate: {
+            locationLevel: 'city',
+            locationConfidence: 'medium'
+          },
+          siteConditions: {
+            sunExposure: 'partial_shade',
+            drainage: 'good',
+            wateringMethod: 'manual'
+          },
+          preferencesConstraints: {
+            maintenanceTolerance: 'low',
+            waterLimits: 'moderate'
+          },
+          knownUnknowns: ['aesthetic_style_preference']
+        }
+      },
+      {
+        id: 'indoor_container',
+        label: 'indoor/container',
+        expectedGate: 'requires_owner_review',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'indoor',
+          zoneLabel: 'indoor shelf container',
+          plantingSurface: 'container',
+          primaryGoal: 'growth',
+          outcomeDimension: 'growth_coverage',
+          locationClimate: {
+            locationLevel: 'room',
+            locationConfidence: 'medium',
+            frostExposureUnknown: true,
+            heatDrynessUnknown: true
+          },
+          siteConditions: {
+            sunExposure: 'bright_indirect',
+            drainage: 'good',
+            wateringMethod: 'manual'
+          },
+          expensiveIrreversibleRisk: true
+        }
+      },
+      {
+        id: 'indoor_container_severe_stop',
+        label: 'indoor/container severe stop variant',
+        expectedGate: 'stop_not_enough_information',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'indoor',
+          primaryGoal: 'unknown',
+          locationClimate: {
+            locationConfidence: 'none'
+          },
+          siteConditions: {}
+        }
+      },
+      {
+        id: 'problem_symptom',
+        label: 'problem/symptom',
+        expectedGate: 'stop_not_enough_information',
+        memory: {
+          syntheticOnly: true,
+          growingContextType: 'unknown',
+          primaryGoal: 'unknown',
+          locationClimate: {
+            locationConfidence: 'none'
+          },
+          siteConditions: {}
+        }
+      }
+    ];
+  }
+
+  async function runAll() {
+    results = [];
+    lastSummary = null;
+    gatesExercised = {};
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_SUMMARY = null;
+    $('btn-run-all').disabled = true;
+    installGuards();
+    try {
+      expect('boot inert before run', window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_BOOT.inert === true, '');
+      $('banner').textContent = 'Running Hero Answer Multi-Context Synthetic Validation harness…';
+
+      var mod = await import('../modules/smart-recommendations/developer-hero-answer-generator-skeleton.js');
+      moduleLoaded = true;
+      window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: false
+      });
+
+      var desc = mod.getSmartRecDeveloperHeroAnswerGeneratorSkeletonDescriptor();
+      var families = buildContextFamilies();
+      var outputs = [];
+      var primaryFamilies = families.filter(function (f) {
+        return f.id !== 'indoor_container_severe_stop';
+      });
+
+      expect('23 module descriptor developerOnly / syntheticOnly / explicit_call_only',
+        isFrozenDeep(desc) &&
+        desc.developerOnly === true &&
+        desc.syntheticOnly === true &&
+        desc.activation === 'explicit_call_only',
+        desc.skeletonVersion);
+
+      expect('24 module descriptor recommendationAuthority false',
+        desc.recommendationAuthority === false,
+        String(desc.recommendationAuthority));
+
+      expect('25 module descriptor plantSuitabilityAuthority false',
+        desc.plantSuitabilityAuthority === false,
+        String(desc.plantSuitabilityAuthority));
+
+      expect('1 six context families represented',
+        primaryFamilies.length === 6,
+        primaryFamilies.map(function (f) { return f.label; }).join(' · '));
+
+      families.forEach(function (family) {
+        var skeleton = mod.createHeroAnswerSkeleton(clone(family.memory));
+        outputs.push({ family: family, skeleton: skeleton });
+        recordGate(skeleton.reviewGate);
+        expect('3 expected gate · ' + family.label,
+          skeleton.reviewGate === family.expectedGate,
+          'expected=' + family.expectedGate + ' actual=' + skeleton.reviewGate);
+      });
+
+      expect('2 all four gates exercised',
+        ALL_GATES.every(function (g) { return gatesExercised[g] === true; }),
+        ALL_GATES.filter(function (g) { return !gatesExercised[g]; }).join(',') || 'all');
+
+      var intakeFamily = outputs.find(function (o) {
+        return o.family.id === 'in_ground_ornamental_coverage';
+      });
+      var intakeSkeleton = intakeFamily && intakeFamily.skeleton;
+      expect('4 progressive intake asks only 1-3 questions when used',
+        intakeSkeleton &&
+        intakeSkeleton.reviewGate === 'ask_progressive_intake' &&
+        intakeSkeleton.progressiveIntakeQuestions.length >= 1 &&
+        intakeSkeleton.progressiveIntakeQuestions.length <= 3,
+        intakeSkeleton ? String(intakeSkeleton.progressiveIntakeQuestions.length) : 'missing');
+
+      expect('5 progressive intake allows unknown/skipped',
+        intakeSkeleton &&
+        intakeSkeleton.progressiveIntakeQuestions.every(function (q) {
+          return q && q.allowsUnknown === true;
+        }),
+        intakeSkeleton ? JSON.stringify(intakeSkeleton.progressiveIntakeQuestions) : 'missing');
+
+      var balconyOutput = outputs.find(function (o) { return o.family.id === 'balcony_container'; });
+      expect('6 unknowns remain visible in precisionGaps',
+        balconyOutput &&
+        balconyOutput.skeleton.precisionGaps.indexOf('orientation') >= 0,
+        balconyOutput ? balconyOutput.skeleton.precisionGaps.join(',') : 'missing');
+
+      var normalizedMissing = mod.normalizeGardenMemory(clone(intakeFamily.family.memory));
+      expect('7 unknown values are not invented',
+        normalizedMissing.siteConditions.sunExposure === 'unknown' &&
+        normalizedMissing.siteConditions.drainage === 'unknown',
+        JSON.stringify(normalizedMissing.siteConditions));
+
+      var allSerialized = JSON.stringify(outputs.map(function (o) { return o.skeleton; }));
+      expect('8 required Hebrew precision gaps label appears',
+        outputs.every(function (o) {
+          return o.skeleton.precisionGapsLabel === PRECISION_LABEL;
+        }),
+        PRECISION_LABEL);
+
+      expect('9 forbidden Hebrew weakness label not emitted',
+        allSerialized.indexOf(FORBIDDEN_LABEL) === -1,
+        FORBIDDEN_LABEL);
+
+      expect('10 feedbackOutcomePrompt exists',
+        outputs.every(function (o) {
+          return o.skeleton.feedbackOutcomePrompt &&
+            o.skeleton.feedbackOutcomePrompt.didUserAct &&
+            o.skeleton.feedbackOutcomePrompt.laterOutcome;
+        }),
+        '');
+
+      expect('11 no plant recommendation generated',
+        outputs.every(function (o) {
+          return o.skeleton.doesNotRecommendPlants === true &&
+            !serializedHasForbiddenClaims(o.skeleton);
+        }),
+        '');
+
+      expect('12 no real plant name generated',
+        !serializedHasRealPlantName(allSerialized),
+        '');
+
+      expect('13 no named plant candidate echoed',
+        allSerialized.indexOf(CANDIDATE_RISK_TOKEN) === -1 &&
+        outputs.every(function (o) { return o.skeleton.doesNotNamePlantCandidates === true; }),
+        CANDIDATE_RISK_TOKEN);
+
+      expect('14 no final suitability score generated',
+        outputs.every(function (o) { return o.skeleton.doesNotGrantFinalSuitability === true; }) &&
+        allSerialized.toLowerCase().indexOf('suitabilityscore') === -1,
+        '');
+
+      expect('15 no final suitability calculation generated',
+        allSerialized.toLowerCase().indexOf('suitability score') === -1,
+        '');
+
+      expect('16 no System Validation claim generated',
+        outputs.every(function (o) { return o.skeleton.doesNotClaimSystemValidation === true; }) &&
+        allSerialized.toLowerCase().indexOf('system validation') === -1,
+        '');
+
+      expect('17 no production-readiness claim generated',
+        allSerialized.toLowerCase().indexOf('production readiness') === -1 &&
+        allSerialized.toLowerCase().indexOf('production-ready') === -1,
+        '');
+
+      expect('18 no Smart Recommendations live claim generated',
+        allSerialized.toLowerCase().indexOf('smart recommendations live') === -1,
+        '');
+
+      expect('19 no index.html import/reference from harness',
+        document.querySelector('script[src*="index.html"]') === null &&
+        allSerialized.indexOf('index.html') === -1,
+        'harness-local only');
+
+      expect('20 no production UI connection',
+        desc.productAuthority === false &&
+        desc.runtimeEligibilityAuthority === false &&
+        outputs.every(function (o) {
+          return o.skeleton.transparencyLabel === 'developer_skeleton_not_system_validation';
+        }),
+        desc.productAuthority + '');
+
+      expect('21 no network/fetch/XHR call succeeds',
+        externalApiRequests === 0,
+        String(externalApiRequests));
+
+      expect('22 no storage mutation occurs',
+        storageMutationCount === 0,
+        String(storageMutationCount));
+
+      window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        fixturesRun: true
+      });
+      $('banner').textContent = 'Multi-context validation harness complete.';
+      finishSummary(results.every(function (r) { return r.pass; }) ? PASS_VERDICT : FAIL_VERDICT);
+    } catch (err) {
+      expect('harness uncaught error', false, err && (err.message || String(err)));
+      finishSummary(FAIL_VERDICT);
+    } finally {
+      restoreGuards();
+      $('btn-run-all').disabled = false;
+    }
+  }
+
+  $('btn-run-all').addEventListener('click', runAll);
+  $('btn-reset').addEventListener('click', function () {
+    results = [];
+    lastSummary = null;
+    moduleLoaded = false;
+    gatesExercised = {};
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_SUMMARY = null;
+    window.__SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      fixturesRun: false
+    });
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('rows').innerHTML = '';
+    $('banner').textContent =
+      'Idle. Module not loaded. No fixtures run. Inert boot marker: SR_HERO_ANSWER_MULTI_CONTEXT_VALIDATION_HARNESS_INERT';
+    setStatus('State: idle · moduleLoaded=0 · externalApiRequests=0 · storageMutationCount=0');
+  });
+})();
+</script>
+</body>
+</html>
