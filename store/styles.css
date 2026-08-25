@@ -58,9 +58,79 @@
   padding: 0.55rem 1rem;
 }
 
-.demo-banner strong {
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.preview-banner {
+  background: rgba(47, 71, 52, 0.94);
+  color: #f7f2e8;
+  text-align: center;
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  padding: 0.6rem 1rem;
+}
+
+.category-card .category-media {
+  overflow: hidden;
+}
+
+.category-card .category-media img {
+  transition: transform 0.45s ease;
+}
+
+.category-card:hover .category-media img {
+  transform: scale(1.03);
+}
+
+.preview-card-wrap {
+  max-width: 22rem;
+  margin: 0 auto;
+}
+
+.preview-cta {
+  text-align: center;
+  margin: 1.35rem 0 0;
+}
+
+.soft-badge {
+  background: rgba(47, 71, 52, 0.88) !important;
+}
+
+.media-hint {
+  color: var(--muted);
+  font-size: 0.92rem;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.muted-price {
+  color: var(--muted) !important;
+  font-size: 1.25rem !important;
+}
+
+.polish-note {
+  margin: 1.5rem auto 0 !important;
+  text-align: center;
+  max-width: 40rem;
+}
+
+.availability-line {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.soft-meta {
+  margin: 0.55rem 0 0 !important;
+  font-size: 0.9rem;
+  color: var(--moss);
+}
+
+.cart-empty-copy {
+  color: var(--muted);
+  margin: 0.5rem auto 1.15rem;
+  max-width: 28rem;
+}
+
+.relevance-grid {
+  margin-top: 0.5rem;
 }
 
 .curation-panel {

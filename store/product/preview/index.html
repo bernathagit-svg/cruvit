@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Product detail template — CRUVIT Store (DEMO_PREVIEW_ONLY)</title>
+  <title>Product experience — CRUVIT Store</title>
   <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,84 +12,86 @@
   <link rel="stylesheet" href="/store/styles.css" />
 </head>
 <body class="store-page">
-  <div class="demo-banner" role="status">
-    <strong>DEMO_PREVIEW_ONLY</strong> — Product detail structure for Owner visual review. Not inventory. Not for sale.
+  <div class="preview-banner" role="status">
+    Product experience preview — not available to purchase
   </div>
 
   <header class="site-header">
     <div class="shell store-header-inner">
-      <a class="brand" href="/store/" aria-label="CRUVIT Store">
+      <a class="brand" href="/" aria-label="CRUVIT home">
         <img src="/homepage-v1/assets/cruvit-logo.svg" alt="" width="36" height="36" />
-        <span>CRUVIT Store</span>
+        <span>CRUVIT</span>
       </a>
-      <nav class="store-nav" aria-label="Store">
-        <a href="/store/">Store</a>
-        <a href="/store/cart/" class="nav-cart">Cart</a>
+      <nav class="store-nav" aria-label="CRUVIT">
+        <a href="/">Home</a>
         <a href="/app">My Garden</a>
+        <a href="/store/">Store</a>
+        <a href="/wtp-premium-v1/">Premium</a>
+        <a href="/store/cart/" class="nav-cart">Cart</a>
       </nav>
     </div>
   </header>
 
   <main id="main" class="section">
-    <div class="shell pdp-layout" data-demo-preview-only="true">
+    <div class="shell pdp-layout" data-preview="product-experience">
       <div class="pdp-gallery" aria-label="Product images">
         <div class="placeholder">
-          Real product images appear here after Owner-approved product data is published.<br /><br />
-          <span class="unknown-chip">UNKNOWN image set</span>
+          <p>Product imagery will appear here when a selection is published.</p>
         </div>
       </div>
 
       <div class="pdp-panel">
-        <p class="section-kicker">Product detail page V1</p>
-        <h1>Example product title (preview structure)</h1>
-        <p class="price">UNKNOWN <span>— price when commercially enabled</span></p>
-        <p><span class="unknown-chip">Purchase disabled</span></p>
+        <p class="section-kicker">CRUVIT Store</p>
+        <h1>Garden-ready product</h1>
+        <p class="price muted-price">Price when available</p>
+        <p class="availability-line">Not available to purchase yet</p>
 
         <div class="pdp-section">
           <h2>What it helps with</h2>
-          <p>A concise use-case statement will describe the garden need this product supports — when a real product is approved.</p>
+          <p>A clear description of the garden need this product supports.</p>
         </div>
 
         <div class="pdp-section">
           <h2>Why CRUVIT selected it</h2>
-          <p>Selection rationale will reference commercial validation — not invented supplier marketing claims.</p>
+          <p>A short, honest rationale for why this product belongs in the CRUVIT Store.</p>
         </div>
 
         <div class="pdp-section">
-          <h2>Garden-fit / contextual relevance</h2>
+          <h2>Why this may fit your garden</h2>
           <p>
-            “Why this may fit your garden” appears only when backed by real CRUVIT context
-            (for example climate/location, garden type, care need, or plants in My Garden).
+            When garden context is available — such as climate or location context,
+            watering or care needs, space constraints, or plants in My Garden —
+            CRUVIT can explain relevance calmly and clearly.
           </p>
-          <p><span class="unknown-chip">No live relevance score</span></p>
+          <p class="soft-meta">Shown only when real garden context supports it.</p>
         </div>
 
         <div class="pdp-section">
           <h2>Key specifications</h2>
           <ul>
-            <li>Specifications: UNKNOWN until product data package exists</li>
-            <li>Variant options: UNKNOWN</li>
-            <li>Materials / dimensions: UNKNOWN</li>
+            <li>Specifications — when available</li>
+            <li>Options &amp; variants — when available</li>
+            <li>Materials &amp; dimensions — when available</li>
           </ul>
         </div>
 
         <div class="pdp-section">
-          <h2>Shipping information</h2>
-          <p>Shipping details remain UNKNOWN until Owner operating shipping policy and product logistics data exist.</p>
-          <p><a href="/store/policies/shipping/">Shipping policy status</a></p>
+          <h2>Shipping</h2>
+          <p>Shipping details will be shared clearly for each published product.</p>
+          <p><a href="/store/policies/shipping/">Shipping information</a></p>
         </div>
 
         <div class="pdp-section">
-          <h2>Returns information</h2>
-          <p>Returns / refunds remain UNKNOWN until Owner operating returns policy exists.</p>
-          <p><a href="/store/policies/returns/">Returns policy status</a></p>
+          <h2>Returns</h2>
+          <p>Returns guidance will be published before purchases are accepted.</p>
+          <p><a href="/store/policies/returns/">Returns information</a></p>
         </div>
 
         <div class="pdp-section">
           <h2>Purchase</h2>
-          <p>Add to cart / checkout activate only when real commerce is enabled for an approved product.</p>
+          <p>Purchase becomes available only when a real product is published in the Store.</p>
           <div class="cta-row" style="margin-top:0.85rem">
-            <button type="button" class="btn btn-primary" disabled>Add to cart unavailable</button>
+            <button type="button" class="btn btn-primary" disabled>Coming when available</button>
             <a class="btn btn-ghost" href="/store/">Back to Store</a>
           </div>
         </div>
@@ -99,6 +101,7 @@
 
   <footer class="store-footer">
     <div class="shell">
+      <a href="/">Home</a> ·
       <a href="/store/">Store</a> ·
       <a href="/privacy/">Privacy</a> ·
       <a href="mailto:office@cruvit.com">office@cruvit.com</a>

@@ -2,65 +2,83 @@
   "schemaVersion": "storefront-readiness-v1",
   "commerceMode": "VALIDATION_ONLY",
   "sellableProducts": [],
+  "firstRealProductSlot": {
+    "insertInto": "sellableProducts",
+    "requiredFields": [
+      "id",
+      "handle",
+      "title",
+      "priceUsd",
+      "images",
+      "categoryIds",
+      "useCase",
+      "whySelected",
+      "specifications",
+      "shippingSummary",
+      "returnsSummary",
+      "purchaseEnabled"
+    ],
+    "notes": "INTERNAL: populate only after Commercial Lead → validation → physical test → Owner approval → Shopify product creation."
+  },
   "categories": [
     {
       "id": "watering-irrigation",
       "name": "Watering & Irrigation",
-      "description": "Solutions that support how a garden is watered and irrigated.",
+      "description": "Support for how a garden is watered — chosen for real garden needs.",
       "image": "/homepage-v1/assets/store-watering.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     },
     {
       "id": "plant-care",
       "name": "Plant Care",
-      "description": "Care support chosen for real garden needs, not generic shelves.",
+      "description": "Care support shaped around the plants and conditions you grow with.",
       "image": "/homepage-v1/assets/store-plant-care.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     },
     {
       "id": "garden-organization",
       "name": "Garden Organization",
-      "description": "Organization tools that help keep garden work clearer and calmer.",
+      "description": "Organization that helps keep garden work clearer and calmer.",
       "image": "/homepage-v1/assets/store-care.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     },
     {
       "id": "tools-accessories",
       "name": "Tools & Accessories",
-      "description": "Practical tools and accessories for everyday garden work.",
+      "description": "Practical tools for everyday garden work — curated, not endless.",
       "image": "/homepage-v1/assets/store-kits.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     },
     {
       "id": "outdoor-living",
       "name": "Outdoor Living",
-      "description": "Garden living support that fits outdoor spaces and habits.",
+      "description": "Pieces that support how you live with and enjoy outdoor garden space.",
       "image": "/homepage-v1/assets/store-water.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     },
     {
       "id": "curated-kits",
       "name": "Curated Kits",
       "description": "Bundled solutions intended for a clear garden purpose.",
       "image": "/homepage-v1/assets/store-kits.jpg",
-      "status": "CURATING"
+      "statusLabel": "Being curated"
     }
   ],
-  "demoPreviewOnlyProductCard": {
+  "productExperiencePreview": {
     "DEMO_PREVIEW_ONLY": true,
     "forSale": false,
-    "id": "demo-preview-card",
-    "title": "Example product card structure",
-    "priceLabel": "UNKNOWN",
-    "useCase": "Concise value / use-case appears here when a real product is approved.",
-    "availability": "Unavailable â preview structure only",
-    "shipping": "UNKNOWN until operational shipping data exists",
+    "id": "product-experience-preview",
+    "title": "Garden-ready product",
+    "priceLabel": "Price when available",
+    "useCase": "A short line describing the garden need this product helps with.",
+    "availability": "Not available to purchase yet",
+    "shipping": "Shipping details when available",
     "relevanceCue": null,
     "image": null,
     "purchaseEnabled": false
   },
   "notes": [
-    "sellableProducts must remain empty until Owner-approved Commercial Lead + physical validation + Shopify creation.",
-    "DEMO_PREVIEW_ONLY content is never real inventory."
+    "INTERNAL: sellableProducts must remain empty until Owner-approved path completes.",
+    "INTERNAL: DEMO_PREVIEW_ONLY / productExperiencePreview is never real inventory."
   ]
 }
