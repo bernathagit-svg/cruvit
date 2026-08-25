@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cart — CRUVIT Store</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/homepage-v1/styles.css" />
+  <link rel="stylesheet" href="/store/styles.css" />
+</head>
+<body class="store-page">
+  <header class="site-header">
+    <div class="shell store-header-inner">
+      <a class="brand" href="/store/" aria-label="CRUVIT Store">
+        <img src="/homepage-v1/assets/cruvit-logo.svg" alt="" width="36" height="36" />
+        <span>CRUVIT Store</span>
+      </a>
+      <nav class="store-nav" aria-label="Store">
+        <a href="/store/">Store</a>
+        <a href="/store/cart/" class="nav-cart">Cart</a>
+        <a href="/app">My Garden</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="section">
+    <div class="shell">
+      <header class="section-head left">
+        <p class="section-kicker">Cart</p>
+        <h2>Your Store cart</h2>
+        <p class="section-lead">
+          Ready for future real products. Checkout stays unavailable until commerce is enabled.
+        </p>
+      </header>
+
+      <table class="cart-table" aria-label="Cart items">
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Price</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              <div class="cart-empty">
+                <p><strong>Your cart is empty.</strong></p>
+                <p style="color:var(--muted);margin:0.5rem 0 1rem">
+                  Sellable products will appear in the Store only after commercial validation and Owner approval.
+                </p>
+                <a class="btn btn-primary" href="/store/">Continue to Store</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="cart-summary" aria-label="Cart summary">
+        <div class="row"><span>Subtotal</span><span>$0.00</span></div>
+        <div class="row"><span>Shipping</span><span>UNKNOWN</span></div>
+        <div class="row total"><span>Total</span><span>$0.00</span></div>
+        <div class="cta-row" style="margin-top:1rem">
+          <button type="button" class="btn btn-primary" disabled>Checkout unavailable</button>
+        </div>
+        <p class="price-note" style="margin-top:0.85rem">
+          Shopify Checkout will be used when real commerce is enabled. This page does not invent checkout.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="store-footer">
+    <div class="shell">
+      <a href="/store/">Store</a> ·
+      <a href="/store/policies/shipping/">Shipping</a> ·
+      <a href="/store/policies/returns/">Returns</a> ·
+      <a href="/privacy/">Privacy</a>
+    </div>
+  </footer>
+</body>
+</html>

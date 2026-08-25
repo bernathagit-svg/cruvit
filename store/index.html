@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRUVIT Store — Intelligent Storefront Readiness</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="description" content="CRUVIT Store — products selected because they may fit your garden context. Curating the first recommendations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/homepage-v1/styles.css" />
+  <link rel="stylesheet" href="/store/styles.css" />
+</head>
+<body class="store-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="shell store-header-inner">
+      <a class="brand" href="/" aria-label="CRUVIT home">
+        <img src="/homepage-v1/assets/cruvit-logo.svg" alt="" width="36" height="36" />
+        <span>CRUVIT</span>
+      </a>
+      <nav class="store-nav" id="storeNav" aria-label="Store">
+        <a href="/store/">Store</a>
+        <a href="#categories">Categories</a>
+        <a href="#relevance">Why CRUVIT</a>
+        <a href="#trust">Trust</a>
+        <a href="/store/cart/" class="nav-cart">Cart</a>
+        <a href="/app">My Garden</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero store-hero" id="hero">
+      <div class="hero-media" aria-hidden="true">
+        <img src="/homepage-v1/assets/hero-garden.jpg" alt="" />
+        <div class="hero-veil"></div>
+      </div>
+      <div class="shell hero-copy">
+        <p class="eyebrow">CRUVIT Intelligent Store</p>
+        <h1>Products selected because they may fit your garden context.</h1>
+        <p class="lead">
+          The CRUVIT Store is built as part of Garden Intelligence —
+          curated for garden needs, not a generic dropshipping catalog.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#categories">Explore categories</a>
+          <a class="btn btn-ghost" href="/app">Open My Garden</a>
+        </div>
+        <p class="micro">No fake inventory. No invented ratings. Unknown stays unknown.</p>
+      </div>
+    </section>
+
+    <section class="section section-ivory" id="curation">
+      <div class="shell">
+        <div class="curation-panel">
+          <p class="section-kicker">Product-ready empty state</p>
+          <h2>CRUVIT is curating the first Store recommendations.</h2>
+          <p>
+            Real products will appear here only after commercial validation and Owner approval.
+            Until then, this Storefront is ready — without pretending products already exist.
+          </p>
+          <p>
+            <span class="unknown-chip">0 sellable products</span>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Store information architecture</p>
+          <h2>Curated categories for garden context.</h2>
+          <p class="section-lead">
+            A small set of customer-facing categories — ready for the first validated products.
+          </p>
+        </header>
+        <div class="category-grid" id="categoryGrid"></div>
+      </div>
+    </section>
+
+    <section class="section section-stone" id="relevance">
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Intelligent commerce differentiation</p>
+          <h2>Relevant to your garden because…</h2>
+          <p class="section-lead">
+            Generic ecommerce says “People also bought.”
+            CRUVIT aims for garden-context relevance — only when real context exists.
+          </p>
+        </header>
+        <div class="card-grid four premium-grid">
+          <article class="soft-card">
+            <h3>Climate / location</h3>
+            <p>Where available, guidance can consider place and climate context you choose to share.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Garden type</h3>
+            <p>Balcony, in-ground, container, and similar garden settings can shape what may fit.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Care need</h3>
+            <p>Watering, plant care, organization, and tools can map to a real garden need.</p>
+          </article>
+          <article class="soft-card">
+            <h3>Current plants</h3>
+            <p>When My Garden context exists, recommendations can stay closer to the garden you grow.</p>
+          </article>
+        </div>
+        <p class="section-lead" style="margin:1.5rem auto 0;text-align:center;max-width:40rem">
+          CRUVIT does not claim live recommendation scoring on this Storefront until that capability is connected with real product data.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section-ivory" id="card-contract">
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Product card contract</p>
+          <h2>One authoritative card for future real products.</h2>
+          <p class="section-lead">
+            Structure only. Marked <strong>DEMO_PREVIEW_ONLY</strong> — not inventory, not for sale.
+          </p>
+        </header>
+        <div style="max-width:22rem;margin:0 auto" id="demoCard"></div>
+        <p style="text-align:center;margin:1.25rem 0 0">
+          <a class="btn btn-ghost" href="/store/product/preview/">View product detail template</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="trust">
+      <div class="shell">
+        <header class="section-head">
+          <p class="section-kicker">Trust &amp; transparency</p>
+          <h2>Commercial clarity before the first purchase.</h2>
+        </header>
+        <div class="trust-grid">
+          <article class="soft-card">
+            <h3>Shipping</h3>
+            <p>Customer shipping expectations require Owner operating policy before public promises.</p>
+            <p><a href="/store/policies/shipping/">Shipping policy status</a></p>
+          </article>
+          <article class="soft-card">
+            <h3>Returns</h3>
+            <p>Returns and refunds require Owner operating policy before public promises.</p>
+            <p><a href="/store/policies/returns/">Returns policy status</a></p>
+          </article>
+          <article class="soft-card">
+            <h3>Privacy &amp; contact</h3>
+            <p>Privacy notice exists for early-access validation. Store terms still need Owner input.</p>
+            <p><a href="/privacy/">Privacy</a> · <a href="/store/policies/terms/">Terms status</a></p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="store-footer">
+    <div class="shell footer-grid">
+      <div>
+        <h3>CRUVIT Store</h3>
+        <p>Garden Intelligence → trusted products when commercially validated.</p>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <a href="/store/">Store home</a>
+        <a href="/store/cart/">Cart</a>
+        <a href="/app">My Garden</a>
+        <a href="/">CRUVIT home</a>
+      </div>
+      <div>
+        <h3>Policies</h3>
+        <a href="/privacy/">Privacy</a>
+        <a href="/store/policies/shipping/">Shipping</a>
+        <a href="/store/policies/returns/">Returns</a>
+        <a href="/store/policies/terms/">Terms</a>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:office@cruvit.com">office@cruvit.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const grid = document.getElementById("categoryGrid");
+      const demoCard = document.getElementById("demoCard");
+
+      function cardHtml(demo) {
+        const relevance = demo.relevanceCue
+          ? `<p class="relevance">Why this may fit your garden: ${demo.relevanceCue}</p>`
+          : `<p class="relevance">Relevance cue appears only when backed by real CRUVIT context.</p>`;
+        return `
+          <article class="product-card" data-demo-preview-only="true">
+            <div class="media">
+              <span class="badge">DEMO_PREVIEW_ONLY</span>
+              <span>Real product image when approved</span>
+            </div>
+            <div class="body">
+              <h3>${demo.title}</h3>
+              <p class="price">${demo.priceLabel} <span>not for sale</span></p>
+              <p class="use-case">${demo.useCase}</p>
+              <p class="availability">${demo.availability}</p>
+              <p class="shipping">Shipping: ${demo.shipping}</p>
+              ${relevance}
+              <div class="actions">
+                <button type="button" class="btn btn-primary" disabled>Add to cart unavailable</button>
+              </div>
+            </div>
+          </article>`;
+      }
+
+      fetch("/store/catalog.json")
+        .then((r) => r.json())
+        .then((data) => {
+          if (!Array.isArray(data.sellableProducts) || data.sellableProducts.length !== 0) {
+            console.warn("Store readiness expects empty sellableProducts until Owner approval.");
+          }
+          grid.innerHTML = (data.categories || [])
+            .map(
+              (c) => `
+            <article class="category-card" id="${c.id}">
+              <img src="${c.image}" alt="" />
+              <div class="body">
+                <h3>${c.name}</h3>
+                <p>${c.description}</p>
+                <span class="status">Curating</span>
+              </div>
+            </article>`,
+            )
+            .join("");
+          demoCard.innerHTML = cardHtml(data.demoPreviewOnlyProductCard);
+        })
+        .catch(() => {
+          grid.innerHTML = "<p class=\"section-lead\">Categories unavailable.</p>";
+        });
+    })();
+  </script>
+</body>
+</html>
