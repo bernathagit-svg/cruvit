@@ -36,6 +36,8 @@ export const REQUIRED_DEPLOY_SENTINELS = Object.freeze([
   'modules/identity/plant-identity-shadow.js',
   'homepage-v1/index.html',
   'homepage-v1/styles.css',
+  'store/index.html',
+  'store/styles.css',
   'netlify.toml',
   'netlify/functions',
 ]);
@@ -73,6 +75,7 @@ const NEVER_PRUNE_PREFIXES = Object.freeze([
   'wtp-premium-v1/',
   'privacy/',
   'homepage-v1/',
+  'store/',
 ]);
 
 const NEVER_PRUNE_EXACT = Object.freeze([
