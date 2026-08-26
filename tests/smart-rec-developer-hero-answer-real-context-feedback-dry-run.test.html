@@ -41,12 +41,15 @@
   .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 12px; margin-top: 20px; }
   .dev-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 8px 0; color: #3d5c3d; }
   .dev-details[open] summary { margin-bottom: 12px; }
-  .feedback-light.hebrew { direction: rtl; text-align: right; margin-top: 20px; padding-top: 16px; border-top: 1px solid #d4e4d4; }
-  .feedback-light h2 { font-size: 1rem; margin: 0 0 4px; }
-  .feedback-light .sub { margin: 0 0 12px; font-size: 0.88rem; line-height: 1.45; }
+  .feedback-light.hebrew { direction: rtl; text-align: right; margin-top: 16px; }
+  .feedback-cta-card { background: #fdfef8; border: 1px solid #9cb89c; border-radius: 12px; padding: 16px 18px; box-shadow: 0 2px 8px rgba(40, 70, 40, 0.06); }
+  .feedback-cta-card h2 { font-size: 1.02rem; margin: 0 0 6px; font-weight: 600; color: #1a3a1a; }
+  .feedback-cta-card .sub { margin: 0 0 12px; font-size: 0.88rem; line-height: 1.45; opacity: 0.92; }
+  .feedback-cta-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 4px; }
+  .feedback-skip-note { margin: 8px 0 0; font-size: 0.85rem; opacity: 0.75; }
   .feedback-light label { font-size: 0.88rem; margin-top: 8px; }
   .feedback-light textarea { min-height: 44px; font-size: 0.9rem; }
-  .feedback-panel { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #d4e4d4; }
+  .feedback-panel { margin-top: 12px; padding-top: 12px; border-top: 1px dashed #d4e4d4; }
   .feedback-panel[hidden] { display: none; }
   .feedback-actions { margin-top: 12px; }
   .dev-harness { margin-bottom: 16px; opacity: 0.92; }
@@ -93,9 +96,14 @@
     <div class="owner-top hebrew" id="panel-owner-top"></div>
 
     <div class="feedback-light hebrew" id="feedback-section">
-      <h2 id="feedback-heading">רוצה לעזור ל־CRUVIT לדייק בפעם הבאה?</h2>
-      <p class="sub" id="feedback-note">אפשר להמשיך בלי למלא משוב. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין מה היה שימושי ומה כדאי לשפר.</p>
-      <button type="button" id="btn-toggle-feedback" class="secondary">השארת משוב קצר</button>
+      <div class="feedback-cta-card" id="feedback-cta-card">
+        <h2 id="feedback-heading">רוצה לתת משוב קצר?</h2>
+        <p class="sub" id="feedback-note">לא חובה. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין אם התשובה הייתה שימושית ומה כדאי לשפר בפעם הבאה.</p>
+        <div class="feedback-cta-actions">
+          <button type="button" id="btn-toggle-feedback">השארת משוב קצר</button>
+        </div>
+        <p class="feedback-skip-note" id="feedback-skip-note">אפשר להמשיך בלי משוב</p>
+      </div>
       <div id="feedback-panel" class="feedback-panel" hidden>
         <form id="feedbackForm">
         <label for="fb-didUserAct" id="lbl-didUserAct">didUserAct</label>
@@ -159,8 +167,9 @@
   var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
   var OPTIONAL_PRECISION_HEADING = 'רוצה לדייק את הבחירה?';
   var OPTIONAL_PRECISION_NOTE = 'אפשר להמשיך גם בלי זה, אבל רמת הביטחון תישאר נמוכה יותר.';
-  var FEEDBACK_OPTIONAL_HEADING = 'רוצה לעזור ל־CRUVIT לדייק בפעם הבאה?';
-  var FEEDBACK_OPTIONAL_NOTE = 'אפשר להמשיך בלי למלא משוב. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין מה היה שימושי ומה כדאי לשפר.';
+  var FEEDBACK_CTA_HEADING = 'רוצה לתת משוב קצר?';
+  var FEEDBACK_CTA_NOTE = 'לא חובה. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין אם התשובה הייתה שימושית ומה כדאי לשפר בפעם הבאה.';
+  var FEEDBACK_SKIP_NOTE = 'אפשר להמשיך בלי משוב';
   var FEEDBACK_TOGGLE_LABEL = 'השארת משוב קצר';
   var FEEDBACK_SAVE_LABEL = 'שמירת משוב בזיכרון הבדיקה';
   var DEV_METRIC_TOKENS = [
@@ -361,6 +370,13 @@
     var panel = $('feedback-panel');
     if (!panel) return;
     panel.hidden = !show;
+    if ($('btn-save-feedback')) {
+      $('btn-save-feedback').disabled = !show;
+    }
+  }
+
+  function openFeedbackForm() {
+    toggleFeedbackPanel(true);
   }
 
   function ownerFacingHasInternalToken(text) {
@@ -526,7 +542,10 @@
     applyFeedbackLabels(sk.feedbackOutcomePrompt || {});
     toggleFeedbackPanel(false);
     $('panel-captured').style.display = 'none';
-    $('btn-save-feedback').disabled = false;
+    if ($('btn-save-feedback')) {
+      $('btn-save-feedback').textContent = FEEDBACK_SAVE_LABEL;
+      $('btn-save-feedback').disabled = true;
+    }
     $('heroRender').className = 'visible';
   }
 
@@ -639,19 +658,38 @@
       ownerText.indexOf('FAIL') === -1,
       'owner top clean of dev metrics');
 
-    expect('feedback framed as optional and collapsed by default',
-      document.querySelector('#feedback-heading') &&
-      document.querySelector('#feedback-heading').textContent === FEEDBACK_OPTIONAL_HEADING &&
-      document.querySelector('#feedback-note').textContent.indexOf('אפשר להמשיך בלי למלא משוב') >= 0 &&
-      $('btn-toggle-feedback').textContent === FEEDBACK_TOGGLE_LABEL &&
-      $('feedback-panel').hidden === true,
-      FEEDBACK_OPTIONAL_HEADING);
+    expect('visible feedback CTA card exists in owner-facing section',
+      document.querySelector('#feedback-cta-card') !== null &&
+      document.querySelector('#feedback-heading').textContent === FEEDBACK_CTA_HEADING &&
+      document.querySelector('#feedback-note').textContent === FEEDBACK_CTA_NOTE &&
+      document.querySelector('#feedback-skip-note').textContent === FEEDBACK_SKIP_NOTE &&
+      $('btn-toggle-feedback').textContent === FEEDBACK_TOGGLE_LABEL,
+      FEEDBACK_CTA_HEADING);
+
+    expect('feedback form collapsed by default',
+      $('feedback-panel').hidden === true &&
+      $('feedbackForm').offsetParent === null,
+      'form hidden');
 
     expect('feedback form not forced before reading answer',
       $('panel-owner-top').innerText.indexOf('תשובת CRUVIT לגינה הזאת') >= 0 &&
       $('heroRender').className === 'visible' &&
       $('feedback-panel').hidden === true,
       'answer visible without feedback');
+
+    expect('clicking feedback CTA opens the form',
+      (function () {
+        $('btn-toggle-feedback').click();
+        return $('feedback-panel').hidden === false &&
+          $('btn-save-feedback').disabled === false &&
+          $('feedbackForm').querySelector('textarea') !== null;
+      })(),
+      'cta opens form');
+
+    expect('feedback framed as optional with skip path',
+      document.querySelector('#feedback-skip-note').textContent.indexOf('בלי משוב') >= 0 &&
+      document.querySelector('#feedback-note').textContent.indexOf('לא חובה') >= 0,
+      FEEDBACK_SKIP_NOTE);
 
     expect('owner-facing top introduces no forbidden claims',
       !serializedHasForbiddenClaims(ownerText) &&
@@ -816,11 +854,7 @@
   }
 
   $('btn-run').addEventListener('click', runSurface);
-  $('btn-toggle-feedback').addEventListener('click', function () {
-    var panel = $('feedback-panel');
-    if (!panel) return;
-    toggleFeedbackPanel(panel.hidden);
-  });
+  $('btn-toggle-feedback').addEventListener('click', openFeedbackForm);
   $('btn-save-feedback').addEventListener('click', captureFeedbackInMemory);
   $('btn-reset').addEventListener('click', function () {
     results = [];
