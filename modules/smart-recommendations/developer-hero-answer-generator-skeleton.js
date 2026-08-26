@@ -429,7 +429,13 @@ function buildTradeOffs(contextPacket) {
   return uniqueStrings(tradeOffs);
 }
 
-function buildRecommendedNextAction(reviewGate) {
+function buildRecommendedNextAction(reviewGate, feedbackInfluence) {
+  if (feedbackInfluence && feedbackInfluence.appliedToNextAnswer) {
+    return (
+      'התשובה הבאה תישאר קצרה. אפשר להשלים רק את ההשקיה, עומק הקרקע והרוח/קרה — ' +
+      'ואז לבדוק את האיזון בין פריחה להימנעות מחרקים/צרעות, בלי שאלון ארוך.'
+    );
+  }
   if (reviewGate === 'stop_not_enough_information') {
     return 'השלם את פרטי אזור הגינה והמטרה לפני המשך.';
   }
@@ -440,6 +446,199 @@ function buildRecommendedNextAction(reviewGate) {
     return 'המתן לבדיקה פנימית לפני שימוש בתשובה מחוץ למסלול הפיתוח.';
   }
   return 'המשך באיסוף מידע נמוך-סיכון לפני כל החלטת שתילה.';
+}
+
+const FEEDBACK_FOCUS_GAP_GROUPS = Object.freeze([
+  { area: 'irrigation', gaps: ['exact_irrigation_schedule', 'siteConditions.wateringMethod'] },
+  { area: 'soil_depth', gaps: ['soil_depth'] },
+  { area: 'wind_frost', gaps: ['wind_exposure', 'exact_winter_frost_frequency'] },
+  { area: 'flowering_vs_wasps', gaps: ['flowering_vs_wasps_insects_tradeoff'] }
+]);
+
+function isUnknownOutcomeText(value) {
+  if (!isNonEmptyString(value)) return true;
+  const normalized = value.trim().toLowerCase();
+  return (
+    normalized === 'unknown' ||
+    normalized === 'לא ידוע' ||
+    normalized.indexOf('לא ידוע') >= 0 ||
+    normalized.indexOf('unknown') >= 0
+  );
+}
+
+function extractLatestFeedbackRecord(gardenMemory, contextPacket) {
+  const raw = asObject(gardenMemory) || {};
+  const ctx = asObject(contextPacket) || {};
+  const lists = [];
+  if (Array.isArray(raw.feedbackHistory)) lists.push(raw.feedbackHistory);
+  if (Array.isArray(raw.outcomeHistory)) lists.push(raw.outcomeHistory);
+  if (Array.isArray(ctx.outcomeHistory)) lists.push(ctx.outcomeHistory);
+
+  for (let i = 0; i < lists.length; i++) {
+    const list = lists[i];
+    for (let j = list.length - 1; j >= 0; j--) {
+      const entry = asObject(list[j]);
+      if (!entry) continue;
+      const feedback = asObject(entry.feedback) || entry;
+      if (
+        feedback &&
+        (isNonEmptyString(feedback.changeNextRecommendation) ||
+          isNonEmptyString(feedback.userSatisfaction) ||
+          isNonEmptyString(feedback.didUserAct))
+      ) {
+        return freezeDeep({ entry: entry, feedback: feedback });
+      }
+    }
+  }
+  return null;
+}
+
+function classifyFeedbackType(feedback) {
+  const fb = asObject(feedback) || {};
+  const didAct = String(fb.didUserAct || '').trim().toLowerCase();
+  const later = fb.laterOutcome;
+  if (didAct === 'no' || didAct === 'false') {
+    if (isUnknownOutcomeText(later)) return 'feedback_only_not_outcome';
+  }
+  if (didAct === 'yes' || didAct === 'true') {
+    if (!isUnknownOutcomeText(later)) return 'outcome_observed';
+    return 'feedback_only_not_outcome';
+  }
+  if (isNonEmptyString(fb.changeNextRecommendation) || isNonEmptyString(fb.userSatisfaction)) {
+    return 'feedback_only_not_outcome';
+  }
+  return 'none';
+}
+
+function detectFeedbackSignals(feedback) {
+  const fb = asObject(feedback) || {};
+  const text = [
+    fb.changeNextRecommendation,
+    fb.userSatisfaction,
+    fb.actionTaken,
+    fb.maintenanceBurden
+  ]
+    .filter(isNonEmptyString)
+    .join(' ')
+    .toLowerCase();
+
+  const brevityRequested =
+    text.indexOf('קצר') >= 0 ||
+    text.indexOf('שאלון') >= 0 ||
+    text.indexOf('concise') >= 0;
+  const optionalQuestionsRequested =
+    text.indexOf('אופציונ') >= 0 ||
+    text.indexOf('optional') >= 0;
+
+  const focusAreas = [];
+  if (text.indexOf('השקיה') >= 0 || text.indexOf('water') >= 0) {
+    focusAreas.push('irrigation');
+  }
+  if (text.indexOf('עומק') >= 0 || text.indexOf('קרקע') >= 0 || text.indexOf('נפח') >= 0) {
+    focusAreas.push('soil_depth');
+  }
+  if (text.indexOf('רוח') >= 0 || text.indexOf('קרה') >= 0 || text.indexOf('frost') >= 0) {
+    focusAreas.push('wind_frost');
+  }
+  if (
+    (text.indexOf('פריח') >= 0 || text.indexOf('flower') >= 0) &&
+    (text.indexOf('צרע') >= 0 || text.indexOf('חרק') >= 0 || text.indexOf('wasp') >= 0)
+  ) {
+    focusAreas.push('flowering_vs_wasps');
+  }
+
+  return {
+    brevityRequested: brevityRequested,
+    optionalQuestionsRequested: optionalQuestionsRequested,
+    focusAreas: uniqueStrings(focusAreas)
+  };
+}
+
+function buildFeedbackInfluence(gardenMemory, contextPacket) {
+  const latest = extractLatestFeedbackRecord(gardenMemory, contextPacket);
+  if (!latest) {
+    return freezeDeep({
+      hasFeedback: false,
+      feedbackType: 'none',
+      brevityRequested: false,
+      optionalQuestionsRequested: false,
+      focusAreas: [],
+      appliedToNextAnswer: false,
+      notes: 'No prior feedback available for answer revision.'
+    });
+  }
+
+  const feedbackType = classifyFeedbackType(latest.feedback);
+  const signals = detectFeedbackSignals(latest.feedback);
+  const hasRevisionSignals =
+    signals.brevityRequested ||
+    signals.optionalQuestionsRequested ||
+    signals.focusAreas.length > 0;
+  const appliedToNextAnswer =
+    feedbackType === 'feedback_only_not_outcome' && hasRevisionSignals;
+
+  let notes = 'Feedback preserved only; not treated as planted-outcome proof.';
+  if (appliedToNextAnswer) {
+    notes =
+      'Owner feedback #1 requests a shorter next answer, optional precision questions, ' +
+      'and focus on irrigation, soil depth, wind/frost, and flowering vs wasps/insects.';
+  }
+
+  return freezeDeep({
+    hasFeedback: true,
+    feedbackType: feedbackType,
+    brevityRequested: signals.brevityRequested,
+    optionalQuestionsRequested: signals.optionalQuestionsRequested,
+    focusAreas: signals.focusAreas,
+    appliedToNextAnswer: appliedToNextAnswer,
+    notes: notes
+  });
+}
+
+function prioritizePrecisionGaps(precisionGaps, feedbackInfluence) {
+  const gaps = uniqueStrings(precisionGaps || []);
+  if (!feedbackInfluence || !feedbackInfluence.appliedToNextAnswer) {
+    return freezeDeep(gaps);
+  }
+
+  const focusAreas =
+    feedbackInfluence.focusAreas && feedbackInfluence.focusAreas.length
+      ? feedbackInfluence.focusAreas.slice()
+      : ['irrigation', 'soil_depth', 'wind_frost', 'flowering_vs_wasps'];
+
+  const working = gaps.slice();
+  if (focusAreas.indexOf('flowering_vs_wasps') >= 0) {
+    if (working.indexOf('flowering_vs_wasps_insects_tradeoff') === -1) {
+      working.push('flowering_vs_wasps_insects_tradeoff');
+    }
+  }
+
+  const prioritized = [];
+  const seen = new Set();
+  for (let i = 0; i < focusAreas.length; i++) {
+    const area = focusAreas[i];
+    for (let g = 0; g < FEEDBACK_FOCUS_GAP_GROUPS.length; g++) {
+      const group = FEEDBACK_FOCUS_GAP_GROUPS[g];
+      if (group.area !== area) continue;
+      for (let k = 0; k < group.gaps.length; k++) {
+        const gap = group.gaps[k];
+        if (working.indexOf(gap) >= 0 && !seen.has(gap)) {
+          prioritized.push(gap);
+          seen.add(gap);
+        }
+      }
+    }
+  }
+
+  for (let j = 0; j < working.length; j++) {
+    const gap = working[j];
+    if (!seen.has(gap)) {
+      prioritized.push(gap);
+      seen.add(gap);
+    }
+  }
+
+  return freezeDeep(prioritized);
 }
 
 function assertPlantFreeSkeleton(skeleton) {
@@ -468,6 +667,11 @@ export function createHeroAnswerSkeleton(gardenMemory) {
       })
     )
   );
+  const feedbackInfluence = buildFeedbackInfluence(gardenMemory, contextUsed);
+  const revisedPrecisionGaps = prioritizePrecisionGaps(
+    precisionGaps,
+    feedbackInfluence
+  );
 
   const skeleton = {
     transparencyLabel: 'developer_skeleton_not_system_validation',
@@ -477,10 +681,11 @@ export function createHeroAnswerSkeleton(gardenMemory) {
     confidence: confidence,
     tradeOffs: buildTradeOffs(contextUsed),
     precisionGapsLabel: SR_HERO_PRECISION_GAPS_LABEL,
-    precisionGaps: precisionGaps,
+    precisionGaps: revisedPrecisionGaps,
     progressiveIntakeQuestions: progressiveIntakeQuestions,
-    recommendedNextAction: buildRecommendedNextAction(reviewGate),
+    recommendedNextAction: buildRecommendedNextAction(reviewGate, feedbackInfluence),
     feedbackOutcomePrompt: buildOutcomeFeedbackPrompt(),
+    feedbackInfluence: feedbackInfluence,
     reviewGate: reviewGate,
     developerOnly: true,
     syntheticOnly: contextUsed.syntheticOnly === true,

@@ -38,6 +38,7 @@
   .optional-note { margin: 0 0 10px; font-size: 0.88rem; opacity: 0.9; line-height: 1.45; }
   .question-card.optional { border-style: dashed; background: #fafcfa; font-size: 0.9rem; }
   .question-cards.optional { margin-bottom: 0; }
+  .next-step-line { margin: 0 0 12px; font-size: 0.9rem; line-height: 1.45; opacity: 0.92; }
   .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 12px; margin-top: 20px; }
   .dev-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 8px 0; color: #3d5c3d; }
   .dev-details[open] summary { margin-bottom: 12px; }
@@ -146,6 +147,7 @@
         <tbody id="rows"></tbody>
       </table>
       <div class="panel" id="panel-context"></div>
+      <div class="panel" id="panel-feedback-comparison"></div>
       <div class="panel" id="panel-goal"></div>
       <div class="panel" id="panel-gate"></div>
       <div class="panel" id="panel-gaps"></div>
@@ -271,10 +273,25 @@
     outcomeHistory: []
   };
 
+  var OWNER_FEEDBACK_1 = {
+    didUserAct: 'no',
+    actionTaken: 'לא בוצע',
+    laterOutcome: 'לא ידוע עדיין',
+    pestsInsectsWasps: 'לא ידוע עדיין',
+    maintenanceBurden: 'לא ידוע עדיין',
+    userSatisfaction: 'חלקית',
+    changeNextRecommendation:
+      'התשובה צריכה להישאר קצרה ולא להרגיש כמו שאלון. שאלות הדיוק והמשוב צריכים להיות אופציונליים. ' +
+      'בתשובה הבאה CRUVIT צריכה להתמקד רק במה שהכי משפיע על בחירת צמח: השקיה, עומק קרקע, רוח/קרה, ' +
+      'והאיזון בין פריחה לבין הימנעות מצרעות/חרקים.'
+  };
+
   var results = [];
   var storageMutationCount = 0;
   var externalApiRequests = 0;
   var skeleton = null;
+  var baselineSkeleton = null;
+  var feedbackInformedSkeleton = null;
   var descriptor = null;
   var inMemoryFeedback = null;
   var restoreGuardsFn = null;
@@ -387,17 +404,50 @@
     return null;
   }
 
+  function buildFeedbackInformedPacket() {
+    var packet = JSON.parse(JSON.stringify(OWNER_PACKET));
+    packet.outcomeHistory = [{
+      source: 'owner_feedback_dry_run_1',
+      capturedAt: '2026-08-26T19:00:00.000Z',
+      feedback: JSON.parse(JSON.stringify(OWNER_FEEDBACK_1))
+    }];
+    return packet;
+  }
+
+  function focusAreaLabel(area) {
+    if (area === 'irrigation') return 'השקיה';
+    if (area === 'soil_depth') return 'עומק קרקע';
+    if (area === 'wind_frost') return 'רוח/קרה';
+    if (area === 'flowering_vs_wasps') return 'פריחה מול חרקים/צרעות';
+    return area;
+  }
+
   function renderHumanReadable(sk) {
     var ctx = sk.contextUsed || {};
     var site = ctx.siteConditions || {};
     var prefs = ctx.preferencesConstraints || {};
     var wallSqm = prefs.wallAreaApproxSqm || 12;
+    var influence = sk.feedbackInfluence || {};
     var nextQuestions = buildOwnerNextQuestions();
     ownerQuestionCount = nextQuestions.length;
 
     var questionCards = nextQuestions.map(function (q) {
       return '<div class="question-card optional">' + esc(q) + '</div>';
     }).join('');
+
+    var focusNote = '';
+    if (influence.appliedToNextAnswer && influence.focusAreas && influence.focusAreas.length) {
+      focusNote =
+        '<p class="optional-note">בהתאם למשוב שלך, המיקוד הבא יהיה: ' +
+        influence.focusAreas.map(focusAreaLabel).join(' · ') +
+        '.</p>';
+    }
+
+    var nextStepHtml = '';
+    if (influence.appliedToNextAnswer && sk.recommendedNextAction) {
+      nextStepHtml =
+        '<p class="next-step-line">' + esc(sk.recommendedNextAction) + '</p>';
+    }
 
     $('panel-owner-top').innerHTML =
       '<div class="decision-card">' +
@@ -421,6 +471,8 @@
             '<li>לכן CRUVIT עדיין לא בוחרת צמח ולא נותנת ציון התאמה.</li>' +
           '</ul>' +
         '</div>' +
+        focusNote +
+        nextStepHtml +
         '<div class="optional-precision">' +
           '<h3 class="section-label">' + esc(OPTIONAL_PRECISION_HEADING) + '</h3>' +
           '<p class="optional-note">' + esc(OPTIONAL_PRECISION_NOTE) +
@@ -428,6 +480,21 @@
           '<div id="owner-next-questions" class="question-cards optional">' + questionCards + '</div>' +
         '</div>' +
       '</div>';
+  }
+
+  function renderFeedbackComparison(baseline, informed) {
+    if (!$('panel-feedback-comparison')) return;
+    $('panel-feedback-comparison').innerHTML =
+      '<strong>Baseline vs feedback-informed answer #2 (developer)</strong>' +
+      '<dl>' +
+      '<dt>baseline reviewGate</dt><dd>' + esc(baseline.reviewGate) + '</dd>' +
+      '<dt>feedback-informed reviewGate</dt><dd>' + esc(informed.reviewGate) + '</dd>' +
+      '<dt>baseline recommendedNextAction</dt><dd>' + esc(baseline.recommendedNextAction) + '</dd>' +
+      '<dt>feedback-informed recommendedNextAction</dt><dd>' + esc(informed.recommendedNextAction) + '</dd>' +
+      '<dt>baseline precisionGaps</dt><dd>' + esc((baseline.precisionGaps || []).join(', ')) + '</dd>' +
+      '<dt>feedback-informed precisionGaps</dt><dd>' + esc((informed.precisionGaps || []).join(', ')) + '</dd>' +
+      '<dt>feedbackInfluence</dt><dd>' + esc(JSON.stringify(informed.feedbackInfluence || {})) + '</dd>' +
+      '</dl>';
   }
 
   function applyFeedbackLabels(prompt) {
@@ -696,6 +763,13 @@
       ownerText.indexOf(FORBIDDEN_LABEL) === -1 &&
       !serializedHasRealPlantName(ownerText),
       'owner text clean');
+
+    if (skeleton && skeleton.feedbackInfluence && skeleton.feedbackInfluence.appliedToNextAnswer) {
+      expect('feedback-informed owner view shows applied focus note',
+        ownerText.indexOf('בהתאם למשוב שלך, המיקוד הבא יהיה:') >= 0 &&
+        ownerText.indexOf('השקיה') >= 0,
+        'owner focus note');
+    }
   }
 
   function runChecks(mod) {
@@ -782,6 +856,75 @@
       OWNER_PACKET.dataBoundary);
   }
 
+  function runFeedbackInfluenceChecks(mod) {
+    baselineSkeleton = mod.createHeroAnswerSkeleton(JSON.parse(JSON.stringify(OWNER_PACKET)));
+    feedbackInformedSkeleton = mod.createHeroAnswerSkeleton(buildFeedbackInformedPacket());
+    skeleton = feedbackInformedSkeleton;
+    var baseline = baselineSkeleton;
+    var informed = feedbackInformedSkeleton;
+    var fi = informed.feedbackInfluence || {};
+    var informedSer = JSON.stringify(informed);
+
+    expect('baseline vs feedback-informed produce different next-answer behavior',
+      baseline.recommendedNextAction !== informed.recommendedNextAction ||
+      JSON.stringify(baseline.precisionGaps) !== JSON.stringify(informed.precisionGaps),
+      'behavior diff');
+
+    expect('feedbackInfluence.hasFeedback true',
+      fi.hasFeedback === true,
+      String(fi.hasFeedback));
+
+    expect('feedbackInfluence.appliedToNextAnswer true',
+      fi.appliedToNextAnswer === true,
+      String(fi.appliedToNextAnswer));
+
+    expect('feedbackInfluence.feedbackType feedback_only_not_outcome',
+      fi.feedbackType === 'feedback_only_not_outcome',
+      fi.feedbackType);
+
+    expect('feedbackInfluence.brevityRequested true',
+      fi.brevityRequested === true,
+      String(fi.brevityRequested));
+
+    expect('feedbackInfluence.optionalQuestionsRequested true',
+      fi.optionalQuestionsRequested === true,
+      String(fi.optionalQuestionsRequested));
+
+    expect('feedbackInfluence.focusAreas include required focus set',
+      fi.focusAreas.indexOf('irrigation') >= 0 &&
+      fi.focusAreas.indexOf('soil_depth') >= 0 &&
+      fi.focusAreas.indexOf('wind_frost') >= 0 &&
+      fi.focusAreas.indexOf('flowering_vs_wasps') >= 0,
+      (fi.focusAreas || []).join(','));
+
+    expect('recommendedNextAction changes compared with baseline',
+      informed.recommendedNextAction !== baseline.recommendedNextAction,
+      informed.recommendedNextAction);
+
+    expect('precision gaps prioritize feedback focus order',
+      informed.precisionGaps[0] === 'exact_irrigation_schedule' &&
+      informed.precisionGaps.indexOf('soil_depth') >= 0 &&
+      informed.precisionGaps.indexOf('flowering_vs_wasps_insects_tradeoff') >= 0,
+      (informed.precisionGaps || []).join(','));
+
+    expect('prioritized precision focus visible in feedback-informed answer',
+      informed.recommendedNextAction.indexOf('השקיה') >= 0 &&
+      informed.recommendedNextAction.indexOf('עומק הקרקע') >= 0,
+      informed.recommendedNextAction);
+
+    expect('feedback-informed skeleton remains plant-free and authority-safe',
+      informed.doesNotRecommendPlants === true &&
+      informed.doesNotNamePlantCandidates === true &&
+      informed.doesNotGrantFinalSuitability === true &&
+      informed.recommendationAuthority === false &&
+      informed.plantSuitabilityAuthority === false &&
+      !serializedHasRealPlantName(informedSer) &&
+      !serializedHasForbiddenClaims(informedSer),
+      'safe skeleton');
+
+    renderFeedbackComparison(baseline, informed);
+  }
+
   function captureFeedbackInMemory() {
     var captured = {};
     FEEDBACK_KEYS.forEach(function (key) {
@@ -826,6 +969,7 @@
       $('banner').textContent = 'Running owner real-context Hero Answer dry surface…';
       var mod = await import('../modules/smart-recommendations/developer-hero-answer-generator-skeleton.js');
       runChecks(mod);
+      runFeedbackInfluenceChecks(mod);
       renderHeroAnswer(skeleton);
       runReadabilityChecks();
       $('banner').textContent = 'Hero Answer rendered. Owner view ready — feedback optional.';
@@ -859,6 +1003,8 @@
   $('btn-reset').addEventListener('click', function () {
     results = [];
     skeleton = null;
+    baselineSkeleton = null;
+    feedbackInformedSkeleton = null;
     descriptor = null;
     inMemoryFeedback = null;
     ownerQuestionCount = 0;
