@@ -218,7 +218,17 @@ export function normalizeGardenMemory(gardenMemory) {
       pestInsectConcern: prefs.pestInsectConcern || 'unknown',
       petsSafetyConcern: prefs.petsSafetyConcern === true,
       childrenSafetyConcern: prefs.childrenSafetyConcern === true,
-      toxicityConcern: prefs.toxicityConcern === true
+      toxicityConcern: prefs.toxicityConcern === true,
+      avoidWasps: prefs.avoidWasps === true,
+      avoidInsectAttraction: prefs.avoidInsectAttraction === true,
+      coverageSpeed: isNonEmptyString(prefs.coverageSpeed)
+        ? prefs.coverageSpeed.trim()
+        : 'unknown',
+      wallAreaApproxSqm:
+        typeof prefs.wallAreaApproxSqm === 'number' &&
+        Number.isFinite(prefs.wallAreaApproxSqm)
+          ? prefs.wallAreaApproxSqm
+          : null
     },
     knownUnknowns: collectKnownUnknowns(packet),
     priorCorrections: Array.isArray(packet.priorCorrections)

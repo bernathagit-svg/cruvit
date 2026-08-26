@@ -256,7 +256,11 @@
           },
           preferencesConstraints: {
             floweringImportance: 'high',
-            maintenanceTolerance: 'medium'
+            maintenanceTolerance: 'medium',
+            avoidWasps: true,
+            avoidInsectAttraction: true,
+            coverageSpeed: 'fast_preferred',
+            wallAreaApproxSqm: 12
           },
           knownUnknowns: ['orientation'],
           sourceLabels: {
@@ -439,6 +443,22 @@
         normalized.knownUnknowns.indexOf('orientation') >= 0 &&
         normalized.syntheticOnly === true,
         JSON.stringify(normalized.gardenZone));
+
+      expect('2b real-context preference constraints preserved in normalizeGardenMemory',
+        normalized.preferencesConstraints.avoidWasps === true &&
+        normalized.preferencesConstraints.avoidInsectAttraction === true &&
+        normalized.preferencesConstraints.coverageSpeed === 'fast_preferred' &&
+        normalized.preferencesConstraints.wallAreaApproxSqm === 12,
+        JSON.stringify(normalized.preferencesConstraints));
+
+      expect('2c real-context preference constraints surfaced in contextUsed',
+        complete.skeleton.contextUsed &&
+        complete.skeleton.contextUsed.preferencesConstraints &&
+        complete.skeleton.contextUsed.preferencesConstraints.avoidWasps === true &&
+        complete.skeleton.contextUsed.preferencesConstraints.avoidInsectAttraction === true &&
+        complete.skeleton.contextUsed.preferencesConstraints.coverageSpeed === 'fast_preferred' &&
+        complete.skeleton.contextUsed.preferencesConstraints.wallAreaApproxSqm === 12,
+        JSON.stringify(complete.skeleton.contextUsed && complete.skeleton.contextUsed.preferencesConstraints));
 
       var askGaps = mod.detectCriticalGaps(mod.normalizeGardenMemory(clone(ask.packet.memory)));
       var stopGaps = mod.detectCriticalGaps(mod.normalizeGardenMemory(clone(stop.packet.memory)));
