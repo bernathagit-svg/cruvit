@@ -34,7 +34,10 @@
   .section-label { font-size: 0.98rem; margin: 0 0 10px; font-weight: 600; color: #1a3a1a; }
   .question-cards { display: grid; gap: 8px; margin-bottom: 10px; }
   .question-card { background: #fff; border: 1px solid #c5d4c5; border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; line-height: 1.4; }
-  .next-step-line { margin: 0; font-size: 0.9rem; opacity: 0.88; line-height: 1.45; }
+  .optional-precision { margin-top: 4px; padding-top: 12px; border-top: 1px dashed #d4e4d4; }
+  .optional-note { margin: 0 0 10px; font-size: 0.88rem; opacity: 0.9; line-height: 1.45; }
+  .question-card.optional { border-style: dashed; background: #fafcfa; font-size: 0.9rem; }
+  .question-cards.optional { margin-bottom: 0; }
   .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 12px; margin-top: 20px; }
   .dev-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 8px 0; color: #3d5c3d; }
   .dev-details[open] summary { margin-bottom: 12px; }
@@ -140,6 +143,8 @@
   var PASS_VERDICT = 'HERO_REAL_CONTEXT_DRY_SURFACE_PASS';
   var FAIL_VERDICT = 'HERO_REAL_CONTEXT_DRY_SURFACE_FAIL';
   var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
+  var OPTIONAL_PRECISION_HEADING = 'רוצה לדייק את הבחירה?';
+  var OPTIONAL_PRECISION_NOTE = 'אפשר להמשיך גם בלי זה, אבל רמת הביטחון תישאר נמוכה יותר.';
   var FORBIDDEN_LABEL = 'מה CRUVIT עדיין לא יודעת';
   var FEEDBACK_KEYS = [
     'didUserAct',
@@ -335,7 +340,7 @@
     ownerQuestionCount = nextQuestions.length;
 
     var questionCards = nextQuestions.map(function (q) {
-      return '<div class="question-card">' + esc(q) + '</div>';
+      return '<div class="question-card optional">' + esc(q) + '</div>';
     }).join('');
 
     $('panel-owner-top').innerHTML =
@@ -360,9 +365,12 @@
             '<li>לכן CRUVIT עדיין לא בוחרת צמח ולא נותנת ציון התאמה.</li>' +
           '</ul>' +
         '</div>' +
-        '<h3 class="section-label">' + esc(PRECISION_LABEL) + '</h3>' +
-        '<div id="owner-next-questions" class="question-cards">' + questionCards + '</div>' +
-        '<p class="next-step-line">אחרי שלושת הפרטים האלה, CRUVIT תוכל לצמצם אפשרויות בצורה בטוחה יותר.</p>' +
+        '<div class="optional-precision">' +
+          '<h3 class="section-label">' + esc(OPTIONAL_PRECISION_HEADING) + '</h3>' +
+          '<p class="optional-note">' + esc(OPTIONAL_PRECISION_NOTE) +
+            ' התשובה למעלה כבר שימושית — השאלות הבאות אופציונליות.</p>' +
+          '<div id="owner-next-questions" class="question-cards optional">' + questionCards + '</div>' +
+        '</div>' +
       '</div>';
   }
 
@@ -555,18 +563,23 @@
       ownerText.indexOf('ציון התאמה') >= 0,
       'notice bullets ok');
 
-    expect('exactly 3 next-question cards rendered',
+    expect('exactly 3 optional next-question cards rendered',
       questionCards.length === 3 &&
+      ownerTop.querySelector('.optional-precision') !== null &&
       OWNER_NEXT_QUESTIONS.every(function (q, idx) {
-        return (questionCards[idx].innerText || '').trim() === q;
+        return (questionCards[idx].innerText || '').trim() === q &&
+          questionCards[idx].classList.contains('optional');
       }),
       String(questionCards.length));
 
-    expect('clear next step line present',
-      ownerText.indexOf('אחרי שלושת הפרטים האלה') >= 0 &&
-      ownerText.indexOf(PRECISION_LABEL) >= 0 &&
+    expect('precision questions framed as optional',
+      ownerText.indexOf(OPTIONAL_PRECISION_HEADING) >= 0 &&
+      ownerText.indexOf(OPTIONAL_PRECISION_NOTE) >= 0 &&
+      ownerText.indexOf('שימושית') >= 0 &&
+      ownerText.indexOf('אופציונליות') >= 0 &&
+      ownerText.indexOf('אחרי שלושת הפרטים האלה') === -1 &&
       ownerText.indexOf(FORBIDDEN_LABEL) === -1,
-      PRECISION_LABEL);
+      OPTIONAL_PRECISION_HEADING);
 
     expect('developer technical section remains available collapsed',
       ($('panel-context').innerHTML || '').indexOf('Western Galilee') >= 0 &&
