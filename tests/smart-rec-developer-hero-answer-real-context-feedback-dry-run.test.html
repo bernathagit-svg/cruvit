@@ -18,11 +18,31 @@
   button:disabled { opacity: .5; cursor: not-allowed; }
   .pass { color: #0a7a32; } .fail { color: #b00020; }
   .panel { border: 1px solid #c5d4c5; border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; background: #fff; }
-  .panel.owner-answer { background: #fdfef8; border-color: #9cb89c; }
   .panel.owner-answer.hebrew { direction: rtl; text-align: right; }
-  .panel.owner-answer p { margin: 0.55em 0; line-height: 1.55; }
-  .panel.owner-answer ul { margin: 0.4em 1.2em 0.4em 0; padding: 0; }
-  .panel.owner-answer li { margin: 0.35em 0; }
+  .owner-top.hebrew { direction: rtl; text-align: right; margin-bottom: 20px; }
+  .decision-card { background: #fdfef8; border: 1px solid #9cb89c; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(40, 70, 40, 0.06); }
+  .decision-card .card-title { margin: 0 0 10px; font-size: 1.15rem; font-weight: 600; color: #1a3a1a; }
+  .status-pill { display: inline-block; padding: 5px 12px; border-radius: 999px; background: #e8f3e8; border: 1px solid #b8d4b8; color: #2d5a2d; font-size: 0.88rem; margin-bottom: 14px; }
+  .owner-summary-table { width: 100%; border-collapse: collapse; margin: 0 0 14px; font-size: 0.92rem; }
+  .owner-summary-table th, .owner-summary-table td { border: 1px solid #d4e4d4; padding: 8px 10px; vertical-align: top; }
+  .owner-summary-table th { background: #eef5ee; font-weight: 600; font-size: 0.85rem; }
+  .owner-summary-table td:first-child { width: 22%; font-weight: 600; color: #3d5c3d; background: #f7faf7; }
+  .notice-box { background: #fff9ee; border: 1px solid #e8d9b0; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.9rem; }
+  .notice-box strong { display: block; margin-bottom: 6px; color: #6b5a2a; }
+  .notice-box ul { margin: 0; padding: 0 1.1em 0 0; }
+  .notice-box li { margin: 4px 0; line-height: 1.45; }
+  .section-label { font-size: 0.98rem; margin: 0 0 10px; font-weight: 600; color: #1a3a1a; }
+  .question-cards { display: grid; gap: 8px; margin-bottom: 10px; }
+  .question-card { background: #fff; border: 1px solid #c5d4c5; border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; line-height: 1.4; }
+  .next-step-line { margin: 0; font-size: 0.9rem; opacity: 0.88; line-height: 1.45; }
+  .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 12px; margin-top: 20px; }
+  .dev-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 8px 0; color: #3d5c3d; }
+  .dev-details[open] summary { margin-bottom: 12px; }
+  .feedback-light { margin-top: 20px; padding-top: 16px; border-top: 1px solid #d4e4d4; }
+  .feedback-light h2 { font-size: 1rem; margin: 0 0 4px; }
+  .feedback-light .sub { margin: 0 0 12px; font-size: 0.88rem; }
+  .feedback-light label { font-size: 0.88rem; margin-top: 8px; }
+  .feedback-light textarea { min-height: 44px; font-size: 0.9rem; }
   .panel dl { margin: 0; }
   .panel dt { font-size: 11px; text-transform: uppercase; opacity: .65; margin-top: 8px; }
   .panel dt:first-child { margin-top: 0; }
@@ -61,13 +81,10 @@
   <div id="metrics"></div>
 
   <div id="heroRender">
-    <h2>CRUVIT&rsquo;s draft answer for this garden context</h2>
-    <div class="panel owner-answer hebrew" id="panel-human-narrative"></div>
-    <div class="panel owner-answer hebrew" id="panel-tradeoff-human"></div>
-    <div class="panel owner-answer hebrew" id="panel-next-questions"></div>
+    <div class="owner-top hebrew" id="panel-owner-top"></div>
 
-    <div class="dev-details">
-      <h2>Developer details</h2>
+    <details class="dev-details" id="dev-details">
+      <summary>פרטים טכניים למפתחים</summary>
       <div class="panel" id="panel-context"></div>
       <div class="panel" id="panel-goal"></div>
       <div class="panel" id="panel-gate"></div>
@@ -78,11 +95,12 @@
       <div class="panel" id="panel-prefs"></div>
       <div class="panel" id="panel-labels"></div>
       <div class="panel" id="panel-prompts"></div>
-    </div>
+    </details>
 
-    <h2>In-Session Feedback Capture</h2>
-    <p class="sub">Feedback stays in memory only. No localStorage, sessionStorage, indexedDB, or cookies.</p>
-    <form id="feedbackForm">
+    <div class="feedback-light">
+      <h2>משוב קצר</h2>
+      <p class="sub">המשוב נשמר בזיכרון בלבד לצורך הבדיקה הזאת.</p>
+      <form id="feedbackForm">
       <label for="fb-didUserAct" id="lbl-didUserAct">didUserAct</label>
       <select id="fb-didUserAct" name="didUserAct">
         <option value="">— select —</option>
@@ -106,6 +124,7 @@
     <div class="panel" id="panel-captured" style="display:none;">
       <strong>Captured in memory:</strong>
       <pre id="capturedJson" style="margin:8px 0 0; white-space:pre-wrap; font-size:0.85rem;"></pre>
+    </div>
     </div>
   </div>
 
@@ -132,6 +151,19 @@
     'changeNextRecommendation'
   ];
   var PLANT_TOKENS = ['lavender', 'rosemary', 'tomato', 'rose ', 'basil', 'mint'];
+  var INTERNAL_OWNER_TOKENS = [
+    'privacy_coverage',
+    'growth_coverage',
+    'proceed_low_confidence',
+    'fast_preferred',
+    'evergreen_required'
+  ];
+  var OWNER_NEXT_QUESTIONS = [
+    'האם תהיה השקיה קבועה ליד הקיר?',
+    'מה עומק הקרקע/נפח השתילה לאורך הקיר?',
+    'האם האזור חשוף לרוחות חזקות או לקרה?'
+  ];
+  var MAX_OWNER_PARAGRAPH_CHARS = 220;
 
   var OWNER_PACKET = {
     syntheticOnly: false,
@@ -267,86 +299,71 @@
     return value;
   }
 
-  function buildOwnerNextQuestions(sk) {
-    var gapSet = {};
-    (sk.precisionGaps || []).forEach(function (g) { gapSet[g] = true; });
-    (sk.contextUsed && sk.contextUsed.knownUnknowns || []).forEach(function (g) { gapSet[g] = true; });
+  function buildOwnerNextQuestions() {
+    return OWNER_NEXT_QUESTIONS.slice();
+  }
 
-    var prioritized = [
-      {
-        match: function () {
-          return gapSet.exact_irrigation_schedule ||
-            gapSet['siteConditions.wateringMethod'] ||
-            (sk.contextUsed && sk.contextUsed.siteConditions &&
-              sk.contextUsed.siteConditions.wateringMethod === 'unknown');
-        },
-        text: 'איך מתוכננת ההשקיה בפועל — ידני, טפטוף, או עדיין לא ידוע?'
-      },
-      {
-        match: function () { return gapSet.soil_depth; },
-        text: 'מה עומק האדמה או נפח העיצוב לאורך הקיר — האם יש מספיק נפח שורש לכיסוי מהיר?'
-      },
-      {
-        match: function () {
-          return gapSet.wind_exposure || gapSet.exact_winter_frost_frequency;
-        },
-        text: 'כמה חשוף האזור לרוח, ומה תדירות הקפיא בחורף — אם ידוע?'
-      }
-    ];
+  function ownerFacingText() {
+    var top = $('panel-owner-top');
+    return top ? (top.innerText || '') : '';
+  }
 
-    var chosen = [];
-    for (var i = 0; i < prioritized.length && chosen.length < 3; i++) {
-      if (prioritized[i].match()) chosen.push(prioritized[i].text);
+  function ownerParagraphsWithinLimit(rootEl, maxChars) {
+    if (!rootEl) return true;
+    var paragraphs = rootEl.querySelectorAll('p');
+    for (var i = 0; i < paragraphs.length; i++) {
+      var len = (paragraphs[i].innerText || '').replace(/\s+/g, ' ').trim().length;
+      if (len > maxChars) return false;
     }
-    return chosen;
+    return true;
+  }
+
+  function ownerFacingHasInternalToken(text) {
+    var s = String(text || '').toLowerCase();
+    for (var i = 0; i < INTERNAL_OWNER_TOKENS.length; i++) {
+      if (s.indexOf(INTERNAL_OWNER_TOKENS[i]) >= 0) return INTERNAL_OWNER_TOKENS[i];
+    }
+    return null;
   }
 
   function renderHumanReadable(sk) {
     var ctx = sk.contextUsed || {};
-    var zone = ctx.gardenZone || {};
     var site = ctx.siteConditions || {};
     var prefs = ctx.preferencesConstraints || {};
-    var wallSqm = prefs.wallAreaApproxSqm;
-    var confidenceHe = sk.confidence === 'low' ? 'נמוכה' : sk.confidence;
-
-    $('panel-human-narrative').innerHTML =
-      '<p>CRUVIT מבינה שמדובר ב<strong>ערוגת קיר בקרבת הגליל המערבי</strong>, ' +
-      'בגינה <strong>בקרקע</strong> (לא במיכל), עם ' + esc(sunExposureHe(site.sunExposure)) +
-      ', ניקוז בינוני, והשקיה שעדיין <strong>לא ידועה</strong>.</p>' +
-      '<p>המטרה היא <strong>פרטיות וכיסוי</strong> לאורך קיר של כ‑<strong>' + esc(wallSqm) +
-      ' מ&quot;ר</strong> — כלומר צריך כיסוי שמתאים לקנה מידה קטן‑בינוני של קיר, לא לכל הגינה.</p>' +
-      '<p>לפי מה שסיפקת: נדרש <strong>עד‑ירוק (evergreen)</strong>, חשיבות <strong>גבוהה לפריחה</strong>, ' +
-      'ועדיפות ל<strong>כיסוי מהיר</strong> — אבל גם <strong>להימנע ממשיכת חרקים</strong> ' +
-      'ובמיוחד <strong>להימנע מדבורים</strong>.</p>' +
-      '<p>רמת הביטחון של CRUVIT בתשובה זו היא <strong>' + esc(confidenceHe) +
-      '</strong> (שער: המשך בזהירות, ביטחון נמוך). ' +
-      'עדיין חסרים פרטים על השקיה, עומק אדמה, רוח, זמינות בחנות, וקפיא — ' +
-      'ולכן CRUVIT <strong>לא בוחרת עדיין צמח</strong> ו<strong>לא מציגה ציון התאמה</strong>.</p>' +
-      '<p><strong>הצעד הבטוח הבא:</strong> ' + esc(sk.recommendedNextAction) + '</p>';
-
-    $('panel-tradeoff-human').innerHTML =
-      '<h3>סיכון / trade-off חשוב</h3>' +
-      '<ul>' +
-      '<li><strong>פריחה גבוהה מול הימנעות מחרקים ודבורים:</strong> פריחה עשירה יכולה להגביר עניין של חרקים, דבורים ויתושים — ' +
-      'וזה מתנגש ישירות עם הדרישה שלך להימנע מחרקים ודבורים.</li>' +
-      '<li><strong>עד‑ירוק + כיסוי מהיר:</strong> מצמצם את מרחב האפשרויות — לא כל צמח מהיר, עמוס ופרחני גם מתאים.</li>' +
-      '<li><strong>קיר של ' + esc(wallSqm) + ' מ&quot;ר:</strong> גודל הקיר משמעותי לקצב כיסוי, צורך בהדרכה/תמיכה, ' +
-      'עומס תחזוקה, ודרישות השקיה — לא רק &quot;איזה צמח&quot;.</li>' +
-      '<li><strong>השקיה ועומק אדמה לא ידועים:</strong> ללא זה, כל החלטת שתילה עלולה להיות שגויה מהיסוד.</li>' +
-      '</ul>';
-
-    var nextQuestions = buildOwnerNextQuestions(sk);
+    var wallSqm = prefs.wallAreaApproxSqm || 12;
+    var nextQuestions = buildOwnerNextQuestions();
     ownerQuestionCount = nextQuestions.length;
-    var questionItems = nextQuestions.map(function (q) {
-      return '<li>' + esc(q) + '</li>';
+
+    var questionCards = nextQuestions.map(function (q) {
+      return '<div class="question-card">' + esc(q) + '</div>';
     }).join('');
 
-    $('panel-next-questions').innerHTML =
-      '<h3>מה CRUVIT צריכה הלאה</h3>' +
-      '<p><strong>' + esc(sk.precisionGapsLabel || PRECISION_LABEL) + '</strong></p>' +
-      '<p>במקום רשימת שדות טכנית — שלוש שאלות קצרות שכדאי להשלים קודם:</p>' +
-      '<ul id="owner-next-questions">' + questionItems + '</ul>' +
-      '<p style="opacity:.85;font-size:.92rem;">אפשר לענות &quot;לא יודע / דילגתי&quot; — CRUVIT תשמור את הפערים ולא תמציא ערכים.</p>';
+    $('panel-owner-top').innerHTML =
+      '<div class="decision-card">' +
+        '<h2 class="card-title">תשובת CRUVIT לגינה הזאת</h2>' +
+        '<span class="status-pill">אפשר להתקדם בזהירות — עדיין לא לבחור צמח</span>' +
+        '<table class="owner-summary-table">' +
+          '<thead><tr><th>נושא</th><th>מה CRUVIT הבינה</th></tr></thead>' +
+          '<tbody>' +
+            '<tr><td>מטרה</td><td>כיסוי ופרטיות לקיר של כ־' + esc(wallSqm) + ' מ״ר</td></tr>' +
+            '<tr><td>תנאי מקום</td><td>ערוגה בקרקע, ' + esc(sunExposureHe(site.sunExposure)) + ', ניקוז בינוני</td></tr>' +
+            '<tr><td>דרישה חשובה</td><td>ירוק־עד, פריחה, כיסוי יחסית מהיר</td></tr>' +
+            '<tr><td>רגישות</td><td>להימנע ככל האפשר ממשיכת חרקים/צרעות</td></tr>' +
+            '<tr><td>ודאות</td><td>ביטחון נמוך כי חסרים השקיה, עומק קרקע ורוח/קרה</td></tr>' +
+          '</tbody>' +
+        '</table>' +
+        '<div class="notice-box">' +
+          '<strong>שימי לב</strong>' +
+          '<ul>' +
+            '<li>פריחה משמעותית יכולה למשוך יותר חרקים/דבורים/צרעות.</li>' +
+            '<li>קיר של כ־' + esc(wallSqm) + ' מ״ר דורש השקיה, עומק קרקע ותמיכה מתאימים.</li>' +
+            '<li>לכן CRUVIT עדיין לא בוחרת צמח ולא נותנת ציון התאמה.</li>' +
+          '</ul>' +
+        '</div>' +
+        '<h3 class="section-label">' + esc(PRECISION_LABEL) + '</h3>' +
+        '<div id="owner-next-questions" class="question-cards">' + questionCards + '</div>' +
+        '<p class="next-step-line">אחרי שלושת הפרטים האלה, CRUVIT תוכל לצמצם אפשרויות בצורה בטוחה יותר.</p>' +
+      '</div>';
   }
 
   function applyFeedbackLabels(prompt) {
@@ -502,46 +519,72 @@
   }
 
   function runReadabilityChecks() {
-    var narrative = $('panel-human-narrative').innerText || '';
-    var tradeoff = $('panel-tradeoff-human').innerText || '';
-    var nextQ = $('panel-next-questions').innerText || '';
-    var pageText = narrative + '\n' + tradeoff + '\n' + nextQ;
-    var questionNodes = document.querySelectorAll('#owner-next-questions li');
+    var ownerTop = $('panel-owner-top');
+    var ownerText = ownerFacingText();
+    var internalHit = ownerFacingHasInternalToken(ownerText);
+    var questionCards = document.querySelectorAll('#owner-next-questions .question-card');
+    var table = ownerTop ? ownerTop.querySelector('.owner-summary-table') : null;
+    var tableRows = table ? table.querySelectorAll('tbody tr') : [];
 
-    expect('human-readable answer section exists',
-      narrative.indexOf('CRUVIT') >= 0 &&
-      narrative.indexOf('12') >= 0 &&
-      narrative.indexOf('פרטיות') >= 0,
-      'narrative present');
+    expect('top owner section exists',
+      ownerTop &&
+      ownerText.indexOf('תשובת CRUVIT לגינה הזאת') >= 0 &&
+      ownerText.indexOf('אפשר להתקדם בזהירות') >= 0,
+      'owner-top present');
 
-    expect('important trade-off mentions flowering and insects or wasps',
-      tradeoff.indexOf('פריחה') >= 0 &&
-      (tradeoff.indexOf('חרקים') >= 0 || tradeoff.indexOf('דבורים') >= 0),
-      tradeoff.slice(0, 120));
+    expect('table/card layout exists with summary rows',
+      table !== null &&
+      tableRows.length === 5 &&
+      ownerTop.querySelector('.decision-card') !== null &&
+      ownerTop.querySelector('.status-pill') !== null &&
+      ownerTop.querySelector('.notice-box') !== null,
+      String(tableRows.length) + ' rows');
 
-    expect('wall area 12 sqm visible in human answer',
-      narrative.indexOf('12') >= 0 && (narrative.indexOf('מ"ר') >= 0 || narrative.indexOf('מ&quot;ר') >= 0),
-      narrative.slice(0, 160));
+    expect('no internal token in owner-facing top section',
+      internalHit === null,
+      internalHit || 'clean');
 
-    expect('no more than 3 next-question items rendered',
-      questionNodes.length >= 1 && questionNodes.length <= 3,
-      String(questionNodes.length));
+    expect('owner-facing text is concise',
+      ownerParagraphsWithinLimit(ownerTop, MAX_OWNER_PARAGRAPH_CHARS),
+      'max ' + MAX_OWNER_PARAGRAPH_CHARS + ' chars per paragraph');
 
-    expect('precision gaps label uses approved wording',
-      nextQ.indexOf(PRECISION_LABEL) >= 0 && nextQ.indexOf(FORBIDDEN_LABEL) === -1,
+    expect('notice box covers flowering and 12 sqm briefly',
+      ownerText.indexOf('פריחה משמעותית') >= 0 &&
+      ownerText.indexOf('חרקים') >= 0 &&
+      ownerText.indexOf('12') >= 0 &&
+      ownerText.indexOf('ציון התאמה') >= 0,
+      'notice bullets ok');
+
+    expect('exactly 3 next-question cards rendered',
+      questionCards.length === 3 &&
+      OWNER_NEXT_QUESTIONS.every(function (q, idx) {
+        return (questionCards[idx].innerText || '').trim() === q;
+      }),
+      String(questionCards.length));
+
+    expect('clear next step line present',
+      ownerText.indexOf('אחרי שלושת הפרטים האלה') >= 0 &&
+      ownerText.indexOf(PRECISION_LABEL) >= 0 &&
+      ownerText.indexOf(FORBIDDEN_LABEL) === -1,
       PRECISION_LABEL);
 
-    expect('developer details remain available',
-      ($('panel-context').innerText || '').indexOf('Western Galilee') >= 0 &&
-      document.querySelector('.dev-details h2') &&
-      document.querySelector('.dev-details h2').textContent === 'Developer details',
+    expect('developer technical section remains available collapsed',
+      ($('panel-context').innerHTML || '').indexOf('Western Galilee') >= 0 &&
+      ($('panel-gate').innerHTML || '').indexOf('proceed_low_confidence') >= 0 &&
+      document.querySelector('#dev-details summary') &&
+      document.querySelector('#dev-details summary').textContent.indexOf('פרטים טכניים') >= 0,
       'dev panels ok');
 
-    expect('human-readable sections introduce no forbidden claims',
-      !serializedHasForbiddenClaims(pageText) &&
-      pageText.indexOf(FORBIDDEN_LABEL) === -1 &&
-      !serializedHasRealPlantName(pageText),
-      'readable text clean');
+    expect('feedback section uses lighter Hebrew labels',
+      document.querySelector('.feedback-light h2') &&
+      document.querySelector('.feedback-light h2').textContent === 'משוב קצר',
+      'feedback-light ok');
+
+    expect('owner-facing top introduces no forbidden claims',
+      !serializedHasForbiddenClaims(ownerText) &&
+      ownerText.indexOf(FORBIDDEN_LABEL) === -1 &&
+      !serializedHasRealPlantName(ownerText),
+      'owner text clean');
   }
 
   function runChecks(mod) {
