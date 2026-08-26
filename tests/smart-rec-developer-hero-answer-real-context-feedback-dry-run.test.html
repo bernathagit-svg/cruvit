@@ -41,11 +41,21 @@
   .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 12px; margin-top: 20px; }
   .dev-details summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 8px 0; color: #3d5c3d; }
   .dev-details[open] summary { margin-bottom: 12px; }
-  .feedback-light { margin-top: 20px; padding-top: 16px; border-top: 1px solid #d4e4d4; }
+  .feedback-light.hebrew { direction: rtl; text-align: right; margin-top: 20px; padding-top: 16px; border-top: 1px solid #d4e4d4; }
   .feedback-light h2 { font-size: 1rem; margin: 0 0 4px; }
-  .feedback-light .sub { margin: 0 0 12px; font-size: 0.88rem; }
+  .feedback-light .sub { margin: 0 0 12px; font-size: 0.88rem; line-height: 1.45; }
   .feedback-light label { font-size: 0.88rem; margin-top: 8px; }
   .feedback-light textarea { min-height: 44px; font-size: 0.9rem; }
+  .feedback-panel { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #d4e4d4; }
+  .feedback-panel[hidden] { display: none; }
+  .feedback-actions { margin-top: 12px; }
+  .dev-harness { margin-bottom: 16px; opacity: 0.92; }
+  .dev-harness summary { cursor: pointer; font-weight: 600; font-size: 0.9rem; color: #3d5c3d; padding: 6px 0; }
+  .harness-controls { margin-bottom: 16px; }
+  .dev-metrics-block { margin: 8px 0; font-size: 0.85rem; white-space: pre-wrap; opacity: 0.9; }
+  .dev-assertions-table { margin-top: 12px; }
+  #summary.dev-only { margin: 8px 0; font-weight: 600; font-size: 0.9rem; }
+  #statusLine.dev-only { margin: 8px 0; font-size: 0.85rem; opacity: 0.85; }
   .panel dl { margin: 0; }
   .panel dt { font-size: 11px; text-transform: uppercase; opacity: .65; margin-top: 8px; }
   .panel dt:first-child { margin-top: 0; }
@@ -57,37 +67,76 @@
   table { border-collapse: collapse; width: 100%; margin-top: 12px; }
   td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
   th { font-size: 11px; text-transform: uppercase; opacity: .7; }
-  #summary { margin: 12px 0; font-weight: 600; }
-  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
   #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
   #heroRender { display: none; }
   #heroRender.visible { display: block; }
-  .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 16px; margin-top: 20px; }
 </style>
 </head>
 <body>
-  <h1>Owner-Supplied Real-Context Hero Answer + Feedback Dry Surface</h1>
-  <p class="sub">
-    Developer-only, manual-browser, in-memory only. Western Galilee owner packet.
-    No live Garden Memory retrieval, no persistence writes, no production UI, no plant names.
-  </p>
-  <div class="banner" id="banner">
-    Idle. Inert boot marker: <strong>SR_HERO_REAL_CONTEXT_DRY_SURFACE_INERT</strong>
-  </div>
-  <div class="controls">
+  <details class="dev-harness" id="dev-harness">
+    <summary>Developer harness notes</summary>
+    <h1>Owner-Supplied Real-Context Hero Answer + Feedback Dry Surface</h1>
+    <p class="sub">
+      Developer-only, manual-browser, in-memory only. Western Galilee owner packet.
+      No live Garden Memory retrieval, no persistence writes, no production UI, no plant names.
+    </p>
+    <div class="banner" id="banner">
+      Idle. Inert boot marker: <strong>SR_HERO_REAL_CONTEXT_DRY_SURFACE_INERT</strong>
+    </div>
+  </details>
+  <div class="controls harness-controls">
     <button type="button" id="btn-run">Run Real-Context Dry Surface</button>
-    <button type="button" id="btn-save-feedback" class="secondary" disabled>Capture Feedback In Memory</button>
     <button type="button" id="btn-reset" class="secondary">Reset</button>
   </div>
-  <div id="statusLine">State: idle · externalApiRequests=0 · storageMutationCount=0</div>
-  <div id="summary">Not run yet.</div>
-  <div id="metrics"></div>
 
   <div id="heroRender">
     <div class="owner-top hebrew" id="panel-owner-top"></div>
 
+    <div class="feedback-light hebrew" id="feedback-section">
+      <h2 id="feedback-heading">רוצה לעזור ל־CRUVIT לדייק בפעם הבאה?</h2>
+      <p class="sub" id="feedback-note">אפשר להמשיך בלי למלא משוב. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין מה היה שימושי ומה כדאי לשפר.</p>
+      <button type="button" id="btn-toggle-feedback" class="secondary">השארת משוב קצר</button>
+      <div id="feedback-panel" class="feedback-panel" hidden>
+        <form id="feedbackForm">
+        <label for="fb-didUserAct" id="lbl-didUserAct">didUserAct</label>
+        <select id="fb-didUserAct" name="didUserAct">
+          <option value="">— select —</option>
+          <option value="yes">yes</option>
+          <option value="no">no</option>
+          <option value="unknown">unknown / skipped</option>
+        </select>
+        <label for="fb-actionTaken" id="lbl-actionTaken">actionTaken</label>
+        <textarea id="fb-actionTaken" name="actionTaken" placeholder="What action was taken?"></textarea>
+        <label for="fb-laterOutcome" id="lbl-laterOutcome">laterOutcome</label>
+        <textarea id="fb-laterOutcome" name="laterOutcome" placeholder="What happened later?"></textarea>
+        <label for="fb-pestsInsectsWasps" id="lbl-pestsInsectsWasps">pestsInsectsWasps</label>
+        <textarea id="fb-pestsInsectsWasps" name="pestsInsectsWasps" placeholder="Pests / insects / wasps observed?"></textarea>
+        <label for="fb-maintenanceBurden" id="lbl-maintenanceBurden">maintenanceBurden</label>
+        <textarea id="fb-maintenanceBurden" name="maintenanceBurden" placeholder="Maintenance burden vs expectation?"></textarea>
+        <label for="fb-userSatisfaction" id="lbl-userSatisfaction">userSatisfaction</label>
+        <textarea id="fb-userSatisfaction" name="userSatisfaction" placeholder="Was the answer useful?"></textarea>
+        <label for="fb-changeNextRecommendation" id="lbl-changeNextRecommendation">changeNextRecommendation</label>
+        <textarea id="fb-changeNextRecommendation" name="changeNextRecommendation" placeholder="What should change next time?"></textarea>
+        </form>
+        <div class="feedback-actions">
+          <button type="button" id="btn-save-feedback" disabled>שמירת משוב בזיכרון הבדיקה</button>
+        </div>
+        <div class="panel" id="panel-captured" style="display:none;">
+          <strong>Captured in memory:</strong>
+          <pre id="capturedJson" style="margin:8px 0 0; white-space:pre-wrap; font-size:0.85rem;"></pre>
+        </div>
+      </div>
+    </div>
+
     <details class="dev-details" id="dev-details">
       <summary>פרטים טכניים למפתחים</summary>
+      <div id="statusLine" class="dev-only">State: idle · externalApiRequests=0 · storageMutationCount=0</div>
+      <div id="summary" class="dev-only">Not run yet.</div>
+      <div id="metrics" class="dev-metrics-block"></div>
+      <table class="dev-assertions-table">
+        <thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
       <div class="panel" id="panel-context"></div>
       <div class="panel" id="panel-goal"></div>
       <div class="panel" id="panel-gate"></div>
@@ -99,42 +148,7 @@
       <div class="panel" id="panel-labels"></div>
       <div class="panel" id="panel-prompts"></div>
     </details>
-
-    <div class="feedback-light">
-      <h2>משוב קצר</h2>
-      <p class="sub">המשוב נשמר בזיכרון בלבד לצורך הבדיקה הזאת.</p>
-      <form id="feedbackForm">
-      <label for="fb-didUserAct" id="lbl-didUserAct">didUserAct</label>
-      <select id="fb-didUserAct" name="didUserAct">
-        <option value="">— select —</option>
-        <option value="yes">yes</option>
-        <option value="no">no</option>
-        <option value="unknown">unknown / skipped</option>
-      </select>
-      <label for="fb-actionTaken" id="lbl-actionTaken">actionTaken</label>
-      <textarea id="fb-actionTaken" name="actionTaken" placeholder="What action was taken?"></textarea>
-      <label for="fb-laterOutcome" id="lbl-laterOutcome">laterOutcome</label>
-      <textarea id="fb-laterOutcome" name="laterOutcome" placeholder="What happened later?"></textarea>
-      <label for="fb-pestsInsectsWasps" id="lbl-pestsInsectsWasps">pestsInsectsWasps</label>
-      <textarea id="fb-pestsInsectsWasps" name="pestsInsectsWasps" placeholder="Pests / insects / wasps observed?"></textarea>
-      <label for="fb-maintenanceBurden" id="lbl-maintenanceBurden">maintenanceBurden</label>
-      <textarea id="fb-maintenanceBurden" name="maintenanceBurden" placeholder="Maintenance burden vs expectation?"></textarea>
-      <label for="fb-userSatisfaction" id="lbl-userSatisfaction">userSatisfaction</label>
-      <textarea id="fb-userSatisfaction" name="userSatisfaction" placeholder="Was the answer useful?"></textarea>
-      <label for="fb-changeNextRecommendation" id="lbl-changeNextRecommendation">changeNextRecommendation</label>
-      <textarea id="fb-changeNextRecommendation" name="changeNextRecommendation" placeholder="What should change next time?"></textarea>
-    </form>
-    <div class="panel" id="panel-captured" style="display:none;">
-      <strong>Captured in memory:</strong>
-      <pre id="capturedJson" style="margin:8px 0 0; white-space:pre-wrap; font-size:0.85rem;"></pre>
-    </div>
-    </div>
   </div>
-
-  <table>
-    <thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
 
 <script>
 (function () {
@@ -145,6 +159,18 @@
   var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
   var OPTIONAL_PRECISION_HEADING = 'רוצה לדייק את הבחירה?';
   var OPTIONAL_PRECISION_NOTE = 'אפשר להמשיך גם בלי זה, אבל רמת הביטחון תישאר נמוכה יותר.';
+  var FEEDBACK_OPTIONAL_HEADING = 'רוצה לעזור ל־CRUVIT לדייק בפעם הבאה?';
+  var FEEDBACK_OPTIONAL_NOTE = 'אפשר להמשיך בלי למלא משוב. אם תבחרי לענות, זה יעזור ל־CRUVIT להבין מה היה שימושי ומה כדאי לשפר.';
+  var FEEDBACK_TOGGLE_LABEL = 'השארת משוב קצר';
+  var FEEDBACK_SAVE_LABEL = 'שמירת משוב בזיכרון הבדיקה';
+  var DEV_METRIC_TOKENS = [
+    'assertionTotal',
+    'passCount',
+    'failCount',
+    'externalApiRequests',
+    'storageMutationCount',
+    'HERO_REAL_CONTEXT_DRY_SURFACE'
+  ];
   var FORBIDDEN_LABEL = 'מה CRUVIT עדיין לא יודעת';
   var FEEDBACK_KEYS = [
     'didUserAct',
@@ -323,6 +349,20 @@
     return true;
   }
 
+  function ownerTopHasDevMetricTokens(text) {
+    var s = String(text || '');
+    for (var i = 0; i < DEV_METRIC_TOKENS.length; i++) {
+      if (s.indexOf(DEV_METRIC_TOKENS[i]) >= 0) return DEV_METRIC_TOKENS[i];
+    }
+    return null;
+  }
+
+  function toggleFeedbackPanel(show) {
+    var panel = $('feedback-panel');
+    if (!panel) return;
+    panel.hidden = !show;
+  }
+
   function ownerFacingHasInternalToken(text) {
     var s = String(text || '').toLowerCase();
     for (var i = 0; i < INTERNAL_OWNER_TOKENS.length; i++) {
@@ -484,6 +524,9 @@
     renderHumanReadable(sk);
     renderDeveloperDetails(sk);
     applyFeedbackLabels(sk.feedbackOutcomePrompt || {});
+    toggleFeedbackPanel(false);
+    $('panel-captured').style.display = 'none';
+    $('btn-save-feedback').disabled = false;
     $('heroRender').className = 'visible';
   }
 
@@ -585,13 +628,30 @@
       ($('panel-context').innerHTML || '').indexOf('Western Galilee') >= 0 &&
       ($('panel-gate').innerHTML || '').indexOf('proceed_low_confidence') >= 0 &&
       document.querySelector('#dev-details summary') &&
-      document.querySelector('#dev-details summary').textContent.indexOf('פרטים טכניים') >= 0,
+      document.querySelector('#dev-details summary').textContent.indexOf('פרטים טכניים') >= 0 &&
+      document.querySelector('#dev-details #metrics') !== null &&
+      document.querySelector('#dev-details #rows') !== null,
       'dev panels ok');
 
-    expect('feedback section uses lighter Hebrew labels',
-      document.querySelector('.feedback-light h2') &&
-      document.querySelector('.feedback-light h2').textContent === 'משוב קצר',
-      'feedback-light ok');
+    expect('developer metrics not prominent in owner-facing top',
+      ownerTopHasDevMetricTokens(ownerText) === null &&
+      ownerText.indexOf('PASS') === -1 &&
+      ownerText.indexOf('FAIL') === -1,
+      'owner top clean of dev metrics');
+
+    expect('feedback framed as optional and collapsed by default',
+      document.querySelector('#feedback-heading') &&
+      document.querySelector('#feedback-heading').textContent === FEEDBACK_OPTIONAL_HEADING &&
+      document.querySelector('#feedback-note').textContent.indexOf('אפשר להמשיך בלי למלא משוב') >= 0 &&
+      $('btn-toggle-feedback').textContent === FEEDBACK_TOGGLE_LABEL &&
+      $('feedback-panel').hidden === true,
+      FEEDBACK_OPTIONAL_HEADING);
+
+    expect('feedback form not forced before reading answer',
+      $('panel-owner-top').innerText.indexOf('תשובת CRUVIT לגינה הזאת') >= 0 &&
+      $('heroRender').className === 'visible' &&
+      $('feedback-panel').hidden === true,
+      'answer visible without feedback');
 
     expect('owner-facing top introduces no forbidden claims',
       !serializedHasForbiddenClaims(ownerText) &&
@@ -721,6 +781,7 @@
     $('btn-run').disabled = true;
     $('btn-save-feedback').disabled = true;
     $('panel-captured').style.display = 'none';
+    toggleFeedbackPanel(false);
     $('heroRender').className = '';
     installGuards();
     try {
@@ -729,8 +790,7 @@
       runChecks(mod);
       renderHeroAnswer(skeleton);
       runReadabilityChecks();
-      $('btn-save-feedback').disabled = false;
-      $('banner').textContent = 'Hero Answer rendered. Review the draft answer, fill feedback, then capture in memory.';
+      $('banner').textContent = 'Hero Answer rendered. Owner view ready — feedback optional.';
       window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_BOOT = Object.freeze({
         inert: false,
         moduleLoaded: true,
@@ -741,9 +801,9 @@
       if (preFeedbackVerdict === FAIL_VERDICT) {
         finishSummary(FAIL_VERDICT);
       } else {
-        $('summary').textContent = 'Rendered · awaiting in-memory feedback capture · checks ' +
-          results.filter(function (r) { return r.pass; }).length + '/' + results.length + ' passed';
-        $('summary').className = 'pass';
+        var passedNow = results.filter(function (r) { return r.pass; }).length;
+        $('summary').textContent = 'Developer checks: ' + passedNow + '/' + results.length + ' passed (collapsed below)';
+        $('summary').className = 'pass dev-only';
         renderRows();
       }
     } catch (err) {
@@ -756,6 +816,11 @@
   }
 
   $('btn-run').addEventListener('click', runSurface);
+  $('btn-toggle-feedback').addEventListener('click', function () {
+    var panel = $('feedback-panel');
+    if (!panel) return;
+    toggleFeedbackPanel(panel.hidden);
+  });
   $('btn-save-feedback').addEventListener('click', captureFeedbackInMemory);
   $('btn-reset').addEventListener('click', function () {
     results = [];
@@ -772,6 +837,7 @@
       feedbackCaptured: false
     });
     $('heroRender').className = '';
+    toggleFeedbackPanel(false);
     $('panel-captured').style.display = 'none';
     $('feedbackForm').reset();
     $('rows').innerHTML = '';
