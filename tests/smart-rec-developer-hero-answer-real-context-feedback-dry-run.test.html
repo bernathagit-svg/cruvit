@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cruvit — Owner Real-Context Hero Answer Feedback Dry Surface</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 15px/1.5 Georgia, "Times New Roman", serif; margin: 24px; max-width: 1100px; color: #1a2e1a; background: #f7faf6; }
+  h1 { font-size: 1.35rem; margin: 0 0 6px; font-weight: 600; }
+  h2 { font-size: 1.05rem; margin: 20px 0 8px; font-weight: 600; }
+  h3 { font-size: 0.98rem; margin: 0 0 8px; font-weight: 600; }
+  p.sub { margin: 0 0 16px; opacity: .8; font-size: 0.95rem; }
+  .banner { padding: 10px 12px; border: 1px solid #c5d4c5; border-radius: 6px; background: #eef5ee; margin-bottom: 16px; font-size: 0.9rem; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid #3d5c3d; background: #3d5c3d; color: #fff; cursor: pointer; }
+  button.secondary { background: #fff; color: #3d5c3d; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  .pass { color: #0a7a32; } .fail { color: #b00020; }
+  .panel { border: 1px solid #c5d4c5; border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; background: #fff; }
+  .panel.owner-answer { background: #fdfef8; border-color: #9cb89c; }
+  .panel.owner-answer.hebrew { direction: rtl; text-align: right; }
+  .panel.owner-answer p { margin: 0.55em 0; line-height: 1.55; }
+  .panel.owner-answer ul { margin: 0.4em 1.2em 0.4em 0; padding: 0; }
+  .panel.owner-answer li { margin: 0.35em 0; }
+  .panel dl { margin: 0; }
+  .panel dt { font-size: 11px; text-transform: uppercase; opacity: .65; margin-top: 8px; }
+  .panel dt:first-child { margin-top: 0; }
+  .panel dd { margin: 2px 0 0; }
+  ul.compact { margin: 4px 0 0 18px; padding: 0; }
+  label { display: block; margin: 10px 0 4px; font-size: 0.92rem; }
+  textarea, select, input[type="text"] { width: 100%; font: inherit; padding: 6px 8px; border: 1px solid #c5d4c5; border-radius: 4px; box-sizing: border-box; }
+  textarea { min-height: 56px; resize: vertical; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  td, th { border-top: 1px solid rgba(80,100,80,.3); padding: 6px 8px; text-align: left; vertical-align: top; font-size: 0.88rem; }
+  th { font-size: 11px; text-transform: uppercase; opacity: .7; }
+  #summary { margin: 12px 0; font-weight: 600; }
+  #statusLine { margin: 8px 0; font-size: 0.9rem; opacity: .85; }
+  #metrics { margin: 8px 0; font-size: 0.88rem; white-space: pre-wrap; }
+  #heroRender { display: none; }
+  #heroRender.visible { display: block; }
+  .dev-details { opacity: 0.92; border-top: 2px dashed #c5d4c5; padding-top: 16px; margin-top: 20px; }
+</style>
+</head>
+<body>
+  <h1>Owner-Supplied Real-Context Hero Answer + Feedback Dry Surface</h1>
+  <p class="sub">
+    Developer-only, manual-browser, in-memory only. Western Galilee owner packet.
+    No live Garden Memory retrieval, no persistence writes, no production UI, no plant names.
+  </p>
+  <div class="banner" id="banner">
+    Idle. Inert boot marker: <strong>SR_HERO_REAL_CONTEXT_DRY_SURFACE_INERT</strong>
+  </div>
+  <div class="controls">
+    <button type="button" id="btn-run">Run Real-Context Dry Surface</button>
+    <button type="button" id="btn-save-feedback" class="secondary" disabled>Capture Feedback In Memory</button>
+    <button type="button" id="btn-reset" class="secondary">Reset</button>
+  </div>
+  <div id="statusLine">State: idle · externalApiRequests=0 · storageMutationCount=0</div>
+  <div id="summary">Not run yet.</div>
+  <div id="metrics"></div>
+
+  <div id="heroRender">
+    <h2>CRUVIT&rsquo;s draft answer for this garden context</h2>
+    <div class="panel owner-answer hebrew" id="panel-human-narrative"></div>
+    <div class="panel owner-answer hebrew" id="panel-tradeoff-human"></div>
+    <div class="panel owner-answer hebrew" id="panel-next-questions"></div>
+
+    <div class="dev-details">
+      <h2>Developer details</h2>
+      <div class="panel" id="panel-context"></div>
+      <div class="panel" id="panel-goal"></div>
+      <div class="panel" id="panel-gate"></div>
+      <div class="panel" id="panel-gaps"></div>
+      <div class="panel" id="panel-tradeoffs"></div>
+      <div class="panel" id="panel-outcomes"></div>
+      <div class="panel" id="panel-action"></div>
+      <div class="panel" id="panel-prefs"></div>
+      <div class="panel" id="panel-labels"></div>
+      <div class="panel" id="panel-prompts"></div>
+    </div>
+
+    <h2>In-Session Feedback Capture</h2>
+    <p class="sub">Feedback stays in memory only. No localStorage, sessionStorage, indexedDB, or cookies.</p>
+    <form id="feedbackForm">
+      <label for="fb-didUserAct" id="lbl-didUserAct">didUserAct</label>
+      <select id="fb-didUserAct" name="didUserAct">
+        <option value="">— select —</option>
+        <option value="yes">yes</option>
+        <option value="no">no</option>
+        <option value="unknown">unknown / skipped</option>
+      </select>
+      <label for="fb-actionTaken" id="lbl-actionTaken">actionTaken</label>
+      <textarea id="fb-actionTaken" name="actionTaken" placeholder="What action was taken?"></textarea>
+      <label for="fb-laterOutcome" id="lbl-laterOutcome">laterOutcome</label>
+      <textarea id="fb-laterOutcome" name="laterOutcome" placeholder="What happened later?"></textarea>
+      <label for="fb-pestsInsectsWasps" id="lbl-pestsInsectsWasps">pestsInsectsWasps</label>
+      <textarea id="fb-pestsInsectsWasps" name="pestsInsectsWasps" placeholder="Pests / insects / wasps observed?"></textarea>
+      <label for="fb-maintenanceBurden" id="lbl-maintenanceBurden">maintenanceBurden</label>
+      <textarea id="fb-maintenanceBurden" name="maintenanceBurden" placeholder="Maintenance burden vs expectation?"></textarea>
+      <label for="fb-userSatisfaction" id="lbl-userSatisfaction">userSatisfaction</label>
+      <textarea id="fb-userSatisfaction" name="userSatisfaction" placeholder="Was the answer useful?"></textarea>
+      <label for="fb-changeNextRecommendation" id="lbl-changeNextRecommendation">changeNextRecommendation</label>
+      <textarea id="fb-changeNextRecommendation" name="changeNextRecommendation" placeholder="What should change next time?"></textarea>
+    </form>
+    <div class="panel" id="panel-captured" style="display:none;">
+      <strong>Captured in memory:</strong>
+      <pre id="capturedJson" style="margin:8px 0 0; white-space:pre-wrap; font-size:0.85rem;"></pre>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>Status</th><th>Check</th><th>Detail</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+(function () {
+  'use strict';
+
+  var PASS_VERDICT = 'HERO_REAL_CONTEXT_DRY_SURFACE_PASS';
+  var FAIL_VERDICT = 'HERO_REAL_CONTEXT_DRY_SURFACE_FAIL';
+  var PRECISION_LABEL = 'מה כדאי להשלים כדי לדייק את התשובה';
+  var FORBIDDEN_LABEL = 'מה CRUVIT עדיין לא יודעת';
+  var FEEDBACK_KEYS = [
+    'didUserAct',
+    'actionTaken',
+    'laterOutcome',
+    'pestsInsectsWasps',
+    'maintenanceBurden',
+    'userSatisfaction',
+    'changeNextRecommendation'
+  ];
+  var PLANT_TOKENS = ['lavender', 'rosemary', 'tomato', 'rose ', 'basil', 'mint'];
+
+  var OWNER_PACKET = {
+    syntheticOnly: false,
+    ownerSuppliedLocalPacket: true,
+    dataBoundary: 'owner_supplied_local_context_no_live_memory_retrieval',
+    growingContextType: 'in_ground',
+    zoneLabel: 'Western Galilee wall-side garden bed',
+    plantingSurface: 'ground',
+    primaryGoal: 'privacy_coverage',
+    outcomeDimension: 'growth_coverage',
+    locationClimate: {
+      locationLevel: 'region',
+      climateInterpretation: 'mediterranean_western_galilee',
+      locationConfidence: 'medium'
+    },
+    siteConditions: {
+      sunExposure: 'approx_6_hours_sun',
+      drainage: 'medium',
+      wateringMethod: 'unknown'
+    },
+    preferencesConstraints: {
+      evergreenDeciduous: 'evergreen_required',
+      floweringImportance: 'high',
+      coverageSpeed: 'fast_preferred',
+      avoidInsectAttraction: true,
+      avoidWasps: true,
+      maintenanceTolerance: 'medium',
+      wallAreaApproxSqm: 12
+    },
+    knownUnknowns: [
+      'exact_irrigation_schedule',
+      'soil_depth',
+      'wind_exposure',
+      'nursery_availability',
+      'exact_winter_frost_frequency'
+    ],
+    sourceLabels: {
+      zoneLabel: 'user_provided',
+      growingContextType: 'user_provided',
+      plantingSurface: 'user_provided',
+      primaryGoal: 'user_provided',
+      sunExposure: 'user_provided',
+      drainage: 'user_provided',
+      wateringMethod: 'unknown_skipped',
+      evergreenDeciduous: 'user_corrected',
+      floweringImportance: 'user_provided',
+      avoidWasps: 'user_provided'
+    },
+    confidenceLabels: {
+      locationClimate: 'medium',
+      sunExposure: 'medium',
+      drainage: 'medium',
+      wateringMethod: 'unknown',
+      evergreenDeciduous: 'high',
+      avoidWasps: 'high'
+    },
+    priorCorrections: [
+      {
+        field: 'preferencesConstraints.evergreenDeciduous',
+        from: 'evergreen_preferred',
+        to: 'evergreen_required',
+        source: 'user_corrected'
+      }
+    ],
+    outcomeHistory: []
+  };
+
+  var results = [];
+  var storageMutationCount = 0;
+  var externalApiRequests = 0;
+  var skeleton = null;
+  var descriptor = null;
+  var inMemoryFeedback = null;
+  var restoreGuardsFn = null;
+  var ownerQuestionCount = 0;
+
+  window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_BOOT = Object.freeze({
+    inert: true,
+    moduleLoaded: false,
+    surfaceRun: false,
+    feedbackCaptured: false
+  });
+  window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_SUMMARY = null;
+  window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_FEEDBACK = null;
+
+  function $(id) { return document.getElementById(id); }
+  function expect(name, pass, detail) {
+    results.push({ name: name, pass: !!pass, detail: detail || '' });
+  }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+  function listHtml(items) {
+    if (!items || !items.length) return '<em>(none)</em>';
+    return '<ul class="compact">' + items.map(function (x) {
+      return '<li>' + esc(x) + '</li>';
+    }).join('') + '</ul>';
+  }
+  function mapHtml(obj) {
+    if (!obj || typeof obj !== 'object') return '<em>(none)</em>';
+    var keys = Object.keys(obj);
+    if (!keys.length) return '<em>(none)</em>';
+    return '<dl>' + keys.map(function (k) {
+      return '<dt>' + esc(k) + '</dt><dd>' + esc(obj[k]) + '</dd>';
+    }).join('') + '</dl>';
+  }
+  function serializedHasForbiddenClaims(text) {
+    var s = String(text || '').toLowerCase();
+    return s.indexOf('final plant recommendation') >= 0 ||
+      s.indexOf('suitabilityscore') >= 0 ||
+      s.indexOf('suitability score') >= 0 ||
+      s.indexOf('system validation') >= 0 ||
+      s.indexOf('product proof') >= 0 ||
+      s.indexOf('smart recommendations live') >= 0 ||
+      s.indexOf('production readiness') >= 0 ||
+      s.indexOf('production-ready') >= 0;
+  }
+  function serializedHasRealPlantName(text) {
+    var s = String(text || '').toLowerCase();
+    for (var i = 0; i < PLANT_TOKENS.length; i++) {
+      if (s.indexOf(PLANT_TOKENS[i]) >= 0) return true;
+    }
+    return false;
+  }
+
+  function sunExposureHe(value) {
+    if (value === 'approx_6_hours_sun') return 'כ‑6 שעות שמש ביום';
+    if (value === 'full_sun') return 'שמש מלאה';
+    if (value === 'unknown') return 'לא ידוע';
+    return value;
+  }
+
+  function buildOwnerNextQuestions(sk) {
+    var gapSet = {};
+    (sk.precisionGaps || []).forEach(function (g) { gapSet[g] = true; });
+    (sk.contextUsed && sk.contextUsed.knownUnknowns || []).forEach(function (g) { gapSet[g] = true; });
+
+    var prioritized = [
+      {
+        match: function () {
+          return gapSet.exact_irrigation_schedule ||
+            gapSet['siteConditions.wateringMethod'] ||
+            (sk.contextUsed && sk.contextUsed.siteConditions &&
+              sk.contextUsed.siteConditions.wateringMethod === 'unknown');
+        },
+        text: 'איך מתוכננת ההשקיה בפועל — ידני, טפטוף, או עדיין לא ידוע?'
+      },
+      {
+        match: function () { return gapSet.soil_depth; },
+        text: 'מה עומק האדמה או נפח העיצוב לאורך הקיר — האם יש מספיק נפח שורש לכיסוי מהיר?'
+      },
+      {
+        match: function () {
+          return gapSet.wind_exposure || gapSet.exact_winter_frost_frequency;
+        },
+        text: 'כמה חשוף האזור לרוח, ומה תדירות הקפיא בחורף — אם ידוע?'
+      }
+    ];
+
+    var chosen = [];
+    for (var i = 0; i < prioritized.length && chosen.length < 3; i++) {
+      if (prioritized[i].match()) chosen.push(prioritized[i].text);
+    }
+    return chosen;
+  }
+
+  function renderHumanReadable(sk) {
+    var ctx = sk.contextUsed || {};
+    var zone = ctx.gardenZone || {};
+    var site = ctx.siteConditions || {};
+    var prefs = ctx.preferencesConstraints || {};
+    var wallSqm = prefs.wallAreaApproxSqm;
+    var confidenceHe = sk.confidence === 'low' ? 'נמוכה' : sk.confidence;
+
+    $('panel-human-narrative').innerHTML =
+      '<p>CRUVIT מבינה שמדובר ב<strong>ערוגת קיר בקרבת הגליל המערבי</strong>, ' +
+      'בגינה <strong>בקרקע</strong> (לא במיכל), עם ' + esc(sunExposureHe(site.sunExposure)) +
+      ', ניקוז בינוני, והשקיה שעדיין <strong>לא ידועה</strong>.</p>' +
+      '<p>המטרה היא <strong>פרטיות וכיסוי</strong> לאורך קיר של כ‑<strong>' + esc(wallSqm) +
+      ' מ&quot;ר</strong> — כלומר צריך כיסוי שמתאים לקנה מידה קטן‑בינוני של קיר, לא לכל הגינה.</p>' +
+      '<p>לפי מה שסיפקת: נדרש <strong>עד‑ירוק (evergreen)</strong>, חשיבות <strong>גבוהה לפריחה</strong>, ' +
+      'ועדיפות ל<strong>כיסוי מהיר</strong> — אבל גם <strong>להימנע ממשיכת חרקים</strong> ' +
+      'ובמיוחד <strong>להימנע מדבורים</strong>.</p>' +
+      '<p>רמת הביטחון של CRUVIT בתשובה זו היא <strong>' + esc(confidenceHe) +
+      '</strong> (שער: המשך בזהירות, ביטחון נמוך). ' +
+      'עדיין חסרים פרטים על השקיה, עומק אדמה, רוח, זמינות בחנות, וקפיא — ' +
+      'ולכן CRUVIT <strong>לא בוחרת עדיין צמח</strong> ו<strong>לא מציגה ציון התאמה</strong>.</p>' +
+      '<p><strong>הצעד הבטוח הבא:</strong> ' + esc(sk.recommendedNextAction) + '</p>';
+
+    $('panel-tradeoff-human').innerHTML =
+      '<h3>סיכון / trade-off חשוב</h3>' +
+      '<ul>' +
+      '<li><strong>פריחה גבוהה מול הימנעות מחרקים ודבורים:</strong> פריחה עשירה יכולה להגביר עניין של חרקים, דבורים ויתושים — ' +
+      'וזה מתנגש ישירות עם הדרישה שלך להימנע מחרקים ודבורים.</li>' +
+      '<li><strong>עד‑ירוק + כיסוי מהיר:</strong> מצמצם את מרחב האפשרויות — לא כל צמח מהיר, עמוס ופרחני גם מתאים.</li>' +
+      '<li><strong>קיר של ' + esc(wallSqm) + ' מ&quot;ר:</strong> גודל הקיר משמעותי לקצב כיסוי, צורך בהדרכה/תמיכה, ' +
+      'עומס תחזוקה, ודרישות השקיה — לא רק &quot;איזה צמח&quot;.</li>' +
+      '<li><strong>השקיה ועומק אדמה לא ידועים:</strong> ללא זה, כל החלטת שתילה עלולה להיות שגויה מהיסוד.</li>' +
+      '</ul>';
+
+    var nextQuestions = buildOwnerNextQuestions(sk);
+    ownerQuestionCount = nextQuestions.length;
+    var questionItems = nextQuestions.map(function (q) {
+      return '<li>' + esc(q) + '</li>';
+    }).join('');
+
+    $('panel-next-questions').innerHTML =
+      '<h3>מה CRUVIT צריכה הלאה</h3>' +
+      '<p><strong>' + esc(sk.precisionGapsLabel || PRECISION_LABEL) + '</strong></p>' +
+      '<p>במקום רשימת שדות טכנית — שלוש שאלות קצרות שכדאי להשלים קודם:</p>' +
+      '<ul id="owner-next-questions">' + questionItems + '</ul>' +
+      '<p style="opacity:.85;font-size:.92rem;">אפשר לענות &quot;לא יודע / דילגתי&quot; — CRUVIT תשמור את הפערים ולא תמציא ערכים.</p>';
+  }
+
+  function applyFeedbackLabels(prompt) {
+    FEEDBACK_KEYS.forEach(function (key) {
+      var lbl = $('lbl-' + key);
+      if (lbl && prompt && prompt[key]) lbl.textContent = prompt[key];
+    });
+  }
+
+  function installGuards() {
+    storageMutationCount = 0;
+    externalApiRequests = 0;
+    var origLs = Storage.prototype.setItem;
+    var origSs = sessionStorage.setItem.bind(sessionStorage);
+    Storage.prototype.setItem = function () {
+      storageMutationCount++;
+      return origLs.apply(this, arguments);
+    };
+    try {
+      sessionStorage.setItem = function () {
+        storageMutationCount++;
+        return origSs.apply(sessionStorage, arguments);
+      };
+    } catch (e) { /* sessionStorage may be unavailable */ }
+    var origFetch = window.fetch;
+    window.fetch = function () {
+      externalApiRequests++;
+      return Promise.reject(new Error('fetch_blocked_in_real_context_dry_surface'));
+    };
+    var origXhr = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      externalApiRequests++;
+      throw new Error('xhr_disabled_in_real_context_dry_surface');
+    };
+    restoreGuardsFn = function () {
+      Storage.prototype.setItem = origLs;
+      try { sessionStorage.setItem = origSs; } catch (e2) { /* ignore */ }
+      window.fetch = origFetch;
+      XMLHttpRequest.prototype.open = origXhr;
+      restoreGuardsFn = null;
+    };
+  }
+
+  function restoreGuards() {
+    if (typeof restoreGuardsFn === 'function') restoreGuardsFn();
+  }
+
+  function renderDeveloperDetails(sk) {
+    var ctx = sk.contextUsed || {};
+    var zone = ctx.gardenZone || {};
+    var site = ctx.siteConditions || {};
+    var loc = ctx.locationClimate || {};
+    var prefs = ctx.preferencesConstraints || {};
+
+    $('panel-context').innerHTML =
+      '<strong>Garden context used</strong>' +
+      '<dl>' +
+      '<dt>Zone</dt><dd>' + esc(zone.zoneLabel) + '</dd>' +
+      '<dt>Context type</dt><dd>' + esc(zone.growingContextType) + '</dd>' +
+      '<dt>Planting surface</dt><dd>' + esc(zone.plantingSurface) + '</dd>' +
+      '<dt>Sun exposure</dt><dd>' + esc(site.sunExposure) + '</dd>' +
+      '<dt>Drainage</dt><dd>' + esc(site.drainage) + '</dd>' +
+      '<dt>Watering method</dt><dd>' + esc(site.wateringMethod) + '</dd>' +
+      '<dt>Climate</dt><dd>' + esc(loc.climateInterpretation) + ' (' + esc(loc.locationConfidence) + ')</dd>' +
+      '</dl>';
+
+    $('panel-goal').innerHTML =
+      '<strong>Goal understood</strong><dd>' + esc(sk.goalUnderstood) + '</dd>';
+
+    $('panel-gate').innerHTML =
+      '<dl>' +
+      '<dt>reviewGate</dt><dd>' + esc(sk.reviewGate) + '</dd>' +
+      '<dt>confidence</dt><dd>' + esc(sk.confidence) + '</dd>' +
+      '<dt>transparencyLabel</dt><dd>' + esc(sk.transparencyLabel) + '</dd>' +
+      '</dl>';
+
+    $('panel-gaps').innerHTML =
+      '<strong>' + esc(sk.precisionGapsLabel) + '</strong>' + listHtml(sk.precisionGaps);
+
+    $('panel-tradeoffs').innerHTML =
+      '<strong>tradeOffs</strong>' + listHtml(sk.tradeOffs);
+
+    $('panel-outcomes').innerHTML =
+      '<strong>outcomeDimensions</strong>' + listHtml(sk.outcomeDimensions);
+
+    $('panel-action').innerHTML =
+      '<strong>recommendedNextAction</strong><p style="margin:6px 0 0;">' + esc(sk.recommendedNextAction) + '</p>';
+
+    $('panel-prefs').innerHTML =
+      '<strong>preferencesConstraints (contextUsed)</strong>' +
+      '<dl>' +
+      '<dt>avoidWasps</dt><dd>' + esc(prefs.avoidWasps) + '</dd>' +
+      '<dt>avoidInsectAttraction</dt><dd>' + esc(prefs.avoidInsectAttraction) + '</dd>' +
+      '<dt>coverageSpeed</dt><dd>' + esc(prefs.coverageSpeed) + '</dd>' +
+      '<dt>wallAreaApproxSqm</dt><dd>' + esc(prefs.wallAreaApproxSqm) + '</dd>' +
+      '<dt>evergreenDeciduous</dt><dd>' + esc(prefs.evergreenDeciduous) + '</dd>' +
+      '<dt>floweringImportance</dt><dd>' + esc(prefs.floweringImportance) + '</dd>' +
+      '</dl>';
+
+    $('panel-labels').innerHTML =
+      '<strong>sourceLabels</strong>' + mapHtml(ctx.sourceLabels) +
+      '<strong style="display:block;margin-top:10px;">confidenceLabels</strong>' + mapHtml(ctx.confidenceLabels);
+
+    var prompt = sk.feedbackOutcomePrompt || {};
+    $('panel-prompts').innerHTML =
+      '<strong>feedbackOutcomePrompt</strong>' + mapHtml(prompt);
+  }
+
+  function renderHeroAnswer(sk) {
+    renderHumanReadable(sk);
+    renderDeveloperDetails(sk);
+    applyFeedbackLabels(sk.feedbackOutcomePrompt || {});
+    $('heroRender').className = 'visible';
+  }
+
+  function renderRows() {
+    var tbody = $('rows');
+    tbody.innerHTML = '';
+    results.forEach(function (r) {
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td class="' + (r.pass ? 'pass' : 'fail') + '">' + (r.pass ? 'PASS' : 'FAIL') +
+        '</td><td>' + esc(r.name) + '</td><td>' + esc(r.detail) + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function finishSummary(verdict) {
+    var passed = results.filter(function (r) { return r.pass; }).length;
+    var failed = results.length - passed;
+    $('summary').textContent = 'SUMMARY: ' + passed + '/' + results.length + ' passed, ' + failed + ' failed · ' + verdict;
+    $('summary').className = failed ? 'fail' : 'pass';
+    $('metrics').textContent =
+      'assertionTotal=' + results.length + '\n' +
+      'passCount=' + passed + '\n' +
+      'failCount=' + failed + '\n' +
+      'verdict=' + verdict + '\n' +
+      'externalApiRequests=' + externalApiRequests + '\n' +
+      'storageMutationCount=' + storageMutationCount + '\n' +
+      'feedbackCaptured=' + (inMemoryFeedback ? 'yes' : 'no');
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_SUMMARY = Object.freeze({
+      passed: passed,
+      failed: failed,
+      total: results.length,
+      verdict: verdict,
+      externalApiRequests: externalApiRequests,
+      storageMutationCount: storageMutationCount,
+      feedbackCaptured: !!inMemoryFeedback
+    });
+    $('statusLine').textContent =
+      'State: complete · externalApiRequests=' + externalApiRequests +
+      ' · storageMutationCount=' + storageMutationCount;
+    renderRows();
+  }
+
+  function runReadabilityChecks() {
+    var narrative = $('panel-human-narrative').innerText || '';
+    var tradeoff = $('panel-tradeoff-human').innerText || '';
+    var nextQ = $('panel-next-questions').innerText || '';
+    var pageText = narrative + '\n' + tradeoff + '\n' + nextQ;
+    var questionNodes = document.querySelectorAll('#owner-next-questions li');
+
+    expect('human-readable answer section exists',
+      narrative.indexOf('CRUVIT') >= 0 &&
+      narrative.indexOf('12') >= 0 &&
+      narrative.indexOf('פרטיות') >= 0,
+      'narrative present');
+
+    expect('important trade-off mentions flowering and insects or wasps',
+      tradeoff.indexOf('פריחה') >= 0 &&
+      (tradeoff.indexOf('חרקים') >= 0 || tradeoff.indexOf('דבורים') >= 0),
+      tradeoff.slice(0, 120));
+
+    expect('wall area 12 sqm visible in human answer',
+      narrative.indexOf('12') >= 0 && (narrative.indexOf('מ"ר') >= 0 || narrative.indexOf('מ&quot;ר') >= 0),
+      narrative.slice(0, 160));
+
+    expect('no more than 3 next-question items rendered',
+      questionNodes.length >= 1 && questionNodes.length <= 3,
+      String(questionNodes.length));
+
+    expect('precision gaps label uses approved wording',
+      nextQ.indexOf(PRECISION_LABEL) >= 0 && nextQ.indexOf(FORBIDDEN_LABEL) === -1,
+      PRECISION_LABEL);
+
+    expect('developer details remain available',
+      ($('panel-context').innerText || '').indexOf('Western Galilee') >= 0 &&
+      document.querySelector('.dev-details h2') &&
+      document.querySelector('.dev-details h2').textContent === 'Developer details',
+      'dev panels ok');
+
+    expect('human-readable sections introduce no forbidden claims',
+      !serializedHasForbiddenClaims(pageText) &&
+      pageText.indexOf(FORBIDDEN_LABEL) === -1 &&
+      !serializedHasRealPlantName(pageText),
+      'readable text clean');
+  }
+
+  function runChecks(mod) {
+    descriptor = mod.getSmartRecDeveloperHeroAnswerGeneratorSkeletonDescriptor();
+    skeleton = mod.createHeroAnswerSkeleton(JSON.parse(JSON.stringify(OWNER_PACKET)));
+    var normalized = mod.normalizeGardenMemory(JSON.parse(JSON.stringify(OWNER_PACKET)));
+    var ser = JSON.stringify(skeleton);
+    var prefs = skeleton.contextUsed && skeleton.contextUsed.preferencesConstraints;
+
+    expect('createHeroAnswerSkeleton returns frozen skeleton',
+      skeleton && skeleton.reviewGate && Object.isFrozen(skeleton),
+      skeleton ? skeleton.reviewGate : 'missing');
+
+    expect('constraints preserved in normalizeGardenMemory',
+      normalized.preferencesConstraints.avoidWasps === true &&
+      normalized.preferencesConstraints.avoidInsectAttraction === true &&
+      normalized.preferencesConstraints.coverageSpeed === 'fast_preferred' &&
+      normalized.preferencesConstraints.wallAreaApproxSqm === 12,
+      JSON.stringify(normalized.preferencesConstraints));
+
+    expect('constraints surfaced in contextUsed',
+      prefs &&
+      prefs.avoidWasps === true &&
+      prefs.avoidInsectAttraction === true &&
+      prefs.coverageSpeed === 'fast_preferred' &&
+      prefs.wallAreaApproxSqm === 12 &&
+      prefs.evergreenDeciduous === 'evergreen_required' &&
+      prefs.floweringImportance === 'high',
+      JSON.stringify(prefs));
+
+    expect('sourceLabels and confidenceLabels present',
+      skeleton.contextUsed.sourceLabels.zoneLabel === 'user_provided' &&
+      skeleton.contextUsed.confidenceLabels.avoidWasps === 'high',
+      'source/confidence ok');
+
+    expect('feedbackOutcomePrompt exists with all keys',
+      FEEDBACK_KEYS.every(function (k) {
+        return skeleton.feedbackOutcomePrompt && skeleton.feedbackOutcomePrompt[k];
+      }),
+      FEEDBACK_KEYS.join(','));
+
+    expect('recommendationAuthority remains false',
+      skeleton.recommendationAuthority === false &&
+      descriptor.recommendationAuthority === false,
+      String(skeleton.recommendationAuthority));
+
+    expect('plantSuitabilityAuthority remains false',
+      descriptor.plantSuitabilityAuthority === false &&
+      skeleton.plantSuitabilityAuthority === false,
+      String(descriptor.plantSuitabilityAuthority));
+
+    expect('doesNotRecommendPlants / doesNotNamePlantCandidates / doesNotGrantFinalSuitability',
+      skeleton.doesNotRecommendPlants === true &&
+      skeleton.doesNotNamePlantCandidates === true &&
+      skeleton.doesNotGrantFinalSuitability === true &&
+      skeleton.doesNotClaimSystemValidation === true,
+      'authority flags ok');
+
+    expect('no plant names in skeleton output',
+      !serializedHasRealPlantName(ser),
+      'plant scan clean');
+
+    expect('no forbidden claims in skeleton output',
+      !serializedHasForbiddenClaims(ser),
+      'forbidden claims clean');
+
+    expect('no index.html import/reference',
+      document.querySelector('script[src*="index.html"]') === null &&
+      ser.indexOf('index.html') === -1,
+      'harness-local only');
+
+    expect('no network calls during run',
+      externalApiRequests === 0,
+      String(externalApiRequests));
+
+    expect('no storage mutation during run',
+      storageMutationCount === 0,
+      String(storageMutationCount));
+
+    expect('owner packet flags',
+      OWNER_PACKET.ownerSuppliedLocalPacket === true &&
+      OWNER_PACKET.syntheticOnly === false &&
+      OWNER_PACKET.dataBoundary === 'owner_supplied_local_context_no_live_memory_retrieval',
+      OWNER_PACKET.dataBoundary);
+  }
+
+  function captureFeedbackInMemory() {
+    var captured = {};
+    FEEDBACK_KEYS.forEach(function (key) {
+      var el = document.querySelector('[name="' + key + '"]');
+      captured[key] = el ? el.value : '';
+    });
+    inMemoryFeedback = Object.freeze(JSON.parse(JSON.stringify(captured)));
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_FEEDBACK = inMemoryFeedback;
+    $('panel-captured').style.display = 'block';
+    $('capturedJson').textContent = JSON.stringify(inMemoryFeedback, null, 2);
+
+    expect('feedback captured in memory without persistence',
+      inMemoryFeedback.didUserAct !== undefined &&
+      inMemoryFeedback.actionTaken !== undefined &&
+      storageMutationCount === 0 &&
+      window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_FEEDBACK === inMemoryFeedback,
+      'in-memory only');
+
+    var verdict = results.every(function (r) { return r.pass; }) ? PASS_VERDICT : FAIL_VERDICT;
+    finishSummary(verdict);
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_BOOT = Object.freeze({
+      inert: false,
+      moduleLoaded: true,
+      surfaceRun: true,
+      feedbackCaptured: true
+    });
+  }
+
+  async function runSurface() {
+    results = [];
+    inMemoryFeedback = null;
+    ownerQuestionCount = 0;
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_SUMMARY = null;
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_FEEDBACK = null;
+    $('btn-run').disabled = true;
+    $('btn-save-feedback').disabled = true;
+    $('panel-captured').style.display = 'none';
+    $('heroRender').className = '';
+    installGuards();
+    try {
+      $('banner').textContent = 'Running owner real-context Hero Answer dry surface…';
+      var mod = await import('../modules/smart-recommendations/developer-hero-answer-generator-skeleton.js');
+      runChecks(mod);
+      renderHeroAnswer(skeleton);
+      runReadabilityChecks();
+      $('btn-save-feedback').disabled = false;
+      $('banner').textContent = 'Hero Answer rendered. Review the draft answer, fill feedback, then capture in memory.';
+      window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_BOOT = Object.freeze({
+        inert: false,
+        moduleLoaded: true,
+        surfaceRun: true,
+        feedbackCaptured: false
+      });
+      var preFeedbackVerdict = results.every(function (r) { return r.pass; }) ? PASS_VERDICT : FAIL_VERDICT;
+      if (preFeedbackVerdict === FAIL_VERDICT) {
+        finishSummary(FAIL_VERDICT);
+      } else {
+        $('summary').textContent = 'Rendered · awaiting in-memory feedback capture · checks ' +
+          results.filter(function (r) { return r.pass; }).length + '/' + results.length + ' passed';
+        $('summary').className = 'pass';
+        renderRows();
+      }
+    } catch (err) {
+      expect('dry surface uncaught error', false, err && (err.message || String(err)));
+      finishSummary(FAIL_VERDICT);
+    } finally {
+      restoreGuards();
+      $('btn-run').disabled = false;
+    }
+  }
+
+  $('btn-run').addEventListener('click', runSurface);
+  $('btn-save-feedback').addEventListener('click', captureFeedbackInMemory);
+  $('btn-reset').addEventListener('click', function () {
+    results = [];
+    skeleton = null;
+    descriptor = null;
+    inMemoryFeedback = null;
+    ownerQuestionCount = 0;
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_SUMMARY = null;
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_FEEDBACK = null;
+    window.__SR_HERO_REAL_CONTEXT_DRY_SURFACE_BOOT = Object.freeze({
+      inert: true,
+      moduleLoaded: false,
+      surfaceRun: false,
+      feedbackCaptured: false
+    });
+    $('heroRender').className = '';
+    $('panel-captured').style.display = 'none';
+    $('feedbackForm').reset();
+    $('rows').innerHTML = '';
+    $('summary').textContent = 'Not run yet.';
+    $('summary').className = '';
+    $('metrics').textContent = '';
+    $('banner').textContent = 'Idle. Inert boot marker: SR_HERO_REAL_CONTEXT_DRY_SURFACE_INERT';
+    $('statusLine').textContent = 'State: idle · externalApiRequests=0 · storageMutationCount=0';
+    $('btn-save-feedback').disabled = true;
+  });
+})();
+</script>
+</body>
+</html>
