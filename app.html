@@ -16,6 +16,154 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
+<style id="sr-hero-answer-preview-styles">
+/* Bounded Hero Answer product-surface preview — app.html only; non-authoritative. */
+#smart-rec-root .sr-hero-answer-preview{
+  grid-column:1 / -1;
+  margin:0;
+  padding:12px 14px 14px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+  background:rgba(255,252,247,.14);
+  color:#f7f2e8;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-card{
+  max-width:52rem;
+  margin:0 auto;
+  background:rgba(20,28,22,.42);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:16px;
+  padding:12px 14px 14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-kicker{
+  margin:0 0 4px;
+  font-size:.72rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  opacity:.82;
+  font-weight:700;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-title{
+  margin:0 0 6px;
+  font-size:1.05rem;
+  font-weight:700;
+  line-height:1.3;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-status{
+  display:inline-block;
+  margin:0 0 10px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.08);
+  font-size:.8rem;
+  font-weight:600;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-lead{
+  margin:0 0 10px;
+  font-size:.9rem;
+  line-height:1.45;
+  opacity:.95;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-grid{
+  display:grid;
+  gap:8px;
+  margin:0 0 10px;
+}
+@media (min-width:720px){
+  #smart-rec-root .sr-hero-answer-preview .sr-ha-grid{grid-template-columns:1fr 1fr;}
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block{
+  margin:0;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.1);
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block h3{
+  margin:0 0 4px;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  opacity:.8;
+  font-weight:700;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block p,
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block ul{
+  margin:0;
+  font-size:.86rem;
+  line-height:1.4;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block ul{
+  padding-inline-start:1.1em;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-block li{margin:2px 0;}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-optional{
+  margin:0 0 8px;
+  padding-top:8px;
+  border-top:1px dashed rgba(255,255,255,.16);
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-optional h3{
+  margin:0 0 4px;
+  font-size:.86rem;
+  font-weight:700;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-optional .sr-ha-note{
+  margin:0 0 6px;
+  font-size:.78rem;
+  opacity:.85;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-q{
+  margin:0 0 4px;
+  padding:6px 8px;
+  border-radius:10px;
+  border:1px dashed rgba(255,255,255,.2);
+  background:rgba(255,255,255,.04);
+  font-size:.82rem;
+  line-height:1.35;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-feedback{
+  margin-top:8px;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-feedback-label{
+  margin:0 0 6px;
+  font-size:.86rem;
+  font-weight:700;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-fb-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-fb-btn{
+  font:inherit;
+  cursor:pointer;
+  appearance:none;
+  border:1px solid rgba(255,255,255,.28);
+  background:rgba(255,255,255,.08);
+  color:#f7f2e8;
+  border-radius:999px;
+  padding:6px 12px;
+  font-size:.8rem;
+  font-weight:600;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-fb-btn.is-selected{
+  background:rgba(180,210,160,.28);
+  border-color:rgba(220,240,200,.55);
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-fb-status{
+  margin:6px 0 0;
+  font-size:.76rem;
+  opacity:.88;
+  min-height:1.1em;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-fine{
+  margin:8px 0 0;
+  font-size:.72rem;
+  line-height:1.4;
+  opacity:.78;
+}
+</style>
 </head>
 <body>
 <div class="app entry-visible" id="appRoot">
@@ -403,6 +551,49 @@
       </div>
     </header>
     <div class="sr-app-panel">
+      <section id="srHeroAnswerPreview" class="sr-hero-answer-preview" aria-label="Cautious garden answer preview">
+        <div class="sr-ha-card">
+          <p class="sr-ha-kicker" id="srHaKicker">Preview · not final</p>
+          <h2 class="sr-ha-title" id="srHaTitle">CRUVIT’s cautious garden answer</h2>
+          <span class="sr-ha-status" id="srHaStatus">Useful preview — not a final plant recommendation</span>
+          <p class="sr-ha-lead" id="srHaLead">Based on the garden context available so far, CRUVIT can help narrow the decision before choosing plants, but it still needs a few key details before making a final recommendation.</p>
+          <div class="sr-ha-grid">
+            <div class="sr-ha-block">
+              <h3 id="srHaUnderstandsLabel">What CRUVIT understands</h3>
+              <ul id="srHaUnderstandsList">
+                <li id="srHaGoal">Goal: coverage / privacy need (local preview context)</li>
+                <li id="srHaSite">Site: in-ground bed · about 6 hours of sun · medium drainage (local placeholder)</li>
+                <li id="srHaConstraint">Constraint: prefer lower insect / wasp attraction when possible</li>
+              </ul>
+            </div>
+            <div class="sr-ha-block">
+              <h3 id="srHaConfidenceLabel">Confidence</h3>
+              <p id="srHaConfidence">Low–medium — useful for narrowing, not enough for a final plant choice.</p>
+            </div>
+          </div>
+          <div class="sr-ha-block" style="margin-bottom:10px;">
+            <h3 id="srHaTradeoffLabel">Important trade-off</h3>
+            <p id="srHaTradeoff">More flowering can increase visual impact, but may also attract more insects or wasps.</p>
+          </div>
+          <div class="sr-ha-optional">
+            <h3 id="srHaQuestionsLabel">Optional precision questions</h3>
+            <p class="sr-ha-note" id="srHaQuestionsNote">Optional — you can continue without answering.</p>
+            <div class="sr-ha-q" id="srHaQ1">Will this area have regular irrigation?</div>
+            <div class="sr-ha-q" id="srHaQ2">How deep is the soil or planting space?</div>
+            <div class="sr-ha-q" id="srHaQ3">Is the area exposed to strong wind or frost?</div>
+          </div>
+          <div class="sr-ha-feedback">
+            <p class="sr-ha-feedback-label" id="srHaFeedbackLabel">Was this answer useful?</p>
+            <div class="sr-ha-fb-row" role="group" aria-label="Optional feedback">
+              <button type="button" class="sr-ha-fb-btn" data-sr-ha-fb="yes" id="srHaFbYes">Yes</button>
+              <button type="button" class="sr-ha-fb-btn" data-sr-ha-fb="partly" id="srHaFbPartly">Partly</button>
+              <button type="button" class="sr-ha-fb-btn" data-sr-ha-fb="not_yet" id="srHaFbNotYet">Not yet</button>
+            </div>
+            <p class="sr-ha-fb-status" id="srHaFbStatus" aria-live="polite"></p>
+          </div>
+          <p class="sr-ha-fine" id="srHaFine">Local preview only. Not live Garden Memory. Feedback is not saved. No plant recommendation, suitability score, System Validation, or Product Proof.</p>
+        </div>
+      </section>
       <section class="sr-chat-pane" aria-label="Garden advisor chat">
         <div class="sr-chat-pane-head">
           <div class="sr-advisor-avatar" aria-hidden="true">🌿</div>
@@ -6444,6 +6635,127 @@ function setPlantIdentifierShellOpen(open){
 }
 
 /* ── Smart Recommendations (dedicated in-app screen; reuses the recommendation engine) ── */
+/* Bounded Hero Answer product-surface preview: UI-only feedback, no persistence/network. */
+let srHeroAnswerPreviewFb=null;
+let srHeroAnswerPreviewBound=false;
+
+function getSrHeroAnswerPreviewCopy(){
+  let he=false;
+  try{
+    if(typeof getAppLanguage==='function') he=getAppLanguage()==='he';
+    else if(typeof getEntryLang==='function') he=getEntryLang()==='he';
+    else he=(document.documentElement.lang||'en')==='he';
+  }catch(_){ he=false; }
+  if(he){
+    return {
+      kicker:'תצוגה מקדימה · לא סופי',
+      title:'תשובת CRUVIT הזהירה לגינה',
+      status:'תצוגה שימושית — לא המלצת צמח סופית',
+      lead:'על סמך הקשר הזמין כרגע, CRUVIT יכולה לעזור לצמצם את ההחלטה לפני בחירת צמחים, אבל עדיין חסרים כמה פרטים חשובים לפני המלצה סופית.',
+      understandsLabel:'מה CRUVIT הבינה',
+      goal:'מטרה: כיסוי / פרטיות (הקשר מקומי לתצוגה)',
+      site:'מקום: ערוגה בקרקע · כ‑6 שעות שמש · ניקוז בינוני (מציין מקום מקומי)',
+      constraint:'רגישות: להעדיף פחות משיכת חרקים / צרעות כשאפשר',
+      confidenceLabel:'ודאות',
+      confidence:'נמוכה–בינונית — שימושי לצמצום, לא מספיק לבחירת צמח סופית.',
+      tradeoffLabel:'איזון חשוב',
+      tradeoff:'יותר פריחה יכולה להגדיל נוכחות ויזואלית, אבל גם למשוך יותר חרקים או צרעות.',
+      questionsLabel:'שאלות דיוק אופציונליות',
+      questionsNote:'אופציונלי — אפשר להמשיך בלי לענות.',
+      q1:'האם תהיה השקיה קבועה באזור?',
+      q2:'מה עומק הקרקע או נפח השתילה?',
+      q3:'האם האזור חשוף לרוח חזקה או לקרה?',
+      feedbackLabel:'האם התשובה הייתה שימושית?',
+      yes:'כן',
+      partly:'חלקית',
+      notYet:'עדיין לא',
+      thanks:'תודה — המשוב נשאר במסך הזה בלבד ולא נשמר.',
+      fine:'תצוגה מקומית בלבד. לא זיכרון גינה חי. משוב לא נשמר. אין המלצת צמח, ציון התאמה, System Validation או Product Proof.'
+    };
+  }
+  return {
+    kicker:'Preview · not final',
+    title:'CRUVIT’s cautious garden answer',
+    status:'Useful preview — not a final plant recommendation',
+    lead:'Based on the garden context available so far, CRUVIT can help narrow the decision before choosing plants, but it still needs a few key details before making a final recommendation.',
+    understandsLabel:'What CRUVIT understands',
+    goal:'Goal: coverage / privacy need (local preview context)',
+    site:'Site: in-ground bed · about 6 hours of sun · medium drainage (local placeholder)',
+    constraint:'Constraint: prefer lower insect / wasp attraction when possible',
+    confidenceLabel:'Confidence',
+    confidence:'Low–medium — useful for narrowing, not enough for a final plant choice.',
+    tradeoffLabel:'Important trade-off',
+    tradeoff:'More flowering can increase visual impact, but may also attract more insects or wasps.',
+    questionsLabel:'Optional precision questions',
+    questionsNote:'Optional — you can continue without answering.',
+    q1:'Will this area have regular irrigation?',
+    q2:'How deep is the soil or planting space?',
+    q3:'Is the area exposed to strong wind or frost?',
+    feedbackLabel:'Was this answer useful?',
+    yes:'Yes',
+    partly:'Partly',
+    notYet:'Not yet',
+    thanks:'Thanks — this feedback stays on this screen only and is not saved.',
+    fine:'Local preview only. Not live Garden Memory. Feedback is not saved. No plant recommendation, suitability score, System Validation, or Product Proof.'
+  };
+}
+
+function applySrHeroAnswerPreviewCopy(){
+  const c=getSrHeroAnswerPreviewCopy();
+  const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
+  set('srHaKicker',c.kicker);
+  set('srHaTitle',c.title);
+  set('srHaStatus',c.status);
+  set('srHaLead',c.lead);
+  set('srHaUnderstandsLabel',c.understandsLabel);
+  set('srHaGoal',c.goal);
+  set('srHaSite',c.site);
+  set('srHaConstraint',c.constraint);
+  set('srHaConfidenceLabel',c.confidenceLabel);
+  set('srHaConfidence',c.confidence);
+  set('srHaTradeoffLabel',c.tradeoffLabel);
+  set('srHaTradeoff',c.tradeoff);
+  set('srHaQuestionsLabel',c.questionsLabel);
+  set('srHaQuestionsNote',c.questionsNote);
+  set('srHaQ1',c.q1);
+  set('srHaQ2',c.q2);
+  set('srHaQ3',c.q3);
+  set('srHaFeedbackLabel',c.feedbackLabel);
+  set('srHaFbYes',c.yes);
+  set('srHaFbPartly',c.partly);
+  set('srHaFbNotYet',c.notYet);
+  set('srHaFine',c.fine);
+  const status=document.getElementById('srHaFbStatus');
+  if(status){
+    status.textContent=srHeroAnswerPreviewFb?c.thanks:'';
+  }
+}
+
+function bindSrHeroAnswerPreviewFeedback(){
+  if(srHeroAnswerPreviewBound) return;
+  const root=document.getElementById('srHeroAnswerPreview');
+  if(!root) return;
+  const buttons=root.querySelectorAll('[data-sr-ha-fb]');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      const value=btn.getAttribute('data-sr-ha-fb');
+      srHeroAnswerPreviewFb=value;
+      buttons.forEach(function(b){
+        b.classList.toggle('is-selected',b===btn);
+      });
+      const c=getSrHeroAnswerPreviewCopy();
+      const status=document.getElementById('srHaFbStatus');
+      if(status) status.textContent=c.thanks;
+    });
+  });
+  srHeroAnswerPreviewBound=true;
+}
+
+function refreshSrHeroAnswerPreview(){
+  applySrHeroAnswerPreviewCopy();
+  bindSrHeroAnswerPreviewFeedback();
+}
+
 function setSmartRecShellOpen(open){
   const root=document.getElementById('smart-rec-root');
   const app=document.getElementById('appRoot');
@@ -6470,6 +6782,7 @@ function openSmartRecommendations(){
   if(tabTable)tabTable.textContent=copy.tabTable;
   const badge=document.querySelector('#smart-rec-root .sr-trust-badge');
   if(badge)badge.textContent=copy.trustBadge;
+  refreshSrHeroAnswerPreview();
   setSmartRecView('photos');
   initSmartRecSession();
   scrollToPageTop('auto');
