@@ -520,7 +520,7 @@
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
     <p class="pd-v0-kicker">Personal domain V0</p>
     <h2 id="pdV0Title">Garden Profile account</h2>
-    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Legacy My Garden local data is not migrated in this checkpoint.</p>
+    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location can be saved to a Garden only after explicit confirmation. Legacy My Garden plants/tasks are not migrated in this checkpoint.</p>
     <div id="pdV0SignedOut">
       <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
       <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
@@ -535,13 +535,22 @@
       <input class="pd-v0-field" id="pdV0GardenName" type="text" placeholder="Garden profile name">
       <div class="pd-v0-actions">
         <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.createGardenProfile()">Create Garden Profile</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename first profile</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename active/first</button>
         <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signOut()">Sign out</button>
         <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
       </div>
       <div class="pd-v0-panel">
         <strong>Your server Garden Profiles</strong>
+        <p class="pd-v0-hint">With multiple gardens, open one explicitly before Smart Rec uses its server location.</p>
         <ul class="pd-v0-list" id="pdV0GardenList"></ul>
+        <div class="pd-v0-actions">
+          <button type="button" class="pd-v0-btn light" id="pdV0SaveAppLocationBtn">Save confirmed app location to active Garden</button>
+          <button type="button" class="pd-v0-btn light" id="pdV0ClearGardenLocationBtn">Clear active Garden location</button>
+        </div>
+        <div id="pdV0LegacyImport" class="pd-v0-legacy" hidden>
+          <p class="pd-v0-hint">This browser has a trusted local location, and the active Garden has none on the server.</p>
+          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyLocationBtn">Use this location for this Garden</button>
+        </div>
       </div>
     </div>
     <p class="pd-v0-status" id="pdV0Status" aria-live="polite"></p>
@@ -3594,6 +3603,148 @@ async function clearAppLocation(){
     source:'default'
   });
 }
+
+/** Snapshot of browser-local garden location taken before server hydrate (auth session). */
+const PRE_AUTH_LOCATION_SNAPSHOT_KEY='cruvit_pd_v1_pre_auth_location_snapshot';
+let __cruvitLocalLocationSnapshotBeforeAuthHydrate=null;
+
+function readPreAuthLocationSnapshot(){
+  if(__cruvitLocalLocationSnapshotBeforeAuthHydrate) return __cruvitLocalLocationSnapshotBeforeAuthHydrate;
+  try{
+    const raw=sessionStorage.getItem(PRE_AUTH_LOCATION_SNAPSHOT_KEY);
+    if(!raw) return null;
+    __cruvitLocalLocationSnapshotBeforeAuthHydrate=JSON.parse(raw);
+    return __cruvitLocalLocationSnapshotBeforeAuthHydrate;
+  }catch(_){
+    return null;
+  }
+}
+
+function writePreAuthLocationSnapshot(snap){
+  __cruvitLocalLocationSnapshotBeforeAuthHydrate=snap;
+  try{
+    if(snap) sessionStorage.setItem(PRE_AUTH_LOCATION_SNAPSHOT_KEY,JSON.stringify(snap));
+    else sessionStorage.removeItem(PRE_AUTH_LOCATION_SNAPSHOT_KEY);
+  }catch(_){}
+}
+
+function readPersistedGardenLocationForSnapshot(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(service.key)||'null');
+    const gl=saved&&saved.gardenLocation&&typeof saved.gardenLocation==='object'
+      ?saved.gardenLocation
+      :null;
+    if(!gl) return null;
+    if(String(gl.source||'').trim()==='default') return null;
+    return {
+      gardenLocation:Object.assign({},gl),
+      location:saved.location!=null?saved.location:gl.label,
+      climate:saved.climate!=null?saved.climate:gl.climate,
+      weather:saved.weather&&typeof saved.weather==='object'?Object.assign({},saved.weather):null,
+      weatherFetchError:saved.weatherFetchError||null
+    };
+  }catch(_){
+    return null;
+  }
+}
+
+function captureLocalGardenLocationSnapshotBeforeAuthHydrate(){
+  const existing=readPreAuthLocationSnapshot();
+  // Keep first trusted capture; allow replacing an accidental default/untrusted snapshot.
+  if(existing?.gardenLocation&&String(existing.gardenLocation.source||'').trim()!=='default'){
+    return existing;
+  }
+  ensureGardenLocation();
+  let snap=null;
+  const inMemoryTrusted=data.gardenLocation&&typeof data.gardenLocation==='object'
+    &&String(data.gardenLocation.source||'').trim()!=='default';
+  if(inMemoryTrusted){
+    snap={
+      gardenLocation:Object.assign({},data.gardenLocation),
+      location:data.location,
+      climate:data.climate,
+      weather:data.weather&&typeof data.weather==='object'?Object.assign({},data.weather):null,
+      weatherFetchError:data.weatherFetchError||null
+    };
+  }else{
+    // After suspend-in-memory, data may be default while localStorage still holds legacy trusted location.
+    snap=readPersistedGardenLocationForSnapshot();
+  }
+  if(!snap?.gardenLocation) return existing||null;
+  writePreAuthLocationSnapshot(snap);
+  return snap;
+}
+
+function clearLocalGardenLocationSnapshotBeforeAuthHydrate(){
+  writePreAuthLocationSnapshot(null);
+}
+
+/**
+ * While still authenticated: drop active trusted hydrate in memory only.
+ * Does not write default into localStorage and does not consume the pre-hydrate snapshot
+ * (snapshot remains available for sign-out restore).
+ */
+function suspendAuthenticatedLocationHydrationInMemory(){
+  const derived=deriveLabelParts(DEFAULT_GARDEN_LOCATION.label);
+  data.gardenLocation={
+    label:DEFAULT_GARDEN_LOCATION.label,
+    climate:DEFAULT_GARDEN_LOCATION.climate,
+    lat:DEFAULT_GARDEN_LOCATION.lat,
+    lon:DEFAULT_GARDEN_LOCATION.lon,
+    rawInput:'',
+    resolvedCity:derived.resolvedCity,
+    region:'',
+    country:derived.countryFromLabel||'',
+    countryCode:'',
+    timezone:'',
+    provider:'',
+    source:'default',
+    updatedAt:new Date().toISOString()
+  };
+  data.location=data.gardenLocation.label;
+  data.climate=data.gardenLocation.climate;
+  data.weather={};
+  delete data.weatherFetchError;
+  // Intentionally no service.save — do not destroy legacy localStorage location.
+  onAppLocationChanged();
+}
+
+/**
+ * Auth boundary release after server location hydrate (sign-out / session end).
+ * Restores pre-hydrate local snapshot when present.
+ * Does NOT write Western Galilee/default into localStorage over unrelated legacy location.
+ */
+function releaseAuthenticatedLocationHydration(){
+  const snap=readPreAuthLocationSnapshot();
+  clearLocalGardenLocationSnapshotBeforeAuthHydrate();
+  if(snap&&snap.gardenLocation&&typeof snap.gardenLocation==='object'){
+    data.gardenLocation=Object.assign({},snap.gardenLocation);
+    data.location=snap.location!=null?snap.location:data.gardenLocation.label;
+    data.climate=snap.climate!=null?snap.climate:data.gardenLocation.climate;
+    if(snap.weather&&typeof snap.weather==='object') data.weather=Object.assign({},snap.weather);
+    else data.weather={};
+    if(snap.weatherFetchError) data.weatherFetchError=snap.weatherFetchError;
+    else delete data.weatherFetchError;
+    try{service.save(data)}catch(_){}
+    onAppLocationChanged();
+    return 'restore-snapshot';
+  }
+  // Never hydrated (or no snapshot): leave localStorage / current local gardenLocation alone.
+  onAppLocationChanged();
+  return 'noop-preserve-local';
+}
+
+/** @deprecated name kept as alias for personal-domain callers during V1 */
+function resetAppLocationToUntrustedDefault(){
+  return releaseAuthenticatedLocationHydration();
+}
+try{
+  window.captureLocalGardenLocationSnapshotBeforeAuthHydrate=captureLocalGardenLocationSnapshotBeforeAuthHydrate;
+  window.releaseAuthenticatedLocationHydration=releaseAuthenticatedLocationHydration;
+  window.suspendAuthenticatedLocationHydrationInMemory=suspendAuthenticatedLocationHydrationInMemory;
+  window.resetAppLocationToUntrustedDefault=resetAppLocationToUntrustedDefault;
+  window.clearLocalGardenLocationSnapshotBeforeAuthHydrate=clearLocalGardenLocationSnapshotBeforeAuthHydrate;
+}catch(_){}
 
 async function resolveAppLocation(rawInput){
   const q=String(rawInput||'').trim();

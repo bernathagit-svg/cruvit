@@ -1,17 +1,34 @@
 /**
- * CRUVIT Personal Domain V0 — Supabase Auth + owned Garden Profile(s).
+ * CRUVIT Personal Domain V0 + Location V1 —
+ * Supabase Auth + owned Garden Profile(s) + confirmed location persistence.
  * Browser-safe anon/publishable key only. Authorization enforced by Postgres RLS.
+ * Legacy localStorage is never silently uploaded to the server.
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { shouldAcceptGardenProfileRefresh } from './garden-profile-v0-refresh-guard.js';
+import {
+  buildServerLocationPayload,
+  isCompleteServerLocation,
+  mayWriteLegacyLocalLocationToServer,
+  nullServerLocationPayload,
+  resolveActiveGardenId,
+  serverLocationToAppPartial,
+  shouldAcceptLocationHydration
+} from './garden-profile-location-contract.js';
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';
+
+const GARDEN_SELECT =
+  'id,name,created_at,updated_at,user_id,location_label,location_lat,location_lon,location_climate,location_country,location_region,location_timezone,location_source,location_confirmed_at,location_updated_at';
 
 /** @type {import('@supabase/supabase-js').SupabaseClient | null} */
 let supabase = null;
 /** @type {import('@supabase/supabase-js').Session | null} */
 let currentSession = null;
+/** @type {object[]} */
+let ownedGardensCache = [];
+let hydrateSeq = 0;
 
 function setStatus(text, kind) {
   const el = document.getElementById('pdV0Status');
@@ -41,6 +58,27 @@ function setSignedInUi(email) {
   if (chip) chip.textContent = email ? email.split('@')[0] : 'Account';
 }
 
+function getStoredActiveGardenId() {
+  try {
+    return String(sessionStorage.getItem(SESSION_STORAGE_KEY) || '').trim();
+  } catch {
+    return '';
+  }
+}
+
+function setStoredActiveGardenId(id) {
+  try {
+    if (id) sessionStorage.setItem(SESSION_STORAGE_KEY, String(id));
+    else sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function getActiveGardenId() {
+  return resolveActiveGardenId(ownedGardensCache, getStoredActiveGardenId());
+}
+
 async function fetchAuthConfig() {
   const res = await fetch(AUTH_CONFIG_PATH, { cache: 'no-store' });
   if (!res.ok) throw new Error(`auth-config HTTP ${res.status}`);
@@ -51,6 +89,33 @@ async function fetchAuthConfig() {
     throw new Error('Supabase is not configured for this environment (auth-config missing URL or anon key).');
   }
   return { url, anonKey };
+}
+
+function clearAuthenticatedHydratedLocation() {
+  // Session end / sign-out path: restore legacy snapshot; never persist default wipe.
+  if (typeof window.releaseAuthenticatedLocationHydration === 'function') {
+    window.releaseAuthenticatedLocationHydration();
+    return;
+  }
+  if (typeof window.resetAppLocationToUntrustedDefault === 'function') {
+    window.resetAppLocationToUntrustedDefault();
+  }
+}
+
+function suspendHydrationForGardenWithoutServerLocation() {
+  // Still signed in, active garden has no confirmed server location:
+  // untrust in-memory only; keep pre-hydrate localStorage snapshot for sign-out.
+  if (typeof window.suspendAuthenticatedLocationHydrationInMemory === 'function') {
+    window.suspendAuthenticatedLocationHydrationInMemory();
+    return;
+  }
+  clearAuthenticatedHydratedLocation();
+}
+
+function captureLocalSnapshotIfNeeded() {
+  if (typeof window.captureLocalGardenLocationSnapshotBeforeAuthHydrate === 'function') {
+    window.captureLocalGardenLocationSnapshotBeforeAuthHydrate();
+  }
 }
 
 async function ensureClient() {
@@ -67,12 +132,17 @@ async function ensureClient() {
     currentSession = session;
     if (session?.user) {
       setSignedInUi(session.user.email || session.user.id);
+      // Capture anonymous/local location before any server hydrate overwrites working cache.
+      captureLocalSnapshotIfNeeded();
       refreshOwnedGardenProfiles().catch((err) => {
         setStatus(err.message || 'Could not load garden profiles.', 'error');
       });
     } else {
+      ownedGardensCache = [];
+      setStoredActiveGardenId('');
       setSignedOutUi();
       renderGardenProfileList([]);
+      clearAuthenticatedHydratedLocation();
     }
   });
   return supabase;
@@ -85,26 +155,13 @@ async function restoreSession() {
   currentSession = data.session;
   if (data.session?.user) {
     setSignedInUi(data.session.user.email || data.session.user.id);
+    captureLocalSnapshotIfNeeded();
     await refreshOwnedGardenProfiles();
   } else {
+    ownedGardensCache = [];
     setSignedOutUi();
     renderGardenProfileList([]);
   }
-}
-
-function renderGardenProfileList(rows) {
-  const list = document.getElementById('pdV0GardenList');
-  if (!list) return;
-  if (!rows?.length) {
-    list.innerHTML = '<li class="pd-v0-chip">No server Garden Profiles yet.</li>';
-    return;
-  }
-  list.innerHTML = rows.map((row) => {
-    const name = escapeHtml(row.name || 'Garden');
-    const id = escapeHtml(row.id || '');
-    const updated = escapeHtml(row.updated_at || row.created_at || '');
-    return `<li><strong>${name}</strong><br><span class="pd-v0-chip">${id}</span><br><small>${updated}</small></li>`;
-  }).join('');
 }
 
 function escapeHtml(value) {
@@ -115,23 +172,160 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
+function formatLocationSummary(row) {
+  if (!isCompleteServerLocation(row)) return 'No confirmed server location';
+  const bits = [row.location_label, row.location_climate].filter(Boolean);
+  return bits.join(' · ');
+}
+
+function hasLegacyTrustedLocalLocation() {
+  try {
+    return typeof window.hasTrustedAppLocation === 'function' && window.hasTrustedAppLocation() === true;
+  } catch {
+    return false;
+  }
+}
+
+function renderGardenProfileList(rows) {
+  const list = document.getElementById('pdV0GardenList');
+  const importPanel = document.getElementById('pdV0LegacyImport');
+  if (!list) return;
+  const activeId = getActiveGardenId();
+  if (!rows?.length) {
+    list.innerHTML = '<li class="pd-v0-chip">No server Garden Profiles yet.</li>';
+    if (importPanel) importPanel.hidden = true;
+    return;
+  }
+  list.innerHTML = rows
+    .map((row) => {
+      const name = escapeHtml(row.name || 'Garden');
+      const id = escapeHtml(row.id || '');
+      const loc = escapeHtml(formatLocationSummary(row));
+      const isActive = activeId && String(row.id) === String(activeId);
+      const openLabel = isActive ? 'Active' : 'Open Garden';
+      const openDisabled = isActive ? 'disabled' : '';
+      return `<li>
+        <strong>${name}</strong>${isActive ? ' <span class="pd-v0-chip">active</span>' : ''}<br>
+        <span class="pd-v0-chip">${id}</span><br>
+        <small>${loc}</small><br>
+        <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-open-garden="${id}" ${openDisabled}>${openLabel}</button>
+      </li>`;
+    })
+    .join('');
+
+  list.querySelectorAll('[data-pd-open-garden]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-pd-open-garden');
+      selectActiveGarden(id).catch((err) => setStatus(err.message || 'Could not open garden.', 'error'));
+    });
+  });
+
+  if (importPanel) {
+    const active = rows.find((r) => activeId && String(r.id) === String(activeId));
+    const showImport =
+      !!active && !isCompleteServerLocation(active) && hasLegacyTrustedLocalLocation();
+    importPanel.hidden = !showImport;
+  }
+}
+
+async function hydrateActiveGardenLocation(gardenRow) {
+  const requestUserId = currentSession?.user?.id;
+  const requestGardenId = gardenRow?.id;
+  const seq = ++hydrateSeq;
+  if (!isCompleteServerLocation(gardenRow)) {
+    suspendHydrationForGardenWithoutServerLocation();
+    return false;
+  }
+  if (
+    !shouldAcceptLocationHydration(
+      requestUserId,
+      requestGardenId,
+      currentSession,
+      getActiveGardenId()
+    )
+  ) {
+    return false;
+  }
+  const partial = serverLocationToAppPartial(gardenRow);
+  if (!partial || typeof window.setAppLocation !== 'function') return false;
+  // Preserve anonymous/local gardenLocation before server hydrate overwrites working cache.
+  if (typeof window.captureLocalGardenLocationSnapshotBeforeAuthHydrate === 'function') {
+    window.captureLocalGardenLocationSnapshotBeforeAuthHydrate();
+  }
+  await window.setAppLocation(partial);
+  if (seq !== hydrateSeq) return false;
+  if (
+    !shouldAcceptLocationHydration(
+      requestUserId,
+      requestGardenId,
+      currentSession,
+      getActiveGardenId()
+    )
+  ) {
+    // setAppLocation may have written server location into local working cache —
+    // restore pre-hydrate snapshot so prior user's server location does not remain.
+    clearAuthenticatedHydratedLocation();
+    return false;
+  }
+  return true;
+}
+
 async function refreshOwnedGardenProfiles() {
   if (!supabase || !currentSession?.user) {
+    ownedGardensCache = [];
     renderGardenProfileList([]);
     return [];
   }
   const requestUserId = currentSession.user.id;
   const { data, error } = await supabase
     .from('garden_profiles')
-    .select('id,name,created_at,updated_at,user_id')
+    .select(GARDEN_SELECT)
     .order('updated_at', { ascending: false });
   if (error) throw error;
   if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) {
     return [];
   }
   const rows = Array.isArray(data) ? data : [];
+  ownedGardensCache = rows;
+
+  const activeId = resolveActiveGardenId(rows, getStoredActiveGardenId());
+  if (rows.length === 1) {
+    setStoredActiveGardenId(rows[0].id);
+  } else if (!activeId) {
+    // Multiple gardens and no valid explicit selection: do not guess.
+    setStoredActiveGardenId(getStoredActiveGardenId());
+  } else {
+    setStoredActiveGardenId(activeId);
+  }
+
   renderGardenProfileList(rows);
+
+  const resolvedActive = getActiveGardenId();
+  if (resolvedActive) {
+    const garden = rows.find((r) => String(r.id) === String(resolvedActive));
+    if (garden) await hydrateActiveGardenLocation(garden);
+  } else if (rows.length !== 1) {
+    // No active garden (0 gardens, or many with no explicit selection):
+    // untrust in-memory only — do NOT release/consume the pre-auth local snapshot.
+    suspendHydrationForGardenWithoutServerLocation();
+  }
   return rows;
+}
+
+async function selectActiveGarden(gardenId) {
+  const id = String(gardenId || '').trim();
+  const row = ownedGardensCache.find((r) => String(r.id) === id);
+  if (!row) throw new Error('Garden not found in your owned profiles.');
+  setStoredActiveGardenId(id);
+  renderGardenProfileList(ownedGardensCache);
+  const ok = await hydrateActiveGardenLocation(row);
+  setStatus(
+    ok
+      ? `Opened garden "${row.name}" and hydrated server location.`
+      : `Opened garden "${row.name}". No confirmed server location yet.`,
+    'ok'
+  );
+  return row;
 }
 
 async function signInWithPassword() {
@@ -151,6 +345,7 @@ async function signInWithPassword() {
   currentSession = data.session;
   setSignedInUi(data.user?.email || data.user?.id || email);
   setStatus('Signed in. Loading your Garden Profiles…', 'ok');
+  captureLocalSnapshotIfNeeded();
   await refreshOwnedGardenProfiles();
 }
 
@@ -175,12 +370,20 @@ async function signUpWithPassword() {
   currentSession = data.session;
   setSignedInUi(data.user?.email || email);
   setStatus('Signed up and signed in.', 'ok');
+  captureLocalSnapshotIfNeeded();
   await refreshOwnedGardenProfiles();
 }
 
 async function signOut() {
+  hydrateSeq += 1;
+  // Restore pre-auth local location once; do not clear snapshot before release.
+  clearAuthenticatedHydratedLocation();
+  ownedGardensCache = [];
+  setStoredActiveGardenId('');
   if (!supabase) {
     setSignedOutUi();
+    renderGardenProfileList([]);
+    setStatus('Signed out.', 'ok');
     return;
   }
   await supabase.auth.signOut();
@@ -200,13 +403,13 @@ async function createGardenProfile() {
   const { data, error } = await supabase
     .from('garden_profiles')
     .insert({ user_id: currentSession.user.id, name })
-    .select('id,name,created_at,updated_at,user_id')
+    .select(GARDEN_SELECT)
     .single();
   if (error) {
     setStatus(error.message || 'Create failed.', 'error');
     return;
   }
-  if (data?.id) sessionStorage.setItem(SESSION_STORAGE_KEY, data.id);
+  if (data?.id) setStoredActiveGardenId(data.id);
   setStatus(`Created Garden Profile "${data.name}".`, 'ok');
   await refreshOwnedGardenProfiles();
 }
@@ -221,7 +424,8 @@ async function renameFirstOwnedGardenProfile() {
     setStatus('Create a Garden Profile first.', 'error');
     return;
   }
-  const target = rows[0];
+  const activeId = getActiveGardenId();
+  const target = (activeId && rows.find((r) => String(r.id) === String(activeId))) || rows[0];
   const nextName = String(document.getElementById('pdV0GardenName')?.value || '').trim();
   if (!nextName) {
     setStatus('Enter a new name to update.', 'error');
@@ -241,6 +445,109 @@ async function renameFirstOwnedGardenProfile() {
   await refreshOwnedGardenProfiles();
 }
 
+async function saveConfirmedLocationToActiveGarden(locationInput) {
+  if (!supabase || !currentSession?.user) {
+    throw new Error('Sign in to save Garden location.');
+  }
+  const gardenId = getActiveGardenId();
+  if (!gardenId) {
+    throw new Error('Select an owned Garden Profile before saving location.');
+  }
+  const payload = buildServerLocationPayload(locationInput);
+  const requestUserId = currentSession.user.id;
+  const { data, error } = await supabase
+    .from('garden_profiles')
+    .update(payload)
+    .eq('id', gardenId)
+    .select(GARDEN_SELECT)
+    .single();
+  if (error) throw error;
+  if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) return null;
+  await refreshOwnedGardenProfiles();
+  return data;
+}
+
+async function clearLocationOnActiveGarden() {
+  if (!supabase || !currentSession?.user) {
+    throw new Error('Sign in to clear Garden location.');
+  }
+  const gardenId = getActiveGardenId();
+  if (!gardenId) {
+    throw new Error('Select an owned Garden Profile first.');
+  }
+  const requestUserId = currentSession.user.id;
+  const { data, error } = await supabase
+    .from('garden_profiles')
+    .update(nullServerLocationPayload())
+    .eq('id', gardenId)
+    .select(GARDEN_SELECT)
+    .single();
+  if (error) throw error;
+  if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) return null;
+  clearAuthenticatedHydratedLocation();
+  await refreshOwnedGardenProfiles();
+  return data;
+}
+
+/**
+ * Explicit legacy import only — never called automatically on sign-in.
+ */
+async function importLegacyTrustedLocationToActiveGarden(explicitConfirm) {
+  if (!mayWriteLegacyLocalLocationToServer(explicitConfirm)) {
+    throw new Error('Legacy local location import requires explicit user confirmation.');
+  }
+  if (typeof window.getAppLocation !== 'function' || typeof window.hasTrustedAppLocation !== 'function') {
+    throw new Error('App location APIs unavailable.');
+  }
+  if (!window.hasTrustedAppLocation()) {
+    throw new Error('No trusted local location available to import.');
+  }
+  const loc = window.getAppLocation();
+  const source = String(loc.source || '').trim();
+  if (source === 'default') {
+    throw new Error('Default location cannot be imported as server-owned Garden location.');
+  }
+  const saved = await saveConfirmedLocationToActiveGarden({
+    label: loc.label,
+    climate: loc.broadClimateLabel || loc.derivedClimateProfile?.climateLabel,
+    lat: loc.lat,
+    lon: loc.lon,
+    country: loc.country,
+    region: loc.region,
+    timezone: loc.timezone,
+    source: source === 'geolocation' ? 'geolocation' : 'manual'
+  });
+  setStatus('Imported local location into this Garden (explicit confirm).', 'ok');
+  return saved;
+}
+
+async function saveCurrentAppLocationToActiveGarden() {
+  if (typeof window.getAppLocation !== 'function' || typeof window.hasTrustedAppLocation !== 'function') {
+    throw new Error('App location APIs unavailable.');
+  }
+  if (!window.hasTrustedAppLocation()) {
+    throw new Error('Confirm a trusted garden location in the location settings first.');
+  }
+  captureLocalSnapshotIfNeeded();
+  const loc = window.getAppLocation();
+  const source = String(loc.source || '').trim();
+  if (source === 'default') {
+    throw new Error('Default location cannot become server-owned Garden location.');
+  }
+  const saved = await saveConfirmedLocationToActiveGarden({
+    label: loc.label,
+    climate: loc.broadClimateLabel || loc.derivedClimateProfile?.climateLabel,
+    lat: loc.lat,
+    lon: loc.lon,
+    country: loc.country,
+    region: loc.region,
+    timezone: loc.timezone,
+    source: source === 'geolocation' ? 'geolocation' : 'manual'
+  });
+  setStatus('Saved confirmed location to this Garden Profile.', 'ok');
+  return saved;
+}
+
 function openPersonalDomainModal() {
   document.getElementById('pdV0Modal')?.classList.add('open');
   restoreSession().catch((err) => setStatus(err.message || 'Could not initialize auth.', 'error'));
@@ -253,6 +560,21 @@ function closePersonalDomainModal() {
 function wirePersonalDomainUi() {
   document.getElementById('pdV0Modal')?.addEventListener('click', (event) => {
     if (event.target?.id === 'pdV0Modal') closePersonalDomainModal();
+  });
+  document.getElementById('pdV0ImportLegacyLocationBtn')?.addEventListener('click', () => {
+    importLegacyTrustedLocationToActiveGarden(true).catch((err) => {
+      setStatus(err.message || 'Import failed.', 'error');
+    });
+  });
+  document.getElementById('pdV0SaveAppLocationBtn')?.addEventListener('click', () => {
+    saveCurrentAppLocationToActiveGarden().catch((err) => {
+      setStatus(err.message || 'Save location failed.', 'error');
+    });
+  });
+  document.getElementById('pdV0ClearGardenLocationBtn')?.addEventListener('click', () => {
+    clearLocationOnActiveGarden()
+      .then(() => setStatus('Cleared server location on this Garden.', 'ok'))
+      .catch((err) => setStatus(err.message || 'Clear failed.', 'error'));
   });
 }
 
@@ -274,8 +596,15 @@ window.cruvitPersonalDomainV0 = {
   createGardenProfile,
   renameFirstOwnedGardenProfile,
   refreshOwnedGardenProfiles,
+  selectActiveGarden,
+  getActiveGardenId,
+  saveConfirmedLocationToActiveGarden,
+  clearLocationOnActiveGarden,
+  saveCurrentAppLocationToActiveGarden,
+  importLegacyTrustedLocationToActiveGarden,
   getSupabaseClient: () => supabase,
-  getSession: () => currentSession
+  getSession: () => currentSession,
+  getOwnedGardensCache: () => ownedGardensCache.slice()
 };
 
 initPersonalDomainV0();
