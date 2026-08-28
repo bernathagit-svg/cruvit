@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
+<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20250828">
 <style id="sr-hero-answer-preview-styles">
 /* Bounded Hero Answer product-surface preview — app.html only; non-authoritative. */
 #smart-rec-root .sr-hero-answer-preview{
@@ -298,6 +299,7 @@
     <button class="pill" onclick="setTab('timeline');closeMobileNav()">History</button>
     <button class="pill" onclick="setTab('rewards');closeMobileNav()">🏆 Rewards <span id="creditsNav" class="badge">0</span></button>
     <button class="pill dark nav-cart-pill" onclick="toggleCart();closeMobileNav()">🛒 Cart <span id="cartCount" class="badge">0</span></button>
+    <button type="button" class="pill" id="pdV0AccountChip" onclick="window.cruvitPersonalDomainV0?.open();closeMobileNav()">Sign in</button>
   </nav>
 </header>
 
@@ -511,6 +513,38 @@
         <button type="button" class="btn light" onclick="closeLocationModal()">Cancel</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="pd-v0-modal" id="pdV0Modal" aria-hidden="true">
+  <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
+    <p class="pd-v0-kicker">Personal domain V0</p>
+    <h2 id="pdV0Title">Garden Profile account</h2>
+    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Legacy My Garden local data is not migrated in this checkpoint.</p>
+    <div id="pdV0SignedOut">
+      <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
+      <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
+      <div class="pd-v0-actions">
+        <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.signIn()">Sign in</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signUp()">Create account</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
+      </div>
+    </div>
+    <div id="pdV0SignedIn" hidden>
+      <p class="pd-v0-lead">Signed in as <strong id="pdV0UserEmail"></strong></p>
+      <input class="pd-v0-field" id="pdV0GardenName" type="text" placeholder="Garden profile name">
+      <div class="pd-v0-actions">
+        <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.createGardenProfile()">Create Garden Profile</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename first profile</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signOut()">Sign out</button>
+        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
+      </div>
+      <div class="pd-v0-panel">
+        <strong>Your server Garden Profiles</strong>
+        <ul class="pd-v0-list" id="pdV0GardenList"></ul>
+      </div>
+    </div>
+    <p class="pd-v0-status" id="pdV0Status" aria-live="polite"></p>
   </div>
 </div>
 
@@ -7083,5 +7117,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js"></script>
 </body>
 </html>
