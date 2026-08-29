@@ -1,0 +1,238 @@
+{
+  "sources": [
+    {
+      "id": "wikimedia-commons",
+      "selected": true,
+      "cost": "free",
+      "rateLimit": "polite use; ~1–2 req/s recommended; no API key",
+      "licenseMetadata": "machine-readable extmetadata (LicenseShortName, LicenseUrl, AttributionRequired, Artist)",
+      "commercialSupport": "filterable via license short names (CC0/PD/CC BY/CC BY-SA)",
+      "notes": "Primary V1 source."
+    },
+    {
+      "id": "openverse",
+      "selected": false,
+      "cost": "free (Creative Commons catalog API)",
+      "rateLimit": "documented API limits; attribution always provided",
+      "licenseMetadata": "strong; license_type=commercial filter",
+      "commercialSupport": "yes when filtered",
+      "notes": "Deferred for V1 to keep one adapter; compatible follow-on."
+    },
+    {
+      "id": "inaturalist",
+      "selected": false,
+      "cost": "free with API etiquette",
+      "rateLimit": "yes",
+      "licenseMetadata": "per-observation photo licenses vary; many NC",
+      "commercialSupport": "often non-commercial — not default-safe",
+      "notes": "Rejected as default source for commercial catalog."
+    },
+    {
+      "id": "google-images-pinterest-scrape",
+      "selected": false,
+      "cost": "n/a",
+      "licenseMetadata": "none reliable",
+      "commercialSupport": "no",
+      "notes": "Explicitly disallowed."
+    }
+  ],
+  "storage": {
+    "mode": "reference-third-party",
+    "rationale": "Wikimedia Commons URLs are stable and redistribution is permitted under accepted licenses; V1 avoids CRUVIT media hosting cost while retaining full provenance for attribution and re-verification.",
+    "risks": [
+      "source-removal",
+      "hotlink-policy-change",
+      "thumb-url-rotation"
+    ],
+    "mitigations": [
+      "persist original file page URL + asset id",
+      "prefer original url over ephemeral thumbs when available",
+      "re-resolve from cache key without network when still valid"
+    ]
+  },
+  "licensePolicy": {
+    "acceptCount": 26,
+    "rejectSubstrings": [
+      "nc",
+      "noncommercial",
+      "non-commercial",
+      "nd",
+      "noderiv",
+      "no derivatives",
+      "all rights reserved",
+      "fair use",
+      "nonfree",
+      "copyrighted"
+    ]
+  },
+  "unit": {
+    "license": "pass",
+    "selectPrimary": "pass"
+  },
+  "falseMatch": [
+    {
+      "case": "binomial-ok",
+      "rejected": false,
+      "reasons": [
+        "binomial-in-metadata"
+      ]
+    },
+    {
+      "case": "genus-only",
+      "rejected": true,
+      "reasons": [
+        "epithet-far-from-genus-or-wrong-species-context"
+      ]
+    },
+    {
+      "case": "common-name-collision",
+      "rejected": true,
+      "reasons": [
+        "common-name-without-scientific"
+      ]
+    },
+    {
+      "case": "kiwi-collision-and-license",
+      "rejectedCount": 3,
+      "selected": "File:Actinidia_deliciosa.jpg",
+      "falseMatchOrLicenseRejectRate": 0.75
+    }
+  ],
+  "acceptance": [
+    {
+      "slug": "cacao",
+      "scientific": "Theobroma cacao",
+      "status": "IMAGE_READY",
+      "license": "CC BY-SA 3.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 1212.7947,
+      "licenseValidationMs": 0.490099999999984,
+      "candidateCount": 10,
+      "passedCount": 9,
+      "rejectedTop": [
+        {
+          "candidate": "Municipal Market of São Paulo city.jpg",
+          "stage": "identity",
+          "reason": "no-scientific-identity-match",
+          "confidence": "none"
+        }
+      ]
+    },
+    {
+      "slug": "coconut",
+      "scientific": "Cocos nucifera",
+      "status": "IMAGE_READY",
+      "license": "CC BY-SA 3.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 700.3140000000001,
+      "licenseValidationMs": 0.3445000000001528,
+      "candidateCount": 10,
+      "passedCount": 4,
+      "rejectedTop": [
+        {
+          "candidate": "1859-Martinique.web.jpg",
+          "stage": "license",
+          "reason": "rejected:copyrighted"
+        },
+        {
+          "candidate": "Coconut trees along salty inland water.jpg",
+          "stage": "identity",
+          "reason": "no-scientific-identity-match",
+          "confidence": "none"
+        },
+        {
+          "candidate": "Coconut Tree.JPG",
+          "stage": "identity",
+          "reason": "no-scientific-identity-match",
+          "confidence": "none"
+        }
+      ]
+    },
+    {
+      "slug": "cypress",
+      "scientific": "Cupressus sempervirens",
+      "status": "IMAGE_READY",
+      "license": "CC BY-SA 3.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 658.8323999999998,
+      "licenseValidationMs": 0.30549999999993815,
+      "candidateCount": 9,
+      "passedCount": 4,
+      "rejectedTop": [
+        {
+          "candidate": "Med Cypress.jpg",
+          "stage": "attribution",
+          "reason": "attribution-required-but-author-missing"
+        },
+        {
+          "candidate": "Ermita de Santo Domingo, Lécera, Zaragoza, España, 2017-01-04, DD 103-105 HDR.jpg",
+          "stage": "identity",
+          "reason": "no-scientific-identity-match",
+          "confidence": "none"
+        },
+        {
+          "candidate": "A View From the Bekaa.png",
+          "stage": "identity",
+          "reason": "common-name-without-scientific",
+          "confidence": "none"
+        }
+      ]
+    },
+    {
+      "slug": "kiwi",
+      "scientific": "Actinidia deliciosa",
+      "status": "IMAGE_READY",
+      "license": "CC BY 4.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 702.1206000000002,
+      "licenseValidationMs": 0.13510000000042055,
+      "candidateCount": 10,
+      "passedCount": 8,
+      "rejectedTop": [
+        {
+          "candidate": "Kiwis 006eue.jpg",
+          "stage": "identity",
+          "reason": "epithet-far-from-genus-or-wrong-species-context",
+          "confidence": "low"
+        },
+        {
+          "candidate": "Actinidia chinensis4.jpg",
+          "stage": "identity",
+          "reason": "epithet-far-from-genus-or-wrong-species-context",
+          "confidence": "low"
+        }
+      ]
+    },
+    {
+      "slug": "plumeria",
+      "scientific": "Plumeria rubra",
+      "status": "IMAGE_READY",
+      "license": "CC BY-SA 3.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 721.7891,
+      "licenseValidationMs": 0.3021000000007916,
+      "candidateCount": 10,
+      "passedCount": 10,
+      "rejectedTop": []
+    }
+  ],
+  "performance": {
+    "batch5Ms": 5787.954699999999,
+    "perPlantMeanMs": 799.17016
+  },
+  "idempotency": {
+    "reuseStable": true,
+    "cacheKey": "cacao__theobroma_cacao__v1.0.0"
+  },
+  "summary": {
+    "ready": 5,
+    "pending": 0,
+    "verdict": "PASS"
+  },
+  "generatedAt": "2026-08-29T15:06:15.376Z"
+}

@@ -205,10 +205,18 @@ function evaluateAt(loc, plant, meta, structuralClimate) {
 
 const REPORT = [];
 
-test('Cacao catalog row has provenance + IMAGE_PENDING', () => {
+test('Cacao catalog row has provenance + licensed image status', () => {
   const { seedRow, meta } = loadCacao();
   assert.equal(seedRow.source?.provider, 'catalog-expansion-v1');
-  assert.equal(seedRow.media?.imageStatus, IMAGE_PENDING);
+  assert.ok(
+    seedRow.media?.imageStatus === IMAGE_PENDING || seedRow.media?.imageStatus === 'IMAGE_READY'
+  );
+  if (seedRow.media?.imageStatus === 'IMAGE_READY') {
+    assert.ok(seedRow.media.primaryUrl);
+    assert.ok(seedRow.media.license);
+    assert.equal(seedRow.media.commercialUseAllowed, true);
+    assert.ok(seedRow.media.attribution);
+  }
   assert.ok(Array.isArray(seedRow.source?.provenance));
   assert.ok(seedRow.source.provenance.some((p) => /ifas|ufl/i.test(p.institution + p.url)));
   assert.ok(meta.floweringRequirements);

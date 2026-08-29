@@ -17,6 +17,23 @@
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
 <link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20250829">
+<style id="licensed-catalog-media-runtime-styles">
+.plant-img{position:relative}
+.plant-media-attr{
+  position:absolute;left:6px;right:6px;bottom:6px;z-index:2;
+  display:inline-block;max-width:calc(100% - 12px);
+  padding:2px 6px;border-radius:4px;
+  background:rgba(8,28,18,.55);color:#f4f7f2;
+  font-size:10px;line-height:1.25;text-decoration:none;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.plant-media-attr:hover,.plant-media-attr:focus{text-decoration:underline;outline:none}
+.thumb{position:relative;display:inline-flex}
+.thumb .plant-media-attr{
+  left:2px;right:2px;bottom:2px;max-width:calc(100% - 4px);
+  font-size:9px;padding:1px 4px;
+}
+</style>
 <style id="sr-hero-answer-preview-styles">
 /* Bounded Hero Answer product-surface preview — app.html only; non-authoritative. */
 #smart-rec-root .sr-hero-answer-preview{
@@ -819,8 +836,17 @@ function catalogItemToLegacyFlat(item){
     products:Array.isArray(src.products)?src.products.map(x=>typeof x==='string'?x:(x?.name||x?.desc||'')).filter(Boolean):[]
   };
   if(he) flat.he=he;
-  const imageUrl=String(media.primaryUrl||media.url||'').trim();
-  if(imageUrl) flat.imageUrl=imageUrl;
+  // Preserve full licensed catalog media; only expose imageUrl when IMAGE_READY + contract OK.
+  if(media&&Object.keys(media).length){
+    flat.catalogMedia=media;
+    flat.media=media;
+  }
+  const approvedMedia=(typeof isApprovedCatalogMediaRecord==='function')
+    ? isApprovedCatalogMediaRecord(media,flat)
+    : (media&&media.imageStatus==='IMAGE_READY'&&media.commercialUseAllowed===true&&media.license&&media.sourcePageUrl
+      ?{ok:true,url:String(media.primaryUrl||media.url||'').trim()}
+      :{ok:false});
+  if(approvedMedia.ok&&approvedMedia.url) flat.imageUrl=approvedMedia.url;
   const searchQuery=String(media.searchQuery||'').trim();
   if(searchQuery) flat.imageSearchQuery=searchQuery;
   const tasks=Array.isArray(careSchedule.initialTasks)?careSchedule.initialTasks:
@@ -2553,14 +2579,119 @@ function searchPlantPhotoUrl(p){
 }
 function flickrFallbackPhotoUrl(p){ return ''; }
 function fallbackPlantImageUrl(p){ return ''; }
-function plantImage(p){
-  const m=plantMeta(p);
-  const scanPhoto=p?.scanPhotoUrl||'';
-  const userPhoto=p?.photoUrl||m?.photoUrl||'';
-  const img=p?.imageUrl||m?.imageUrl||m?.image||'';
-  if(img && (/^https?:\/\//i.test(img)||/^data:image\//i.test(img)) && !/garden-bg\.jpg/i.test(img) && !/source\.unsplash\.com/i.test(img) && !/loremflickr\.com/i.test(img)) return img;
-  if(userPhoto && userPhoto!==scanPhoto && (/^https?:\/\//i.test(userPhoto)||/^data:image\//i.test(userPhoto)) && !/garden-bg\.jpg/i.test(userPhoto)) return userPhoto;
+function licensedCatalogMediaApi(){
+  return (typeof window!=='undefined'&&window.CruvitLicensedCatalogMedia)||null;
+}
+function isHttpPlantImageUrl(u){
+  return /^https?:\/\//i.test(String(u||''));
+}
+function isDataPlantImageUrl(u){
+  return /^data:image\//i.test(String(u||''));
+}
+function isBannedPlantImageHost(u){
+  return /garden-bg\.jpg|source\.unsplash\.com|loremflickr\.com|tse\d*\.mm\.bing\.net/i.test(String(u||''));
+}
+function getCatalogMediaRecord(plantOrCatalog){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.getCatalogMediaRecord==='function') return api.getCatalogMediaRecord(plantOrCatalog);
+  if(!plantOrCatalog||typeof plantOrCatalog!=='object') return null;
+  const candidates=[plantOrCatalog.catalogMedia,plantOrCatalog.media,plantOrCatalog.meta?.catalogMedia,plantOrCatalog.meta?.media];
+  for(const m of candidates){ if(m&&typeof m==='object') return m; }
+  return null;
+}
+function isApprovedCatalogMediaRecord(media,plant){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.isApprovedCatalogMediaRecord==='function') return api.isApprovedCatalogMediaRecord(media,plant);
+  if(!media||typeof media!=='object') return {ok:false,reason:'missing-media'};
+  if(String(media.imageStatus||'')!=='IMAGE_READY') return {ok:false,reason:'status:'+(media.imageStatus||'none')};
+  const url=String(media.primaryUrl||media.url||'').trim();
+  if(!isHttpPlantImageUrl(url)||isBannedPlantImageHost(url)) return {ok:false,reason:'missing-or-banned-url'};
+  if(media.commercialUseAllowed!==true) return {ok:false,reason:'commercial-use-not-allowed'};
+  if(!String(media.license||'').trim()) return {ok:false,reason:'missing-license'};
+  if(!String(media.sourceProvider||media.provenance?.provider||'').trim()) return {ok:false,reason:'missing-provider'};
+  if(!String(media.sourcePageUrl||'').trim()) return {ok:false,reason:'missing-source-page'};
+  if(media.attributionRequired===true){
+    const attr=String(media.attribution||'').trim();
+    const author=String(media.author||'').trim();
+    if(!attr&&!author) return {ok:false,reason:'attribution-required-missing'};
+  }
+  return {ok:true,reason:null,url};
+}
+function getUserOwnedPlantPhotoUrl(plant){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.getUserOwnedPlantPhotoUrl==='function') return api.getUserOwnedPlantPhotoUrl(plant);
+  if(!plant||typeof plant!=='object') return '';
+  const m=plant.meta&&typeof plant.meta==='object'?plant.meta:{};
+  const scan=String(plant.scanPhotoUrl||'').trim();
+  const candidates=[plant.photoUrl,m.photoUrl,plant.userPhotoUrl,m.userPhotoUrl];
+  for(const raw of candidates){
+    const u=String(raw||'').trim();
+    if(!u||u===scan) continue;
+    if((isHttpPlantImageUrl(u)||isDataPlantImageUrl(u))&&!isBannedPlantImageHost(u)) return u;
+  }
+  if(scan&&(isHttpPlantImageUrl(scan)||isDataPlantImageUrl(scan))&&!isBannedPlantImageHost(scan)) return scan;
   return '';
+}
+function resolvePlantDisplayMedia(plant){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.resolvePlantDisplayMedia==='function') return api.resolvePlantDisplayMedia(plant);
+  const userUrl=getUserOwnedPlantPhotoUrl(plant);
+  if(userUrl){
+    return {kind:'user',url:userUrl,attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,imageStatus:null,placeholder:false};
+  }
+  const media=getCatalogMediaRecord(plant);
+  const approved=isApprovedCatalogMediaRecord(media,plant);
+  if(approved.ok){
+    return {
+      kind:'catalog',url:approved.url,attributionRequired:media.attributionRequired===true,
+      attribution:media.attribution||null,author:media.author||null,license:media.license||null,
+      licenseUrl:media.licenseUrl||null,sourcePageUrl:media.sourcePageUrl||null,
+      sourceProvider:media.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media
+    };
+  }
+  const status=media?.imageStatus||'IMAGE_PENDING';
+  return {
+    kind:'placeholder',url:'',attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,
+    imageStatus:status==='IMAGE_OWNER_REVIEW'?'IMAGE_OWNER_REVIEW':'IMAGE_PENDING',
+    pendingReason:media?.pendingReason||approved.reason||'no-approved-catalog-media',placeholder:true
+  };
+}
+function formatCatalogAttributionLabel(displayMedia){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.formatCatalogAttributionLabel==='function') return api.formatCatalogAttributionLabel(displayMedia);
+  if(!displayMedia||displayMedia.kind!=='catalog') return '';
+  if(!displayMedia.attributionRequired&&!displayMedia.attribution) return '';
+  const author=String(displayMedia.author||'').trim();
+  const license=String(displayMedia.license||'').trim();
+  if(author&&license) return author+' · '+license;
+  if(displayMedia.attribution){
+    const short=String(displayMedia.attribution).slice(0,80);
+    return short.length<displayMedia.attribution.length?short+'…':short;
+  }
+  return license||'Source';
+}
+function catalogMediaPlaceholderDataUrl(name){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.catalogMediaPlaceholderDataUrl==='function') return api.catalogMediaPlaceholderDataUrl(name);
+  const safe=String(name||'Plant').replace(/[<>&]/g,'').slice(0,38);
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#eaf4df"/><stop offset="1" stop-color="#fff2cd"/></linearGradient></defs><rect width="900" height="520" fill="url(#g)"/><text x="450" y="245" text-anchor="middle" font-size="86">🌿</text><text x="450" y="340" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#0d3d27">'+safe+'</text></svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function plantMediaAttributionHtml(p){
+  const display=resolvePlantDisplayMedia(p);
+  if(display.kind!=='catalog'||!display.attributionRequired) return '';
+  const label=formatCatalogAttributionLabel(display);
+  if(!label) return '';
+  const href=display.sourcePageUrl||display.licenseUrl||'';
+  if(href&&isHttpPlantImageUrl(href)){
+    return `<a class="plant-media-attr" href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(display.attribution||label)}" onclick="event.stopPropagation()">${escapeHtml(label)}</a>`;
+  }
+  return `<span class="plant-media-attr" title="${escapeAttr(display.attribution||label)}">${escapeHtml(label)}</span>`;
+}
+/** User photo or approved catalog IMAGE_READY only — never arbitrary imageUrl / search. */
+function plantImage(p){
+  const display=resolvePlantDisplayMedia(p);
+  return display.placeholder?'':(display.url||'');
 }
 function cleanImageSearchQuery(value){
   return String(value||'')
@@ -2590,50 +2721,32 @@ function plantPhotoQuery(p){
     .trim()||'plant';
 }
 function instantPlantImageUrl(p){
-  // Browser-renderable plant thumbnail fallback. This keeps the card visual even
-  // before the verified image is stored on the plant profile.
-  const q=plantPhotoQuery(p);
-  if(!q || normalizeQuery(q)==='plant') return '';
-  return 'https://tse1.mm.bing.net/th?q='+encodeURIComponent(q+' plant photo')+'&w=900&h=600&c=7&rs=1&p=0';
+  // Licensed runtime: no Bing/Unsplash/Flickr search fallbacks.
+  return '';
 }
 function plantImageProxyUrl(p){
-  const q=plantPhotoQuery(p);
-  if(!q || normalizeQuery(q)==='plant') return '';
-  return netlifyFunctionUrl('/.netlify/functions/plant-image?redirect=1&query='+encodeURIComponent(q));
+  // Licensed runtime: do not call plant-image Netlify search.
+  return '';
 }
 function plantImageFallbacks(p){
-  const q=plantPhotoQuery(p);
-  const tags=q.split(/\s+/).filter(Boolean).slice(0,4).join(',');
-  return [
-    plantImageProxyUrl(p),
-    instantPlantImageUrl(p),
-    q ? 'https://loremflickr.com/900/600/'+encodeURIComponent(tags||q)+',plant' : '',
-    q ? 'https://source.unsplash.com/900x600/?'+encodeURIComponent(q+',plant') : ''
-  ].filter(Boolean);
+  // Broken approved hotlink → local SVG placeholder only (no replacement search).
+  return [catalogMediaPlaceholderDataUrl(p&&(p.name||p.scientific)||'Plant')];
 }
 function displayPlantImage(p){
-  return plantImage(p)||plantImageProxyUrl(p)||'';
+  return plantImage(p)||'';
 }
 function swapToInstantPlantImage(imgEl){
-  let list=[];
-  try{list=JSON.parse(imgEl.getAttribute('data-fallback-list')||'[]')}catch(e){list=[]}
-  const current=imgEl.getAttribute('src')||'';
-  const failed=(imgEl.dataset.failed||'').split('|');
-  imgEl.dataset.failed=(imgEl.dataset.failed?imgEl.dataset.failed+'|':'')+current;
-  const next=list.find(x=>x && x!==current && !failed.includes(x));
-  if(next){imgEl.src=next; return;}
-  const parent=imgEl.parentElement;
+  // Safe broken-URL fallback only — never launch media search or substitute another species.
   const name=imgEl.getAttribute('alt')||'Plant';
-  const safe=String(name).replace(/[<>&]/g,'').slice(0,38);
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#eaf4df"/><stop offset="1" stop-color="#fff2cd"/></linearGradient></defs><rect width="900" height="520" fill="url(#g)"/><text x="450" y="245" text-anchor="middle" font-size="86">🌿</text><text x="450" y="340" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#0d3d27">'+safe+'</text></svg>';
   imgEl.onerror=null;
-  imgEl.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  imgEl.removeAttribute('data-fallback-list');
+  imgEl.src=catalogMediaPlaceholderDataUrl(name);
+  const parent=imgEl.parentElement;
   if(parent)parent.classList.add('has-photo');
 }
 const imageHydrationQueue=new Set();
-// Plant-card hydration lifecycle (My Garden strip only). Separate from search/result
-// imageHydrationQueue so failed/stale card attempts stay retryable without changing
-// hydratePlantResultImages semantics.
+// Plant-card hydration lifecycle retained for idle waiters / generation guards, but
+// catalog images are never fetched at runtime (licensed catalog media only).
 var plantCardHydrationGeneration=0;
 var plantCardHydrationInFlight=new Set();
 var plantCardHydrationPassActive=false;
@@ -2697,147 +2810,19 @@ function schedulePlantCardHydrationRetry(){
   },0);
 }
 async function fetchPlantImageFromWikipedia(query){
-  const q=String(query||'').trim();
-  if(!q) return '';
-  // First try the Netlify image proxy. This avoids browser/CORS issues and uses the same
-  // server-side image lookup for every plant card.
-  try{
-    const res=await fetch(netlifyFunctionUrl('/.netlify/functions/plant-image?query='+encodeURIComponent(q)));
-    if(res.ok){
-      const json=await res.json();
-      if(json?.imageUrl && /^https?:\/\//i.test(json.imageUrl) && !/\.svg($|\?)/i.test(json.imageUrl)) return json.imageUrl;
-    }
-  }catch(e){}
-  // Browser fallback, used only if the Function is unavailable.
-  try{
-    const searchUrl='https://en.wikipedia.org/w/api.php?'+new URLSearchParams({
-      action:'query',format:'json',origin:'*',generator:'search',gsrsearch:q+' plant',gsrlimit:'8',
-      prop:'pageimages|description',piprop:'thumbnail|original',pithumbsize:'900'
-    });
-    const res=await fetch(searchUrl);
-    if(res.ok){
-      const json=await res.json();
-      const pages=Object.values(json?.query?.pages||{});
-      const plantPages=pages.filter(pg=>/plant|tree|flower|fruit|species|shrub|vine|herb|berry/i.test(String(pg.description||'')+' '+String(pg.title||'')));
-      const best=[...plantPages,...pages].find(pg=>pg?.original?.source||pg?.thumbnail?.source);
-      const img=best?.original?.source||best?.thumbnail?.source||'';
-      if(img && !/\.svg($|\?)/i.test(img)) return img;
-    }
-  }catch(e){}
-  try{
-    const commonsUrl='https://commons.wikimedia.org/w/api.php?'+new URLSearchParams({
-      action:'query',format:'json',origin:'*',generator:'search',gsrnamespace:'6',gsrsearch:q+' plant flower leaves fruit',gsrlimit:'12',
-      prop:'imageinfo',iiprop:'url|mime',iiurlwidth:'900'
-    });
-    const res=await fetch(commonsUrl);
-    if(res.ok){
-      const json=await res.json();
-      const pages=Object.values(json?.query?.pages||{});
-      const best=pages.find(pg=>{const info=pg?.imageinfo?.[0]||{};return (!info.mime||/^image\//.test(info.mime))&&(info.thumburl||info.url)});
-      const img=best?.imageinfo?.[0]?.thumburl||best?.imageinfo?.[0]?.url||'';
-      if(img && !/\.svg($|\?)/i.test(img)) return img;
-    }
-  }catch(e){}
+  // Hard stop: runtime must not search Wikipedia/Commons/Openverse for catalog images.
   return '';
 }
 async function hydratePlantCardImages(scheduledGeneration){
   const generation=scheduledGeneration==null?plantCardHydrationGeneration:scheduledGeneration;
   if(generation!==plantCardHydrationGeneration) return;
-  if(plantCardHydrationPassActive){
-    // Coalesce: one active pass; retry current generation after it finishes.
-    schedulePlantCardHydrationRetry();
-    return;
-  }
-  plantCardHydrationPassActive=true;
-  try{
-    if(generation!==plantCardHydrationGeneration) return;
-    const candidates=[];
-    for(const p of data.plants||[]){
-      if(!p || plantImage(p)) continue;
-      clearTransientPlantImageLoading(p);
-      const key=plantCardHydrationKey(p);
-      if(!key || plantCardHydrationInFlight.has(key)) continue;
-      const meta=plantMeta(p);
-      const query=[p.scientific,meta.scientific,meta.imageSearchQuery,p.name,meta.name].filter(Boolean).join(' ');
-      if(!query) continue;
-      candidates.push({
-        key,
-        query,
-        id:p.id,
-        name:p.name,
-        scientific:p.scientific||(meta&&meta.scientific)||''
-      });
-    }
-    if(!candidates.length) return;
-    for(const c of candidates) plantCardHydrationInFlight.add(c.key);
-    let settled;
-    try{
-      settled=await Promise.all(candidates.map(async(c)=>{
-        try{
-          const img=await fetchPlantImageFromWikipedia(c.query);
-          return {key:c.key,id:c.id,name:c.name,scientific:c.scientific,img:img||''};
-        }catch(_){
-          return {key:c.key,id:c.id,name:c.name,scientific:c.scientific,img:''};
-        }finally{
-          plantCardHydrationInFlight.delete(c.key);
-        }
-      }));
-    }catch(_){
-      for(const c of candidates) plantCardHydrationInFlight.delete(c.key);
-      if(generation!==plantCardHydrationGeneration) schedulePlantCardHydrationRetry();
-      return;
-    }
-    if(generation!==plantCardHydrationGeneration){
-      // Stale pass: no data/DOM/save/render. Allow the current generation to retry.
-      schedulePlantCardHydrationRetry();
-      return;
-    }
-    let changed=false;
-    for(const r of settled||[]){
-      if(!r || !r.img) continue;
-      const p=resolvePlantCardHydrationTarget(r);
-      if(!p || plantImage(p)) continue;
-      if(p.imageUrl===r.img || (p.meta && p.meta.imageUrl===r.img)) continue;
-      p.imageUrl=r.img;
-      if(p.meta) p.meta.imageUrl=r.img;
-      const slug=slugify(p.name);
-      if(PLANT_INDEX[slug]) PLANT_INDEX[slug].imageUrl=r.img;
-      clearTransientPlantImageLoading(p);
-      changed=true;
-    }
-    if(generation!==plantCardHydrationGeneration){
-      schedulePlantCardHydrationRetry();
-      return;
-    }
-    if(!changed) return;
-    plantCardHydrationFlushPending=true;
-    try{
-      service.save(data);
-      render();
-    }finally{
-      plantCardHydrationFlushPending=false;
-    }
-  }finally{
-    plantCardHydrationPassActive=false;
-  }
+  // No-op: catalog IMAGE_READY is consumed from seed media; IMAGE_PENDING stays placeholder.
+  plantCardHydrationPassActive=false;
+  plantCardHydrationInFlight.clear();
 }
 async function hydratePlantResultImages(){
-  const pending=[...document.querySelectorAll('#plantResults .thumb-pending[data-plant-query]')];
-  await Promise.all(pending.map(async el=>{
-    const query=el.getAttribute('data-plant-query');
-    const key=el.getAttribute('data-plant-thumb');
-    if(!query) return;
-    const queueKey='result:'+query;
-    if(imageHydrationQueue.has(queueKey)) return;
-    imageHydrationQueue.add(queueKey);
-    const img=await fetchPlantImageFromWikipedia(query);
-    if(!img || !el.isConnected) return;
-    const profile=PLANT_INDEX[key]||PLANT_LIBRARY.find(p=>(p.slug||slugify(p.name))===key);
-    if(profile) profile.imageUrl=img;
-    el.classList.remove('thumb-pending');
-    el.classList.add('thumb-has-img');
-    el.innerHTML='<img src="'+escapeAttr(img)+'" alt="" loading="lazy" data-fallback-list="'+escapeAttr(JSON.stringify(plantImageFallbacks(profile||{name:query,scientific:query})))+'" onerror="swapToInstantPlantImage(this)">';
-  }));
+  // No-op: search result thumbs use licensed catalog media or placeholder — no runtime fetch.
+  return;
 }
 function mergeLiveProfileIntoLibrary(slug,profile){
   if(!profile)return PLANT_INDEX[slug];
@@ -2854,9 +2839,23 @@ function applyProfileToPlant(plant,profile){
   plant.status=profile.status||plant.status||'Healthy';
   plant.mark=profile.mark||plant.mark||'✓';
   plant.scientific=profile.scientific||plant.scientific||'';
-  plant.imageUrl=profile.imageUrl||profile.image||plant.imageUrl||'';
+  const catalogMedia=profile.catalogMedia||profile.media||plant.catalogMedia||plant.media||null;
+  if(catalogMedia&&typeof catalogMedia==='object'){
+    plant.catalogMedia=catalogMedia;
+    plant.media=catalogMedia;
+  }
+  // Never adopt unlicensed live/search imageUrl as catalog truth.
+  const display=resolvePlantDisplayMedia(Object.assign({},profile,plant,{catalogMedia:plant.catalogMedia,media:plant.media}));
+  if(display.kind==='catalog') plant.imageUrl=display.url;
+  else if(display.kind==='user'){ /* user photo fields already on plant */ }
+  else if(plant.imageUrl&&!getUserOwnedPlantPhotoUrl(plant)){
+    const approvedOnly=isApprovedCatalogMediaRecord(getCatalogMediaRecord(plant),plant);
+    if(!approvedOnly.ok) delete plant.imageUrl;
+  }
   const cleanProfile=enrichProfileWithQuality(profile, plant.name||profile.name||'');
   plant.meta=JSON.parse(JSON.stringify(cleanProfile));
+  if(plant.catalogMedia) plant.meta.catalogMedia=plant.catalogMedia;
+  if(plant.imageUrl) plant.meta.imageUrl=plant.imageUrl;
   return plant;
 }
 function escapeAttr(v){return String(v??'').replace(/[\'"]/g,'').replace(/[<>]/g,'')}
@@ -4668,9 +4667,8 @@ function plantNeedsLiveProfile(p){
   if(!p) return false;
   const meta=p.meta||{};
   const hasProfile=(p.scientific||meta.scientific||meta.guide||meta.sun||meta.water||meta.warnings||meta.products||meta.tasks);
-  const hasRealImage=!!plantImage(p);
-  const isPlaceholder=(p.imageUrl||meta.imageUrl||'').includes('garden-bg.jpg');
-  return !hasProfile || !hasRealImage || isPlaceholder;
+  // Missing catalog image must NOT trigger live web/media research.
+  return !hasProfile;
 }
 
 function maybeEnrichVisiblePlants(plants){
@@ -4861,7 +4859,7 @@ function render(){syncHealthScore();
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   applyGardenUserLabels();
-  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const fallbackList=plantImageFallbacks(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" data-fallback-list="${escapeAttr(JSON.stringify(fallbackList))}" onerror="swapToInstantPlantImage(this)">`:''}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
+  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const mediaAttr=plantMediaAttributionHtml(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="swapToInstantPlantImage(this)">`:''}${mediaAttr}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
   plantCardHydrationGeneration++;
   const plantCardHydrationPass=plantCardHydrationGeneration;
   schedulePlantCardHydrationPass(plantCardHydrationPass);
@@ -6025,15 +6023,14 @@ function mergeSearchProfiles(primary,suggestions,locals,query,source){
   return out.slice(0,8);
 }
 function plantResultThumb(p){
-  const stored=plantImage(p);
-  const proxy=plantImageProxyUrl(p);
-  const src=stored||proxy||'';
+  const src=plantImage(p);
   const key=escapeAttr(p.slug||slugify(p.name));
+  const attr=plantMediaAttributionHtml(p);
   if(src){
-    const fallbacks=escapeAttr(JSON.stringify(plantImageFallbacks(p)));
-    return `<span class="thumb thumb-has-img"><img src="${escapeAttr(src)}" alt="${escapeAttr(p.name||'Plant')}" loading="lazy" data-plant-thumb="${key}" data-fallback-list="${fallbacks}" onerror="swapToInstantPlantImage(this)"></span>`;
+    return `<span class="thumb thumb-has-img"><img src="${escapeAttr(src)}" alt="${escapeAttr(p.name||'Plant')}" loading="lazy" referrerpolicy="no-referrer" data-plant-thumb="${key}" onerror="swapToInstantPlantImage(this)">${attr}</span>`;
   }
-  return `<span class="thumb thumb-pending" data-plant-thumb="${key}" data-plant-query="${escapeAttr(plantPhotoQuery(p))}"><span class="ico">${p.icon||'🌿'}</span></span>`;
+  const ph=catalogMediaPlaceholderDataUrl(p.name||'Plant');
+  return `<span class="thumb thumb-has-img thumb-pending-licensed" data-plant-thumb="${key}" data-image-status="IMAGE_PENDING"><img src="${escapeAttr(ph)}" alt="${escapeAttr(p.name||'Plant')}" loading="lazy"><span class="ico">${p.icon||'🌿'}</span></span>`;
 }
 function renderPlantResults(source,query='',targetId='plantResults'){
   if(typeof targetId!=='string')targetId='plantResults';
@@ -6834,7 +6831,6 @@ function applyPlantTaskSync(plant,source){
 function buildPlantFromReference(ref,source,options){
   const safeRef=ref||{};
   const prefs={autoTasks:options?.autoTasks!==false,reminders:options?.reminders!==false,alerts:true};
-  const existingImage=displayPlantImage(safeRef)||safeRef.imageUrl||safeRef.image||'';
   const plant=applyProfileToPlant({name:safeRef.name||'Plant',status:safeRef.status||'Healthy',mark:safeRef.mark||'✓',source,archived:false,prefs},safeRef);
   plant.id='plant_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
   plant.name=safeRef.name||plant.name||'Plant';
@@ -6843,9 +6839,15 @@ function buildPlantFromReference(ref,source,options){
   plant.source=source||'My Garden';
   plant.archived=false;
   plant.prefs=prefs;
-  plant.imageUrl=existingImage||plant.imageUrl||'';
+  if(safeRef.catalogMedia||safeRef.media){
+    plant.catalogMedia=safeRef.catalogMedia||safeRef.media;
+    plant.media=plant.catalogMedia;
+  }
   if(safeRef.scanPhotoUrl && source==='Scan & Identify') plant.photoUrl=safeRef.scanPhotoUrl;
+  const display=resolvePlantDisplayMedia(plant);
+  plant.imageUrl=display.kind==='catalog'||display.kind==='user'?display.url:'';
   plant.meta=plant.meta||{};
+  if(plant.catalogMedia) plant.meta.catalogMedia=plant.catalogMedia;
   if(plant.imageUrl)plant.meta.imageUrl=plant.imageUrl;
   plant.profileSlug=deriveProfileSlug(plant);
   const nowIso=new Date().toISOString();
@@ -6886,14 +6888,16 @@ function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,re
 
     setTimeout(async()=>{
       try{
-        const needsLive=!(ref.tags||[]).includes('scan-result') && (!(ref.tags||[]).includes('ai-profile') || !(ref.imageUrl||ref.image||ref.photoUrl));
+        const needsLive=!(ref.tags||[]).includes('scan-result') && !(ref.tags||[]).includes('ai-profile') && !(ref.scientific||plant.scientific);
         if(needsLive){
           const live=await fetchPlantProfile(ref.name||slug,source);
           if(live&&live.isPlant!==false){
-            const merged=mergeLiveProfileIntoLibrary(ref.slug||slug,live);
+            // Merge care/text only — never import unlicensed live images into catalog media.
+            const liveSansImage=Object.assign({},live);
+            delete liveSansImage.imageUrl;
+            delete liveSansImage.image;
+            const merged=mergeLiveProfileIntoLibrary(ref.slug||slug,Object.assign({},liveSansImage,{catalogMedia:ref.catalogMedia||ref.media||plant.catalogMedia,media:ref.catalogMedia||ref.media||plant.media}));
             applyProfileToPlant(plant,merged);
-            const liveImg=displayPlantImage(merged)||merged.imageUrl||merged.image||merged.photoUrl||plant.imageUrl||'';
-            if(liveImg){plant.imageUrl=liveImg; plant.meta=plant.meta||{}; plant.meta.imageUrl=liveImg;}
             service.save(data);render();setTab('plants');
           }
         }
@@ -6904,7 +6908,7 @@ function savePlantFromLibrary(slug,source='My Garden',options={autoTasks:true,re
     // Last-resort save so the user is not blocked by a secondary feature.
     try{
       normalizeGardenDataShape();
-      const plant={id:'plant_'+Date.now(),name:ref.name||String(slug||'Plant'),status:ref.status||'Needs review',mark:ref.mark||'!',source,archived:false,prefs:{autoTasks:true,reminders:true,alerts:true},imageUrl:displayPlantImage(ref)||instantPlantImageUrl(ref)||'',meta:ref};
+      const plant={id:'plant_'+Date.now(),name:ref.name||String(slug||'Plant'),status:ref.status||'Needs review',mark:ref.mark||'!',source,archived:false,prefs:{autoTasks:true,reminders:true,alerts:true},imageUrl:displayPlantImage(ref)||'',catalogMedia:ref.catalogMedia||ref.media||null,media:ref.catalogMedia||ref.media||null,meta:ref};
       data.plants.push(plant);
       data.events.unshift(['Today','Plant added',`${plant.name} · ${source}`]);
       safeUiAfterPlantAdd();
@@ -7776,6 +7780,7 @@ scrollToPageTop('auto');
 window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
+<script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
