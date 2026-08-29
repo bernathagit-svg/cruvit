@@ -372,7 +372,8 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
 
   // Calibrated coconut may earn evidence-backed Good + Supported fruiting in humid tropical Kochi.
   assert.equal(kochi.overallCode, 'good');
-  assert.ok(kochi.fruiting === 'Supported' || kochi.fruiting === 'Constrained');
+  assert.equal(kochi.fruiting, 'Supported');
+  assert.equal(kochi.flowering, 'Supported');
 
   // Non-hospitable sites: survival failure ⇒ blocked; no confident Good.
   for (const row of [cairo, tokyo, yehiam]) {

@@ -102,22 +102,14 @@
     {
       "slug": "cacao",
       "scientific": "Theobroma cacao",
-      "status": "IMAGE_READY",
-      "license": "CC BY-SA 3.0",
-      "attributionRequired": true,
-      "pendingReason": null,
-      "searchMs": 1212.7947,
-      "licenseValidationMs": 0.490099999999984,
-      "candidateCount": 10,
-      "passedCount": 9,
-      "rejectedTop": [
-        {
-          "candidate": "Municipal Market of São Paulo city.jpg",
-          "stage": "identity",
-          "reason": "no-scientific-identity-match",
-          "confidence": "none"
-        }
-      ]
+      "status": "IMAGE_PENDING",
+      "license": null,
+      "attributionRequired": null,
+      "pendingReason": "source-search-failed:fetch failed",
+      "searchMs": 10675.5463,
+      "licenseValidationMs": 0,
+      "passedCount": 0,
+      "rejectedTop": []
     },
     {
       "slug": "coconut",
@@ -126,8 +118,8 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 700.3140000000001,
-      "licenseValidationMs": 0.3445000000001528,
+      "searchMs": 9229.5405,
+      "licenseValidationMs": 0.822199999998702,
       "candidateCount": 10,
       "passedCount": 4,
       "rejectedTop": [
@@ -157,9 +149,9 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 658.8323999999998,
-      "licenseValidationMs": 0.30549999999993815,
-      "candidateCount": 9,
+      "searchMs": 4690.921400000003,
+      "licenseValidationMs": 0.6073000000033062,
+      "candidateCount": 10,
       "passedCount": 4,
       "rejectedTop": [
         {
@@ -188,8 +180,8 @@
       "license": "CC BY 4.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 702.1206000000002,
-      "licenseValidationMs": 0.13510000000042055,
+      "searchMs": 4790.734500000006,
+      "licenseValidationMs": 0.386899999997695,
       "candidateCount": 10,
       "passedCount": 8,
       "rejectedTop": [
@@ -214,25 +206,25 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 721.7891,
-      "licenseValidationMs": 0.3021000000007916,
+      "searchMs": 6348.756999999998,
+      "licenseValidationMs": 0.5867999999973108,
       "candidateCount": 10,
       "passedCount": 10,
       "rejectedTop": []
     }
   ],
   "performance": {
-    "batch5Ms": 5787.954699999999,
-    "perPlantMeanMs": 799.17016
+    "batch5Ms": 48202.1832,
+    "perPlantMeanMs": 7147.09994
   },
   "idempotency": {
     "reuseStable": true,
     "cacheKey": "cacao__theobroma_cacao__v1.0.0"
   },
   "summary": {
-    "ready": 5,
-    "pending": 0,
+    "ready": 4,
+    "pending": 1,
     "verdict": "PASS"
   },
-  "generatedAt": "2026-08-29T15:06:15.376Z"
+  "generatedAt": "2026-08-29T15:56:18.247Z"
 }

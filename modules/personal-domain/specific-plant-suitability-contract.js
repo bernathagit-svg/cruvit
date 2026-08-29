@@ -503,7 +503,7 @@ export function hasFloweringEvidence(meta, plant) {
   return hasPositiveFloweringEvidence(meta);
 }
 
-/** Positive fruiting requires explicit fruitingRequirements ג€” not fruit group alone. */
+/** Positive fruiting requires explicit fruitingRequirements — not fruit group alone. */
 export function hasPositiveFruitingEvidence(meta) {
   return !!(meta && String(meta.fruitingRequirements || '').trim());
 }
@@ -535,6 +535,438 @@ export function hasFruitingFailureContext(meta, plant) {
 /** @deprecated */
 export function hasFruitingEvidence(meta, plant) {
   return hasPositiveFruitingEvidence(meta) || hasFruitingFailureContext(meta, plant);
+}
+
+/**
+ * Parse a minimum temperature (°C) from flowering/fruiting requirement prose.
+ * Supports patterns like "68°F (20°C)", "above 20°C", "at or above 20 C".
+ * Returns null when no comparable numeric threshold is present.
+ */
+export function parseMinTempCFromRequirements(text) {
+  const raw = String(text || '');
+  if (!raw.trim()) return null;
+  const parenC = raw.match(/\(\s*(-?\d+(?:\.\d+)?)\s*°?\s*C\s*\)/i);
+  if (parenC) {
+    const n = Number(parenC[1]);
+    return Number.isFinite(n) ? n : null;
+  }
+  const aboveC = raw.match(
+    /(?:at\s+or\s+)?(?:above|over|≥|>=|minimum|min(?:imum)?)\s*(-?\d+(?:\.\d+)?)\s*°?\s*C\b/i
+  );
+  if (aboveC) {
+    const n = Number(aboveC[1]);
+    return Number.isFinite(n) ? n : null;
+  }
+  const bareC = raw.match(/\b(-?\d+(?:\.\d+)?)\s*°\s*C\b/i);
+  if (bareC) {
+    const n = Number(bareC[1]);
+    return Number.isFinite(n) ? n : null;
+  }
+  const fMatch = raw.match(
+    /(?:at\s+or\s+)?(?:above|over|≥|>=)?\s*(-?\d+(?:\.\d+)?)\s*°?\s*F\b/i
+  );
+  if (fMatch) {
+    const f = Number(fMatch[1]);
+    if (!Number.isFinite(f)) return null;
+    return ((f - 32) * 5) / 9;
+  }
+  return null;
+}
+
+function requirementsText(meta, kind) {
+  if (kind === 'flowering') return String(meta?.floweringRequirements || '');
+  return String(meta?.fruitingRequirements || '');
+}
+
+function requirementsWantTropicalWarmth(text) {
+  return /tropical|frost-?\s*free|year-?\s*round\s*warm|warm\s+tropical|near year-round|always.?hot/i.test(
+    String(text || '')
+  );
+}
+
+function requirementsMentionDroughtOrMoisture(text) {
+  return /drought|soil moisture|year-round (soil )?moisture|humid|high humidity|moisture/i.test(
+    String(text || '')
+  );
+}
+
+function requirementsMentionCoolSlows(text) {
+  return /cool weather|cold snap|prolonged cool|wet cold|mild frost-free|frost damages/i.test(
+    String(text || '')
+  );
+}
+
+/**
+ * Compare Garden climate to floweringRequirements without using numeric fit scores.
+ * @returns {{ status: string, limiting?: string, unknownGap?: string, evidence: string }}
+ */
+export function evaluateFloweringFromCatalogEvidence({
+  meta,
+  env,
+  survival,
+  chillDeficit = false,
+  review = false,
+  sheltered = false
+} = {}) {
+  const text = requirementsText(meta, 'flowering');
+  const hasPositive = hasPositiveFloweringEvidence(meta);
+  const frostSensitivity = String(meta?.frostSensitivity || '').toLowerCase();
+  const humidityTolerance = String(meta?.humidityTolerance || '').toLowerCase();
+  const tropicalMoisturePlant =
+    isWarmTropicalFrostSensitiveGroup(meta) && humidityTolerance === 'high';
+  const frostFree = !!env?.isFrostFreeGrowingClimate;
+  const freezingRisk = String(env?.freezingRisk || '').toLowerCase();
+  const humiditySignal = String(env?.humiditySignal || '').toLowerCase();
+  const broad = String(env?.broadClimate || '').toLowerCase();
+  const thermal = String(env?.thermalRegime || '').toLowerCase();
+  const coldRaw = env?.coldestMonthMeanMinC;
+  const coldest =
+    coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
+  const minTempC = parseMinTempCFromRequirements(text);
+
+  // Explicit negative evidence (may apply even without positive requirement text).
+  if (!sheltered && chillDeficit) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting:
+        'Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.',
+      evidence: 'negative:chill-deficit'
+    };
+  }
+  if (
+    !sheltered &&
+    survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE &&
+    (frostSensitivity === 'high' || tropicalMoisturePlant)
+  ) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      evidence: 'negative:survival-failure-blocks-normal-flowering'
+    };
+  }
+  if (!sheltered && frostSensitivity === 'high' && freezingRisk !== 'low') {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: 'Frost risk is too high for reliable flowering.',
+      evidence: 'negative:freezing-risk'
+    };
+  }
+  if (!sheltered && frostSensitivity === 'high' && !frostFree) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: 'Needs frost-free conditions for flowering.',
+      evidence: 'negative:not-frost-free'
+    };
+  }
+  if (!sheltered && outdoorDamagingColdUnsupported(meta, env)) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: `Coldest-month mean lows (~${coldest}°C) are below the warm tropical reliability band for flowering.`,
+      evidence: 'negative:damaging-cold'
+    };
+  }
+  if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env)) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: `Structural moisture regime (${env.moistureRegime}) conflicts with flowering moisture needs.`,
+      evidence: 'negative:aridity-moisture-mismatch'
+    };
+  }
+  if (!sheltered && tropicalMoisturePlant && humiditySignal === 'low') {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: 'Low humidity / dry-air climate is a poor match for flowering.',
+      evidence: 'negative:low-humidity'
+    };
+  }
+  if (minTempC != null && Number.isFinite(coldest) && coldest < minTempC) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+      limiting: `Coldest-month mean lows (~${coldest}°C) are below sourced flowering minimum (~${minTempC}°C).`,
+      evidence: `negative:min-temp:${minTempC}C`
+    };
+  }
+
+  if (!hasPositive) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+      unknownGap: 'floweringRequirements',
+      evidence: 'missing:floweringRequirements'
+    };
+  }
+
+  // Positive path: only when climate can be compared to sourced requirements.
+  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivity === 'high';
+  const droughtCue = requirementsMentionDroughtOrMoisture(text);
+  const coolSlows = requirementsMentionCoolSlows(text);
+
+  if (minTempC != null) {
+    if (!Number.isFinite(coldest)) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+        unknownGap: 'flowering-coldest-month',
+        evidence: 'incomplete:min-temp-without-coldest-month'
+      };
+    }
+    if (coldest >= minTempC) {
+      if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
+        return {
+          status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+          limiting: 'Drought / low-moisture climate conflicts with sourced flowering moisture needs.',
+          evidence: 'negative:drought-vs-flowering-moisture'
+        };
+      }
+      if (
+        tropicalMoisturePlant &&
+        humiditySignal === 'medium' &&
+        broad !== 'tropical'
+      ) {
+        return {
+          status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+          limiting:
+            'Humidity and moisture regime are only a partial match for flowering; frost-free status alone is not enough.',
+          evidence: 'partial:humidity-medium-non-tropical'
+        };
+      }
+      return {
+        status: review
+          ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+          : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
+        evidence: `positive:coldest-month:${coldest}>=min:${minTempC}`
+      };
+    }
+  }
+
+  if (wantsWarm) {
+    const warmOk =
+      frostFree &&
+      (broad === 'tropical' ||
+        env?.alwaysHot === true ||
+        thermal === 'year-round-warm');
+    const humidOk =
+      !tropicalMoisturePlant ||
+      humiditySignal === 'high' ||
+      (humiditySignal === 'medium' && broad === 'tropical');
+    if (warmOk && humidOk && !moistureMismatchForHighHumidityPlant(meta, env)) {
+      if (coolSlows && (env?.coolSeasonSignal === true || /cool|frost-prone|highland/.test(thermal))) {
+        return {
+          status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+          limiting: 'Cool-season signal may slow flowering relative to sourced warm-tropical needs.',
+          evidence: 'partial:cool-season-vs-warm-tropical-flowering'
+        };
+      }
+      return {
+        status: review
+          ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+          : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
+        evidence: 'positive:frost-free-tropical-warmth-match'
+      };
+    }
+    if (
+      tropicalMoisturePlant &&
+      humiditySignal === 'medium' &&
+      broad !== 'tropical' &&
+      frostFree
+    ) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+        limiting:
+          'Humidity and moisture regime are only a partial match for flowering; frost-free status alone is not enough.',
+        evidence: 'partial:humidity-medium-non-tropical'
+      };
+    }
+    // Requirements present and comparable, but climate fails the warm-tropical match
+    // without already hitting a hard negative above — still a real comparison, not a default score.
+    if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
+        limiting: 'Climate is too cool / not frost-free for sourced warm flowering needs.',
+        evidence: 'negative:cool-or-not-frost-free-vs-warm-flowering'
+      };
+    }
+  }
+
+  // Requirement text exists but cannot be compared to available climate signals.
+  return {
+    status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+    unknownGap: 'flowering-climate-comparison',
+    evidence: 'incomplete:cannot-compare-flowering-requirements'
+  };
+}
+
+/**
+ * Compare Garden climate to fruitingRequirements without using numeric fit scores.
+ */
+export function evaluateFruitingFromCatalogEvidence({
+  meta,
+  plant,
+  env,
+  survival,
+  flowering,
+  chillDeficit = false,
+  review = false,
+  sheltered = false
+} = {}) {
+  const text = requirementsText(meta, 'fruiting');
+  const fruitPositive = hasPositiveFruitingEvidence(meta);
+  const fruitFailCtx = hasFruitingFailureContext(meta, plant);
+  const frostSensitivity = String(meta?.frostSensitivity || '').toLowerCase();
+  const humidityTolerance = String(meta?.humidityTolerance || '').toLowerCase();
+  const tropicalMoisturePlant =
+    isWarmTropicalFrostSensitiveGroup(meta) && humidityTolerance === 'high';
+  const frostFree = !!env?.isFrostFreeGrowingClimate;
+  const freezingRisk = String(env?.freezingRisk || '').toLowerCase();
+  const humiditySignal = String(env?.humiditySignal || '').toLowerCase();
+  const broad = String(env?.broadClimate || '').toLowerCase();
+  const thermal = String(env?.thermalRegime || '').toLowerCase();
+  const coldRaw = env?.coldestMonthMeanMinC;
+  const coldest =
+    coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
+  const minTempC = parseMinTempCFromRequirements(text);
+
+  if (!sheltered && chillDeficit && (fruitPositive || fruitFailCtx || plantNeedsWinterChill(meta))) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      limiting:
+        'Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.',
+      evidence: 'negative:chill-deficit'
+    };
+  }
+
+  if (
+    fruitFailCtx &&
+    !sheltered &&
+    isWarmTropicalFrostSensitiveGroup(meta) &&
+    (freezingRisk === 'medium' || freezingRisk === 'high' || !frostFree || humiditySignal === 'low')
+  ) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      limiting:
+        survival !== SPECIFIC_OUTCOME_STATUS.UNRELIABLE
+          ? 'Can grow, but reliable fruit production is not expected.'
+          : undefined,
+      evidence: 'negative:tropical-fruit-frost-or-dry-failure-context'
+    };
+  }
+
+  if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env) && (fruitPositive || fruitFailCtx)) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      limiting: `Structural moisture regime (${env.moistureRegime}) is too arid for reliable fruiting.`,
+      evidence: 'negative:aridity-vs-fruiting'
+    };
+  }
+
+  if (
+    !sheltered &&
+    survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE &&
+    (fruitPositive || fruitFailCtx)
+  ) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      evidence: 'negative:survival-failure-blocks-fruiting'
+    };
+  }
+
+  if (minTempC != null && Number.isFinite(coldest) && coldest < minTempC && fruitPositive) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      limiting: `Coldest-month mean lows (~${coldest}°C) are below sourced fruiting thermal needs (~${minTempC}°C).`,
+      evidence: `negative:min-temp:${minTempC}C`
+    };
+  }
+
+  if (!fruitPositive) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+      unknownGap: 'fruitingRequirements',
+      evidence: 'missing:fruitingRequirements'
+    };
+  }
+
+  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivity === 'high';
+  const droughtCue = requirementsMentionDroughtOrMoisture(text);
+
+  if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+      limiting: 'Drought / low-moisture climate conflicts with sourced fruiting moisture needs.',
+      evidence: 'negative:drought-vs-fruiting-moisture'
+    };
+  }
+
+  if (minTempC != null) {
+    if (!Number.isFinite(coldest)) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+        unknownGap: 'fruiting-coldest-month',
+        evidence: 'incomplete:min-temp-without-coldest-month'
+      };
+    }
+    if (coldest >= minTempC) {
+      if (
+        tropicalMoisturePlant &&
+        humiditySignal === 'medium' &&
+        broad !== 'tropical'
+      ) {
+        return {
+          status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+          limiting: 'Humidity/moisture only partially match sourced fruiting needs.',
+          evidence: 'partial:humidity-medium-non-tropical'
+        };
+      }
+      return {
+        status: review
+          ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+          : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
+        evidence: `positive:coldest-month:${coldest}>=min:${minTempC}`
+      };
+    }
+  }
+
+  if (wantsWarm) {
+    const warmOk =
+      frostFree &&
+      (broad === 'tropical' ||
+        env?.alwaysHot === true ||
+        thermal === 'year-round-warm');
+    const humidOk =
+      !tropicalMoisturePlant ||
+      humiditySignal === 'high' ||
+      (humiditySignal === 'medium' && broad === 'tropical');
+    if (warmOk && humidOk && !moistureMismatchForHighHumidityPlant(meta, env)) {
+      return {
+        status: review
+          ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
+          : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
+        evidence: 'positive:frost-free-tropical-warmth-match'
+      };
+    }
+    if (
+      tropicalMoisturePlant &&
+      humiditySignal === 'medium' &&
+      broad !== 'tropical' &&
+      frostFree
+    ) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
+        limiting: 'Humidity/moisture only partially match sourced fruiting needs.',
+        evidence: 'partial:humidity-medium-non-tropical'
+      };
+    }
+    if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
+      return {
+        status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+        limiting: 'Climate is too cool / not frost-free for sourced fruiting needs.',
+        evidence: 'negative:cool-or-not-frost-free-vs-warm-fruiting'
+      };
+    }
+  }
+
+  return {
+    status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+    unknownGap: 'fruiting-climate-comparison',
+    evidence: 'incomplete:cannot-compare-fruiting-requirements'
+  };
 }
 
 export function catalogNeedsReview(meta, plant) {
@@ -582,8 +1014,9 @@ export function deriveSpecificPlantOutcomes({
   const humidityTolerance = String(meta?.humidityTolerance || '').toLowerCase();
   const survivalFit = Number(s.survivalFit);
   const thriveFit = Number(s.thriveFit);
-  const floweringFit = Number(s.floweringFit);
-  const fruitingFit = Number(s.fruitingFit);
+  // floweringFit / fruitingFit are NOT botanical evidence — ignored for reproductive outcomes.
+  void s.floweringFit;
+  void s.fruitingFit;
   const engineBlocked = String(s.recommendationLevel || '').toLowerCase() === 'blocked';
   const review = catalogNeedsReview(meta, plant);
   const tropicalMoisturePlant =
@@ -706,54 +1139,35 @@ export function deriveSpecificPlantOutcomes({
     if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
   }
 
-  if (!hasPositiveFloweringEvidence(meta)) {
-    flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
-    unknownGaps.push('floweringRequirements');
-  } else if (chillDeficit) {
-    flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
-    if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
-  } else if (Number.isFinite(floweringFit) && floweringFit < 40) {
-    flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
-    limiting.push('Flowering performance is likely to be weak in this location.');
-  } else if (Number.isFinite(floweringFit) && floweringFit < 65) {
-    flowering = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-  } else if (Number.isFinite(floweringFit)) {
-    flowering = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
-  } else {
-    flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
-    unknownGaps.push('flowering-fit');
+  const flowerEval = evaluateFloweringFromCatalogEvidence({
+    meta,
+    env,
+    survival,
+    chillDeficit,
+    review,
+    sheltered
+  });
+  flowering = flowerEval.status;
+  if (flowerEval.limiting && !limiting.includes(flowerEval.limiting)) {
+    limiting.push(flowerEval.limiting);
   }
+  if (flowerEval.unknownGap) unknownGaps.push(flowerEval.unknownGap);
 
-  const fruitPositive = hasPositiveFruitingEvidence(meta);
-  if (
-    fruitFailCtx &&
-    !sheltered &&
-    isWarmTropicalFrostSensitiveGroup(meta) &&
-    (freezingRisk === 'medium' || !frostFree || humiditySignal === 'low')
-  ) {
-    fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    if (survival !== SPECIFIC_OUTCOME_STATUS.UNRELIABLE) {
-      limiting.push('Can grow, but reliable fruit production is not expected.');
-    }
-  } else if (chillDeficit && (fruitPositive || fruitFailCtx || chillRequired)) {
-    fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
-  } else if (!fruitPositive) {
-    fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
-    unknownGaps.push('fruitingRequirements');
-  } else if (Number.isFinite(fruitingFit) && fruitingFit < 35) {
-    fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    if (survival !== SPECIFIC_OUTCOME_STATUS.UNRELIABLE) {
-      limiting.push('Can grow, but reliable fruit production is not expected.');
-    }
-  } else if (Number.isFinite(fruitingFit) && fruitingFit < 60) {
-    fruiting = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-  } else if (Number.isFinite(fruitingFit)) {
-    fruiting = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
-  } else {
-    fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
-    unknownGaps.push('fruiting-fit');
+  const fruitEval = evaluateFruitingFromCatalogEvidence({
+    meta,
+    plant,
+    env,
+    survival,
+    flowering,
+    chillDeficit,
+    review,
+    sheltered
+  });
+  fruiting = fruitEval.status;
+  if (fruitEval.limiting && !limiting.includes(fruitEval.limiting)) {
+    limiting.push(fruitEval.limiting);
   }
+  if (fruitEval.unknownGap) unknownGaps.push(fruitEval.unknownGap);
 
   return finalizeOutcomes({
     survival,
@@ -765,7 +1179,11 @@ export function deriveSpecificPlantOutcomes({
     suitability: s,
     sheltered,
     needsReview: review,
-    fruitOriented: fruitFailCtx || chillRequired
+    fruitOriented: fruitFailCtx || chillRequired,
+    reproductiveEvidence: {
+      flowering: flowerEval.evidence,
+      fruiting: fruitEval.evidence
+    }
   });
 }
 
@@ -780,7 +1198,8 @@ function finalizeOutcomes({
   forceOverall,
   sheltered,
   needsReview = false,
-  fruitOriented = false
+  fruitOriented = false,
+  reproductiveEvidence = null
 }) {
   const overall = forceOverall
     ? forceOverall
@@ -809,7 +1228,8 @@ function finalizeOutcomes({
     limitingFactors: limiting,
     unknownEvidence: unknownGaps,
     needsReview: !!needsReview,
-    protectedGrowing: sheltered === true
+    protectedGrowing: sheltered === true,
+    reproductiveEvidence: reproductiveEvidence || null
   };
 }
 

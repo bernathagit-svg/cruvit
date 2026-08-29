@@ -441,7 +441,8 @@ test('view model surfaces four outcomes with prominent overall', () => {
   });
   assert.equal(vm.levelLabel, 'Not recommended');
   assert.equal(vm.survivalLabel, 'Unreliable');
-  assert.ok(vm.floweringLabel === 'Constrained' || vm.floweringLabel === 'Unlikely' || vm.floweringLabel === 'UNKNOWN');
+  assert.ok(vm.floweringLabel === 'Unlikely' || vm.floweringLabel === 'UNKNOWN');
+  assert.equal(vm.fruitingLabel, 'Unreliable');
 });
 
 test('UI + wiring expose four-outcome block; Yehiam alias supported', () => {

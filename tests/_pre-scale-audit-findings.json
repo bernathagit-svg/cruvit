@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T15:09:50.451Z",
+  "generatedAt": "2026-08-29T16:04:26.324Z",
   "findings": [
     {
       "severity": "P3",
@@ -11,7 +11,7 @@
       "severity": "P3",
       "area": "climate",
       "title": "TelAviv structural live fetch failed; using verified audit fixture",
-      "detail": "http-429"
+      "detail": "fetch failed"
     },
     {
       "severity": "P3",
@@ -715,166 +715,206 @@
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.3733000000065658
+            "evalMs": 1.3717000000178814
           },
           {
             "climate": "Kochi",
             "overall": "good",
             "survival": "reliable",
             "growth": "supported",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": [],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "positive:coldest-month:23.4>=min:20",
+              "fruiting": "positive:frost-free-tropical-warmth-match"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.03959999998915009
+            "evalMs": 0.510999999998603
           },
           {
             "climate": "Cairo",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.020099999994272366
+            "evalMs": 0.053699999989476055
           },
           {
             "climate": "Tokyo",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.01579999999376014
+            "evalMs": 0.0390999999945052
           },
           {
             "climate": "London",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.014999999999417923
+            "evalMs": 0.05890000000363216
           },
           {
             "climate": "Singapore",
             "overall": "good",
             "survival": "reliable",
             "growth": "supported",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": [],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "positive:coldest-month:24.46>=min:20",
+              "fruiting": "positive:frost-free-tropical-warmth-match"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.014999999999417923
+            "evalMs": 0.12369999999646097
           },
           {
             "climate": "Phoenix",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.019100000004982576
+            "evalMs": 0.045400000002700835
           },
           {
             "climate": "Zurich",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.01939999999012798
+            "evalMs": 0.03889999998500571
           },
           {
             "climate": "Quito",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.01830000001064036
+            "evalMs": 0.1187999999965541
           },
           {
             "climate": "MexicoCity",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.027900000000954606
+            "evalMs": 0.05939999999827705
           }
         ]
       },
@@ -886,166 +926,206 @@
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.014999999999417923
+            "evalMs": 0.18769999998039566
           },
           {
             "climate": "Kochi",
             "overall": "good",
             "survival": "reliable",
             "growth": "supported",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": [],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "positive:frost-free-tropical-warmth-match",
+              "fruiting": "positive:frost-free-tropical-warmth-match"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.011800000007497147
+            "evalMs": 0.05120000001625158
           },
           {
             "climate": "Cairo",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.005100000009406358
+            "evalMs": 0.013899999990826473
           },
           {
             "climate": "Tokyo",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.003499999991618097
+            "evalMs": 0.010999999998603016
           },
           {
             "climate": "London",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.0029999999969732016
+            "evalMs": 0.00950000001466833
           },
           {
             "climate": "Singapore",
             "overall": "good",
             "survival": "reliable",
             "growth": "supported",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": [],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "positive:frost-free-tropical-warmth-match",
+              "fruiting": "positive:frost-free-tropical-warmth-match"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.005099999994854443
+            "evalMs": 0.03959999998915009
           },
           {
             "climate": "Phoenix",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.005000000004656613
+            "evalMs": 0.019299999985378236
           },
           {
             "climate": "Zurich",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.003200000006472692
+            "evalMs": 0.013199999986682087
           },
           {
             "climate": "Quito",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.0031999999919207767
+            "evalMs": 0.012699999992037192
           },
           {
             "climate": "MexicoCity",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Frost risk is too high for this plant."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:survival-failure-blocks-normal-flowering",
+              "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.0029000000067753717
+            "evalMs": 0.007199999992735684
           }
         ]
       },
@@ -1064,11 +1144,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.05739999999059364
+            "evalMs": 0.07949999999254942
           },
           {
             "climate": "Kochi",
@@ -1084,11 +1168,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.012300000002142042
+            "evalMs": 0.01600000000325963
           },
           {
             "climate": "Cairo",
@@ -1102,11 +1190,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.006900000007590279
+            "evalMs": 0.018299999996088445
           },
           {
             "climate": "Tokyo",
@@ -1122,11 +1214,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.005899999989196658
+            "evalMs": 0.013000000006286427
           },
           {
             "climate": "London",
@@ -1142,11 +1238,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.0063999999983934686
+            "evalMs": 0.007800000021234155
           },
           {
             "climate": "Singapore",
@@ -1162,11 +1262,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.004799999995157123
+            "evalMs": 0.00770000001648441
           },
           {
             "climate": "Phoenix",
@@ -1180,11 +1284,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.41620000000693835
+            "evalMs": 0.00789999999688007
           },
           {
             "climate": "Zurich",
@@ -1200,11 +1308,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.036300000007031485
+            "evalMs": 0.007799999992130324
           },
           {
             "climate": "Quito",
@@ -1220,11 +1332,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.009500000000116415
+            "evalMs": 0.007400000002235174
           },
           {
             "climate": "MexicoCity",
@@ -1238,11 +1354,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.005099999994854443
+            "evalMs": 0.007200000021839514
           }
         ]
       },
@@ -1261,30 +1381,36 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.029099999999743886
+            "evalMs": 0.02549999998882413
           },
           {
             "climate": "Kochi",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
-            "unknown": [
-              "floweringRequirements"
-            ],
+            "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.006599999993341044
+            "evalMs": 0.013800000015180558
           },
           {
             "climate": "Cairo",
@@ -1298,11 +1424,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.004199999995762482
+            "evalMs": 0.008000000001629815
           },
           {
             "climate": "Tokyo",
@@ -1318,11 +1448,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.0042000000103143975
+            "evalMs": 0.007400000002235174
           },
           {
             "climate": "London",
@@ -1336,30 +1470,36 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.0038000000058673322
+            "evalMs": 0.007299999997485429
           },
           {
             "climate": "Singapore",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": [
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
-            "unknown": [
-              "floweringRequirements"
-            ],
+            "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.004099999991012737
+            "evalMs": 0.009000000020023435
           },
           {
             "climate": "Phoenix",
@@ -1373,11 +1513,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.003799999991315417
+            "evalMs": 0.007299999997485429
           },
           {
             "climate": "Zurich",
@@ -1393,11 +1537,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.02599999999802094
+            "evalMs": 0.007199999992735684
           },
           {
             "climate": "Quito",
@@ -1411,11 +1559,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.006699999998090789
+            "evalMs": 0.0076000000117346644
           },
           {
             "climate": "MexicoCity",
@@ -1429,11 +1581,15 @@
               "floweringRequirements",
               "fruitingRequirements"
             ],
+            "reproductiveEvidence": {
+              "flowering": "missing:floweringRequirements",
+              "fruiting": "missing:fruitingRequirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.004999999990104698
+            "evalMs": 0.007500000006984919
           }
         ]
       },
@@ -1445,15 +1601,22 @@
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.0060000000084983185
+            "evalMs": 0.018099999986588955
           },
           {
             "climate": "Kochi",
@@ -1467,60 +1630,85 @@
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.01980000000912696
+            "evalMs": 0.009600000019418076
           },
           {
             "climate": "Cairo",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.006599999993341044
+            "evalMs": 0.010399999999208376
           },
           {
             "climate": "Tokyo",
             "overall": "borderline",
             "survival": "constrained",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [
               "High humidity is a poor fit for this plant."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.007100000002537854
+            "evalMs": 0.0087000000057742
           },
           {
             "climate": "London",
             "overall": "borderline",
             "survival": "constrained",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [
               "High humidity is a poor fit for this plant."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.003299999996670522
+            "evalMs": 0.007500000006984919
           },
           {
             "climate": "Singapore",
@@ -1534,75 +1722,106 @@
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.0038000000058673322
+            "evalMs": 0.006699999998090789
           },
           {
             "climate": "Phoenix",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.003599999996367842
+            "evalMs": 0.014400000014575198
           },
           {
             "climate": "Zurich",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
             "limiting": [
               "Survival fit is too weak for reliable outdoor establishment."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "negative:survival-failure-blocks-fruiting"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.003299999996670522
+            "evalMs": 0.00930000000516884
           },
           {
             "climate": "Quito",
             "overall": "borderline",
             "survival": "constrained",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [
               "High humidity is a poor fit for this plant."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.0031000000017229468
+            "evalMs": 0.007500000006984919
           },
           {
             "climate": "MexicoCity",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.0029000000067753717
+            "evalMs": 0.007100000017089769
           }
         ]
       },
@@ -1614,15 +1833,22 @@
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "semi-arid",
             "humidity": "low",
             "cold": 9.66,
-            "evalMs": 0.003600000010919757
+            "evalMs": 0.010100000014062971
           },
           {
             "climate": "Kochi",
@@ -1635,58 +1861,82 @@
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 23.4,
-            "evalMs": 0.003400000001420267
+            "evalMs": 0.007199999992735684
           },
           {
             "climate": "Cairo",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "hyper-arid",
             "humidity": "low",
             "cold": 8.89,
-            "evalMs": 0.0031000000017229468
+            "evalMs": 0.00810000000637956
           },
           {
             "climate": "Tokyo",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
             "limiting": [
               "Survival fit is too weak for reliable outdoor establishment."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "negative:survival-failure-blocks-fruiting"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": -0.18,
-            "evalMs": 0.0029000000067753717
+            "evalMs": 0.008000000001629815
           },
           {
             "climate": "London",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 1.82,
-            "evalMs": 0.0029000000067753717
+            "evalMs": 0.007799999992130324
           },
           {
             "climate": "Singapore",
@@ -1699,73 +1949,104 @@
               "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
             ],
             "unknown": [],
+            "reproductiveEvidence": {
+              "flowering": "negative:chill-deficit",
+              "fruiting": "negative:chill-deficit"
+            },
             "frostFree": true,
             "moisture": "humid",
             "humidity": "high",
             "cold": 24.46,
-            "evalMs": 0.003200000006472692
+            "evalMs": 0.006699999998090789
           },
           {
             "climate": "Phoenix",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "arid",
             "humidity": "low",
             "cold": 5.5,
-            "evalMs": 0.0029999999969732016
+            "evalMs": 0.0076000000117346644
           },
           {
             "climate": "Zurich",
             "overall": "blocked",
             "survival": "unreliable",
             "growth": "poor",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
             "limiting": [
               "Survival fit is too weak for reliable outdoor establishment."
             ],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "negative:survival-failure-blocks-fruiting"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": -2.5,
-            "evalMs": 0.0028999999922234565
+            "evalMs": 0.007199999992735684
           },
           {
             "climate": "Quito",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "high",
             "cold": 7.85,
-            "evalMs": 0.0028000000020256266
+            "evalMs": 0.0076000000117346644
           },
           {
             "climate": "MexicoCity",
             "overall": "borderline",
             "survival": "reliable",
             "growth": "constrained",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": [],
-            "unknown": [],
+            "unknown": [
+              "flowering-climate-comparison",
+              "fruiting-climate-comparison"
+            ],
+            "reproductiveEvidence": {
+              "flowering": "incomplete:cannot-compare-flowering-requirements",
+              "fruiting": "incomplete:cannot-compare-fruiting-requirements"
+            },
             "frostFree": false,
             "moisture": "humid",
             "humidity": "medium",
             "cold": 7.03,
-            "evalMs": 0.0029000000067753717
+            "evalMs": 0.010999999998603016
           }
         ]
       }
@@ -1778,16 +2059,16 @@
             "plant": "cacao",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": null
           },
           {
             "plant": "coconut",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": null
           },
           {
@@ -1802,7 +2083,7 @@
             "plant": "japanese-maple",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
           },
@@ -1826,7 +2107,7 @@
             "plant": "plumeria",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
+            "flowering": "supported",
             "fruiting": "unknown",
             "limiting": null
           },
@@ -1855,7 +2136,7 @@
             "plant": "cacao",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -1863,7 +2144,7 @@
             "plant": "coconut",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -1887,23 +2168,23 @@
             "plant": "pistachio",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           },
           {
             "plant": "kiwi",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           },
           {
             "plant": "plumeria",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unknown",
             "limiting": "Coldest-month mean lows (~5.5°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
           },
@@ -1911,7 +2192,7 @@
             "plant": "coffee",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -1919,8 +2200,8 @@
             "plant": "almond",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           }
         ]
@@ -1932,16 +2213,16 @@
             "plant": "cacao",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": null
           },
           {
             "plant": "coconut",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "supported",
+            "fruiting": "supported",
             "limiting": null
           },
           {
@@ -1956,7 +2237,7 @@
             "plant": "japanese-maple",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match."
           },
@@ -1980,7 +2261,7 @@
             "plant": "plumeria",
             "overall": "good",
             "survival": "reliable",
-            "flowering": "constrained",
+            "flowering": "supported",
             "fruiting": "unknown",
             "limiting": null
           },
@@ -2009,7 +2290,7 @@
             "plant": "cacao",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -2017,7 +2298,7 @@
             "plant": "coconut",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -2041,23 +2322,23 @@
             "plant": "pistachio",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           },
           {
             "plant": "kiwi",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           },
           {
             "plant": "plumeria",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "constrained",
+            "flowering": "unlikely",
             "fruiting": "unknown",
             "limiting": "Coldest-month mean lows (~8.89°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
           },
@@ -2065,7 +2346,7 @@
             "plant": "coffee",
             "overall": "blocked",
             "survival": "unreliable",
-            "flowering": "unknown",
+            "flowering": "unlikely",
             "fruiting": "unreliable",
             "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
           },
@@ -2073,8 +2354,8 @@
             "plant": "almond",
             "overall": "borderline",
             "survival": "reliable",
-            "flowering": "constrained",
-            "fruiting": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
             "limiting": null
           }
         ]
@@ -2086,9 +2367,13 @@
         "climate": "Kochi",
         "overall": "good",
         "survival": "reliable",
-        "flowering": "constrained",
-        "fruiting": "constrained",
+        "flowering": "supported",
+        "fruiting": "supported",
         "needsReview": false,
+        "reproductiveEvidence": {
+          "flowering": "positive:coldest-month:23.4>=min:20",
+          "fruiting": "positive:frost-free-tropical-warmth-match"
+        },
         "evidence": {
           "frost": "high",
           "humidityTol": "high",
@@ -2097,7 +2382,11 @@
           "structuralStatus": "known",
           "moisture": "humid",
           "humidity": "high",
-          "cold": 23.4
+          "cold": 23.4,
+          "reproductiveEvidence": {
+            "flowering": "positive:coldest-month:23.4>=min:20",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          }
         }
       },
       {
@@ -2105,9 +2394,13 @@
         "climate": "Singapore",
         "overall": "good",
         "survival": "reliable",
-        "flowering": "constrained",
-        "fruiting": "constrained",
+        "flowering": "supported",
+        "fruiting": "supported",
         "needsReview": false,
+        "reproductiveEvidence": {
+          "flowering": "positive:coldest-month:24.46>=min:20",
+          "fruiting": "positive:frost-free-tropical-warmth-match"
+        },
         "evidence": {
           "frost": "high",
           "humidityTol": "high",
@@ -2116,7 +2409,11 @@
           "structuralStatus": "known",
           "moisture": "humid",
           "humidity": "high",
-          "cold": 24.46
+          "cold": 24.46,
+          "reproductiveEvidence": {
+            "flowering": "positive:coldest-month:24.46>=min:20",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          }
         }
       },
       {
@@ -2124,9 +2421,13 @@
         "climate": "Kochi",
         "overall": "good",
         "survival": "reliable",
-        "flowering": "constrained",
-        "fruiting": "constrained",
+        "flowering": "supported",
+        "fruiting": "supported",
         "needsReview": false,
+        "reproductiveEvidence": {
+          "flowering": "positive:frost-free-tropical-warmth-match",
+          "fruiting": "positive:frost-free-tropical-warmth-match"
+        },
         "evidence": {
           "frost": "high",
           "humidityTol": "high",
@@ -2135,7 +2436,11 @@
           "structuralStatus": "known",
           "moisture": "humid",
           "humidity": "high",
-          "cold": 23.4
+          "cold": 23.4,
+          "reproductiveEvidence": {
+            "flowering": "positive:frost-free-tropical-warmth-match",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          }
         }
       },
       {
@@ -2143,9 +2448,13 @@
         "climate": "Singapore",
         "overall": "good",
         "survival": "reliable",
-        "flowering": "constrained",
-        "fruiting": "constrained",
+        "flowering": "supported",
+        "fruiting": "supported",
         "needsReview": false,
+        "reproductiveEvidence": {
+          "flowering": "positive:frost-free-tropical-warmth-match",
+          "fruiting": "positive:frost-free-tropical-warmth-match"
+        },
         "evidence": {
           "frost": "high",
           "humidityTol": "high",
@@ -2154,7 +2463,11 @@
           "structuralStatus": "known",
           "moisture": "humid",
           "humidity": "high",
-          "cold": 24.46
+          "cold": 24.46,
+          "reproductiveEvidence": {
+            "flowering": "positive:frost-free-tropical-warmth-match",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          }
         }
       }
     ],
@@ -2346,7 +2659,9 @@
         "limiting": [
           "Survival fit is too weak for reliable outdoor establishment."
         ],
-        "unknown": []
+        "unknown": [
+          "flowering-climate-comparison"
+        ]
       },
       {
         "plant": "kiwi",
@@ -2355,7 +2670,9 @@
         "limiting": [
           "Survival fit is too weak for reliable outdoor establishment."
         ],
-        "unknown": []
+        "unknown": [
+          "flowering-climate-comparison"
+        ]
       },
       {
         "plant": "kiwi",
@@ -2364,7 +2681,9 @@
         "limiting": [
           "Survival fit is too weak for reliable outdoor establishment."
         ],
-        "unknown": []
+        "unknown": [
+          "flowering-climate-comparison"
+        ]
       }
     ],
     "catalog": {
@@ -2497,24 +2816,174 @@
       "appSearchDisabled": true,
       "plantImageFnDisabled": true
     },
+    "reproductiveSanity": {
+      "coconut": {
+        "Kochi": {
+          "overall": "Good",
+          "overallCode": "good",
+          "survival": "Reliable",
+          "growth": "Supported",
+          "flowering": "Supported",
+          "fruiting": "Supported",
+          "reproductiveEvidence": {
+            "flowering": "positive:frost-free-tropical-warmth-match",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          },
+          "limiting": []
+        },
+        "Cairo": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          ]
+        },
+        "Tokyo": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Frost risk is too high for this plant."
+          ]
+        },
+        "Yehiam": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Frost risk is too high for this plant."
+          ]
+        },
+        "Singapore": {
+          "overall": "Good",
+          "overallCode": "good",
+          "survival": "Reliable",
+          "growth": "Supported",
+          "flowering": "Supported",
+          "fruiting": "Supported",
+          "reproductiveEvidence": {
+            "flowering": "positive:frost-free-tropical-warmth-match",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          },
+          "limiting": []
+        }
+      },
+      "cacao": {
+        "Kochi": {
+          "overall": "Good",
+          "overallCode": "good",
+          "survival": "Reliable",
+          "growth": "Supported",
+          "flowering": "Supported",
+          "fruiting": "Supported",
+          "reproductiveEvidence": {
+            "flowering": "positive:coldest-month:23.4>=min:20",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          },
+          "limiting": []
+        },
+        "Cairo": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          ]
+        },
+        "Tokyo": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Frost risk is too high for this plant."
+          ]
+        },
+        "Yehiam": {
+          "overall": "Not recommended",
+          "overallCode": "blocked",
+          "survival": "Unreliable",
+          "growth": "Poor",
+          "flowering": "Unlikely",
+          "fruiting": "Unreliable",
+          "reproductiveEvidence": {
+            "flowering": "negative:survival-failure-blocks-normal-flowering",
+            "fruiting": "negative:tropical-fruit-frost-or-dry-failure-context"
+          },
+          "limiting": [
+            "Frost risk is too high for this plant."
+          ]
+        },
+        "Singapore": {
+          "overall": "Good",
+          "overallCode": "good",
+          "survival": "Reliable",
+          "growth": "Supported",
+          "flowering": "Supported",
+          "fruiting": "Supported",
+          "reproductiveEvidence": {
+            "flowering": "positive:coldest-month:24.46>=min:20",
+            "fruiting": "positive:frost-free-tropical-warmth-match"
+          },
+          "limiting": []
+        }
+      },
+      "defaultFitIndependent": true,
+      "missingRequirementsStayUnknown": true
+    },
     "performance": {
-      "warmP95Ms": 0.006099999998696148,
-      "warmMaxMs": 0.03290000000561122,
-      "batch100Ms": 0.2526999999972759,
-      "batch500Ms": 1.5320000000065193,
-      "search200Ms": 17.42410000000382,
+      "warmP95Ms": 0.01579999999376014,
+      "warmMaxMs": 0.054100000008475035,
+      "batch100Ms": 0.8722000000125263,
+      "batch500Ms": 4.60130000000936,
+      "search200Ms": 27.756200000003446,
       "catalogSize": 33,
       "structuralAcquisitionSamplesMs": [],
       "mediaLookup": {
         "iterations": 40,
         "plantCount": 20,
-        "minMs": 0.009200000000419095,
-        "medianMs": 0.015100000004167669,
-        "p95Ms": 0.03290000000561122,
-        "maxMs": 0.06329999999434222
+        "minMs": 0.012900000001536682,
+        "medianMs": 0.0204000000085216,
+        "p95Ms": 0.094600000011269,
+        "maxMs": 0.11609999998472631
       },
-      "mediaBatch100Ms": 1.022400000001653,
-      "mediaBatch500Ms": 3.662400000001071
+      "mediaBatch100Ms": 1.532100000011269,
+      "mediaBatch500Ms": 5.924100000003818
     },
     "climateGapNotes": [
       {

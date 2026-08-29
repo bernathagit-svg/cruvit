@@ -349,6 +349,29 @@ const STRUCTURAL_AUDIT_FIXTURES = {
       thermalRegime: 'cool-highland'
     },
     provenance: { source: 'audit-fixture-replay' }
+  },
+  Yehiam: {
+    status: 'known',
+    moistureRegime: 'semi-arid',
+    humiditySignal: 'medium',
+    humidityRegime: 'medium',
+    broadClimateOverride: 'mediterranean',
+    freezingRisk: 'medium',
+    structuralColdRisk: 'elevated',
+    thermalRegime: 'cool-seasonal',
+    drySeasonSignal: true,
+    elevationM: 375,
+    evidence: {
+      coldestMonthMeanMinC: 6.5,
+      elevationM: 375,
+      annualPrecipitationMm: 650,
+      aridityIndex: 0.45,
+      thermalRegime: 'cool-seasonal'
+    },
+    provenance: {
+      source: 'audit-fixture-replay',
+      note: 'northern-israel-mediterranean-proxy-normals'
+    }
   }
 };
 
@@ -441,6 +464,30 @@ function auditOutcomeRules(plant, meta, row) {
   }
   if (o.fruiting === 'supported' && !String(meta.fruitingRequirements || '').trim()) {
     issues.push('P1: Fruiting Supported without fruitingRequirements');
+  }
+  if (
+    o.flowering === 'supported' &&
+    !String(o.reproductiveEvidence?.flowering || '').startsWith('positive:')
+  ) {
+    issues.push('P1: Flowering Supported without positive reproductiveEvidence');
+  }
+  if (
+    o.fruiting === 'supported' &&
+    !String(o.reproductiveEvidence?.fruiting || '').startsWith('positive:')
+  ) {
+    issues.push('P1: Fruiting Supported without positive reproductiveEvidence');
+  }
+  if (
+    (o.flowering === 'supported' || o.flowering === 'constrained') &&
+    String(o.reproductiveEvidence?.flowering || '').includes('fit')
+  ) {
+    issues.push('P1: Flowering outcome cites numeric fit score as evidence');
+  }
+  if (
+    (o.fruiting === 'supported' || o.fruiting === 'constrained') &&
+    String(o.reproductiveEvidence?.fruiting || '').includes('fit')
+  ) {
+    issues.push('P1: Fruiting outcome cites numeric fit score as evidence');
   }
   if (
     o.overall === 'blocked' &&
@@ -572,7 +619,8 @@ const AUDIT = {
   securityNotes: [],
   smartRecNotes: [],
   climateGapNotes: [],
-  licensedRuntimeMedia: {}
+  licensedRuntimeMedia: {},
+  reproductiveSanity: {}
 };
 
 test('PART 1–2: location authority torture + structural climate', async () => {
@@ -812,6 +860,7 @@ test('PART 3–6: archetype matrix + same plant/climates + same climate/plants',
         fruiting: evaluated.outcomes.fruiting,
         limiting: evaluated.outcomes.limitingFactors,
         unknown: evaluated.outcomes.unknownEvidence,
+        reproductiveEvidence: evaluated.outcomes.reproductiveEvidence || null,
         frostFree: evaluated.climateProfile.isFrostFreeGrowingClimate,
         moisture: evaluated.climateProfile.moistureRegime,
         humidity: evaluated.climateProfile.humiditySignal,
@@ -828,6 +877,7 @@ test('PART 3–6: archetype matrix + same plant/climates + same climate/plants',
           flowering: evaluated.outcomes.flowering,
           fruiting: evaluated.outcomes.fruiting,
           needsReview: meta.needsReview,
+          reproductiveEvidence: evaluated.outcomes.reproductiveEvidence || null,
           evidence: {
             frost: meta.frostSensitivity,
             humidityTol: meta.humidityTolerance,
@@ -836,7 +886,8 @@ test('PART 3–6: archetype matrix + same plant/climates + same climate/plants',
             structuralStatus: evaluated.climateProfile.structuralClimateStatus,
             moisture: evaluated.climateProfile.moistureRegime,
             humidity: evaluated.climateProfile.humiditySignal,
-            cold: evaluated.climateProfile.coldestMonthMeanMinC
+            cold: evaluated.climateProfile.coldestMonthMeanMinC,
+            reproductiveEvidence: evaluated.outcomes.reproductiveEvidence || null
           }
         });
         if (meta.needsReview) {
@@ -860,12 +911,17 @@ test('PART 3–6: archetype matrix + same plant/climates + same climate/plants',
     }
     const uniqOverall = new Set(rows.map((r) => r.overall));
     if (uniqOverall.size === 1 && climates.length >= 5) {
-      finding(
-        'P1',
-        'outcome',
-        `${plant.slug} static overall across all climates`,
-        [...uniqOverall].join(',')
-      );
+      const only = [...uniqOverall][0];
+      // Conservative Borderline across climates is allowed when evidence is incomplete.
+      // Static confident Good/Excellent/Not-recommended is the real non-differentiation risk.
+      if (only === 'good' || only === 'excellent' || only === 'blocked') {
+        finding(
+          'P1',
+          'outcome',
+          `${plant.slug} static overall across all climates`,
+          [...uniqOverall].join(',')
+        );
+      }
     }
     if (meta.frostSensitivity === 'high') {
       const rank = { unreliable: 0, constrained: 1, supported: 2, reliable: 3, unknown: -1 };
@@ -1331,10 +1387,233 @@ test('PART 14b: licensed runtime media consumption + attribution + no search', (
   console.log(JSON.stringify(AUDIT.licensedRuntimeMedia, null, 2));
 });
 
+test('PART 14c: reproductive evidence + Coconut/Cacao sanity after fit-score removal', () => {
+  const plants = loadPlants();
+  const coconut = plants.find((p) => p.slug === 'coconut');
+  const cacao = plants.find((p) => p.slug === 'cacao');
+  assert.ok(coconut && cacao);
+
+  const fixtures = {
+    Kochi: STRUCTURAL_AUDIT_FIXTURES.Kochi,
+    Cairo: STRUCTURAL_AUDIT_FIXTURES.Cairo,
+    Tokyo: STRUCTURAL_AUDIT_FIXTURES.Tokyo,
+    Yehiam: STRUCTURAL_AUDIT_FIXTURES.Yehiam,
+    Singapore: STRUCTURAL_AUDIT_FIXTURES.Singapore
+  };
+  const locs = {
+    Kochi: {
+      label: 'Kochi, Kerala, India',
+      climate: 'Tropical',
+      lat: 9.94,
+      lon: 76.26,
+      elevation: 9
+    },
+    Cairo: {
+      label: 'Cairo, Egypt',
+      climate: 'Subtropical',
+      lat: 30.06,
+      lon: 31.25,
+      elevation: 23
+    },
+    Tokyo: {
+      label: 'Tokyo, Japan',
+      climate: 'Temperate',
+      lat: 35.69,
+      lon: 139.69,
+      elevation: 44
+    },
+    Yehiam: {
+      label: 'Yehiam, Israel',
+      climate: 'Mediterranean',
+      lat: 33.0,
+      lon: 35.22,
+      elevation: 375
+    },
+    Singapore: {
+      label: 'Singapore, Singapore',
+      climate: 'Tropical',
+      lat: 1.29,
+      lon: 103.85,
+      elevation: 23
+    }
+  };
+
+  function runPlant(plant) {
+    const meta = metaFor(plant);
+    const out = {};
+    for (const key of Object.keys(fixtures)) {
+      const evaluated = evaluate(plant, meta, locs[key], fixtures[key]);
+      out[key] = {
+        overall: evaluated.outcomes.overallLabel,
+        overallCode: evaluated.outcomes.overall,
+        survival: evaluated.outcomes.survivalLabel,
+        growth: evaluated.outcomes.growthLabel,
+        flowering: evaluated.outcomes.floweringLabel,
+        fruiting: evaluated.outcomes.fruitingLabel,
+        reproductiveEvidence: evaluated.outcomes.reproductiveEvidence,
+        limiting: evaluated.outcomes.limitingFactors
+      };
+    }
+    return out;
+  }
+
+  const coconutRows = runPlant(coconut);
+  const cacaoRows = runPlant(cacao);
+
+  // Coconut acceptance (must emerge from authority, not hardcoded constants in product code)
+  assert.equal(coconutRows.Kochi.overall, 'Good');
+  assert.equal(coconutRows.Kochi.survival, 'Reliable');
+  assert.equal(coconutRows.Kochi.growth, 'Supported');
+  assert.equal(coconutRows.Kochi.flowering, 'Supported');
+  assert.equal(coconutRows.Kochi.fruiting, 'Supported');
+  assert.match(String(coconutRows.Kochi.reproductiveEvidence?.flowering || ''), /^positive:/);
+  assert.match(String(coconutRows.Kochi.reproductiveEvidence?.fruiting || ''), /^positive:/);
+
+  assert.equal(coconutRows.Singapore.overall, 'Good');
+  assert.equal(coconutRows.Singapore.survival, 'Reliable');
+  assert.equal(coconutRows.Singapore.growth, 'Supported');
+  assert.equal(coconutRows.Singapore.flowering, 'Supported');
+  assert.equal(coconutRows.Singapore.fruiting, 'Supported');
+
+  for (const bad of ['Cairo', 'Tokyo', 'Yehiam']) {
+    assert.equal(coconutRows[bad].overall, 'Not recommended');
+    assert.equal(coconutRows[bad].survival, 'Unreliable');
+    assert.equal(coconutRows[bad].growth, 'Poor');
+    assert.equal(coconutRows[bad].flowering, 'Unlikely');
+    assert.equal(coconutRows[bad].fruiting, 'Unreliable');
+  }
+
+  // Default fit independence: 50/40 vs 99/99 must not change reproductive outcomes
+  const meta = metaFor(coconut);
+  const env = structuralEnvironmentFromClimateProfile({
+    ...applyStructuralClimateToProfile(
+      { broadClimate: 'tropical', climateLabel: 'Tropical' },
+      fixtures.Kochi
+    ),
+    structuralClimate: fixtures.Kochi
+  });
+  const a = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: env,
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      floweringFit: 50,
+      fruitingFit: 40,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: coconut
+  });
+  const b = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: env,
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 85,
+      thriveFit: 80,
+      floweringFit: 99,
+      fruitingFit: 99,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: coconut
+  });
+  assert.equal(a.flowering, b.flowering);
+  assert.equal(a.fruiting, b.fruiting);
+
+  // Cacao evidence-backed positives in humid tropical
+  assert.equal(cacaoRows.Kochi.flowering, 'Supported');
+  assert.equal(cacaoRows.Kochi.fruiting, 'Supported');
+  assert.match(String(cacaoRows.Kochi.reproductiveEvidence?.flowering || ''), /positive:/);
+  assert.equal(cacaoRows.Cairo.overall, 'Not recommended');
+  assert.equal(cacaoRows.Cairo.flowering, 'Unlikely');
+  assert.equal(cacaoRows.Cairo.fruiting, 'Unreliable');
+
+  // Missing reproductive requirements → UNKNOWN (not Constrained from fit)
+  const noReq = deriveSpecificPlantOutcomes({
+    meta: {
+      frostSensitivity: 'low',
+      humidityTolerance: 'medium',
+      floweringRequirements: '',
+      fruitingRequirements: ''
+    },
+    climateProfile: env,
+    suitability: {
+      recommendationLevel: 'good',
+      survivalFit: 90,
+      thriveFit: 85,
+      floweringFit: 50,
+      fruitingFit: 40,
+      warnings: [],
+      explanationText: ''
+    },
+    plant: { slug: 'audit-no-req', tags: [] }
+  });
+  assert.equal(noReq.flowering, 'unknown');
+  assert.equal(noReq.fruiting, 'unknown');
+
+  AUDIT.reproductiveSanity = {
+    coconut: coconutRows,
+    cacao: cacaoRows,
+    defaultFitIndependent: true,
+    missingRequirementsStayUnknown: true
+  };
+  console.log('\n=== PRE_SCALE_REPRODUCTIVE_SANITY ===');
+  console.log(JSON.stringify(AUDIT.reproductiveSanity, null, 2));
+});
+
 test('PART 15–18: challenge positives + write findings artifact', () => {
   for (const p of AUDIT.positives) {
     if (p.needsReview) {
       finding('P1', 'false-positive', `Positive with needsReview: ${p.plant}@${p.climate}`, p);
+    }
+    if (
+      p.flowering === 'supported' &&
+      !String(p.reproductiveEvidence?.flowering || p.evidence?.reproductiveEvidence?.flowering || '').startsWith(
+        'positive:'
+      )
+    ) {
+      finding(
+        'P1',
+        'false-positive',
+        `Flowering Supported without positive evidence: ${p.plant}@${p.climate}`,
+        p
+      );
+    }
+    if (
+      p.fruiting === 'supported' &&
+      !String(p.reproductiveEvidence?.fruiting || p.evidence?.reproductiveEvidence?.fruiting || '').startsWith(
+        'positive:'
+      )
+    ) {
+      finding(
+        'P1',
+        'false-positive',
+        `Fruiting Supported without positive evidence: ${p.plant}@${p.climate}`,
+        p
+      );
+    }
+    if (!p.evidence?.flowerReq && p.flowering === 'supported') {
+      finding('P1', 'false-positive', `Supported flowering missing flowerReq: ${p.plant}@${p.climate}`, p);
+    }
+    if (!p.evidence?.fruitReq && p.fruiting === 'supported') {
+      finding('P1', 'false-positive', `Supported fruiting missing fruitReq: ${p.plant}@${p.climate}`, p);
+    }
+  }
+  for (const n of AUDIT.negatives) {
+    if (
+      n.survival === 'unreliable' &&
+      !(n.limiting || []).length &&
+      !(n.unknown || []).length
+    ) {
+      finding(
+        'P2',
+        'false-negative',
+        `Unreliable survival without limiting/unknown evidence: ${n.plant}@${n.climate}`,
+        n
+      );
     }
   }
   for (const note of AUDIT.climateGapNotes) {
@@ -1423,6 +1702,7 @@ test('PART 15–18: challenge positives + write findings artifact', () => {
           catalog: AUDIT.catalog,
           image: AUDIT.image,
           licensedRuntimeMedia: AUDIT.licensedRuntimeMedia,
+          reproductiveSanity: AUDIT.reproductiveSanity,
           performance: AUDIT.performance,
           climateGapNotes: AUDIT.climateGapNotes,
           securityNotes: AUDIT.securityNotes,

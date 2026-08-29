@@ -39,7 +39,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - Specific Plant Suitability / Outcome Profile V1 (Owned Garden → confirmed location → climate/environment → selected catalog plant → deterministic Overall/Survival/Growth/Flowering/Fruiting; quality gate PASS)
 - Pre-Scale Systemic Quality Fixes V1 (highland thermal authority; location ambiguity/city-state confidence; Specific Outcome winter chill; bounded 10-plant verified calibration; quality gate PASS).
 - Licensed Image Pipeline V1 + Runtime Licensed Catalog Media (catalog-time resolve/store; runtime consume-only; quality gate PASS).
-- **CRUVIT PRE-SCALE QUALITY GATE — PASS.** Automated bulk catalog expansion is **AUTHORIZED** but **NOT yet completed / NOT started**.
+- Reproductive Outcome Evidence Gate (Flowering/Fruiting evidence-only; default numeric fit cannot create reproductive outcomes; quality gate PASS).
+- **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.**
 
 ## Partial
 - Plant Doctor — plant **identification** and care recommendations work (`plant-identify.mjs`, plant-identifier module, `visual_analysis`); structured **disease detection / diagnosis** is not yet a real flow.
@@ -69,37 +70,57 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
-### CRUVIT Pre-Scale Quality Gate — CLOSED / PASS
-Status: **CRUVIT PRE-SCALE QUALITY GATE — PASS** (Owner-approved final pre-scale foundation closure).
+### CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO
+Status: **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). Owner-approved final pre-scale quality approval. Do not rerun another broad audit unless a new regression is discovered.
+
+**Final accepted quality state:** P0 = 0 · P1 = 0 · material P2 = 0 · regression suite 111 pass / 0 fail · `REPRODUCTIVE_OUTCOME_EVIDENCE_GATE: PASS` · Licensed Image Pipeline PASS · Runtime licensed catalog media PASS · Structural Climate Authority PASS · Specific Plant Outcome PASS.
+
+**Final quality audit passed only after reproductive outcomes were changed to evidence-only evaluation** (default `floweringFit` / `fruitingFit` numeric fits removed as reproductive authority; positives require catalog + climate evidence; missing evidence → UNKNOWN; explicit frost/cold/aridity/chill failures may still justify negatives).
 
 **Passed stack (do not reopen):**
 1. Pre-Scale Systemic Quality Fixes V1 — `PRE_SCALE_SYSTEMIC_FIXES_V1_QUALITY_GATE: PASS`
 2. Licensed Image Pipeline V1 — `LICENSED_IMAGE_PIPELINE_V1_QUALITY_GATE: PASS`
 3. Runtime Licensed Catalog Media integration — consume-only; no runtime image-source search
-4. Full CRUVIT Pre-Scale System Quality Audit re-run — no open P0 / P1 / material P2
+4. Reproductive Outcome Evidence Gate — `REPRODUCTIVE_OUTCOME_EVIDENCE_GATE: PASS`
+5. Full CRUVIT Pre-Scale System Quality Audit re-run after reproductive fix — no open P0 / P1 / material P2
 
 **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Owner may begin bulk ingestion in a separate turn. This closure does **not** ingest hundreds of plants.
 
-**Mandatory pre-scale quality rules (architecture law):**
-- Survival / Growth / Flowering / Fruiting remain separate outcomes
-- Unreliable outdoor survival → Overall Not recommended (Borderline cannot hide survival failure)
-- UNKNOWN remains explicit when evidence is missing
-- `needsReview` cannot leak confident Good/Excellent
-- Broad/ambiguous locations cannot become Garden authority
-- Altitude / cold / aridity / humidity / chill are structural factors where evidence exists
-- Every positive outcome must have traceable evidence
+**Final Coconut acceptance (emerged from current authority; not hardcoded):**
+| Location | Overall | Survival | Growth | Flowering | Fruiting |
+|----------|---------|----------|--------|-----------|----------|
+| Kochi | Good | Reliable | Supported | Supported | Supported |
+| Singapore | Good | Reliable | Supported | Supported | Supported |
+| Cairo | Not recommended | Unreliable | Poor | Unlikely | Unreliable |
+| Tokyo | Not recommended | Unreliable | Poor | Unlikely | Unreliable |
+| Yehiam | Not recommended | Unreliable | Poor | Unlikely | Unreliable |
+
+**Mandatory product quality contract (architecture law):**
+1. Overall does NOT replace Survival / Growth / Flowering / Fruiting
+2. Unreliable outdoor survival → Not recommended
+3. Borderline cannot soften survival failure
+4. Flowering / Fruiting require real evidence
+5. Default numeric fit values may NOT generate reproductive outcomes
+6. Missing evidence → UNKNOWN
+7. Positive outcomes require traceable positive evidence
+8. Negative outcomes require traceable limiting evidence
+9. Frost-free alone does not imply suitability
+10. Structural factors include, when authoritative: damaging cold, altitude, aridity/moisture, humidity, seasonality, winter chill
+11. Broad/ambiguous geographic results cannot silently become Garden climate authority
+12. `needsReview` cannot leak into unsupported confident positives
 - Catalog images require license + provenance; commercial-use validation at catalog time
 - Runtime cannot bypass licensed catalog media authority
-- **FETCH / RESEARCH ONCE → VALIDATE → STORE → REUSE** — normal runtime must not repeatedly pay/research for already-resolved public catalog data, licensed media metadata, or Garden structural climate
+- **FETCH / RESEARCH ONCE → VALIDATE → STORE → REUSE** — external research/API belongs to catalog/background setup, not normal user runtime; persist identity/aliases/climate traits/flowering+fruiting requirements/provenance/verification/licensed media+attribution; Garden structural climate acquired on location establish/update then cached/reused
 - No LLM / web research / catalog-source API / image-source search per normal plant check
-- Runtime target: stored Garden climate + stored catalog plant data → deterministic evaluation
-- Runtime catalog image priority: (1) user-owned Garden photo where supported → (2) approved catalog IMAGE_READY → (3) safe placeholder / IMAGE_PENDING
+- Runtime target: stored Garden climate + stored catalog plant data → deterministic local evaluation
+- Runtime catalog image priority: (1) user-owned Garden photo where supported → (2) approved catalog IMAGE_READY → (3) safe placeholder / IMAGE_PENDING; zero image-source searches; NC/unlicensed cannot render as catalog truth; attribution-required images retain accessible author/license/source
 
 **Tracked open P3 only (do not promote to fixed):**
-- Yehiam resolver/provider gap in some live geocode calls
-- Open-Meteo structural-climate rate limiting / 429
-- Incomplete-climate archetype absent in current seed
-- Third-party media hotlink / source-removal operational risk (safe placeholder fallback exists)
+- Yehiam live geocode provider gap
+- Open-Meteo 429 / rate-limit operational behavior
+- Incomplete-climate archetype coverage gap
+- Third-party image hotlink / source-removal residual
+- Most future plants still require catalog verification as they are ingested
 
 ### Pre-Scale Systemic Quality Fixes V1 — CLOSED
 Status: **PRE-SCALE SYSTEMIC QUALITY FIXES V1 — COMPLETE / GO** (Owner-approved; `PRE_SCALE_SYSTEMIC_FIXES_V1_QUALITY_GATE: PASS`).
@@ -136,7 +157,7 @@ Status: **LOCATION PERSISTENCE V1 — COMPLETE / GO** (Owner-approved). Trusted 
 Status: **LOCATION_AUTHORITY_PROOF: PASS** (Owner-approved). Trusted location materially reaches climate → suitability → block/sort → visible browse. Proof not to be reopened. **Follow-on Location Persistence V1:** COMPLETE / GO (closed above).
 
 ### Authenticated Personal Domain V0 — CLOSED
-Status: **COMPLETE / GO** (Owner-approved). Auth + owned Garden Profile(s) live ownership/RLS boundary closed. Location Persistence V1, Garden Plants Persistence V1, Garden Tasks Persistence V1, Specific Plant Suitability / Outcome Profile V1, and the final **CRUVIT PRE-SCALE QUALITY GATE — PASS** are closed. **Automated Bulk Catalog Expansion is AUTHORIZED / NOT STARTED** (separate execution turn). **Do not** start photos / Garden Memory / Doctor history / purchases / recommendation-history migration until a separate bounded checkpoint is approved. Cost-per-active-user monitoring is a mandatory roadmap/ops rule (dashboard not built yet). Hero V1 branch retained separately and not merged.
+Status: **COMPLETE / GO** (Owner-approved). Auth + owned Garden Profile(s) live ownership/RLS boundary closed. Location Persistence V1, Garden Plants Persistence V1, Garden Tasks Persistence V1, Specific Plant Suitability / Outcome Profile V1, and **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** are closed. **Automated Bulk Catalog Expansion is AUTHORIZED / NOT STARTED** (separate execution turn). **Do not** start photos / Garden Memory / Doctor history / purchases / recommendation-history migration until a separate bounded checkpoint is approved. Cost-per-active-user monitoring is a mandatory roadmap/ops rule (dashboard not built yet). Hero V1 branch retained separately and not merged.
 
 ### Next phase — Smart Recommendations sun/water filter readiness (catalog C–E follow)
 Status: **Active — Tavily Vendor Terms and Use Clarification Gate defined (this docs commit; Tavily still not approved); Live Provider Vendor Research and Conditional Selection Record defined (`85c737a`; Tavily conditional primary); Live Provider Deployment Exposure and Ignore Protection verified (docs `1d98b60`; impl pushed `cf5f934`); Deployment Exposure and Ignore Protection Documentation Contract defined (`d66aa5a`); Local Secret-Free Live Provider Adapter/Transport Proof combined static/Node verified (docs `5edf4ad`; impl pushed `8198a20`); Live Provider Adapter Transport/Security Documentation Contract defined (`5bc08bb`); Live Source Provider mock/replay production-verified (pushed `95becf0`; implementation `9e560a5`); Live Source Provider Documentation Contract defined (`5b51426`); Source Scout → Batch Draft Generator Integration production-verified (pushed `c064c5e`; implementation `5d22a66`); Integration Documentation Contract defined (`0b0dae3`); Source Scout production-verified (pushed `710af6f`; implementation `69eaf52`); Source Scout Documentation Contract pushed (`ab5e75c`); Real Overlay → Developer Product Adapter Bridge production-verified (docs `c4eb0d7`; implementation `eb125e5`); Bridge Documentation Contract pushed (`729bf99`); Real Lavender/Rosemary Reviewed Climate Profile Catalog Overlay Pilot production-verified (docs `8dc58cd`; implementation pushed `54bc086`); Documentation Contract pushed (`94779ff`); Product Adapter Implementation pushed (`e011c4e`) and production-verified (docs `e133d22`); Product Adapter Documentation Contract pushed (`e3019cc`); inert reviewedClimateProfile catalog proof production-verified and closed (`b281818` + Reset fix `dbcc2e6` / docs `891c5c3`); Catalog Reviewed Climate Profile Documentation Contract pushed (`fca925c`); Deterministic Batch Draft Generator Implementation production-verified and closed (`f814d3d` / docs `4842846`); Reviewed-Data Batch Automation Documentation Contract pushed (`7bba825`); Media Evidence Pipeline + CRUVIT Media Library Corrected Roadmap Alignment pushed (`c01c028`; documentation-only; no media code; media track remains future and separately gated); Source Scout Documentation Contract pushed (`ab5e75c`); Source Scout Processor Implementation complete this commit (synthetic-only module+harness; no live provider); Media Source Scout remains future and separately gated; blueberry parent remains blocked; all 23 conflicts remain blocked; matcher still blocked; GOS paused; foundation Registry defaults remain realPacketCount/realRecordCount/realProfileCount = 0 — inert Lavender + Rosemary reviewed-data batches under explicit developer load only; no product consumer / eligibility authority; no media implementation**
@@ -221,7 +242,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **CRUVIT Pre-Scale Quality Gate** | Done (this commit) | **CRUVIT PRE-SCALE QUALITY GATE — PASS.** Licensed Image Pipeline V1 + Runtime Licensed Catalog Media + full pre-scale audit re-run closed. **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Architecture law: fetch/research once → validate → store → reuse; no paid/research API or image-source search per normal plant check. Tracked P3: Yehiam geocode; Open-Meteo 429; incomplete-climate archetype; hotlink risk. |
+| **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION** | Done (this commit) | **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). Final audit after reproductive-outcome evidence fix: P0/P1/material P2 = 0; regression 111/0; reproductive evidence gate PASS; licensed media PASS. Coconut 5-location acceptance recorded (authority-emerged). **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Fetch once → store → reuse mandatory before/during bulk. Open P3 kept open (Yehiam geocode; Open-Meteo 429; incomplete-climate archetype; hotlink residual; future plants need verification). |
 | **Specific Plant Suitability / Outcome Profile V1** | Done (pushed) | **SPECIFIC PLANT SUITABILITY / OUTCOME PROFILE V1 — COMPLETE / GO.** Follow-on **Pre-Scale Systemic Quality Fixes V1 COMPLETE / GO** (highland thermal; location ambiguity; Specific Outcome chill; 10-plant calibration). **CRUVIT PRE-SCALE QUALITY GATE — PASS.** **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Hero V1 @ 268a435 untouched. |\n| **Pre-Scale Systemic Quality Fixes V1** | Done (this commit) | **PRE-SCALE SYSTEMIC QUALITY FIXES V1 — COMPLETE / GO — PRE_SCALE_SYSTEMIC_FIXES_V1_QUALITY_GATE: PASS.** Thermal/highland authority; location confidence; winter chill in Specific Outcome; bounded calibration (cacao, coconut, cypress, kiwi, almond, pistachio, japanese-maple, cherimoya, plumeria, oak-tree). Structural climate hydrate network-bound ~4–9s once per location; warm plant P95 ≈ 0.005 ms. Bulk expansion AUTHORIZED / NOT STARTED after final pre-scale closure. |
 | **Owned Garden Tasks Persistence V1** | Done (pushed) | **GARDEN TASKS PERSISTENCE V1 — COMPLETE / GO — Owner-approved live Tasks V1 on production `cruvit-production` / `saiuscqbszafszpdmzfl`.** Proven path: Authenticated User → Owned Garden Profile → Owned Garden Plants → Owned Garden Tasks → My Garden hydrate/write → reload persistence → Garden switching → server-side cross-user isolation. **Live contains:** `public.garden_tasks` with private per-Garden ownership; RLS + FORCE RLS; SELECT/INSERT/UPDATE/DELETE policies TO authenticated; ownership trigger derives `user_id` from owning Garden; same-Garden `garden_plant_id` enforcement; `garden_profile_id` FK ON DELETE CASCADE; `garden_plant_id` FK ON DELETE SET NULL; BEFORE DELETE on `garden_plants` deletes open linked tasks; UNIQUE(`garden_profile_id`, `client_instance_id`); fixed `search_path` on triggers; anon revoke; browser anon key only. **Live E2E proved:** task create persists; reload restores; upsert prevents duplicates; update/postpone persists; completion persists; instance state survives care/template enrichment; A↔A2 plant mismatch rejected; plant delete removes open linked tasks and retains completed tasks with `garden_plant_id=null` + plant_name/history; multi-Garden independent task sets; sign-out clears authenticated task trust via RLS; pre-existing local tasks preserved by auth-boundary snapshot contract; no silent legacy upload; explicit import required; User B cannot SELECT/UPDATE/DELETE A tasks, INSERT into A Garden, MOVE into A Garden, or attach A plant; `user_id` forgery cannot steal ownership; no browser secret exposure; temporary E2E Auth users/gardens/plants/tasks cleaned (`auth.users=0`, `garden_profiles=0`, `garden_plants=0`, `garden_tasks=0`); Security Advisor = 0 lints. **Repo:** `supabase/migrations/20250829100000_garden_tasks_v1.sql`; `modules/personal-domain/garden-profile-tasks-contract.js`; task CRUD/hydrate/import + auth-boundary snapshot/release in `garden-profile-v0.js` / `app.html`. **Tests:** tasks-v1-contract; tasks-v1-signout-local-preserve; tasks-v1-live (Owner-verified live). **Out of scope (not started):** events/photos/Garden Memory/Doctor/Identifier/purchases/recommendation-history. Upstream tip before this commit: `70a1c9515bb05890fe7f12b5f3a41b30c293504a` (`Close owned Garden Plants persistence V1`); Hero V1 `cursor/smart-rec-hero-authoritative-context-v1` @ `268a435` untouched; safety `fdc318e` and 4 stashes untouched. |
 | **Owned Garden Plants Persistence V1** | Done (pushed) | **GARDEN PLANTS PERSISTENCE V1 — COMPLETE / GO — Owner-approved live Plants V1 on production `cruvit-production` / `saiuscqbszafszpdmzfl`.** Proven path: Authenticated User → Owned Garden Profile → Owned Garden Plants → My Garden hydrate/write → reload persistence → Garden switching → server-side cross-user isolation. **Live contains:** `public.garden_plants` with private per-Garden ownership; RLS + FORCE RLS; SELECT/INSERT/UPDATE/DELETE policies TO authenticated; ownership trigger derives `user_id` from owning Garden; `garden_profile_id` FK ON DELETE CASCADE; UNIQUE(`garden_profile_id`, `client_instance_id`); fixed `search_path` on triggers; anon revoke; browser anon key only. **Live E2E proved:** actual My Garden add persists; reload restores server plants; upsert prevents duplicate instance rows; update persists and survives reload; delete does not resurrect from legacy local; scientific survives/reconstructs including uncataloged/stale-profile cases; multi-Garden independent plant sets; active Garden switching replaces plant set; authenticated plant state clears on sign-out; pre-existing anonymous/local plants preserved; no silent local upload; explicit import required; User B cannot SELECT/UPDATE/DELETE A plants, INSERT into A Garden, or MOVE into A Garden; `user_id` forgery cannot steal ownership; no browser secret exposure; temporary E2E Auth users/gardens/plants cleaned (`auth.users=0`, `garden_profiles=0`, `garden_plants=0`); Security Advisor = 0 lints; Performance Advisor unused-index INFO expected on new/empty table (indexes retained). **Live-E2E product fix preserved:** catalog/profile reattachment on hydrate must enrich catalog-derived metadata only and MUST NOT overwrite authoritative instance `status`/`mark` — server-owned instance state wins after hydrate; regression in `tests/garden-profile-plants-v1-contract.test.mjs`. **Repo:** `supabase/migrations/20250828230000_garden_plants_v1.sql`; `modules/personal-domain/garden-profile-plants-contract.js`; plant CRUD/hydrate/import + auth-boundary snapshot/release in `garden-profile-v0.js` / `app.html`. **Tests:** plants-v1-contract; plants-v1-signout-local-preserve; plants-v1-live (skips without credentials; live E2E Owner-verified). **Out of scope (not started):** tasks/photos/events/Garden Memory/Doctor/Identifier/purchases/recommendation-history. Upstream tip before this commit: `558ea846d7c4f5af8093404854dabba049e01767` (`Close Garden Profile location persistence V1`); Hero V1 `cursor/smart-rec-hero-authoritative-context-v1` @ `268a435` untouched; safety `fdc318e` and 4 stashes untouched. |
