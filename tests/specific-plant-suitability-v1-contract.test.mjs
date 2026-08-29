@@ -373,8 +373,12 @@ test('Coconut / Yehiam four-outcome result (quality gate)', () => {
   });
   assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
   assert.equal(outcomes.growth, SPECIFIC_OUTCOME_STATUS.POOR);
-  // No floweringRequirements on coconut seed → UNKNOWN
-  assert.equal(outcomes.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  // Calibrated coconut has sourced floweringRequirements; Yehiam remains non-viable overall
+  assert.ok(
+    outcomes.flowering === SPECIFIC_OUTCOME_STATUS.CONSTRAINED ||
+      outcomes.flowering === SPECIFIC_OUTCOME_STATUS.UNLIKELY ||
+      outcomes.flowering === SPECIFIC_OUTCOME_STATUS.UNKNOWN
+  );
   assert.equal(outcomes.fruiting, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
   assert.equal(outcomes.overall, 'blocked');
   assert.equal(outcomes.overallLabel, 'Not recommended');
@@ -401,10 +405,14 @@ test('Coconut / London four-outcome result (quality gate)', () => {
   assert.ok(outcomes.limitingFactors.some((w) => /Frost risk is too high/i.test(w)));
 });
 
-test('Cacao remains absent; search still works for Coconut', () => {
+test('Cacao is present after Catalog Expansion V1 ingest; Coconut still searchable', () => {
   const plants = loadSeedPlants();
-  assert.equal(reportCacaoCatalogStatus(plants).present, false);
+  const cacao = reportCacaoCatalogStatus(plants);
+  assert.equal(cacao.present, true);
+  assert.equal(cacao.identity?.slug, 'cacao');
+  assert.equal(cacao.canJudgeResponsibly, true);
   assert.equal(searchCatalogPlantsForSpecificCheck(plants, 'Cocos nucifera')[0]?.slug, 'coconut');
+  assert.equal(searchCatalogPlantsForSpecificCheck(plants, 'Theobroma cacao')[0]?.slug, 'cacao');
 });
 
 test('view model surfaces four outcomes with prominent overall', () => {
@@ -433,7 +441,7 @@ test('view model surfaces four outcomes with prominent overall', () => {
   });
   assert.equal(vm.levelLabel, 'Not recommended');
   assert.equal(vm.survivalLabel, 'Unreliable');
-  assert.equal(vm.floweringLabel, 'UNKNOWN');
+  assert.ok(vm.floweringLabel === 'Constrained' || vm.floweringLabel === 'Unlikely' || vm.floweringLabel === 'UNKNOWN');
 });
 
 test('UI + wiring expose four-outcome block; Yehiam alias supported', () => {

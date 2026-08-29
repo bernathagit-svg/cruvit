@@ -1,6 +1,6 @@
 /**
- * Coconut multi-location quality acceptance after general outcome authority fixes.
- * No hardcoded expected city outcomes — asserts quality gates + reports results.
+ * Cacao five-location quality acceptance after Catalog Expansion V1 ingest.
+ * Uses existing Specific Plant Outcome evaluator — no cacao-specific suitability logic.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,6 +12,7 @@ import {
   deriveSpecificPlantOutcomes,
   findCatalogPlantBySlugOrName,
   measureSpecificPlantEvaluationLatency,
+  reportCacaoCatalogStatus,
   structuralEnvironmentFromClimateProfile,
   structuralFreezingRiskFromBroadClimate
 } from '../modules/personal-domain/specific-plant-suitability-contract.js';
@@ -20,6 +21,7 @@ import {
   isTooBroadForGardenClimate,
   mayAcceptResolvedLocationForGardenClimate
 } from '../modules/personal-domain/location-granularity-contract.js';
+import { IMAGE_PENDING } from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
 import {
   applyStructuralClimateToProfile,
   fetchStructuralClimateForCoordinates
@@ -46,7 +48,7 @@ function inferClimate(lat, lon, country = '') {
   return 'Cool temperate';
 }
 
-function loadCoconut() {
+function loadCacao() {
   const raw = JSON.parse(fs.readFileSync(SEED, 'utf8').replace(/^\uFEFF/, ''));
   const plants = (raw.plants || []).map((p) => ({
     slug: p.slug,
@@ -55,9 +57,14 @@ function loadCoconut() {
     aliases: p.aliases || [],
     climateTraits: p.climateTraits,
     tags: p.tags || [],
-    qualityTier: p.qualityTier
+    qualityTier: p.qualityTier,
+    media: p.media,
+    source: p.source,
+    verification: p.verification
   }));
-  const plant = findCatalogPlantBySlugOrName(plants, 'coconut');
+  const status = reportCacaoCatalogStatus(plants);
+  assert.equal(status.present, true, 'Cacao must be in catalog for this acceptance');
+  const plant = findCatalogPlantBySlugOrName(plants, 'cacao');
   const t = plant.climateTraits;
   const meta = {
     frostSensitivity: t.frostSensitivity,
@@ -71,7 +78,7 @@ function loadCoconut() {
     floweringRequirements: t.floweringRequirements || '',
     fruitingRequirements: t.fruitingRequirements || ''
   };
-  return { plant, meta, traits: t };
+  return { plant, meta, traits: t, seedRow: raw.plants.find((p) => p.slug === 'cacao') };
 }
 
 async function geocodeOpenMeteo(query) {
@@ -94,7 +101,7 @@ async function geocodeNominatim(query) {
       addressdetails: '1'
     });
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'cruvit-outcome-quality-fix/1.1' },
+    headers: { 'User-Agent': 'cruvit-cacao-outcome-quality/1.0' },
     signal: AbortSignal.timeout(15000)
   });
   if (!res.ok) return null;
@@ -129,9 +136,6 @@ function mapNom(r) {
     country: addr.country || '',
     feature_code:
       r.addresstype === 'country' ? 'PCLI' : r.addresstype === 'state' ? 'ADM1' : '',
-    addresstype: r.addresstype || '',
-    class: r.class || '',
-    type: r.type || '',
     climate: inferClimate(Number(r.lat), Number(r.lon), addr.country || ''),
     provider: 'nominatim'
   };
@@ -144,10 +148,12 @@ async function resolveLocation(query) {
 }
 
 async function hydrateStructural(loc) {
+  const t0 = performance.now();
   const result = await fetchStructuralClimateForCoordinates(loc.lat, loc.lon);
+  const acquisitionMs = performance.now() - t0;
   return {
     structuralClimate: result.structuralClimate,
-    acquisitionMs: result.acquisitionMs,
+    acquisitionMs: result.acquisitionMs ?? acquisitionMs,
     ok: result.ok,
     error: result.error
   };
@@ -199,26 +205,22 @@ function evaluateAt(loc, plant, meta, structuralClimate) {
 
 const REPORT = [];
 
-test('Brazil country hit cannot become trusted Garden climate authority', () => {
-  const brazil = {
-    name: 'Brazil',
-    label: 'Brazil, Brazil',
-    lat: -10,
-    lon: -55,
-    country: 'Brazil',
-    feature_code: 'PCLI',
-    climate: 'Tropical'
-  };
-  assert.equal(isTooBroadForGardenClimate(brazil), true);
-  const gate = mayAcceptResolvedLocationForGardenClimate(brazil);
-  assert.equal(gate.ok, false);
-  assert.equal(gate.code, NEEDS_MORE_SPECIFIC_LOCATION);
-  // Israel-only gate is gone: Brazil must fail the general gate.
-  assert.equal(isTooBroadForGardenClimate({ name: 'israel', label: 'Israel', feature_code: 'PCLI' }), true);
+test('Cacao catalog row has provenance + IMAGE_PENDING', () => {
+  const { seedRow, meta } = loadCacao();
+  assert.equal(seedRow.source?.provider, 'catalog-expansion-v1');
+  assert.equal(seedRow.media?.imageStatus, IMAGE_PENDING);
+  assert.ok(Array.isArray(seedRow.source?.provenance));
+  assert.ok(seedRow.source.provenance.some((p) => /ifas|ufl/i.test(p.institution + p.url)));
+  assert.ok(meta.floweringRequirements);
+  assert.ok(meta.fruitingRequirements);
+  // Pre-scale calibration cleared climate needsReview for cacao's validated scope;
+  // rainfallMmAnnual remains UNKNOWN / needsReviewFields may still list disputed slots.
+  assert.equal(meta.needsReview, false);
+  assert.ok(seedRow.source?.unknownFields?.includes('rainfallMmAnnual'));
 });
 
-test('Coconut five-location quality acceptance + latency', async (t) => {
-  const { plant, meta, traits } = loadCoconut();
+test('Cacao five-location quality acceptance + latency', async (t) => {
+  const { plant, meta, traits } = loadCacao();
   const cases = [
     { key: 'Brazil', query: 'Brazil' },
     { key: 'Kochi', query: 'Kochi, India' },
@@ -264,6 +266,7 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
 
     let hydrated;
     try {
+      // Pace archive requests — hydrate is once per location, not per plant.
       await new Promise((r) => setTimeout(r, 1500));
       hydrated = await hydrateStructural(loc);
     } catch (err) {
@@ -284,8 +287,12 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
       climate: evaluated.climateProfile.climateLabel,
       broadClimate: evaluated.climateProfile.broadClimate,
       moistureRegime: evaluated.climateProfile.moistureRegime,
+      humidityRegime: evaluated.climateProfile.humidityRegime,
       humiditySignal: evaluated.climateProfile.humiditySignal,
       structuralColdRisk: evaluated.climateProfile.structuralColdRisk,
+      coldestMonthMeanMinC: evaluated.climateProfile.coldestMonthMeanMinC,
+      annualPrecipitationMm: evaluated.climateProfile.annualPrecipitationMm,
+      aridityIndex: evaluated.climateProfile.aridityIndex,
       freezingRisk: evaluated.climateProfile.freezingRisk,
       frostFree: evaluated.climateProfile.isFrostFreeGrowingClimate,
       structuralAcquisitionMs: hydrated.acquisitionMs,
@@ -299,16 +306,8 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
       unknownEvidence: evaluated.outcomes.unknownEvidence,
       needsReview: evaluated.outcomes.needsReview,
       evalMs: evaluated.evalMs,
-      evidence: {
-        frostSensitivity: meta.frostSensitivity,
-        humidityTolerance: meta.humidityTolerance,
-        groupIds: meta.groupIds,
-        needsReview: meta.needsReview,
-        floweringRequirements: meta.floweringRequirements || null,
-        fruitingRequirements: meta.fruitingRequirements || null,
-        survivalNotes: meta.survivalVsThriveNotes,
-        structural: hydrated.structuralClimate?.evidence || null
-      }
+      evidence: hydrated.structuralClimate?.evidence || null,
+      provenance: hydrated.structuralClimate?.provenance || null
     });
   }
 
@@ -320,9 +319,7 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
       climateProfile: structuralEnvironmentFromClimateProfile({
         broadClimate: kochi.broadClimate,
         climateLabel: kochi.climate,
-        freezingRisk: kochi.freezingRisk,
-        humiditySignal: kochi.humiditySignal,
-        moistureRegime: kochi.moistureRegime
+        freezingRisk: kochi.freezingRisk
       }),
       suitability: {
         recommendationLevel: 'good',
@@ -337,7 +334,7 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
     });
   }, 300);
 
-  console.log('\n=== COCONUT_FIVE_LOCATION_QUALITY_REPORT ===');
+  console.log('\n=== CACAO_FIVE_LOCATION_QUALITY_REPORT ===');
   console.log(
     JSON.stringify(
       {
@@ -365,16 +362,24 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
   assert.ok(tokyo?.overall);
   assert.ok(yehiam?.overall);
 
-  // Cairo must not equal Kochi solely via frost-free Good collapse.
+  // Kochi vs Cairo must differ via structural moisture/humidity — not frost-free collapse.
+  assert.notEqual(kochi.moistureRegime, cairo.moistureRegime);
+  assert.ok(
+    cairo.humiditySignal === 'low' ||
+      cairo.moistureRegime === 'arid' ||
+      cairo.moistureRegime === 'hyper-arid'
+  );
   assert.notEqual(kochi.overallCode, cairo.overallCode);
   assert.equal(cairo.overallCode, 'blocked');
   assert.equal(cairo.survival, 'Unreliable');
+  assert.ok((cairo.limiting || []).some((x) => /arid|humidity|moisture|cold/i.test(x)));
 
-  // Calibrated coconut may earn evidence-backed Good + Supported fruiting in humid tropical Kochi.
+  // Calibrated cacao may earn evidence-backed Good in humid tropical Kochi.
   assert.equal(kochi.overallCode, 'good');
-  assert.ok(kochi.fruiting === 'Supported' || kochi.fruiting === 'Constrained');
+  assert.equal(kochi.survival, 'Reliable');
+  assert.ok(kochi.moistureRegime === 'humid');
 
-  // Non-hospitable sites: survival failure ⇒ blocked; no confident Good.
+  // Non-hospitable sites must not leak confident Good/Excellent.
   for (const row of [cairo, tokyo, yehiam]) {
     assert.notEqual(row.overallCode, 'good');
     assert.notEqual(row.overallCode, 'excellent');
@@ -383,9 +388,11 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
     }
   }
 
-  // Colder Tokyo survival not better than Kochi.
   const rank = { Unreliable: 0, Constrained: 1, Supported: 2, Reliable: 3, Poor: 0, UNKNOWN: -1 };
   assert.ok((rank[tokyo.survival] ?? 0) <= (rank[kochi.survival] ?? 3));
+
+  assert.equal(yehiam.survival, 'Unreliable');
+  assert.equal(yehiam.overallCode, 'blocked');
 
   assert.ok(latency.p95Ms < 500, `P95 ${latency.p95Ms}ms must be < 500ms`);
   assert.ok(latency.maxMs < 1000, `max ${latency.maxMs}ms must be < 1000ms`);

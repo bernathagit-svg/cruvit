@@ -1,0 +1,2630 @@
+{
+  "generatedAt": "2026-08-29T13:27:10.832Z",
+  "findings": [
+    {
+      "severity": "P3",
+      "area": "location",
+      "title": "Yehiam unresolved",
+      "detail": "geocoder returned null"
+    },
+    {
+      "severity": "P2",
+      "area": "location",
+      "title": "Singapore rejected as too broad unexpectedly",
+      "detail": "feature_code=PPLC"
+    },
+    {
+      "severity": "P1",
+      "area": "climate",
+      "title": "Quito: high-altitude cool nights still frost-free for tropical logic",
+      "detail": "elev=2854m coldestMonthMeanMin=7.85 band=Tropical broad=tropical"
+    },
+    {
+      "severity": "P1",
+      "area": "climate",
+      "title": "MexicoCity: high-altitude cool nights still frost-free for tropical logic",
+      "detail": "elev=2240m coldestMonthMeanMin=7.03 band=Tropical broad=tropical"
+    },
+    {
+      "severity": "P1",
+      "area": "location",
+      "title": "California accepted despite broad admin",
+      "detail": "feature_code=PPLA2"
+    },
+    {
+      "severity": "P3",
+      "area": "catalog",
+      "title": "Archetype missing: incomplete climate metadata",
+      "detail": "no matching seed plant"
+    },
+    {
+      "severity": "P1",
+      "area": "outcome",
+      "title": "Kochi: all plants share identical overall",
+      "detail": "borderline"
+    },
+    {
+      "severity": "P3",
+      "area": "catalog",
+      "title": "Almost no plants have fruitingRequirements",
+      "detail": "count=1"
+    },
+    {
+      "severity": "P3",
+      "area": "catalog",
+      "title": "Almost no plants have floweringRequirements",
+      "detail": "count=1"
+    },
+    {
+      "severity": "P3",
+      "area": "catalog",
+      "title": "100% of seed plants are needsReview",
+      "detail": "confident Good impossible under current gates for entire catalog"
+    },
+    {
+      "severity": "P1",
+      "area": "climate",
+      "title": "Quito high-altitude treated frost-free despite cool nights",
+      "detail": "{\"case\":\"Quito\",\"elevation\":2854,\"band\":\"Tropical\",\"structural\":{\"moistureRegime\":\"humid\",\"humiditySignal\":\"high\",\"humidityRegime\":\"high\",\"broadClimate\":\"tropical\",\"freezingRisk\":\"low\",\"structuralColdRisk\":\"elevated\",\"coldestMonthMeanMinC\":7.85,\"annualPrecipitationMm\":3392.4,\"aridityIndex\":2.848,\"frostFree\":true,\"elevationM\":2854,\"acquisitionMs\":2328.056199999999,\"evidence\":{\"annualPrecipitationMm\":3392.4,\"annualEt0Mm\":1191.1,\"aridityIndex\":2.848,\"meanRelativeHumidityPct\":80.2,\"coldestMonth\":\"07\",\"coldestMonthMeanMinC\":7.85,\"windowYears\":10,\"sampleDays\":3652}}}"
+    },
+    {
+      "severity": "P2",
+      "area": "climate",
+      "title": "Quito: latitude band ignores altitude for horticultural regime",
+      "detail": "{\"case\":\"Quito\",\"elevation\":2854,\"band\":\"Tropical\",\"structural\":{\"moistureRegime\":\"humid\",\"humiditySignal\":\"high\",\"humidityRegime\":\"high\",\"broadClimate\":\"tropical\",\"freezingRisk\":\"low\",\"structuralColdRisk\":\"elevated\",\"coldestMonthMeanMinC\":7.85,\"annualPrecipitationMm\":3392.4,\"aridityIndex\":2.848,\"frostFree\":true,\"elevationM\":2854,\"acquisitionMs\":2328.056199999999,\"evidence\":{\"annualPrecipitationMm\":3392.4,\"annualEt0Mm\":1191.1,\"aridityIndex\":2.848,\"meanRelativeHumidityPct\":80.2,\"coldestMonth\":\"07\",\"coldestMonthMeanMinC\":7.85,\"windowYears\":10,\"sampleDays\":3652}}}"
+    },
+    {
+      "severity": "P1",
+      "area": "climate",
+      "title": "MexicoCity high-altitude treated frost-free despite cool nights",
+      "detail": "{\"case\":\"MexicoCity\",\"elevation\":2240,\"band\":\"Tropical\",\"structural\":{\"moistureRegime\":\"humid\",\"humiditySignal\":\"medium\",\"humidityRegime\":\"medium\",\"broadClimate\":\"tropical\",\"freezingRisk\":\"low\",\"structuralColdRisk\":\"elevated\",\"coldestMonthMeanMinC\":7.03,\"annualPrecipitationMm\":1117.6,\"aridityIndex\":0.712,\"frostFree\":true,\"elevationM\":2240,\"acquisitionMs\":1016.9645000000019,\"evidence\":{\"annualPrecipitationMm\":1117.6,\"annualEt0Mm\":1570.2,\"aridityIndex\":0.712,\"meanRelativeHumidityPct\":62.8,\"coldestMonth\":\"01\",\"coldestMonthMeanMinC\":7.03,\"windowYears\":10,\"sampleDays\":3652}}}"
+    },
+    {
+      "severity": "P2",
+      "area": "climate",
+      "title": "MexicoCity: latitude band ignores altitude for horticultural regime",
+      "detail": "{\"case\":\"MexicoCity\",\"elevation\":2240,\"band\":\"Tropical\",\"structural\":{\"moistureRegime\":\"humid\",\"humiditySignal\":\"medium\",\"humidityRegime\":\"medium\",\"broadClimate\":\"tropical\",\"freezingRisk\":\"low\",\"structuralColdRisk\":\"elevated\",\"coldestMonthMeanMinC\":7.03,\"annualPrecipitationMm\":1117.6,\"aridityIndex\":0.712,\"frostFree\":true,\"elevationM\":2240,\"acquisitionMs\":1016.9645000000019,\"evidence\":{\"annualPrecipitationMm\":1117.6,\"annualEt0Mm\":1570.2,\"aridityIndex\":0.712,\"meanRelativeHumidityPct\":62.8,\"coldestMonth\":\"01\",\"coldestMonthMeanMinC\":7.03,\"windowYears\":10,\"sampleDays\":3652}}}"
+    }
+  ],
+  "counts": {
+    "P3": 5,
+    "P2": 3,
+    "P1": 6
+  },
+  "audit": {
+    "locations": [
+      {
+        "key": "Yehiam",
+        "unresolved": true
+      },
+      {
+        "key": "TelAviv",
+        "query": "Tel Aviv, Israel",
+        "label": "Tel Aviv, Tel Aviv, Israel",
+        "lat": 32.08088,
+        "lon": 34.78057,
+        "elevation": 15,
+        "feature_code": "PPLA",
+        "bandClimate": "Mediterranean",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "semi-arid",
+          "humiditySignal": "low",
+          "humidityRegime": "high",
+          "broadClimate": "mediterranean",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 9.66,
+          "annualPrecipitationMm": 472.6,
+          "aridityIndex": 0.32,
+          "frostFree": false,
+          "elevationM": 15,
+          "acquisitionMs": 1156.5813,
+          "evidence": {
+            "annualPrecipitationMm": 472.6,
+            "annualEt0Mm": 1476.4,
+            "aridityIndex": 0.32,
+            "meanRelativeHumidityPct": 71.5,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 9.66,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Kochi",
+        "query": "Kochi, India",
+        "label": "Kochi, Kerala, India",
+        "lat": 9.93988,
+        "lon": 76.26022,
+        "elevation": 9,
+        "feature_code": "PPL",
+        "bandClimate": "Tropical",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "tropical",
+          "freezingRisk": "low",
+          "structuralColdRisk": "low",
+          "coldestMonthMeanMinC": 23.4,
+          "annualPrecipitationMm": 2804,
+          "aridityIndex": 2.12,
+          "frostFree": true,
+          "elevationM": 9,
+          "acquisitionMs": 961.7663000000002,
+          "evidence": {
+            "annualPrecipitationMm": 2804,
+            "annualEt0Mm": 1322.6,
+            "aridityIndex": 2.12,
+            "meanRelativeHumidityPct": 84.3,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 23.4,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Cairo",
+        "query": "Cairo, Egypt",
+        "label": "Cairo, Cairo Governorate, Egypt",
+        "lat": 30.06263,
+        "lon": 31.24967,
+        "elevation": 23,
+        "feature_code": "PPLC",
+        "bandClimate": "Subtropical",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "hyper-arid",
+          "humiditySignal": "low",
+          "humidityRegime": "medium",
+          "broadClimate": "arid",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 8.89,
+          "annualPrecipitationMm": 34.9,
+          "aridityIndex": 0.017,
+          "frostFree": false,
+          "elevationM": 23,
+          "acquisitionMs": 962.9393,
+          "evidence": {
+            "annualPrecipitationMm": 34.9,
+            "annualEt0Mm": 2067.7,
+            "aridityIndex": 0.017,
+            "meanRelativeHumidityPct": 50.1,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 8.89,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Tokyo",
+        "query": "Tokyo, Japan",
+        "label": "Tokyo, Tokyo, Japan",
+        "lat": 35.6895,
+        "lon": 139.69171,
+        "elevation": 44,
+        "feature_code": "PPLC",
+        "bandClimate": "Temperate",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "temperate",
+          "freezingRisk": "high",
+          "structuralColdRisk": "high",
+          "coldestMonthMeanMinC": -0.18,
+          "annualPrecipitationMm": 1586.3,
+          "aridityIndex": 1.506,
+          "frostFree": false,
+          "elevationM": 44,
+          "acquisitionMs": 781.1905000000006,
+          "evidence": {
+            "annualPrecipitationMm": 1586.3,
+            "annualEt0Mm": 1053.7,
+            "aridityIndex": 1.506,
+            "meanRelativeHumidityPct": 74.5,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": -0.18,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "London",
+        "query": "London, United Kingdom",
+        "label": "London, England, United Kingdom",
+        "lat": 51.50853,
+        "lon": -0.12574,
+        "elevation": 25,
+        "feature_code": "PPLC",
+        "bandClimate": "Cool temperate",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "cool-temperate",
+          "freezingRisk": "medium",
+          "structuralColdRisk": "medium",
+          "coldestMonthMeanMinC": 1.82,
+          "annualPrecipitationMm": 709.8,
+          "aridityIndex": 0.957,
+          "frostFree": false,
+          "elevationM": 25,
+          "acquisitionMs": 900.2109999999993,
+          "evidence": {
+            "annualPrecipitationMm": 709.8,
+            "annualEt0Mm": 741.6,
+            "aridityIndex": 0.957,
+            "meanRelativeHumidityPct": 79,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 1.82,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Singapore",
+        "query": "Singapore",
+        "label": "Singapore, Singapore",
+        "lat": 1.28967,
+        "lon": 103.85007,
+        "elevation": 23,
+        "feature_code": "PPLC",
+        "bandClimate": "Tropical",
+        "tooBroad": true,
+        "accepted": false,
+        "gateCode": "NEEDS MORE SPECIFIC LOCATION",
+        "expect": "accept"
+      },
+      {
+        "key": "Phoenix",
+        "query": "Phoenix, Arizona",
+        "label": "Phoenix, Arizona, United States",
+        "lat": 33.44838,
+        "lon": -112.07404,
+        "elevation": 331,
+        "feature_code": "PPLA",
+        "bandClimate": "Subtropical",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "arid",
+          "humiditySignal": "low",
+          "humidityRegime": "low",
+          "broadClimate": "arid",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 5.81,
+          "annualPrecipitationMm": 290.7,
+          "aridityIndex": 0.143,
+          "frostFree": false,
+          "elevationM": 331,
+          "acquisitionMs": 824.8626999999997,
+          "evidence": {
+            "annualPrecipitationMm": 290.7,
+            "annualEt0Mm": 2029.5,
+            "aridityIndex": 0.143,
+            "meanRelativeHumidityPct": 34.5,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 5.81,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Zurich",
+        "query": "Zurich, Switzerland",
+        "label": "Zurich, Canton of Zurich, Switzerland",
+        "lat": 47.36667,
+        "lon": 8.55,
+        "elevation": 429,
+        "feature_code": "PPLA",
+        "bandClimate": "Temperate",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "temperate",
+          "freezingRisk": "high",
+          "structuralColdRisk": "high",
+          "coldestMonthMeanMinC": -1.67,
+          "annualPrecipitationMm": 1278.2,
+          "aridityIndex": 1.644,
+          "frostFree": false,
+          "elevationM": 429,
+          "acquisitionMs": 10525.780499999999,
+          "evidence": {
+            "annualPrecipitationMm": 1278.2,
+            "annualEt0Mm": 777.5,
+            "aridityIndex": 1.644,
+            "meanRelativeHumidityPct": 78.4,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": -1.67,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Quito",
+        "query": "Quito, Ecuador",
+        "label": "Quito, Pichincha, Ecuador",
+        "lat": -0.22985,
+        "lon": -78.52495,
+        "elevation": 2854,
+        "feature_code": "PPLC",
+        "bandClimate": "Tropical",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "tropical",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 7.85,
+          "annualPrecipitationMm": 3392.4,
+          "aridityIndex": 2.848,
+          "frostFree": true,
+          "elevationM": 2854,
+          "acquisitionMs": 2328.056199999999,
+          "evidence": {
+            "annualPrecipitationMm": 3392.4,
+            "annualEt0Mm": 1191.1,
+            "aridityIndex": 2.848,
+            "meanRelativeHumidityPct": 80.2,
+            "coldestMonth": "07",
+            "coldestMonthMeanMinC": 7.85,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "MexicoCity",
+        "query": "Mexico City, Mexico",
+        "label": "Mexico City, Mexico City, Mexico",
+        "lat": 19.42847,
+        "lon": -99.12766,
+        "elevation": 2240,
+        "feature_code": "PPLC",
+        "bandClimate": "Tropical",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "accept",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "medium",
+          "humidityRegime": "medium",
+          "broadClimate": "tropical",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 7.03,
+          "annualPrecipitationMm": 1117.6,
+          "aridityIndex": 0.712,
+          "frostFree": true,
+          "elevationM": 2240,
+          "acquisitionMs": 1016.9645000000019,
+          "evidence": {
+            "annualPrecipitationMm": 1117.6,
+            "annualEt0Mm": 1570.2,
+            "aridityIndex": 0.712,
+            "meanRelativeHumidityPct": 62.8,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 7.03,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "key": "Brazil",
+        "query": "Brazil",
+        "label": "Brazil, Brazil",
+        "lat": -10,
+        "lon": -55,
+        "elevation": 258,
+        "feature_code": "PCLI",
+        "bandClimate": "Tropical",
+        "tooBroad": true,
+        "accepted": false,
+        "gateCode": "NEEDS MORE SPECIFIC LOCATION",
+        "expect": "reject"
+      },
+      {
+        "key": "California",
+        "query": "California",
+        "label": "California, Missouri, United States",
+        "lat": 38.62753,
+        "lon": -92.56658,
+        "elevation": 272,
+        "feature_code": "PPLA2",
+        "bandClimate": "Temperate",
+        "tooBroad": false,
+        "accepted": true,
+        "gateCode": null,
+        "expect": "reject",
+        "structuralOk": true,
+        "structuralError": null,
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "temperate",
+          "freezingRisk": "high",
+          "structuralColdRisk": "high",
+          "coldestMonthMeanMinC": -3.69,
+          "annualPrecipitationMm": 1108.9,
+          "aridityIndex": 0.993,
+          "frostFree": false,
+          "elevationM": 272,
+          "acquisitionMs": 1109.423999999999,
+          "evidence": {
+            "annualPrecipitationMm": 1108.9,
+            "annualEt0Mm": 1117,
+            "aridityIndex": 0.993,
+            "meanRelativeHumidityPct": 69.1,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": -3.69,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      }
+    ],
+    "archetypes": [
+      {
+        "id": 1,
+        "name": "humid tropical fruit/crop",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 2,
+        "name": "tropical palm",
+        "present": true,
+        "slug": "coconut",
+        "scientific": "Cocos nucifera",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 3,
+        "name": "subtropical fruit",
+        "present": true,
+        "slug": "papaya",
+        "scientific": "Carica papaya",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "high",
+        "humidity": "medium",
+        "chill": false
+      },
+      {
+        "id": 4,
+        "name": "Mediterranean plant",
+        "present": true,
+        "slug": "cedar",
+        "scientific": "Cedrus libani",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 5,
+        "name": "humidity-sensitive Mediterranean",
+        "present": true,
+        "slug": "cedar",
+        "scientific": "Cedrus libani",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 6,
+        "name": "temperate chill-requiring fruit",
+        "present": true,
+        "slug": "kiwi",
+        "scientific": "Actinidia deliciosa",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 7,
+        "name": "frost-tolerant temperate",
+        "present": true,
+        "slug": "oak-tree",
+        "scientific": "Quercus spp.",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 8,
+        "name": "heat-sensitive plant",
+        "present": true,
+        "slug": "japanese-maple",
+        "scientific": "Acer palmatum",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 9,
+        "name": "drought-tolerant plant",
+        "present": true,
+        "slug": "dragon-fruit",
+        "scientific": "Hylocereus undatus",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "high",
+        "humidity": "medium",
+        "chill": false
+      },
+      {
+        "id": 10,
+        "name": "high-water/high-humidity plant",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 11,
+        "name": "incomplete climate metadata",
+        "present": false
+      },
+      {
+        "id": 12,
+        "name": "needsReview plant",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 13,
+        "name": "ornamental/non-fruiting",
+        "present": true,
+        "slug": "japanese-maple",
+        "scientific": "Acer palmatum",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "low",
+        "humidity": "medium",
+        "chill": true
+      },
+      {
+        "id": 14,
+        "name": "edible fruiting plant",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 15,
+        "name": "with flowering metadata",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 16,
+        "name": "without flowering metadata",
+        "present": true,
+        "slug": "coconut",
+        "scientific": "Cocos nucifera",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 17,
+        "name": "with fruiting metadata",
+        "present": true,
+        "slug": "cacao",
+        "scientific": "Theobroma cacao",
+        "needsReview": true,
+        "flowerMeta": true,
+        "fruitMeta": true,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      },
+      {
+        "id": 18,
+        "name": "without fruiting metadata",
+        "present": true,
+        "slug": "coconut",
+        "scientific": "Cocos nucifera",
+        "needsReview": true,
+        "flowerMeta": false,
+        "fruitMeta": false,
+        "frost": "high",
+        "humidity": "high",
+        "chill": false
+      }
+    ],
+    "coverageGaps": [
+      "incomplete climate metadata"
+    ],
+    "samePlantManyClimates": [
+      {
+        "plant": "cacao",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.2963999999992666
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "constrained",
+            "fruiting": "constrained",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.034599999999045394
+          },
+          {
+            "climate": "Cairo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.01750000000174623
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.011999999995168764
+          },
+          {
+            "climate": "London",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.01269999999931315
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.01720000000204891
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.01299999999901047
+          },
+          {
+            "climate": "Quito",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "constrained",
+            "limiting": [
+              "Coldest-month mean lows (~7.85°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+            ],
+            "unknown": [],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.012000000002444722
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "constrained",
+            "limiting": [
+              "Coldest-month mean lows (~7.03°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+            ],
+            "unknown": [],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.013200000001234002
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.02290000000357395
+          }
+        ]
+      },
+      {
+        "plant": "coconut",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.02170000000478467
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.009400000002642628
+          },
+          {
+            "climate": "Cairo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.0044999999954598024
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.0031000000017229468
+          },
+          {
+            "climate": "London",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.002899999999499414
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.0031000000017229468
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.002899999999499414
+          },
+          {
+            "climate": "Quito",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Coldest-month mean lows (~7.85°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.00420000000303844
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Coldest-month mean lows (~7.03°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.0044999999954598024
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": [
+              "Frost risk is too high for this plant."
+            ],
+            "unknown": [
+              "floweringRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.0031999999991967343
+          }
+        ]
+      },
+      {
+        "plant": "cypress",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.01780000000144355
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.008999999998195563
+          },
+          {
+            "climate": "Cairo",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.009599999997590203
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.010399999999208376
+          },
+          {
+            "climate": "London",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.007499999999708962
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.0037999999985913746
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.003200000006472692
+          },
+          {
+            "climate": "Quito",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.0031999999991967343
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.003099999994446989
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.0029999999969732016
+          }
+        ]
+      },
+      {
+        "plant": "japanese-maple",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.027999999998428393
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.003599999996367842
+          },
+          {
+            "climate": "Cairo",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.0029999999969732016
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.0031000000017229468
+          },
+          {
+            "climate": "London",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.0029999999969732016
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.0031000000017229468
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.002899999999499414
+          },
+          {
+            "climate": "Quito",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.0030000000042491592
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.0029999999969732016
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.002799999994749669
+          }
+        ]
+      },
+      {
+        "plant": "pistachio",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.0026999999972758815
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.002599999999802094
+          },
+          {
+            "climate": "Cairo",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.002599999999802094
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.0023999999975785613
+          },
+          {
+            "climate": "London",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.002400000004854519
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.0025000000023283064
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.0023999999975785613
+          },
+          {
+            "climate": "Quito",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.002499999995052349
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.002400000004854519
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.0023999999975785613
+          }
+        ]
+      },
+      {
+        "plant": "kiwi",
+        "rows": [
+          {
+            "climate": "TelAviv",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "semi-arid",
+            "humidity": "low",
+            "cold": 9.66,
+            "evalMs": 0.002899999999499414
+          },
+          {
+            "climate": "Kochi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 23.4,
+            "evalMs": 0.002599999999802094
+          },
+          {
+            "climate": "Cairo",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "hyper-arid",
+            "humidity": "low",
+            "cold": 8.89,
+            "evalMs": 0.002499999995052349
+          },
+          {
+            "climate": "Tokyo",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -0.18,
+            "evalMs": 0.002499999995052349
+          },
+          {
+            "climate": "London",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 1.82,
+            "evalMs": 0.0023999999975785613
+          },
+          {
+            "climate": "Phoenix",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "arid",
+            "humidity": "low",
+            "cold": 5.81,
+            "evalMs": 0.002499999995052349
+          },
+          {
+            "climate": "Zurich",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -1.67,
+            "evalMs": 0.0023999999975785613
+          },
+          {
+            "climate": "Quito",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": 7.85,
+            "evalMs": 0.002499999995052349
+          },
+          {
+            "climate": "MexicoCity",
+            "overall": "borderline",
+            "survival": "constrained",
+            "growth": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Catalog marks climate traits as needing review - survival stays conservative."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": true,
+            "moisture": "humid",
+            "humidity": "medium",
+            "cold": 7.03,
+            "evalMs": 0.0023999999975785613
+          },
+          {
+            "climate": "California",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "growth": "poor",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": [
+              "Survival fit is too weak for reliable outdoor establishment."
+            ],
+            "unknown": [
+              "floweringRequirements",
+              "fruitingRequirements"
+            ],
+            "frostFree": false,
+            "moisture": "humid",
+            "humidity": "high",
+            "cold": -3.69,
+            "evalMs": 0.002300000000104774
+          }
+        ]
+      }
+    ],
+    "sameClimateManyPlants": [
+      {
+        "climate": "Phoenix",
+        "plants": [
+          {
+            "plant": "cacao",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "coconut",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "cypress",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "japanese-maple",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "pistachio",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "kiwi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "plumeria",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Coldest-month mean lows (~5.81°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+          },
+          {
+            "plant": "coffee",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "almond",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          }
+        ]
+      },
+      {
+        "climate": "Kochi",
+        "plants": [
+          {
+            "plant": "cacao",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "constrained",
+            "fruiting": "constrained",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "coconut",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "cypress",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "japanese-maple",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "pistachio",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "kiwi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "plumeria",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "coffee",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "almond",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          }
+        ]
+      },
+      {
+        "climate": "Cairo",
+        "plants": [
+          {
+            "plant": "cacao",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "constrained",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "coconut",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "cypress",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "japanese-maple",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "pistachio",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "kiwi",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          },
+          {
+            "plant": "plumeria",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Coldest-month mean lows (~8.89°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+          },
+          {
+            "plant": "coffee",
+            "overall": "blocked",
+            "survival": "unreliable",
+            "flowering": "unknown",
+            "fruiting": "unreliable",
+            "limiting": "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+          },
+          {
+            "plant": "almond",
+            "overall": "borderline",
+            "survival": "constrained",
+            "flowering": "unknown",
+            "fruiting": "unknown",
+            "limiting": "Catalog marks climate traits as needing review - survival stays conservative."
+          }
+        ]
+      }
+    ],
+    "positives": [],
+    "negativesSample": [
+      {
+        "plant": "cacao",
+        "climate": "TelAviv",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "Cairo",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "London",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "Phoenix",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "Quito",
+        "survival": "unreliable",
+        "limiting": [
+          "Coldest-month mean lows (~7.85°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "MexicoCity",
+        "survival": "unreliable",
+        "limiting": [
+          "Coldest-month mean lows (~7.03°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "cacao",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": []
+      },
+      {
+        "plant": "coconut",
+        "climate": "TelAviv",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (semi-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "Cairo",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (hyper-arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "London",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "Phoenix",
+        "survival": "unreliable",
+        "limiting": [
+          "Structural moisture regime (arid) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "Quito",
+        "survival": "unreliable",
+        "limiting": [
+          "Coldest-month mean lows (~7.85°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "MexicoCity",
+        "survival": "unreliable",
+        "limiting": [
+          "Coldest-month mean lows (~7.03°C) are below the warm tropical reliability band; damaging cold can occur without literal frost."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "coconut",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Frost risk is too high for this plant."
+        ],
+        "unknown": [
+          "floweringRequirements"
+        ]
+      },
+      {
+        "plant": "cypress",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "cypress",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "cypress",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "japanese-maple",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "japanese-maple",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "japanese-maple",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "pistachio",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "pistachio",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "pistachio",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "kiwi",
+        "climate": "Tokyo",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "kiwi",
+        "climate": "Zurich",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      },
+      {
+        "plant": "kiwi",
+        "climate": "California",
+        "survival": "unreliable",
+        "limiting": [
+          "Survival fit is too weak for reliable outdoor establishment."
+        ],
+        "unknown": [
+          "floweringRequirements",
+          "fruitingRequirements"
+        ]
+      }
+    ],
+    "catalog": {
+      "incompleteClimateCount": 0,
+      "needsReviewCount": 33,
+      "withFlowerMeta": 1,
+      "withFruitMeta": 1,
+      "genusLevel": 4,
+      "expansion": {
+        "cacaoValid": true,
+        "duplicateRefused": true,
+        "demoDryRunSlug": "audit-demo-plant-y",
+        "imagePending": "IMAGE_PENDING"
+      }
+    },
+    "image": {
+      "plantsWithPrimaryUrl": 0,
+      "cacaoImageStatus": "IMAGE_PENDING",
+      "licenseMissingOnPrimary": []
+    },
+    "performance": {
+      "warmP95Ms": 0.00429999999323627,
+      "warmMaxMs": 0.019800000001851004,
+      "batch100Ms": 0.29140000000188593,
+      "batch500Ms": 1.1497999999992317,
+      "search200Ms": 15.74699999999575,
+      "catalogSize": 33,
+      "structuralAcquisitionSamplesMs": [
+        1156.5813,
+        961.7663000000002,
+        962.9393,
+        781.1905000000006,
+        900.2109999999993,
+        824.8626999999997,
+        10525.780499999999,
+        2328.056199999999,
+        1016.9645000000019,
+        1109.423999999999
+      ]
+    },
+    "climateGapNotes": [
+      {
+        "case": "Quito",
+        "elevation": 2854,
+        "band": "Tropical",
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "high",
+          "humidityRegime": "high",
+          "broadClimate": "tropical",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 7.85,
+          "annualPrecipitationMm": 3392.4,
+          "aridityIndex": 2.848,
+          "frostFree": true,
+          "elevationM": 2854,
+          "acquisitionMs": 2328.056199999999,
+          "evidence": {
+            "annualPrecipitationMm": 3392.4,
+            "annualEt0Mm": 1191.1,
+            "aridityIndex": 2.848,
+            "meanRelativeHumidityPct": 80.2,
+            "coldestMonth": "07",
+            "coldestMonthMeanMinC": 7.85,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      },
+      {
+        "case": "MexicoCity",
+        "elevation": 2240,
+        "band": "Tropical",
+        "structural": {
+          "moistureRegime": "humid",
+          "humiditySignal": "medium",
+          "humidityRegime": "medium",
+          "broadClimate": "tropical",
+          "freezingRisk": "low",
+          "structuralColdRisk": "elevated",
+          "coldestMonthMeanMinC": 7.03,
+          "annualPrecipitationMm": 1117.6,
+          "aridityIndex": 0.712,
+          "frostFree": true,
+          "elevationM": 2240,
+          "acquisitionMs": 1016.9645000000019,
+          "evidence": {
+            "annualPrecipitationMm": 1117.6,
+            "annualEt0Mm": 1570.2,
+            "aridityIndex": 0.712,
+            "meanRelativeHumidityPct": 62.8,
+            "coldestMonth": "01",
+            "coldestMonthMeanMinC": 7.03,
+            "windowYears": 10,
+            "sampleDays": 3652
+          }
+        }
+      }
+    ],
+    "securityNotes": [
+      {
+        "plantLive": true,
+        "locLive": true,
+        "taskLive": true,
+        "rlsIsolation": true
+      }
+    ],
+    "smartRecNotes": [
+      {
+        "specificClearsAnswers": true,
+        "structuralFailureNotGood": "borderline"
+      }
+    ]
+  }
+}

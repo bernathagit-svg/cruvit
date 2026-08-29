@@ -4,6 +4,15 @@
  * This module only formats results, search ranking, and garden-gate rules.
  */
 
+import {
+  DAMAGING_COLD_MONTH_MEAN_MIN_C,
+  applyStructuralClimateToProfile,
+  isFrostFreeGrowingClimateFromStructural,
+  moistureMismatchForHighHumidityPlant,
+  outdoorDamagingColdUnsupported,
+  thermalRegimeFromStructuralEvidence
+} from './structural-climate-authority-v1.js';
+
 export const SPECIFIC_PLANT_SUITABILITY_LEVELS = Object.freeze([
   'excellent',
   'good',
@@ -317,46 +326,106 @@ export function climateSignalsFromHydratedAppPartial(partial) {
   };
 }
 
-/** Mirrors climateSuitabilityV1IsFrostFreeGrowingClimate. */
+/**
+ * Frost-free growing climate for warm tropical/subtropical logic.
+ * Structural thermal evidence (coldest-month lows, elevation, cold risk)
+ * overrides latitude-band tropical labels.
+ */
 export function isFrostFreeGrowingClimate(climateProfile) {
-  const broad = String(climateProfile?.broadClimate || '').toLowerCase();
-  const risk = String(climateProfile?.freezingRisk || '').toLowerCase();
-  if (broad === 'tropical') return risk !== 'high';
-  if (broad === 'subtropical') return risk === 'low';
-  return false;
+  return isFrostFreeGrowingClimateFromStructural(climateProfile || {});
+}
+
+/** Same chill authority as Smart Recommendations — not a second engine. */
+export function plantNeedsWinterChill(meta) {
+  if (!meta || typeof meta !== 'object') return false;
+  if (meta.needsWinterChill === true) return true;
+  const groups = Array.isArray(meta.groupIds) ? meta.groupIds : [];
+  return groups.includes('temperate-chill-fruit-tree');
+}
+
+export function climateLacksWinterChillSignal(env = {}) {
+  return !!env.alwaysHot && !env.coolSeasonSignal;
 }
 
 /**
- * Structural environment signals from broad climate ג€” mirrors smartRecClimateProfile
- * humidity/dry/cool/hot derivation WITHOUT live weather. Cacheable at location hydrate.
+ * Structural environment signals from Garden climate profile.
+ * Prefers long-term Structural Climate Authority V1 fields when present (KNOWN).
+ * Falls back to broadClimate bands only when structural slots are absent/UNKNOWN.
+ * Cacheable at location hydrate — not recomputed per plant via network.
  */
 export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
-  const broad = String(
-    climateProfile.broadClimate ||
-      broadClimateFromLocationClimate(climateProfile.climateLabel || climateProfile.climate || '')
+  const merged = applyStructuralClimateToProfile(climateProfile, climateProfile.structuralClimate);
+  let broad = String(
+    merged.broadClimate ||
+      broadClimateFromLocationClimate(merged.climateLabel || climateProfile.climate || '')
   ).toLowerCase();
+  if (merged.moistureRegime === 'hyper-arid' || merged.moistureRegime === 'arid') {
+    broad = 'arid';
+  }
+  const elevationM = merged.elevationM ?? climateProfile.elevationM ?? null;
+  const coldRaw = merged.coldestMonthMeanMinC ?? climateProfile.coldestMonthMeanMinC;
+  const coldestMonthMeanMinC =
+    coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
+  const freezingFromBands = structuralFreezingRiskFromBroadClimate(
+    broad === 'highland-tropical' ? 'tropical' : broad
+  );
   const freezingRisk = String(
-    climateProfile.freezingRisk || structuralFreezingRiskFromBroadClimate(broad)
+    merged.freezingRisk || climateProfile.freezingRisk || freezingFromBands
   ).toLowerCase();
-  const humiditySignal =
-    climateProfile.humiditySignal ||
-    (broad === 'tropical'
+  const thermalRegime =
+    merged.thermalRegime ||
+    climateProfile.thermalRegime ||
+    thermalRegimeFromStructuralEvidence({
+      coldestMonthMeanMinC,
+      elevationM,
+      structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk,
+      freezingRisk
+    });
+  const humidityFromBands =
+    broad === 'tropical'
       ? 'high'
-      : broad === 'subtropical'
+      : broad === 'highland-tropical'
         ? 'medium'
-        : broad === 'mediterranean' || broad === 'arid'
-          ? 'low'
-          : 'medium');
+        : broad === 'subtropical'
+          ? 'medium'
+          : broad === 'mediterranean' || broad === 'arid'
+            ? 'low'
+            : 'medium';
+  const humiditySignal = String(merged.humiditySignal || humidityFromBands).toLowerCase();
   const drySeasonSignal =
+    merged.drySeasonSignal === true ||
     climateProfile.drySeasonSignal === true ||
     broad === 'mediterranean' ||
     broad === 'arid';
-  const alwaysHot = climateProfile.alwaysHot === true || broad === 'tropical';
+  const frostFree = isFrostFreeGrowingClimate({
+    ...merged,
+    broadClimate: broad,
+    freezingRisk,
+    coldestMonthMeanMinC,
+    elevationM,
+    thermalRegime,
+    structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk
+  });
+  // Year-round heat requires structural thermal support — highland tropics are not alwaysHot.
+  const alwaysHot =
+    climateProfile.alwaysHot === true ||
+    thermalRegime === 'year-round-warm' ||
+    (broad === 'tropical' &&
+      frostFree &&
+      thermalRegime !== 'cool-highland' &&
+      thermalRegime !== 'cool-seasonal' &&
+      thermalRegime !== 'frost-prone');
   const coolSeasonSignal =
     climateProfile.coolSeasonSignal === true ||
     broad === 'temperate' ||
     broad === 'cool-temperate' ||
-    broad === 'mediterranean';
+    broad === 'mediterranean' ||
+    broad === 'highland-tropical' ||
+    thermalRegime === 'cool-highland' ||
+    thermalRegime === 'cool-seasonal' ||
+    thermalRegime === 'frost-prone' ||
+    (Number.isFinite(coldestMonthMeanMinC) &&
+      coldestMonthMeanMinC < DAMAGING_COLD_MONTH_MEAN_MIN_C);
   return {
     broadClimate: broad,
     freezingRisk,
@@ -364,10 +433,19 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
     drySeasonSignal: !!drySeasonSignal,
     alwaysHot: !!alwaysHot,
     coolSeasonSignal: !!coolSeasonSignal,
-    isFrostFreeGrowingClimate: isFrostFreeGrowingClimate({
-      broadClimate: broad,
-      freezingRisk
-    })
+    isFrostFreeGrowingClimate: frostFree,
+    thermalRegime,
+    elevationM,
+    moistureRegime: merged.moistureRegime || climateProfile.moistureRegime || 'unknown',
+    humidityRegime: merged.humidityRegime || climateProfile.humidityRegime || 'unknown',
+    structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk || 'unknown',
+    coldestMonthMeanMinC,
+    annualPrecipitationMm:
+      merged.annualPrecipitationMm ?? climateProfile.annualPrecipitationMm ?? null,
+    aridityIndex: merged.aridityIndex ?? climateProfile.aridityIndex ?? null,
+    structuralClimateStatus:
+      merged.structuralClimateStatus || climateProfile.structuralClimateStatus || 'unknown',
+    structuralClimate: merged.structuralClimate || climateProfile.structuralClimate || null
   };
 }
 
@@ -511,6 +589,10 @@ export function deriveSpecificPlantOutcomes({
   const tropicalMoisturePlant =
     isWarmTropicalFrostSensitiveGroup(meta) && humidityTolerance === 'high';
   const fruitFailCtx = hasFruitingFailureContext(meta, plant);
+  const chillRequired = plantNeedsWinterChill(meta);
+  const chillDeficit = chillRequired && climateLacksWinterChillSignal(env);
+  const chillLimitMsg =
+    'Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.';
 
   let survival = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
   let growth = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
@@ -537,6 +619,19 @@ export function deriveSpecificPlantOutcomes({
   if (!sheltered && frostSensitivity === 'high' && freezingRisk !== 'low') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Frost risk is too high for this plant.');
+  } else if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env)) {
+    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    limiting.push(
+      `Structural moisture regime (${env.moistureRegime}) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity.`
+    );
+  } else if (!sheltered && outdoorDamagingColdUnsupported(meta, env)) {
+    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    limiting.push(
+      `Coldest-month mean lows (~${env.coldestMonthMeanMinC}°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.`
+    );
+  } else if (!sheltered && humidityTolerance === 'low' && humiditySignal === 'high') {
+    survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    limiting.push('High humidity is a poor fit for this plant.');
   } else if (!sheltered && frostSensitivity === 'high' && !frostFree) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
@@ -576,12 +671,16 @@ export function deriveSpecificPlantOutcomes({
 
   if (survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE && !sheltered) {
     growth = SPECIFIC_OUTCOME_STATUS.POOR;
+  } else if (!sheltered && humidityTolerance === 'low' && humiditySignal === 'high') {
+    growth = SPECIFIC_OUTCOME_STATUS.POOR;
   } else if (
-    tropicalMoisturePlant &&
-    (humiditySignal === 'low' || (humiditySignal === 'medium' && env.broadClimate !== 'tropical'))
+    moistureMismatchForHighHumidityPlant(meta, env) ||
+    (tropicalMoisturePlant &&
+      (humiditySignal === 'low' ||
+        (humiditySignal === 'medium' && env.broadClimate !== 'tropical')))
   ) {
     growth =
-      humiditySignal === 'low'
+      humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env)
         ? SPECIFIC_OUTCOME_STATUS.POOR
         : SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
   } else if (Number.isFinite(thriveFit) && thriveFit < 35) {
@@ -595,9 +694,24 @@ export function deriveSpecificPlantOutcomes({
     unknownGaps.push('growth-evidence');
   }
 
+  if (chillDeficit) {
+    if (
+      growth === SPECIFIC_OUTCOME_STATUS.SUPPORTED ||
+      growth === SPECIFIC_OUTCOME_STATUS.RELIABLE
+    ) {
+      growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    } else if (growth === SPECIFIC_OUTCOME_STATUS.UNKNOWN && Number.isFinite(thriveFit)) {
+      growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    }
+    if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
+  }
+
   if (!hasPositiveFloweringEvidence(meta)) {
     flowering = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('floweringRequirements');
+  } else if (chillDeficit) {
+    flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
+    if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
   } else if (Number.isFinite(floweringFit) && floweringFit < 40) {
     flowering = SPECIFIC_OUTCOME_STATUS.UNLIKELY;
     limiting.push('Flowering performance is likely to be weak in this location.');
@@ -621,6 +735,9 @@ export function deriveSpecificPlantOutcomes({
     if (survival !== SPECIFIC_OUTCOME_STATUS.UNRELIABLE) {
       limiting.push('Can grow, but reliable fruit production is not expected.');
     }
+  } else if (chillDeficit && (fruitPositive || fruitFailCtx || chillRequired)) {
+    fruiting = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    if (!limiting.includes(chillLimitMsg)) limiting.push(chillLimitMsg);
   } else if (!fruitPositive) {
     fruiting = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('fruitingRequirements');
@@ -648,7 +765,7 @@ export function deriveSpecificPlantOutcomes({
     suitability: s,
     sheltered,
     needsReview: review,
-    fruitOriented: fruitFailCtx
+    fruitOriented: fruitFailCtx || chillRequired
   });
 }
 

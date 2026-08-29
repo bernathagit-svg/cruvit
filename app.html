@@ -1749,6 +1749,17 @@ function climateSuitabilityV1CatalogWeakMatch(catalogLabel,garden){
 function climateSuitabilityV1IsFrostFreeGrowingClimate(garden){
   const broad=String(garden?.broadClimate||'').toLowerCase();
   const risk=String(garden?.freezingRisk||'').toLowerCase();
+  const cold=Number(garden?.coldestMonthMeanMinC);
+  const elev=Number(garden?.elevationM??garden?.elevation);
+  const thermal=String(garden?.thermalRegime||'').toLowerCase();
+  const sc=String(garden?.structuralColdRisk||'').toLowerCase();
+  if(thermal==='frost-prone'||thermal==='cool-highland'||thermal==='cool-seasonal') return false;
+  if(Number.isFinite(cold)&&cold<10) return false;
+  if(Number.isFinite(elev)&&elev>=1500&&(!Number.isFinite(cold)||cold<15)) return false;
+  if(sc==='elevated'||sc==='medium'||sc==='high'){
+    if(Number.isFinite(cold)&&cold<10) return false;
+  }
+  if(broad==='highland-tropical') return false;
   if(broad==='tropical') return risk!=='high';
   if(broad==='subtropical') return risk==='low';
   return false;
@@ -3302,7 +3313,7 @@ function closeLocationModal(){
 }
 
 async function callGardenWeather(payload){
-  const res=await fetchWithTimeout(netlifyFunctionUrl('/.netlify/functions/garden-weather'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},18000);
+  const res=await fetchWithTimeout(netlifyFunctionUrl('/.netlify/functions/garden-weather'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},45000);
   const json=await res.json().catch(()=>({}));
   if(!res.ok) throw new Error(json.error||'Weather service unavailable');
   return json;
@@ -3310,24 +3321,33 @@ async function callGardenWeather(payload){
 
 async function refreshGardenWeather(){
   const loc=ensureGardenLocation();
-  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||''};
+  const hasStructural=loc.structuralClimate&&loc.structuralClimate.status==='known'
+    &&Number(loc.structuralClimate?.provenance?.lat)===Number(loc.lat)
+    &&Number(loc.structuralClimate?.provenance?.lon)===Number(loc.lon);
+  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||'',skipStructuralClimate:!!hasStructural};
   if(Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lon))){
     payload={...payload,lat:Number(loc.lat),lon:Number(loc.lon)};
   }else if(loc.label){
-    payload={mode:'forecast',query:loc.label,country:loc.country||''};
+    payload={mode:'forecast',query:loc.label,country:loc.country||'',skipStructuralClimate:!!hasStructural};
   }else{
     throw new Error('Garden location is not set');
   }
   const result=await callGardenWeather(payload);
   if(result.location){
     const rl=result.location;
+    const structuralClimate=result.structuralClimate||rl.structuralClimate||(hasStructural?loc.structuralClimate:null);
+    let nextClimate=loc.climate||rl.climate;
+    if(structuralClimate?.broadClimateOverride==='arid') nextClimate='Arid';
+    else if(!loc.climate&&rl.climate) nextClimate=rl.climate;
     data.gardenLocation=Object.assign({},loc,{
       label:rl.label||loc.label,
       lat:Number.isFinite(Number(rl.lat))?Number(rl.lat):loc.lat,
       lon:Number.isFinite(Number(rl.lon))?Number(rl.lon):loc.lon,
-      climate:loc.climate||rl.climate,
+      climate:nextClimate,
       country:String(rl.country||loc.country||'').trim(),
       timezone:String(rl.timezone||loc.timezone||'').trim(),
+      structuralClimate:structuralClimate||null,
+      structuralAcquisitionMs:result.structuralAcquisitionMs??loc.structuralAcquisitionMs??null,
       updatedAt:new Date().toISOString()
     });
     data.location=data.gardenLocation.label;
@@ -5409,33 +5429,78 @@ function buildClimateConfidenceNotes({locationConfidence,climateConfidence,weath
 function smartRecClimateProfile(){
   const loc=ensureGardenLocation();
   const weather=data.weather||{};
-  const climateLabel=String(loc.climate||data.climate||'').toLowerCase();
+  const structuralClimate=loc.structuralClimate&&typeof loc.structuralClimate==='object'?loc.structuralClimate:null;
+  let climateLabel=String(loc.climate||data.climate||'').toLowerCase();
+  if(structuralClimate?.status==='known'&&structuralClimate.broadClimateOverride==='arid'){
+    climateLabel='arid';
+  }
   const locationLabel=String(loc.label||data.location||'').toLowerCase();
   const alerts=Array.isArray(weather.alerts)?weather.alerts:[];
   const forecastPeak=Number.isFinite(Number(weather.forecastPeak))?Number(weather.forecastPeak):Number(weather.maxC||NaN);
   const forecastLow=Number.isFinite(Number(weather.forecastLow))?Number(weather.forecastLow):Number(weather.minC||NaN);
-  const broadClimate=broadClimateFromLabel(loc.climate||data.climate||'');
+  let broadClimate=broadClimateFromLabel(climateLabel||loc.climate||data.climate||'');
+  if(structuralClimate?.status==='known'&&structuralClimate.broadClimateOverride){
+    broadClimate=structuralClimate.broadClimateOverride;
+  }
   const structuralFreezingRisk=broadClimate==='cool-temperate'?'high'
     :(broadClimate==='temperate'?'medium':'low');
-  let freezingRisk=structuralFreezingRisk;
+  let freezingRisk=structuralClimate?.status==='known'&&structuralClimate.freezingRisk
+    ?structuralClimate.freezingRisk
+    :structuralFreezingRisk;
+  // Forecast may elevate risk, never invent a softer structural cold than long-term evidence.
   if(alerts.includes('frost')||(Number.isFinite(forecastLow)&&forecastLow<=0)) freezingRisk='high';
   else if(alerts.includes('cold-snap')||(Number.isFinite(forecastLow)&&forecastLow<=3)) freezingRisk=(freezingRisk==='high'?'high':'medium');
   const forecastFreezingRisk=deriveForecastFreezingRisk(alerts,forecastLow);
   const extremeHeatRisk=(alerts.includes('heat-wave')||(Number.isFinite(forecastPeak)&&forecastPeak>=38))?'high'
     :((alerts.includes('dry-heat')||(Number.isFinite(forecastPeak)&&forecastPeak>=34))?'medium':'low');
-  const alwaysHot=broadClimate==='tropical'||(Number.isFinite(forecastPeak)&&forecastPeak>=30&&Number.isFinite(forecastLow)&&forecastLow>=18);
-  const coolSeasonSignal=broadClimate==='temperate'||broadClimate==='cool-temperate'||broadClimate==='mediterranean'||(Number.isFinite(forecastLow)&&forecastLow<=12);
-  const drySeasonSignal=broadClimate==='mediterranean'||broadClimate==='arid'||alerts.includes('dry-heat');
-  const humiditySignal=broadClimate==='tropical'?'high':(broadClimate==='subtropical'?'medium':((broadClimate==='mediterranean'||broadClimate==='arid')?'low':'medium'));
+  const coldestMonthMeanMinC=structuralClimate?.evidence?.coldestMonthMeanMinC??null;
+  const elevationM=structuralClimate?.elevationM??structuralClimate?.evidence?.elevationM??loc?.elevation??null;
+  const thermalRegime=structuralClimate?.thermalRegime||null;
+  let resolvedBroad=broadClimate;
+  if(thermalRegime==='cool-highland'||thermalRegime==='cool-seasonal'||thermalRegime==='frost-prone'){
+    if(resolvedBroad==='tropical') resolvedBroad='highland-tropical';
+  }
+  const frostFreeArgs={
+    broadClimate:resolvedBroad,
+    freezingRisk,
+    coldestMonthMeanMinC,
+    elevationM,
+    thermalRegime,
+    structuralColdRisk:structuralClimate?.structuralColdRisk||null
+  };
+  const isFrostFreeGrowingClimate=climateSuitabilityV1IsFrostFreeGrowingClimate(frostFreeArgs);
+  const alwaysHot=thermalRegime==='year-round-warm'
+    ||(resolvedBroad==='tropical'&&isFrostFreeGrowingClimate&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal'&&thermalRegime!=='frost-prone')
+    ||(Number.isFinite(forecastPeak)&&forecastPeak>=30&&Number.isFinite(forecastLow)&&forecastLow>=18&&thermalRegime!=='cool-highland'&&thermalRegime!=='cool-seasonal');
+  const coolSeasonSignal=resolvedBroad==='temperate'||resolvedBroad==='cool-temperate'||resolvedBroad==='mediterranean'||resolvedBroad==='highland-tropical'
+    ||thermalRegime==='cool-highland'||thermalRegime==='cool-seasonal'||thermalRegime==='frost-prone'
+    ||(Number.isFinite(Number(coldestMonthMeanMinC))&&Number(coldestMonthMeanMinC)<10)
+    ||(Number.isFinite(forecastLow)&&forecastLow<=12);
+  const drySeasonSignal=resolvedBroad==='mediterranean'||resolvedBroad==='arid'
+    ||structuralClimate?.drySeasonSignal===true
+    ||alerts.includes('dry-heat');
+  let humiditySignal=resolvedBroad==='tropical'?'high':(resolvedBroad==='highland-tropical'?'medium':(resolvedBroad==='subtropical'?'medium':((resolvedBroad==='mediterranean'||resolvedBroad==='arid')?'low':'medium')));
+  if(structuralClimate?.status==='known'&&structuralClimate.humiditySignal){
+    humiditySignal=structuralClimate.humiditySignal;
+  }
   const locationConfidence=deriveLocationConfidence(loc);
-  const climateConfidence=deriveClimateConfidence(loc,broadClimate);
+  const climateConfidence=deriveClimateConfidence(loc,resolvedBroad);
   const weatherStatus=deriveWeatherStatus(weather);
   const weatherAge=weatherAgeMs(weather);
-  const isFrostFreeGrowingClimate=climateSuitabilityV1IsFrostFreeGrowingClimate({broadClimate,freezingRisk});
   const confidenceNotes=buildClimateConfidenceNotes({locationConfidence,climateConfidence,weatherStatus});
   return {
-    locationLabel,climateLabel,broadClimate,alerts,forecastPeak,forecastLow,freezingRisk,extremeHeatRisk,alwaysHot,coolSeasonSignal,drySeasonSignal,humiditySignal,
-    structuralFreezingRisk,forecastFreezingRisk,isFrostFreeGrowingClimate,locationConfidence,climateConfidence,weatherStatus,weatherAgeMs:weatherAge,confidenceNotes
+    locationLabel,climateLabel,broadClimate:resolvedBroad,alerts,forecastPeak,forecastLow,freezingRisk,extremeHeatRisk,alwaysHot,coolSeasonSignal,drySeasonSignal,humiditySignal,
+    structuralFreezingRisk,forecastFreezingRisk,isFrostFreeGrowingClimate,locationConfidence,climateConfidence,weatherStatus,weatherAgeMs:weatherAge,confidenceNotes,
+    moistureRegime:structuralClimate?.moistureRegime||null,
+    humidityRegime:structuralClimate?.humidityRegime||null,
+    structuralColdRisk:structuralClimate?.structuralColdRisk||null,
+    coldestMonthMeanMinC,
+    elevationM,
+    thermalRegime,
+    annualPrecipitationMm:structuralClimate?.evidence?.annualPrecipitationMm??null,
+    aridityIndex:structuralClimate?.evidence?.aridityIndex??null,
+    structuralClimateStatus:structuralClimate?.status||'unknown',
+    structuralClimate
   };
 }
 

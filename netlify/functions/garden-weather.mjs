@@ -1,3 +1,12 @@
+import { fetchStructuralClimateForCoordinates } from '../../modules/personal-domain/structural-climate-authority-v1.js';
+import {
+  isTooBroadForGardenClimate,
+  pickBestGeocodeResult,
+  resolveGardenLocationFromCandidates,
+  NEEDS_MORE_SPECIFIC_LOCATION,
+  LOCATION_NEEDS_CONFIRMATION
+} from '../../modules/personal-domain/location-granularity-contract.js';
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
@@ -121,81 +130,9 @@ function locationLabelFromParts(name, admin1, country) {
   return [name, admin1, country].filter(Boolean).join(', ');
 }
 
-/** Open-Meteo / GeoNames codes too coarse for one Garden climate. */
-const TOO_BROAD_FEATURE_CODES = new Set([
-  'CONT',
-  'PCLI',
-  'PCLD',
-  'PCLF',
-  'PCLS',
-  'PCLIX',
-  'PCL',
-  'ADM1',
-  'RGN',
-  'AREA'
-]);
-
-/**
- * General Garden location precision gate (not Israel-only).
- * Country / continent / state-province centroids are not Garden climate authority.
- */
-function isTooBroadForGardenClimate(loc) {
-  if (!loc) return true;
-  const featureCode = cleanText(loc.feature_code || loc.featureCode || '').toUpperCase();
-  if (featureCode && TOO_BROAD_FEATURE_CODES.has(featureCode)) return true;
-  if (featureCode.startsWith('PCL')) return true;
-
-  const addresstype = cleanText(loc.addresstype || loc.addressType || '').toLowerCase();
-  if (
-    ['country', 'continent', 'state', 'province', 'region', 'state_district'].includes(
-      addresstype
-    )
-  ) {
-    return true;
-  }
-
-  const osmClass = cleanText(loc.class || loc.osm_key || '').toLowerCase();
-  const osmType = cleanText(loc.type || loc.osm_value || loc.resultType || '').toLowerCase();
-  if (osmType === 'country' || osmType === 'continent') return true;
-  if (osmClass === 'boundary' && ['administrative', 'country', 'region'].includes(osmType)) {
-    const name = cleanText(loc.name || '').toLowerCase();
-    const country = cleanText(loc.country || '').toLowerCase();
-    if (!name || name === country || osmType === 'country') return true;
-  }
-
-  const name = cleanText(loc.name || '').toLowerCase();
-  const label = cleanText(loc.label || '').toLowerCase();
-  const country = cleanText(loc.country || '').toLowerCase();
-  if (country && name && name === country) return true;
-  if (label && country && (label === country || label === `${country}, ${country}`)) return true;
-  const parts = label.split(',').map((p) => p.trim()).filter(Boolean);
-  if (parts.length === 2 && parts[0] === parts[1]) return true;
-  return false;
-}
-
-/** @deprecated name — use isTooBroadForGardenClimate */
+/** @deprecated name — use isTooBroadForGardenClimate from location-granularity-contract */
 function isBroadCountryResult(loc) {
   return isTooBroadForGardenClimate(loc);
-}
-
-function pickBestGeocodeResult(results, query) {
-  if (!Array.isArray(results) || !results.length) return null;
-  const q = cleanText(query).toLowerCase();
-  const qHe = cleanText(query);
-  const score = (r) => {
-    const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
-    const label = cleanText(r.label || '').toLowerCase();
-    if (isTooBroadForGardenClimate(r)) return 1;
-    if (name.toLowerCase() === q || name === qHe) return 100;
-    if (label.startsWith(q) || label.includes(q)) return 60;
-    if (hasHebrew(qHe) && (r.country || '').includes('Israel') && !isTooBroadForGardenClimate(r)) {
-      return 40;
-    }
-    return 10;
-  };
-  const ranked = [...results].sort((a, b) => score(b) - score(a));
-  const precise = ranked.find((r) => !isTooBroadForGardenClimate(r));
-  return precise || null;
 }
 
 const GEO_TIMEOUT_MS = 5500;
@@ -281,17 +218,21 @@ function mapPhotonFeature(feature, query) {
 function mapOpenMeteoResult(best, query) {
   if (!best) return null;
   const country = best.country || '';
-  const label = locationLabelFromParts(best.name, best.admin1, country);
+  const label =
+    best.label || locationLabelFromParts(best.name, best.admin1, country);
+  const lat = Number(best.lat ?? best.latitude);
+  const lon = Number(best.lon ?? best.longitude);
   return {
     name: best.name || '',
     label,
-    lat: Number(best.latitude),
-    lon: Number(best.longitude),
+    lat,
+    lon,
     country,
     timezone: best.timezone || '',
-    climate: inferClimate(best.latitude, best.longitude, country),
+    climate: best.climate || inferClimate(lat, lon, country),
     feature_code: best.feature_code || '',
-    admin1: best.admin1 || ''
+    admin1: best.admin1 || '',
+    elevation: best.elevation != null ? Number(best.elevation) : null
   };
 }
 
@@ -452,8 +393,17 @@ async function geocodeQuery(query) {
 
   for (const searchQ of queries) {
     const candidates = await fetchAllGeocodeCandidates(searchQ);
-    const best = pickBestGeocodeResult(candidates, q);
-    if (best && !isTooBroadForGardenClimate(best)) return best;
+    const resolved = resolveGardenLocationFromCandidates(candidates, q);
+    if (resolved.ok && resolved.location && !isTooBroadForGardenClimate(resolved.location)) {
+      return resolved.location;
+    }
+    // Ambiguous / too-broad: do not silently bind a namesake city
+    if (
+      resolved.code === LOCATION_NEEDS_CONFIRMATION ||
+      resolved.code === NEEDS_MORE_SPECIFIC_LOCATION
+    ) {
+      return null;
+    }
   }
 
   return null;
@@ -597,6 +547,19 @@ export default async function handler(request) {
       return json(200, { suggestions });
     }
 
+    if (mode === 'structural-climate') {
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        return json(400, { error: 'Missing coordinates for structural climate' });
+      }
+      const structural = await fetchStructuralClimateForCoordinates(lat, lon);
+      return json(200, {
+        structuralClimate: structural.structuralClimate,
+        ok: structural.ok,
+        error: structural.error,
+        acquisitionMs: structural.acquisitionMs
+      });
+    }
+
     // forecast (default)
     if (Number.isFinite(lat) && Number.isFinite(lon)) {
       location = {
@@ -620,7 +583,26 @@ export default async function handler(request) {
 
     if (!location.climate) location.climate = inferClimate(lat, lon, location.country);
 
-    return json(200, { location, weather });
+    // One-shot long-term structural climate (not forecast). Cached on client location.
+    const skipStructural = body.skipStructuralClimate === true;
+    let structuralClimate = null;
+    let structuralAcquisitionMs = null;
+    if (!skipStructural) {
+      const structural = await fetchStructuralClimateForCoordinates(lat, lon);
+      structuralClimate = structural.structuralClimate;
+      structuralAcquisitionMs = structural.acquisitionMs;
+      if (structural.ok && structuralClimate?.broadClimateOverride === 'arid') {
+        location.climate = 'Arid';
+      }
+      location.structuralClimate = structuralClimate;
+    }
+
+    return json(200, {
+      location,
+      weather,
+      structuralClimate,
+      structuralAcquisitionMs
+    });
   } catch (error) {
     return json(500, { error: error?.message || 'Weather service failed' });
   }
