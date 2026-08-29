@@ -1,6 +1,8 @@
 -- CRUVIT Runtime Cost & Persistence Guardrails V1
+-- Live migration version: 20260829171001_runtime_cost_persistence_guardrails_v1
 -- Infrastructure + bounded proof only. Does NOT bulk-ingest plants.
--- DO NOT apply to production until Owner Review.
+-- Authoritative live record on cruvit-production / saiuscqbszafszpdmzfl.
+-- Do NOT re-apply if already recorded live.
 
 -- ---------------------------------------------------------------------------
 -- A) Structural climate persistence on owned Garden Profiles
@@ -103,7 +105,7 @@ create policy catalog_plants_select_public
   to anon, authenticated
   using (true);
 
--- No INSERT/UPDATE/DELETE policies for anon/authenticated → writes require service_role.
+-- Initial privilege intent (incomplete vs Postgres defaults — hardened in 20260829171035).
 revoke insert, update, delete on public.catalog_plants from anon, authenticated;
 grant select on public.catalog_plants to anon, authenticated;
 

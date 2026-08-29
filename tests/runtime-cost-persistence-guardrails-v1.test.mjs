@@ -70,7 +70,19 @@ const MIGRATION = path.join(
   ROOT,
   'supabase',
   'migrations',
-  '20250829200000_runtime_cost_persistence_guardrails_v1.sql'
+  '20260829171001_runtime_cost_persistence_guardrails_v1.sql'
+);
+const MIGRATION_HARDEN = path.join(
+  ROOT,
+  'supabase',
+  'migrations',
+  '20260829171035_harden_runtime_cost_persistence_table_privileges.sql'
+);
+const MIGRATION_RLS_OPT = path.join(
+  ROOT,
+  'supabase',
+  'migrations',
+  '20260829171130_optimize_runtime_cost_events_rls_auth_calls.sql'
 );
 const REPORT = path.join(ROOT, 'tests', '_runtime-cost-persistence-guardrails-v1-report.json');
 
@@ -385,6 +397,18 @@ test('migration defines catalog_plants, design assets, cost events, structural c
   assert.match(sql, /create table if not exists public\.runtime_cost_events/);
   assert.match(sql, /catalog_plants_select_public/);
   assert.match(sql, /revoke insert, update, delete on public\.catalog_plants/);
+
+  const harden = fs.readFileSync(MIGRATION_HARDEN, 'utf8');
+  assert.match(harden, /revoke all on table public\.catalog_plants from anon, authenticated/i);
+  assert.match(harden, /grant select on table public\.catalog_plants to anon, authenticated/i);
+  assert.match(harden, /revoke all on table public\.catalog_design_assets from anon, authenticated/i);
+  assert.match(harden, /grant select on table public\.catalog_design_assets to anon, authenticated/i);
+  assert.match(harden, /revoke all on table public\.runtime_cost_events from anon, authenticated/i);
+  assert.match(harden, /grant select, insert on table public\.runtime_cost_events to authenticated/i);
+
+  const rlsOpt = fs.readFileSync(MIGRATION_RLS_OPT, 'utf8');
+  assert.match(rlsOpt, /\(select auth\.uid\(\)\) = user_id/);
+  assert.doesNotMatch(rlsOpt, /using \(auth\.uid\(\) = user_id\)/);
 });
 
 test('licensed media acceptance plants remain IMAGE_READY consume-only', () => {

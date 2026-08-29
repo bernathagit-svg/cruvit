@@ -41,8 +41,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - Licensed Image Pipeline V1 + Runtime Licensed Catalog Media (catalog-time resolve/store; runtime consume-only; quality gate PASS).
 - Reproductive Outcome Evidence Gate (Flowering/Fruiting evidence-only; default numeric fit cannot create reproductive outcomes; quality gate PASS).
 - **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`).
-- **CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_GATE: PASS`). Ordinary runtime must not trigger paid external enrichment; acquire/create once → validate → store → reuse.
-- **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED** (unblocked by guardrail gate PASS; Owner must start in a separate turn).
+- **CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO`). Live Supabase hardened; Plant Identifier paid AI disabled by default; ordinary runtime must not trigger paid external enrichment; acquire/create once → validate → store → reuse.
+- **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / READY TO START** (**NOT STARTED** — separate Owner turn).
 
 ## Partial
 - Plant Doctor — plant **identification** and care recommendations work (`plant-identify.mjs`, plant-identifier module, `visual_analysis`); structured **disease detection / diagnosis** is not yet a real flow.
@@ -73,34 +73,33 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 # Active Development
 
 ### CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO
-Status: **CRUVIT_RUNTIME_COST_PERSISTENCE_GATE: PASS** (architecture). **Live production closure:** Plant Identifier paid AI hard-gated server-side; live Supabase migration apply/verify required for `CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO`.
+Status: **CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_GATE: PASS` + live Supabase + production paid-AI gate).
 
 **Permanent Owner policy:**
 - **ACQUIRE / CREATE ONCE → VALIDATE → STORE → REUSE**
 - **NO PAID EXTERNAL API FROM ORDINARY USER ACTIVITY WITHOUT EXPLICIT OWNER ENABLEMENT.**
 
-**Paid runtime hard gates (default OFF):**
-- Plant Identifier / Anthropic: server env `CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER` — missing/false → **blocked before any Anthropic call**; client cannot override; do **not** set `true` in production without a future Owner decision. Plant Identifier may remain unavailable until then.
-- Plant knowledge runtime enrichment: client default OFF (`CRUVIT_ALLOW_RUNTIME_PLANT_KNOWLEDGE`); catalog enrichment is background/ingestion only.
-- Image generation: no normal user runtime path.
-- Image discovery/search: zero runtime search.
-- Garden Design generation: never per placement/user action (metadata contract only).
-- Structural climate: reused from persisted Garden authority; **zero** provider calls per plant evaluation (100/500 proven).
+**Live Supabase (`cruvit-production` / `saiuscqbszafszpdmzfl`) — applied & verified:**
+1. `20260829171001_runtime_cost_persistence_guardrails_v1` — base schema (structural climate columns; `catalog_plants`; `catalog_design_assets`; `runtime_cost_events`)
+2. `20260829171035_harden_runtime_cost_persistence_table_privileges` — `REVOKE ALL` then least privilege (removes TRUNCATE/TRIGGER/REFERENCES leftovers)
+3. `20260829171130_optimize_runtime_cost_events_rls_auth_calls` — `(select auth.uid())` RLS optimization
+- Live Security Advisor: **0 SECURITY LINTS**
+- Performance advisor: auth_rls_initplan cleared; unused-index INFO only on new/empty tables
 
-**Accepted foundations:**
-1. Runtime external-call inventory + free vs paid separation (Open-Meteo / Nominatim / Photon = free operational dependencies for location/weather — not paid enrichment; no retry storms; cooldown/cache/reuse).
-2. Canonical catalog persistence foundation — `public.catalog_plants` (public SELECT; writes service_role/ingestion only) + contract module. Runtime still ships `plants.seed.json`; DB is long-term authority path. **No bulk plant migration.**
-3. Structural climate persistence columns on `garden_profiles` + acquire-once / failure cooldown; archive retries capped at 2.
-4. Licensed catalog media consume-only preserved.
-5. Garden Design asset metadata contract + `catalog_design_assets` (no UI / no mass gen).
-6. Cost observability — `runtime_cost_events` + contract (no private Garden content).
-7. External-call guard tests + paid Identifier gate tests.
+**Paid runtime hard gates (default OFF in production):**
+- Plant Identifier / Anthropic: `CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER` missing/false → **403 PAID_PLANT_IDENTIFIER_DISABLED** before any Anthropic call; client cannot override; **do not set true** without future Owner decision
+- Plant knowledge runtime enrichment: client default OFF
+- Image generation / image discovery search: zero normal runtime paths
+- Garden Design generation: never per placement
+- Structural climate: persisted Garden authority; **zero** provider calls per plant evaluation
 
-**BULK CATALOG EXPANSION:** AUTHORIZED / **NOT STARTED**.
+**Foundations ready:** canonical catalog persistence; structural climate persistence; Garden Design asset metadata; cost observability events.
 
-**Live migration:** `supabase/migrations/20250829200000_runtime_cost_persistence_guardrails_v1.sql` — apply to `cruvit-production` / `saiuscqbszafszpdmzfl` then verify schema/RLS/advisor. Do not ingest catalog rows in that apply.
+**BULK CATALOG EXPANSION: AUTHORIZED / READY TO START** — **NOT STARTED** in this turn.
 
-**Tracked open P3:** Open-Meteo forecast on weather refresh (free); IMAGE_READY Wikimedia hotlink paint; Yehiam geocode; `catalog_plants` empty until ingestion turn; live migration apply if not yet verified on this close.
+**Free operational deps (not paid enrichment):** Open-Meteo / Nominatim / Photon for location/weather — cooldown/cache/reuse; no structural-per-plant.
+
+**Tracked open P3:** IMAGE_READY Wikimedia hotlink paint; Yehiam geocode; empty `catalog_plants` until ingestion; Open-Meteo forecast refresh (free).
 
 ### CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO
 Status: **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). Owner-approved final pre-scale quality approval. Do not rerun another broad audit unless a new regression is discovered.
@@ -171,7 +170,7 @@ Status: **LICENSED IMAGE PIPELINE V1 — PASS** and **runtime licensed-media con
 Catalog-time: resolve Wikimedia Commons (and future approved providers) → validate identity/license/commercial-use/attribution → store IMAGE_READY metadata (or IMAGE_PENDING) on the plant media record → reuse. Runtime: zero image-source searches; user photo wins over catalog; broken hotlink → placeholder only.
 
 ### AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED
-Hundreds-of-plants expansion is **AUTHORIZED** after final pre-scale foundation + **Runtime Cost & Persistence Guardrails V1 PASS**, and is **NOT started** in this turn. Cacao packet/path remains the bounded acceptance proof of reusable ingestion. Most non-calibration plants remain `needsReview`; flowering/fruiting coverage remains sparse outside calibration; live RLS CI still lacks automatic credentials (operational). Apply migration `20250829200000_runtime_cost_persistence_guardrails_v1.sql` before relying on server catalog/structural columns in production.
+Hundreds-of-plants expansion is **AUTHORIZED / READY TO START** after Runtime Cost & Persistence Guardrails V1 live closure, and is **NOT started** in this turn. Cacao packet/path remains the bounded acceptance proof of reusable ingestion. Most non-calibration plants remain `needsReview`; flowering/fruiting coverage remains sparse outside calibration. Live schema: `20260829171001` / `20260829171035` / `20260829171130` on `cruvit-production`.
 
 ### Specific Plant Suitability / Outcome Profile V1 — CLOSED
 Status: **SPECIFIC PLANT SUITABILITY / OUTCOME PROFILE V1 — COMPLETE / GO** (Owner-approved; `SPECIFIC_PLANT_OUTCOME_QUALITY_GATE: PASS`). User-facing contract: Owned Garden → confirmed location → climate/environment authority → selected catalog plant → deterministic specific-plant evaluation → outcome profile (**Overall**, **Survival**, **Growth**, **Flowering**, **Fruiting**, main limiting factors). Reuses `smartRecEvaluateSuitability` / `getAppClimateProfile` with preference answers cleared so browse filters cannot block the selected plant. **Mandatory quality rules:** unreliable outdoor survival ⇒ Overall Not recommended (Borderline never softens survival failure); four outcomes judged separately; UNKNOWN explicit; fruiting Supported requires fruitingRequirements (not fruit-group + frost-free alone); flowering Supported requires floweringRequirements; `needsReview` cannot leak confident Good/Excellent; country/state/continent centroids rejected with **NEEDS MORE SPECIFIC LOCATION**; no LLM/web research per check — warm in-memory eval after Garden climate + catalog metadata (acceptance harness P95 ≈ 0.01 ms; network/location setup measured separately ≈ 1.1 s). **Coconut quality evidence (final authority after reproductive evidence gate — do not hardcode):** Kochi/Singapore → Good / Reliable / Supported / Supported / Supported; Cairo/Tokyo/Yehiam → Not recommended / Unreliable / Poor / Unlikely / Unreliable. Brazil → NEEDS MORE SPECIFIC LOCATION. Flowering/Fruiting positives require catalog + climate evidence (not default fit scores). **Follow-on Pre-Scale Systemic Quality Fixes V1:** COMPLETE / GO (closed above). Final pre-scale foundation: COMPLETE / GO. Hero V1 branch retained separately and not merged.
@@ -274,7 +273,7 @@ Files: <list of files>
 
 | Checkpoint | Status | Notes |
 |------------|--------|-------|
-| **CRUVIT Runtime Cost & Persistence Guardrails V1** | Done (this commit) | **Architecture PASS.** Server hard-gate: `CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER` missing/false → zero Anthropic (client cannot override; do not enable in production). Plant knowledge client default OFF. Structural climate persist columns + 100/500 zero provider-call proof. Free deps (Open-Meteo/Nominatim/Photon) recorded separately from paid enrichment. **BULK: AUTHORIZED / NOT STARTED.** Live migration apply/verify required for full CLOSED:GO. |
+| **CRUVIT Runtime Cost & Persistence Guardrails V1** | Done (this commit) | **COMPLETE / GO — CLOSED.** Live migrations `20260829171001` + privilege harden `20260829171035` + RLS auth optimize `20260829171130`. Security Advisor 0 lints. Plant Identifier paid AI disabled by default (`CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER`). Canonical catalog / structural climate / design-asset metadata foundations ready. **BULK CATALOG EXPANSION: AUTHORIZED / READY TO START — NOT STARTED.** |
 | **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION** | Done (pushed) | **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). Final audit after reproductive-outcome evidence fix: P0/P1/material P2 = 0; regression 111/0; reproductive evidence gate PASS; licensed media PASS. Coconut 5-location acceptance recorded (authority-emerged). **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Fetch once → store → reuse mandatory before/during bulk. Open P3 kept open (Yehiam geocode; Open-Meteo 429; incomplete-climate archetype; hotlink residual; future plants need verification). |
 | **Specific Plant Suitability / Outcome Profile V1** | Done (pushed) | **SPECIFIC PLANT SUITABILITY / OUTCOME PROFILE V1 — COMPLETE / GO.** Follow-on **Pre-Scale Systemic Quality Fixes V1 COMPLETE / GO** (highland thermal; location ambiguity; Specific Outcome chill; 10-plant calibration). **CRUVIT PRE-SCALE QUALITY GATE — PASS.** **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Hero V1 @ 268a435 untouched. |\n| **Pre-Scale Systemic Quality Fixes V1** | Done (this commit) | **PRE-SCALE SYSTEMIC QUALITY FIXES V1 — COMPLETE / GO — PRE_SCALE_SYSTEMIC_FIXES_V1_QUALITY_GATE: PASS.** Thermal/highland authority; location confidence; winter chill in Specific Outcome; bounded calibration (cacao, coconut, cypress, kiwi, almond, pistachio, japanese-maple, cherimoya, plumeria, oak-tree). Structural climate hydrate network-bound ~4–9s once per location; warm plant P95 ≈ 0.005 ms. Bulk expansion AUTHORIZED / NOT STARTED after final pre-scale closure. |
 | **Owned Garden Tasks Persistence V1** | Done (pushed) | **GARDEN TASKS PERSISTENCE V1 — COMPLETE / GO — Owner-approved live Tasks V1 on production `cruvit-production` / `saiuscqbszafszpdmzfl`.** Proven path: Authenticated User → Owned Garden Profile → Owned Garden Plants → Owned Garden Tasks → My Garden hydrate/write → reload persistence → Garden switching → server-side cross-user isolation. **Live contains:** `public.garden_tasks` with private per-Garden ownership; RLS + FORCE RLS; SELECT/INSERT/UPDATE/DELETE policies TO authenticated; ownership trigger derives `user_id` from owning Garden; same-Garden `garden_plant_id` enforcement; `garden_profile_id` FK ON DELETE CASCADE; `garden_plant_id` FK ON DELETE SET NULL; BEFORE DELETE on `garden_plants` deletes open linked tasks; UNIQUE(`garden_profile_id`, `client_instance_id`); fixed `search_path` on triggers; anon revoke; browser anon key only. **Live E2E proved:** task create persists; reload restores; upsert prevents duplicates; update/postpone persists; completion persists; instance state survives care/template enrichment; A↔A2 plant mismatch rejected; plant delete removes open linked tasks and retains completed tasks with `garden_plant_id=null` + plant_name/history; multi-Garden independent task sets; sign-out clears authenticated task trust via RLS; pre-existing local tasks preserved by auth-boundary snapshot contract; no silent legacy upload; explicit import required; User B cannot SELECT/UPDATE/DELETE A tasks, INSERT into A Garden, MOVE into A Garden, or attach A plant; `user_id` forgery cannot steal ownership; no browser secret exposure; temporary E2E Auth users/gardens/plants/tasks cleaned (`auth.users=0`, `garden_profiles=0`, `garden_plants=0`, `garden_tasks=0`); Security Advisor = 0 lints. **Repo:** `supabase/migrations/20250829100000_garden_tasks_v1.sql`; `modules/personal-domain/garden-profile-tasks-contract.js`; task CRUD/hydrate/import + auth-boundary snapshot/release in `garden-profile-v0.js` / `app.html`. **Tests:** tasks-v1-contract; tasks-v1-signout-local-preserve; tasks-v1-live (Owner-verified live). **Out of scope (not started):** events/photos/Garden Memory/Doctor/Identifier/purchases/recommendation-history. Upstream tip before this commit: `70a1c9515bb05890fe7f12b5f3a41b30c293504a` (`Close owned Garden Plants persistence V1`); Hero V1 `cursor/smart-rec-hero-authoritative-context-v1` @ `268a435` untouched; safety `fdc318e` and 4 stashes untouched. |
