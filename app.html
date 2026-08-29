@@ -520,7 +520,7 @@
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
     <p class="pd-v0-kicker">Personal domain V0</p>
     <h2 id="pdV0Title">Garden Profile account</h2>
-    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location can be saved to a Garden only after explicit confirmation. Legacy My Garden plants/tasks are not migrated in this checkpoint.</p>
+    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location and plants can be saved to a Garden only after explicit confirmation. Legacy My Garden tasks are not migrated in this checkpoint.</p>
     <div id="pdV0SignedOut">
       <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
       <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
@@ -550,6 +550,10 @@
         <div id="pdV0LegacyImport" class="pd-v0-legacy" hidden>
           <p class="pd-v0-hint">This browser has a trusted local location, and the active Garden has none on the server.</p>
           <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyLocationBtn">Use this location for this Garden</button>
+        </div>
+        <div id="pdV0LegacyPlantImport" class="pd-v0-legacy" hidden>
+          <p class="pd-v0-hint">This browser has local My Garden plants. They are not uploaded until you confirm.</p>
+          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyPlantsBtn">Add existing local plants to this Garden</button>
         </div>
       </div>
     </div>
@@ -2375,6 +2379,15 @@ function finalizePlantListChange(){
   service.save(data);
   refreshOpenTaskPanels();
   render();
+  try{
+    const pd=window.cruvitPersonalDomainV0;
+    if(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()
+      &&typeof pd.syncActiveGardenPlantsFromLocal==='function'){
+      pd.syncActiveGardenPlantsFromLocal(data.plants).catch((err)=>{
+        console.warn('Server plant sync failed',err&&err.message?err.message:err);
+      });
+    }
+  }catch(e){console.warn('Server plant sync hook failed',e)}
 }
 function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
 function openCareCalendar(){showAllTasks=false;setTab('timeline')}
@@ -3744,6 +3757,154 @@ try{
   window.suspendAuthenticatedLocationHydrationInMemory=suspendAuthenticatedLocationHydrationInMemory;
   window.resetAppLocationToUntrustedDefault=resetAppLocationToUntrustedDefault;
   window.clearLocalGardenLocationSnapshotBeforeAuthHydrate=clearLocalGardenLocationSnapshotBeforeAuthHydrate;
+}catch(_){}
+
+/** Snapshot of browser-local My Garden plants taken before server plant hydrate (auth session). */
+const PRE_AUTH_PLANTS_SNAPSHOT_KEY='cruvit_pd_v1_pre_auth_plants_snapshot';
+let __cruvitLocalPlantsSnapshotBeforeAuthHydrate=null;
+
+function readPreAuthPlantsSnapshot(){
+  if(__cruvitLocalPlantsSnapshotBeforeAuthHydrate) return __cruvitLocalPlantsSnapshotBeforeAuthHydrate;
+  try{
+    const raw=sessionStorage.getItem(PRE_AUTH_PLANTS_SNAPSHOT_KEY);
+    if(!raw) return null;
+    __cruvitLocalPlantsSnapshotBeforeAuthHydrate=JSON.parse(raw);
+    return __cruvitLocalPlantsSnapshotBeforeAuthHydrate;
+  }catch(_){
+    return null;
+  }
+}
+
+function writePreAuthPlantsSnapshot(snap){
+  __cruvitLocalPlantsSnapshotBeforeAuthHydrate=snap;
+  try{
+    if(snap) sessionStorage.setItem(PRE_AUTH_PLANTS_SNAPSHOT_KEY,JSON.stringify(snap));
+    else sessionStorage.removeItem(PRE_AUTH_PLANTS_SNAPSHOT_KEY);
+  }catch(_){}
+}
+
+function clonePlantsForSnapshot(plants){
+  try{
+    return JSON.parse(JSON.stringify(Array.isArray(plants)?plants:[]));
+  }catch(_){
+    return [];
+  }
+}
+
+function readPersistedPlantsForSnapshot(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(service.key)||'null');
+    if(!saved||!Array.isArray(saved.plants)) return null;
+    return {plants:clonePlantsForSnapshot(saved.plants)};
+  }catch(_){
+    return null;
+  }
+}
+
+function captureLocalGardenPlantsSnapshotBeforeAuthHydrate(){
+  const existing=readPreAuthPlantsSnapshot();
+  if(existing&&Array.isArray(existing.plants)) return existing;
+  let snap=null;
+  if(Array.isArray(data.plants)&&data.plants.length){
+    snap={plants:clonePlantsForSnapshot(data.plants)};
+  }else{
+    snap=readPersistedPlantsForSnapshot();
+  }
+  if(!snap||!Array.isArray(snap.plants)) return existing||null;
+  writePreAuthPlantsSnapshot(snap);
+  return snap;
+}
+
+function clearLocalGardenPlantsSnapshotBeforeAuthHydrate(){
+  writePreAuthPlantsSnapshot(null);
+}
+
+function suspendAuthenticatedPlantsHydrationInMemory(){
+  data.plants=[];
+  // Intentionally no service.save — do not destroy legacy localStorage plants.
+  try{render()}catch(_){}
+}
+
+function releaseAuthenticatedPlantsHydration(){
+  const snap=readPreAuthPlantsSnapshot();
+  clearLocalGardenPlantsSnapshotBeforeAuthHydrate();
+  if(snap&&Array.isArray(snap.plants)){
+    data.plants=clonePlantsForSnapshot(snap.plants);
+    try{if(typeof normalizeGardenDataShape==='function')normalizeGardenDataShape()}catch(_){}
+    try{data.plants=(data.plants||[]).map(normalizePlant)}catch(_){}
+    try{service.save(data)}catch(_){}
+    try{render()}catch(_){}
+    return 'restore-snapshot';
+  }
+  try{render()}catch(_){}
+  return 'noop-preserve-local';
+}
+
+function applyAuthenticatedGardenPlants(plants,options){
+  const list=Array.isArray(plants)?plants:[];
+  data.plants=list.map((p)=>{
+    const normalized=typeof normalizePlant==='function'?normalizePlant(p):p;
+    // Instance facts from server must win over catalog defaults after meta reattach.
+    const instanceName=normalized.name;
+    const instanceStatus=normalized.status;
+    const instanceMark=normalized.mark;
+    const instanceSource=normalized.source;
+    const instanceArchived=normalized.archived===true;
+    const instancePrefs=normalized.prefs&&typeof normalized.prefs==='object'?Object.assign({},normalized.prefs):null;
+    const instanceScientific=normalized.scientific?String(normalized.scientific):'';
+    // Reattach catalog meta for display when profileSlug/name resolves (derived where possible).
+    try{
+      const profile=typeof resolvePlantProfileRaw==='function'
+        ?resolvePlantProfileRaw(normalized)
+        :(normalized&&normalized.profileSlug&&typeof getPlantProfile==='function'
+          ?getPlantProfile(normalized.profileSlug)
+          :null);
+      if(profile&&typeof applyProfileToPlant==='function'){
+        applyProfileToPlant(normalized,profile);
+      }
+    }catch(_){}
+    // Restore authoritative My Garden instance fields (not catalog card defaults).
+    if(instanceName) normalized.name=instanceName;
+    if(instanceStatus) normalized.status=instanceStatus;
+    if(instanceMark) normalized.mark=instanceMark;
+    if(instanceSource) normalized.source=instanceSource;
+    normalized.archived=instanceArchived;
+    if(instancePrefs) normalized.prefs=instancePrefs;
+    if(instanceScientific) normalized.scientific=instanceScientific;
+    else if(p&&p.scientific) normalized.scientific=String(p.scientific);
+    return normalized;
+  });
+  if(options&&options.authoritative){
+    try{service.save(data)}catch(_){}
+  }
+  try{syncHealthScore()}catch(_){}
+  try{render()}catch(_){}
+}
+
+function getActiveMyGardenPlantsForSync(){
+  return Array.isArray(data.plants)?data.plants.slice():[];
+}
+
+function getLegacyLocalGardenPlantsSnapshot(){
+  const snap=readPreAuthPlantsSnapshot();
+  if(snap&&Array.isArray(snap.plants)&&snap.plants.length) return clonePlantsForSnapshot(snap.plants);
+  return [];
+}
+
+function hasPreAuthPlantsSnapshot(){
+  const snap=readPreAuthPlantsSnapshot();
+  return !!(snap&&Array.isArray(snap.plants)&&snap.plants.length);
+}
+
+try{
+  window.captureLocalGardenPlantsSnapshotBeforeAuthHydrate=captureLocalGardenPlantsSnapshotBeforeAuthHydrate;
+  window.releaseAuthenticatedPlantsHydration=releaseAuthenticatedPlantsHydration;
+  window.suspendAuthenticatedPlantsHydrationInMemory=suspendAuthenticatedPlantsHydrationInMemory;
+  window.clearLocalGardenPlantsSnapshotBeforeAuthHydrate=clearLocalGardenPlantsSnapshotBeforeAuthHydrate;
+  window.applyAuthenticatedGardenPlants=applyAuthenticatedGardenPlants;
+  window.getActiveMyGardenPlantsForSync=getActiveMyGardenPlantsForSync;
+  window.getLegacyLocalGardenPlantsSnapshot=getLegacyLocalGardenPlantsSnapshot;
+  window.hasPreAuthPlantsSnapshot=hasPreAuthPlantsSnapshot;
 }catch(_){}
 
 async function resolveAppLocation(rawInput){
@@ -6311,6 +6472,18 @@ function safeUiAfterPlantAdd(){
   try{closeAddPlantModal()}catch(e){console.warn('Close add modal failed',e)}
   try{render()}catch(e){console.error('Render failed after plant add',e)}
   try{setTab('plants')}catch(e){console.warn('Could not switch to plants tab',e)}
+  try{
+    const pd=window.cruvitPersonalDomainV0;
+    if(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()
+      &&typeof pd.upsertPlantOnActiveGarden==='function'){
+      const plant=(data.plants||[])[(data.plants||[]).length-1];
+      if(plant){
+        pd.upsertPlantOnActiveGarden(plant).catch((err)=>{
+          console.warn('Server plant upsert failed',err&&err.message?err.message:err);
+        });
+      }
+    }
+  }catch(e){console.warn('Server plant add hook failed',e)}
 }
 function applyPlantTaskSync(plant,source){
   if(plant.prefs?.autoTasks===false){

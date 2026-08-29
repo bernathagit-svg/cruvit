@@ -6,6 +6,7 @@
    - `supabase/migrations/20250828120000_garden_profiles_v0.sql`
    - `supabase/migrations/20250828210000_garden_profiles_location_v1.sql` (location columns; already live on production — do not re-apply)
    - `supabase/migrations/20250828220000_harden_garden_profile_location_normalizer_search_path.sql` (pins normalizer `search_path`; already live — do not re-apply)
+   - `supabase/migrations/20250828230000_garden_plants_v1.sql` (owned garden plants; already live on production — do not re-apply)
 4. Set Netlify environment variables (Site settings → Environment variables):
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY` (browser-safe publishable/anon key only)
@@ -18,9 +19,11 @@ cp .env.example .env
 # fill SUPABASE_URL and SUPABASE_ANON_KEY
 node --test tests/garden-profile-v0-signout-stale-refresh.test.mjs
 node --test tests/garden-profile-location-v1-contract.test.mjs
+node --test tests/garden-profile-plants-v1-contract.test.mjs
+node --test tests/garden-profile-plants-v1-signout-local-preserve.test.mjs
 node --test tests/garden-profile-v0-rls-isolation.test.mjs
 ```
 
 If email confirmation is enabled, create two test users manually and set `CRUVIT_TEST_USER_A_*` / `CRUVIT_TEST_USER_B_*` in `.env`.
 
-Live location RLS/update checks require the Location V1 migration to be applied; contract/unit tests do not.
+Live location/plants RLS checks require the Location V1 and Plants V1 migrations to be applied; contract/unit tests do not.
