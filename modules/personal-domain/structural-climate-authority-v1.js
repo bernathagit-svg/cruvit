@@ -401,7 +401,8 @@ export async function fetchStructuralClimateForCoordinates(lat, lon, options = {
   }
 
   const fetchImpl = options.fetchImpl || fetch;
-  const maxAttempts = Number(options.maxAttempts) > 0 ? Number(options.maxAttempts) : 5;
+  // Guardrails V1: no retry storms — at most 2 attempts on location hydrate only.
+  const maxAttempts = Number(options.maxAttempts) > 0 ? Number(options.maxAttempts) : 2;
   const url =
     STRUCTURAL_CLIMATE_SOURCE.endpoint +
     '?' +

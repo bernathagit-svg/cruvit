@@ -3323,11 +3323,17 @@ async function refreshGardenWeather(){
   const hasStructural=loc.structuralClimate&&loc.structuralClimate.status==='known'
     &&Number(loc.structuralClimate?.provenance?.lat)===Number(loc.lat)
     &&Number(loc.structuralClimate?.provenance?.lon)===Number(loc.lon);
-  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||'',skipStructuralClimate:!!hasStructural};
+  // Guardrails V1: reuse known structural; cooldown after failure (no retry storms).
+  let skipStructuralClimate=!!hasStructural;
+  if(!skipStructuralClimate&&loc.structuralClimate){
+    const failedAt=Date.parse(String(loc.structuralClimate.lastAcquireErrorAt||''));
+    if(Number.isFinite(failedAt)&&(Date.now()-failedAt)<(6*60*60*1000)) skipStructuralClimate=true;
+  }
+  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||'',skipStructuralClimate};
   if(Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lon))){
     payload={...payload,lat:Number(loc.lat),lon:Number(loc.lon)};
   }else if(loc.label){
-    payload={mode:'forecast',query:loc.label,country:loc.country||'',skipStructuralClimate:!!hasStructural};
+    payload={mode:'forecast',query:loc.label,country:loc.country||'',skipStructuralClimate};
   }else{
     throw new Error('Garden location is not set');
   }
@@ -3683,6 +3689,12 @@ async function setAppLocation(partial,options){
   };
   if(nextLat!=null) payload.lat=nextLat;
   if(nextLon!=null) payload.lon=nextLon;
+  // Guardrails V1: hydrate/reuse server-persisted structural climate when present.
+  if(p.structuralClimate&&typeof p.structuralClimate==='object'){
+    payload.structuralClimate=p.structuralClimate;
+  }else if(!locationChanged&&current.structuralClimate){
+    payload.structuralClimate=current.structuralClimate;
+  }
   return saveGardenLocation(payload);
 }
 
@@ -6732,6 +6744,12 @@ function fetchWithTimeout(url,options={},ms=9000){
   return fetch(url,{...options,signal:ctrl.signal}).finally(()=>clearTimeout(id));
 }
 async function fetchPlantKnowledgeBundle(plantName,source){
+  // Runtime Cost Guardrails V1: ordinary Add Plant search must NOT call paid enrichment.
+  // Opt-in only via explicit Owner override: window.CRUVIT_ALLOW_RUNTIME_PLANT_KNOWLEDGE=true
+  if(window.CRUVIT_ALLOW_RUNTIME_PLANT_KNOWLEDGE!==true){
+    window.lastPlantSearchError='';
+    return {profile:null,suggestions:[],raw:null,disabled:true,reason:'runtime-cost-guardrails-v1'};
+  }
   const rawQuery=String(plantName||'').trim();
   const payload={plantName:rawQuery,query:rawQuery,originalQuery:rawQuery,location:(data.location||'Western Galilee, Israel'),climate:(data.climate||'Mediterranean'),language:(localStorage.getItem('cruvitLang')||document.documentElement.lang||'en'),source};
   const endpoints=[OPENAI_READY.endpoint,netlifyFunctionUrl('/.netlify/functions/plant-knowledge')].filter((v,i,a)=>v&&a.indexOf(v)===i);

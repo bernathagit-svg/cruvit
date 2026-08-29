@@ -36,7 +36,7 @@ const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';
 
 const GARDEN_SELECT =
-  'id,name,created_at,updated_at,user_id,location_label,location_lat,location_lon,location_climate,location_country,location_region,location_timezone,location_source,location_confirmed_at,location_updated_at';
+  'id,name,created_at,updated_at,user_id,location_label,location_lat,location_lon,location_climate,location_country,location_region,location_timezone,location_source,location_confirmed_at,location_updated_at,location_structural_climate,location_structural_climate_version,location_structural_climate_fetched_at,location_structural_climate_source,location_structural_climate_status';
 
 const PLANT_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,name,status,mark,source,profile_slug,scientific,archived,prefs,added_at,created_at,updated_at';
@@ -992,7 +992,8 @@ async function importLegacyTrustedLocationToActiveGarden(explicitConfirm) {
     country: loc.country,
     region: loc.region,
     timezone: loc.timezone,
-    source: source === 'geolocation' ? 'geolocation' : 'manual'
+    source: source === 'geolocation' ? 'geolocation' : 'manual',
+    structuralClimate: loc.structuralClimate || null
   });
   setStatus('Imported local location into this Garden (explicit confirm).', 'ok');
   return saved;
@@ -1019,7 +1020,8 @@ async function saveCurrentAppLocationToActiveGarden() {
     country: loc.country,
     region: loc.region,
     timezone: loc.timezone,
-    source: source === 'geolocation' ? 'geolocation' : 'manual'
+    source: source === 'geolocation' ? 'geolocation' : 'manual',
+    structuralClimate: loc.structuralClimate || null
   });
   setStatus('Saved confirmed location to this Garden Profile.', 'ok');
   return saved;

@@ -34,7 +34,12 @@ export function nullServerLocationPayload() {
     location_timezone: null,
     location_source: null,
     location_confirmed_at: null,
-    location_updated_at: null
+    location_updated_at: null,
+    location_structural_climate: null,
+    location_structural_climate_version: null,
+    location_structural_climate_fetched_at: null,
+    location_structural_climate_source: null,
+    location_structural_climate_status: null
   };
 }
 
@@ -69,6 +74,39 @@ export function buildServerLocationPayload(input) {
   const region = String(input?.region || input?.location_region || '').trim() || null;
   const timezone = String(input?.timezone || input?.location_timezone || '').trim() || null;
 
+  const structural =
+    input?.structuralClimate ||
+    input?.location_structural_climate ||
+    null;
+  let structuralFields = {
+    location_structural_climate: null,
+    location_structural_climate_version: null,
+    location_structural_climate_fetched_at: null,
+    location_structural_climate_source: null,
+    location_structural_climate_status: null
+  };
+  if (structural && typeof structural === 'object') {
+    const status = String(structural.status || 'unknown').toLowerCase();
+    structuralFields = {
+      location_structural_climate: structural,
+      location_structural_climate_version: String(
+        structural.authorityVersion || structural.version || '1.0.0'
+      ),
+      location_structural_climate_fetched_at: structural.provenance?.fetchedAt
+        ? String(structural.provenance.fetchedAt)
+        : structural.fetchedAt
+          ? String(structural.fetchedAt)
+          : null,
+      location_structural_climate_source: structural.provenance?.provider
+        ? String(structural.provenance.provider)
+        : structural.source?.provider
+          ? String(structural.source.provider)
+          : null,
+      location_structural_climate_status:
+        status === 'known' || status === 'failed' || status === 'unknown' ? status : 'unknown'
+    };
+  }
+
   return {
     location_label: label,
     location_lat: lat,
@@ -79,7 +117,8 @@ export function buildServerLocationPayload(input) {
     location_timezone: timezone,
     location_source: src,
     location_confirmed_at: now,
-    location_updated_at: updated
+    location_updated_at: updated,
+    ...structuralFields
   };
 }
 
@@ -101,7 +140,7 @@ export function isCompleteServerLocation(row) {
 /** Map a complete server row into setAppLocation partial (existing app contract). */
 export function serverLocationToAppPartial(row) {
   if (!isCompleteServerLocation(row)) return null;
-  return {
+  const partial = {
     label: String(row.location_label).trim(),
     climate: String(row.location_climate).trim(),
     lat: Number(row.location_lat),
@@ -111,6 +150,11 @@ export function serverLocationToAppPartial(row) {
     timezone: String(row.location_timezone || '').trim(),
     source: String(row.location_source).trim()
   };
+  const sc = row.location_structural_climate;
+  if (sc && typeof sc === 'object') {
+    partial.structuralClimate = sc;
+  }
+  return partial;
 }
 
 /**

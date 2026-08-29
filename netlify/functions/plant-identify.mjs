@@ -1,3 +1,9 @@
+import {
+  isPaidPlantIdentifierAllowed,
+  paidPlantIdentifierDisabledResponse,
+  clientCannotOverridePaidPlantIdentifierGate
+} from '../../modules/runtime-guards/paid-plant-identifier-gate-v1.js';
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type, Cache-Control',
@@ -952,6 +958,13 @@ export default async function handler(request) {
     return json(405, { error: 'Method not allowed' });
   }
 
+  // Owner policy: paid Anthropic Identifier DISABLED by default.
+  // Missing / false env → block BEFORE any Anthropic call. Client cannot override.
+  if (!isPaidPlantIdentifierAllowed(process.env)) {
+    const disabled = paidPlantIdentifierDisabledResponse();
+    return json(disabled.status, disabled.body);
+  }
+
   const key =
     process.env.ANTHROPIC_KEY ||
     process.env.ANTHROPIC_API_KEY ||
@@ -970,6 +983,9 @@ export default async function handler(request) {
   } catch {
     return json(400, { error: 'Invalid JSON body.' });
   }
+
+  // Explicitly ignore client override attempts (gate already decided from server env).
+  clientCannotOverridePaidPlantIdentifierGate(body, Object.fromEntries(request.headers || []));
 
   const mode = cleanText(body?.mode).toLowerCase();
   const preferred = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-6';
