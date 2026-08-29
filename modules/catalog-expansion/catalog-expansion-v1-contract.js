@@ -186,6 +186,66 @@ export function validateCatalogExpansionPacket(packet) {
 }
 
 /**
+ * Build botanical provenance records from an expansion packet.
+ * Source-level entries plus claim/field coverage actually present on the packet.
+ * Does not invent sources or claim mappings.
+ */
+export function buildBotanicalProvenanceFromPacket(packet) {
+  if (!packet || typeof packet !== 'object') return [];
+  const identity = packet.identity || {};
+  const sources = Array.isArray(packet.sources) ? packet.sources : [];
+  const claims = Array.isArray(packet.claims) ? packet.claims : [];
+
+  return sources.map((s) => {
+    const sourceId = String(s?.sourceId || '').trim();
+    const assertedForSource = claims.filter(
+      (c) =>
+        c &&
+        c.status === 'asserted' &&
+        Array.isArray(c.sourceIds) &&
+        sourceId &&
+        c.sourceIds.includes(sourceId)
+    );
+    const unknownForSource = claims.filter(
+      (c) =>
+        c &&
+        c.status === 'unknown' &&
+        Array.isArray(c.sourceIds) &&
+        sourceId &&
+        c.sourceIds.includes(sourceId)
+    );
+    return {
+      sourceId,
+      institution: s.institution || null,
+      publisher: s.publisher || s.institution || null,
+      title: s.title || null,
+      url: s.url || null,
+      authorityTier: s.authorityTier || null,
+      verifiedAt: s.verifiedAt || null,
+      plantIdentity: {
+        canonicalSlug: identity.canonicalSlug || null,
+        commonNameEn: identity.commonNameEn || null,
+        acceptedScientificName: identity.acceptedScientificName || null
+      },
+      // Field coverage derived only from packet claims referencing this sourceId.
+      supportsFields: [
+        ...new Set(assertedForSource.map((c) => String(c.field || '').trim()).filter(Boolean))
+      ],
+      assertedClaims: assertedForSource.map((c) => ({
+        claimId: c.claimId || null,
+        field: c.field || null,
+        status: 'asserted'
+      })),
+      unknownClaims: unknownForSource.map((c) => ({
+        claimId: c.claimId || null,
+        field: c.field || null,
+        status: 'unknown'
+      }))
+    };
+  });
+}
+
+/**
  * Materialize a PlantCatalogItem from a validated expansion packet.
  * Does not invent values for unknown/needsReview claims without asserted values.
  */
@@ -278,14 +338,7 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
           imageStatus: IMAGE_PENDING
         };
 
-  const provenanceSummary = (packet.sources || []).map((s) => ({
-    sourceId: s.sourceId,
-    institution: s.institution,
-    title: s.title,
-    url: s.url,
-    authorityTier: s.authorityTier,
-    verifiedAt: s.verifiedAt
-  }));
+  const botanicalProvenance = buildBotanicalProvenanceFromPacket(packet);
 
   const item = {
     schemaVersion: 1,
@@ -301,6 +354,8 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
     care: Object.keys(care).length ? care : undefined,
     climateLabel: climateLabel || undefined,
     climateTraits,
+    // Top-level botanical provenance (distinct from media.provenance).
+    provenance: botanicalProvenance,
     warnings: warnings.length ? warnings : undefined,
     media,
     careSchedule: {
@@ -317,18 +372,20 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
         : {})
     },
     verification: {
-      needsReview: true,
+      needsReview: climateTraits.needsReview === true,
       botanicalVerified: packet.flags?.botanicalVerified === true,
       climateVerified: false,
       reviewNotes: `Ingested via catalog-expansion-v1 packet ${packet.packetId}. Unknown: ${unknownFields.join(', ') || 'none'}. NeedsReview fields: ${needsReviewFields.join(', ') || 'none'}.`
     },
-    qualityTier: 'needs_review',
+    // Only flag needs_review when climateTraits.needsReview is forced (conflicts / Owner flag).
+    // Blind needs_review on every expansion ingest falsely caps Specific Plant outcomes to Borderline.
+    qualityTier: climateTraits.needsReview === true ? 'needs_review' : 'expansion_asserted_v1',
     source: {
       provider: 'catalog-expansion-v1',
       recordId: packet.packetId,
       expansionContractVersion: CATALOG_EXPANSION_CONTRACT_VERSION,
       imageStatus,
-      provenance: provenanceSummary,
+      provenance: botanicalProvenance,
       claimCount: (packet.claims || []).length,
       unknownFields,
       needsReviewFields

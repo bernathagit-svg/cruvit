@@ -4,6 +4,12 @@
   "notes": "Central Plant Identity Registry (Model C: authoritative identity layer; the plant catalog remains the descriptive data layer). Covers every non-conflicted canonical catalog identity: verified alias slugs are collapsed into their canonical entry and verified cross-module keys are bridged. Avocado is a single canonical identity (Persea americana). Strawberry-guava is a single canonical identity (accepted Psidium cattleyanum; scientific synonym Psidium cattleianum); the inline PLANT_LIBRARY still contains two descriptive strawberry-guava rows pending a separate catalog-deduplication task. Remaining same-slug duplicate conflict (mulberry) stays in duplicateConflicts. NOT wired into runtime as authoritative. Nine pilot plantId values are assigned (lavender, lemon, olive, pomegranate, apple, fig, coconut, papaya, japanese-maple); all other canonical identities remain unassigned. Runtime does not consume plantId yet. No plant records were renamed, merged, or deleted in the catalog. Genus-level / 'Various' identities are marked needsReview:true with acceptedScientificName omitted pending editorial review. Entries are ordered by canonicalSlug for stable diffs. Record references captured during the read-only Canonical Identity Audit must be re-verified before any cleanup.",
   "canonicalIdentities": [
     {
+      "canonicalSlug": "acerola",
+      "acceptedScientificName": "Malpighia emarginata",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet acerola-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "agapanthus",
       "needsReview": true,
       "notes": "Genus-level catalog scientific name (Agapanthus spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
@@ -58,9 +64,21 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "bay-laurel",
+      "acceptedScientificName": "Laurus nobilis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet bay-laurel-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "black-eyed-susan-vine",
       "acceptedScientificName": "Thunbergia alata",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "blue-gum",
+      "acceptedScientificName": "Eucalyptus globulus",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet blue-gum-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "blueberry",
@@ -71,6 +89,12 @@
       "canonicalSlug": "bougainvillea",
       "needsReview": true,
       "notes": "Inline catalog scientific is genus-level (Bougainvillea spp.); Garden Design manifest lists species 'Bougainvillea spectabilis'. acceptedScientificName omitted pending editorial reconciliation."
+    },
+    {
+      "canonicalSlug": "breadfruit",
+      "acceptedScientificName": "Artocarpus altilis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet breadfruit-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "cacao",
@@ -85,6 +109,12 @@
       "notes": "Genus-level catalog scientific name (Camellia spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
     },
     {
+      "canonicalSlug": "carob",
+      "acceptedScientificName": "Ceratonia siliqua",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet carob-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "cedar",
       "acceptedScientificName": "Cedrus libani",
       "needsReview": false
@@ -93,6 +123,12 @@
       "canonicalSlug": "cherimoya",
       "acceptedScientificName": "Annona cherimola",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "chinese-wisteria",
+      "acceptedScientificName": "Wisteria sinensis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet chinese-wisteria-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "coconut",
@@ -104,6 +140,24 @@
       "canonicalSlug": "coffee",
       "acceptedScientificName": "Coffea arabica",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "common-lilac",
+      "acceptedScientificName": "Syringa vulgaris",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet common-lilac-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "common-myrtle",
+      "acceptedScientificName": "Myrtus communis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet common-myrtle-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "common-thyme",
+      "acceptedScientificName": "Thymus vulgaris",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet common-thyme-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "cucumber",
@@ -140,9 +194,27 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "durian",
+      "acceptedScientificName": "Durio zibethinus",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet durian-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "eggplant",
       "acceptedScientificName": "Solanum melongena",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "english-walnut",
+      "acceptedScientificName": "Juglans regia",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet english-walnut-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "feijoa",
+      "acceptedScientificName": "Acca sellowiana",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet feijoa-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "ficus-benjamina",
@@ -163,6 +235,24 @@
       "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'fig-tree' is an alias of 'fig' (both Ficus carica)."
     },
     {
+      "canonicalSlug": "forsythia",
+      "acceptedScientificName": "Forsythia × intermedia",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet forsythia-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "garden-peony",
+      "acceptedScientificName": "Paeonia lactiflora",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet garden-peony-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "garden-sage",
+      "acceptedScientificName": "Salvia officinalis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet garden-sage-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "geranium",
       "needsReview": true,
       "notes": "Genus-level catalog scientific name (Pelargonium spp.); species not reliably determined. acceptedScientificName omitted pending editorial review before allocation."
@@ -171,6 +261,18 @@
       "canonicalSlug": "ginger",
       "acceptedScientificName": "Zingiber officinale",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "ginkgo",
+      "acceptedScientificName": "Ginkgo biloba",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet ginkgo-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "gooseberry",
+      "acceptedScientificName": "Ribes uva-crispa",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet gooseberry-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "grapevine",
@@ -193,6 +295,12 @@
       "canonicalSlug": "hydrangea",
       "acceptedScientificName": "Hydrangea macrophylla",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "jaboticaba",
+      "acceptedScientificName": "Plinia cauliflora",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet jaboticaba-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "jackfruit",
@@ -243,6 +351,18 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "longan",
+      "acceptedScientificName": "Dimocarpus longan",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet longan-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "loquat",
+      "acceptedScientificName": "Eriobotrya japonica",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet loquat-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "lychee",
       "acceptedScientificName": "Litchi chinensis",
       "moduleKeys": {
@@ -264,6 +384,12 @@
       },
       "needsReview": false,
       "notes": "Cross-module key mapping. CARE_QUALITY_PROFILES uses 'mango-tree'; the inline PLANT_LIBRARY record uses slug 'mango'. Same species (Mangifera indica). No 'mango-tree' record exists in PLANT_LIBRARY."
+    },
+    {
+      "canonicalSlug": "mangosteen",
+      "acceptedScientificName": "Garcinia mangostana",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet mangosteen-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "melaleuca",
@@ -289,6 +415,12 @@
       "canonicalSlug": "oak-tree",
       "needsReview": true,
       "notes": "Genus-level catalog scientific name (Quercus spp.); species not reliably determined. CARE_QUALITY_PROFILES key 'oak-tree' matches the canonical slug (no module-key bridge needed). acceptedScientificName omitted pending editorial review."
+    },
+    {
+      "canonicalSlug": "oleander",
+      "acceptedScientificName": "Nerium oleander",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet oleander-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "olive",
@@ -349,6 +481,12 @@
       "notes": "Variant slug pair within the inline PLANT_LIBRARY namespace. 'pear-tree' is an alias of 'pear' (both Pyrus communis)."
     },
     {
+      "canonicalSlug": "persimmon",
+      "acceptedScientificName": "Diospyros kaki",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet persimmon-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "pine-tree",
       "needsReview": true,
       "notes": "Genus-level catalog scientific name (Pinus spp.); species not reliably determined. CARE_QUALITY_PROFILES key 'pine-tree' matches the canonical slug (no module-key bridge needed). acceptedScientificName omitted pending editorial review."
@@ -387,6 +525,12 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "quince",
+      "acceptedScientificName": "Cydonia oblonga",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet quince-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "rambutan",
       "acceptedScientificName": "Nephelium lappaceum",
       "needsReview": false
@@ -396,6 +540,12 @@
       "acceptedScientificName": "Rubus idaeus",
       "needsReview": false,
       "notes": "Inline catalog is species-level Rubus idaeus; CARE_QUALITY_PROFILES lists 'Rubus idaeus / Rubus spp.' variant. CARE_QUALITY_PROFILES key 'raspberry' matches the canonical slug (no module-key bridge needed)."
+    },
+    {
+      "canonicalSlug": "red-currant",
+      "acceptedScientificName": "Ribes rubrum",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet red-currant-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "rose",
@@ -408,9 +558,21 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "silver-birch",
+      "acceptedScientificName": "Betula pendula",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet silver-birch-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "snake-plant",
       "acceptedScientificName": "Dracaena trifasciata",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "southern-magnolia",
+      "acceptedScientificName": "Magnolia grandiflora",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet southern-magnolia-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "starfruit",
@@ -459,6 +621,12 @@
       "needsReview": false
     },
     {
+      "canonicalSlug": "sweet-cherry",
+      "acceptedScientificName": "Prunus avium",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet sweet-cherry-bulk-batch-1-v1."
+    },
+    {
       "canonicalSlug": "sweet-pepper",
       "acceptedScientificName": "Capsicum annuum",
       "needsReview": false
@@ -467,6 +635,18 @@
       "canonicalSlug": "tomato",
       "acceptedScientificName": "Solanum lycopersicum",
       "needsReview": false
+    },
+    {
+      "canonicalSlug": "turmeric",
+      "acceptedScientificName": "Curcuma longa",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet turmeric-bulk-batch-1-v1."
+    },
+    {
+      "canonicalSlug": "white-sapote",
+      "acceptedScientificName": "Casimiroa edulis",
+      "needsReview": false,
+      "notes": "Catalog Expansion V1 acceptance ingest from packet white-sapote-bulk-batch-1-v1."
     },
     {
       "canonicalSlug": "zz-plant",

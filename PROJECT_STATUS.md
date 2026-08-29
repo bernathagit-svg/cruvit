@@ -42,7 +42,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - Reproductive Outcome Evidence Gate (Flowering/Fruiting evidence-only; default numeric fit cannot create reproductive outcomes; quality gate PASS).
 - **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`).
 - **CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO`). Live Supabase hardened; Plant Identifier paid AI disabled by default; ordinary runtime must not trigger paid external enrichment; acquire/create once → validate → store → reuse.
-- **AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / READY TO START** (**NOT STARTED** — separate Owner turn).
+- **CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS** (`CRUVIT_BULK_CATALOG_BATCH_1: PASS`). Live `public.catalog_plants`: 30 new canonical plants; 29 verified / 1 needsReview (`blue-gum`); botanical provenance 30/30; IMAGE_READY 30/30; paid API $0.
+- **BULK CATALOG BATCH 2: AUTHORIZED AFTER BATCH 1 CLOSURE** — **NOT STARTED** (separate Owner turn).
 
 ## Partial
 - Plant Doctor — plant **identification** and care recommendations work (`plant-identify.mjs`, plant-identifier module, `visual_analysis`); structured **disease detection / diagnosis** is not yet a real flow.
@@ -95,11 +96,32 @@ Status: **CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO** (`CRUVIT_RUNTIME_COST_PER
 
 **Foundations ready:** canonical catalog persistence; structural climate persistence; Garden Design asset metadata; cost observability events.
 
-**BULK CATALOG EXPANSION: AUTHORIZED / READY TO START** — **NOT STARTED** in this turn.
+### CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS
+Status: **CRUVIT_BULK_CATALOG_BATCH_1: PASS** (Owner live Supabase verification complete).
+
+**Live canonical catalog (`public.catalog_plants`):**
+- Exactly **30** Batch 1 rows persisted
+- Verified: **29** · Needs Review: **1** (`blue-gum` / *Eucalyptus globulus* — invasive/regional risk)
+- Botanical provenance: **30/30** non-empty
+- `source_packet`: **30/30** per-plant packet IDs
+- IMAGE_READY: **30/30**
+- Flowering requirements: **29/30** · Fruiting requirements: **19/30** (missing reproductive evidence remains NULL)
+- Duplicate canonical slugs: **0** · Duplicate scientific identities: **0**
+- Live JSONB round-trip verified (flowering/fruiting string scalars; NULL preserved; provenance array; media provenance separate)
+- Security: anon/authenticated SELECT-only; INSERT/UPDATE/DELETE blocked; Security Advisor **0** lints
+
+**Systemic fixes discovered during Batch 1 (permanent):**
+1. Botanical provenance must survive materialization into `catalog_plants.provenance`
+2. `verified` + empty botanical provenance is forbidden
+3. Flowering/fruiting JSONB prose requires valid JSON serialization (`to_jsonb(text)` / JS string|null)
+4. Per-plant `source_packet` must be preserved (not only batch label)
+5. Runtime paid enrichment remains prohibited (ACQUIRE ONCE → VALIDATE → STORE → REUSE; PAID API = $0 for Batch 1)
+
+**BULK CATALOG BATCH 2: AUTHORIZED AFTER BATCH 1 CLOSURE** — **NOT STARTED** in this turn. Do not begin 100-plant scale until Owner starts Batch 2 explicitly.
 
 **Free operational deps (not paid enrichment):** Open-Meteo / Nominatim / Photon for location/weather — cooldown/cache/reuse; no structural-per-plant.
 
-**Tracked open P3:** IMAGE_READY Wikimedia hotlink paint; Yehiam geocode; empty `catalog_plants` until ingestion; Open-Meteo forecast refresh (free).
+**Tracked open P3:** IMAGE_READY Wikimedia hotlink paint; Yehiam geocode; Open-Meteo forecast refresh (free).
 
 ### CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO
 Status: **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`). Owner-approved final pre-scale quality approval. Do not rerun another broad audit unless a new regression is discovered.
@@ -115,7 +137,7 @@ Status: **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT
 4. Reproductive Outcome Evidence Gate — `REPRODUCTIVE_OUTCOME_EVIDENCE_GATE: PASS`
 5. Full CRUVIT Pre-Scale System Quality Audit re-run after reproductive fix — no open P0 / P1 / material P2
 
-**AUTOMATED BULK CATALOG EXPANSION — AUTHORIZED / NOT STARTED.** Owner may begin bulk ingestion in a separate turn. This closure does **not** ingest hundreds of plants.
+**AUTOMATED BULK CATALOG EXPANSION — BATCH 1 COMPLETE / PASS.** Batch 2 authorized after Batch 1 closure; not started in the final pre-scale foundation turn.
 
 **Final Coconut acceptance (emerged from current authority; not hardcoded):**
 | Location | Overall | Survival | Growth | Flowering | Fruiting |

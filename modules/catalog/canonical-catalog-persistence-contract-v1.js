@@ -19,9 +19,105 @@ export const CATALOG_MEDIA_STATUSES = Object.freeze([
   'IMAGE_OWNER_REVIEW'
 ]);
 
+const ASSERTED_CLIMATE_KEYS = Object.freeze([
+  'frostSensitivity',
+  'coldTolerance',
+  'heatTolerance',
+  'humidityTolerance',
+  'waterNeeds',
+  'sunNeeds',
+  'drainageNeeds',
+  'needsWinterChill'
+]);
+
+/**
+ * Botanical provenance only — never media.provenance / image license trails.
+ * Prefer top-level plant.provenance; fall back to expansion source.provenance.
+ */
+export function extractBotanicalProvenance(plant) {
+  if (!plant || typeof plant !== 'object') return [];
+  if (Array.isArray(plant.provenance) && plant.provenance.length > 0) {
+    return plant.provenance;
+  }
+  if (Array.isArray(plant.climateTraits?.provenance) && plant.climateTraits.provenance.length > 0) {
+    return plant.climateTraits.provenance;
+  }
+  // Expansion materializer historically nested botanical sources here.
+  if (Array.isArray(plant.source?.provenance) && plant.source.provenance.length > 0) {
+    return plant.source.provenance;
+  }
+  return [];
+}
+
+export function plantHasAssertedBotanicalTraits(plant) {
+  if (!plant || typeof plant !== 'object') return false;
+  const ct = plant.climateTraits && typeof plant.climateTraits === 'object' ? plant.climateTraits : {};
+  for (const key of ASSERTED_CLIMATE_KEYS) {
+    if (ct[key] !== undefined && ct[key] !== null && ct[key] !== '') return true;
+  }
+  const flowering = ct.floweringRequirements ?? plant.floweringRequirements;
+  if (flowering !== undefined && flowering !== null && String(flowering).trim() !== '') return true;
+  const fruiting = ct.fruitingRequirements ?? plant.fruitingRequirements;
+  if (fruiting !== undefined && fruiting !== null && String(fruiting).trim() !== '') return true;
+  return false;
+}
+
+export function resolveCatalogSourcePacket(plant, explicitSourcePacket) {
+  // Exact per-plant expansion packet id is authoritative when present.
+  const recordId = plant?.source?.recordId && String(plant.source.recordId).trim();
+  if (recordId) return recordId;
+  if (explicitSourcePacket != null && String(explicitSourcePacket).trim()) {
+    return String(explicitSourcePacket).trim();
+  }
+  if (plant?.sourcePacket && String(plant.sourcePacket).trim()) {
+    return String(plant.sourcePacket).trim();
+  }
+  return null;
+}
+
+/**
+ * Normalize flowering/fruiting for catalog_plants jsonb columns.
+ * Canonical form for prose: JS string (Supabase serializes to JSONB string scalar).
+ * Absent / unknown: null. Never invent objects.
+ */
+export function normalizeCatalogRequirementJsonbValue(value) {
+  if (value === undefined || value === null) return null;
+  if (typeof value === 'string') {
+    const t = value.trim();
+    return t ? value : null;
+  }
+  // Already a structured JSON value from DB round-trip — keep as-is.
+  if (typeof value === 'object') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') return value;
+  return null;
+}
+
+/**
+ * PostgreSQL JSONB literal for Owner SQL upserts into catalog_plants.
+ * Live columns flowering_requirements / fruiting_requirements are jsonb.
+ * Prose must become a JSON string scalar, never a bare SQL text cast to jsonb.
+ *
+ * Preferred for strings: to_jsonb('<escaped>'::text)
+ * NULL when absent.
+ */
+export function sqlJsonbLiteral(value) {
+  if (value === null || value === undefined) return 'NULL';
+  if (typeof value === 'string') {
+    const escaped = value.replace(/'/g, "''");
+    return `to_jsonb('${escaped}'::text)`;
+  }
+  return `'${JSON.stringify(value).replace(/'/g, "''")}'::jsonb`;
+}
+
 /**
  * Map a seed / packet plant object into a catalog_plants row shape.
  * Bounded proof helper — not a bulk migrator.
+ *
+ * Rule: verification_state cannot be `verified` when asserted botanical traits
+ * lack non-empty botanical provenance.
+ *
+ * flowering_requirements / fruiting_requirements are JS string|null so the
+ * Supabase client JSON-encodes them as JSONB string scalars (parity with SQL).
  */
 export function seedPlantToCatalogRow(plant, { catalogVersion = '1.0.0', sourcePacket } = {}) {
   if (!plant || typeof plant !== 'object') {
@@ -32,12 +128,35 @@ export function seedPlantToCatalogRow(plant, { catalogVersion = '1.0.0', sourceP
 
   const media = plant.media && typeof plant.media === 'object' ? plant.media : {};
   const mediaStatus = String(media.imageStatus || 'IMAGE_PENDING');
-  const needsReview = plant.needsReview === true || plant.climateTraits?.needsReview === true;
+  const botanicalProvenance = extractBotanicalProvenance(plant);
+  const hasAsserted = plantHasAssertedBotanicalTraits(plant);
+
+  let needsReview =
+    plant.needsReview === true ||
+    plant.climateTraits?.needsReview === true ||
+    plant.verification?.needsReview === true ||
+    String(plant.qualityTier || '').toLowerCase() === 'needs_review';
+
+  // Asserted botanical facts without traceable botanical provenance cannot be verified.
+  if (hasAsserted && botanicalProvenance.length === 0) {
+    needsReview = true;
+  }
+
   let verificationState = 'needsReview';
-  if (plant.verificationState && CATALOG_VERIFICATION_STATES.includes(plant.verificationState)) {
+  if (needsReview) {
+    verificationState = 'needsReview';
+  } else if (plant.verificationState && CATALOG_VERIFICATION_STATES.includes(plant.verificationState)) {
     verificationState = plant.verificationState;
-  } else if (!needsReview) {
+  } else if (hasAsserted && botanicalProvenance.length > 0) {
     verificationState = 'verified';
+  } else {
+    verificationState = 'needsReview';
+  }
+
+  // Hard gate: never emit verified + empty botanical provenance.
+  if (verificationState === 'verified' && botanicalProvenance.length === 0) {
+    verificationState = 'needsReview';
+    needsReview = true;
   }
 
   return {
@@ -46,21 +165,19 @@ export function seedPlantToCatalogRow(plant, { catalogVersion = '1.0.0', sourceP
     common_names: plant.names && typeof plant.names === 'object' ? plant.names : {},
     aliases: Array.isArray(plant.aliases) ? plant.aliases : [],
     climate_traits: plant.climateTraits && typeof plant.climateTraits === 'object' ? plant.climateTraits : {},
-    flowering_requirements:
-      plant.climateTraits?.floweringRequirements ?? plant.floweringRequirements ?? null,
-    fruiting_requirements:
-      plant.climateTraits?.fruitingRequirements ?? plant.fruitingRequirements ?? null,
-    provenance: Array.isArray(plant.provenance)
-      ? plant.provenance
-      : Array.isArray(plant.climateTraits?.provenance)
-        ? plant.climateTraits.provenance
-        : [],
+    flowering_requirements: normalizeCatalogRequirementJsonbValue(
+      plant.climateTraits?.floweringRequirements ?? plant.floweringRequirements ?? null
+    ),
+    fruiting_requirements: normalizeCatalogRequirementJsonbValue(
+      plant.climateTraits?.fruitingRequirements ?? plant.fruitingRequirements ?? null
+    ),
+    provenance: botanicalProvenance,
     needs_review: !!needsReview,
     verification_state: verificationState,
     media,
     media_status: CATALOG_MEDIA_STATUSES.includes(mediaStatus) ? mediaStatus : 'IMAGE_PENDING',
     catalog_version: String(catalogVersion),
-    source_packet: sourcePacket ? String(sourcePacket) : null
+    source_packet: resolveCatalogSourcePacket(plant, sourcePacket)
   };
 }
 
@@ -81,14 +198,15 @@ export function catalogRowToRuntimePlant(row) {
     climateTraits,
     floweringRequirements: row.flowering_requirements ?? climateTraits.floweringRequirements,
     fruitingRequirements: row.fruiting_requirements ?? climateTraits.fruitingRequirements,
-    provenance: row.provenance || [],
+    provenance: Array.isArray(row.provenance) ? row.provenance : extractBotanicalProvenance(row),
     needsReview: row.needs_review === true || climateTraits.needsReview === true,
     verificationState: row.verification_state || 'needsReview',
     media,
     catalogMedia: media,
     mediaStatus: row.media_status || media.imageStatus || 'IMAGE_PENDING',
     catalogVersion: row.catalog_version || CANONICAL_CATALOG_PERSISTENCE_VERSION,
-    source: 'canonical-catalog'
+    source: 'canonical-catalog',
+    sourcePacket: row.source_packet || null
   };
 }
 
