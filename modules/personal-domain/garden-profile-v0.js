@@ -1,6 +1,6 @@
 /**
- * CRUVIT Personal Domain V0 + Location V1 + Plants V1 —
- * Supabase Auth + owned Garden Profile(s) + confirmed location + owned plants.
+ * CRUVIT Personal Domain V0 + Location V1 + Plants V1 + Tasks V1 —
+ * Supabase Auth + owned Garden Profile(s) + confirmed location + owned plants + owned tasks.
  * Browser-safe anon/publishable key only. Authorization enforced by Postgres RLS.
  * Legacy localStorage is never silently uploaded to the server.
  */
@@ -21,6 +21,12 @@ import {
   serverPlantToAppPlant,
   shouldAcceptPlantHydration
 } from './garden-profile-plants-contract.js';
+import {
+  buildServerTaskPayload,
+  mayWriteLegacyLocalTasksToServer,
+  serverTaskToAppTask,
+  shouldAcceptTaskHydration
+} from './garden-profile-tasks-contract.js';
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';
@@ -31,6 +37,9 @@ const GARDEN_SELECT =
 const PLANT_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,name,status,mark,source,profile_slug,scientific,archived,prefs,added_at,created_at,updated_at';
 
+const TASK_SELECT =
+  'id,garden_profile_id,user_id,client_instance_id,garden_plant_id,icon,title,when_label,priority,due_on,auto_generated,plant_name,done,created_at,updated_at';
+
 /** @type {import('@supabase/supabase-js').SupabaseClient | null} */
 let supabase = null;
 /** @type {import('@supabase/supabase-js').Session | null} */
@@ -39,8 +48,13 @@ let currentSession = null;
 let ownedGardensCache = [];
 let hydrateSeq = 0;
 let plantHydrateSeq = 0;
+let taskHydrateSeq = 0;
 /** @type {boolean} */
 let serverPlantsAuthoritative = false;
+/** @type {boolean} */
+let serverTasksAuthoritative = false;
+/** @type {Map<string, string>} client plant id → server plant uuid for active garden */
+let plantClientToServerId = new Map();
 
 function setStatus(text, kind) {
   const el = document.getElementById('pdV0Status');
@@ -116,8 +130,17 @@ function clearAuthenticatedHydratedLocation() {
 
 function clearAuthenticatedHydratedPlants() {
   serverPlantsAuthoritative = false;
+  plantClientToServerId = new Map();
   if (typeof window.releaseAuthenticatedPlantsHydration === 'function') {
     window.releaseAuthenticatedPlantsHydration();
+    return;
+  }
+}
+
+function clearAuthenticatedHydratedTasks() {
+  serverTasksAuthoritative = false;
+  if (typeof window.releaseAuthenticatedTasksHydration === 'function') {
+    window.releaseAuthenticatedTasksHydration();
     return;
   }
 }
@@ -134,8 +157,16 @@ function suspendHydrationForGardenWithoutServerLocation() {
 
 function suspendAuthenticatedPlantsInMemory() {
   serverPlantsAuthoritative = false;
+  plantClientToServerId = new Map();
   if (typeof window.suspendAuthenticatedPlantsHydrationInMemory === 'function') {
     window.suspendAuthenticatedPlantsHydrationInMemory();
+  }
+}
+
+function suspendAuthenticatedTasksInMemory() {
+  serverTasksAuthoritative = false;
+  if (typeof window.suspendAuthenticatedTasksHydrationInMemory === 'function') {
+    window.suspendAuthenticatedTasksHydrationInMemory();
   }
 }
 
@@ -145,6 +176,9 @@ function captureLocalSnapshotIfNeeded() {
   }
   if (typeof window.captureLocalGardenPlantsSnapshotBeforeAuthHydrate === 'function') {
     window.captureLocalGardenPlantsSnapshotBeforeAuthHydrate();
+  }
+  if (typeof window.captureLocalGardenTasksSnapshotBeforeAuthHydrate === 'function') {
+    window.captureLocalGardenTasksSnapshotBeforeAuthHydrate();
   }
 }
 
@@ -174,6 +208,7 @@ async function ensureClient() {
       renderGardenProfileList([]);
       clearAuthenticatedHydratedLocation();
       clearAuthenticatedHydratedPlants();
+      clearAuthenticatedHydratedTasks();
     }
   });
   return supabase;
@@ -232,6 +267,7 @@ function renderGardenProfileList(rows) {
   const list = document.getElementById('pdV0GardenList');
   const importPanel = document.getElementById('pdV0LegacyImport');
   const plantImportPanel = document.getElementById('pdV0LegacyPlantImport');
+  const taskImportPanel = document.getElementById('pdV0LegacyTaskImport');
   if (!list) return;
   const activeId = getActiveGardenId();
   if (!rows?.length) {
@@ -275,6 +311,25 @@ function renderGardenProfileList(rows) {
     // Show when an active garden exists and browser still has legacy local plants to import.
     plantImportPanel.hidden = !(active && hasLegacyLocalPlants());
   }
+  if (taskImportPanel) {
+    const active = rows.find((r) => activeId && String(r.id) === String(activeId));
+    taskImportPanel.hidden = !(active && hasLegacyLocalTasks());
+  }
+}
+
+function hasLegacyLocalTasks() {
+  try {
+    if (typeof window.hasPreAuthTasksSnapshot === 'function') {
+      return window.hasPreAuthTasksSnapshot() === true;
+    }
+    if (typeof window.getActiveMyGardenTasksForSync === 'function') {
+      const tasks = window.getActiveMyGardenTasksForSync();
+      return Array.isArray(tasks) && tasks.length > 0 && !serverTasksAuthoritative;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
 }
 
 async function listPlantsForGarden(gardenProfileId) {
@@ -324,10 +379,93 @@ async function hydrateActiveGardenPlants(gardenRow) {
     return false;
   }
   const plants = rows.map(serverPlantToAppPlant).filter(Boolean);
+  plantClientToServerId = new Map();
+  rows.forEach((r) => {
+    const cid = String(r.client_instance_id || '').trim();
+    if (cid && r.id) plantClientToServerId.set(cid, r.id);
+  });
   if (typeof window.applyAuthenticatedGardenPlants === 'function') {
     window.applyAuthenticatedGardenPlants(plants, { authoritative: true });
   }
   serverPlantsAuthoritative = true;
+  return true;
+}
+
+async function listTasksForGarden(gardenProfileId) {
+  if (!supabase || !currentSession?.user) return [];
+  const gardenId = String(gardenProfileId || '').trim();
+  if (!gardenId) return [];
+  const { data, error } = await supabase
+    .from('garden_tasks')
+    .select(TASK_SELECT)
+    .eq('garden_profile_id', gardenId)
+    .order('due_on', { ascending: true, nullsFirst: false });
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+}
+
+function resolveGardenPlantIdForTask(task) {
+  if (task?.gardenPlantId || task?.garden_plant_id) {
+    return String(task.gardenPlantId || task.garden_plant_id).trim() || null;
+  }
+  const plantName = String(Array.isArray(task) ? task[6] || '' : task?.plantName || '').trim();
+  if (!plantName || plantName.startsWith('__weather:')) return null;
+  try {
+    const plants =
+      typeof window.getActiveMyGardenPlantsForSync === 'function'
+        ? window.getActiveMyGardenPlantsForSync()
+        : [];
+    const match = (plants || []).find(
+      (p) => String(p?.name || '').trim().toLowerCase() === plantName.toLowerCase()
+    );
+    if (!match) return null;
+    if (match.serverId) return String(match.serverId);
+    const cid = String(match.id || '').trim();
+    if (cid && plantClientToServerId.has(cid)) return plantClientToServerId.get(cid);
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+async function hydrateActiveGardenTasks(gardenRow) {
+  const requestUserId = currentSession?.user?.id;
+  const requestGardenId = gardenRow?.id;
+  const seq = ++taskHydrateSeq;
+  if (!requestGardenId) {
+    suspendAuthenticatedTasksInMemory();
+    return false;
+  }
+  if (
+    !shouldAcceptTaskHydration(
+      requestUserId,
+      requestGardenId,
+      currentSession,
+      getActiveGardenId()
+    )
+  ) {
+    return false;
+  }
+  if (typeof window.captureLocalGardenTasksSnapshotBeforeAuthHydrate === 'function') {
+    window.captureLocalGardenTasksSnapshotBeforeAuthHydrate();
+  }
+  const rows = await listTasksForGarden(requestGardenId);
+  if (seq !== taskHydrateSeq) return false;
+  if (
+    !shouldAcceptTaskHydration(
+      requestUserId,
+      requestGardenId,
+      currentSession,
+      getActiveGardenId()
+    )
+  ) {
+    return false;
+  }
+  const tasks = rows.map(serverTaskToAppTask).filter(Boolean);
+  if (typeof window.applyAuthenticatedGardenTasks === 'function') {
+    window.applyAuthenticatedGardenTasks(tasks, { authoritative: true });
+  }
+  serverTasksAuthoritative = true;
   return true;
 }
 
@@ -409,12 +547,14 @@ async function refreshOwnedGardenProfiles() {
     if (garden) {
       await hydrateActiveGardenLocation(garden);
       await hydrateActiveGardenPlants(garden);
+      await hydrateActiveGardenTasks(garden);
     }
   } else if (rows.length !== 1) {
     // No active garden (0 gardens, or many with no explicit selection):
     // untrust in-memory only — do NOT release/consume the pre-auth local snapshot.
     suspendHydrationForGardenWithoutServerLocation();
     suspendAuthenticatedPlantsInMemory();
+    suspendAuthenticatedTasksInMemory();
   }
   return rows;
 }
@@ -427,8 +567,9 @@ async function selectActiveGarden(gardenId) {
   renderGardenProfileList(ownedGardensCache);
   const okLoc = await hydrateActiveGardenLocation(row);
   const okPlants = await hydrateActiveGardenPlants(row);
+  const okTasks = await hydrateActiveGardenTasks(row);
   setStatus(
-    okLoc || okPlants
+    okLoc || okPlants || okTasks
       ? `Opened garden "${row.name}" and hydrated server garden data.`
       : `Opened garden "${row.name}". No confirmed server location yet.`,
     'ok'
@@ -485,9 +626,11 @@ async function signUpWithPassword() {
 async function signOut() {
   hydrateSeq += 1;
   plantHydrateSeq += 1;
-  // Restore pre-auth local location/plants once; do not clear snapshot before release.
+  taskHydrateSeq += 1;
+  // Restore pre-auth local location/plants/tasks once; do not clear snapshot before release.
   clearAuthenticatedHydratedLocation();
   clearAuthenticatedHydratedPlants();
+  clearAuthenticatedHydratedTasks();
   ownedGardensCache = [];
   setStoredActiveGardenId('');
   if (!supabase) {
@@ -631,6 +774,11 @@ async function syncActiveGardenPlantsFromLocal(plantsInput) {
     if (error) throw error;
   }
   serverPlantsAuthoritative = true;
+  plantClientToServerId = new Map();
+  saved.forEach((r) => {
+    const cid = String(r.client_instance_id || '').trim();
+    if (cid && r.id) plantClientToServerId.set(cid, r.id);
+  });
   return saved;
 }
 
@@ -657,6 +805,112 @@ async function importLegacyLocalPlantsToActiveGarden(explicitUserConfirm) {
 
 function isServerPlantsAuthoritative() {
   return serverPlantsAuthoritative === true && !!currentSession?.user && !!getActiveGardenId();
+}
+
+function isServerTasksAuthoritative() {
+  return serverTasksAuthoritative === true && !!currentSession?.user && !!getActiveGardenId();
+}
+
+async function upsertTaskOnActiveGarden(task) {
+  const gardenId = requireActiveOwnedGardenId();
+  const gardenPlantId = resolveGardenPlantIdForTask(task);
+  const payload = buildServerTaskPayload(task, { gardenPlantId });
+  const row = {
+    ...payload,
+    garden_profile_id: gardenId,
+    user_id: currentSession.user.id
+  };
+  const { data, error } = await supabase
+    .from('garden_tasks')
+    .upsert(row, { onConflict: 'garden_profile_id,client_instance_id' })
+    .select(TASK_SELECT)
+    .single();
+  if (error) throw error;
+  serverTasksAuthoritative = true;
+  return data;
+}
+
+async function deleteTaskOnActiveGarden(clientInstanceId) {
+  const gardenId = requireActiveOwnedGardenId();
+  const id = String(clientInstanceId || '').trim();
+  if (!id) throw new Error('client_instance_id is required');
+  const { error } = await supabase
+    .from('garden_tasks')
+    .delete()
+    .eq('garden_profile_id', gardenId)
+    .eq('client_instance_id', id);
+  if (error) throw error;
+  return true;
+}
+
+async function syncActiveGardenTasksFromLocal(tasksInput) {
+  const gardenId = requireActiveOwnedGardenId();
+  const localTasks = Array.isArray(tasksInput)
+    ? tasksInput
+    : typeof window.getActiveMyGardenTasksForSync === 'function'
+      ? window.getActiveMyGardenTasksForSync()
+      : [];
+  // Refresh plant id map so plant FK resolution stays current.
+  try {
+    const plantRows = await listPlantsForGarden(gardenId);
+    plantClientToServerId = new Map();
+    plantRows.forEach((r) => {
+      const cid = String(r.client_instance_id || '').trim();
+      if (cid && r.id) plantClientToServerId.set(cid, r.id);
+    });
+  } catch {
+    /* plant map optional for weather / name-only tasks */
+  }
+  const serverRows = await listTasksForGarden(gardenId);
+  const localIds = new Set();
+  const saved = [];
+  for (const task of localTasks) {
+    const gardenPlantId = resolveGardenPlantIdForTask(task);
+    const payload = buildServerTaskPayload(task, { gardenPlantId });
+    localIds.add(payload.client_instance_id);
+    const { data, error } = await supabase
+      .from('garden_tasks')
+      .upsert(
+        {
+          ...payload,
+          garden_profile_id: gardenId,
+          user_id: currentSession.user.id
+        },
+        { onConflict: 'garden_profile_id,client_instance_id' }
+      )
+      .select(TASK_SELECT)
+      .single();
+    if (error) throw error;
+    saved.push(data);
+  }
+  const stale = serverRows.filter((r) => !localIds.has(String(r.client_instance_id || '')));
+  for (const row of stale) {
+    const { error } = await supabase.from('garden_tasks').delete().eq('id', row.id);
+    if (error) throw error;
+  }
+  serverTasksAuthoritative = true;
+  return saved;
+}
+
+async function importLegacyLocalTasksToActiveGarden(explicitUserConfirm) {
+  if (!mayWriteLegacyLocalTasksToServer(explicitUserConfirm)) {
+    throw new Error('Legacy local tasks import requires explicit user confirmation.');
+  }
+  requireActiveOwnedGardenId();
+  const tasks =
+    typeof window.getLegacyLocalGardenTasksSnapshot === 'function'
+      ? window.getLegacyLocalGardenTasksSnapshot()
+      : typeof window.getActiveMyGardenTasksForSync === 'function'
+        ? window.getActiveMyGardenTasksForSync()
+        : [];
+  if (!Array.isArray(tasks) || !tasks.length) {
+    throw new Error('No local tasks available to import.');
+  }
+  const saved = await syncActiveGardenTasksFromLocal(tasks);
+  await hydrateActiveGardenTasks({ id: getActiveGardenId() });
+  setStatus(`Imported ${saved.length} local task(s) into this Garden.`, 'ok');
+  renderGardenProfileList(ownedGardensCache);
+  return saved;
 }
 
 async function saveConfirmedLocationToActiveGarden(locationInput) {
@@ -785,6 +1039,11 @@ function wirePersonalDomainUi() {
       setStatus(err.message || 'Plant import failed.', 'error');
     });
   });
+  document.getElementById('pdV0ImportLegacyTasksBtn')?.addEventListener('click', () => {
+    importLegacyLocalTasksToActiveGarden(true).catch((err) => {
+      setStatus(err.message || 'Task import failed.', 'error');
+    });
+  });
   document.getElementById('pdV0SaveAppLocationBtn')?.addEventListener('click', () => {
     saveCurrentAppLocationToActiveGarden().catch((err) => {
       setStatus(err.message || 'Save location failed.', 'error');
@@ -833,6 +1092,18 @@ window.cruvitPersonalDomainV0 = {
     return hydrateActiveGardenPlants(garden);
   },
   isServerPlantsAuthoritative,
+  upsertTaskOnActiveGarden,
+  deleteTaskOnActiveGarden,
+  syncActiveGardenTasksFromLocal,
+  importLegacyLocalTasksToActiveGarden,
+  listTasksForActiveGarden: async () => listTasksForGarden(getActiveGardenId()),
+  hydrateActiveGardenTasks: async () => {
+    const id = getActiveGardenId();
+    const garden = ownedGardensCache.find((r) => String(r.id) === String(id));
+    if (!garden) return false;
+    return hydrateActiveGardenTasks(garden);
+  },
+  isServerTasksAuthoritative,
   getSupabaseClient: () => supabase,
   getSession: () => currentSession,
   getOwnedGardensCache: () => ownedGardensCache.slice()

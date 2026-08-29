@@ -520,7 +520,7 @@
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
     <p class="pd-v0-kicker">Personal domain V0</p>
     <h2 id="pdV0Title">Garden Profile account</h2>
-    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location and plants can be saved to a Garden only after explicit confirmation. Legacy My Garden tasks are not migrated in this checkpoint.</p>
+    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location, plants, and tasks can be saved to a Garden only after explicit confirmation. Legacy My Garden events are not migrated in this checkpoint.</p>
     <div id="pdV0SignedOut">
       <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
       <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
@@ -554,6 +554,10 @@
         <div id="pdV0LegacyPlantImport" class="pd-v0-legacy" hidden>
           <p class="pd-v0-hint">This browser has local My Garden plants. They are not uploaded until you confirm.</p>
           <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyPlantsBtn">Add existing local plants to this Garden</button>
+        </div>
+        <div id="pdV0LegacyTaskImport" class="pd-v0-legacy" hidden>
+          <p class="pd-v0-hint">This browser has local My Garden tasks. They are not uploaded until you confirm.</p>
+          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyTasksBtn">Add existing local tasks to this Garden</button>
         </div>
       </div>
     </div>
@@ -1462,19 +1466,41 @@ function isLocalCruvitPreview(){
 const OPENAI_READY={enabled:true,get endpoint(){return netlifyFunctionUrl('/.netlify/functions/plant-knowledge')},note:'OpenAI is called only through the server-side Netlify function. Never place the API key in this browser file.'};
 
 const TASK_DONE_IDX=7;
+const TASK_CLIENT_ID_IDX=8;
+function ensureMyGardenTaskClientId(row){
+  if(!row||typeof row!=='object') return '';
+  while(row.length<=TASK_CLIENT_ID_IDX) row.push(undefined);
+  const existing=String(row[TASK_CLIENT_ID_IDX]||row.id||row.client_instance_id||'').trim();
+  if(existing){row[TASK_CLIENT_ID_IDX]=existing;row.id=existing;return existing}
+  const id=`task_${Date.now()}_${Math.random().toString(36).slice(2,10)}`;
+  row[TASK_CLIENT_ID_IDX]=id;
+  row.id=id;
+  return id;
+}
 function normalizeTaskRow(t){
-  if(!t) return ['🌿','Garden care','This week','Low','',false,'',false];
+  if(!t){
+    const empty=['🌿','Garden care','This week','Low','',false,'',false,''];
+    ensureMyGardenTaskClientId(empty);
+    return empty;
+  }
   let row;
   if(Array.isArray(t)){
     row=t.slice();
+    if(t.id) row.id=t.id;
+    if(t.serverId) row.serverId=t.serverId;
+    if(t.gardenPlantId) row.gardenPlantId=t.gardenPlantId;
     if(t.done===true) row[TASK_DONE_IDX]=true;
   }else if(typeof t==='object'){
-    row=[t.icon||t[0]||'🌿',t.title||t.name||t[1]||'Garden care',t.when||t.date||t[2]||'This week',t.priority||t[3]||'Low',t.iso||t[4]||'',t.auto??t[5]??false,t.plantName||t[6]||'',!!t.done];
+    row=[t.icon||t[0]||'🌿',t.title||t.name||t[1]||'Garden care',t.when||t.date||t[2]||'This week',t.priority||t[3]||'Low',t.iso||t[4]||'',t.auto??t[5]??false,t.plantName||t[6]||'',!!t.done,t.id||t.client_instance_id||t[8]||''];
+    if(t.id) row.id=t.id;
+    if(t.serverId) row.serverId=t.serverId;
+    if(t.gardenPlantId||t.garden_plant_id) row.gardenPlantId=t.gardenPlantId||t.garden_plant_id;
   }else{
-    row=[String(t),'Garden care','This week','Low','',false,'',false];
+    row=[String(t),'Garden care','This week','Low','',false,'',false,''];
   }
-  while(row.length<=TASK_DONE_IDX) row.push(undefined);
+  while(row.length<=TASK_CLIENT_ID_IDX) row.push(undefined);
   row[TASK_DONE_IDX]=!!row[TASK_DONE_IDX];
+  ensureMyGardenTaskClientId(row);
   return row;
 }
 function taskDone(t){return !!normalizeTaskRow(t)[TASK_DONE_IDX]}
@@ -2388,6 +2414,23 @@ function finalizePlantListChange(){
       });
     }
   }catch(e){console.warn('Server plant sync hook failed',e)}
+  try{finalizeTaskListChange()}catch(e){console.warn('Server task sync after plant change failed',e)}
+}
+
+function finalizeTaskListChange(){
+  try{
+    if(Array.isArray(data.tasks)) data.tasks=data.tasks.map(normalizeTaskRow);
+  }catch(_){}
+  try{service.save(data)}catch(_){}
+  try{
+    const pd=window.cruvitPersonalDomainV0;
+    if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()
+      &&typeof pd.syncActiveGardenTasksFromLocal==='function'){
+      pd.syncActiveGardenTasksFromLocal(data.tasks).catch((err)=>{
+        console.warn('Server task sync failed',err&&err.message?err.message:err);
+      });
+    }
+  }catch(e){console.warn('Server task sync hook failed',e)}
 }
 function toggleAllTasks(){showAllTasks=!showAllTasks;render()}
 function openCareCalendar(){showAllTasks=false;setTab('timeline')}
@@ -3016,6 +3059,7 @@ function addAutoCareTask(ref,title,offset,note,icon){
   if(taskExistsForPlantAt(title,plantName,iso))return false;
   const priority=autoTaskPriority(title,ref);
   data.tasks.push([icon||ref.icon||'🌿',title,taskDueText(iso,note||'auto-generated care task'),priority,iso,true,plantName,false]);
+  data.tasks[data.tasks.length-1]=normalizeTaskRow(data.tasks[data.tasks.length-1]);
   if(!/6-month plan/i.test(String(note||''))){
     data.events.unshift([labelFromIso(iso),'Care task created',`${title} · ${plantName}`]);
   }
@@ -3907,6 +3951,148 @@ try{
   window.hasPreAuthPlantsSnapshot=hasPreAuthPlantsSnapshot;
 }catch(_){}
 
+/** Snapshot of browser-local My Garden tasks taken before server task hydrate (auth session). */
+const PRE_AUTH_TASKS_SNAPSHOT_KEY='cruvit_pd_v1_pre_auth_tasks_snapshot';
+let __cruvitLocalTasksSnapshotBeforeAuthHydrate=null;
+
+function readPreAuthTasksSnapshot(){
+  if(__cruvitLocalTasksSnapshotBeforeAuthHydrate) return __cruvitLocalTasksSnapshotBeforeAuthHydrate;
+  try{
+    const raw=sessionStorage.getItem(PRE_AUTH_TASKS_SNAPSHOT_KEY);
+    if(!raw) return null;
+    __cruvitLocalTasksSnapshotBeforeAuthHydrate=JSON.parse(raw);
+    return __cruvitLocalTasksSnapshotBeforeAuthHydrate;
+  }catch(_){
+    return null;
+  }
+}
+
+function writePreAuthTasksSnapshot(snap){
+  __cruvitLocalTasksSnapshotBeforeAuthHydrate=snap;
+  try{
+    if(snap) sessionStorage.setItem(PRE_AUTH_TASKS_SNAPSHOT_KEY,JSON.stringify(snap));
+    else sessionStorage.removeItem(PRE_AUTH_TASKS_SNAPSHOT_KEY);
+  }catch(_){}
+}
+
+function cloneTasksForSnapshot(tasks){
+  try{
+    return JSON.parse(JSON.stringify(Array.isArray(tasks)?tasks:[]));
+  }catch(_){
+    return [];
+  }
+}
+
+function readPersistedTasksForSnapshot(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(service.key)||'null');
+    if(!saved||!Array.isArray(saved.tasks)) return null;
+    return {tasks:cloneTasksForSnapshot(saved.tasks)};
+  }catch(_){
+    return null;
+  }
+}
+
+function captureLocalGardenTasksSnapshotBeforeAuthHydrate(){
+  const existing=readPreAuthTasksSnapshot();
+  if(existing&&Array.isArray(existing.tasks)) return existing;
+  let snap=null;
+  if(Array.isArray(data.tasks)&&data.tasks.length){
+    snap={tasks:cloneTasksForSnapshot(data.tasks)};
+  }else{
+    snap=readPersistedTasksForSnapshot();
+  }
+  if(!snap||!Array.isArray(snap.tasks)) return existing||null;
+  writePreAuthTasksSnapshot(snap);
+  return snap;
+}
+
+function clearLocalGardenTasksSnapshotBeforeAuthHydrate(){
+  writePreAuthTasksSnapshot(null);
+}
+
+function suspendAuthenticatedTasksHydrationInMemory(){
+  data.tasks=[];
+  // Intentionally no service.save — do not destroy legacy localStorage tasks.
+  try{render()}catch(_){}
+}
+
+function releaseAuthenticatedTasksHydration(){
+  const snap=readPreAuthTasksSnapshot();
+  clearLocalGardenTasksSnapshotBeforeAuthHydrate();
+  if(snap&&Array.isArray(snap.tasks)){
+    data.tasks=cloneTasksForSnapshot(snap.tasks);
+    try{if(typeof normalizeGardenDataShape==='function')normalizeGardenDataShape()}catch(_){}
+    try{data.tasks=(data.tasks||[]).map(normalizeTaskRow)}catch(_){}
+    try{service.save(data)}catch(_){}
+    try{render()}catch(_){}
+    return 'restore-snapshot';
+  }
+  try{render()}catch(_){}
+  return 'noop-preserve-local';
+}
+
+function applyAuthenticatedGardenTasks(tasks,options){
+  const list=Array.isArray(tasks)?tasks:[];
+  data.tasks=list.map((t)=>{
+    const normalized=normalizeTaskRow(t);
+    // Authoritative instance fields must win (no catalog/care template overwrite).
+    const instanceIcon=normalized[0];
+    const instanceTitle=normalized[1];
+    const instanceWhen=normalized[2];
+    const instancePriority=normalized[3];
+    const instanceIso=normalized[4];
+    const instanceAuto=normalized[5];
+    const instancePlant=normalized[6];
+    const instanceDone=normalized[TASK_DONE_IDX];
+    const instanceId=normalized[TASK_CLIENT_ID_IDX]||normalized.id;
+    normalized[0]=instanceIcon;
+    normalized[1]=instanceTitle;
+    normalized[2]=instanceWhen;
+    normalized[3]=instancePriority;
+    normalized[4]=instanceIso;
+    normalized[5]=instanceAuto;
+    normalized[6]=instancePlant;
+    normalized[TASK_DONE_IDX]=instanceDone;
+    if(instanceId){
+      normalized[TASK_CLIENT_ID_IDX]=instanceId;
+      normalized.id=instanceId;
+    }
+    return normalized;
+  });
+  if(options&&options.authoritative){
+    try{service.save(data)}catch(_){}
+  }
+  try{syncHealthScore()}catch(_){}
+  try{render()}catch(_){}
+}
+
+function getActiveMyGardenTasksForSync(){
+  return Array.isArray(data.tasks)?data.tasks.map(normalizeTaskRow):[];
+}
+
+function getLegacyLocalGardenTasksSnapshot(){
+  const snap=readPreAuthTasksSnapshot();
+  if(snap&&Array.isArray(snap.tasks)&&snap.tasks.length) return cloneTasksForSnapshot(snap.tasks);
+  return [];
+}
+
+function hasPreAuthTasksSnapshot(){
+  const snap=readPreAuthTasksSnapshot();
+  return !!(snap&&Array.isArray(snap.tasks)&&snap.tasks.length);
+}
+
+try{
+  window.captureLocalGardenTasksSnapshotBeforeAuthHydrate=captureLocalGardenTasksSnapshotBeforeAuthHydrate;
+  window.releaseAuthenticatedTasksHydration=releaseAuthenticatedTasksHydration;
+  window.suspendAuthenticatedTasksHydrationInMemory=suspendAuthenticatedTasksHydrationInMemory;
+  window.clearLocalGardenTasksSnapshotBeforeAuthHydrate=clearLocalGardenTasksSnapshotBeforeAuthHydrate;
+  window.applyAuthenticatedGardenTasks=applyAuthenticatedGardenTasks;
+  window.getActiveMyGardenTasksForSync=getActiveMyGardenTasksForSync;
+  window.getLegacyLocalGardenTasksSnapshot=getLegacyLocalGardenTasksSnapshot;
+  window.hasPreAuthTasksSnapshot=hasPreAuthTasksSnapshot;
+}catch(_){}
+
 async function resolveAppLocation(rawInput){
   const q=String(rawInput||'').trim();
   if(!q) return null;
@@ -4104,6 +4290,7 @@ function addWeatherCareTask(title,type,priority,offsetDays,note){
   if(hasOpenWeatherTask(type)) return false;
   const iso=isoFromOffset(offsetDays);
   data.tasks.push(['🌡️',title,taskDueText(iso,note||'weather-adjusted care'),priority||'High',iso,true,key,false]);
+  data.tasks[data.tasks.length-1]=normalizeTaskRow(data.tasks[data.tasks.length-1]);
   data.events.unshift(['Today','Weather task created',title]);
   return true;
 }
@@ -4122,34 +4309,45 @@ function syncWeatherCareTasks(){
   const w=data.weather;
   if(!w||!Array.isArray(w.alerts)) return;
   const plants=(data.plants||[]).filter(p=>!p.archived);
+  let changed=false;
   if(w.alerts.includes('heat-wave')||w.alerts.includes('dry-heat')||Number(w.forecastPeak)>=34){
-    addWeatherCareTask('Deep water pots and heat-sensitive plants before hot days','heat-wave','High',0,'heat wave expected · water deeply tonight');
+    if(addWeatherCareTask('Deep water pots and heat-sensitive plants before hot days','heat-wave','High',0,'heat wave expected · water deeply tonight'))changed=true;
     plants.filter(isHeatSensitivePlant).slice(0,2).forEach(p=>{
       if(!taskTitleExists(`Extra water ${p.name} before heat`,p.name)){
-        addAutoCareTask(p,`Extra water ${p.name} before heat`,0,'weather-adjusted · heat wave expected','☀️');
+        if(addAutoCareTask(p,`Extra water ${p.name} before heat`,0,'weather-adjusted · heat wave expected','☀️'))changed=true;
       }
     });
   }
   if(w.alerts.includes('cold-snap')||w.alerts.includes('frost')||Number(w.forecastLow)<=3){
-    addWeatherCareTask('Cover or move frost-sensitive plants before cold nights','cold-snap','High',0,'cold snap expected · frost risk');
+    if(addWeatherCareTask('Cover or move frost-sensitive plants before cold nights','cold-snap','High',0,'cold snap expected · frost risk'))changed=true;
     plants.filter(isFrostSensitivePlant).slice(0,2).forEach(p=>{
       if(!taskTitleExists(`Protect ${p.name} from cold`,p.name)){
-        addAutoCareTask(p,`Protect ${p.name} from cold`,0,'weather-adjusted · frost risk','❄️');
+        if(addAutoCareTask(p,`Protect ${p.name} from cold`,0,'weather-adjusted · frost risk','❄️'))changed=true;
       }
     });
   }
   if(w.alerts.includes('heavy-rain')){
-    addWeatherCareTask('Check drainage and delay watering before heavy rain','heavy-rain','Medium',0,'heavy rain expected · avoid waterlogging');
+    if(addWeatherCareTask('Check drainage and delay watering before heavy rain','heavy-rain','Medium',0,'heavy rain expected · avoid waterlogging'))changed=true;
+  }
+  if(changed){
+    try{service.save(data)}catch(_){}
+    try{finalizeTaskListChange()}catch(_){}
   }
 }
 
 function syncPlantCareTasks(){
+  let changed=false;
+  const beforeLen=(data.tasks||[]).length;
   activeGardenPlants().forEach(p=>{
     if(p.prefs?.autoTasks===false)return;
     const ref=Object.assign({},plantMeta(p),p);
     if(!companionOpenTasksForPlant(p.name).length)generateCareTasksForPlant(ref,p.source||'My Garden');
     maintainSeasonalCarePlanForPlant(ref);
   });
+  if((data.tasks||[]).length!==beforeLen)changed=true;
+  if(changed){
+    try{finalizeTaskListChange()}catch(_){}
+  }
 }
 
 function renderWeatherNote(){
@@ -4678,17 +4876,17 @@ function toggleTaskMenu(ev,i){
     });
   }
 }
-function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels()}}
-function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels()}
+function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}}
+function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
-function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels()}
+function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function completeTaskByRef(btn){
   const title=btn?.dataset?.taskTitle||'';
   const iso=btn?.dataset?.taskIso||'';
   const i=(data.tasks||[]).findIndex(t=>!taskDone(t)&&String(t[1]||'')===title&&taskIsoValue(t)===iso);
   if(i>=0)completeTask(i);
 }
-function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels()}
+function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function createPlantAlertTaskFromPanel(i){
   const p=data.plants[i];
   if(!p)return;
@@ -4698,6 +4896,7 @@ function createPlantAlertTaskFromPanel(i){
     closePlantPanel();
     render();
     setTab('tasks');
+    finalizeTaskListChange();
   }else{
     alert('A similar care task is already open for this plant.');
   }
