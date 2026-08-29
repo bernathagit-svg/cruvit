@@ -27,6 +27,10 @@ import {
   serverTaskToAppTask,
   shouldAcceptTaskHydration
 } from './garden-profile-tasks-contract.js';
+import {
+  onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
+  wireSpecificPlantSuitabilityUi
+} from './specific-plant-suitability-ui.js';
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';
@@ -574,6 +578,11 @@ async function selectActiveGarden(gardenId) {
       : `Opened garden "${row.name}". No confirmed server location yet.`,
     'ok'
   );
+  try {
+    onSpecificSuitabilityGardenChanged();
+  } catch {
+    /* suitability UI optional */
+  }
   return row;
 }
 
@@ -1054,6 +1063,7 @@ function wirePersonalDomainUi() {
       .then(() => setStatus('Cleared server location on this Garden.', 'ok'))
       .catch((err) => setStatus(err.message || 'Clear failed.', 'error'));
   });
+  wireSpecificPlantSuitabilityUi();
 }
 
 export async function initPersonalDomainV0() {

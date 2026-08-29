@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
-<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20250828">
+<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20250829">
 <style id="sr-hero-answer-preview-styles">
 /* Bounded Hero Answer product-surface preview — app.html only; non-authoritative. */
 #smart-rec-root .sr-hero-answer-preview{
@@ -558,6 +558,17 @@
         <div id="pdV0LegacyTaskImport" class="pd-v0-legacy" hidden>
           <p class="pd-v0-hint">This browser has local My Garden tasks. They are not uploaded until you confirm.</p>
           <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyTasksBtn">Add existing local tasks to this Garden</button>
+        </div>
+        <div class="pd-v0-panel pd-v0-suitability" id="pdV0SpecificSuitability">
+          <strong>Can this plant grow in my Garden?</strong>
+          <p class="pd-v0-hint">Checks one catalog plant against the active Garden’s confirmed location. Browse preference filters do not apply.</p>
+          <input class="pd-v0-field" id="pdV0PlantSearch" type="search" autocomplete="off" placeholder="Search catalog plant…" aria-label="Search catalog plant">
+          <ul class="pd-v0-list pd-v0-plant-hits" id="pdV0PlantHits" hidden></ul>
+          <p class="pd-v0-hint" id="pdV0PlantSelected" hidden></p>
+          <div class="pd-v0-actions">
+            <button type="button" class="pd-v0-btn main" id="pdV0CheckSuitabilityBtn" disabled>Check suitability</button>
+          </div>
+          <div class="pd-v0-suit-result" id="pdV0SuitResult" hidden aria-live="polite"></div>
         </div>
       </div>
     </div>
@@ -3379,9 +3390,22 @@ async function resolveLocationFromQuery(label){
     'אילת':'Eilat, Israel'
   };
   const isBroadCountryLocation=(loc)=>{
-    const name=String(loc?.name||'').trim().toLowerCase();
-    const locLabel=String(loc?.label||'').trim().toLowerCase();
-    return name==='israel'||name==='ישראל'||locLabel==='israel, israel';
+    if(!loc||typeof loc!=='object') return true;
+    const featureCode=String(loc.feature_code||loc.featureCode||'').trim().toUpperCase();
+    if(['CONT','PCLI','PCLD','PCLF','PCLS','PCLIX','PCL','ADM1','RGN','AREA'].includes(featureCode)) return true;
+    if(featureCode.startsWith('PCL')) return true;
+    const addresstype=String(loc.addresstype||loc.addressType||'').trim().toLowerCase();
+    if(['country','continent','state','province','region','state_district'].includes(addresstype)) return true;
+    const osmType=String(loc.type||loc.resultType||'').trim().toLowerCase();
+    if(osmType==='country'||osmType==='continent') return true;
+    const name=String(loc.name||'').trim().toLowerCase();
+    const locLabel=String(loc.label||'').trim().toLowerCase();
+    const country=String(loc.country||'').trim().toLowerCase();
+    if(country&&name&&name===country) return true;
+    if(locLabel&&country&&(locLabel===country||locLabel===`${country}, ${country}`)) return true;
+    const parts=locLabel.split(',').map(p=>p.trim()).filter(Boolean);
+    if(parts.length===2&&parts[0]===parts[1]) return true;
+    return false;
   };
   const q=String(label||'').trim().normalize('NFKC').replace(/[\u200E\u200F]/g,'');
   if(pendingGeoLocation && Number.isFinite(Number(pendingGeoLocation.lat))){
@@ -5693,6 +5717,56 @@ function smartRecEvaluateSuitability(p){
   const explanationText=warnings[0]||meta.survivalVsThriveNotes||'';
   return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText};
 }
+
+/**
+ * Specific Plant Suitability Check V1 — reuses smartRecEvaluateSuitability.
+ * Clears Smart Rec preference answers so browse filters cannot distort the check.
+ */
+function searchCatalogForSpecificPlantCheck(query){
+  const q=normalizeQuery(canonicalPlantQuery(query));
+  if(!q) return PLANT_LIBRARY.slice(0,40);
+  const exact=[]; const contains=[];
+  PLANT_LIBRARY.forEach(p=>{
+    const aliases=[p.slug,p.name,p.he,p.scientific,...(p.aliases||[])].filter(Boolean).map(normalizeQuery);
+    if(aliases.some(a=>a===q || a.replace(/^עץ\s+/,'')===q || q===a.replace(/^עץ\s+/,''))) exact.push(p);
+    else if(textForSearch(p).includes(q) || q.split(' ').some(part=>part.length>1 && textForSearch(p).includes(part))) contains.push(p);
+  });
+  return [...exact,...contains].filter((p,i,a)=>a.findIndex(x=>x.slug===p.slug)===i).slice(0,40);
+}
+
+function evaluateSpecificPlantSuitability(plant){
+  if(!plant||typeof plant!=='object'){
+    return {
+      suitabilityScore:0,
+      recommendationLevel:'blocked',
+      survivalFit:0,
+      thriveFit:0,
+      floweringFit:0,
+      fruitingFit:0,
+      warnings:['Select a catalog plant first.'],
+      explanationText:'Select a catalog plant first.'
+    };
+  }
+  const savedAnswers=smartRecSession&&typeof smartRecSession==='object'?smartRecSession.answers:undefined;
+  if(smartRecSession&&typeof smartRecSession==='object') smartRecSession.answers={};
+  try{
+    return smartRecEvaluateSuitability(plant);
+  }finally{
+    if(smartRecSession&&typeof smartRecSession==='object') smartRecSession.answers=savedAnswers;
+  }
+}
+
+window.cruvitSpecificPlantSuitability={
+  search:searchCatalogForSpecificPlantCheck,
+  evaluate:evaluateSpecificPlantSuitability,
+  evaluateAuthoritative:smartRecEvaluateSuitability,
+  getClimateMetaForPlant:smartRecClimateMetaForPlant,
+  getPlantLibrary:()=>PLANT_LIBRARY.slice(),
+  hasTrustedAppLocation,
+  getAppClimateProfile,
+  getAppLocation,
+  setAppLocation
+};
 
 function smartRecDecoratePlant(p){
   const suitability=smartRecEvaluateSuitability(p);

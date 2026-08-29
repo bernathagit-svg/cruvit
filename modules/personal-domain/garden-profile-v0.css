@@ -143,3 +143,82 @@
   border: 1px dashed rgba(31, 90, 56, 0.28);
   background: rgba(31, 90, 56, 0.04);
 }
+
+.pd-v0-suitability {
+  margin-top: 14px;
+}
+
+.pd-v0-plant-hits {
+  max-height: 160px;
+  overflow: auto;
+  margin: 6px 0 0;
+}
+
+.pd-v0-plant-hits button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 6px 4px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.pd-v0-plant-hits button:hover,
+.pd-v0-plant-hits button:focus-visible {
+  background: rgba(31, 90, 56, 0.08);
+}
+
+.pd-v0-suit-result {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(31, 90, 56, 0.22);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 0.88rem;
+}
+
+.pd-v0-suit-result .pd-v0-suit-level {
+  font-weight: 650;
+  margin: 0 0 6px;
+}
+
+.pd-v0-suit-result .pd-v0-suit-overall {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+  color: #14301c;
+}
+
+.pd-v0-suit-outcomes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+  margin: 10px 0 6px;
+}
+
+.pd-v0-suit-outcomes div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid rgba(31, 90, 56, 0.12);
+  padding: 3px 0;
+}
+
+.pd-v0-suit-outcomes dt {
+  margin: 0;
+  font-weight: 600;
+  color: #3a4f40;
+}
+
+.pd-v0-suit-outcomes dd {
+  margin: 0;
+  text-align: right;
+}
+
+.pd-v0-suit-result ul {
+  margin: 6px 0 0;
+  padding-left: 1.1rem;
+}

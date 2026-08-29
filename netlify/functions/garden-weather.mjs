@@ -121,33 +121,81 @@ function locationLabelFromParts(name, admin1, country) {
   return [name, admin1, country].filter(Boolean).join(', ');
 }
 
-function isBroadCountryResult(loc) {
-  if (!loc) return false;
+/** Open-Meteo / GeoNames codes too coarse for one Garden climate. */
+const TOO_BROAD_FEATURE_CODES = new Set([
+  'CONT',
+  'PCLI',
+  'PCLD',
+  'PCLF',
+  'PCLS',
+  'PCLIX',
+  'PCL',
+  'ADM1',
+  'RGN',
+  'AREA'
+]);
+
+/**
+ * General Garden location precision gate (not Israel-only).
+ * Country / continent / state-province centroids are not Garden climate authority.
+ */
+function isTooBroadForGardenClimate(loc) {
+  if (!loc) return true;
+  const featureCode = cleanText(loc.feature_code || loc.featureCode || '').toUpperCase();
+  if (featureCode && TOO_BROAD_FEATURE_CODES.has(featureCode)) return true;
+  if (featureCode.startsWith('PCL')) return true;
+
+  const addresstype = cleanText(loc.addresstype || loc.addressType || '').toLowerCase();
+  if (
+    ['country', 'continent', 'state', 'province', 'region', 'state_district'].includes(
+      addresstype
+    )
+  ) {
+    return true;
+  }
+
+  const osmClass = cleanText(loc.class || loc.osm_key || '').toLowerCase();
+  const osmType = cleanText(loc.type || loc.osm_value || loc.resultType || '').toLowerCase();
+  if (osmType === 'country' || osmType === 'continent') return true;
+  if (osmClass === 'boundary' && ['administrative', 'country', 'region'].includes(osmType)) {
+    const name = cleanText(loc.name || '').toLowerCase();
+    const country = cleanText(loc.country || '').toLowerCase();
+    if (!name || name === country || osmType === 'country') return true;
+  }
+
   const name = cleanText(loc.name || '').toLowerCase();
   const label = cleanText(loc.label || '').toLowerCase();
-  return name === 'israel' || name === 'ישראל' || label === 'israel, israel';
+  const country = cleanText(loc.country || '').toLowerCase();
+  if (country && name && name === country) return true;
+  if (label && country && (label === country || label === `${country}, ${country}`)) return true;
+  const parts = label.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 2 && parts[0] === parts[1]) return true;
+  return false;
+}
+
+/** @deprecated name — use isTooBroadForGardenClimate */
+function isBroadCountryResult(loc) {
+  return isTooBroadForGardenClimate(loc);
 }
 
 function pickBestGeocodeResult(results, query) {
   if (!Array.isArray(results) || !results.length) return null;
   const q = cleanText(query).toLowerCase();
   const qHe = cleanText(query);
-  const qIsCountry = q === 'israel' || qHe === 'ישראל';
-  const score = r => {
+  const score = (r) => {
     const name = cleanText(r.name || (r.label || '').split(',')[0] || '');
     const label = cleanText(r.label || '').toLowerCase();
-    if (!qIsCountry && isBroadCountryResult(r)) return 1;
+    if (isTooBroadForGardenClimate(r)) return 1;
     if (name.toLowerCase() === q || name === qHe) return 100;
     if (label.startsWith(q) || label.includes(q)) return 60;
-    if (hasHebrew(qHe) && (r.country || '').includes('Israel') && !isBroadCountryResult(r)) return 40;
+    if (hasHebrew(qHe) && (r.country || '').includes('Israel') && !isTooBroadForGardenClimate(r)) {
+      return 40;
+    }
     return 10;
   };
   const ranked = [...results].sort((a, b) => score(b) - score(a));
-  const best = ranked[0];
-  if (!qIsCountry && isBroadCountryResult(best)) {
-    return ranked.find(r => !isBroadCountryResult(r)) || null;
-  }
-  return best;
+  const precise = ranked.find((r) => !isTooBroadForGardenClimate(r));
+  return precise || null;
 }
 
 const GEO_TIMEOUT_MS = 5500;
@@ -194,7 +242,11 @@ function mapNominatimItem(item, fallbackName = '') {
     lon: Number(item.lon),
     country: addr.country || '',
     timezone: '',
-    climate: inferClimate(item.lat, item.lon, addr.country || '')
+    climate: inferClimate(item.lat, item.lon, addr.country || ''),
+    addresstype: item.addresstype || '',
+    class: item.class || '',
+    type: item.type || '',
+    feature_code: item.addresstype === 'country' ? 'PCLI' : item.addresstype === 'state' ? 'ADM1' : ''
   };
 }
 
@@ -207,6 +259,10 @@ function mapPhotonFeature(feature, query) {
   const isStreet = p.osm_key === 'highway';
   const name = p.name || p.city || query;
   const label = [name, p.state || p.county, p.country].filter(Boolean).join(', ');
+  const osmValue = String(p.osm_value || '').toLowerCase();
+  let feature_code = '';
+  if (p.type === 'country' || osmValue === 'country') feature_code = 'PCLI';
+  else if (p.type === 'state' || osmValue === 'state') feature_code = 'ADM1';
   return {
     name,
     label,
@@ -215,7 +271,10 @@ function mapPhotonFeature(feature, query) {
     country: p.country || '',
     timezone: '',
     climate: inferClimate(lat, lon, p.country || ''),
-    isStreet
+    isStreet,
+    feature_code,
+    type: p.type || '',
+    class: p.osm_key || ''
   };
 }
 
@@ -224,12 +283,15 @@ function mapOpenMeteoResult(best, query) {
   const country = best.country || '';
   const label = locationLabelFromParts(best.name, best.admin1, country);
   return {
+    name: best.name || '',
     label,
     lat: Number(best.latitude),
     lon: Number(best.longitude),
     country,
     timezone: best.timezone || '',
-    climate: inferClimate(best.latitude, best.longitude, country)
+    climate: inferClimate(best.latitude, best.longitude, country),
+    feature_code: best.feature_code || '',
+    admin1: best.admin1 || ''
   };
 }
 
@@ -387,17 +449,14 @@ async function geocodeQuery(query) {
   const q = cleanText(query);
   if (!q) return null;
   const queries = geocodeSearchQueries(q);
-  let fallback = null;
 
   for (const searchQ of queries) {
     const candidates = await fetchAllGeocodeCandidates(searchQ);
     const best = pickBestGeocodeResult(candidates, q);
-    if (!best) continue;
-    if (!isBroadCountryResult(best)) return best;
-    if (!fallback) fallback = best;
+    if (best && !isTooBroadForGardenClimate(best)) return best;
   }
 
-  return fallback;
+  return null;
 }
 
 async function reverseGeocode(lat, lon) {
