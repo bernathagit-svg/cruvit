@@ -1,0 +1,33 @@
+{
+  "title": "Yehiam CHELSA precipitation investigation",
+  "coordinate": { "lat": 33.12806, "lon": 35.22028, "label": "Yehiam kibbutz WGS84" },
+  "extractionBugFound": false,
+  "checks": {
+    "monthsPresent": 12,
+    "noDuplicateMonths": true,
+    "scaleFactorApplied": "raw_integer / 10 → mm (CHELSA V2.1 precip COG convention)",
+    "nodataHandling": "GDAL nodata rejected when present (65535 for precip-class uint16)",
+    "orientation": "lon→x, lat→y with north-up bbox (ymax - lat)",
+    "annualEqualsMonthlySum": true,
+    "cellDeterministic": true,
+    "bio12CrossCheck": {
+      "url": "CHELSA_bio12_1981-2010_V.2.1.tif",
+      "cellPixel": { "x": 25826, "y": 6104 },
+      "raw": 12936,
+      "mm": 1293.6,
+      "matchesMonthlySum": true,
+      "matchesPilotClimateGridCell": true
+    }
+  },
+  "chelsaModelAnnualPrecipMm": 1293.6,
+  "qaIndependentReference": {
+    "note": "QA only — does not replace CHELSA. Western Galilee / northern Israel station & WorldClim-class normals commonly cited ~500–900 mm/yr depending on site.",
+    "implication": "CHELSA cell value is wetter than many observed local normals → model-vs-observed uncertainty retained; CHELSA remains authority."
+  },
+  "decision": "PRESERVE_CHELSA_VALUE",
+  "aridityFollowUp": "UNEP AI = P/PET from CHELSA pet_penman with raw/100 scale (CMI-validated); precip-band moisture label retired when PET present",
+  "chelsaOfficialAiLayerQa": {
+    "note": "CHELSA bio AI float at same cell ≈ 1.357 (humid). Derived UNEP P/sum(monthly pet_penman) may differ slightly from the published annual AI layer; both remain CHELSA-family.",
+    "sampledAi": 1.356851577758789
+  }
+}

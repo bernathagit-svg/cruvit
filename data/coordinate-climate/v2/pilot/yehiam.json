@@ -1,0 +1,562 @@
+{
+  "status": "known",
+  "authorityVersion": "2.0.2-accuracy",
+  "coordinate": {
+    "lat": 33.12806,
+    "lon": 35.22028,
+    "label": "Yehiam, Israel"
+  },
+  "baseline": {
+    "source": "chelsa-v2.1-climatologies-1981-2010",
+    "version": "2.1",
+    "period": "1981-2010",
+    "license": "CC0-1.0",
+    "nativeClimateResolution": "~1 km (30 arc-seconds)",
+    "nativeClimateResolutionArcSec": 30
+  },
+  "terrain": {
+    "source": "aws-elevation-tiles-terrarium",
+    "version": "terrarium-v1",
+    "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "elevationM": 441,
+    "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+    "tile": {
+      "z": 12,
+      "x": 2448,
+      "y": 1648,
+      "px": 186,
+      "py": 33
+    },
+    "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2448/1648.png"
+  },
+  "climateNativeResolution": "~1 km (30 arc-seconds)",
+  "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+  "climateGrid": {
+    "dataset": "chelsa-v2.1-climatologies-1981-2010",
+    "nativeResolutionArcSec": 30,
+    "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+    "cellPixel": {
+      "x": 25826,
+      "y": 6104
+    },
+    "cellResDeg": {
+      "x": 0.0083333333,
+      "y": 0.0083333333
+    },
+    "bbox": [
+      -180.00013888885002,
+      -90.00013888884999,
+      179.99985967115003,
+      83.99986041515001
+    ]
+  },
+  "elevationM": 441,
+  "monthlyTminC": [
+    7.95,
+    7.75,
+    9.35,
+    12.05,
+    15.45,
+    19.15,
+    21.65,
+    22.45,
+    21.05,
+    17.95,
+    13.15,
+    9.75
+  ],
+  "monthlyTmeanC": [
+    10.65,
+    10.75,
+    12.65,
+    15.65,
+    18.95,
+    22.45,
+    24.75,
+    25.35,
+    23.85,
+    20.75,
+    16.05,
+    12.35
+  ],
+  "monthlyTmaxC": [
+    13.25,
+    13.45,
+    15.55,
+    19.05,
+    22.35,
+    25.55,
+    27.75,
+    28.25,
+    26.85,
+    23.85,
+    19.15,
+    15.15
+  ],
+  "monthlyPrecipMm": [
+    339.8,
+    236.9,
+    131.7,
+    46.8,
+    11.2,
+    2.4,
+    2.9,
+    1.8,
+    6.4,
+    57.1,
+    193.2,
+    263.4
+  ],
+  "monthlyPetMm": [
+    65.5,
+    72.3,
+    105.2,
+    135.3,
+    167.5,
+    181.3,
+    190.2,
+    174.6,
+    140.9,
+    109.7,
+    80.5,
+    64.6
+  ],
+  "monthlyVpdPa": [
+    5405,
+    5349,
+    6116,
+    7870,
+    9387,
+    10788,
+    11316,
+    10908,
+    10743,
+    10004,
+    8348,
+    6217
+  ],
+  "monthlyHursPct": [
+    57.8,
+    58.6,
+    58.3,
+    55.9,
+    57.3,
+    60.3,
+    63.7,
+    66.1,
+    63.7,
+    59.3,
+    54.3,
+    56.9
+  ],
+  "seasonality": {
+    "tminRangeC": 14.7,
+    "coldestMonth": 2,
+    "warmestMonth": 8
+  },
+  "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+  "freezingRisk": "low",
+  "structuralColdRisk": "elevated",
+  "thermalRegime": "cool-seasonal",
+  "aridityMoistureRegime": "humid",
+  "aridityIndex": 0.87,
+  "aridityMethod": "UNEP_AI_P_over_PET",
+  "humidityRegime": "medium",
+  "humiditySignal": "medium",
+  "coolSeasonSignal": true,
+  "alwaysHot": false,
+  "highlandModifier": false,
+  "coldestMonthMeanMinC": 7.75,
+  "warmestMonthMeanMaxC": 28.25,
+  "annualPrecipitationMm": 1293.6,
+  "annualPetMm": 1487.6,
+  "meanVpdPa": 8538,
+  "meanRelativeHumidityPct": 59.4,
+  "confidence": "low",
+  "missingFields": [],
+  "provenance": {
+    "baseline": {
+      "id": "chelsa-v2.1-climatologies-1981-2010",
+      "product": "CHELSA-climatologies",
+      "version": "2.1",
+      "period": "1981-2010",
+      "license": "CC0-1.0",
+      "nativeResolutionArcSec": 30,
+      "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+      "fileFormat": "COG",
+      "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+      "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+      "variablesUsed": [
+        "tasmin",
+        "tas",
+        "tasmax",
+        "pr",
+        "vpd",
+        "hurs",
+        "pet_penman"
+      ],
+      "petVariablePath": {
+        "folder": "pet",
+        "filePrefix": "CHELSA_pet_penman"
+      },
+      "variablesDeferred": [
+        "rsds",
+        "sfcWind",
+        "cmi"
+      ]
+    },
+    "terrainPolicy": {
+      "preferredOpenOption": "aws-elevation-tiles-terrarium",
+      "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+      "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+      "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "nativeResolutionMetersApprox": 30,
+      "forbidsPerUserCopernicusApi": true,
+      "forbidsPaidRuntimeProvider": true,
+      "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+    },
+    "acquisitionChannel": "build-ingestion-only",
+    "runtimeExternalCallsForbidden": true,
+    "noCityProxy": true,
+    "pilotId": "yehiam",
+    "geocode": {
+      "lat": 33.12806,
+      "lon": 35.22028,
+      "resolvedLabel": "Yehiam, Israel",
+      "geocodeProvider": "fallback-known-coordinate",
+      "usedFallback": true,
+      "geocodeError": "geocode-empty"
+    },
+    "ingestedAt": "2026-08-29T20:01:25.299Z",
+    "cityProxy": false,
+    "usedCityProxy": false,
+    "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+    "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+    "petScaleFix": "2026-08-29-production-hardening"
+  },
+  "derivedAt": "2026-08-29T20:48:38.884Z",
+  "structuralPersistencePreview": {
+    "status": "known",
+    "version": "2.0.1-production",
+    "authorityVersion": "2.0.1-production",
+    "moistureRegime": "humid",
+    "humidityRegime": "medium",
+    "humiditySignal": "medium",
+    "structuralColdRisk": "elevated",
+    "freezingRisk": "low",
+    "broadClimateOverride": "mediterranean",
+    "drySeasonSignal": false,
+    "thermalRegime": "cool-seasonal",
+    "elevationM": 441,
+    "evidence": {
+      "coldestMonthMeanMinC": 7.75,
+      "warmestMonthMeanMaxC": 28.25,
+      "annualPrecipitationMm": 1293.6,
+      "annualPetMm": 1487.6,
+      "aridityIndex": 0.87,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "meanRelativeHumidityPct": 59.4,
+      "meanVpdPa": 8538,
+      "elevationM": 441,
+      "thermalRegime": "cool-seasonal",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010"
+    },
+    "provenance": {
+      "provider": "coordinate-climate-authority-v2",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010",
+      "baselineVersion": "2.1",
+      "terrainSource": "aws-elevation-tiles-terrarium",
+      "authorityVersion": "2.0.1-production",
+      "lat": 33.12806,
+      "lon": 35.22028,
+      "fetchedAt": "2026-08-29T20:48:38.884Z",
+      "confidence": "high",
+      "noCityProxy": true,
+      "status": "known"
+    },
+    "coordinateClimateV2": {
+      "status": "known",
+      "authorityVersion": "2.0.1-production",
+      "coordinate": {
+        "lat": 33.12806,
+        "lon": 35.22028,
+        "label": "Yehiam, Israel"
+      },
+      "baseline": {
+        "source": "chelsa-v2.1-climatologies-1981-2010",
+        "version": "2.1",
+        "period": "1981-2010",
+        "license": "CC0-1.0",
+        "nativeClimateResolution": "~1 km (30 arc-seconds)",
+        "nativeClimateResolutionArcSec": 30
+      },
+      "terrain": {
+        "source": "aws-elevation-tiles-terrarium",
+        "version": "terrarium-v1",
+        "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+        "elevationM": 441,
+        "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+        "tile": {
+          "z": 12,
+          "x": 2448,
+          "y": 1648,
+          "px": 186,
+          "py": 33
+        },
+        "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2448/1648.png"
+      },
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "climateGrid": {
+        "dataset": "chelsa-v2.1-climatologies-1981-2010",
+        "nativeResolutionArcSec": 30,
+        "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+        "cellPixel": {
+          "x": 25826,
+          "y": 6104
+        },
+        "cellResDeg": {
+          "x": 0.0083333333,
+          "y": 0.0083333333
+        },
+        "bbox": [
+          -180.00013888885002,
+          -90.00013888884999,
+          179.99985967115003,
+          83.99986041515001
+        ]
+      },
+      "elevationM": 441,
+      "monthlyTminC": [
+        7.95,
+        7.75,
+        9.35,
+        12.05,
+        15.45,
+        19.15,
+        21.65,
+        22.45,
+        21.05,
+        17.95,
+        13.15,
+        9.75
+      ],
+      "monthlyTmeanC": [
+        10.65,
+        10.75,
+        12.65,
+        15.65,
+        18.95,
+        22.45,
+        24.75,
+        25.35,
+        23.85,
+        20.75,
+        16.05,
+        12.35
+      ],
+      "monthlyTmaxC": [
+        13.25,
+        13.45,
+        15.55,
+        19.05,
+        22.35,
+        25.55,
+        27.75,
+        28.25,
+        26.85,
+        23.85,
+        19.15,
+        15.15
+      ],
+      "monthlyPrecipMm": [
+        339.8,
+        236.9,
+        131.7,
+        46.8,
+        11.2,
+        2.4,
+        2.9,
+        1.8,
+        6.4,
+        57.1,
+        193.2,
+        263.4
+      ],
+      "monthlyPetMm": [
+        65.5,
+        72.3,
+        105.2,
+        135.3,
+        167.5,
+        181.3,
+        190.2,
+        174.6,
+        140.9,
+        109.7,
+        80.5,
+        64.6
+      ],
+      "monthlyVpdPa": [
+        5405,
+        5349,
+        6116,
+        7870,
+        9387,
+        10788,
+        11316,
+        10908,
+        10743,
+        10004,
+        8348,
+        6217
+      ],
+      "monthlyHursPct": [
+        57.8,
+        58.6,
+        58.3,
+        55.9,
+        57.3,
+        60.3,
+        63.7,
+        66.1,
+        63.7,
+        59.3,
+        54.3,
+        56.9
+      ],
+      "seasonality": {
+        "tminRangeC": 14.7,
+        "coldestMonth": 2,
+        "warmestMonth": 8
+      },
+      "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+      "freezingRisk": "low",
+      "structuralColdRisk": "elevated",
+      "thermalRegime": "cool-seasonal",
+      "aridityMoistureRegime": "humid",
+      "aridityIndex": 0.87,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "humidityRegime": "medium",
+      "humiditySignal": "medium",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "highlandModifier": false,
+      "coldestMonthMeanMinC": 7.75,
+      "warmestMonthMeanMaxC": 28.25,
+      "annualPrecipitationMm": 1293.6,
+      "annualPetMm": 1487.6,
+      "meanVpdPa": 8538,
+      "meanRelativeHumidityPct": 59.4,
+      "confidence": "high",
+      "missingFields": [],
+      "provenance": {
+        "baseline": {
+          "id": "chelsa-v2.1-climatologies-1981-2010",
+          "product": "CHELSA-climatologies",
+          "version": "2.1",
+          "period": "1981-2010",
+          "license": "CC0-1.0",
+          "nativeResolutionArcSec": 30,
+          "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+          "fileFormat": "COG",
+          "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+          "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+          "variablesUsed": [
+            "tasmin",
+            "tas",
+            "tasmax",
+            "pr",
+            "vpd",
+            "hurs",
+            "pet_penman"
+          ],
+          "petVariablePath": {
+            "folder": "pet",
+            "filePrefix": "CHELSA_pet_penman"
+          },
+          "variablesDeferred": [
+            "rsds",
+            "sfcWind",
+            "cmi"
+          ]
+        },
+        "terrainPolicy": {
+          "preferredOpenOption": "aws-elevation-tiles-terrarium",
+          "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+          "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+          "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+          "nativeResolutionMetersApprox": 30,
+          "forbidsPerUserCopernicusApi": true,
+          "forbidsPaidRuntimeProvider": true,
+          "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+        },
+        "acquisitionChannel": "build-ingestion-only",
+        "runtimeExternalCallsForbidden": true,
+        "noCityProxy": true,
+        "pilotId": "yehiam",
+        "geocode": {
+          "lat": 33.12806,
+          "lon": 35.22028,
+          "resolvedLabel": "Yehiam, Israel",
+          "geocodeProvider": "fallback-known-coordinate",
+          "usedFallback": true,
+          "geocodeError": "geocode-empty"
+        },
+        "ingestedAt": "2026-08-29T20:01:25.299Z",
+        "cityProxy": false,
+        "usedCityProxy": false,
+        "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+        "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+        "petScaleFix": "2026-08-29-production-hardening"
+      },
+      "derivedAt": "2026-08-29T20:48:38.884Z"
+    }
+  },
+  "confidenceDimensions": {
+    "SOURCE_DATA_INTEGRITY": "high",
+    "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+    "TERRAIN_CONTEXT_CONFIDENCE": "high",
+    "LOCAL_REPRESENTATIVENESS": "low",
+    "PROFILE_COMPLETENESS": "high",
+    "OVERALL_AUTHORITY_CONFIDENCE": "low"
+  },
+  "localRepresentativeness": {
+    "level": "low",
+    "reason": "material-model-vs-observed-divergence",
+    "materialDivergence": true,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 1293.6,
+        "referenceMin": 500,
+        "referenceMax": 900,
+        "inRange": false,
+        "divergenceRatioApprox": 1.44,
+        "level": "low"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 7.75,
+        "reference": 7,
+        "absDeltaC": 0.8,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 28.25,
+        "reference": 30,
+        "absDeltaC": 1.8,
+        "level": "high"
+      }
+    },
+    "warnings": [
+      "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
+    ],
+    "qaSource": "IMS/Western-Galilee station-class normals + Israel atlas precip bands (QA synthesis)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidenceWarnings": [
+    "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
+  ]
+}

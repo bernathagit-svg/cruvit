@@ -43,6 +43,7 @@ Honest classification from a read-only code verification pass. Tiers:
 - **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`).
 - **CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO`). Live Supabase hardened; Plant Identifier paid AI disabled by default; ordinary runtime must not trigger paid external enrichment; acquire/create once → validate → store → reuse.
 - **CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS** (`CRUVIT_BULK_CATALOG_BATCH_1: PASS`). Live `public.catalog_plants`: 30 new canonical plants; 29 verified / 1 needsReview (`blue-gum`); botanical provenance 30/30; IMAGE_READY 30/30; paid API $0.
+- **CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO** (`CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO`). Exact-coordinate structural climate authority; CHELSA ~1 km baseline; terrain context separate; PET + UNEP AI; no city proxy; zero external structural acquisition on user runtime; multi-dimension confidence (extraction ≠ local representativeness); compact CRUVIT tile foundation prototype. **UNIVERSAL GLOBAL CLIMATE COVERAGE: NOT YET CLOSED (P1 — central bake/tile expansion).**
 - **BULK CATALOG BATCH 2: AUTHORIZED AFTER BATCH 1 CLOSURE** — **NOT STARTED** (separate Owner turn).
 
 ## Partial
@@ -72,6 +73,27 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 ---
 
 # Active Development
+
+### CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO
+Status: **CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO**
+
+Upstream gates (all PASS):
+- `CRUVIT_COORDINATE_CLIMATE_AUTHORITY_V2`
+- `CRUVIT_COORDINATE_CLIMATE_V2_PRODUCTION_GATE`
+- `CRUVIT_COORDINATE_CLIMATE_V2_ACCURACY_GATE`
+
+**Foundation (architecture closed — not universal coverage):**
+- Exact lat/lon authority; never city / nearby-city proxy in production.
+- CHELSA V2.1 climatologies (~1 km / 30″) as climate native resolution; terrain (~30 m class) declared separately — never advertise “30 m climate”.
+- PET decoder `raw/100`; UNEP-style `AI = P/PET` (Cairo ~0.014 hyper-arid; Singapore ~1.399 humid; Kochi ~1.867 humid).
+- Ordinary user activity: **zero** CHELSA / terrain / ERA5 / Open-Meteo **structural** calls; forecast weather remains separate.
+- Prepared coordinate → CRUVIT local lookup → Garden `location_structural_climate*` persist → reuse.
+- Unprepared → `CLIMATE_AUTHORITY_UNAVAILABLE` / background prep queue (never synchronous external fetch).
+- External climate API variable cost per user = **$0**.
+- Confidence dimensions: `SOURCE_DATA_INTEGRITY`, `COORDINATE_RESOLUTION_CONFIDENCE`, `TERRAIN_CONTEXT_CONFIDENCE`, `LOCAL_REPRESENTATIVENESS`, `PROFILE_COMPLETENESS`, `OVERALL_AUTHORITY_CONFIDENCE`. Extraction correctness ≠ local representativeness (Yehiam: CHELSA precip 1293.6 mm preserved; LOCAL_REPRESENTATIVENESS low; no strong moisture-dependent positive; no auto Not Recommended).
+- Compact tile foundation prototype: `hybrid-compact-zlib-json-cells-v1` (~376 B/cell gzip; ~35.9× vs naive JSON; ~56 GB projected full-land). **Not a completed global bake.**
+
+**UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (central regional/global tile bake expansion — coverage, not redesign).
 
 ### CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO
 Status: **CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_GATE: PASS` + live Supabase + production paid-AI gate).

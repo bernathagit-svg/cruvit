@@ -1,0 +1,148 @@
+{
+  "id": "tokyo",
+  "lat": 35.6895,
+  "lon": 139.69171,
+  "climateClass": "humid-subtropical",
+  "tags": [
+    "subtropical",
+    "coastal"
+  ],
+  "qaEvidenceAvailable": true,
+  "qaSource": "Tokyo JMA-class normals (~1400–1600 mm)",
+  "qaDate": "2026-08-29",
+  "qaVersion": "qa-v1",
+  "chelsa": {
+    "annualPrecipitationMm": 1517.5,
+    "coldestMonthMeanMinC": -0.35,
+    "warmestMonthMeanMaxC": 29.35,
+    "annualPetMm": 934.5,
+    "aridityIndex": 1.624,
+    "cell": {
+      "x": 38363,
+      "y": 5797
+    }
+  },
+  "reference": {
+    "annualPrecipitationMm": {
+      "min": 1400,
+      "max": 1650
+    },
+    "coldestMonthMeanMinC": {
+      "value": 1,
+      "toleranceC": 2.5
+    },
+    "warmestMonthMeanMaxC": {
+      "value": 31,
+      "toleranceC": 2.5
+    }
+  },
+  "chelsaReplaced": false,
+  "note": null,
+  "nearbyPairWith": null,
+  "yehiamReview": null,
+  "preparedInCruvit": true,
+  "representativeness": {
+    "level": "high",
+    "reason": "qa-within-tolerance",
+    "materialDivergence": false,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 1517.5,
+        "referenceMin": 1400,
+        "referenceMax": 1650,
+        "inRange": true,
+        "divergenceRatioApprox": 1,
+        "level": "high"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": -0.35,
+        "reference": 1,
+        "absDeltaC": 1.4,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 29.35,
+        "reference": 31,
+        "absDeltaC": 1.6,
+        "level": "high"
+      }
+    },
+    "warnings": [],
+    "qaSource": "Tokyo JMA-class normals (~1400–1600 mm)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidence": {
+    "version": "2.0.2-accuracy",
+    "dimensions": {
+      "SOURCE_DATA_INTEGRITY": "high",
+      "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+      "TERRAIN_CONTEXT_CONFIDENCE": "high",
+      "LOCAL_REPRESENTATIVENESS": "high",
+      "PROFILE_COMPLETENESS": "high",
+      "OVERALL_AUTHORITY_CONFIDENCE": "high"
+    },
+    "overall": "high",
+    "legacyConfidenceField": "high",
+    "localRepresentativeness": {
+      "level": "high",
+      "reason": "qa-within-tolerance",
+      "materialDivergence": false,
+      "variables": {
+        "annualPrecipitationMm": {
+          "chelsa": 1517.5,
+          "referenceMin": 1400,
+          "referenceMax": 1650,
+          "inRange": true,
+          "divergenceRatioApprox": 1,
+          "level": "high"
+        },
+        "coldestMonthMeanMinC": {
+          "chelsa": -0.35,
+          "reference": 1,
+          "absDeltaC": 1.4,
+          "level": "high"
+        },
+        "warmestMonthMeanMaxC": {
+          "chelsa": 29.35,
+          "reference": 31,
+          "absDeltaC": 1.6,
+          "level": "high"
+        }
+      },
+      "warnings": [],
+      "qaSource": "Tokyo JMA-class normals (~1400–1600 mm)",
+      "qaDate": "2026-08-29",
+      "qaVersion": "qa-v1"
+    },
+    "warnings": [],
+    "notes": {
+      "rule": "SOURCE_DATA_INTEGRITY is not LOCAL_REPRESENTATIVENESS",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "forbidsClaiming30mClimate": true
+    }
+  },
+  "divergenceSummary": {
+    "precip": {
+      "chelsa": 1517.5,
+      "referenceMin": 1400,
+      "referenceMax": 1650,
+      "inRange": true,
+      "divergenceRatioApprox": 1,
+      "level": "high"
+    },
+    "cold": {
+      "chelsa": -0.35,
+      "reference": 1,
+      "absDeltaC": 1.4,
+      "level": "high"
+    },
+    "warm": {
+      "chelsa": 29.35,
+      "reference": 31,
+      "absDeltaC": 1.6,
+      "level": "high"
+    },
+    "material": false
+  }
+}

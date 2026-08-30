@@ -1,0 +1,102 @@
+{
+  "gate": "CRUVIT_COORDINATE_CLIMATE_V2_PRODUCTION_GATE",
+  "verdict": "PASS",
+  "authorityVersion": "2.0.1-production",
+  "generatedAt": "2026-08-29T20:30:00.000Z",
+  "petScale": "raw/100 mm month⁻¹ (CMI-validated; corrected from raw/10)",
+  "locations": [
+    {
+      "id": "yehiam",
+      "lat": 33.12806,
+      "lon": 35.22028,
+      "cell": { "x": 25826, "y": 6104 },
+      "elevationM": 441,
+      "annualPrecipitationMm": 1293.6,
+      "annualPetMm": 1487.6,
+      "aridityIndex": 0.87,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "cool-seasonal",
+      "coldestMonthMeanMinC": 7.75,
+      "nativeClimateResolution": "~1 km (30 arc-seconds)",
+      "confidence": "high"
+    },
+    {
+      "id": "helsinki",
+      "lat": 60.16952,
+      "lon": 24.93545,
+      "annualPrecipitationMm": 672.3,
+      "annualPetMm": 610.7,
+      "aridityIndex": 1.101,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "frost-prone",
+      "coldestMonthMeanMinC": -8.25,
+      "elevationM": 40.2,
+      "confidence": "high"
+    },
+    {
+      "id": "singapore",
+      "lat": 1.28967,
+      "lon": 103.85007,
+      "annualPrecipitationMm": 2423.3,
+      "annualPetMm": 1731.8,
+      "aridityIndex": 1.399,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "year-round-warm",
+      "confidence": "high"
+    },
+    {
+      "id": "kochi",
+      "lat": 9.93988,
+      "lon": 76.26022,
+      "annualPrecipitationMm": 2992,
+      "annualPetMm": 1602.5,
+      "aridityIndex": 1.867,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "year-round-warm",
+      "confidence": "high"
+    },
+    {
+      "id": "cairo",
+      "lat": 30.06263,
+      "lon": 31.24967,
+      "annualPrecipitationMm": 19.8,
+      "annualPetMm": 1423.6,
+      "aridityIndex": 0.014,
+      "aridityMoistureRegime": "hyper-arid",
+      "thermalRegime": "cool-seasonal",
+      "confidence": "high"
+    },
+    {
+      "id": "tokyo",
+      "lat": 35.6895,
+      "lon": 139.69171,
+      "annualPrecipitationMm": 1517.5,
+      "annualPetMm": 934.5,
+      "aridityIndex": 1.624,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "frost-prone",
+      "confidence": "high"
+    },
+    {
+      "id": "quito",
+      "lat": -0.22985,
+      "lon": -78.52495,
+      "annualPrecipitationMm": 2086.2,
+      "annualPetMm": 1315.6,
+      "aridityIndex": 1.586,
+      "aridityMoistureRegime": "humid",
+      "thermalRegime": "cool-highland",
+      "elevationM": 2854,
+      "highlandModifier": true,
+      "confidence": "high"
+    }
+  ],
+  "tests": {
+    "coordinate-climate-authority-v2": "11/11",
+    "coordinate-climate-v2-production-hardening": "PASS",
+    "runtime-cost-persistence-guardrails-v1": "PASS",
+    "total": "34/34"
+  },
+  "globalAuthorityFullyClosed": false,
+  "globalAuthorityNote": "Production hardening gate PASS. Global inventory remains sparse (pilot cells + background prep queue); expand central bake before claiming universal Garden coverage."
+}

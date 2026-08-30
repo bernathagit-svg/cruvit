@@ -3320,27 +3320,20 @@ async function callGardenWeather(payload){
 
 async function refreshGardenWeather(){
   const loc=ensureGardenLocation();
-  const hasStructural=loc.structuralClimate&&loc.structuralClimate.status==='known'
-    &&Number(loc.structuralClimate?.provenance?.lat)===Number(loc.lat)
-    &&Number(loc.structuralClimate?.provenance?.lon)===Number(loc.lon);
-  // Guardrails V1: reuse known structural; cooldown after failure (no retry storms).
-  let skipStructuralClimate=!!hasStructural;
-  if(!skipStructuralClimate&&loc.structuralClimate){
-    const failedAt=Date.parse(String(loc.structuralClimate.lastAcquireErrorAt||''));
-    if(Number.isFinite(failedAt)&&(Date.now()-failedAt)<(6*60*60*1000)) skipStructuralClimate=true;
-  }
-  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||'',skipStructuralClimate};
+  // Coordinate Climate V2: forecast never acquires structural via Open-Meteo/CHELSA.
+  // Structural authority is CRUVIT local lookup only (mode coordinate-climate-v2).
+  let payload={mode:'forecast',label:loc.label,climate:loc.climate,country:loc.country||'',skipStructuralClimate:true,existingStructural:loc.structuralClimate||null};
   if(Number.isFinite(Number(loc.lat))&&Number.isFinite(Number(loc.lon))){
     payload={...payload,lat:Number(loc.lat),lon:Number(loc.lon)};
   }else if(loc.label){
-    payload={mode:'forecast',query:loc.label,country:loc.country||'',skipStructuralClimate};
+    payload={mode:'forecast',query:loc.label,country:loc.country||'',skipStructuralClimate:true,existingStructural:loc.structuralClimate||null};
   }else{
     throw new Error('Garden location is not set');
   }
   const result=await callGardenWeather(payload);
   if(result.location){
     const rl=result.location;
-    const structuralClimate=result.structuralClimate||rl.structuralClimate||(hasStructural?loc.structuralClimate:null);
+    const structuralClimate=result.structuralClimate||rl.structuralClimate||null;
     let nextClimate=loc.climate||rl.climate;
     if(structuralClimate?.broadClimateOverride==='arid') nextClimate='Arid';
     else if(!loc.climate&&rl.climate) nextClimate=rl.climate;
@@ -3352,7 +3345,8 @@ async function refreshGardenWeather(){
       country:String(rl.country||loc.country||'').trim(),
       timezone:String(rl.timezone||loc.timezone||'').trim(),
       structuralClimate:structuralClimate||null,
-      structuralAcquisitionMs:result.structuralAcquisitionMs??loc.structuralAcquisitionMs??null,
+      structuralAcquisitionMs:null,
+      climateAuthorityCode:result.code||null,
       updatedAt:new Date().toISOString()
     });
     data.location=data.gardenLocation.label;

@@ -306,8 +306,12 @@ test('PART G9: Garden Design asset lookup cannot invoke generation', () => {
 
 test('structural acquire-once / failure cooldown / server fields', () => {
   const known = knownStructural();
+  // Production V2: external structural acquire is never allowed on user runtime.
   assert.equal(shouldAcquireStructuralClimate(known, 9.93, 76.26).acquire, false);
-  assert.equal(shouldAcquireStructuralClimate(known, 9.93, 76.26).reason, 'reuse-known');
+  assert.match(
+    shouldAcquireStructuralClimate(known, 9.93, 76.26).reason,
+    /v2-local-lookup-only-no-external-acquire|reuse-known/
+  );
 
   const failed = markStructuralAcquireFailure(null, 'http-429');
   assert.equal(failed.status, 'failed');
@@ -315,12 +319,13 @@ test('structural acquire-once / failure cooldown / server fields', () => {
     nowMs: Date.parse(failed.lastAcquireErrorAt) + 1000
   });
   assert.equal(blocked.acquire, false);
-  assert.equal(blocked.reason, 'failure-cooldown');
 
   const afterCooldown = shouldAcquireStructuralClimate(failed, 9.93, 76.26, {
     nowMs: Date.parse(failed.lastAcquireErrorAt) + STRUCTURAL_ACQUIRE_FAILURE_COOLDOWN_MS + 1
   });
-  assert.equal(afterCooldown.acquire, true);
+  // V2: still no external acquire after cooldown — local lookup / prep queue only.
+  assert.equal(afterCooldown.acquire, false);
+  assert.equal(afterCooldown.reason, 'v2-local-lookup-only-no-external-acquire');
 
   const fields = buildStructuralClimateServerFields(known);
   assert.equal(fields.location_structural_climate_status, 'known');

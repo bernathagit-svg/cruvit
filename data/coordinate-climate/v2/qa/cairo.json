@@ -1,0 +1,148 @@
+{
+  "id": "cairo",
+  "lat": 30.06263,
+  "lon": 31.24967,
+  "climateClass": "hyper-arid",
+  "tags": [
+    "hyper-arid",
+    "inland"
+  ],
+  "qaEvidenceAvailable": true,
+  "qaSource": "Cairo WMO-class normals (precip ~20–30 mm; hot summers)",
+  "qaDate": "2026-08-29",
+  "qaVersion": "qa-v1",
+  "chelsa": {
+    "annualPrecipitationMm": 19.8,
+    "coldestMonthMeanMinC": 8.15,
+    "warmestMonthMeanMaxC": 35.95,
+    "annualPetMm": 1423.6,
+    "aridityIndex": 0.014,
+    "cell": {
+      "x": 25349,
+      "y": 6472
+    }
+  },
+  "reference": {
+    "annualPrecipitationMm": {
+      "min": 15,
+      "max": 40
+    },
+    "coldestMonthMeanMinC": {
+      "value": 9,
+      "toleranceC": 2.5
+    },
+    "warmestMonthMeanMaxC": {
+      "value": 35,
+      "toleranceC": 2.5
+    }
+  },
+  "chelsaReplaced": false,
+  "note": null,
+  "nearbyPairWith": null,
+  "yehiamReview": null,
+  "preparedInCruvit": true,
+  "representativeness": {
+    "level": "high",
+    "reason": "qa-within-tolerance",
+    "materialDivergence": false,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 19.8,
+        "referenceMin": 15,
+        "referenceMax": 40,
+        "inRange": true,
+        "divergenceRatioApprox": 1,
+        "level": "high"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 8.15,
+        "reference": 9,
+        "absDeltaC": 0.8,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 35.95,
+        "reference": 35,
+        "absDeltaC": 1,
+        "level": "high"
+      }
+    },
+    "warnings": [],
+    "qaSource": "Cairo WMO-class normals (precip ~20–30 mm; hot summers)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidence": {
+    "version": "2.0.2-accuracy",
+    "dimensions": {
+      "SOURCE_DATA_INTEGRITY": "high",
+      "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+      "TERRAIN_CONTEXT_CONFIDENCE": "high",
+      "LOCAL_REPRESENTATIVENESS": "high",
+      "PROFILE_COMPLETENESS": "high",
+      "OVERALL_AUTHORITY_CONFIDENCE": "high"
+    },
+    "overall": "high",
+    "legacyConfidenceField": "high",
+    "localRepresentativeness": {
+      "level": "high",
+      "reason": "qa-within-tolerance",
+      "materialDivergence": false,
+      "variables": {
+        "annualPrecipitationMm": {
+          "chelsa": 19.8,
+          "referenceMin": 15,
+          "referenceMax": 40,
+          "inRange": true,
+          "divergenceRatioApprox": 1,
+          "level": "high"
+        },
+        "coldestMonthMeanMinC": {
+          "chelsa": 8.15,
+          "reference": 9,
+          "absDeltaC": 0.8,
+          "level": "high"
+        },
+        "warmestMonthMeanMaxC": {
+          "chelsa": 35.95,
+          "reference": 35,
+          "absDeltaC": 1,
+          "level": "high"
+        }
+      },
+      "warnings": [],
+      "qaSource": "Cairo WMO-class normals (precip ~20–30 mm; hot summers)",
+      "qaDate": "2026-08-29",
+      "qaVersion": "qa-v1"
+    },
+    "warnings": [],
+    "notes": {
+      "rule": "SOURCE_DATA_INTEGRITY is not LOCAL_REPRESENTATIVENESS",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "forbidsClaiming30mClimate": true
+    }
+  },
+  "divergenceSummary": {
+    "precip": {
+      "chelsa": 19.8,
+      "referenceMin": 15,
+      "referenceMax": 40,
+      "inRange": true,
+      "divergenceRatioApprox": 1,
+      "level": "high"
+    },
+    "cold": {
+      "chelsa": 8.15,
+      "reference": 9,
+      "absDeltaC": 0.8,
+      "level": "high"
+    },
+    "warm": {
+      "chelsa": 35.95,
+      "reference": 35,
+      "absDeltaC": 1,
+      "level": "high"
+    },
+    "material": false
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "yehiam",
+  "lat": 33.12806,
+  "lon": 35.22028,
+  "climateClass": "mediterranean-highland-margin",
+  "tags": [
+    "mediterranean",
+    "inland",
+    "mountainous"
+  ],
+  "qaEvidenceAvailable": true,
+  "qaSource": "IMS/Western-Galilee station-class normals + Israel atlas precip bands (QA synthesis)",
+  "qaDate": "2026-08-29",
+  "qaVersion": "qa-v1",
+  "chelsa": {
+    "annualPrecipitationMm": 1293.6,
+    "coldestMonthMeanMinC": 7.75,
+    "warmestMonthMeanMaxC": 28.25,
+    "annualPetMm": 1487.6,
+    "aridityIndex": 0.87,
+    "cell": {
+      "x": 25826,
+      "y": 6104
+    }
+  },
+  "reference": {
+    "annualPrecipitationMm": {
+      "min": 500,
+      "max": 900,
+      "note": "Western Galilee / nearby station class ~500–900 mm"
+    },
+    "coldestMonthMeanMinC": {
+      "value": 7,
+      "toleranceC": 2.5
+    },
+    "warmestMonthMeanMaxC": {
+      "value": 30,
+      "toleranceC": 3
+    }
+  },
+  "chelsaReplaced": false,
+  "note": null,
+  "nearbyPairWith": null,
+  "yehiamReview": {
+    "extractionCorrect": true,
+    "conclusions": [
+      "A",
+      "C"
+    ],
+    "narrative": "CHELSA cell extraction verified (bio12=1293.6 mm). Model is wetter than local station-class normals; orographic CHELSA treatment and station/elevation/period mismatch (C) likely contribute. No extraction bug (D false). Preserve CHELSA; demote LOCAL_REPRESENTATIVENESS."
+  },
+  "preparedInCruvit": true,
+  "representativeness": {
+    "level": "low",
+    "reason": "material-model-vs-observed-divergence",
+    "materialDivergence": true,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 1293.6,
+        "referenceMin": 500,
+        "referenceMax": 900,
+        "inRange": false,
+        "divergenceRatioApprox": 1.44,
+        "level": "low"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 7.75,
+        "reference": 7,
+        "absDeltaC": 0.8,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 28.25,
+        "reference": 30,
+        "absDeltaC": 1.8,
+        "level": "high"
+      }
+    },
+    "warnings": [
+      "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
+    ],
+    "qaSource": "IMS/Western-Galilee station-class normals + Israel atlas precip bands (QA synthesis)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidence": {
+    "version": "2.0.2-accuracy",
+    "dimensions": {
+      "SOURCE_DATA_INTEGRITY": "high",
+      "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+      "TERRAIN_CONTEXT_CONFIDENCE": "high",
+      "LOCAL_REPRESENTATIVENESS": "low",
+      "PROFILE_COMPLETENESS": "high",
+      "OVERALL_AUTHORITY_CONFIDENCE": "low"
+    },
+    "overall": "low",
+    "legacyConfidenceField": "low",
+    "localRepresentativeness": {
+      "level": "low",
+      "reason": "material-model-vs-observed-divergence",
+      "materialDivergence": true,
+      "variables": {
+        "annualPrecipitationMm": {
+          "chelsa": 1293.6,
+          "referenceMin": 500,
+          "referenceMax": 900,
+          "inRange": false,
+          "divergenceRatioApprox": 1.44,
+          "level": "low"
+        },
+        "coldestMonthMeanMinC": {
+          "chelsa": 7.75,
+          "reference": 7,
+          "absDeltaC": 0.8,
+          "level": "high"
+        },
+        "warmestMonthMeanMaxC": {
+          "chelsa": 28.25,
+          "reference": 30,
+          "absDeltaC": 1.8,
+          "level": "high"
+        }
+      },
+      "warnings": [
+        "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
+      ],
+      "qaSource": "IMS/Western-Galilee station-class normals + Israel atlas precip bands (QA synthesis)",
+      "qaDate": "2026-08-29",
+      "qaVersion": "qa-v1"
+    },
+    "warnings": [
+      "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
+    ],
+    "notes": {
+      "rule": "SOURCE_DATA_INTEGRITY is not LOCAL_REPRESENTATIVENESS",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "forbidsClaiming30mClimate": true
+    }
+  },
+  "divergenceSummary": {
+    "precip": {
+      "chelsa": 1293.6,
+      "referenceMin": 500,
+      "referenceMax": 900,
+      "inRange": false,
+      "divergenceRatioApprox": 1.44,
+      "level": "low"
+    },
+    "cold": {
+      "chelsa": 7.75,
+      "reference": 7,
+      "absDeltaC": 0.8,
+      "level": "high"
+    },
+    "warm": {
+      "chelsa": 28.25,
+      "reference": 30,
+      "absDeltaC": 1.8,
+      "level": "high"
+    },
+    "material": true
+  }
+}

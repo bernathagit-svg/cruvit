@@ -12,6 +12,7 @@ import {
   outdoorDamagingColdUnsupported,
   thermalRegimeFromStructuralEvidence
 } from './structural-climate-authority-v1.js';
+import { applyRepresentativenessToSuitabilityClaim } from './coordinate-climate-confidence-v2-contract.js';
 
 export const SPECIFIC_PLANT_SUITABILITY_LEVELS = Object.freeze([
   'excellent',
@@ -1003,6 +1004,29 @@ export function deriveSpecificPlantOutcomes({
   protectedGrowing = false
 } = {}) {
   const env = structuralEnvironmentFromClimateProfile(climateProfile || {});
+  const climateConfidence =
+    climateProfile?.confidenceDimensions ||
+    climateProfile?.coordinateClimateV2?.confidenceDimensions ||
+    climateProfile?.structuralClimate?.provenance?.confidenceDimensions ||
+    climateProfile?.confidence ||
+    null;
+  const confidenceBundle =
+    climateProfile?.localRepresentativeness ||
+    climateProfile?.coordinateClimateV2?.localRepresentativeness
+      ? {
+          dimensions: climateProfile.confidenceDimensions ||
+            climateProfile.coordinateClimateV2?.confidenceDimensions || {
+              LOCAL_REPRESENTATIVENESS: climateProfile.localRepresentativeness?.level,
+              OVERALL_AUTHORITY_CONFIDENCE: climateProfile.confidence
+            },
+          localRepresentativeness:
+            climateProfile.localRepresentativeness ||
+            climateProfile.coordinateClimateV2?.localRepresentativeness,
+          overall: climateProfile.confidence
+        }
+      : climateConfidence && typeof climateConfidence === 'object' && climateConfidence.SOURCE_DATA_INTEGRITY
+        ? { dimensions: climateConfidence, overall: climateConfidence.OVERALL_AUTHORITY_CONFIDENCE }
+        : null;
   const s = suitability && typeof suitability === 'object' ? suitability : {};
   const sheltered = protectedGrowing === true;
   const limiting = [];
@@ -1183,7 +1207,13 @@ export function deriveSpecificPlantOutcomes({
     reproductiveEvidence: {
       flowering: flowerEval.evidence,
       fruiting: fruitEval.evidence
-    }
+    },
+    climateConfidence: confidenceBundle,
+    moistureOrPrecipDependent:
+      tropicalMoisturePlant ||
+      humidityTolerance === 'high' ||
+      humidityTolerance === 'low' ||
+      moistureMismatchForHighHumidityPlant(meta, env)
   });
 }
 
@@ -1199,9 +1229,11 @@ function finalizeOutcomes({
   sheltered,
   needsReview = false,
   fruitOriented = false,
-  reproductiveEvidence = null
+  reproductiveEvidence = null,
+  climateConfidence = null,
+  moistureOrPrecipDependent = false
 }) {
-  const overall = forceOverall
+  let overall = forceOverall
     ? forceOverall
     : deriveOverallVerdict({
         survival,
@@ -1214,6 +1246,25 @@ function finalizeOutcomes({
         fruitOriented,
         unknownGaps
       });
+
+  const confAdj = applyRepresentativenessToSuitabilityClaim({
+    overallRecommendation: overall,
+    confidence: climateConfidence,
+    moistureOrPrecipDependent
+  });
+  if (confAdj.demoted) {
+    overall = confAdj.adjustedRecommendation;
+    for (const w of confAdj.warnings || []) {
+      if (!limiting.includes(w)) limiting.push(w);
+    }
+  } else if (confAdj.forceUnknownOutcomes && moistureOrPrecipDependent) {
+    // Do not auto Not Recommended — keep / move thin moisture claims toward unknown/borderline.
+    if (overall === 'excellent' || overall === 'good') overall = 'borderline';
+    for (const w of confAdj.warnings || []) {
+      if (!limiting.includes(w)) limiting.push(w);
+    }
+  }
+
   return {
     survival,
     growth,
@@ -1229,7 +1280,9 @@ function finalizeOutcomes({
     unknownEvidence: unknownGaps,
     needsReview: !!needsReview,
     protectedGrowing: sheltered === true,
-    reproductiveEvidence: reproductiveEvidence || null
+    reproductiveEvidence: reproductiveEvidence || null,
+    climateAuthorityConfidence: climateConfidence || null,
+    representativenessAdjustment: confAdj.demoted || confAdj.forceUnknownOutcomes ? confAdj : null
   };
 }
 

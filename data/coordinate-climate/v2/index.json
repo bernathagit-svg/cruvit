@@ -1,0 +1,170 @@
+{
+  "authorityVersion": "2.0.2-accuracy",
+  "baseline": {
+    "id": "chelsa-v2.1-climatologies-1981-2010",
+    "product": "CHELSA-climatologies",
+    "version": "2.1",
+    "period": "1981-2010",
+    "license": "CC0-1.0",
+    "nativeResolutionArcSec": 30,
+    "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+    "fileFormat": "COG",
+    "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+    "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+    "variablesUsed": [
+      "tasmin",
+      "tas",
+      "tasmax",
+      "pr",
+      "vpd",
+      "hurs",
+      "pet_penman"
+    ],
+    "petVariablePath": {
+      "folder": "pet",
+      "filePrefix": "CHELSA_pet_penman"
+    },
+    "variablesDeferred": [
+      "rsds",
+      "sfcWind",
+      "cmi"
+    ]
+  },
+  "terrainPolicy": {
+    "preferredOpenOption": "aws-elevation-tiles-terrarium",
+    "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+    "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+    "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "nativeResolutionMetersApprox": 30,
+    "forbidsPerUserCopernicusApi": true,
+    "forbidsPaidRuntimeProvider": true,
+    "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+  },
+  "generatedAt": "2026-08-29T20:06:37.128Z",
+  "noCityProxy": true,
+  "entries": [
+    {
+      "id": "yehiam",
+      "label": "Yehiam, Israel",
+      "lat": 33.12806,
+      "lon": 35.22028,
+      "profilePath": "pilot/yehiam.json",
+      "coldestMonthMeanMinC": 7.75,
+      "thermalRegime": "cool-seasonal",
+      "moisture": "humid",
+      "elevationM": 441,
+      "aridityIndex": 0.87,
+      "annualPetMm": 1487.6,
+      "annualPrecipitationMm": 1293.6
+    },
+    {
+      "id": "helsinki",
+      "label": "Helsinki, Uusimaa, Finland",
+      "lat": 60.16952,
+      "lon": 24.93545,
+      "profilePath": "pilot/helsinki.json",
+      "coldestMonthMeanMinC": -8.25,
+      "thermalRegime": "frost-prone",
+      "moisture": "humid",
+      "elevationM": 40.2,
+      "aridityIndex": 1.101,
+      "annualPetMm": 610.7,
+      "annualPrecipitationMm": 672.3
+    },
+    {
+      "id": "singapore",
+      "label": "Singapore, Singapore",
+      "lat": 1.28967,
+      "lon": 103.85007,
+      "profilePath": "pilot/singapore.json",
+      "coldestMonthMeanMinC": 24.85,
+      "thermalRegime": "year-round-warm",
+      "moisture": "humid",
+      "elevationM": 20,
+      "aridityIndex": 1.399,
+      "annualPetMm": 1731.8,
+      "annualPrecipitationMm": 2423.3
+    },
+    {
+      "id": "kochi",
+      "label": "Kochi, Kerala, India",
+      "lat": 9.93988,
+      "lon": 76.26022,
+      "profilePath": "pilot/kochi.json",
+      "coldestMonthMeanMinC": 24.35,
+      "thermalRegime": "year-round-warm",
+      "moisture": "humid",
+      "elevationM": 9,
+      "aridityIndex": 1.867,
+      "annualPetMm": 1602.5,
+      "annualPrecipitationMm": 2992
+    },
+    {
+      "id": "cairo",
+      "label": "Cairo, Cairo Governorate, Egypt",
+      "lat": 30.06263,
+      "lon": 31.24967,
+      "profilePath": "pilot/cairo.json",
+      "coldestMonthMeanMinC": 8.15,
+      "thermalRegime": "cool-seasonal",
+      "moisture": "hyper-arid",
+      "elevationM": 21,
+      "aridityIndex": 0.014,
+      "annualPetMm": 1423.6,
+      "annualPrecipitationMm": 19.8
+    },
+    {
+      "id": "tokyo",
+      "label": "Tokyo, Tokyo, Japan",
+      "lat": 35.6895,
+      "lon": 139.69171,
+      "profilePath": "pilot/tokyo.json",
+      "coldestMonthMeanMinC": -0.35,
+      "thermalRegime": "frost-prone",
+      "moisture": "humid",
+      "elevationM": 35,
+      "aridityIndex": 1.624,
+      "annualPetMm": 934.5,
+      "annualPrecipitationMm": 1517.5
+    },
+    {
+      "id": "quito",
+      "label": "Quito, Pichincha, Ecuador",
+      "lat": -0.22985,
+      "lon": -78.52495,
+      "profilePath": "pilot/quito.json",
+      "coldestMonthMeanMinC": 8.65,
+      "thermalRegime": "cool-highland",
+      "moisture": "humid",
+      "elevationM": 2854,
+      "aridityIndex": 1.586,
+      "annualPetMm": 1315.6,
+      "annualPrecipitationMm": 2086.2
+    }
+  ],
+  "errors": [],
+  "storageEstimate": {
+    "variablesRequired": [
+      "tasmin",
+      "tas",
+      "tasmax",
+      "pr",
+      "vpd",
+      "hurs"
+    ],
+    "variablesDeferred": [
+      "rsds",
+      "sfcWind",
+      "cmi"
+    ],
+    "rawGlobalChelsaSelectedVarsGbApprox": 16.5,
+    "pilotCompactProfileBytesApprox": 13249,
+    "projectedNaivePerCellGlobalGbApprox": 1987,
+    "recommendation": "Prefer sparse CRUVIT tiles / on-demand cell materialization over raw global COG mirrors.",
+    "oneTimeIngestion": "COG range sample or regional tile bake — not per-user",
+    "recurringUserCostUsd": 0
+  },
+  "petScale": "raw/100",
+  "petScaleNote": "CMI-validated; corrected from raw/10 on 2026-08-29",
+  "updatedAt": "2026-08-29T20:48:38.884Z"
+}

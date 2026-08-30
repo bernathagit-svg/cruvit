@@ -10,8 +10,11 @@ export const STRUCTURAL_CLIMATE_PERSISTENCE_VERSION = '1.0.0';
 export const STRUCTURAL_ACQUIRE_FAILURE_COOLDOWN_MS = 6 * 60 * 60 * 1000;
 
 /**
- * Whether a new Open-Meteo archive acquire is allowed for this Garden location.
- * Known matching coords → never. Recent failure → never until cooldown.
+ * Whether a new EXTERNAL structural climate acquire is allowed for this Garden location.
+ *
+ * Production V2: external acquire is NEVER allowed on user runtime.
+ * Authority is CRUVIT local Coordinate Climate V2 lookup / reuse only.
+ * Kept for compatibility with older callers — always returns acquire:false for external paths.
  */
 export function shouldAcquireStructuralClimate(
   existingStructural,
@@ -19,6 +22,8 @@ export function shouldAcquireStructuralClimate(
   lon,
   { nowMs = Date.now(), cooldownMs = STRUCTURAL_ACQUIRE_FAILURE_COOLDOWN_MS } = {}
 ) {
+  void nowMs;
+  void cooldownMs;
   const latitude = Number(lat);
   const longitude = Number(lon);
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
@@ -27,35 +32,23 @@ export function shouldAcquireStructuralClimate(
 
   const sc =
     existingStructural && typeof existingStructural === 'object' ? existingStructural : null;
-  if (!sc) return { acquire: true, reason: 'missing' };
-
-  const status = String(sc.status || '').toLowerCase();
-  const pLat = Number(sc.provenance?.lat);
-  const pLon = Number(sc.provenance?.lon);
-  const coordsMatch =
-    Number.isFinite(pLat) &&
-    Number.isFinite(pLon) &&
-    Math.abs(pLat - latitude) < 0.00015 &&
-    Math.abs(pLon - longitude) < 0.00015;
-
-  if (status === 'known' && coordsMatch) {
-    return { acquire: false, reason: 'reuse-known' };
+  if (
+    sc &&
+    String(sc.status || '').toLowerCase() === 'known' &&
+    String(sc.provenance?.provider || '').includes('coordinate-climate-authority-v2')
+  ) {
+    const pLat = Number(sc.provenance?.lat);
+    const pLon = Number(sc.provenance?.lon);
+    const coordsMatch =
+      Number.isFinite(pLat) &&
+      Number.isFinite(pLon) &&
+      Math.abs(pLat - latitude) < 0.00015 &&
+      Math.abs(pLon - longitude) < 0.00015;
+    if (coordsMatch) return { acquire: false, reason: 'reuse-known-v2' };
   }
 
-  if (status === 'failed' || status === 'unknown') {
-    const failedAt = Date.parse(
-      String(sc.lastAcquireErrorAt || sc.provenance?.fetchedAt || sc.fetchedAt || '')
-    );
-    if (Number.isFinite(failedAt) && nowMs - failedAt < cooldownMs) {
-      return { acquire: false, reason: 'failure-cooldown' };
-    }
-  }
-
-  if (status === 'known' && !coordsMatch) {
-    return { acquire: true, reason: 'coords-changed' };
-  }
-
-  return { acquire: true, reason: status === 'known' ? 'stale-or-mismatch' : 'not-known' };
+  // Never allow Open-Meteo / CHELSA / terrain external acquire on user runtime.
+  return { acquire: false, reason: 'v2-local-lookup-only-no-external-acquire' };
 }
 
 /** Server write fields for garden_profiles structural climate columns. */

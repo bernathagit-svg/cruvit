@@ -1,0 +1,556 @@
+{
+  "status": "known",
+  "authorityVersion": "2.0.2-accuracy",
+  "coordinate": {
+    "lat": -0.22985,
+    "lon": -78.52495,
+    "label": "Quito, Pichincha, Ecuador"
+  },
+  "baseline": {
+    "source": "chelsa-v2.1-climatologies-1981-2010",
+    "version": "2.1",
+    "period": "1981-2010",
+    "license": "CC0-1.0",
+    "nativeClimateResolution": "~1 km (30 arc-seconds)",
+    "nativeClimateResolutionArcSec": 30
+  },
+  "terrain": {
+    "source": "aws-elevation-tiles-terrarium",
+    "version": "terrarium-v1",
+    "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "elevationM": 2854,
+    "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+    "tile": {
+      "z": 12,
+      "x": 1154,
+      "y": 2050,
+      "px": 143,
+      "py": 157
+    },
+    "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/1154/2050.png"
+  },
+  "climateNativeResolution": "~1 km (30 arc-seconds)",
+  "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+  "climateGrid": {
+    "dataset": "chelsa-v2.1-climatologies-1981-2010",
+    "nativeResolutionArcSec": 30,
+    "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+    "cellPixel": {
+      "x": 12177,
+      "y": 10107
+    },
+    "cellResDeg": {
+      "x": 0.0083333333,
+      "y": 0.0083333333
+    },
+    "bbox": [
+      -180.00013888885002,
+      -90.00013888884999,
+      179.99985967115003,
+      83.99986041515001
+    ]
+  },
+  "elevationM": 2854,
+  "monthlyTminC": [
+    9.05,
+    9.05,
+    8.95,
+    9.15,
+    9.05,
+    8.95,
+    8.65,
+    8.75,
+    8.75,
+    8.85,
+    8.75,
+    8.95
+  ],
+  "monthlyTmeanC": [
+    11.95,
+    12.15,
+    12.15,
+    12.35,
+    12.55,
+    12.55,
+    12.55,
+    12.75,
+    12.45,
+    12.15,
+    11.85,
+    11.95
+  ],
+  "monthlyTmaxC": [
+    15.25,
+    15.35,
+    15.45,
+    15.55,
+    16.05,
+    16.45,
+    16.75,
+    17.45,
+    16.95,
+    16.05,
+    15.45,
+    15.25
+  ],
+  "monthlyPrecipMm": [
+    193.7,
+    226.9,
+    292.5,
+    288.8,
+    194.9,
+    93.8,
+    41.5,
+    48.2,
+    132.1,
+    184.9,
+    190.6,
+    198.3
+  ],
+  "monthlyPetMm": [
+    114.4,
+    103,
+    111,
+    100.8,
+    102.2,
+    96.6,
+    103.8,
+    114.1,
+    116.4,
+    123.4,
+    116,
+    113.9
+  ],
+  "monthlyVpdPa": [
+    4429,
+    4573,
+    4641,
+    4752,
+    5107,
+    5556,
+    5859,
+    6087,
+    5670,
+    4895,
+    4454,
+    4378
+  ],
+  "monthlyHursPct": [
+    68.4,
+    67.6,
+    67.2,
+    66.9,
+    64.8,
+    61.8,
+    59.6,
+    58.6,
+    60.8,
+    65.4,
+    68,
+    68.7
+  ],
+  "seasonality": {
+    "tminRangeC": 0.5,
+    "coldestMonth": 7,
+    "warmestMonth": 8
+  },
+  "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+  "freezingRisk": "low",
+  "structuralColdRisk": "elevated",
+  "thermalRegime": "cool-highland",
+  "aridityMoistureRegime": "humid",
+  "aridityIndex": 1.586,
+  "aridityMethod": "UNEP_AI_P_over_PET",
+  "humidityRegime": "medium",
+  "humiditySignal": "medium",
+  "coolSeasonSignal": false,
+  "alwaysHot": false,
+  "highlandModifier": true,
+  "coldestMonthMeanMinC": 8.65,
+  "warmestMonthMeanMaxC": 17.45,
+  "annualPrecipitationMm": 2086.2,
+  "annualPetMm": 1315.6,
+  "meanVpdPa": 5033,
+  "meanRelativeHumidityPct": 64.8,
+  "confidence": "high",
+  "missingFields": [],
+  "provenance": {
+    "baseline": {
+      "id": "chelsa-v2.1-climatologies-1981-2010",
+      "product": "CHELSA-climatologies",
+      "version": "2.1",
+      "period": "1981-2010",
+      "license": "CC0-1.0",
+      "nativeResolutionArcSec": 30,
+      "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+      "fileFormat": "COG",
+      "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+      "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+      "variablesUsed": [
+        "tasmin",
+        "tas",
+        "tasmax",
+        "pr",
+        "vpd",
+        "hurs",
+        "pet_penman"
+      ],
+      "petVariablePath": {
+        "folder": "pet",
+        "filePrefix": "CHELSA_pet_penman"
+      },
+      "variablesDeferred": [
+        "rsds",
+        "sfcWind",
+        "cmi"
+      ]
+    },
+    "terrainPolicy": {
+      "preferredOpenOption": "aws-elevation-tiles-terrarium",
+      "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+      "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+      "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "nativeResolutionMetersApprox": 30,
+      "forbidsPerUserCopernicusApi": true,
+      "forbidsPaidRuntimeProvider": true,
+      "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+    },
+    "acquisitionChannel": "build-ingestion-only",
+    "runtimeExternalCallsForbidden": true,
+    "noCityProxy": true,
+    "pilotId": "quito",
+    "geocode": {
+      "lat": -0.22985,
+      "lon": -78.52495,
+      "resolvedLabel": "Quito, Pichincha, Ecuador",
+      "geocodeProvider": "open-meteo-geocoding",
+      "usedFallback": false
+    },
+    "ingestedAt": "2026-08-29T20:06:37.126Z",
+    "cityProxy": false,
+    "usedCityProxy": false,
+    "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+    "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+    "petScaleFix": "2026-08-29-production-hardening"
+  },
+  "derivedAt": "2026-08-29T20:48:38.882Z",
+  "structuralPersistencePreview": {
+    "status": "known",
+    "version": "2.0.1-production",
+    "authorityVersion": "2.0.1-production",
+    "moistureRegime": "humid",
+    "humidityRegime": "medium",
+    "humiditySignal": "medium",
+    "structuralColdRisk": "elevated",
+    "freezingRisk": "low",
+    "broadClimateOverride": "highland-tropical",
+    "drySeasonSignal": false,
+    "thermalRegime": "cool-highland",
+    "elevationM": 2854,
+    "evidence": {
+      "coldestMonthMeanMinC": 8.65,
+      "warmestMonthMeanMaxC": 17.45,
+      "annualPrecipitationMm": 2086.2,
+      "annualPetMm": 1315.6,
+      "aridityIndex": 1.586,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "meanRelativeHumidityPct": 64.8,
+      "meanVpdPa": 5033,
+      "elevationM": 2854,
+      "thermalRegime": "cool-highland",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010"
+    },
+    "provenance": {
+      "provider": "coordinate-climate-authority-v2",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010",
+      "baselineVersion": "2.1",
+      "terrainSource": "aws-elevation-tiles-terrarium",
+      "authorityVersion": "2.0.1-production",
+      "lat": -0.22985,
+      "lon": -78.52495,
+      "fetchedAt": "2026-08-29T20:48:38.882Z",
+      "confidence": "high",
+      "noCityProxy": true,
+      "status": "known"
+    },
+    "coordinateClimateV2": {
+      "status": "known",
+      "authorityVersion": "2.0.1-production",
+      "coordinate": {
+        "lat": -0.22985,
+        "lon": -78.52495,
+        "label": "Quito, Pichincha, Ecuador"
+      },
+      "baseline": {
+        "source": "chelsa-v2.1-climatologies-1981-2010",
+        "version": "2.1",
+        "period": "1981-2010",
+        "license": "CC0-1.0",
+        "nativeClimateResolution": "~1 km (30 arc-seconds)",
+        "nativeClimateResolutionArcSec": 30
+      },
+      "terrain": {
+        "source": "aws-elevation-tiles-terrarium",
+        "version": "terrarium-v1",
+        "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+        "elevationM": 2854,
+        "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+        "tile": {
+          "z": 12,
+          "x": 1154,
+          "y": 2050,
+          "px": 143,
+          "py": 157
+        },
+        "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/1154/2050.png"
+      },
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "climateGrid": {
+        "dataset": "chelsa-v2.1-climatologies-1981-2010",
+        "nativeResolutionArcSec": 30,
+        "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+        "cellPixel": {
+          "x": 12177,
+          "y": 10107
+        },
+        "cellResDeg": {
+          "x": 0.0083333333,
+          "y": 0.0083333333
+        },
+        "bbox": [
+          -180.00013888885002,
+          -90.00013888884999,
+          179.99985967115003,
+          83.99986041515001
+        ]
+      },
+      "elevationM": 2854,
+      "monthlyTminC": [
+        9.05,
+        9.05,
+        8.95,
+        9.15,
+        9.05,
+        8.95,
+        8.65,
+        8.75,
+        8.75,
+        8.85,
+        8.75,
+        8.95
+      ],
+      "monthlyTmeanC": [
+        11.95,
+        12.15,
+        12.15,
+        12.35,
+        12.55,
+        12.55,
+        12.55,
+        12.75,
+        12.45,
+        12.15,
+        11.85,
+        11.95
+      ],
+      "monthlyTmaxC": [
+        15.25,
+        15.35,
+        15.45,
+        15.55,
+        16.05,
+        16.45,
+        16.75,
+        17.45,
+        16.95,
+        16.05,
+        15.45,
+        15.25
+      ],
+      "monthlyPrecipMm": [
+        193.7,
+        226.9,
+        292.5,
+        288.8,
+        194.9,
+        93.8,
+        41.5,
+        48.2,
+        132.1,
+        184.9,
+        190.6,
+        198.3
+      ],
+      "monthlyPetMm": [
+        114.4,
+        103,
+        111,
+        100.8,
+        102.2,
+        96.6,
+        103.8,
+        114.1,
+        116.4,
+        123.4,
+        116,
+        113.9
+      ],
+      "monthlyVpdPa": [
+        4429,
+        4573,
+        4641,
+        4752,
+        5107,
+        5556,
+        5859,
+        6087,
+        5670,
+        4895,
+        4454,
+        4378
+      ],
+      "monthlyHursPct": [
+        68.4,
+        67.6,
+        67.2,
+        66.9,
+        64.8,
+        61.8,
+        59.6,
+        58.6,
+        60.8,
+        65.4,
+        68,
+        68.7
+      ],
+      "seasonality": {
+        "tminRangeC": 0.5,
+        "coldestMonth": 7,
+        "warmestMonth": 8
+      },
+      "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+      "freezingRisk": "low",
+      "structuralColdRisk": "elevated",
+      "thermalRegime": "cool-highland",
+      "aridityMoistureRegime": "humid",
+      "aridityIndex": 1.586,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "humidityRegime": "medium",
+      "humiditySignal": "medium",
+      "coolSeasonSignal": false,
+      "alwaysHot": false,
+      "highlandModifier": true,
+      "coldestMonthMeanMinC": 8.65,
+      "warmestMonthMeanMaxC": 17.45,
+      "annualPrecipitationMm": 2086.2,
+      "annualPetMm": 1315.6,
+      "meanVpdPa": 5033,
+      "meanRelativeHumidityPct": 64.8,
+      "confidence": "high",
+      "missingFields": [],
+      "provenance": {
+        "baseline": {
+          "id": "chelsa-v2.1-climatologies-1981-2010",
+          "product": "CHELSA-climatologies",
+          "version": "2.1",
+          "period": "1981-2010",
+          "license": "CC0-1.0",
+          "nativeResolutionArcSec": 30,
+          "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+          "fileFormat": "COG",
+          "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+          "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+          "variablesUsed": [
+            "tasmin",
+            "tas",
+            "tasmax",
+            "pr",
+            "vpd",
+            "hurs",
+            "pet_penman"
+          ],
+          "petVariablePath": {
+            "folder": "pet",
+            "filePrefix": "CHELSA_pet_penman"
+          },
+          "variablesDeferred": [
+            "rsds",
+            "sfcWind",
+            "cmi"
+          ]
+        },
+        "terrainPolicy": {
+          "preferredOpenOption": "aws-elevation-tiles-terrarium",
+          "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+          "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+          "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+          "nativeResolutionMetersApprox": 30,
+          "forbidsPerUserCopernicusApi": true,
+          "forbidsPaidRuntimeProvider": true,
+          "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+        },
+        "acquisitionChannel": "build-ingestion-only",
+        "runtimeExternalCallsForbidden": true,
+        "noCityProxy": true,
+        "pilotId": "quito",
+        "geocode": {
+          "lat": -0.22985,
+          "lon": -78.52495,
+          "resolvedLabel": "Quito, Pichincha, Ecuador",
+          "geocodeProvider": "open-meteo-geocoding",
+          "usedFallback": false
+        },
+        "ingestedAt": "2026-08-29T20:06:37.126Z",
+        "cityProxy": false,
+        "usedCityProxy": false,
+        "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+        "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+        "petScaleFix": "2026-08-29-production-hardening"
+      },
+      "derivedAt": "2026-08-29T20:48:38.882Z"
+    }
+  },
+  "confidenceDimensions": {
+    "SOURCE_DATA_INTEGRITY": "high",
+    "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+    "TERRAIN_CONTEXT_CONFIDENCE": "high",
+    "LOCAL_REPRESENTATIVENESS": "high",
+    "PROFILE_COMPLETENESS": "high",
+    "OVERALL_AUTHORITY_CONFIDENCE": "high"
+  },
+  "localRepresentativeness": {
+    "level": "high",
+    "reason": "qa-within-tolerance",
+    "materialDivergence": false,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 2086.2,
+        "referenceMin": 900,
+        "referenceMax": 2200,
+        "inRange": true,
+        "divergenceRatioApprox": 1,
+        "level": "high"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 8.65,
+        "reference": 8,
+        "absDeltaC": 0.7,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 17.45,
+        "reference": 19,
+        "absDeltaC": 1.6,
+        "level": "high"
+      }
+    },
+    "warnings": [],
+    "qaSource": "Quito highland normals (cool; precip highly local ~900–2200 mm by slope/aspect)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidenceWarnings": []
+}

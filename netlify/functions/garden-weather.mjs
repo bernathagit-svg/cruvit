@@ -1,4 +1,8 @@
-import { fetchStructuralClimateForCoordinates } from '../../modules/personal-domain/structural-climate-authority-v1.js';
+import {
+  resolveGardenStructuralClimateFromCoordinateV2,
+  assertNoExternalStructuralAcquisitionOnUserRuntime,
+  getCoordinateClimateRuntimeCounters
+} from '../../modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
 import {
   isTooBroadForGardenClimate,
   pickBestGeocodeResult,
@@ -547,16 +551,28 @@ export default async function handler(request) {
       return json(200, { suggestions });
     }
 
-    if (mode === 'structural-climate') {
+    if (mode === 'structural-climate' || mode === 'coordinate-climate-v2') {
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
         return json(400, { error: 'Missing coordinates for structural climate' });
       }
-      const structural = await fetchStructuralClimateForCoordinates(lat, lon);
+      // Production: CRUVIT local Coordinate Climate V2 only — never Open-Meteo/CHELSA/terrain fetch.
+      const resolved = resolveGardenStructuralClimateFromCoordinateV2(lat, lon, {
+        label: cleanText(body.label),
+        existingStructural: body.existingStructural || null,
+        enqueuePrep: body.enqueuePrep !== false
+      });
       return json(200, {
-        structuralClimate: structural.structuralClimate,
-        ok: structural.ok,
-        error: structural.error,
-        acquisitionMs: structural.acquisitionMs
+        ok: resolved.ok,
+        code: resolved.code,
+        structuralClimate: resolved.structuralClimate,
+        serverFields: resolved.serverFields,
+        prepEnqueued: resolved.prepEnqueued,
+        resolutionContract: resolved.resolutionContract,
+        cost: resolved.cost || getCoordinateClimateRuntimeCounters(),
+        policy: assertNoExternalStructuralAcquisitionOnUserRuntime(),
+        // Explicit: acquisitionMs null — no external structural provider call
+        acquisitionMs: null,
+        error: resolved.ok ? null : resolved.code
       });
     }
 
@@ -583,25 +599,30 @@ export default async function handler(request) {
 
     if (!location.climate) location.climate = inferClimate(lat, lon, location.country);
 
-    // One-shot long-term structural climate (not forecast). Cached on client location.
-    const skipStructural = body.skipStructuralClimate === true;
-    let structuralClimate = null;
-    let structuralAcquisitionMs = null;
-    if (!skipStructural) {
-      const structural = await fetchStructuralClimateForCoordinates(lat, lon);
-      structuralClimate = structural.structuralClimate;
-      structuralAcquisitionMs = structural.acquisitionMs;
-      if (structural.ok && structuralClimate?.broadClimateOverride === 'arid') {
-        location.climate = 'Arid';
-      }
-      location.structuralClimate = structuralClimate;
+    // Structural climate authority: Coordinate Climate V2 local lookup only.
+    // Forecast remains separate. Never call Open-Meteo archive / CHELSA / terrain here.
+    const resolved = resolveGardenStructuralClimateFromCoordinateV2(lat, lon, {
+      label: location.label,
+      existingStructural: body.existingStructural || null,
+      enqueuePrep: body.enqueuePrep !== false
+    });
+    const structuralClimate = resolved.structuralClimate;
+    const structuralAcquisitionMs = null;
+    if (resolved.ok && structuralClimate?.broadClimateOverride === 'arid') {
+      location.climate = 'Arid';
     }
+    location.structuralClimate = structuralClimate;
 
     return json(200, {
       location,
       weather,
       structuralClimate,
-      structuralAcquisitionMs
+      structuralAcquisitionMs,
+      code: resolved.code,
+      ok: resolved.ok,
+      prepEnqueued: resolved.prepEnqueued,
+      cost: resolved.cost,
+      policy: assertNoExternalStructuralAcquisitionOnUserRuntime()
     });
   } catch (error) {
     return json(500, { error: error?.message || 'Weather service failed' });

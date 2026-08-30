@@ -1,0 +1,556 @@
+{
+  "status": "known",
+  "authorityVersion": "2.0.2-accuracy",
+  "coordinate": {
+    "lat": 9.93988,
+    "lon": 76.26022,
+    "label": "Kochi, Kerala, India"
+  },
+  "baseline": {
+    "source": "chelsa-v2.1-climatologies-1981-2010",
+    "version": "2.1",
+    "period": "1981-2010",
+    "license": "CC0-1.0",
+    "nativeClimateResolution": "~1 km (30 arc-seconds)",
+    "nativeClimateResolutionArcSec": 30
+  },
+  "terrain": {
+    "source": "aws-elevation-tiles-terrarium",
+    "version": "terrarium-v1",
+    "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "elevationM": 9,
+    "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+    "tile": {
+      "z": 12,
+      "x": 2915,
+      "y": 1934,
+      "px": 171,
+      "py": 85
+    },
+    "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2915/1934.png"
+  },
+  "climateNativeResolution": "~1 km (30 arc-seconds)",
+  "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+  "climateGrid": {
+    "dataset": "chelsa-v2.1-climatologies-1981-2010",
+    "nativeResolutionArcSec": 30,
+    "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+    "cellPixel": {
+      "x": 30751,
+      "y": 8887
+    },
+    "cellResDeg": {
+      "x": 0.0083333333,
+      "y": 0.0083333333
+    },
+    "bbox": [
+      -180.00013888885002,
+      -90.00013888884999,
+      179.99985967115003,
+      83.99986041515001
+    ]
+  },
+  "elevationM": 9,
+  "monthlyTminC": [
+    24.35,
+    25.05,
+    25.95,
+    26.25,
+    26.15,
+    25.15,
+    24.55,
+    24.35,
+    24.55,
+    24.65,
+    24.75,
+    24.45
+  ],
+  "monthlyTmeanC": [
+    26.35,
+    26.95,
+    27.75,
+    28.05,
+    27.55,
+    26.05,
+    25.45,
+    25.35,
+    25.75,
+    26.05,
+    26.35,
+    26.35
+  ],
+  "monthlyTmaxC": [
+    28.05,
+    28.55,
+    29.45,
+    29.65,
+    28.95,
+    27.15,
+    26.55,
+    26.45,
+    26.85,
+    27.35,
+    27.75,
+    27.95
+  ],
+  "monthlyPrecipMm": [
+    18.4,
+    26.8,
+    46.8,
+    129.2,
+    273.7,
+    725.4,
+    556.1,
+    390.7,
+    295.9,
+    345.5,
+    153.3,
+    30.2
+  ],
+  "monthlyPetMm": [
+    137,
+    138.8,
+    166.5,
+    157.2,
+    143.2,
+    115.7,
+    117.2,
+    124.8,
+    129.2,
+    126.3,
+    118.5,
+    128.1
+  ],
+  "monthlyVpdPa": [
+    13171,
+    13746,
+    14299,
+    13781,
+    12783,
+    10590,
+    10075,
+    10056,
+    10741,
+    11155,
+    11722,
+    12806
+  ],
+  "monthlyHursPct": [
+    61.6,
+    61.2,
+    61.6,
+    63.5,
+    65.2,
+    68.5,
+    69,
+    68.8,
+    67.4,
+    66.8,
+    65.7,
+    62.6
+  ],
+  "seasonality": {
+    "tminRangeC": 1.9,
+    "coldestMonth": 1,
+    "warmestMonth": 4
+  },
+  "derivedColdFrostRisk": "freezingRisk=low; coldRisk=low",
+  "freezingRisk": "low",
+  "structuralColdRisk": "low",
+  "thermalRegime": "year-round-warm",
+  "aridityMoistureRegime": "humid",
+  "aridityIndex": 1.867,
+  "aridityMethod": "UNEP_AI_P_over_PET",
+  "humidityRegime": "high",
+  "humiditySignal": "high",
+  "coolSeasonSignal": false,
+  "alwaysHot": true,
+  "highlandModifier": false,
+  "coldestMonthMeanMinC": 24.35,
+  "warmestMonthMeanMaxC": 29.65,
+  "annualPrecipitationMm": 2992,
+  "annualPetMm": 1602.5,
+  "meanVpdPa": 12077,
+  "meanRelativeHumidityPct": 65.2,
+  "confidence": "high",
+  "missingFields": [],
+  "provenance": {
+    "baseline": {
+      "id": "chelsa-v2.1-climatologies-1981-2010",
+      "product": "CHELSA-climatologies",
+      "version": "2.1",
+      "period": "1981-2010",
+      "license": "CC0-1.0",
+      "nativeResolutionArcSec": 30,
+      "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+      "fileFormat": "COG",
+      "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+      "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+      "variablesUsed": [
+        "tasmin",
+        "tas",
+        "tasmax",
+        "pr",
+        "vpd",
+        "hurs",
+        "pet_penman"
+      ],
+      "petVariablePath": {
+        "folder": "pet",
+        "filePrefix": "CHELSA_pet_penman"
+      },
+      "variablesDeferred": [
+        "rsds",
+        "sfcWind",
+        "cmi"
+      ]
+    },
+    "terrainPolicy": {
+      "preferredOpenOption": "aws-elevation-tiles-terrarium",
+      "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+      "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+      "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "nativeResolutionMetersApprox": 30,
+      "forbidsPerUserCopernicusApi": true,
+      "forbidsPaidRuntimeProvider": true,
+      "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+    },
+    "acquisitionChannel": "build-ingestion-only",
+    "runtimeExternalCallsForbidden": true,
+    "noCityProxy": true,
+    "pilotId": "kochi",
+    "geocode": {
+      "lat": 9.93988,
+      "lon": 76.26022,
+      "resolvedLabel": "Kochi, Kerala, India",
+      "geocodeProvider": "open-meteo-geocoding",
+      "usedFallback": false
+    },
+    "ingestedAt": "2026-08-29T20:04:56.770Z",
+    "cityProxy": false,
+    "usedCityProxy": false,
+    "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+    "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+    "petScaleFix": "2026-08-29-production-hardening"
+  },
+  "derivedAt": "2026-08-29T20:48:38.881Z",
+  "structuralPersistencePreview": {
+    "status": "known",
+    "version": "2.0.1-production",
+    "authorityVersion": "2.0.1-production",
+    "moistureRegime": "humid",
+    "humidityRegime": "high",
+    "humiditySignal": "high",
+    "structuralColdRisk": "low",
+    "freezingRisk": "low",
+    "broadClimateOverride": "tropical",
+    "drySeasonSignal": false,
+    "thermalRegime": "year-round-warm",
+    "elevationM": 9,
+    "evidence": {
+      "coldestMonthMeanMinC": 24.35,
+      "warmestMonthMeanMaxC": 29.65,
+      "annualPrecipitationMm": 2992,
+      "annualPetMm": 1602.5,
+      "aridityIndex": 1.867,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "meanRelativeHumidityPct": 65.2,
+      "meanVpdPa": 12077,
+      "elevationM": 9,
+      "thermalRegime": "year-round-warm",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010"
+    },
+    "provenance": {
+      "provider": "coordinate-climate-authority-v2",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010",
+      "baselineVersion": "2.1",
+      "terrainSource": "aws-elevation-tiles-terrarium",
+      "authorityVersion": "2.0.1-production",
+      "lat": 9.93988,
+      "lon": 76.26022,
+      "fetchedAt": "2026-08-29T20:48:38.881Z",
+      "confidence": "high",
+      "noCityProxy": true,
+      "status": "known"
+    },
+    "coordinateClimateV2": {
+      "status": "known",
+      "authorityVersion": "2.0.1-production",
+      "coordinate": {
+        "lat": 9.93988,
+        "lon": 76.26022,
+        "label": "Kochi, Kerala, India"
+      },
+      "baseline": {
+        "source": "chelsa-v2.1-climatologies-1981-2010",
+        "version": "2.1",
+        "period": "1981-2010",
+        "license": "CC0-1.0",
+        "nativeClimateResolution": "~1 km (30 arc-seconds)",
+        "nativeClimateResolutionArcSec": 30
+      },
+      "terrain": {
+        "source": "aws-elevation-tiles-terrarium",
+        "version": "terrarium-v1",
+        "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+        "elevationM": 9,
+        "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+        "tile": {
+          "z": 12,
+          "x": 2915,
+          "y": 1934,
+          "px": 171,
+          "py": 85
+        },
+        "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2915/1934.png"
+      },
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "climateGrid": {
+        "dataset": "chelsa-v2.1-climatologies-1981-2010",
+        "nativeResolutionArcSec": 30,
+        "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+        "cellPixel": {
+          "x": 30751,
+          "y": 8887
+        },
+        "cellResDeg": {
+          "x": 0.0083333333,
+          "y": 0.0083333333
+        },
+        "bbox": [
+          -180.00013888885002,
+          -90.00013888884999,
+          179.99985967115003,
+          83.99986041515001
+        ]
+      },
+      "elevationM": 9,
+      "monthlyTminC": [
+        24.35,
+        25.05,
+        25.95,
+        26.25,
+        26.15,
+        25.15,
+        24.55,
+        24.35,
+        24.55,
+        24.65,
+        24.75,
+        24.45
+      ],
+      "monthlyTmeanC": [
+        26.35,
+        26.95,
+        27.75,
+        28.05,
+        27.55,
+        26.05,
+        25.45,
+        25.35,
+        25.75,
+        26.05,
+        26.35,
+        26.35
+      ],
+      "monthlyTmaxC": [
+        28.05,
+        28.55,
+        29.45,
+        29.65,
+        28.95,
+        27.15,
+        26.55,
+        26.45,
+        26.85,
+        27.35,
+        27.75,
+        27.95
+      ],
+      "monthlyPrecipMm": [
+        18.4,
+        26.8,
+        46.8,
+        129.2,
+        273.7,
+        725.4,
+        556.1,
+        390.7,
+        295.9,
+        345.5,
+        153.3,
+        30.2
+      ],
+      "monthlyPetMm": [
+        137,
+        138.8,
+        166.5,
+        157.2,
+        143.2,
+        115.7,
+        117.2,
+        124.8,
+        129.2,
+        126.3,
+        118.5,
+        128.1
+      ],
+      "monthlyVpdPa": [
+        13171,
+        13746,
+        14299,
+        13781,
+        12783,
+        10590,
+        10075,
+        10056,
+        10741,
+        11155,
+        11722,
+        12806
+      ],
+      "monthlyHursPct": [
+        61.6,
+        61.2,
+        61.6,
+        63.5,
+        65.2,
+        68.5,
+        69,
+        68.8,
+        67.4,
+        66.8,
+        65.7,
+        62.6
+      ],
+      "seasonality": {
+        "tminRangeC": 1.9,
+        "coldestMonth": 1,
+        "warmestMonth": 4
+      },
+      "derivedColdFrostRisk": "freezingRisk=low; coldRisk=low",
+      "freezingRisk": "low",
+      "structuralColdRisk": "low",
+      "thermalRegime": "year-round-warm",
+      "aridityMoistureRegime": "humid",
+      "aridityIndex": 1.867,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "humidityRegime": "high",
+      "humiditySignal": "high",
+      "coolSeasonSignal": false,
+      "alwaysHot": true,
+      "highlandModifier": false,
+      "coldestMonthMeanMinC": 24.35,
+      "warmestMonthMeanMaxC": 29.65,
+      "annualPrecipitationMm": 2992,
+      "annualPetMm": 1602.5,
+      "meanVpdPa": 12077,
+      "meanRelativeHumidityPct": 65.2,
+      "confidence": "high",
+      "missingFields": [],
+      "provenance": {
+        "baseline": {
+          "id": "chelsa-v2.1-climatologies-1981-2010",
+          "product": "CHELSA-climatologies",
+          "version": "2.1",
+          "period": "1981-2010",
+          "license": "CC0-1.0",
+          "nativeResolutionArcSec": 30,
+          "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+          "fileFormat": "COG",
+          "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+          "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+          "variablesUsed": [
+            "tasmin",
+            "tas",
+            "tasmax",
+            "pr",
+            "vpd",
+            "hurs",
+            "pet_penman"
+          ],
+          "petVariablePath": {
+            "folder": "pet",
+            "filePrefix": "CHELSA_pet_penman"
+          },
+          "variablesDeferred": [
+            "rsds",
+            "sfcWind",
+            "cmi"
+          ]
+        },
+        "terrainPolicy": {
+          "preferredOpenOption": "aws-elevation-tiles-terrarium",
+          "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+          "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+          "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+          "nativeResolutionMetersApprox": 30,
+          "forbidsPerUserCopernicusApi": true,
+          "forbidsPaidRuntimeProvider": true,
+          "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+        },
+        "acquisitionChannel": "build-ingestion-only",
+        "runtimeExternalCallsForbidden": true,
+        "noCityProxy": true,
+        "pilotId": "kochi",
+        "geocode": {
+          "lat": 9.93988,
+          "lon": 76.26022,
+          "resolvedLabel": "Kochi, Kerala, India",
+          "geocodeProvider": "open-meteo-geocoding",
+          "usedFallback": false
+        },
+        "ingestedAt": "2026-08-29T20:04:56.770Z",
+        "cityProxy": false,
+        "usedCityProxy": false,
+        "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+        "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+        "petScaleFix": "2026-08-29-production-hardening"
+      },
+      "derivedAt": "2026-08-29T20:48:38.881Z"
+    }
+  },
+  "confidenceDimensions": {
+    "SOURCE_DATA_INTEGRITY": "high",
+    "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+    "TERRAIN_CONTEXT_CONFIDENCE": "high",
+    "LOCAL_REPRESENTATIVENESS": "high",
+    "PROFILE_COMPLETENESS": "high",
+    "OVERALL_AUTHORITY_CONFIDENCE": "high"
+  },
+  "localRepresentativeness": {
+    "level": "high",
+    "reason": "qa-within-tolerance",
+    "materialDivergence": false,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 2992,
+        "referenceMin": 2700,
+        "referenceMax": 3300,
+        "inRange": true,
+        "divergenceRatioApprox": 1,
+        "level": "high"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 24.35,
+        "reference": 23,
+        "absDeltaC": 1.4,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 29.65,
+        "reference": 32,
+        "absDeltaC": 2.4,
+        "level": "high"
+      }
+    },
+    "warnings": [],
+    "qaSource": "Kochi/Cochin Indian Meteorological station-class (~2800–3200 mm)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidenceWarnings": []
+}

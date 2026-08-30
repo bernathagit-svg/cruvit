@@ -1,0 +1,556 @@
+{
+  "status": "known",
+  "authorityVersion": "2.0.2-accuracy",
+  "coordinate": {
+    "lat": 30.06263,
+    "lon": 31.24967,
+    "label": "Cairo, Cairo Governorate, Egypt"
+  },
+  "baseline": {
+    "source": "chelsa-v2.1-climatologies-1981-2010",
+    "version": "2.1",
+    "period": "1981-2010",
+    "license": "CC0-1.0",
+    "nativeClimateResolution": "~1 km (30 arc-seconds)",
+    "nativeClimateResolutionArcSec": 30
+  },
+  "terrain": {
+    "source": "aws-elevation-tiles-terrarium",
+    "version": "terrarium-v1",
+    "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "elevationM": 21,
+    "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+    "tile": {
+      "z": 12,
+      "x": 2403,
+      "y": 1689,
+      "px": 141,
+      "py": 21
+    },
+    "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2403/1689.png"
+  },
+  "climateNativeResolution": "~1 km (30 arc-seconds)",
+  "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+  "climateGrid": {
+    "dataset": "chelsa-v2.1-climatologies-1981-2010",
+    "nativeResolutionArcSec": 30,
+    "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+    "cellPixel": {
+      "x": 25349,
+      "y": 6472
+    },
+    "cellResDeg": {
+      "x": 0.0083333333,
+      "y": 0.0083333333
+    },
+    "bbox": [
+      -180.00013888885002,
+      -90.00013888884999,
+      179.99985967115003,
+      83.99986041515001
+    ]
+  },
+  "elevationM": 21,
+  "monthlyTminC": [
+    8.15,
+    8.45,
+    10.15,
+    13.35,
+    16.45,
+    19.15,
+    20.75,
+    21.25,
+    20.05,
+    17.55,
+    13.45,
+    9.75
+  ],
+  "monthlyTmeanC": [
+    13.75,
+    14.75,
+    17.45,
+    21.55,
+    24.95,
+    27.85,
+    28.75,
+    28.65,
+    27.15,
+    23.95,
+    19.15,
+    15.05
+  ],
+  "monthlyTmaxC": [
+    18.75,
+    20.15,
+    23.55,
+    28.55,
+    32.25,
+    35.25,
+    35.95,
+    35.55,
+    33.65,
+    29.95,
+    24.75,
+    20.15
+  ],
+  "monthlyPrecipMm": [
+    3.8,
+    3.7,
+    3.8,
+    1,
+    0.5,
+    0.1,
+    0.1,
+    0.2,
+    0.2,
+    0.7,
+    2.3,
+    3.4
+  ],
+  "monthlyPetMm": [
+    56.1,
+    69,
+    107,
+    138,
+    169.9,
+    179.6,
+    182.3,
+    167.4,
+    135.9,
+    101.5,
+    65.8,
+    51.1
+  ],
+  "monthlyVpdPa": [
+    7424,
+    8225,
+    9889,
+    13348,
+    16561,
+    19241,
+    19314,
+    18716,
+    17180,
+    14006,
+    10423,
+    8007
+  ],
+  "monthlyHursPct": [
+    52.8,
+    51.1,
+    50.5,
+    48,
+    47.6,
+    48.5,
+    51,
+    52.3,
+    52.1,
+    53,
+    53.1,
+    53.2
+  ],
+  "seasonality": {
+    "tminRangeC": 13.1,
+    "coldestMonth": 1,
+    "warmestMonth": 7
+  },
+  "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+  "freezingRisk": "low",
+  "structuralColdRisk": "elevated",
+  "thermalRegime": "cool-seasonal",
+  "aridityMoistureRegime": "hyper-arid",
+  "aridityIndex": 0.014,
+  "aridityMethod": "UNEP_AI_P_over_PET",
+  "humidityRegime": "medium",
+  "humiditySignal": "low",
+  "coolSeasonSignal": true,
+  "alwaysHot": false,
+  "highlandModifier": false,
+  "coldestMonthMeanMinC": 8.15,
+  "warmestMonthMeanMaxC": 35.95,
+  "annualPrecipitationMm": 19.8,
+  "annualPetMm": 1423.6,
+  "meanVpdPa": 13528,
+  "meanRelativeHumidityPct": 51.1,
+  "confidence": "high",
+  "missingFields": [],
+  "provenance": {
+    "baseline": {
+      "id": "chelsa-v2.1-climatologies-1981-2010",
+      "product": "CHELSA-climatologies",
+      "version": "2.1",
+      "period": "1981-2010",
+      "license": "CC0-1.0",
+      "nativeResolutionArcSec": 30,
+      "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+      "fileFormat": "COG",
+      "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+      "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+      "variablesUsed": [
+        "tasmin",
+        "tas",
+        "tasmax",
+        "pr",
+        "vpd",
+        "hurs",
+        "pet_penman"
+      ],
+      "petVariablePath": {
+        "folder": "pet",
+        "filePrefix": "CHELSA_pet_penman"
+      },
+      "variablesDeferred": [
+        "rsds",
+        "sfcWind",
+        "cmi"
+      ]
+    },
+    "terrainPolicy": {
+      "preferredOpenOption": "aws-elevation-tiles-terrarium",
+      "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+      "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+      "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "nativeResolutionMetersApprox": 30,
+      "forbidsPerUserCopernicusApi": true,
+      "forbidsPaidRuntimeProvider": true,
+      "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+    },
+    "acquisitionChannel": "build-ingestion-only",
+    "runtimeExternalCallsForbidden": true,
+    "noCityProxy": true,
+    "pilotId": "cairo",
+    "geocode": {
+      "lat": 30.06263,
+      "lon": 31.24967,
+      "resolvedLabel": "Cairo, Cairo Governorate, Egypt",
+      "geocodeProvider": "open-meteo-geocoding",
+      "usedFallback": false
+    },
+    "ingestedAt": "2026-08-29T20:05:28.493Z",
+    "cityProxy": false,
+    "usedCityProxy": false,
+    "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+    "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+    "petScaleFix": "2026-08-29-production-hardening"
+  },
+  "derivedAt": "2026-08-29T20:48:38.877Z",
+  "structuralPersistencePreview": {
+    "status": "known",
+    "version": "2.0.1-production",
+    "authorityVersion": "2.0.1-production",
+    "moistureRegime": "hyper-arid",
+    "humidityRegime": "medium",
+    "humiditySignal": "low",
+    "structuralColdRisk": "elevated",
+    "freezingRisk": "low",
+    "broadClimateOverride": "arid",
+    "drySeasonSignal": true,
+    "thermalRegime": "cool-seasonal",
+    "elevationM": 21,
+    "evidence": {
+      "coldestMonthMeanMinC": 8.15,
+      "warmestMonthMeanMaxC": 35.95,
+      "annualPrecipitationMm": 19.8,
+      "annualPetMm": 1423.6,
+      "aridityIndex": 0.014,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "meanRelativeHumidityPct": 51.1,
+      "meanVpdPa": 13528,
+      "elevationM": 21,
+      "thermalRegime": "cool-seasonal",
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010"
+    },
+    "provenance": {
+      "provider": "coordinate-climate-authority-v2",
+      "baseline": "chelsa-v2.1-climatologies-1981-2010",
+      "baselineVersion": "2.1",
+      "terrainSource": "aws-elevation-tiles-terrarium",
+      "authorityVersion": "2.0.1-production",
+      "lat": 30.06263,
+      "lon": 31.24967,
+      "fetchedAt": "2026-08-29T20:48:38.877Z",
+      "confidence": "high",
+      "noCityProxy": true,
+      "status": "known"
+    },
+    "coordinateClimateV2": {
+      "status": "known",
+      "authorityVersion": "2.0.1-production",
+      "coordinate": {
+        "lat": 30.06263,
+        "lon": 31.24967,
+        "label": "Cairo, Cairo Governorate, Egypt"
+      },
+      "baseline": {
+        "source": "chelsa-v2.1-climatologies-1981-2010",
+        "version": "2.1",
+        "period": "1981-2010",
+        "license": "CC0-1.0",
+        "nativeClimateResolution": "~1 km (30 arc-seconds)",
+        "nativeClimateResolutionArcSec": 30
+      },
+      "terrain": {
+        "source": "aws-elevation-tiles-terrarium",
+        "version": "terrarium-v1",
+        "nativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+        "elevationM": 21,
+        "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA.",
+        "tile": {
+          "z": 12,
+          "x": 2403,
+          "y": 1689,
+          "px": 141,
+          "py": 21
+        },
+        "url": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/2403/1689.png"
+      },
+      "climateNativeResolution": "~1 km (30 arc-seconds)",
+      "terrainNativeResolution": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+      "climateGrid": {
+        "dataset": "chelsa-v2.1-climatologies-1981-2010",
+        "nativeResolutionArcSec": 30,
+        "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+        "cellPixel": {
+          "x": 25349,
+          "y": 6472
+        },
+        "cellResDeg": {
+          "x": 0.0083333333,
+          "y": 0.0083333333
+        },
+        "bbox": [
+          -180.00013888885002,
+          -90.00013888884999,
+          179.99985967115003,
+          83.99986041515001
+        ]
+      },
+      "elevationM": 21,
+      "monthlyTminC": [
+        8.15,
+        8.45,
+        10.15,
+        13.35,
+        16.45,
+        19.15,
+        20.75,
+        21.25,
+        20.05,
+        17.55,
+        13.45,
+        9.75
+      ],
+      "monthlyTmeanC": [
+        13.75,
+        14.75,
+        17.45,
+        21.55,
+        24.95,
+        27.85,
+        28.75,
+        28.65,
+        27.15,
+        23.95,
+        19.15,
+        15.05
+      ],
+      "monthlyTmaxC": [
+        18.75,
+        20.15,
+        23.55,
+        28.55,
+        32.25,
+        35.25,
+        35.95,
+        35.55,
+        33.65,
+        29.95,
+        24.75,
+        20.15
+      ],
+      "monthlyPrecipMm": [
+        3.8,
+        3.7,
+        3.8,
+        1,
+        0.5,
+        0.1,
+        0.1,
+        0.2,
+        0.2,
+        0.7,
+        2.3,
+        3.4
+      ],
+      "monthlyPetMm": [
+        56.1,
+        69,
+        107,
+        138,
+        169.9,
+        179.6,
+        182.3,
+        167.4,
+        135.9,
+        101.5,
+        65.8,
+        51.1
+      ],
+      "monthlyVpdPa": [
+        7424,
+        8225,
+        9889,
+        13348,
+        16561,
+        19241,
+        19314,
+        18716,
+        17180,
+        14006,
+        10423,
+        8007
+      ],
+      "monthlyHursPct": [
+        52.8,
+        51.1,
+        50.5,
+        48,
+        47.6,
+        48.5,
+        51,
+        52.3,
+        52.1,
+        53,
+        53.1,
+        53.2
+      ],
+      "seasonality": {
+        "tminRangeC": 13.1,
+        "coldestMonth": 1,
+        "warmestMonth": 7
+      },
+      "derivedColdFrostRisk": "freezingRisk=low; coldRisk=elevated",
+      "freezingRisk": "low",
+      "structuralColdRisk": "elevated",
+      "thermalRegime": "cool-seasonal",
+      "aridityMoistureRegime": "hyper-arid",
+      "aridityIndex": 0.014,
+      "aridityMethod": "UNEP_AI_P_over_PET",
+      "humidityRegime": "medium",
+      "humiditySignal": "low",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "highlandModifier": false,
+      "coldestMonthMeanMinC": 8.15,
+      "warmestMonthMeanMaxC": 35.95,
+      "annualPrecipitationMm": 19.8,
+      "annualPetMm": 1423.6,
+      "meanVpdPa": 13528,
+      "meanRelativeHumidityPct": 51.1,
+      "confidence": "high",
+      "missingFields": [],
+      "provenance": {
+        "baseline": {
+          "id": "chelsa-v2.1-climatologies-1981-2010",
+          "product": "CHELSA-climatologies",
+          "version": "2.1",
+          "period": "1981-2010",
+          "license": "CC0-1.0",
+          "nativeResolutionArcSec": 30,
+          "nativeResolutionLabel": "~1 km (30 arc-seconds)",
+          "fileFormat": "COG",
+          "baseUrl": "https://os.zhdk.cloud.switch.ch/chelsav2/GLOBAL/climatologies/1981-2010",
+          "citation": "Karger et al. (2017/2021). Climatologies at high resolution for the earth’s land surface areas. EnviDat / Sci Data.",
+          "variablesUsed": [
+            "tasmin",
+            "tas",
+            "tasmax",
+            "pr",
+            "vpd",
+            "hurs",
+            "pet_penman"
+          ],
+          "petVariablePath": {
+            "folder": "pet",
+            "filePrefix": "CHELSA_pet_penman"
+          },
+          "variablesDeferred": [
+            "rsds",
+            "sfcWind",
+            "cmi"
+          ]
+        },
+        "terrainPolicy": {
+          "preferredOpenOption": "aws-elevation-tiles-terrarium",
+          "provider": "AWS elevation-tiles-prod / Mapzen Terrarium",
+          "licenseNote": "Public elevation tiles (SRTM-class heritage); verify attribution for redistribution.",
+          "nativeResolutionLabel": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+          "nativeResolutionMetersApprox": 30,
+          "forbidsPerUserCopernicusApi": true,
+          "forbidsPaidRuntimeProvider": true,
+          "note": "30 m terrain ≠ 30 m measured climate. Climate remains ~1 km CHELSA."
+        },
+        "acquisitionChannel": "build-ingestion-only",
+        "runtimeExternalCallsForbidden": true,
+        "noCityProxy": true,
+        "pilotId": "cairo",
+        "geocode": {
+          "lat": 30.06263,
+          "lon": 31.24967,
+          "resolvedLabel": "Cairo, Cairo Governorate, Egypt",
+          "geocodeProvider": "open-meteo-geocoding",
+          "usedFallback": false
+        },
+        "ingestedAt": "2026-08-29T20:05:28.493Z",
+        "cityProxy": false,
+        "usedCityProxy": false,
+        "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
+        "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
+        "petScaleFix": "2026-08-29-production-hardening"
+      },
+      "derivedAt": "2026-08-29T20:48:38.877Z"
+    }
+  },
+  "confidenceDimensions": {
+    "SOURCE_DATA_INTEGRITY": "high",
+    "COORDINATE_RESOLUTION_CONFIDENCE": "high",
+    "TERRAIN_CONTEXT_CONFIDENCE": "high",
+    "LOCAL_REPRESENTATIVENESS": "high",
+    "PROFILE_COMPLETENESS": "high",
+    "OVERALL_AUTHORITY_CONFIDENCE": "high"
+  },
+  "localRepresentativeness": {
+    "level": "high",
+    "reason": "qa-within-tolerance",
+    "materialDivergence": false,
+    "variables": {
+      "annualPrecipitationMm": {
+        "chelsa": 19.8,
+        "referenceMin": 15,
+        "referenceMax": 40,
+        "inRange": true,
+        "divergenceRatioApprox": 1,
+        "level": "high"
+      },
+      "coldestMonthMeanMinC": {
+        "chelsa": 8.15,
+        "reference": 9,
+        "absDeltaC": 0.8,
+        "level": "high"
+      },
+      "warmestMonthMeanMaxC": {
+        "chelsa": 35.95,
+        "reference": 35,
+        "absDeltaC": 1,
+        "level": "high"
+      }
+    },
+    "warnings": [],
+    "qaSource": "Cairo WMO-class normals (precip ~20–30 mm; hot summers)",
+    "qaDate": "2026-08-29",
+    "qaVersion": "qa-v1"
+  },
+  "confidenceWarnings": []
+}

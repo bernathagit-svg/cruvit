@@ -1,0 +1,20 @@
+{
+  "id": "hybrid-compact-derived-cells-prebaked",
+  "authorityVersion": "2.0.2-accuracy",
+  "selected": true,
+  "runtimeReads": "CRUVIT-controlled index + compact tiles under data/coordinate-climate/v2",
+  "forbidsRuntimeExternalCogReads": true,
+  "forbidsUserTriggeredMaterialization": true,
+  "materialization": "central ingest script / scheduled background bake only",
+  "cellKeying": "chelsa30s:{x}:{y} from deterministic 30-arcsec grid",
+  "prototypeFormat": "hybrid-compact-zlib-json-cells-v1 (.cct.gz)",
+  "confidenceModel": "multi-dimension; SOURCE_DATA_INTEGRITY ≠ LOCAL_REPRESENTATIVENESS",
+  "qaSidecar": "data/coordinate-climate/v2/qa (central only; never user runtime)",
+  "resolutionContract": {
+    "CLIMATE_NATIVE_RESOLUTION": "~1 km (CHELSA 30 arc-seconds)",
+    "TERRAIN_NATIVE_RESOLUTION": "~30 m class (terrain context only — NOT climate)",
+    "DERIVED_COORDINATE_PROFILE": "CRUVIT interpretation for exact lat/lon",
+    "GARDEN_CONTEXT": "User planting-site conditions (separate)"
+  },
+  "forbidsClaims": ["30 m climate", "exact measured climate at the coordinate without station evidence"]
+}

@@ -1,0 +1,157 @@
+{
+  "generatedAt": "2026-08-29T20:06:37.128Z",
+  "authorityVersion": "2.0.1-production",
+  "entries": [
+    {
+      "id": "yehiam",
+      "label": "Yehiam, Israel",
+      "lat": 33.12806,
+      "lon": 35.22028,
+      "profilePath": "pilot/yehiam.json",
+      "coldestMonthMeanMinC": 7.75,
+      "thermalRegime": "cool-seasonal",
+      "moisture": "arid",
+      "elevationM": 441
+    },
+    {
+      "id": "helsinki",
+      "label": "Helsinki, Uusimaa, Finland",
+      "lat": 60.16952,
+      "lon": 24.93545,
+      "profilePath": "pilot/helsinki.json",
+      "coldestMonthMeanMinC": -8.25,
+      "thermalRegime": "frost-prone",
+      "moisture": "arid",
+      "elevationM": 40.2
+    },
+    {
+      "id": "singapore",
+      "label": "Singapore, Singapore",
+      "lat": 1.28967,
+      "lon": 103.85007,
+      "profilePath": "pilot/singapore.json",
+      "coldestMonthMeanMinC": 24.85,
+      "thermalRegime": "year-round-warm",
+      "moisture": "arid",
+      "elevationM": 20
+    },
+    {
+      "id": "kochi",
+      "label": "Kochi, Kerala, India",
+      "lat": 9.93988,
+      "lon": 76.26022,
+      "profilePath": "pilot/kochi.json",
+      "coldestMonthMeanMinC": 24.35,
+      "thermalRegime": "year-round-warm",
+      "moisture": "arid",
+      "elevationM": 9
+    },
+    {
+      "id": "cairo",
+      "label": "Cairo, Cairo Governorate, Egypt",
+      "lat": 30.06263,
+      "lon": 31.24967,
+      "profilePath": "pilot/cairo.json",
+      "coldestMonthMeanMinC": 8.15,
+      "thermalRegime": "cool-seasonal",
+      "moisture": "hyper-arid",
+      "elevationM": 21
+    },
+    {
+      "id": "tokyo",
+      "label": "Tokyo, Tokyo, Japan",
+      "lat": 35.6895,
+      "lon": 139.69171,
+      "profilePath": "pilot/tokyo.json",
+      "coldestMonthMeanMinC": -0.35,
+      "thermalRegime": "frost-prone",
+      "moisture": "arid",
+      "elevationM": 35
+    },
+    {
+      "id": "quito",
+      "label": "Quito, Pichincha, Ecuador",
+      "lat": -0.22985,
+      "lon": -78.52495,
+      "profilePath": "pilot/quito.json",
+      "coldestMonthMeanMinC": 8.65,
+      "thermalRegime": "cool-highland",
+      "moisture": "arid",
+      "elevationM": 2854
+    }
+  ],
+  "errors": [],
+  "storageEstimate": {
+    "variablesRequired": [
+      "tasmin",
+      "tas",
+      "tasmax",
+      "pr",
+      "vpd",
+      "hurs"
+    ],
+    "variablesDeferred": [
+      "rsds",
+      "sfcWind",
+      "cmi"
+    ],
+    "rawGlobalChelsaSelectedVarsGbApprox": 16.5,
+    "pilotCompactProfileBytesApprox": 13249,
+    "projectedNaivePerCellGlobalGbApprox": 1987,
+    "recommendation": "Prefer sparse CRUVIT tiles / on-demand cell materialization over raw global COG mirrors.",
+    "oneTimeIngestion": "COG range sample or regional tile bake — not per-user",
+    "recurringUserCostUsd": 0
+  },
+  "differentiation": {
+    "yehiam_vs_cairo": {
+      "a": "yehiam",
+      "b": "cairo",
+      "comparable": true,
+      "sameThermal": true,
+      "sameMoisture": false,
+      "coldestDeltaC": -0.4,
+      "elevDeltaM": 420
+    },
+    "cairo_vs_kochi": {
+      "a": "cairo",
+      "b": "kochi",
+      "comparable": true,
+      "sameThermal": false,
+      "sameMoisture": false,
+      "coldestDeltaC": -16.2,
+      "elevDeltaM": 12
+    },
+    "kochi_vs_singapore": {
+      "a": "kochi",
+      "b": "singapore",
+      "comparable": true,
+      "sameThermal": true,
+      "sameMoisture": true,
+      "coldestDeltaC": -0.5,
+      "elevDeltaM": -11
+    },
+    "quito_vs_singapore": {
+      "a": "quito",
+      "b": "singapore",
+      "comparable": true,
+      "sameThermal": false,
+      "sameMoisture": true,
+      "coldestDeltaC": -16.2,
+      "elevDeltaM": 2834
+    },
+    "helsinki_vs_tokyo": {
+      "a": "helsinki",
+      "b": "tokyo",
+      "comparable": true,
+      "sameThermal": true,
+      "sameMoisture": true,
+      "coldestDeltaC": -7.9,
+      "elevDeltaM": 5.2
+    },
+    "helsinki_not_zurich_proxy": {
+      "helsinkiPresent": true,
+      "usedZurichProxy": false,
+      "note": "Helsinki profile sampled at Helsinki lat/lon only"
+    }
+  }
+}
