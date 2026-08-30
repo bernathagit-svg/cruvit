@@ -43,7 +43,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - **CRUVIT FINAL PRE-SCALE QUALITY FOUNDATION — COMPLETE / GO** (`CRUVIT_PRE_SCALE_QUALITY_GATE: PASS`).
 - **CRUVIT Runtime Cost & Persistence Guardrails V1 — COMPLETE / GO** (`CRUVIT_RUNTIME_COST_PERSISTENCE_CLOSED: GO`). Live Supabase hardened; Plant Identifier paid AI disabled by default; ordinary runtime must not trigger paid external enrichment; acquire/create once → validate → store → reuse.
 - **CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS** (`CRUVIT_BULK_CATALOG_BATCH_1: PASS`). Live `public.catalog_plants`: 30 new canonical plants; 29 verified / 1 needsReview (`blue-gum`); botanical provenance 30/30; IMAGE_READY 30/30; paid API $0.
-- **CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO** (`CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO`). Exact-coordinate structural climate authority; CHELSA ~1 km baseline; terrain context separate; PET + UNEP AI; no city proxy; zero external structural acquisition on user runtime; multi-dimension confidence (extraction ≠ local representativeness); compact CRUVIT tile foundation prototype. **UNIVERSAL GLOBAL CLIMATE COVERAGE: NOT YET CLOSED (P1 — central bake/tile expansion).**
+- **CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO** (`CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO`). Exact-coordinate structural climate authority; CHELSA ~1 km baseline; terrain context separate; PET + UNEP AI; no city proxy; zero external structural acquisition on user runtime; multi-dimension confidence (extraction ≠ local representativeness); compact CRUVIT tile foundation.
+- **CRUVIT GLOBAL CLIMATE COVERAGE V1 — REGIONAL FOUNDATION CLOSED / GO** (`CRUVIT_GLOBAL_CLIMATE_REGIONAL_FOUNDATION_CLOSED: GO`). Production format `cruvit-cctb-int16-gzip-v1` (~103.3 B/cell gzip); first real pack `emed-n-israel-v1` (9,409 cells, ~972 KB, 6 tiles); zero external runtime climate calls; **Cloudflare R2 PREFERRED** (not free — storage + Class A/B); R2 upload not yet global. **UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (broader central bake — coverage expansion, not redesign).
 - **BULK CATALOG BATCH 2: AUTHORIZED AFTER BATCH 1 CLOSURE** — **NOT STARTED** (separate Owner turn).
 
 ## Partial
@@ -74,6 +75,31 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 
 # Active Development
 
+### CRUVIT GLOBAL CLIMATE COVERAGE V1 — REGIONAL FOUNDATION CLOSED / GO
+Status: **CRUVIT_GLOBAL_CLIMATE_REGIONAL_FOUNDATION_CLOSED: GO** (`CRUVIT_GLOBAL_CLIMATE_COVERAGE_V1_REGIONAL_GATE: PASS`)
+
+**Production tile format:** `cruvit-cctb-int16-gzip-v1`  
+**Measured regional density:** ~103.3 bytes/cell gzip (maxAbsDelta = 0 at CHELSA quanta)
+
+**First real regional pack `emed-n-israel-v1`:**
+- Bounds: south 32.45 / north 33.25 / west 34.85 / east 35.65
+- Cells: **9,409** · Pack: **~972 KB** gzip · **6** tiles
+- 25-coordinate exact lookup PASS; outside coverage → `CLIMATE_AUTHORITY_UNAVAILABLE`
+- User runtime external climate calls: **0** (CHELSA / terrain / Open-Meteo structural / ERA5 / AI)
+
+**Object storage:** **CLOUDFLARE R2 — PREFERRED** (S3-compatible; zero internet egress under current R2 pricing; avoids Supabase egress coupling). **R2 is NOT free** — cost model includes storage + Class A + Class B (+ any future optional services actually used). Do not add R2 SQL / Data Catalog / Workers unless Owner-required. Runtime stays simple object GET + manifest/index.  
+**R2_UPLOAD = NOT YET GLOBAL** — production wiring/upload not complete; do not claim global coverage live.
+
+**Supabase remains authoritative for:** Garden persistence, Garden `CoordinateClimateProfile`, app metadata. Do **not** store full global climate-cell inventory as Postgres rows.
+
+**Central bake automation:** resumable, deterministic, idempotent, checksummed, bounded concurrency, backoff-safe, repack-from-cache; never user-triggered.
+
+**Projections (measured packing; not final billing until full bake):** Europe ~1.2 GB · North America ~2.1 GB · global land ~15.5 GB (replaces earlier ~56 GB JSON-era projection).
+
+**UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** — remaining P1 is **BROADER CENTRAL COVERAGE BAKE** (coverage expansion, not climate-authority redesign).
+
+Permanent runtime rule: **USER REQUEST → CRUVIT CONTROLLED TILE LOOKUP** — never user-request → CHELSA / terrain / Open-Meteo structural / ERA5 acquisition.
+
 ### CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO
 Status: **CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO**
 
@@ -91,7 +117,7 @@ Upstream gates (all PASS):
 - Unprepared → `CLIMATE_AUTHORITY_UNAVAILABLE` / background prep queue (never synchronous external fetch).
 - External climate API variable cost per user = **$0**.
 - Confidence dimensions: `SOURCE_DATA_INTEGRITY`, `COORDINATE_RESOLUTION_CONFIDENCE`, `TERRAIN_CONTEXT_CONFIDENCE`, `LOCAL_REPRESENTATIVENESS`, `PROFILE_COMPLETENESS`, `OVERALL_AUTHORITY_CONFIDENCE`. Extraction correctness ≠ local representativeness (Yehiam: CHELSA precip 1293.6 mm preserved; LOCAL_REPRESENTATIVENESS low; no strong moisture-dependent positive; no auto Not Recommended).
-- Compact tile foundation prototype: `hybrid-compact-zlib-json-cells-v1` (~376 B/cell gzip; ~35.9× vs naive JSON; ~56 GB projected full-land). **Not a completed global bake.**
+- Compact tile foundation prototype: `hybrid-compact-zlib-json-cells-v1` (legacy sparse). **Production coverage format:** `cruvit-cctb-int16-gzip-v1` (~103.3 B/cell regional). See Global Climate Coverage V1 regional foundation closure.
 
 **UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (central regional/global tile bake expansion — coverage, not redesign).
 

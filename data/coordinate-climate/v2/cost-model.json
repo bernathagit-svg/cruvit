@@ -1,16 +1,23 @@
 {
-  "title": "CRUVIT Coordinate Climate V2 — cost after compact tile prototype",
+  "title": "CRUVIT Coordinate Climate V2 — cost after regional binary coverage",
   "externalClimateApiVariableCostPerUserUsd": 0,
-  "qualification": "EXTERNAL CLIMATE API VARIABLE COST PER USER = $0. Not a claim of $0 total CRUVIT cost.",
-  "architecture": "hybrid-compact-zlib-json-cells-v1 → future denser binary pack",
-  "prototypeMeasured": {
-    "bytesPerCellGzip": 380,
-    "bytesPerCellJsonUncompressed": 1069,
-    "naiveProfileJsonBytes": 13500,
-    "compressionVsNaive": "35.5×",
-    "estimatedFullLandGzipGbAt150MCells": 57,
-    "lookupLatencyLocalMsOrder": "<1–5 ms cold tile decode; <<1 ms warm cell hit",
-    "lookupBandwidthPerHitKb": "~0.4–2 (cell slice; full tile gzip ~2.6 KB for 7-cell pilot)"
+  "qualification": "EXTERNAL CLIMATE API VARIABLE COST PER USER = $0. Not a claim of $0 total CRUVIT cost. R2 is NOT free.",
+  "architecture": "cruvit-cctb-int16-gzip-v1 + Cloudflare R2 preferred",
+  "preferredObjectStorage": "cloudflare-r2",
+  "r2Upload": "NOT_YET_GLOBAL",
+  "r2CostComponents": ["storage $/GB-month", "Class A ops", "Class B ops"],
+  "regionalMeasured": {
+    "regionId": "emed-n-israel-v1",
+    "bytesPerCellGzip": 103.31,
+    "cellCount": 9409,
+    "packGzipBytes": 972047,
+    "tileCount": 6
+  },
+  "projectedStorageGzipGb": {
+    "europe": 1.2,
+    "northAmerica": 2.1,
+    "globalLand": 15.5,
+    "note": "Replaces earlier ~56 GB JSON-era projection; not final billing until full bake verifies land-cell count/compression"
   },
   "preprocessing": {
     "chelsaCentralBake": "one-time / scheduled COG range reads; not per user",
@@ -21,27 +28,22 @@
     {
       "activeUsers": 1000,
       "externalApiUsdMonth": 0,
-      "storageGbSparsePrepared": 0.01,
-      "infraUsdMonthApprox": 0.25
+      "infraUsdMonthApprox": 0.5
     },
     {
       "activeUsers": 10000,
       "externalApiUsdMonth": 0,
-      "storageGbSparsePrepared": 0.05,
-      "infraUsdMonthApprox": 2.5
+      "infraUsdMonthApprox": 3
     },
     {
       "activeUsers": 100000,
       "externalApiUsdMonth": 0,
-      "storageGbIfRegionalTiles": 2,
-      "infraUsdMonthApprox": 25
+      "infraUsdMonthApprox": 20
     },
     {
       "activeUsers": 1000000,
       "externalApiUsdMonth": 0,
-      "storageGbIfBroaderCoverage": 15,
-      "infraUsdMonthApprox": 200,
-      "note": "Full global land ~57 GB gzip prototype-class; prefer sparse/regional tiles first"
+      "infraUsdMonthApprox": 120
     }
   ]
 }

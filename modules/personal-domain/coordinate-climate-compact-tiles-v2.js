@@ -21,7 +21,9 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_TILE_ROOT = path.resolve(HERE, '../../data/coordinate-climate/v2/tiles');
 
 export const CRUVIT_CLIMATE_TILE_MAGIC = 'CRUVIT_CCT_V1';
+/** Legacy sparse JSON prototype — production coverage uses binary Int16 (see coverage-tiles-v2). */
 export const CRUVIT_CLIMATE_TILE_FORMAT = 'hybrid-compact-zlib-json-cells-v1';
+export const CRUVIT_CLIMATE_TILE_FORMAT_PRODUCTION = 'cruvit-cctb-int16-gzip-v1';
 
 /** Pack profile into compact cell record (no 12KB provenance blob). */
 export function packClimateCellFromProfile(profile) {

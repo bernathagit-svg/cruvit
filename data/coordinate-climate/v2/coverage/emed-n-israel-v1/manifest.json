@@ -1,0 +1,114 @@
+{
+  "kind": "cruvit-climate-coverage-manifest-v1",
+  "regionId": "emed-n-israel-v1",
+  "bakeVersion": "bake-2026-08-30-emed-n-israel-v1",
+  "schemaVersion": "cctb-i16-v1",
+  "format": "cruvit-cctb-int16-gzip-v1",
+  "bounds": {
+    "south": 32.45,
+    "north": 33.25,
+    "west": 34.85,
+    "east": 35.65
+  },
+  "climateNativeResolution": "~1 km (CHELSA 30 arc-seconds)",
+  "terrainNativeResolution": "~30 m class where available (NOT climate)",
+  "sourceVersions": {
+    "chelsa": "chelsa-v2.1-climatologies-1981-2010",
+    "petScale": "raw/100",
+    "terrain": "aws-elevation-tiles-terrarium",
+    "terrainZoom": 12
+  },
+  "tileCount": 6,
+  "tiles": [
+    {
+      "tileKey": "chelsa30s-t64:402:95",
+      "tx": 402,
+      "ty": 95,
+      "fileName": "chelsa30s-t64_402_95.cctb.gz",
+      "cellCount": 550,
+      "gzipBytes": 31128,
+      "rawBytes": 103706,
+      "bytesPerCellGzip": 56.6,
+      "sha256": "52eea11f8dafdb7e40035bc9de04a7493e1989bbeae1c8396b62918ff2b8bf24"
+    },
+    {
+      "tileKey": "chelsa30s-t64:403:95",
+      "tx": 403,
+      "ty": 95,
+      "fileName": "chelsa30s-t64_403_95.cctb.gz",
+      "cellCount": 3520,
+      "gzipBytes": 365896,
+      "rawBytes": 662067,
+      "bytesPerCellGzip": 103.95,
+      "sha256": "677e528b6a5ffc46e8ec2b07eb41252de59357bd7abe4bd0c3579c4436875834"
+    },
+    {
+      "tileKey": "chelsa30s-t64:404:95",
+      "tx": 404,
+      "ty": 95,
+      "fileName": "chelsa30s-t64_404_95.cctb.gz",
+      "cellCount": 1265,
+      "gzipBytes": 137733,
+      "rawBytes": 238127,
+      "bytesPerCellGzip": 108.88,
+      "sha256": "b5107be10b3ee3f0371590fd5d934e89b1e69075397e0bdd114b4f150c25b050"
+    },
+    {
+      "tileKey": "chelsa30s-t64:402:96",
+      "tx": 402,
+      "ty": 96,
+      "fileName": "chelsa30s-t64_402_96.cctb.gz",
+      "cellCount": 420,
+      "gzipBytes": 35087,
+      "rawBytes": 79266,
+      "bytesPerCellGzip": 83.54,
+      "sha256": "437c7dbf5ba589d441a8f31196f6d1d06a6cc998e1d083879464abf74a36a7e2"
+    },
+    {
+      "tileKey": "chelsa30s-t64:403:96",
+      "tx": 403,
+      "ty": 96,
+      "fileName": "chelsa30s-t64_403_96.cctb.gz",
+      "cellCount": 2688,
+      "gzipBytes": 299724,
+      "rawBytes": 505651,
+      "bytesPerCellGzip": 111.5,
+      "sha256": "8889da040482fb847c072d0f26883ed93efbbcd6c24c782fda1677e3f901445b"
+    },
+    {
+      "tileKey": "chelsa30s-t64:404:96",
+      "tx": 404,
+      "ty": 96,
+      "fileName": "chelsa30s-t64_404_96.cctb.gz",
+      "cellCount": 966,
+      "gzipBytes": 102479,
+      "rawBytes": 181914,
+      "bytesPerCellGzip": 106.09,
+      "sha256": "208a1a8c7eafbdab2db83ab7027fdb683f52a82c6bad54010bf7c749e3c36840"
+    }
+  ],
+  "checksums": {
+    "chelsa30s-t64_402_95.cctb.gz": "52eea11f8dafdb7e40035bc9de04a7493e1989bbeae1c8396b62918ff2b8bf24",
+    "chelsa30s-t64_403_95.cctb.gz": "677e528b6a5ffc46e8ec2b07eb41252de59357bd7abe4bd0c3579c4436875834",
+    "chelsa30s-t64_404_95.cctb.gz": "b5107be10b3ee3f0371590fd5d934e89b1e69075397e0bdd114b4f150c25b050",
+    "chelsa30s-t64_402_96.cctb.gz": "437c7dbf5ba589d441a8f31196f6d1d06a6cc998e1d083879464abf74a36a7e2",
+    "chelsa30s-t64_403_96.cctb.gz": "8889da040482fb847c072d0f26883ed93efbbcd6c24c782fda1677e3f901445b",
+    "chelsa30s-t64_404_96.cctb.gz": "208a1a8c7eafbdab2db83ab7027fdb683f52a82c6bad54010bf7c749e3c36840"
+  },
+  "runtimeExternalAcquisitionForbidden": true,
+  "objectStorage": {
+    "prepared": true,
+    "uploaded": false,
+    "note": "Contract only — no full-world upload in this checkpoint"
+  },
+  "generatedAt": "2026-08-30T17:46:37.514Z",
+  "label": "Northern Israel / Eastern Mediterranean coastal–highland transect",
+  "why": "Meaningful multi-climate Eastern Med pack (coast→highland→inland) including Yehiam validation zone; denser than city pilots; not full planet.",
+  "stats": {
+    "cellCount": 9409,
+    "tileCount": 6,
+    "totalGzipBytes": 972047,
+    "bytesPerCellGzip": 103.31,
+    "coverageTileCells": 64
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "selectedProductionFormat": "cruvit-cctb-int16-gzip-v1",
+  "rationale": "Binary Int16 packing preserves CHELSA decode quanta (0.01°C / 0.1 mm) with measured maxAbsDelta≤0.01 and ~3–5× smaller gzip than JSON cells at density.",
+  "cellCountBench": 2100,
+  "jsonGzip": {
+    "format": "hybrid-compact-zlib-json-cells-v1",
+    "gzipBytes": 26840,
+    "bytesPerCell": 12.780952380952382,
+    "encodeMs": 15.979700000000001,
+    "decodeMs": 12.339100000000002
+  },
+  "binaryGzip": {
+    "format": "cruvit-cctb-int16-gzip-v1",
+    "gzipBytes": 8261,
+    "bytesPerCell": 3.933809523809524,
+    "encodeMs": 9.519400000000005,
+    "decodeMs": 10.275299999999987,
+    "decodedCells": 2100
+  },
+  "compressionRatioBinaryVsJson": 3.2490013315579227,
+  "precision": {
+    "maxAbsDelta": 0,
+    "sampleCount": 40,
+    "withinTemp001": true
+  },
+  "lookupLatencyNote": "Single-cell map hit after tile decode is <0.1ms; dominant cost is one gzip gunzip per tile (~1–5ms for regional tiles)."
+}

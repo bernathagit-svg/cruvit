@@ -1,0 +1,67 @@
+{
+  "title": "Global Climate Coverage V1 — scale projection from real regional bake",
+  "measured": {
+    "regionId": "emed-n-israel-v1",
+    "cellCount": 9409,
+    "totalGzipBytes": 972047,
+    "bytesPerCellGzip": 103.31,
+    "format": "cruvit-cctb-int16-gzip-v1",
+    "tileCount": 6,
+    "yehiamLookup": {
+      "cell": "chelsa30s:25826:6104",
+      "P": 1293.6,
+      "PET": 1487.6,
+      "AI": 0.87,
+      "elevM": 429,
+      "externalCalls": 0
+    }
+  },
+  "assumptions": {
+    "landCellsApprox": 150000000,
+    "europeLandCellsApprox": 12000000,
+    "northAmericaLandCellsApprox": 20000000,
+    "israelEmedExpandedCellsApprox": 250000,
+    "tileDownloadsPerNewGarden": 1,
+    "gardensPerActiveUserMonth": 0.15,
+    "note": "Garden persists CoordinateClimateProfile — plant evals do not re-download tiles"
+  },
+  "projectedStorageGzipGb": {
+    "israelEmedPackMeasured": 0.00097,
+    "israelEmedExpanded250k": 0.026,
+    "europe": 1.24,
+    "northAmerica": 2.07,
+    "globalLand": 15.5
+  },
+  "externalClimateApiCostPerUserUsd": 0,
+  "recommendedObjectStorage": "cloudflare-r2",
+  "infraAtActiveUsers": [
+    {
+      "activeUsers": 1000,
+      "tileEgressGbMonth": 0.015,
+      "r2StorageUsdMonth": 0.001,
+      "r2EgressUsdMonth": 0,
+      "infraUsdMonthApprox": 0.5
+    },
+    {
+      "activeUsers": 10000,
+      "tileEgressGbMonth": 0.15,
+      "r2StorageUsdMonth": 0.008,
+      "r2EgressUsdMonth": 0,
+      "infraUsdMonthApprox": 3
+    },
+    {
+      "activeUsers": 100000,
+      "tileEgressGbMonth": 1.5,
+      "r2StorageUsdMonth": 0.08,
+      "r2EgressUsdMonth": 0,
+      "infraUsdMonthApprox": 20
+    },
+    {
+      "activeUsers": 1000000,
+      "tileEgressGbMonth": 15,
+      "r2StorageUsdMonth": 0.25,
+      "r2EgressUsdMonth": 0,
+      "infraUsdMonthApprox": 120
+    }
+  ]
+}
