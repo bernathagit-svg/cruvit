@@ -134,26 +134,26 @@ function classifyUnepAridity(ai) {
 }
 
 /**
- * Map mean RH (%) → humidity regime. Conservative bands; UNKNOWN if missing.
+ * Map mean RH (%) → humidity regime. ATMOSPHERIC only (hurs) — not P/PET.
+ * Aligned with ATMOSPHERIC_HUMIDITY_AUTHORITY_V2 (transition 60–70 → borderline).
  */
 export function humidityRegimeFromMeanRh(meanRh) {
   if (!Number.isFinite(meanRh)) return 'unknown';
   if (meanRh < 45) return 'low';
-  if (meanRh < 65) return 'medium';
+  if (meanRh < 60) return 'medium';
+  if (meanRh < 70) return 'borderline';
   return 'high';
 }
 
 /**
- * Prefer moisture-driven humidity for arid regimes (ambient climate, not irrigation).
- * Hyper-arid / arid → low humiditySignal even if mean RH sits mid-band.
+ * ATMOSPHERIC humiditySignal passthrough — never substitute moistureRegime (P/PET).
+ * moistureRegime remains a separate CLIMATE_WATER_BALANCE authority.
  */
 export function humiditySignalFromStructural({ moistureRegime, humidityRegime }) {
-  const m = String(moistureRegime || '').toLowerCase();
-  if (m === 'hyper-arid' || m === 'arid') return 'low';
-  if (m === 'semi-arid') return 'low';
-  if (m === 'dry-subhumid') return humidityRegime === 'high' ? 'medium' : humidityRegime || 'medium';
-  if (m === 'humid') return humidityRegime === 'unknown' ? 'high' : humidityRegime;
-  return humidityRegime === 'unknown' ? null : humidityRegime;
+  void moistureRegime;
+  const h = String(humidityRegime || '').toLowerCase();
+  if (h === 'unknown' || !h) return null;
+  return h;
 }
 
 export function structuralColdRiskFromColdestMonthMeanMinC(c) {
@@ -594,4 +594,86 @@ export function moistureMismatchForHighHumidityPlant(meta, climateProfile) {
   if (humidityTol !== 'high') return false;
   const regime = String(climateProfile?.moistureRegime || '').toLowerCase();
   return regime === 'hyper-arid' || regime === 'arid' || regime === 'semi-arid';
+}
+
+/**
+ * Explicit botanical evidence that atmospheric humidity threatens outdoor survival
+ * (mortality / lethal disease). Qualitative humidityTolerance alone is NOT enough.
+ */
+export function plantHasHumiditySurvivalThreatEvidence(meta) {
+  if (!meta || typeof meta !== 'object') return false;
+  const q = meta.quantitativeEvidence || meta.quantitative || {};
+  if (
+    (q.humidity_mortality === true || q.humidity_survival_threat === true) &&
+    (q.humidity_mortality_sourceIds ||
+      q.humidity_survival_threat_sourceIds ||
+      q.sourceIds ||
+      meta.humiditySurvivalThreatProvenance)
+  ) {
+    return true;
+  }
+  if (
+    String(meta.humiditySurvivalThreat || '').toLowerCase() === 'documented' &&
+    meta.humiditySurvivalThreatProvenance
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Low humidityTolerance vs authoritative ATMOSPHERIC humidity only.
+ *
+ * Uses RH bands (incl. borderline transition) — never moistureRegime.
+ * Default: constrains Growth / Overall confidence — does NOT demote Survival
+ * unless plantHasHumiditySurvivalThreatEvidence is true.
+ */
+export function atmosphericHumidityMismatchForLowTolerancePlant(meta, climateProfile) {
+  const humidityTol = String(meta?.humidityTolerance || '').toLowerCase();
+  if (humidityTol !== 'low') return null;
+
+  const months =
+    climateProfile?.monthlyHursPct ||
+    climateProfile?.coordinateClimateV2?.monthlyHursPct ||
+    climateProfile?.monthly?.hursPct ||
+    null;
+  const meanRhRaw =
+    climateProfile?.meanRelativeHumidityPct ??
+    climateProfile?.coordinateClimateV2?.meanRelativeHumidityPct ??
+    null;
+
+  let mean = meanRhRaw != null && meanRhRaw !== '' ? Number(meanRhRaw) : null;
+  if ((!Number.isFinite(mean) || mean == null) && Array.isArray(months)) {
+    const fin = months.map(Number).filter((n) => Number.isFinite(n));
+    if (fin.length >= 6) mean = fin.reduce((a, b) => a + b, 0) / fin.length;
+  }
+
+  let regime = 'unknown';
+  if (Number.isFinite(mean)) {
+    if (mean < 45) regime = 'low';
+    else if (mean < 60) regime = 'medium';
+    else if (mean < 70) regime = 'borderline';
+    else regime = 'high';
+  } else {
+    regime = 'unknown';
+  }
+
+  if (regime !== 'high' && regime !== 'borderline') return null;
+
+  const survivalThreat = plantHasHumiditySurvivalThreatEvidence(meta);
+  const severity = regime === 'high' ? 'strong' : 'moderate';
+  return {
+    kind:
+      regime === 'high' ? 'atmosphericHumidity-high' : 'atmosphericHumidity-borderline',
+    severity,
+    authority: regime === 'high' ? 'hurs' : 'hurs-transition-band',
+    meanRh: mean,
+    regime,
+    affectsSurvival: survivalThreat === true,
+    affectsGrowth: true,
+    affectsOverall: true,
+    note: survivalThreat
+      ? 'Documented humidity survival threat — Survival may be constrained'
+      : 'Qualitative humidityTolerance — Growth/Overall only; Survival unchanged'
+  };
 }

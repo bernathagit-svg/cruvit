@@ -1,0 +1,159 @@
+{
+  "gate": "CRUVIT_REAL_WORLD_SUITABILITY_REPAIR",
+  "externalRuntimeCalls": {
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0,
+    "botanicalApi": 0,
+    "aiLlm": 0
+  },
+  "bayLaurelSixSite": [
+    {
+      "Location": "yehiam",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "medium",
+      "Evidence": "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only. | Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    },
+    {
+      "Location": "singapore",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "medium",
+      "Evidence": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure. | Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    },
+    {
+      "Location": "cairo",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "medium",
+      "Evidence": "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only. | Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    },
+    {
+      "Location": "tokyo",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "low",
+      "Evidence": "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional. | Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    },
+    {
+      "Location": "helsinki",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "low",
+      "Evidence": "Medium frostSensitivity + strongly cold monthly means; no provenanced hardiness / extremes — conditional, not confident Not Recommended. | Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    },
+    {
+      "Location": "quito",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "medium",
+      "Evidence": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure. | Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only. | Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
+    }
+  ],
+  "provenanceHonestyCountsBatch1Traits": {
+    "SOURCE_SUPPORTED": 78,
+    "HEURISTIC_ASSERTION": 210,
+    "UNKNOWN": 12
+  },
+  "coldDiscriminationProof": [
+    {
+      "plant": "english-walnut",
+      "frostSensitivity": "low",
+      "coldTolerance": "high",
+      "site": "tokyo",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "cold-tolerant-discrimination",
+      "reason": "Cold-tolerant plant (low frostSensitivity); monthly frost-prone class alone is not treated as lethal.",
+      "survivalFit": 75
+    },
+    {
+      "plant": "english-walnut",
+      "frostSensitivity": "low",
+      "coldTolerance": "high",
+      "site": "helsinki",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "cold-tolerant-discrimination",
+      "reason": "Cold-tolerant plant (low frostSensitivity); monthly frost-prone class alone is not treated as lethal.",
+      "survivalFit": 75
+    },
+    {
+      "plant": "loquat",
+      "frostSensitivity": "medium",
+      "coldTolerance": "medium",
+      "site": "tokyo",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "frostSensitivity-medium-bounded",
+      "reason": "Medium frostSensitivity + frost-prone monthly class; no provenanced hardiness / extremes — conditional.",
+      "survivalFit": 65
+    },
+    {
+      "plant": "loquat",
+      "frostSensitivity": "medium",
+      "coldTolerance": "medium",
+      "site": "helsinki",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "frostSensitivity-medium-bounded",
+      "reason": "Medium frostSensitivity + strongly cold monthly means; no provenanced hardiness / extremes — conditional, not confident Not Recommended.",
+      "survivalFit": 55
+    },
+    {
+      "plant": "durian",
+      "frostSensitivity": "high",
+      "coldTolerance": "low",
+      "site": "tokyo",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "tropical-damaging-cold",
+      "reason": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+      "survivalFit": 25
+    },
+    {
+      "plant": "durian",
+      "frostSensitivity": "high",
+      "coldTolerance": "low",
+      "site": "helsinki",
+      "survival": "constrained",
+      "overall": "borderline",
+      "plantEvidence": "tropical-damaging-cold",
+      "reason": "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
+      "survivalFit": 25
+    }
+  ],
+  "stubs": {
+    "coldSurvivalBefore": "freezingRisk=high → survivalFit=15 → Survival Unreliable (all plants)",
+    "coldSurvivalAfter": "plant frostSensitivity/coldTolerance × climate freezingRisk/thermal/monthly Tmin; no generic 15; monthly ≠ extreme",
+    "thriveBefore": "!frostFree / cool-seasonal / arid / highland → thriveFit≈55 → Growth Constrained (all plants)",
+    "thriveAfter": "thrive penalty only when plantRequiresYearRoundWarmClimate; else cool-seasonal/arid OK for Mediterranean/temperate"
+  },
+  "reproductiveContract": {
+    "separates": [
+      "REPRODUCTIVE_CLIMATE_SUITABILITY",
+      "BIOLOGICAL_FRUIT_SET_ELIGIBILITY"
+    ],
+    "fruitingSupportedRequiresBio": true
+  }
+}

@@ -20,6 +20,7 @@ import {
   validateCatalogExpansionPacket,
   materializePlantCatalogItemFromPacket
 } from '../modules/catalog-expansion/catalog-expansion-v1-contract.js';
+import { materializeFloweringEvidenceFields } from '../modules/catalog-expansion/field-provenance-honesty-v1-contract.js';
 import { seedPlantToCatalogRow } from '../modules/catalog/canonical-catalog-persistence-contract-v1.js';
 import { resolveLicensedImageForPlant } from '../modules/catalog-media/wikimedia-commons-source-v1.js';
 import {
@@ -110,7 +111,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.frostSensitivity,
       sourceIds: [primary],
-      shortExcerpt: `Frost sensitivity characterized as ${def.frostSensitivity} for home-landscape use.`
+      shortExcerpt: `Frost sensitivity characterized as ${def.frostSensitivity} for home-landscape use.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'cold',
@@ -118,7 +120,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.coldTolerance,
       sourceIds: [primary],
-      shortExcerpt: `Cold tolerance characterized as ${def.coldTolerance}.`
+      shortExcerpt: `Cold tolerance characterized as ${def.coldTolerance}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'heat',
@@ -126,7 +129,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.heatTolerance,
       sourceIds: [primary],
-      shortExcerpt: `Heat tolerance characterized as ${def.heatTolerance}.`
+      shortExcerpt: `Heat tolerance characterized as ${def.heatTolerance}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'humidity',
@@ -134,7 +138,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.humidityTolerance,
       sourceIds: [primary],
-      shortExcerpt: `Humidity tolerance characterized as ${def.humidityTolerance}.`
+      shortExcerpt: `Humidity tolerance characterized as ${def.humidityTolerance}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'water',
@@ -142,7 +147,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.waterNeeds,
       sourceIds: [primary],
-      shortExcerpt: `Water / moisture needs characterized as ${def.waterNeeds}.`
+      shortExcerpt: `Water / moisture needs characterized as ${def.waterNeeds}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'sun',
@@ -150,7 +156,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.sunNeeds,
       sourceIds: [primary],
-      shortExcerpt: `Sun exposure characterized as ${def.sunNeeds}.`
+      shortExcerpt: `Sun exposure characterized as ${def.sunNeeds}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'drainage',
@@ -158,7 +165,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.drainageNeeds,
       sourceIds: [primary],
-      shortExcerpt: `Drainage needs characterized as ${def.drainageNeeds}.`
+      shortExcerpt: `Drainage needs characterized as ${def.drainageNeeds}.`,
+      evidenceClass: 'HEURISTIC_ASSERTION'
     },
     {
       claimId: 'chill',
@@ -244,14 +252,42 @@ function buildPacket(def) {
   }
 
   if (def.floweringUnknown || !def.floweringRequirements) {
+    const flowerFields = materializeFloweringEvidenceFields({
+      floweringRequirements: def.floweringRequirements,
+      floweringUnknown: true,
+      floweringAuthoritative: false
+    });
     claims.push({
       claimId: 'flowering',
       field: 'floweringRequirements',
       status: 'unknown',
       value: null,
       sourceIds: [primary],
-      shortExcerpt: 'Flowering requirements not asserted beyond identity-level landscape notes.'
+      shortExcerpt: 'Flowering requirements not asserted beyond identity-level landscape notes.',
+      evidenceClass: 'UNKNOWN'
     });
+    if (flowerFields.floweringDescriptiveProse) {
+      claims.push({
+        claimId: 'flowering-descriptive',
+        field: 'floweringDescriptiveProse',
+        status: 'asserted',
+        value: flowerFields.floweringDescriptiveProse,
+        sourceIds: [primary],
+        shortExcerpt: flowerFields.floweringDescriptiveProse.slice(0, 180),
+        evidenceClass: 'HEURISTIC_ASSERTION'
+      });
+    } else if (def.floweringRequirements) {
+      // Prose existed but flagged unknown — preserve as non-authoritative descriptive evidence.
+      claims.push({
+        claimId: 'flowering-descriptive',
+        field: 'floweringDescriptiveProse',
+        status: 'asserted',
+        value: def.floweringRequirements,
+        sourceIds: [primary],
+        shortExcerpt: String(def.floweringRequirements).slice(0, 180),
+        evidenceClass: 'HEURISTIC_ASSERTION'
+      });
+    }
   } else {
     claims.push({
       claimId: 'flowering',
@@ -259,7 +295,8 @@ function buildPacket(def) {
       status: 'asserted',
       value: def.floweringRequirements,
       sourceIds: [primary],
-      shortExcerpt: def.floweringRequirements.slice(0, 180)
+      shortExcerpt: def.floweringRequirements.slice(0, 180),
+      evidenceClass: 'SOURCE_SUPPORTED'
     });
   }
 

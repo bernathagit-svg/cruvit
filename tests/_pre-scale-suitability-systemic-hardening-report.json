@@ -1,0 +1,223 @@
+{
+  "gate": "CRUVIT_PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING",
+  "verdict": "CRUVIT_PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING: PASS",
+  "hardeningVersion": "1.0.0",
+  "humidityFpFix": {
+    "status": "in-place",
+    "alignmentGate": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS",
+    "originalFpFixed": [
+      {
+        "plant": "bay-laurel",
+        "site": "singapore",
+        "overallBefore": "good",
+        "overallAfter": "borderline",
+        "survivalAfter": "constrained",
+        "growthAfter": "constrained",
+        "limiting": "Humid climate moisture class is a poor atmospheric fit for this low-humidity-tolerance plant; frost-free status alone does not authorize a strong positive.",
+        "fixed": true
+      },
+      {
+        "plant": "oleander",
+        "site": "singapore",
+        "overallBefore": "good",
+        "overallAfter": "borderline",
+        "survivalAfter": "constrained",
+        "growthAfter": "constrained",
+        "limiting": "Humid climate moisture class is a poor atmospheric fit for this low-humidity-tolerance plant; frost-free status alone does not authorize a strong positive.",
+        "fixed": true
+      },
+      {
+        "plant": "common-thyme",
+        "site": "singapore",
+        "overallBefore": "good",
+        "overallAfter": "borderline",
+        "survivalAfter": "constrained",
+        "growthAfter": "constrained",
+        "limiting": "Humid climate moisture class is a poor atmospheric fit for this low-humidity-tolerance plant; frost-free status alone does not authorize a strong positive.",
+        "fixed": true
+      },
+      {
+        "plant": "garden-sage",
+        "site": "singapore",
+        "overallBefore": "good",
+        "overallAfter": "borderline",
+        "survivalAfter": "constrained",
+        "growthAfter": "constrained",
+        "limiting": "Humid climate moisture class is a poor atmospheric fit for this low-humidity-tolerance plant; frost-free status alone does not authorize a strong positive.",
+        "fixed": true
+      }
+    ]
+  },
+  "additionalSystemicDefects": [
+    {
+      "id": "extremes-vs-normals",
+      "severity": "P0-contract",
+      "status": "mitigated",
+      "note": "Survival was mean-normals-only; strong positives for extremes-sensitive plants now capped when extreme authority absent"
+    },
+    {
+      "id": "annual-ai-vs-seasonality",
+      "severity": "P0-contract",
+      "status": "mitigated",
+      "note": "Monthly P/PET seasonality derived; warm-season drought demotes high waterNeeds strong positives"
+    },
+    {
+      "id": "overall-collapses-garden-site",
+      "severity": "P0-contract",
+      "status": "mitigated",
+      "note": "Dimensions CLIMATE_SUITABILITY / GARDEN_SITE_SUITABILITY / RECOMMENDATION_ELIGIBILITY frozen; sun/drainage unknown → UNKNOWN not auto-negative"
+    },
+    {
+      "id": "irrigation-assumed",
+      "severity": "P1",
+      "status": "mitigated",
+      "note": "Natural climate water ≠ garden irrigation; unknown irrigation → CONDITIONAL"
+    },
+    {
+      "id": "nh-phenology-calendar",
+      "severity": "P1",
+      "status": "mitigated",
+      "note": "Spring/autumn cues use thermal seasons + hemisphere; equatorial not forced into temperate calendar"
+    },
+    {
+      "id": "cool-season-as-chill-hours",
+      "severity": "P1",
+      "status": "mitigated",
+      "note": "coolSeasonSignal ≠ chill sufficiency; qualitative chill bounds confidence"
+    },
+    {
+      "id": "species-as-cultivar",
+      "severity": "P1",
+      "status": "documented",
+      "note": "Species-level evidence surfaces uncertainty; no invented cultivar variation"
+    },
+    {
+      "id": "stale-garden-climate",
+      "severity": "P0-contract",
+      "status": "mitigated",
+      "note": "authorityVersion/bakeVersion mismatch refuses silent permanent reuse"
+    },
+    {
+      "id": "climate-period-as-current",
+      "severity": "P1",
+      "status": "documented",
+      "note": "CHELSA 1981–2010 normals — not current measured climate; CURRENT_NORMAL/DELTA is future central layer"
+    }
+  ],
+  "extremesVsNormals": {
+    "code": "normals-monthly-mean-climatology",
+    "means": "Survival outcomes currently use monthly-mean climatology (coldest/warmest month means, freezingRisk from means) plus qualitative plant traits — NOT absolute extreme minima/maxima, frost-day counts, or heat-event frequency.",
+    "falsePositiveRisk": "A plant may survive mean winters yet fail rare hard freezes / heat waves. Without extreme-risk authority, Survival=Reliable must not be marketed as extreme-event proof.",
+    "extremeAuthorityPresentInDataset": false,
+    "extremeFieldsAudited": [
+      "extreme cold / hard-freeze absolute min — NOT in V2 profiles",
+      "extreme heat absolute max / heat-wave frequency — NOT in V2 profiles",
+      "frost-day frequency — NOT in V2 profiles"
+    ]
+  },
+  "seasonalWaterBalance": {
+    "method": "monthly P/PET from stored series; dry month AI<0.5; warm-season drought class",
+    "annualAiInsufficientAlone": true
+  },
+  "climateVsGardenSite": {
+    "dimensions": [
+      "CLIMATE_SUITABILITY",
+      "GARDEN_SITE_SUITABILITY",
+      "RECOMMENDATION_ELIGIBILITY"
+    ],
+    "overallMeaning": "Backward-compatible Overall reflects CLIMATE_SUITABILITY (plus safe demotions). It is NOT a complete garden-site assessment when sun/drainage/irrigation/container are unknown."
+  },
+  "irrigation": "NATURAL_CLIMATE_WATER vs GARDEN_IRRIGATION separated; unknown → CONDITIONAL",
+  "hemispherePhenology": "thermal seasons + latitude hemisphere; equatorial not forced",
+  "chillConfidence": "coolSeason ≠ chill hours; optional quantitative chill preserved",
+  "numericPlantEvidence": {
+    "optionalFields": [
+      "quantitative.minimum_survival_temperature_c",
+      "quantitative.preferred_minimum_temperature_c",
+      "quantitative.chill_hours_min",
+      "quantitative.chill_hours_max",
+      "quantitative.maximum_tolerated_temperature_c",
+      "quantitative.preferred_maximum_temperature_c",
+      "quantitative.vpd_min_kpa",
+      "quantitative.vpd_max_kpa",
+      "quantitative.drought_tolerance",
+      "quantitative.aridity_tolerance_note",
+      "quantitative.flowering_min_temperature_c",
+      "quantitative.fruiting_min_temperature_c"
+    ],
+    "batch1Enriched": false
+  },
+  "cultivarPrecision": "species evidence must not become cultivar-specific precision",
+  "staleVersionInvalidation": "authorityVersion / bakeVersion mismatch → local relookup required; external acquire still forbidden",
+  "terrainPrecision": {
+    "climateNative": "~1 km (30 arc-seconds)",
+    "terrainNative": "~30 m class at high zoom (tile zoom dependent) — NOT climate resolution",
+    "mode": "A_interpretation_highland_context_only",
+    "numericallyDownscalesTemperature": false,
+    "note": "High-resolution elevation is terrain context / highland modifier — not measured climate at 30 m."
+  },
+  "climatePeriod": {
+    "baselineId": "chelsa-v2.1-climatologies-1981-2010",
+    "period": "1981-2010",
+    "isCurrentMeasuredClimate": false,
+    "productClaimAllowed": "historical climatological normals (1981–2010 CHELSA V2.1)",
+    "productClaimForbidden": "current measured climate / live weather",
+    "futureLayerNeeded": "CURRENT_NORMAL / CLIMATE_DELTA (centrally prepared — not user-runtime API)",
+    "priority": "P1"
+  },
+  "recommendationEligibility": "needsReview → HOLD_REVIEW ≠ climate suitability",
+  "matrix": {
+    "totals": {
+      "matrix": 210,
+      "gradient": 250,
+      "expected": 460
+    },
+    "overallCounts": {
+      "blocked": 68,
+      "borderline": 142
+    },
+    "survivalCounts": {
+      "unreliable": 68,
+      "reliable": 99,
+      "constrained": 43
+    }
+  },
+  "materialFp": 0,
+  "materialFn": 0,
+  "unitTestStatus": "PASS",
+  "unitStdoutTail": "✔ atmospheric humidity mismatch is plant-agnostic (no site/slug hardcode) (1.3656ms)\n✔ humidityTolerance=low + humid moistureRegime → constrained, not Good (2.0494ms)\n✔ humidityTolerance=low + semi-arid does not trigger humid mismatch (0.0785ms)\n✔ waterNeeds is not equated with humidityTolerance (0.0574ms)\n✔ absence of quantitative thresholds does not create a negative (0.0709ms)\n✔ authoritative quantitative min survival is additive when present (0.2687ms)\n✔ hardening contract version frozen (0.5433ms)\n✔ Part1 humidity FP systemic — no site/slug hardcode (0.3028ms)\n✔ Part2 extremes gap demotes strong positive; absence does not auto-block (0.5034ms)\n✔ Part3 monthly water balance distinguishes seasonality with similar annual P (0.3189ms)\n✔ Part4 climate vs garden-site dimensions — unknown sun/drainage not auto-negative (0.2301ms)\n✔ Part5 irrigation conditional when dry climate + high waterNeeds + irrigation unknown (0.0888ms)\n✔ Part6 hemisphere phenology — SH and equatorial (0.141ms)\n✔ Part7 chill: cool season ≠ enough chill hours (0.0833ms)\n✔ Part8–9 numeric optional + cultivar species uncertainty (0.1003ms)\n✔ Part10 stale authorityVersion prevents silent permanent reuse (0.3595ms)\n✔ Part11 coordinate edge cases — wrap, SH, outside coverage, tile index (1.1422ms)\n✔ Part12–14 terrain / period / recommendation HOLD (0.078ms)\n✔ Part1+2 end-to-end: low humidity + humid climate cannot stay Good (1.2793ms)\n✔ coverage cellToMinimalProfile exposes freezingRisk/humidity/chill enums (0.8221ms)\nℹ tests 20\nℹ suites 0\nℹ pass 20\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1071.328\n",
+  "externalCalls": {
+    "botanicalApi": 0,
+    "aiLlm": 0,
+    "catalogEnrichment": 0,
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0
+  },
+  "batch2Readiness": {
+    "schemaReady": true,
+    "everyPlantHasCompleteNumericEvidence": false,
+    "mayStartSafely": "YES — with qualitative + optional provenanced quantitative; no invented thresholds; Overall is climate suitability not full garden-site claim"
+  },
+  "broaderGlobalCoverage": {
+    "mayContinueSafely": "YES for regional bake expansion — tile exposure + stale invalidation in place. CURRENT_NORMAL/DELTA and extreme-risk layers remain P1 before strong current/extreme claims."
+  },
+  "remainingGaps": {
+    "P0": [],
+    "P1": [
+      "Extreme cold/heat frequency layers not in dataset — demotion contract only",
+      "Climate chill-hour series not yet compared to plant chill_hours_*",
+      "CURRENT_NORMAL / CLIMATE_DELTA central layer not built",
+      "Full garden-site comparator UI not wired to Overall split"
+    ],
+    "P2": [
+      "Continuous PET vs waterNeeds",
+      "VPD only when plant supplies provenanced bounds"
+    ],
+    "P3": [
+      "sunNeeds/drainageNeeds climate mapping still none (garden-site dimension)"
+    ]
+  },
+  "generatedAt": "2026-08-30T18:29:07.151Z"
+}

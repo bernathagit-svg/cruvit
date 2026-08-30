@@ -6,9 +6,89 @@
  * Image attachment only when packet supplies license-clear media; otherwise IMAGE_PENDING.
  *
  * NOT imported by product runtime suitability paths.
+ *
+ * v1.1.0: optional quantitative climate evidence fields (provenanced); Batch 1
+ * packets on v1.0.0 remain valid without numeric fields.
  */
 
-export const CATALOG_EXPANSION_CONTRACT_VERSION = '1.0.0';
+import {
+  QUANTITATIVE_CLAIM_FIELDS,
+  materializeQuantitativeEvidenceFromClaims,
+  validateQuantitativeClaims
+} from './plant-climate-quantitative-evidence-v1-contract.js';
+import {
+  FIELD_PROVENANCE_EVIDENCE_CLASSES,
+  classifyClaimFieldProvenance,
+  materializeFloweringEvidenceFields
+} from './field-provenance-honesty-v1-contract.js';
+import {
+  REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS,
+  REPRODUCTIVE_BIOLOGY_CONTRACT_VERSION
+} from './reproductive-biology-v1-contract.js';
+
+export const CATALOG_EXPANSION_CONTRACT_VERSION = '1.2.0';
+export const CATALOG_EXPANSION_COMPATIBLE_VERSIONS = Object.freeze(['1.0.0', '1.1.0', '1.2.0']);
+
+export {
+  FIELD_PROVENANCE_EVIDENCE_CLASSES,
+  classifyClaimFieldProvenance,
+  materializeFloweringEvidenceFields,
+  REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS,
+  REPRODUCTIVE_BIOLOGY_CONTRACT_VERSION
+};
+
+export { BATCH_2_EVIDENCE_INGESTION_RULE } from '../personal-domain/evidence-strength-propagation-v1-contract.js';
+import { BATCH_2_EVIDENCE_INGESTION_RULE as _BATCH2_RULE } from '../personal-domain/evidence-strength-propagation-v1-contract.js';
+
+export const CATALOG_EXPANSION_BATCH_2_EVIDENCE_RULE = _BATCH2_RULE;
+
+/** Enforce Batch 2 evidence rule when packet opts in (Batch 1 remains backward-compatible). */
+export function enforceBatch2EvidenceIngestionRule(packet, { hardFail = true } = {}) {
+  const errors = [];
+  const warnings = [];
+  const claims = Array.isArray(packet?.claims) ? packet.claims : [];
+  const climateTraitFields = new Set([
+    'frostSensitivity',
+    'coldTolerance',
+    'heatTolerance',
+    'humidityTolerance',
+    'waterNeeds',
+    'sunNeeds',
+    'drainageNeeds',
+    'needsWinterChill',
+    'floweringRequirements',
+    'fruitingRequirements'
+  ]);
+  for (const c of claims) {
+    if (!climateTraitFields.has(c.field) && !String(c.field || '').startsWith('reproductive.')) {
+      continue;
+    }
+    if (c.status !== 'asserted') continue;
+    if (!c.evidenceClass) {
+      const msg = `Batch 2 rule: claim ${c.claimId} (${c.field}) must declare evidenceClass`;
+      if (hardFail) errors.push(msg);
+      else warnings.push(msg);
+    } else if (
+      c.evidenceClass === FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED
+    ) {
+      const excerpt = String(c.shortExcerpt || '');
+      if (
+        /characterized as /i.test(excerpt) ||
+        /^(Frost sensitivity|Cold tolerance|Heat tolerance|Humidity tolerance)/i.test(excerpt)
+      ) {
+        errors.push(
+          `Batch 2 rule: claim ${c.claimId} cannot be SOURCE_SUPPORTED with template-generated excerpt`
+        );
+      }
+    }
+  }
+  return {
+    ok: errors.length === 0,
+    errors,
+    warnings,
+    rule: _BATCH2_RULE
+  };
+}
 
 export const IMAGE_PENDING = 'IMAGE_PENDING';
 
@@ -22,6 +102,7 @@ export const CLAIM_FIELDS = Object.freeze([
   'drainageNeeds',
   'needsWinterChill',
   'floweringRequirements',
+  'floweringDescriptiveProse',
   'fruitingRequirements',
   'survivalVsThriveNotes',
   'groupIds',
@@ -34,7 +115,9 @@ export const CLAIM_FIELDS = Object.freeze([
   'climateLabel',
   'warnings',
   'tags',
-  'gardenCompatibility.spacing.matureSize'
+  'gardenCompatibility.spacing.matureSize',
+  ...QUANTITATIVE_CLAIM_FIELDS,
+  ...REPRODUCTIVE_BIOLOGY_CLAIM_FIELDS
 ]);
 
 const TRAIT_FIELDS = new Set([
@@ -71,10 +154,11 @@ export function validateCatalogExpansionPacket(packet) {
   if (!packet || typeof packet !== 'object') {
     return { ok: false, errors: ['packet must be an object'], warnings };
   }
-  if (packet.expansionContractVersion !== CATALOG_EXPANSION_CONTRACT_VERSION) {
+  const ver = String(packet.expansionContractVersion || '');
+  if (!CATALOG_EXPANSION_COMPATIBLE_VERSIONS.includes(ver)) {
     fail(
       errors,
-      `expansionContractVersion must be ${CATALOG_EXPANSION_CONTRACT_VERSION}`
+      `expansionContractVersion must be one of ${CATALOG_EXPANSION_COMPATIBLE_VERSIONS.join(', ')} (current ${CATALOG_EXPANSION_CONTRACT_VERSION})`
     );
   }
   if (!isNonEmptyString(packet.packetId)) fail(errors, 'packetId required');
@@ -141,6 +225,15 @@ export function validateCatalogExpansionPacket(packet) {
           fail(errors, `claim ${c.claimId}: shortExcerpt required for asserted claims`);
         }
       }
+      if (
+        c.evidenceClass != null &&
+        !Object.values(FIELD_PROVENANCE_EVIDENCE_CLASSES).includes(c.evidenceClass)
+      ) {
+        fail(
+          errors,
+          `claim ${c.claimId}: evidenceClass must be SOURCE_SUPPORTED|HEURISTIC_ASSERTION|UNKNOWN`
+        );
+      }
       if (status === 'disputed') {
         warnings.push(`claim ${c.claimId}: disputed — will force needsReview on materialization`);
       }
@@ -157,6 +250,7 @@ export function validateCatalogExpansionPacket(packet) {
         'at least one asserted claim for frostSensitivity, heatTolerance, or coldTolerance is required'
       );
     }
+    validateQuantitativeClaims(claims, sourceIds, errors);
   }
 
   const image = packet.image;
@@ -180,6 +274,16 @@ export function validateCatalogExpansionPacket(packet) {
   const approval = packet.humanApproval;
   if (!approval || approval.approvedForIngest !== true) {
     fail(errors, 'humanApproval.approvedForIngest must be true (Owner Review gate)');
+  }
+
+  if (
+    packet.flags?.enforceBatch2EvidenceRule === true ||
+    packet.flags?.batch2 === true ||
+    String(packet.packetId || '').includes('batch-2')
+  ) {
+    const b2 = enforceBatch2EvidenceIngestionRule(packet, { hardFail: true });
+    for (const e of b2.errors) fail(errors, e);
+    for (const w of b2.warnings) warnings.push(w);
   }
 
   return { ok: errors.length === 0, errors, warnings };
@@ -295,6 +399,71 @@ export function materializePlantCatalogItemFromPacket(packet, options = {}) {
   // or when packet.flags.forceClimateNeedsReview is set.
   if (packet.flags?.forceClimateNeedsReview === true) forceNeedsReview = true;
   climateTraits.needsReview = forceNeedsReview || climateTraits.needsReview === true;
+
+  const { quantitativeEvidence, quantitativeProvenance } =
+    materializeQuantitativeEvidenceFromClaims(packet.claims);
+  if (quantitativeEvidence) {
+    climateTraits.quantitativeEvidence = quantitativeEvidence;
+    climateTraits.quantitativeProvenance = quantitativeProvenance;
+  }
+
+  // Flowering: preserve descriptive prose when authoritative floweringRequirements is unknown.
+  const flowerClaim = packet.claims.find((c) => c.field === 'floweringRequirements');
+  const flowerDescClaim = packet.claims.find((c) => c.field === 'floweringDescriptiveProse');
+  if (flowerDescClaim?.value) {
+    climateTraits.floweringDescriptiveProse = String(flowerDescClaim.value);
+    climateTraits.floweringEvidenceClass =
+      flowerDescClaim.evidenceClass || FIELD_PROVENANCE_EVIDENCE_CLASSES.HEURISTIC_ASSERTION;
+  } else if (flowerClaim?.status === 'unknown' && flowerClaim.shortExcerpt) {
+    // Do not silently discard prose that was only parked in shortExcerpt.
+    const parked = String(flowerClaim.shortExcerpt || '').trim();
+    if (
+      parked &&
+      !/^Flowering requirements not asserted/i.test(parked) &&
+      parked.length > 40
+    ) {
+      climateTraits.floweringDescriptiveProse = parked;
+      climateTraits.floweringEvidenceClass = FIELD_PROVENANCE_EVIDENCE_CLASSES.HEURISTIC_ASSERTION;
+    }
+  }
+  if (flowerClaim?.status === 'asserted' && flowerClaim.value) {
+    climateTraits.floweringEvidenceClass =
+      flowerClaim.evidenceClass ||
+      classifyClaimFieldProvenance(flowerClaim).evidenceClass;
+  }
+
+  // Optional reproductive biology block (do not invent).
+  const reproductiveBiology = {};
+  for (const c of packet.claims) {
+    if (!String(c.field || '').startsWith('reproductive.')) continue;
+    if (c.status !== 'asserted' || c.value === undefined || c.value === null || c.value === '') {
+      continue;
+    }
+    const key = String(c.field).slice('reproductive.'.length);
+    reproductiveBiology[key] = c.value;
+  }
+  if (Object.keys(reproductiveBiology).length) {
+    climateTraits.reproductiveBiology = reproductiveBiology;
+  }
+
+  // Field-level evidence classes for evaluator evidence-strength propagation.
+  const traitEvidenceClasses = {};
+  const traitProvenance = {};
+  for (const c of packet.claims) {
+    if (!TRAIT_FIELDS.has(c.field) && c.field !== 'groupIds' && c.field !== 'floweringRequirements' && c.field !== 'fruitingRequirements') {
+      if (!String(c.field || '').startsWith('reproductive.')) continue;
+    }
+    const cls = c.evidenceClass || classifyClaimFieldProvenance(c).evidenceClass;
+    traitEvidenceClasses[c.field] = cls;
+    traitProvenance[c.field] = {
+      evidenceClass: cls,
+      sourceIds: c.sourceIds || [],
+      shortExcerpt: c.shortExcerpt || null,
+      status: c.status
+    };
+  }
+  climateTraits.traitEvidenceClasses = traitEvidenceClasses;
+  climateTraits.traitProvenance = traitProvenance;
 
   const care = {};
   let climateLabel = '';

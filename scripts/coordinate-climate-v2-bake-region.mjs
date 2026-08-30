@@ -70,7 +70,7 @@ const VARIABLES = [
   { key: 'hurs', decode: chelsaHursToPct }
 ];
 
-const BAKE_VERSION = 'bake-2026-08-30-emed-n-israel-v1';
+const BAKE_VERSION = 'bake-2026-08-30-emed-n-israel-v1-vpd-scale';
 const MAX_CONCURRENCY = 2;
 const MAX_ATTEMPTS = 6;
 

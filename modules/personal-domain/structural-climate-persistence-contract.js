@@ -4,6 +4,9 @@
  * Plant evaluations must never call climate providers.
  */
 
+import { COORDINATE_CLIMATE_AUTHORITY_V2_VERSION } from './coordinate-climate-authority-v2-contract.js';
+import { isPersistedClimateAuthorityStale } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
+
 export const STRUCTURAL_CLIMATE_PERSISTENCE_VERSION = '1.0.0';
 
 /** Do not re-hit archive after a failed acquire within this window (ms). */
@@ -20,7 +23,7 @@ export function shouldAcquireStructuralClimate(
   existingStructural,
   lat,
   lon,
-  { nowMs = Date.now(), cooldownMs = STRUCTURAL_ACQUIRE_FAILURE_COOLDOWN_MS } = {}
+  { nowMs = Date.now(), cooldownMs = STRUCTURAL_ACQUIRE_FAILURE_COOLDOWN_MS, currentBakeVersion = null } = {}
 ) {
   void nowMs;
   void cooldownMs;
@@ -44,7 +47,19 @@ export function shouldAcquireStructuralClimate(
       Number.isFinite(pLon) &&
       Math.abs(pLat - latitude) < 0.00015 &&
       Math.abs(pLon - longitude) < 0.00015;
-    if (coordsMatch) return { acquire: false, reason: 'reuse-known-v2' };
+    const stale = isPersistedClimateAuthorityStale(sc, {
+      currentAuthorityVersion: COORDINATE_CLIMATE_AUTHORITY_V2_VERSION,
+      currentBakeVersion
+    });
+    if (coordsMatch && !stale.stale) return { acquire: false, reason: 'reuse-known-v2', staleCheck: stale };
+    if (coordsMatch && stale.stale) {
+      return {
+        acquire: false,
+        reason: 'stale-v2-requiring-local-relookup',
+        staleCheck: stale,
+        note: 'External acquire still forbidden — caller must re-resolve via CRUVIT local V2 lookup.'
+      };
+    }
   }
 
   // Never allow Open-Meteo / CHELSA / terrain external acquire on user runtime.

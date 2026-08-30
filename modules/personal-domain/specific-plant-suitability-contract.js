@@ -7,12 +7,39 @@
 import {
   DAMAGING_COLD_MONTH_MEAN_MIN_C,
   applyStructuralClimateToProfile,
+  atmosphericHumidityMismatchForLowTolerancePlant,
   isFrostFreeGrowingClimateFromStructural,
   moistureMismatchForHighHumidityPlant,
   outdoorDamagingColdUnsupported,
   thermalRegimeFromStructuralEvidence
 } from './structural-climate-authority-v1.js';
 import { applyRepresentativenessToSuitabilityClaim } from './coordinate-climate-confidence-v2-contract.js';
+import {
+  quantitativeColdSurvivalUnsupported,
+  quantitativeHeatUnsupported,
+  quantitativeVpdUnsupported
+} from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
+import { applyPreScaleSystemicDemotions } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
+import {
+  assessPlantClimateColdSurvival,
+  plantRequiresYearRoundWarmClimate,
+  buildPlantDiscriminatedSuitabilityStub
+} from './plant-climate-suitability-baseline-v1.js';
+import { resolveFruitingWithBiologicalEligibility, readBiologicalFruitSetEvidence } from '../catalog-expansion/reproductive-biology-v1-contract.js';
+import { applyEvidenceStrengthPropagation } from './evidence-strength-propagation-v1-contract.js';
+
+export { atmosphericHumidityMismatchForLowTolerancePlant };
+export {
+  assessPlantClimateColdSurvival,
+  plantRequiresYearRoundWarmClimate,
+  buildPlantDiscriminatedSuitabilityStub
+};
+export {
+  applyEvidenceStrengthPropagation,
+  resolveTraitEvidenceClass,
+  BATCH_2_EVIDENCE_INGESTION_RULE,
+  EVIDENCE_STRENGTH_PROPAGATION_VERSION
+} from './evidence-strength-propagation-v1-contract.js';
 
 export const SPECIFIC_PLANT_SUITABILITY_LEVELS = Object.freeze([
   'excellent',
@@ -392,7 +419,32 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
           : broad === 'mediterranean' || broad === 'arid'
             ? 'low'
             : 'medium';
-  const humiditySignal = String(merged.humiditySignal || humidityFromBands).toLowerCase();
+  // Prefer ATMOSPHERIC authority from stored hurs series — never moistureRegime.
+  let humiditySignal = String(merged.humiditySignal || '').toLowerCase();
+  const hursMonths =
+    climateProfile.monthlyHursPct ||
+    climateProfile.coordinateClimateV2?.monthlyHursPct ||
+    merged.monthlyHursPct;
+  const meanRh =
+    climateProfile.meanRelativeHumidityPct ??
+    climateProfile.coordinateClimateV2?.meanRelativeHumidityPct ??
+    merged.meanRelativeHumidityPct;
+  if (Array.isArray(hursMonths) || meanRh != null) {
+    let mean = meanRh != null && meanRh !== '' ? Number(meanRh) : null;
+    if ((!Number.isFinite(mean) || mean == null) && Array.isArray(hursMonths)) {
+      const fin = hursMonths.map(Number).filter((n) => Number.isFinite(n));
+      if (fin.length >= 6) mean = fin.reduce((a, b) => a + b, 0) / fin.length;
+    }
+    if (Number.isFinite(mean)) {
+      if (mean < 45) humiditySignal = 'low';
+      else if (mean < 60) humiditySignal = 'medium';
+      else if (mean < 70) humiditySignal = 'borderline';
+      else humiditySignal = 'high';
+    }
+  }
+  if (!humiditySignal || humiditySignal === 'unknown' || humiditySignal === 'null') {
+    humiditySignal = String(humidityFromBands).toLowerCase();
+  }
   const drySeasonSignal =
     merged.drySeasonSignal === true ||
     climateProfile.drySeasonSignal === true ||
@@ -439,14 +491,37 @@ export function structuralEnvironmentFromClimateProfile(climateProfile = {}) {
     elevationM,
     moistureRegime: merged.moistureRegime || climateProfile.moistureRegime || 'unknown',
     humidityRegime: merged.humidityRegime || climateProfile.humidityRegime || 'unknown',
+    atmosphericHumidityRegime:
+      climateProfile.atmosphericHumidityRegime ||
+      merged.atmosphericHumidityRegime ||
+      (humiditySignal && humiditySignal !== 'unknown' ? humiditySignal : 'unknown'),
+    meanRelativeHumidityPct:
+      meanRh != null && meanRh !== '' && Number.isFinite(Number(meanRh))
+        ? Number(meanRh)
+        : climateProfile.meanRelativeHumidityPct ?? merged.meanRelativeHumidityPct ?? null,
+    monthlyHursPct: Array.isArray(hursMonths)
+      ? hursMonths
+      : climateProfile.monthlyHursPct || merged.monthlyHursPct || null,
+    monthlyVpdPa:
+      climateProfile.monthlyVpdPa ||
+      climateProfile.coordinateClimateV2?.monthlyVpdPa ||
+      merged.monthlyVpdPa ||
+      null,
+    meanVpdPa:
+      climateProfile.meanVpdPa ??
+      climateProfile.coordinateClimateV2?.meanVpdPa ??
+      merged.meanVpdPa ??
+      null,
     structuralColdRisk: merged.structuralColdRisk || climateProfile.structuralColdRisk || 'unknown',
     coldestMonthMeanMinC,
     annualPrecipitationMm:
       merged.annualPrecipitationMm ?? climateProfile.annualPrecipitationMm ?? null,
+    annualPetMm: merged.annualPetMm ?? climateProfile.annualPetMm ?? null,
     aridityIndex: merged.aridityIndex ?? climateProfile.aridityIndex ?? null,
     structuralClimateStatus:
       merged.structuralClimateStatus || climateProfile.structuralClimateStatus || 'unknown',
-    structuralClimate: merged.structuralClimate || climateProfile.structuralClimate || null
+    structuralClimate: merged.structuralClimate || climateProfile.structuralClimate || null,
+    coordinateClimateV2: climateProfile.coordinateClimateV2 || merged.coordinateClimateV2 || null
   };
 }
 
@@ -824,6 +899,28 @@ export function evaluateFruitingFromCatalogEvidence({
     coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
   const minTempC = parseMinTempCFromRequirements(text);
 
+  const applyBio = (climateResult) => {
+    const resolved = resolveFruitingWithBiologicalEligibility({
+      climateFruitingStatus: climateResult.status,
+      meta,
+      fruitOriented: fruitPositive || fruitFailCtx
+    });
+    return {
+      ...climateResult,
+      status: resolved.status,
+      reproductiveClimateSuitability: resolved.reproductiveClimateSuitability,
+      biologicalFruitSetEligibility: resolved.biologicalFruitSetEligibility,
+      evidence:
+        resolved.status !== climateResult.status && resolved.note
+          ? `${climateResult.evidence || 'climate'};bio:${resolved.note}`
+          : climateResult.evidence,
+      limiting:
+        resolved.status !== climateResult.status && resolved.note
+          ? resolved.note
+          : climateResult.limiting
+    };
+  };
+
   if (!sheltered && chillDeficit && (fruitPositive || fruitFailCtx || plantNeedsWinterChill(meta))) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
@@ -880,7 +977,9 @@ export function evaluateFruitingFromCatalogEvidence({
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
       unknownGap: 'fruitingRequirements',
-      evidence: 'missing:fruitingRequirements'
+      evidence: 'missing:fruitingRequirements',
+      reproductiveClimateSuitability: 'unknown',
+      biologicalFruitSetEligibility: 'UNKNOWN'
     };
   }
 
@@ -909,18 +1008,18 @@ export function evaluateFruitingFromCatalogEvidence({
         humiditySignal === 'medium' &&
         broad !== 'tropical'
       ) {
-        return {
+        return applyBio({
           status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
           limiting: 'Humidity/moisture only partially match sourced fruiting needs.',
           evidence: 'partial:humidity-medium-non-tropical'
-        };
+        });
       }
-      return {
+      return applyBio({
         status: review
           ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
           : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
         evidence: `positive:coldest-month:${coldest}>=min:${minTempC}`
-      };
+      });
     }
   }
 
@@ -935,12 +1034,12 @@ export function evaluateFruitingFromCatalogEvidence({
       humiditySignal === 'high' ||
       (humiditySignal === 'medium' && broad === 'tropical');
     if (warmOk && humidOk && !moistureMismatchForHighHumidityPlant(meta, env)) {
-      return {
+      return applyBio({
         status: review
           ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED
           : SPECIFIC_OUTCOME_STATUS.SUPPORTED,
         evidence: 'positive:frost-free-tropical-warmth-match'
-      };
+      });
     }
     if (
       tropicalMoisturePlant &&
@@ -948,26 +1047,28 @@ export function evaluateFruitingFromCatalogEvidence({
       broad !== 'tropical' &&
       frostFree
     ) {
-      return {
+      return applyBio({
         status: SPECIFIC_OUTCOME_STATUS.CONSTRAINED,
         limiting: 'Humidity/moisture only partially match sourced fruiting needs.',
         evidence: 'partial:humidity-medium-non-tropical'
-      };
+      });
     }
     if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
         limiting: 'Climate is too cool / not frost-free for sourced fruiting needs.',
-        evidence: 'negative:cool-or-not-frost-free-vs-warm-fruiting'
+        evidence: 'negative:cool-or-not-frost-free-vs-warm-fruiting',
+        reproductiveClimateSuitability: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
+        biologicalFruitSetEligibility: readBiologicalFruitSetEvidence(meta).eligibility
       };
     }
   }
 
-  return {
+  return applyBio({
     status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
     unknownGap: 'fruiting-climate-comparison',
     evidence: 'incomplete:cannot-compare-fruiting-requirements'
-  };
+  });
 }
 
 export function catalogNeedsReview(meta, plant) {
@@ -1073,30 +1174,66 @@ export function deriveSpecificPlantOutcomes({
     });
   }
 
+  const quantCold = !sheltered ? quantitativeColdSurvivalUnsupported(meta, env) : null;
+  const lowHumMismatchEarly = !sheltered
+    ? atmosphericHumidityMismatchForLowTolerancePlant(meta, env)
+    : null;
+  const evidenceHints = {
+    survivalFields: [],
+    growthFields: [],
+    usedQuantitativeCold: false,
+    usedHumiditySurvival: false,
+    usedMoistureSurvival: false,
+    usedTropicalGroup: false,
+    usedHumidityGrowth: false,
+    usedMoistureGrowth: false,
+    usedWarmNeed: false,
+    usedHeat: false,
+    usedVpd: false
+  };
+
   if (!sheltered && frostSensitivity === 'high' && freezingRisk !== 'low') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Frost risk is too high for this plant.');
+    evidenceHints.survivalFields.push('frostSensitivity');
   } else if (!sheltered && moistureMismatchForHighHumidityPlant(meta, env)) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
       `Structural moisture regime (${env.moistureRegime}) is too arid for a high-humidity / high-moisture plant; frost-free status does not neutralize aridity.`
     );
+    evidenceHints.usedMoistureSurvival = true;
+    evidenceHints.survivalFields.push('humidityTolerance');
   } else if (!sheltered && outdoorDamagingColdUnsupported(meta, env)) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
       `Coldest-month mean lows (~${env.coldestMonthMeanMinC}°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.`
     );
-  } else if (!sheltered && humidityTolerance === 'low' && humiditySignal === 'high') {
+    evidenceHints.survivalFields.push('frostSensitivity', 'coldTolerance');
+    if (isWarmTropicalFrostSensitiveGroup(meta)) evidenceHints.usedTropicalGroup = true;
+  } else if (quantCold?.unsupported) {
+    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    limiting.push(quantCold.limiting);
+    evidenceHints.usedQuantitativeCold = true;
+    evidenceHints.survivalFields.push('quantitative.minimum_survival_temperature_c');
+  } else if (lowHumMismatchEarly?.affectsSurvival) {
+    // Only when plant has documented humidity mortality / survival-threat evidence.
     survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-    limiting.push('High humidity is a poor fit for this plant.');
+    limiting.push(
+      'Documented humidity-related survival threat conflicts with atmospheric humidity at this site.'
+    );
+    evidenceHints.usedHumiditySurvival = true;
+    evidenceHints.survivalFields.push('humidityTolerance');
   } else if (!sheltered && frostSensitivity === 'high' && !frostFree) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
       'Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.'
     );
+    evidenceHints.survivalFields.push('frostSensitivity');
   } else if (!sheltered && tropicalMoisturePlant && humiditySignal === 'low') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Low humidity / dry-air climate is a poor match for this plant.');
+    evidenceHints.survivalFields.push('humidityTolerance');
+    evidenceHints.usedTropicalGroup = true;
   } else if (
     !sheltered &&
     tropicalMoisturePlant &&
@@ -1107,29 +1244,69 @@ export function deriveSpecificPlantOutcomes({
     limiting.push(
       'Humidity and moisture regime are only a partial match; frost-free status alone is not enough.'
     );
+    evidenceHints.survivalFields.push('humidityTolerance');
   } else if (engineBlocked && /frost risk is too high/i.test(String(s.explanationText || ''))) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    evidenceHints.survivalFields.push('frostSensitivity');
   } else if (!frostSensitivity) {
     survival = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('frostSensitivity');
-  } else if (Number.isFinite(survivalFit) && survivalFit < 40) {
-    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
-    limiting.push('Survival fit is too weak for reliable outdoor establishment.');
-  } else if (Number.isFinite(survivalFit) && survivalFit < 65) {
-    survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
   } else {
-    survival = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.RELIABLE;
-    if (review) {
-      limiting.push(
-        'Catalog marks climate traits as needing review - survival stays conservative.'
-      );
+    const coldAssess = assessPlantClimateColdSurvival(meta, env);
+    evidenceHints.survivalFields.push('frostSensitivity');
+    if (meta?.coldTolerance) evidenceHints.survivalFields.push('coldTolerance');
+    if (coldAssess.survivalHint === 'unreliable') {
+      survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+      if (coldAssess.reason) limiting.push(coldAssess.reason);
+    } else if (coldAssess.survivalHint === 'constrained') {
+      survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+      if (coldAssess.reason && !limiting.includes(coldAssess.reason)) {
+        limiting.push(coldAssess.reason);
+      }
+    } else if (coldAssess.survivalHint === 'reliable') {
+      survival = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.RELIABLE;
+    } else if (Number.isFinite(survivalFit) && survivalFit < 40) {
+      // Weak engine fit only when plant-cold assessment did not authorize reliable/constrained.
+      survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+      limiting.push('Survival fit is too weak for reliable outdoor establishment.');
+    } else if (Number.isFinite(survivalFit) && survivalFit < 65) {
+      survival = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    } else {
+      survival = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.RELIABLE;
+      if (review) {
+        limiting.push(
+          'Catalog marks climate traits as needing review - survival stays conservative.'
+        );
+      }
     }
   }
 
+  const lowHumMismatch = lowHumMismatchEarly;
+  const heatQ = !sheltered ? quantitativeHeatUnsupported(meta, env) : null;
+  const vpdQ = !sheltered ? quantitativeVpdUnsupported(meta, env) : null;
+
   if (survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE && !sheltered) {
     growth = SPECIFIC_OUTCOME_STATUS.POOR;
-  } else if (!sheltered && humidityTolerance === 'low' && humiditySignal === 'high') {
-    growth = SPECIFIC_OUTCOME_STATUS.POOR;
+    evidenceHints.growthFields.push(...(evidenceHints.survivalFields || []));
+  } else if (lowHumMismatch) {
+    // Qualitative humidityTolerance → Growth (and Overall via growth/demotion), not Survival.
+    growth =
+      lowHumMismatch.severity === 'strong'
+        ? SPECIFIC_OUTCOME_STATUS.POOR
+        : SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedHumidityGrowth = true;
+    evidenceHints.growthFields.push('humidityTolerance');
+    if (!limiting.some((m) => /humidity/i.test(String(m)))) {
+      if (lowHumMismatch.severity === 'strong') {
+        limiting.push(
+          'High atmospheric humidity constrains growth for this low-humidity-tolerance plant (distinct from irrigation water need; not a survival claim without mortality evidence).'
+        );
+      } else {
+        limiting.push(
+          'Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.'
+        );
+      }
+    }
   } else if (
     moistureMismatchForHighHumidityPlant(meta, env) ||
     (tropicalMoisturePlant &&
@@ -1140,12 +1317,44 @@ export function deriveSpecificPlantOutcomes({
       humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env)
         ? SPECIFIC_OUTCOME_STATUS.POOR
         : SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
-  } else if (Number.isFinite(thriveFit) && thriveFit < 35) {
-    growth = SPECIFIC_OUTCOME_STATUS.POOR;
-  } else if (Number.isFinite(thriveFit) && thriveFit < 60) {
+    evidenceHints.usedMoistureGrowth = true;
+    evidenceHints.growthFields.push('humidityTolerance');
+  } else if (heatQ?.unsupported || vpdQ?.unsupported) {
     growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+    evidenceHints.usedHeat = !!heatQ?.unsupported;
+    evidenceHints.usedVpd = !!vpdQ?.unsupported;
+    if (meta?.heatTolerance) evidenceHints.growthFields.push('heatTolerance');
+    if (heatQ?.unsupported && heatQ.limiting && !limiting.includes(heatQ.limiting)) {
+      limiting.push(heatQ.limiting);
+    }
+    if (vpdQ?.unsupported && vpdQ.limiting && !limiting.includes(vpdQ.limiting)) {
+      limiting.push(vpdQ.limiting);
+    }
+  } else if (Number.isFinite(thriveFit) && thriveFit < 35) {
+    // Severe thrive cut only when plant-authorized warm need OR explicit mismatch already handled
+    if (plantRequiresYearRoundWarmClimate(meta)) {
+      growth = SPECIFIC_OUTCOME_STATUS.POOR;
+      evidenceHints.usedWarmNeed = true;
+      evidenceHints.growthFields.push('frostSensitivity');
+    } else {
+      growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
+      if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
+    }
+  } else if (Number.isFinite(thriveFit) && thriveFit < 60) {
+    if (plantRequiresYearRoundWarmClimate(meta)) {
+      growth = SPECIFIC_OUTCOME_STATUS.CONSTRAINED;
+      evidenceHints.usedWarmNeed = true;
+      evidenceHints.growthFields.push('frostSensitivity');
+    } else {
+      // Cool-seasonal / arid / highland alone must NOT force Constrained for non-tropical plants
+      growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
+      if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
+      if (meta?.humidityTolerance) evidenceHints.growthFields.push('humidityTolerance');
+    }
   } else if (Number.isFinite(thriveFit)) {
     growth = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.SUPPORTED;
+    if (meta?.frostSensitivity) evidenceHints.growthFields.push('frostSensitivity');
+    if (meta?.humidityTolerance) evidenceHints.growthFields.push('humidityTolerance');
   } else {
     growth = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('growth-evidence');
@@ -1193,6 +1402,24 @@ export function deriveSpecificPlantOutcomes({
   }
   if (fruitEval.unknownGap) unknownGaps.push(fruitEval.unknownGap);
 
+  // Evidence-strength propagation: heuristic/unknown traits cannot authorize confident truth.
+  const strength = applyEvidenceStrengthPropagation({
+    meta,
+    env,
+    survival,
+    growth,
+    flowering,
+    fruiting,
+    evidenceHints
+  });
+  survival = strength.survival;
+  growth = strength.growth;
+  flowering = strength.flowering;
+  fruiting = strength.fruiting;
+  for (const w of strength.warnings || []) {
+    if (!limiting.includes(w)) limiting.push(w);
+  }
+
   return finalizeOutcomes({
     survival,
     growth,
@@ -1213,7 +1440,11 @@ export function deriveSpecificPlantOutcomes({
       tropicalMoisturePlant ||
       humidityTolerance === 'high' ||
       humidityTolerance === 'low' ||
-      moistureMismatchForHighHumidityPlant(meta, env)
+      moistureMismatchForHighHumidityPlant(meta, env),
+    meta,
+    climateProfile: climateProfile || env,
+    plant,
+    evidenceStrength: strength
   });
 }
 
@@ -1231,7 +1462,12 @@ function finalizeOutcomes({
   fruitOriented = false,
   reproductiveEvidence = null,
   climateConfidence = null,
-  moistureOrPrecipDependent = false
+  moistureOrPrecipDependent = false,
+  meta = null,
+  climateProfile = null,
+  plant = null,
+  gardenContext = null,
+  evidenceStrength = null
 }) {
   let overall = forceOverall
     ? forceOverall
@@ -1265,6 +1501,19 @@ function finalizeOutcomes({
     }
   }
 
+  const systemic = applyPreScaleSystemicDemotions({
+    overall,
+    meta,
+    climateProfile: climateProfile || {},
+    plant: plant || {},
+    gardenContext: gardenContext || {},
+    needsReview
+  });
+  overall = systemic.overall;
+  for (const w of systemic.warnings || []) {
+    if (!limiting.includes(w)) limiting.push(w);
+  }
+
   return {
     survival,
     growth,
@@ -1282,7 +1531,12 @@ function finalizeOutcomes({
     protectedGrowing: sheltered === true,
     reproductiveEvidence: reproductiveEvidence || null,
     climateAuthorityConfidence: climateConfidence || null,
-    representativenessAdjustment: confAdj.demoted || confAdj.forceUnknownOutcomes ? confAdj : null
+    representativenessAdjustment: confAdj.demoted || confAdj.forceUnknownOutcomes ? confAdj : null,
+    systemicHardening: systemic,
+    suitabilityDimensions: systemic.dimensions,
+    survivalConfidenceMeaning: systemic.survivalConfidenceMeaning,
+    recommendationEligibility: systemic.recommendationEligibility,
+    evidenceStrength: evidenceStrength || null
   };
 }
 
@@ -1382,15 +1636,8 @@ export function compareSpecificPlantAcrossHydratedGardens(
   if (!climateA || !climateB) {
     throw new Error('Both gardens must hydrate to complete trusted app location partials');
   }
-  const suitabilityStub = (climate) => ({
-    recommendationLevel: 'borderline',
-    survivalFit: climate.freezingRisk === 'high' ? 20 : 70,
-    thriveFit: climate.freezingRisk === 'high' ? 20 : 55,
-    floweringFit: 50,
-    fruitingFit: 40,
-    warnings: [],
-    explanationText: ''
-  });
+  const suitabilityStub = (climate) =>
+    buildPlantDiscriminatedSuitabilityStub(meta, climate);
   return {
     gardenA: {
       locationLabel: climateA.locationLabel,

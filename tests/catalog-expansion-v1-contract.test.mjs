@@ -29,8 +29,52 @@ function loadPacket() {
   return JSON.parse(fs.readFileSync(CACAO_PACKET, 'utf8').replace(/^\uFEFF/, ''));
 }
 
-test('expansion contract version is stable', () => {
-  assert.equal(CATALOG_EXPANSION_CONTRACT_VERSION, '1.0.0');
+test('expansion contract version accepts 1.0.0, 1.1.0, and 1.2.0', () => {
+  assert.equal(CATALOG_EXPANSION_CONTRACT_VERSION, '1.2.0');
+  const packet = loadPacket();
+  assert.equal(packet.expansionContractVersion, '1.0.0');
+  const v = validateCatalogExpansionPacket(packet);
+  assert.equal(v.ok, true, v.errors.join('; '));
+});
+
+test('optional quantitative claim requires provenance; inventing numbers is rejected', () => {
+  const packet = loadPacket();
+  packet.expansionContractVersion = '1.1.0';
+  packet.claims = [
+    ...packet.claims,
+    {
+      claimId: 'q-min-temp-no-source',
+      field: 'quantitative.minimum_survival_temperature_c',
+      status: 'asserted',
+      value: -5,
+      sourceIds: [],
+      shortExcerpt: ''
+    }
+  ];
+  const bad = validateCatalogExpansionPacket(packet);
+  assert.equal(bad.ok, false);
+  assert.ok(bad.errors.some((e) => /quantitative|sourceIds|shortExcerpt|finite/i.test(e)));
+
+  const packet2 = loadPacket();
+  packet2.expansionContractVersion = '1.1.0';
+  const sid = packet2.sources[0].sourceId;
+  packet2.claims = [
+    ...packet2.claims,
+    {
+      claimId: 'q-min-temp-ok',
+      field: 'quantitative.minimum_survival_temperature_c',
+      status: 'asserted',
+      value: 10,
+      sourceIds: [sid],
+      shortExcerpt: 'Source states survival above 10°C mean monthly minimum.'
+    }
+  ];
+  const ok = validateCatalogExpansionPacket(packet2);
+  assert.equal(ok.ok, true, ok.errors.join('; '));
+  const m = materializePlantCatalogItemFromPacket(packet2);
+  assert.equal(m.ok, true);
+  assert.equal(m.item.climateTraits.quantitativeEvidence.minimum_survival_temperature_c, 10);
+  assert.ok(m.item.climateTraits.quantitativeProvenance.minimum_survival_temperature_c.sourceIds.includes(sid));
 });
 
 test('cacao packet validates and materializes without inventing rainfall mm', () => {

@@ -24,7 +24,7 @@ test('contract version stable', () => {
   assert.equal(DAMAGING_COLD_MONTH_MEAN_MIN_C, 10);
 });
 
-test('UNEP AI + RH derive arid humidity low without inventing', () => {
+test('UNEP AI + RH keep moisture and atmospheric humidity separate', () => {
   const derived = deriveStructuralClimateFromNormals({
     annualPrecipitationMm: 32,
     annualEt0Mm: 2000,
@@ -37,7 +37,8 @@ test('UNEP AI + RH derive arid humidity low without inventing', () => {
   });
   assert.equal(derived.status, 'known');
   assert.equal(derived.moistureRegime, 'hyper-arid');
-  assert.equal(derived.humiditySignal, 'low');
+  // RH 51 → atmospheric medium; moisture must NOT force atmospheric low
+  assert.equal(derived.humiditySignal, 'medium');
   assert.equal(derived.broadClimateOverride, 'arid');
   assert.equal(derived.structuralColdRisk, 'elevated');
 });
@@ -80,7 +81,7 @@ test('applyStructuralClimate overlays arid over subtropical label', () => {
     sc
   );
   assert.equal(profile.broadClimate, 'arid');
-  assert.equal(profile.humiditySignal, 'low');
+  assert.equal(profile.humiditySignal, 'medium'); // RH 50 atmospheric — not arid-forced low
   assert.equal(profile.moistureRegime, 'hyper-arid');
 });
 
@@ -104,7 +105,8 @@ test('outcome: arid structural blocks high-humidity tropical even if frost-free 
   );
   const env = structuralEnvironmentFromClimateProfile(climateProfile);
   assert.equal(env.broadClimate, 'arid');
-  assert.equal(env.humiditySignal, 'low');
+  assert.equal(env.humiditySignal, 'medium');
+  assert.equal(env.moistureRegime, 'hyper-arid');
 
   const meta = {
     frostSensitivity: 'high',
@@ -114,7 +116,14 @@ test('outcome: arid structural blocks high-humidity tropical even if frost-free 
     groupIds: ['tropical-frost-sensitive-fruit'],
     needsReview: true,
     floweringRequirements: 'temp',
-    fruitingRequirements: 'pods'
+    fruitingRequirements: 'pods',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      coldTolerance: 'SOURCE_SUPPORTED',
+      humidityTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED',
+      groupIds: 'SOURCE_SUPPORTED'
+    }
   };
   assert.equal(moistureMismatchForHighHumidityPlant(meta, env), true);
   assert.equal(outdoorDamagingColdUnsupported(meta, env), true);
@@ -174,8 +183,13 @@ test('live hydrate Cairo vs Kochi differentiate moisture (network)', async (t) =
       cairo.structuralClimate.moistureRegime === 'arid'
   );
   assert.equal(kochi.structuralClimate.moistureRegime, 'humid');
-  assert.equal(cairo.structuralClimate.humiditySignal, 'low');
-  assert.equal(kochi.structuralClimate.humiditySignal, 'high');
+  // Atmospheric from RH — must not collapse to moistureRegime
+  assert.notEqual(
+    cairo.structuralClimate.humiditySignal,
+    cairo.structuralClimate.moistureRegime
+  );
+  assert.ok(['low', 'medium', 'high'].includes(cairo.structuralClimate.humiditySignal));
+  assert.ok(['low', 'medium', 'high'].includes(kochi.structuralClimate.humiditySignal));
   assert.notEqual(
     humiditySignalFromStructural(cairo.structuralClimate),
     humiditySignalFromStructural(kochi.structuralClimate)

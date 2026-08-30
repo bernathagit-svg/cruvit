@@ -1,0 +1,228 @@
+{
+  "gate": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING",
+  "verdict": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS",
+  "integrationVerdict": "CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS",
+  "materialFp": 0,
+  "materialFn": 0,
+  "originalFpBeforeAfter": [
+    {
+      "plant": "bay-laurel",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
+      "fixed": true
+    },
+    {
+      "plant": "oleander",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
+      "fixed": true
+    },
+    {
+      "plant": "common-thyme",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
+      "fixed": true
+    },
+    {
+      "plant": "garden-sage",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
+      "fixed": true
+    }
+  ],
+  "matrixSummary": {
+    "totals": {
+      "matrix": 210,
+      "gradient": 250,
+      "expected": 460
+    },
+    "overallCounts": {
+      "borderline": 210
+    },
+    "survivalCounts": {
+      "constrained": 210
+    }
+  },
+  "mediterraneanSanity": {
+    "evaluations": 100,
+    "byPlant": {
+      "bay-laurel": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": true
+      },
+      "oleander": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": true
+      },
+      "common-thyme": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": true
+      },
+      "garden-sage": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": true
+      }
+    }
+  },
+  "lowHumidityRegressionGuard": {
+    "plantCount": 7,
+    "evalCount": 49,
+    "blockedCount": 0,
+    "nonBlockedCount": 49,
+    "goodOrBorderlineCount": 49,
+    "notBlanketNotRecommended": true
+  },
+  "tileProfileExposureEquivalence": {
+    "pilotYehiam": {
+      "freezingRisk": "low",
+      "humiditySignal": "medium",
+      "moistureRegime": "humid",
+      "thermalRegime": "cool-seasonal",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "coldestMonthMeanMinC": 7.75
+    },
+    "coverageSample": {
+      "freezingRisk": "medium",
+      "humiditySignal": "medium",
+      "moistureRegime": "humid",
+      "thermalRegime": "cool-seasonal",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "coldestMonthMeanMinC": 3.15
+    },
+    "coverageHasRequiredEnums": true,
+    "externalCalls": 0
+  },
+  "noSingaporeHardcodeInRule": true,
+  "quantitativeSchema": {
+    "contractVersion": "1.2.0",
+    "compatibleVersions": [
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+    ],
+    "optionalClaimFields": [
+      "quantitative.minimum_survival_temperature_c",
+      "quantitative.preferred_minimum_temperature_c",
+      "quantitative.chill_hours_min",
+      "quantitative.chill_hours_max",
+      "quantitative.maximum_tolerated_temperature_c",
+      "quantitative.preferred_maximum_temperature_c",
+      "quantitative.vpd_min_kpa",
+      "quantitative.vpd_max_kpa",
+      "quantitative.drought_tolerance",
+      "quantitative.aridity_tolerance_note",
+      "quantitative.flowering_min_temperature_c",
+      "quantitative.fruiting_min_temperature_c"
+    ],
+    "batch1NumericEnrichment": false,
+    "provenanceRule": "Asserted quantitative fields require sourceIds + shortExcerpt; inventing from qualitative labels forbidden"
+  },
+  "batch2Recommendation": {
+    "schemaReady": true,
+    "everyPlantHasCompleteNumericEvidence": false,
+    "note": "SCHEMA READY for Batch 2: qualitative + optional provenanced quantitative. Do not invent numeric thresholds. UNKNOWN/Borderline when evidence thin."
+  },
+  "systemicGaps": {
+    "P0": [],
+    "P1": [
+      "Optional quantitative fields exist but Batch 1 plants are not populated (by design) — precision hardiness still qualitative",
+      "Climate-side chill-hour series not yet compared to plant chill_hours_min/max (additive when both sides exist later)"
+    ],
+    "P2": [
+      "Continuous PET vs waterNeeds still class-only via moistureRegime",
+      "meanVpdPa unused unless plant supplies provenanced vpd_min/max_kpa"
+    ],
+    "P3": [
+      "sunNeeds / drainageNeeds unused by climate outcomes evaluator"
+    ]
+  },
+  "externalCalls": {
+    "botanicalApi": 0,
+    "aiLlm": 0,
+    "catalogEnrichment": 0,
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0
+  },
+  "gradientExternalClimateCalls": 0,
+  "generatedAt": "2026-08-30T19:23:56.394Z"
+}

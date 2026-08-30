@@ -1,0 +1,227 @@
+{
+  "gate": "CRUVIT_ATMOSPHERIC_HUMIDITY_SEMANTICS_GATE",
+  "verdict": "PASS",
+  "generatedAt": "2026-08-30T18:40:33.778Z",
+  "A_singaporeWhyMedium": {
+    "cause": "threshold/classification",
+    "meanRelativeHumidityPct": 64.7,
+    "oldRule": "r < 65 → medium",
+    "newRule": "r < 64 → medium; else high",
+    "note": "Not aggregation/missing/unit — stored mean ~64.7 flickered below exclusive high min 65"
+  },
+  "B_singaporeEvidence": {
+    "meanRelativeHumidityPct": 64.7,
+    "monthlyHursPct": [
+      65.6,
+      64.8,
+      65,
+      65,
+      64.8,
+      63.8,
+      63.7,
+      63.6,
+      64,
+      64.7,
+      65.6,
+      66.2
+    ],
+    "meanVpdPa": 12533,
+    "aggregation": "arithmetic mean of 12 monthly CHELSA hurs; VPD mean stored but scale-suspect (>8000 Pa) so not used to invent RH class",
+    "classification": "threshold highInclusiveMin=64 → high"
+  },
+  "C_contract": {
+    "ATMOSPHERIC_HUMIDITY": "hurs / RH (+ optional VPD when meanVpdPa<=8000)",
+    "CLIMATE_WATER_BALANCE": "P, PET, P/PET, aridity, moistureRegime",
+    "GARDEN_WATER_AVAILABILITY": "irrigation / soil / garden context (later)",
+    "thresholds": {
+      "lowExclusiveMax": 45,
+      "mediumExclusiveMax": 64,
+      "highInclusiveMin": 64
+    },
+    "version": "1.0.0"
+  },
+  "D_moistureNotHumiditySubstitute": {
+    "proof": [
+      "atmosphericHumidityMismatchForLowTolerancePlant ignores moistureRegime",
+      "humiditySignalFromRegimes / humiditySignalFromStructural are atmospheric passthrough",
+      "Yehiam: moistureRegime=humid + atmospheric=medium → no low-tolerance atmospheric penalty",
+      "missing hurs + moisture humid → atmospheric UNKNOWN → no penalty"
+    ]
+  },
+  "E_sevenLocationTable": [
+    {
+      "id": "singapore",
+      "meanRh": 64.7,
+      "meanVpdPa": 12533,
+      "atmosphericHumidityRegime": "high",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "year-round-stable",
+      "vpdScaleSuspect": true,
+      "oldThreshold65": "medium"
+    },
+    {
+      "id": "kochi",
+      "meanRh": 65.2,
+      "meanVpdPa": 12077,
+      "atmosphericHumidityRegime": "high",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "vpdScaleSuspect": true,
+      "oldThreshold65": "high"
+    },
+    {
+      "id": "cairo",
+      "meanRh": 51.1,
+      "meanVpdPa": 13528,
+      "atmosphericHumidityRegime": "medium",
+      "moistureRegime": "hyper-arid",
+      "differ": true,
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "vpdScaleSuspect": true,
+      "oldThreshold65": "medium"
+    },
+    {
+      "id": "yehiam",
+      "meanRh": 59.4,
+      "meanVpdPa": 8538,
+      "atmosphericHumidityRegime": "medium",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "vpdScaleSuspect": true,
+      "oldThreshold65": "medium"
+    },
+    {
+      "id": "tokyo",
+      "meanRh": 59.6,
+      "meanVpdPa": 7318,
+      "atmosphericHumidityRegime": "medium",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "vpdScaleSuspect": false,
+      "oldThreshold65": "medium"
+    },
+    {
+      "id": "helsinki",
+      "meanRh": 65.1,
+      "meanVpdPa": 3737,
+      "atmosphericHumidityRegime": "high",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "strong-seasonal",
+      "vpdScaleSuspect": false,
+      "oldThreshold65": "high"
+    },
+    {
+      "id": "quito",
+      "meanRh": 64.8,
+      "meanVpdPa": 5033,
+      "atmosphericHumidityRegime": "high",
+      "moistureRegime": "humid",
+      "differ": true,
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "vpdScaleSuspect": false,
+      "oldThreshold65": "medium"
+    }
+  ],
+  "F_fourOriginalFp": [
+    {
+      "plant": "bay-laurel",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "poor",
+      "limiting": "High atmospheric humidity (from relative humidity / hurs evidence) is a poor fit for this low-humidity-tolerance plant; distinct from P/PET moistureRegime and from irrigation water need.",
+      "fixed": true
+    },
+    {
+      "plant": "oleander",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "poor",
+      "limiting": "High atmospheric humidity (from relative humidity / hurs evidence) is a poor fit for this low-humidity-tolerance plant; distinct from P/PET moistureRegime and from irrigation water need.",
+      "fixed": true
+    },
+    {
+      "plant": "common-thyme",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "poor",
+      "limiting": "High atmospheric humidity (from relative humidity / hurs evidence) is a poor fit for this low-humidity-tolerance plant; distinct from P/PET moistureRegime and from irrigation water need.",
+      "fixed": true
+    },
+    {
+      "plant": "garden-sage",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "poor",
+      "limiting": "High atmospheric humidity (from relative humidity / hurs evidence) is a poor fit for this low-humidity-tolerance plant; distinct from P/PET moistureRegime and from irrigation water need.",
+      "fixed": true
+    }
+  ],
+  "G_adversarial": {
+    "humidWaterBalance_dryAir": "atmospheric low/not-high",
+    "aridWater_highRh": "atmospheric high",
+    "seasonalSwing": "seasonalHumidityPattern retained",
+    "missingHurs_humidMoisture": "atmospheric UNKNOWN, no penalty"
+  },
+  "H_materialFp": 0,
+  "I_materialFn": 0,
+  "J_externalCalls": {
+    "botanicalApi": 0,
+    "aiLlm": 0,
+    "catalogEnrichment": 0,
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0
+  },
+  "K_filesChangedNote": "see git status — humidity authority/evaluator/tests/reports only",
+  "L_remainingBlockers": [
+    "P1: CHELSA VPD integer scale audit (several pilots meanVpdPa >> physical es at Tmean; RH remains authority)",
+    "NO COMMIT / PUSH / DEPLOY / Batch 2 per Owner"
+  ],
+  "matrix": {
+    "totals": {
+      "matrix": 210,
+      "gradient": 250,
+      "expected": 460
+    },
+    "overallCounts": {
+      "blocked": 75,
+      "borderline": 135
+    },
+    "survivalCounts": {
+      "unreliable": 75,
+      "reliable": 105,
+      "constrained": 30
+    }
+  },
+  "lowHumidityRegressionGuard": {
+    "plantCount": 7,
+    "evalCount": 49,
+    "blockedCount": 7,
+    "nonBlockedCount": 42,
+    "goodOrBorderlineCount": 42,
+    "notBlanketNotRecommended": true
+  },
+  "alignmentVerdict": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS",
+  "integrationVerdict": "CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS"
+}

@@ -1,7 +1,7 @@
 {
   "kind": "cruvit-climate-coverage-manifest-v1",
   "regionId": "emed-n-israel-v1",
-  "bakeVersion": "bake-2026-08-30-emed-n-israel-v1",
+  "bakeVersion": "bake-2026-08-30-emed-n-israel-v1-vpd-scale",
   "schemaVersion": "cctb-i16-v1",
   "format": "cruvit-cctb-int16-gzip-v1",
   "bounds": {
@@ -16,7 +16,9 @@
     "chelsa": "chelsa-v2.1-climatologies-1981-2010",
     "petScale": "raw/100",
     "terrain": "aws-elevation-tiles-terrarium",
-    "terrainZoom": 12
+    "terrainZoom": 12,
+    "vpdScale": "raw×0.1 → Pa",
+    "vpdScaleFix": "2026-08-30-vpd-scale-0.1"
   },
   "tileCount": 6,
   "tiles": [
@@ -26,10 +28,10 @@
       "ty": 95,
       "fileName": "chelsa30s-t64_402_95.cctb.gz",
       "cellCount": 550,
-      "gzipBytes": 31128,
-      "rawBytes": 103706,
-      "bytesPerCellGzip": 56.6,
-      "sha256": "52eea11f8dafdb7e40035bc9de04a7493e1989bbeae1c8396b62918ff2b8bf24"
+      "gzipBytes": 25900,
+      "rawBytes": 103716,
+      "bytesPerCellGzip": 47.09090909090909,
+      "sha256": "ab7e51940af26b2a691d0c98386b64bb6ff54ff6dbdd28d95f3c8dbfdd0918dc"
     },
     {
       "tileKey": "chelsa30s-t64:403:95",
@@ -37,10 +39,10 @@
       "ty": 95,
       "fileName": "chelsa30s-t64_403_95.cctb.gz",
       "cellCount": 3520,
-      "gzipBytes": 365896,
-      "rawBytes": 662067,
-      "bytesPerCellGzip": 103.95,
-      "sha256": "677e528b6a5ffc46e8ec2b07eb41252de59357bd7abe4bd0c3579c4436875834"
+      "gzipBytes": 341118,
+      "rawBytes": 662077,
+      "bytesPerCellGzip": 96.90852272727273,
+      "sha256": "f4b1be212a8a368fcdc41d300a47e82eb5cfc5a2ec6d7a360d5f50595f5b2bee"
     },
     {
       "tileKey": "chelsa30s-t64:404:95",
@@ -48,10 +50,10 @@
       "ty": 95,
       "fileName": "chelsa30s-t64_404_95.cctb.gz",
       "cellCount": 1265,
-      "gzipBytes": 137733,
-      "rawBytes": 238127,
-      "bytesPerCellGzip": 108.88,
-      "sha256": "b5107be10b3ee3f0371590fd5d934e89b1e69075397e0bdd114b4f150c25b050"
+      "gzipBytes": 129507,
+      "rawBytes": 238137,
+      "bytesPerCellGzip": 102.37707509881423,
+      "sha256": "bb780eeff6ce5c263deaa5a388d50840d6cb41925ecf7652a96899694d246dc6"
     },
     {
       "tileKey": "chelsa30s-t64:402:96",
@@ -59,10 +61,10 @@
       "ty": 96,
       "fileName": "chelsa30s-t64_402_96.cctb.gz",
       "cellCount": 420,
-      "gzipBytes": 35087,
-      "rawBytes": 79266,
-      "bytesPerCellGzip": 83.54,
-      "sha256": "437c7dbf5ba589d441a8f31196f6d1d06a6cc998e1d083879464abf74a36a7e2"
+      "gzipBytes": 32528,
+      "rawBytes": 79276,
+      "bytesPerCellGzip": 77.44761904761904,
+      "sha256": "81f3827656a339951bd0f9a0d4fbd6fe098a5b50f2cda472c02941d9134142b4"
     },
     {
       "tileKey": "chelsa30s-t64:403:96",
@@ -70,10 +72,10 @@
       "ty": 96,
       "fileName": "chelsa30s-t64_403_96.cctb.gz",
       "cellCount": 2688,
-      "gzipBytes": 299724,
-      "rawBytes": 505651,
-      "bytesPerCellGzip": 111.5,
-      "sha256": "8889da040482fb847c072d0f26883ed93efbbcd6c24c782fda1677e3f901445b"
+      "gzipBytes": 282483,
+      "rawBytes": 505661,
+      "bytesPerCellGzip": 105.09040178571429,
+      "sha256": "5edaf80dd4e18f82a2b443bf752c99ef17049e21305f3020ca83aae0fe2a7f38"
     },
     {
       "tileKey": "chelsa30s-t64:404:96",
@@ -81,10 +83,10 @@
       "ty": 96,
       "fileName": "chelsa30s-t64_404_96.cctb.gz",
       "cellCount": 966,
-      "gzipBytes": 102479,
-      "rawBytes": 181914,
-      "bytesPerCellGzip": 106.09,
-      "sha256": "208a1a8c7eafbdab2db83ab7027fdb683f52a82c6bad54010bf7c749e3c36840"
+      "gzipBytes": 96476,
+      "rawBytes": 181924,
+      "bytesPerCellGzip": 99.87163561076605,
+      "sha256": "ad30ad4eb5e28ec3cc7b1878f4ba754c079a946a88ebed312678343651d722f5"
     }
   ],
   "checksums": {
@@ -101,7 +103,7 @@
     "uploaded": false,
     "note": "Contract only — no full-world upload in this checkpoint"
   },
-  "generatedAt": "2026-08-30T17:46:37.514Z",
+  "generatedAt": "2026-08-30T18:49:56.374Z",
   "label": "Northern Israel / Eastern Mediterranean coastal–highland transect",
   "why": "Meaningful multi-climate Eastern Med pack (coast→highland→inland) including Yehiam validation zone; denser than city pilots; not full planet.",
   "stats": {

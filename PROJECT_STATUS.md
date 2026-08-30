@@ -45,7 +45,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - **CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS** (`CRUVIT_BULK_CATALOG_BATCH_1: PASS`). Live `public.catalog_plants`: 30 new canonical plants; 29 verified / 1 needsReview (`blue-gum`); botanical provenance 30/30; IMAGE_READY 30/30; paid API $0.
 - **CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO** (`CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO`). Exact-coordinate structural climate authority; CHELSA ~1 km baseline; terrain context separate; PET + UNEP AI; no city proxy; zero external structural acquisition on user runtime; multi-dimension confidence (extraction ≠ local representativeness); compact CRUVIT tile foundation.
 - **CRUVIT GLOBAL CLIMATE COVERAGE V1 — REGIONAL FOUNDATION CLOSED / GO** (`CRUVIT_GLOBAL_CLIMATE_REGIONAL_FOUNDATION_CLOSED: GO`). Production format `cruvit-cctb-int16-gzip-v1` (~103.3 B/cell gzip); first real pack `emed-n-israel-v1` (9,409 cells, ~972 KB, 6 tiles); zero external runtime climate calls; **Cloudflare R2 PREFERRED** (not free — storage + Class A/B); R2 upload not yet global. **UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (broader central bake — coverage expansion, not redesign).
-- **BULK CATALOG BATCH 2: AUTHORIZED AFTER BATCH 1 CLOSURE** — **NOT STARTED** (separate Owner turn).
+- **CRUVIT PRE-SCALE SUITABILITY SYSTEMIC HARDENING — CLOSED / GO** (`CRUVIT_PRE_SCALE_SUITABILITY_HARDENING_CLOSED: GO`). Material FP/FN = 0; heuristic-dependent confident results = 0; evaluator READY; ingestion contract READY; **BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN** (78 SOURCE_SUPPORTED / 210 HEURISTIC / 12 UNKNOWN — Batch 1 not fully botanically enriched).
+- **BULK CATALOG BATCH 2: AUTHORIZED AFTER PRE-SCALE HARDENING CLOSURE** — **NOT STARTED** (separate Owner turn). Evaluator + ingestion contracts are ready; Batch 2 must prefer fewer SOURCE_SUPPORTED traits over many heuristic completes.
 
 ## Partial
 - Plant Doctor — plant **identification** and care recommendations work (`plant-identify.mjs`, plant-identifier module, `visual_analysis`); structured **disease detection / diagnosis** is not yet a real flow.
@@ -74,6 +75,93 @@ These must never be replaced unless explicitly approved. Once a new design is ap
 ---
 
 # Active Development
+
+### CRUVIT PRE-SCALE SUITABILITY SYSTEMIC HARDENING — CLOSED / GO
+Status: **CRUVIT_PRE_SCALE_SUITABILITY_HARDENING_CLOSED: GO**
+
+Upstream gates (all Owner-accepted PASS):
+- `CRUVIT_PRE_SCALE_SUITABILITY_SYSTEMIC_HARDENING`
+- `CRUVIT_ATMOSPHERIC_HUMIDITY_SEMANTICS_GATE`
+- `CRUVIT_ATMOSPHERIC_HUMIDITY_VPD_CALIBRATION_GATE`
+- `CRUVIT_REAL_WORLD_SUITABILITY_REPAIR`
+- `CRUVIT_EVIDENCE_STRENGTH_PROPAGATION_GATE`
+
+**Acceptance:**
+- Material false positives = **0**
+- Material false negatives = **0**
+- Confident results depending on heuristic evidence = **0**
+- 210 plant × climate matrix: **PASS**
+- 250 regional gradient: **PASS**
+- External runtime structural / botanical / AI calls = **0**
+- Evaluator: **READY**
+- Ingestion contract: **READY** (catalog-expansion v1.2.0 + Batch 2 evidence rule frozen)
+- **BATCH 2: NOT STARTED**
+
+**BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN**  
+Current Batch 1 field evidence audit: **SOURCE_SUPPORTED 78 · HEURISTIC_ASSERTION 210 · UNKNOWN 12**.  
+The evaluator foundation is trustworthy; Batch 1 must **not** be described as fully source-enriched.
+
+#### Final doctrine (frozen)
+1. **NO CONFIDENT GUESSING.**
+2. Evidence classes: `SOURCE_SUPPORTED` | `HEURISTIC_ASSERTION` | `UNKNOWN`.
+3. `SOURCE_SUPPORTED` may authorize confident conclusions only for the dimension it actually supports.
+4. `HEURISTIC_ASSERTION` may contribute to bounded / provisional / Borderline / Conditional results only — not confident Good / Reliable / Supported / Not Recommended / Unreliable / Poor / Unlikely by itself.
+5. `UNKNOWN` cannot authorize positive or negative botanical truth.
+6. Evidence strength propagates independently into Survival / Growth / Flowering / Fruiting.
+7. Survival ≠ Growth ≠ Flowering ≠ Fruiting.
+8. Climate suitability ≠ Garden-site suitability ≠ recommendation eligibility.
+
+#### Cold / Survival
+- Removed generic `freezingRisk=high → survivalFit=15 → Unreliable`.
+- Cold survival is plant-discriminated; monthly climatology is **not** an observed extreme minimum.
+- Absent numeric hardiness / extreme-event authority → confidence bounded; no invented hardiness °C.
+
+#### Growth
+- Removed generic cool-seasonal / arid / cool-highland / not year-round-warm / not frost-free → Growth Constrained.
+- Growth penalties require actual plant-specific evidence.
+
+#### Humidity / VPD
+- CHELSA VPD: physical Pa = raw × **0.1**; authority **`2.0.3-vpd-scale`**.
+- `ATMOSPHERIC_HUMIDITY` ≠ `CLIMATE_WATER_BALANCE` ≠ `GARDEN_WATER_AVAILABILITY`.
+- Atmospheric humidity from hurs/RH (+ valid VPD); `moistureRegime` / P / PET / AI must not substitute.
+- RH bands: &lt;45 low · 45–60 medium · 60–70 transition/borderline · ≥70 high (not a plant-specific biological threshold; no Singapore-tuned cutoff).
+
+#### Seasonal water
+- Annual P/PET alone insufficient where seasonality matters; monthly P/PET preserved.
+- Climatic water ≠ irrigation; unknown irrigation → CONDITIONAL / UNKNOWN where material.
+
+#### Provenance honesty
+- Packet source ID alone ≠ field evidence; template “characterized as …” ≠ botanical excerpt.
+- `BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN` (counts above).
+
+#### Reproductive biology
+- `REPRODUCTIVE_CLIMATE_SUITABILITY` ≠ `BIOLOGICAL_FRUIT_SET_ELIGIBILITY`.
+- Optional future fields: dioecious, monoecious, self_fertile, requires_pollinator, compatible_pollinator_requirement, sex_requirement, cultivar_dependency, reproductive_maturity_requirement.
+- Unknown biological fruit-set → Fruiting cannot be confidently Supported.
+- Descriptive flowering prose may be retained separately; must not masquerade as authoritative requirements.
+
+#### Climate authority limits
+- CHELSA period **1981–2010** — not “current measured climate”.
+- Terrain ~30 m = context/elevation only — not “30 m climate”.
+- Extreme-event authority: incomplete · CURRENT_NORMAL / climate-delta: future work.
+
+#### Version / stale safety
+- Stale detection for climate authority version, bake/data version, Garden persisted structural profile.
+- Old VPD profiles must not silently remain authoritative after VPD scale correction.
+- No user-triggered external acquisition.
+
+#### Recommendation eligibility
+- `needsReview=true` must not silently become an ordinary confident Smart Recommendation.
+- Climate suitability does not override HOLD_REVIEW / recommendation eligibility.
+
+**Open future work (not this closure):**
+- Batch 1 source-supported enrichment queue — **P1**
+- CURRENT_NORMAL / climate-delta authority
+- Extreme-event climate authority
+- Richer chill / numeric hardiness where authoritative evidence exists
+- Garden-site UI/context wiring
+- Reproductive evidence population
+- Batch 2 ingestion (separate Owner turn)
 
 ### CRUVIT GLOBAL CLIMATE COVERAGE V1 — REGIONAL FOUNDATION CLOSED / GO
 Status: **CRUVIT_GLOBAL_CLIMATE_REGIONAL_FOUNDATION_CLOSED: GO** (`CRUVIT_GLOBAL_CLIMATE_COVERAGE_V1_REGIONAL_GATE: PASS`)
@@ -118,6 +206,7 @@ Upstream gates (all PASS):
 - External climate API variable cost per user = **$0**.
 - Confidence dimensions: `SOURCE_DATA_INTEGRITY`, `COORDINATE_RESOLUTION_CONFIDENCE`, `TERRAIN_CONTEXT_CONFIDENCE`, `LOCAL_REPRESENTATIVENESS`, `PROFILE_COMPLETENESS`, `OVERALL_AUTHORITY_CONFIDENCE`. Extraction correctness ≠ local representativeness (Yehiam: CHELSA precip 1293.6 mm preserved; LOCAL_REPRESENTATIVENESS low; no strong moisture-dependent positive; no auto Not Recommended).
 - Compact tile foundation prototype: `hybrid-compact-zlib-json-cells-v1` (legacy sparse). **Production coverage format:** `cruvit-cctb-int16-gzip-v1` (~103.3 B/cell regional). See Global Climate Coverage V1 regional foundation closure.
+- Authority version includes VPD scale fix: **`2.0.3-vpd-scale`** (physical VPD Pa = raw × 0.1).
 
 **UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (central regional/global tile bake expansion — coverage, not redesign).
 

@@ -13,7 +13,8 @@ import {
   freezingRiskFromCold,
   thermalRegimeFromCoordinateEvidence,
   humidityRegimeFromMeanRh,
-  humiditySignalFromRegimes
+  coolSeasonSignalFromMonthlyTmin,
+  alwaysHotSignalFromMonthlyTmin
 } from './coordinate-climate-authority-v2-contract.js';
 import { buildCoordinateClimateConfidenceV2 } from './coordinate-climate-confidence-v2-contract.js';
 import { chelsaGridCellIndex } from './coordinate-climate-garden-hydrate-v2.js';
@@ -294,6 +295,7 @@ export function deriveCellEnumsFromSeries({ tmin, tmax, pr, pet, hurs, elev }) {
       ? hurs.filter((v) => Number.isFinite(v)).reduce((a, b) => a + b, 0) /
         hurs.filter((v) => Number.isFinite(v)).length
       : null;
+  const humidityRegime = humidityRegimeFromMeanRh(meanRh);
   return {
     P: annualP,
     PET: annualPet,
@@ -303,23 +305,39 @@ export function deriveCellEnumsFromSeries({ tmin, tmax, pr, pet, hurs, elev }) {
     cold,
     warm,
     highland,
-    humidityRegime: humidityRegimeFromMeanRh(meanRh),
-    humiditySignal: humiditySignalFromRegimes(moisture, humidityRegimeFromMeanRh(meanRh)),
+    humidityRegime,
+    // ATMOSPHERIC only — do not blend moistureRegime into humiditySignal
+    humiditySignal: humidityRegime === 'unknown' ? null : humidityRegime,
     structuralColdRisk: sc,
-    freezingRisk: fr
+    freezingRisk: fr,
+    coolSeasonSignal: coolSeasonSignalFromMonthlyTmin(tmin),
+    alwaysHot: alwaysHotSignalFromMonthlyTmin(tmin)
   };
 }
 
 export function cellToMinimalProfile(cell) {
+  // Re-derive enums from series so coverage profiles match pilot authority fields
+  // (binary packs moisture/thermal only; freezingRisk/humidity/chill must be restored).
+  const derived =
+    Array.isArray(cell.tmin) && Array.isArray(cell.pr)
+      ? deriveCellEnumsFromSeries({
+          tmin: cell.tmin,
+          tmax: cell.tmax,
+          pr: cell.pr,
+          pet: cell.pet,
+          hurs: cell.hurs,
+          elev: cell.elev
+        })
+      : null;
   const conf = buildCoordinateClimateConfidenceV2({
     profile: {
       missingFields: [],
       climateGrid: { cellPixel: { x: cell.x, y: cell.y } },
       elevationM: cell.elev,
-      annualPetMm: cell.PET,
-      annualPrecipitationMm: cell.P,
-      coldestMonthMeanMinC: cell.cold,
-      warmestMonthMeanMaxC: cell.warm,
+      annualPetMm: cell.PET ?? derived?.PET,
+      annualPrecipitationMm: cell.P ?? derived?.P,
+      coldestMonthMeanMinC: cell.cold ?? derived?.cold,
+      warmestMonthMeanMaxC: cell.warm ?? derived?.warm,
       climateNativeResolution: '~1 km (30 arc-seconds)'
     },
     qaRecord: null
@@ -340,14 +358,20 @@ export function cellToMinimalProfile(cell) {
     monthlyPetMm: cell.pet,
     monthlyVpdPa: cell.vpd,
     monthlyHursPct: cell.hurs,
-    annualPrecipitationMm: cell.P,
-    annualPetMm: cell.PET,
-    aridityIndex: cell.AI,
-    aridityMoistureRegime: cell.moisture,
-    thermalRegime: cell.thermal,
-    coldestMonthMeanMinC: cell.cold,
-    warmestMonthMeanMaxC: cell.warm,
-    highlandModifier: cell.highland,
+    annualPrecipitationMm: cell.P ?? derived?.P,
+    annualPetMm: cell.PET ?? derived?.PET,
+    aridityIndex: cell.AI ?? derived?.AI,
+    aridityMoistureRegime: cell.moisture ?? derived?.moisture,
+    thermalRegime: cell.thermal ?? derived?.thermal,
+    coldestMonthMeanMinC: cell.cold ?? derived?.cold,
+    warmestMonthMeanMaxC: cell.warm ?? derived?.warm,
+    highlandModifier: cell.highland ?? derived?.highland,
+    humidityRegime: derived?.humidityRegime ?? null,
+    humiditySignal: derived?.humiditySignal ?? null,
+    structuralColdRisk: derived?.structuralColdRisk ?? null,
+    freezingRisk: derived?.freezingRisk ?? null,
+    coolSeasonSignal: derived?.coolSeasonSignal ?? null,
+    alwaysHot: derived?.alwaysHot ?? null,
     climateNativeResolution: '~1 km (30 arc-seconds)',
     terrainNativeResolution: '~30 m class (terrain context only — NOT climate)',
     confidence: conf.overall,

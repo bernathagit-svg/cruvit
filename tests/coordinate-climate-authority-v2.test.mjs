@@ -18,6 +18,7 @@ import {
   chelsaPrecipToMm,
   chelsaHursToPct,
   chelsaTemperatureToCelsius,
+  chelsaVpdToPa,
   assertCoordinateClimateRuntimeCostPolicy
 } from '../modules/personal-domain/coordinate-climate-authority-v2-contract.js';
 import {
@@ -35,10 +36,11 @@ function loadProfile(id) {
   return JSON.parse(fs.readFileSync(path.join(DATA, 'pilot', `${id}.json`), 'utf8'));
 }
 
-test('scales: CHELSA precip×10 and hurs×100', () => {
+test('scales: CHELSA precip×10, hurs×100, vpd×0.1', () => {
   assert.equal(chelsaPrecipToMm(2337), 233.7);
   assert.equal(chelsaHursToPct(6030), 60.3);
   assert.equal(chelsaTemperatureToCelsius(2661), -7.05);
+  assert.equal(chelsaVpdToPa(11492), 1149.2);
 });
 
 test('unavailable: no city proxy object', () => {

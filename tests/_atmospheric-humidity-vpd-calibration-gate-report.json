@@ -1,0 +1,273 @@
+{
+  "gate": "CRUVIT_ATMOSPHERIC_HUMIDITY_VPD_CALIBRATION_GATE",
+  "verdict": "PASS",
+  "generatedAt": "2026-08-30T18:51:58.884Z",
+  "A_chelsaVpdEncoding": {
+    "unit": "Pa",
+    "scale": 0.1,
+    "offset": 0,
+    "provenFrom": "COG GDAL_METADATA SCALE/OFFSET on CHELSA vpd climatology COGs",
+    "proven": "COG GDAL_METADATA on CHELSA_vpd_01_1981-2010_V.2.1.tif: OFFSET=0 SCALE=0.1"
+  },
+  "B_decoderWasWrong": true,
+  "C_singaporeRawToDecoded": {
+    "rawDN_january": 11492,
+    "scale": 0.1,
+    "offset": 0,
+    "physicalPa": 1149.2,
+    "physicalKpa": 1.1492,
+    "storedMeanVpdPa": 1253.3,
+    "storedMeanVpdKpa": 1.2532999999999999,
+    "note": "Previously stored mean 12533 Pa was unscaled DN; now 1253.3 Pa"
+  },
+  "D_sevenLocationCorrectedVpd": [
+    {
+      "id": "singapore",
+      "meanRh": 64.7,
+      "meanVpdPa": 1253.3,
+      "meanVpdKpa": 1.25,
+      "vpdMin": 1140.2,
+      "vpdMax": 1345.7,
+      "atmosphericHumidityRegime": "borderline",
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "year-round-stable",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1,
+      "expectedVpdPa": 1253.3
+    },
+    {
+      "id": "kochi",
+      "meanRh": 65.2,
+      "meanVpdPa": 1207.7,
+      "meanVpdKpa": 1.21,
+      "vpdMin": 1005.6,
+      "vpdMax": 1429.9,
+      "atmosphericHumidityRegime": "borderline",
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1,
+      "expectedVpdPa": 1202.6
+    },
+    {
+      "id": "cairo",
+      "meanRh": 51.1,
+      "meanVpdPa": 1352.8,
+      "meanVpdKpa": 1.35,
+      "vpdMin": 742.4,
+      "vpdMax": 1931.4,
+      "atmosphericHumidityRegime": "medium",
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "moistureRegime": "hyper-arid",
+      "physicalPlausible": true,
+      "physRatio": 1.05,
+      "expectedVpdPa": 1283.7
+    },
+    {
+      "id": "yehiam",
+      "meanRh": 59.4,
+      "meanVpdPa": 853.8,
+      "meanVpdKpa": 0.85,
+      "vpdMin": 534.9,
+      "vpdMax": 1131.6,
+      "atmosphericHumidityRegime": "medium",
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1.03,
+      "expectedVpdPa": 828.4
+    },
+    {
+      "id": "tokyo",
+      "meanRh": 59.6,
+      "meanVpdPa": 731.8,
+      "meanVpdKpa": 0.73,
+      "vpdMin": 397.1,
+      "vpdMax": 1205.3,
+      "atmosphericHumidityRegime": "medium",
+      "humidityAuthorityConfidence": "high",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1.05,
+      "expectedVpdPa": 698.7
+    },
+    {
+      "id": "helsinki",
+      "meanRh": 65.1,
+      "meanVpdPa": 373.7,
+      "meanVpdKpa": 0.37,
+      "vpdMin": 116.6,
+      "vpdMax": 793.1,
+      "atmosphericHumidityRegime": "borderline",
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "strong-seasonal",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1.21,
+      "expectedVpdPa": 309.5
+    },
+    {
+      "id": "quito",
+      "meanRh": 64.8,
+      "meanVpdPa": 503.3,
+      "meanVpdKpa": 0.5,
+      "vpdMin": 437.8,
+      "vpdMax": 608.7,
+      "atmosphericHumidityRegime": "borderline",
+      "humidityAuthorityConfidence": "medium",
+      "seasonalHumidityPattern": "moderate-seasonal",
+      "moistureRegime": "humid",
+      "physicalPlausible": true,
+      "physRatio": 1,
+      "expectedVpdPa": 502.1
+    }
+  ],
+  "E_physicalConsistency": [
+    {
+      "id": "singapore",
+      "plausible": true,
+      "ratio": 1,
+      "expectedPa": 1253.3,
+      "actualPa": 1253.3
+    },
+    {
+      "id": "kochi",
+      "plausible": true,
+      "ratio": 1,
+      "expectedPa": 1202.6,
+      "actualPa": 1207.7
+    },
+    {
+      "id": "cairo",
+      "plausible": true,
+      "ratio": 1.05,
+      "expectedPa": 1283.7,
+      "actualPa": 1352.8
+    },
+    {
+      "id": "yehiam",
+      "plausible": true,
+      "ratio": 1.03,
+      "expectedPa": 828.4,
+      "actualPa": 853.8
+    },
+    {
+      "id": "tokyo",
+      "plausible": true,
+      "ratio": 1.05,
+      "expectedPa": 698.7,
+      "actualPa": 731.8
+    },
+    {
+      "id": "helsinki",
+      "plausible": true,
+      "ratio": 1.21,
+      "expectedPa": 309.5,
+      "actualPa": 373.7
+    },
+    {
+      "id": "quito",
+      "plausible": true,
+      "ratio": 1,
+      "expectedPa": 502.1,
+      "actualPa": 503.3
+    }
+  ],
+  "F_classificationJustification": "RH bands with 60–70% transition; not tuned to any site. Prior highInclusiveMin=64 was Singapore-fit and is rejected.",
+  "thresholds": {
+    "lowExclusiveMax": 45,
+    "mediumExclusiveMax": 60,
+    "transitionExclusiveMax": 70,
+    "highInclusiveMin": 70
+  },
+  "G_noSingaporeTunedThreshold": true,
+  "H_fourOriginalFp": [
+    {
+      "plant": "bay-laurel",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band (not a hard RH cutoff); qualitative low humidityTolerance reduces confidence without inventing plant-specific numeric thresholds.",
+      "fixed": true
+    },
+    {
+      "plant": "oleander",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band (not a hard RH cutoff); qualitative low humidityTolerance reduces confidence without inventing plant-specific numeric thresholds.",
+      "fixed": true
+    },
+    {
+      "plant": "common-thyme",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band (not a hard RH cutoff); qualitative low humidityTolerance reduces confidence without inventing plant-specific numeric thresholds.",
+      "fixed": true
+    },
+    {
+      "plant": "garden-sage",
+      "site": "singapore",
+      "overallBefore": "good",
+      "overallAfter": "borderline",
+      "survivalAfter": "constrained",
+      "growthAfter": "constrained",
+      "limiting": "Atmospheric humidity sits in a transition band (not a hard RH cutoff); qualitative low humidityTolerance reduces confidence without inventing plant-specific numeric thresholds.",
+      "fixed": true
+    }
+  ],
+  "I_thresholdSensitivity": {
+    "rhBand": "60–69.9 → all borderline",
+    "plantOutcomeStableAcross_64_65_66": true
+  },
+  "J_regression": {
+    "materialFp": 0,
+    "materialFn": 0,
+    "matrix": {
+      "totals": {
+        "matrix": 210,
+        "gradient": 250,
+        "expected": 460
+      },
+      "overallCounts": {
+        "blocked": 75,
+        "borderline": 135
+      },
+      "survivalCounts": {
+        "unreliable": 75,
+        "reliable": 105,
+        "constrained": 30
+      }
+    }
+  },
+  "K_dataVersions": {
+    "authorityVersion": "2.0.3-vpd-scale",
+    "bakeVersion": "bake-2026-08-30-emed-n-israel-v1-vpd-scale",
+    "staleGuard": "isPersistedClimateAuthorityStale mismatches 2.0.2-accuracy vs 2.0.3-vpd-scale"
+  },
+  "L_externalCalls": {
+    "botanicalApi": 0,
+    "aiLlm": 0,
+    "catalogEnrichment": 0,
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0
+  },
+  "M_filesChangedNote": "VPD decoder, rescale pilots/tiles, borderline RH bands, evaluator soft constraint, tests/reports",
+  "N_remainingBlockers": [
+    "NO COMMIT/PUSH/DEPLOY/Batch 2 per Owner"
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "authorityVersion": "2.0.2-accuracy",
+  "authorityVersion": "2.0.3-vpd-scale",
   "baseline": {
     "id": "chelsa-v2.1-climatologies-1981-2010",
     "product": "CHELSA-climatologies",
@@ -55,7 +55,10 @@
       "elevationM": 441,
       "aridityIndex": 0.87,
       "annualPetMm": 1487.6,
-      "annualPrecipitationMm": 1293.6
+      "annualPrecipitationMm": 1293.6,
+      "meanVpdPa": 853.8,
+      "humiditySignal": "medium",
+      "atmosphericHumidityRegime": "medium"
     },
     {
       "id": "helsinki",
@@ -69,7 +72,10 @@
       "elevationM": 40.2,
       "aridityIndex": 1.101,
       "annualPetMm": 610.7,
-      "annualPrecipitationMm": 672.3
+      "annualPrecipitationMm": 672.3,
+      "meanVpdPa": 373.7,
+      "humiditySignal": "borderline",
+      "atmosphericHumidityRegime": "borderline"
     },
     {
       "id": "singapore",
@@ -83,7 +89,10 @@
       "elevationM": 20,
       "aridityIndex": 1.399,
       "annualPetMm": 1731.8,
-      "annualPrecipitationMm": 2423.3
+      "annualPrecipitationMm": 2423.3,
+      "meanVpdPa": 1253.3,
+      "humiditySignal": "borderline",
+      "atmosphericHumidityRegime": "borderline"
     },
     {
       "id": "kochi",
@@ -97,7 +106,10 @@
       "elevationM": 9,
       "aridityIndex": 1.867,
       "annualPetMm": 1602.5,
-      "annualPrecipitationMm": 2992
+      "annualPrecipitationMm": 2992,
+      "meanVpdPa": 1207.7,
+      "humiditySignal": "borderline",
+      "atmosphericHumidityRegime": "borderline"
     },
     {
       "id": "cairo",
@@ -111,7 +123,10 @@
       "elevationM": 21,
       "aridityIndex": 0.014,
       "annualPetMm": 1423.6,
-      "annualPrecipitationMm": 19.8
+      "annualPrecipitationMm": 19.8,
+      "meanVpdPa": 1352.8,
+      "humiditySignal": "medium",
+      "atmosphericHumidityRegime": "medium"
     },
     {
       "id": "tokyo",
@@ -125,7 +140,10 @@
       "elevationM": 35,
       "aridityIndex": 1.624,
       "annualPetMm": 934.5,
-      "annualPrecipitationMm": 1517.5
+      "annualPrecipitationMm": 1517.5,
+      "meanVpdPa": 731.8,
+      "humiditySignal": "medium",
+      "atmosphericHumidityRegime": "medium"
     },
     {
       "id": "quito",
@@ -139,7 +157,10 @@
       "elevationM": 2854,
       "aridityIndex": 1.586,
       "annualPetMm": 1315.6,
-      "annualPrecipitationMm": 2086.2
+      "annualPrecipitationMm": 2086.2,
+      "meanVpdPa": 503.3,
+      "humiditySignal": "borderline",
+      "atmosphericHumidityRegime": "borderline"
     }
   ],
   "errors": [],
@@ -166,5 +187,7 @@
   },
   "petScale": "raw/100",
   "petScaleNote": "CMI-validated; corrected from raw/10 on 2026-08-29",
-  "updatedAt": "2026-08-29T20:48:38.884Z"
+  "updatedAt": "2026-08-30T18:49:30.664Z",
+  "vpdScale": "raw×0.1",
+  "vpdScaleNote": "CHELSA COG GDAL SCALE=0.1 OFFSET=0; corrected from raw-as-Pa on 2026-08-30"
 }

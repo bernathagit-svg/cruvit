@@ -5651,7 +5651,7 @@ function smartRecEvaluateSuitability(p){
   if(meta.humidityTolerance==='low'&&climateProfile.humiditySignal==='high'){
     humidityFit=20;
     thriveFit=Math.min(thriveFit,35);
-    addWarning('High humidity is a poor fit for this plant.',15);
+    addWarning('High atmospheric humidity is a poor fit for this low-humidity-tolerance plant (distinct from irrigation water need and from P/PET moistureRegime).',15);
     if(meta.hardBlockRules.includes('humid-heat-stress')&&climateProfile.extremeHeatRisk!=='low'){
       blockWith('Hot humid conditions make this a poor match.');
     }

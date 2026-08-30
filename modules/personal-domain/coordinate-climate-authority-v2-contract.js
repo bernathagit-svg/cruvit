@@ -11,7 +11,19 @@
  * - Acquire centrally once (build/ingestion) → store → lookup → persist on Garden → reuse.
  */
 
-export const COORDINATE_CLIMATE_AUTHORITY_V2_VERSION = '2.0.2-accuracy';
+export const COORDINATE_CLIMATE_AUTHORITY_V2_VERSION = '2.0.3-vpd-scale';
+
+/**
+ * CHELSA V2.1 VPD GeoTIFF encoding (proven from COG GDAL_METADATA on
+ * CHELSA_vpd_*_1981-2010_V.2.1.tif: OFFSET=0, SCALE=0.1; unit Pa).
+ * Physical value = raw × scale + offset.
+ */
+export const CHELSA_VPD_GEOTIFF_ENCODING = Object.freeze({
+  unit: 'Pa',
+  scale: 0.1,
+  offset: 0,
+  provenFrom: 'COG GDAL_METADATA SCALE/OFFSET on CHELSA vpd climatology COGs'
+});
 
 export const CLIMATE_AUTHORITY_UNAVAILABLE = 'CLIMATE_AUTHORITY_UNAVAILABLE';
 
@@ -112,10 +124,15 @@ export function chelsaPrecipToMm(raw) {
   return Math.round((v / 10) * 10) / 10;
 }
 
-/** VPD: stored as Pa integers (atmospheric drying power). */
+/**
+ * VPD: CHELSA V2.1 stores integer DN; physical Pa = DN × 0.1 + 0.
+ * CRUVIT stores rounded physical Pa (not DN).
+ */
 export function chelsaVpdToPa(raw) {
   if (!isFiniteNumber(raw)) return null;
-  return Math.round(Number(raw));
+  const physical =
+    Number(raw) * CHELSA_VPD_GEOTIFF_ENCODING.scale + CHELSA_VPD_GEOTIFF_ENCODING.offset;
+  return Math.round(physical * 10) / 10;
 }
 
 /** Relative humidity: CHELSA V2.1 stores percent × 100. */
@@ -145,20 +162,211 @@ export function classifyUnepAridityFromIndex(ai) {
   return 'humid';
 }
 
+/**
+ * ATMOSPHERIC_HUMIDITY authority — hurs / VPD only.
+ * Never uses precipitation, PET, aridity, or moistureRegime.
+ *
+ * Classification uses RH bands with an explicit TRANSITION (borderline) zone so a
+ * 0.3–1% RH difference cannot flip plant suitability. Thresholds are climatological
+ * bands — NOT fitted to Singapore or any other pilot city.
+ *
+ * Justification (qualitative climatology of mean RH):
+ * - <45%: dry-air climatology
+ * - 45–60%: typical mid-band mean RH
+ * - 60–70%: moist-air transition — do not force HIGH
+ * - ≥70%: clearly humid mean atmospheric regime
+ *
+ * Corrected physical VPD (Pa) corroborates confidence only; it does not invent
+ * plant-specific VPD cutoffs.
+ */
+export const ATMOSPHERIC_HUMIDITY_AUTHORITY_V2 = Object.freeze({
+  version: '1.1.0-borderline-bands',
+  sources: Object.freeze(['monthlyHursPct', 'meanRelativeHumidityPct', 'monthlyVpdPa', 'meanVpdPa']),
+  excludes: Object.freeze([
+    'precipitation',
+    'PET',
+    'aridityIndex',
+    'moistureRegime',
+    'waterNeeds',
+    'pilotCityHardcodes'
+  ]),
+  meanRhThresholdsPct: Object.freeze({
+    lowExclusiveMax: 45,
+    mediumExclusiveMax: 60,
+    transitionExclusiveMax: 70,
+    highInclusiveMin: 70
+  }),
+  justification:
+    'RH bands with 60–70% transition; not tuned to any site. Prior highInclusiveMin=64 was Singapore-fit and is rejected.',
+  /** After CHELSA ×0.1 decode, values ≫ ~5 kPa mean are still suspicious. */
+  vpdPhysicallyImplausibleMaxPa: 5000
+});
+
+/**
+ * RH-only coarse regime. Transition band avoids 0.3–1% RH binary jumps.
+ * NOT tuned to any pilot city — see ATMOSPHERIC_HUMIDITY_AUTHORITY_V2 justification.
+ */
 export function humidityRegimeFromMeanRh(meanRh) {
   if (!isFiniteNumber(meanRh)) return 'unknown';
   const r = Number(meanRh);
-  if (r < 45) return 'low';
-  if (r < 65) return 'medium';
+  const t = ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.meanRhThresholdsPct;
+  if (r < t.lowExclusiveMax) return 'low';
+  if (r < t.mediumExclusiveMax) return 'medium';
+  if (r < t.transitionExclusiveMax) return 'borderline';
   return 'high';
 }
 
+/**
+ * @deprecated Moisture–humidity blending violates ATMOSPHERIC != WATER_BALANCE.
+ * Prefer deriveAtmosphericHumidityAuthority / humidityRegimeFromMeanRh.
+ * Kept for callers; when moisture is arid it no longer forces atmospheric low —
+ * returns humidityRegime unchanged (atmospheric-only passthrough).
+ */
 export function humiditySignalFromRegimes(moistureRegime, humidityRegime) {
-  const m = String(moistureRegime || '').toLowerCase();
-  if (m === 'hyper-arid' || m === 'arid' || m === 'semi-arid') return 'low';
-  if (m === 'dry-subhumid') return humidityRegime === 'high' ? 'medium' : humidityRegime || 'medium';
-  if (m === 'humid') return humidityRegime === 'unknown' ? 'high' : humidityRegime;
-  return humidityRegime === 'unknown' ? null : humidityRegime;
+  void moistureRegime;
+  const h = String(humidityRegime || '').toLowerCase();
+  if (h === 'unknown' || !h) return null;
+  return h;
+}
+
+/** Tetens saturation vapor pressure (Pa) from °C. */
+export function saturationVaporPressurePa(tC) {
+  if (!isFiniteNumber(tC)) return null;
+  return 610.94 * Math.exp((17.625 * Number(tC)) / (Number(tC) + 243.04));
+}
+
+/**
+ * Psychrometric consistency: expected VPD ≈ es(T) × (1 − RH/100).
+ * Returns ratio actual/expected; plausible if roughly 0.5–2.0 after correct scale.
+ */
+export function assessRhVpdPhysicalConsistency({
+  meanRelativeHumidityPct,
+  meanVpdPa,
+  meanTmeanC
+} = {}) {
+  const rh = Number(meanRelativeHumidityPct);
+  const vpd = Number(meanVpdPa);
+  const t = Number(meanTmeanC);
+  if (![rh, vpd, t].every((x) => Number.isFinite(x))) {
+    return { ok: false, reason: 'missing-fields' };
+  }
+  const es = saturationVaporPressurePa(t);
+  const expected = es * (1 - rh / 100);
+  const ratio = expected > 0 ? vpd / expected : null;
+  const plausible = ratio != null && ratio >= 0.5 && ratio <= 2.0;
+  return {
+    ok: true,
+    esPa: Math.round(es),
+    expectedVpdPa: Math.round(expected * 10) / 10,
+    meanVpdPa: vpd,
+    meanVpdKpa: Math.round((vpd / 1000) * 1000) / 1000,
+    ratio: ratio != null ? Math.round(ratio * 100) / 100 : null,
+    plausible,
+    note: plausible
+      ? 'RH/T/VPD mutually consistent within factor 2'
+      : 'RH/T/VPD inconsistent — check VPD decode scale'
+  };
+}
+
+export function deriveAtmosphericHumidityAuthority({
+  monthlyHursPct,
+  meanRelativeHumidityPct,
+  monthlyVpdPa,
+  meanVpdPa,
+  meanTmeanC
+} = {}) {
+  const months = Array.isArray(monthlyHursPct)
+    ? monthlyHursPct.map((v) => (isFiniteNumber(v) ? Number(v) : null))
+    : [];
+  const finiteMonths = months.filter((v) => v != null);
+  let meanRh =
+    isFiniteNumber(meanRelativeHumidityPct) ? Number(meanRelativeHumidityPct) : null;
+  if (meanRh == null && finiteMonths.length >= 6) {
+    meanRh =
+      Math.round(
+        (finiteMonths.reduce((a, b) => a + b, 0) / finiteMonths.length) * 10
+      ) / 10;
+  }
+
+  const vpdMonths = Array.isArray(monthlyVpdPa)
+    ? monthlyVpdPa.map((v) => (isFiniteNumber(v) ? Number(v) : null))
+    : [];
+  const finiteVpd = vpdMonths.filter((v) => v != null);
+  let meanVpd = isFiniteNumber(meanVpdPa) ? Number(meanVpdPa) : null;
+  if (meanVpd == null && finiteVpd.length >= 6) {
+    meanVpd =
+      Math.round((finiteVpd.reduce((a, b) => a + b, 0) / finiteVpd.length) * 10) / 10;
+  }
+  const vpdScaleSuspect =
+    meanVpd != null && meanVpd > ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.vpdPhysicallyImplausibleMaxPa;
+
+  if (meanRh == null && finiteMonths.length < 6) {
+    return {
+      atmosphericHumidityRegime: 'unknown',
+      humiditySignal: 'unknown',
+      humidityAuthorityConfidence: 'unknown',
+      seasonalHumidityPattern: 'unknown',
+      evidence: {
+        meanRh: null,
+        monthlyHursPct: months,
+        meanVpdPa: meanVpd,
+        meanVpdKpa: meanVpd != null ? meanVpd / 1000 : null,
+        vpdScaleSuspect,
+        monthsWithRh: finiteMonths.length
+      },
+      notDerivedFrom: [...ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.excludes]
+    };
+  }
+
+  const regime = humidityRegimeFromMeanRh(meanRh);
+  let seasonalHumidityPattern = 'unknown';
+  if (finiteMonths.length >= 12) {
+    const min = Math.min(...finiteMonths);
+    const max = Math.max(...finiteMonths);
+    const amp = max - min;
+    if (amp < 5) seasonalHumidityPattern = 'year-round-stable';
+    else if (amp < 15) seasonalHumidityPattern = 'moderate-seasonal';
+    else seasonalHumidityPattern = 'strong-seasonal';
+  }
+
+  let humidityAuthorityConfidence = 'high';
+  if (regime === 'borderline') humidityAuthorityConfidence = 'medium';
+  if (finiteMonths.length < 12 && meanRh != null) humidityAuthorityConfidence = 'medium';
+  if (vpdScaleSuspect) humidityAuthorityConfidence = 'low';
+
+  const phys =
+    meanVpd != null && isFiniteNumber(meanTmeanC)
+      ? assessRhVpdPhysicalConsistency({
+          meanRelativeHumidityPct: meanRh,
+          meanVpdPa: meanVpd,
+          meanTmeanC
+        })
+      : null;
+  if (phys && !phys.plausible) humidityAuthorityConfidence = 'medium';
+
+  // humiditySignal: map borderline → borderline (not fake high/medium precision)
+  const humiditySignal = regime;
+
+  return {
+    atmosphericHumidityRegime: regime,
+    humiditySignal,
+    humidityAuthorityConfidence,
+    seasonalHumidityPattern,
+    evidence: {
+      meanRh,
+      monthlyHursPct: months,
+      meanVpdPa: meanVpd,
+      meanVpdKpa: meanVpd != null ? Math.round((meanVpd / 1000) * 1000) / 1000 : null,
+      vpdMinPa: finiteVpd.length ? Math.min(...finiteVpd) : null,
+      vpdMaxPa: finiteVpd.length ? Math.max(...finiteVpd) : null,
+      vpdScaleSuspect,
+      monthsWithRh: finiteMonths.length,
+      physicalConsistency: phys,
+      thresholds: ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.meanRhThresholdsPct,
+      justification: ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.justification
+    },
+    notDerivedFrom: [...ATMOSPHERIC_HUMIDITY_AUTHORITY_V2.excludes]
+  };
 }
 
 export function structuralColdRiskFromColdestMonthMeanMinC(c) {
@@ -296,6 +504,7 @@ export function deriveCoordinateClimateInterpretation({
   const finitePet = pet.filter((v) => v != null);
   const finiteHurs = hurs.filter((v) => v != null);
   const finiteVpd = vpd.filter((v) => v != null);
+  const finiteTmean = tmean.filter((v) => v != null);
 
   let coldestMonth = null;
   let coldestMonthMeanMinC = null;
@@ -347,11 +556,24 @@ export function deriveCoordinateClimateInterpretation({
       : null;
   const meanVpdPa =
     finiteVpd.length > 0
-      ? Math.round(finiteVpd.reduce((a, b) => a + b, 0) / finiteVpd.length)
+      ? Math.round((finiteVpd.reduce((a, b) => a + b, 0) / finiteVpd.length) * 10) / 10
+      : null;
+
+  const meanTmeanC =
+    finiteTmean.length > 0
+      ? Math.round((finiteTmean.reduce((a, b) => a + b, 0) / finiteTmean.length) * 100) / 100
       : null;
 
   const humidityRegime = humidityRegimeFromMeanRh(meanRelativeHumidityPct);
-  const humiditySignal = humiditySignalFromRegimes(moistureRegime, humidityRegime);
+  const atmospheric = deriveAtmosphericHumidityAuthority({
+    monthlyHursPct: hurs,
+    meanRelativeHumidityPct,
+    monthlyVpdPa: vpd,
+    meanVpdPa,
+    meanTmeanC
+  });
+  // ATMOSPHERIC humiditySignal — never blended with moistureRegime (P/PET).
+  const humiditySignal = atmospheric.humiditySignal;
   const structuralColdRisk = structuralColdRiskFromColdestMonthMeanMinC(coldestMonthMeanMinC);
   const freezingRisk = freezingRiskFromCold(coldestMonthMeanMinC, structuralColdRisk);
   const thermalRegime = thermalRegimeFromCoordinateEvidence({
@@ -414,6 +636,9 @@ export function deriveCoordinateClimateInterpretation({
       meanRelativeHumidityPct,
       meanVpdPa,
       humidityRegime,
+      atmosphericHumidityRegime: atmospheric.atmosphericHumidityRegime,
+      humidityAuthorityConfidence: atmospheric.humidityAuthorityConfidence,
+      seasonalHumidityPattern: atmospheric.seasonalHumidityPattern,
       humiditySignal,
       structuralColdRisk,
       freezingRisk,

@@ -1,6 +1,6 @@
 {
   "status": "known",
-  "authorityVersion": "2.0.2-accuracy",
+  "authorityVersion": "2.0.3-vpd-scale",
   "coordinate": {
     "lat": 33.12806,
     "lon": 35.22028,
@@ -122,18 +122,18 @@
     64.6
   ],
   "monthlyVpdPa": [
-    5405,
-    5349,
-    6116,
-    7870,
-    9387,
-    10788,
-    11316,
-    10908,
-    10743,
-    10004,
-    8348,
-    6217
+    540.5,
+    534.9,
+    611.6,
+    787,
+    938.7,
+    1078.8,
+    1131.6,
+    1090.8,
+    1074.3,
+    1000.4,
+    834.8,
+    621.7
   ],
   "monthlyHursPct": [
     57.8,
@@ -170,9 +170,9 @@
   "warmestMonthMeanMaxC": 28.25,
   "annualPrecipitationMm": 1293.6,
   "annualPetMm": 1487.6,
-  "meanVpdPa": 8538,
+  "meanVpdPa": 853.8,
   "meanRelativeHumidityPct": 59.4,
-  "confidence": "low",
+  "confidence": "high",
   "missingFields": [],
   "provenance": {
     "baseline": {
@@ -232,13 +232,21 @@
     "usedCityProxy": false,
     "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
     "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
-    "petScaleFix": "2026-08-29-production-hardening"
+    "petScaleFix": "2026-08-29-production-hardening",
+    "vpdScale": "raw×0.1 → Pa (CHELSA GDAL SCALE=0.1 OFFSET=0)",
+    "vpdScaleFix": "2026-08-30-vpd-scale-0.1",
+    "vpdEncoding": {
+      "unit": "Pa",
+      "scale": 0.1,
+      "offset": 0,
+      "provenFrom": "COG GDAL_METADATA SCALE/OFFSET on CHELSA vpd climatology COGs"
+    }
   },
-  "derivedAt": "2026-08-29T20:48:38.884Z",
+  "derivedAt": "2026-08-30T18:49:30.663Z",
   "structuralPersistencePreview": {
     "status": "known",
-    "version": "2.0.1-production",
-    "authorityVersion": "2.0.1-production",
+    "version": "2.0.3-vpd-scale",
+    "authorityVersion": "2.0.3-vpd-scale",
     "moistureRegime": "humid",
     "humidityRegime": "medium",
     "humiditySignal": "medium",
@@ -256,7 +264,7 @@
       "aridityIndex": 0.87,
       "aridityMethod": "UNEP_AI_P_over_PET",
       "meanRelativeHumidityPct": 59.4,
-      "meanVpdPa": 8538,
+      "meanVpdPa": 853.8,
       "elevationM": 441,
       "thermalRegime": "cool-seasonal",
       "climateNativeResolution": "~1 km (30 arc-seconds)",
@@ -268,17 +276,20 @@
       "baseline": "chelsa-v2.1-climatologies-1981-2010",
       "baselineVersion": "2.1",
       "terrainSource": "aws-elevation-tiles-terrarium",
-      "authorityVersion": "2.0.1-production",
+      "authorityVersion": "2.0.3-vpd-scale",
       "lat": 33.12806,
       "lon": 35.22028,
-      "fetchedAt": "2026-08-29T20:48:38.884Z",
+      "fetchedAt": "2026-08-30T18:49:30.663Z",
       "confidence": "high",
+      "confidenceDimensions": null,
+      "localRepresentativeness": null,
+      "confidenceWarnings": [],
       "noCityProxy": true,
       "status": "known"
     },
     "coordinateClimateV2": {
       "status": "known",
-      "authorityVersion": "2.0.1-production",
+      "authorityVersion": "2.0.3-vpd-scale",
       "coordinate": {
         "lat": 33.12806,
         "lon": 35.22028,
@@ -400,18 +411,18 @@
         64.6
       ],
       "monthlyVpdPa": [
-        5405,
-        5349,
-        6116,
-        7870,
-        9387,
-        10788,
-        11316,
-        10908,
-        10743,
-        10004,
-        8348,
-        6217
+        540.5,
+        534.9,
+        611.6,
+        787,
+        938.7,
+        1078.8,
+        1131.6,
+        1090.8,
+        1074.3,
+        1000.4,
+        834.8,
+        621.7
       ],
       "monthlyHursPct": [
         57.8,
@@ -448,7 +459,7 @@
       "warmestMonthMeanMaxC": 28.25,
       "annualPrecipitationMm": 1293.6,
       "annualPetMm": 1487.6,
-      "meanVpdPa": 8538,
+      "meanVpdPa": 853.8,
       "meanRelativeHumidityPct": 59.4,
       "confidence": "high",
       "missingFields": [],
@@ -510,53 +521,17 @@
         "usedCityProxy": false,
         "acquisitionBytesNote": "COG range reads via geotiff fromUrl — not full global download",
         "petScale": "raw/100 → mm month⁻¹ (CMI-validated; was incorrectly raw/10)",
-        "petScaleFix": "2026-08-29-production-hardening"
+        "petScaleFix": "2026-08-29-production-hardening",
+        "vpdScale": "raw×0.1 → Pa (CHELSA GDAL SCALE=0.1 OFFSET=0)",
+        "vpdScaleFix": "2026-08-30-vpd-scale-0.1",
+        "vpdEncoding": {
+          "unit": "Pa",
+          "scale": 0.1,
+          "offset": 0,
+          "provenFrom": "COG GDAL_METADATA SCALE/OFFSET on CHELSA vpd climatology COGs"
+        }
       },
-      "derivedAt": "2026-08-29T20:48:38.884Z"
+      "derivedAt": "2026-08-30T18:49:30.663Z"
     }
-  },
-  "confidenceDimensions": {
-    "SOURCE_DATA_INTEGRITY": "high",
-    "COORDINATE_RESOLUTION_CONFIDENCE": "high",
-    "TERRAIN_CONTEXT_CONFIDENCE": "high",
-    "LOCAL_REPRESENTATIVENESS": "low",
-    "PROFILE_COMPLETENESS": "high",
-    "OVERALL_AUTHORITY_CONFIDENCE": "low"
-  },
-  "localRepresentativeness": {
-    "level": "low",
-    "reason": "material-model-vs-observed-divergence",
-    "materialDivergence": true,
-    "variables": {
-      "annualPrecipitationMm": {
-        "chelsa": 1293.6,
-        "referenceMin": 500,
-        "referenceMax": 900,
-        "inRange": false,
-        "divergenceRatioApprox": 1.44,
-        "level": "low"
-      },
-      "coldestMonthMeanMinC": {
-        "chelsa": 7.75,
-        "reference": 7,
-        "absDeltaC": 0.8,
-        "level": "high"
-      },
-      "warmestMonthMeanMaxC": {
-        "chelsa": 28.25,
-        "reference": 30,
-        "absDeltaC": 1.8,
-        "level": "high"
-      }
-    },
-    "warnings": [
-      "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
-    ],
-    "qaSource": "IMS/Western-Galilee station-class normals + Israel atlas precip bands (QA synthesis)",
-    "qaDate": "2026-08-29",
-    "qaVersion": "qa-v1"
-  },
-  "confidenceWarnings": [
-    "Annual precipitation model-vs-reference material divergence (CHELSA 1293.6 mm vs ref 500–900 mm)."
-  ]
+  }
 }

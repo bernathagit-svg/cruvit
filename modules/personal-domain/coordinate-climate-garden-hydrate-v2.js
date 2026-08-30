@@ -15,6 +15,7 @@ import {
 } from './coordinate-climate-authority-v2-contract.js';
 import { lookupCoordinateClimateProfile } from './coordinate-climate-lookup-v2.js';
 import { buildStructuralClimateServerFields } from './structural-climate-persistence-contract.js';
+import { isPersistedClimateAuthorityStale } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
 
 /** Frozen resolution contract labels (never claim 30 m climate). */
 export const RESOLUTION_CONTRACT_V2 = Object.freeze({
@@ -116,7 +117,7 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
     };
   }
 
-  // Reuse known matching Garden structural if already V2 and coords match.
+  // Reuse known matching Garden structural if already V2, coords match, and versions not stale.
   const existing = options.existingStructural;
   if (
     existing &&
@@ -126,12 +127,16 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
   ) {
     const pLat = Number(existing.provenance?.lat);
     const pLon = Number(existing.provenance?.lon);
-    if (
+    const coordsMatch =
       Number.isFinite(pLat) &&
       Number.isFinite(pLon) &&
       Math.abs(pLat - latitude) < 0.00015 &&
-      Math.abs(pLon - longitude) < 0.00015
-    ) {
+      Math.abs(pLon - longitude) < 0.00015;
+    const stale = isPersistedClimateAuthorityStale(existing, {
+      currentAuthorityVersion: COORDINATE_CLIMATE_AUTHORITY_V2_VERSION,
+      currentBakeVersion: options.currentBakeVersion ?? null
+    });
+    if (coordsMatch && !stale.stale) {
       return {
         ok: true,
         code: 'REUSE_PERSISTED_V2',
@@ -140,8 +145,13 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
         profile: existing.coordinateClimateV2 || null,
         cost: getCoordinateClimateRuntimeCounters(),
         prepEnqueued: null,
-        resolutionContract: RESOLUTION_CONTRACT_V2
+        resolutionContract: RESOLUTION_CONTRACT_V2,
+        staleCheck: stale
       };
+    }
+    if (coordsMatch && stale.stale) {
+      // Fall through to local lookup — do not keep permanently authoritative after version bump.
+      void stale;
     }
   }
 
