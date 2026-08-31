@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "common-lilac-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "common-lilac",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/17768/syringa-vulgaris/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-syringa-vulgaris",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Syringa vulgaris (Common Lilac)",
+      "url": "https://plants.ces.ncsu.edu/plants/syringa-vulgaris/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-syringa-vulgaris"
+        "ncsu-syringa-vulgaris"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as low for home-landscape use."
+      "shortExcerpt": "USDA Plant Hardiness Zone 3a–7a; does best in cold winter climates.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-syringa-vulgaris"
+        "ncsu-syringa-vulgaris"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "USDA zones 3a–7a; requires long winter chill for buds to mature.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -108,9 +125,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-syringa-vulgaris"
+        "ncsu-syringa-vulgaris"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Light: Full sun (6 or more hours) / Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +138,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-syringa-vulgaris"
+        "ncsu-syringa-vulgaris"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Does not do well in soil that is highly acidic or poorly drained; Good Drainage Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -210,11 +233,14 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Spring panicles after substantial winter chill; weak bloom without chill.",
+      "value": "Spring bloom; requires winter chill; late frost may kill buds",
       "sourceIds": [
-        "rhs-syringa-vulgaris"
+        "ncsu-syringa-vulgaris"
       ],
-      "shortExcerpt": "Spring panicles after substantial winter chill; weak bloom without chill."
+      "shortExcerpt": "Require a long period of winter chill for the buds to mature; Late frost will sometimes kill the buds; Flower Bloom Time: Spring.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",

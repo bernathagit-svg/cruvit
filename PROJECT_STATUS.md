@@ -45,7 +45,8 @@ Honest classification from a read-only code verification pass. Tiers:
 - **CRUVIT BULK CATALOG EXPANSION V1 — BATCH 1 COMPLETE / PASS** (`CRUVIT_BULK_CATALOG_BATCH_1: PASS`). Live `public.catalog_plants`: 30 new canonical plants; 29 verified / 1 needsReview (`blue-gum`); botanical provenance 30/30; IMAGE_READY 30/30; paid API $0.
 - **CRUVIT COORDINATE CLIMATE AUTHORITY V2 — PRODUCTION FOUNDATION CLOSED / GO** (`CRUVIT_COORDINATE_CLIMATE_V2_FOUNDATION_CLOSED: GO`). Exact-coordinate structural climate authority; CHELSA ~1 km baseline; terrain context separate; PET + UNEP AI; no city proxy; zero external structural acquisition on user runtime; multi-dimension confidence (extraction ≠ local representativeness); compact CRUVIT tile foundation.
 - **CRUVIT GLOBAL CLIMATE COVERAGE V1 — REGIONAL FOUNDATION CLOSED / GO** (`CRUVIT_GLOBAL_CLIMATE_REGIONAL_FOUNDATION_CLOSED: GO`). Production format `cruvit-cctb-int16-gzip-v1` (~103.3 B/cell gzip); first real pack `emed-n-israel-v1` (9,409 cells, ~972 KB, 6 tiles); zero external runtime climate calls; **Cloudflare R2 PREFERRED** (not free — storage + Class A/B); R2 upload not yet global. **UNIVERSAL_GLOBAL_COVERAGE = P1 OPEN** (broader central bake — coverage expansion, not redesign).
-- **CRUVIT PRE-SCALE SUITABILITY SYSTEMIC HARDENING — CLOSED / GO** (`CRUVIT_PRE_SCALE_SUITABILITY_HARDENING_CLOSED: GO`). Material FP/FN = 0; heuristic-dependent confident results = 0; evaluator READY; ingestion contract READY; **BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN** (78 SOURCE_SUPPORTED / 210 HEURISTIC / 12 UNKNOWN — Batch 1 not fully botanically enriched).
+- **CRUVIT PRE-SCALE SUITABILITY SYSTEMIC HARDENING — CLOSED / GO** (`CRUVIT_PRE_SCALE_SUITABILITY_HARDENING_CLOSED: GO`). Material FP/FN = 0; heuristic-dependent confident results = 0; evaluator READY; ingestion contract READY.
+- **CRUVIT BATCH 1 SOURCE-SUPPORTED ENRICHMENT — LIVE PERSISTENCE CLOSED / GO** (`CRUVIT_BATCH_1_SOURCE_SUPPORTED_ENRICHMENT_CLOSED: GO`). Live `public.catalog_plants`: 30 rows; **SOURCE_SUPPORTED 189 · HEURISTIC_ASSERTION 125 · UNKNOWN 11** (was 78 / 210 / 12); traitEvidenceClasses **30/30**; verified 29 / needsReview 1 (`blue-gum`); IMAGE_READY 30/30; preserved-columns checksum unchanged (`6486146f25d1e78460ff235ef0db3125`); user runtime external provider calls = **0**.
 - **BULK CATALOG BATCH 2: AUTHORIZED AFTER PRE-SCALE HARDENING CLOSURE** — **NOT STARTED** (separate Owner turn). Evaluator + ingestion contracts are ready; Batch 2 must prefer fewer SOURCE_SUPPORTED traits over many heuristic completes.
 
 ## Partial
@@ -97,9 +98,25 @@ Upstream gates (all Owner-accepted PASS):
 - Ingestion contract: **READY** (catalog-expansion v1.2.0 + Batch 2 evidence rule frozen)
 - **BATCH 2: NOT STARTED**
 
-**BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN**  
-Current Batch 1 field evidence audit: **SOURCE_SUPPORTED 78 · HEURISTIC_ASSERTION 210 · UNKNOWN 12**.  
-The evaluator foundation is trustworthy; Batch 1 must **not** be described as fully source-enriched.
+**BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = CLOSED / GO**  
+Live evidence inventory (all 30 canonical Batch 1 plants): **SOURCE_SUPPORTED 189 · HEURISTIC_ASSERTION 125 · UNKNOWN 11** (baseline before enrichment: 78 / 210 / 12).  
+All 30 rows persist `traitEvidenceClasses` + field-level provenance. **Permanent persistence rule:** unchanged botanical rows must still receive evidence metadata — `unchanged` ≠ skip metadata.
+
+### CRUVIT BATCH 1 SOURCE-SUPPORTED ENRICHMENT — CLOSED / GO
+Status: **CRUVIT_BATCH_1_SOURCE_SUPPORTED_ENRICHMENT_CLOSED: GO**
+
+**Live persistence:** `CRUVIT_BATCH_1_SOURCE_SUPPORTED_ENRICHMENT_PERSISTED: PASS`  
+**Generator defect fixed:** original SQL updated only 18 enriched rows; live apply required metadata-only merge for 12 botanically unchanged plants. Future generators must persist evidence metadata on **every** canonical plant after evidence-strength hardening.
+
+**Live inventory:** catalog_plants 30 · verified 29 · needsReview 1 · IMAGE_READY 30/30 · traitEvidenceClasses 30/30 · duplicate slugs 0 · duplicate scientific identities 0 · missing source_packet 0 · missing media 0 · Blue Gum `needs_review=true`.
+
+**Evidence delta:** SOURCE_SUPPORTED 78→189 · HEURISTIC 210→125 · UNKNOWN 12→11.
+
+**Non-destructive proof:** preserved-columns checksum before/after `6486146f25d1e78460ff235ef0db3125` (scientific_name, common_names, aliases, botanical provenance, media, media_status, needs_review, verification_state, source_packet, catalog_version unchanged).
+
+**Security:** anon/auth SELECT-only; no RLS/grant/schema changes; Supabase Security Advisor 0 lints.
+
+**BATCH 2: NOT STARTED** (separate Owner turn).
 
 #### Final doctrine (frozen)
 1. **NO CONFIDENT GUESSING.**
@@ -132,7 +149,8 @@ The evaluator foundation is trustworthy; Batch 1 must **not** be described as fu
 
 #### Provenance honesty
 - Packet source ID alone ≠ field evidence; template “characterized as …” ≠ botanical excerpt.
-- `BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = P1 OPEN` (counts above).
+- `BATCH_1_SOURCE_SUPPORTED_ENRICHMENT = CLOSED / GO` (live counts above).
+- **Persistence generator rule (frozen):** `UNCHANGED BOTANICAL ROWS MUST STILL PERSIST EVIDENCE METADATA` — traitEvidenceClasses + traitProvenance required on every canonical plant; botanical value updates remain limited to materially enriched rows only.
 
 #### Reproductive biology
 - `REPRODUCTIVE_CLIMATE_SUITABILITY` ≠ `BIOLOGICAL_FRUIT_SET_ELIGIBILITY`.

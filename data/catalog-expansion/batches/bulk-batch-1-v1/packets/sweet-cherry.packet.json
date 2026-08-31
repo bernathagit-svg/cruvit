@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "sweet-cherry-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "sweet-cherry",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/13766/prunus-avium/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-prunus-avium",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Prunus avium (Sweet Cherry)",
+      "url": "https://plants.ces.ncsu.edu/plants/prunus-avium/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "USDA zones 3a–8b; Late frosts will damage the buds.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "USDA Plant Hardiness Zone 3a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -108,9 +125,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Enjoys full sun; Light: Full sun (6 or more hours).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +138,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Prefers moisture-retentive soils that provide good drainage as it will not tolerate wet soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -223,21 +246,40 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers.",
+      "value": "Spring bloom; late frost damages buds",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+      "shortExcerpt": "Showy white flowers in spring; Late frosts will damage the buds.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Requires winter chill and cool springs; poor in always-hot tropics.",
+      "value": "Summer edible drupe; cultivar/pollination details not fully specified on this page",
       "sourceIds": [
-        "rhs-prunus-avium"
+        "ncsu-prunus-avium"
       ],
-      "shortExcerpt": "Requires winter chill and cool springs; poor in always-hot tropics."
+      "shortExcerpt": "Fruit in summer; fleshy yellow to red to purple-red drupe.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-selfFertility",
+      "field": "reproductive.selfFertility",
+      "status": "asserted",
+      "value": "unknown",
+      "sourceIds": [
+        "ncsu-prunus-avium"
+      ],
+      "shortExcerpt": "NCSU page does not state self-fertility or pollinator cultivar requirements.",
+      "evidenceClass": "UNKNOWN",
+      "transformation": null,
+      "enrichmentReason": "Do not invent sweet-cherry pollination biology from horticultural lore."
     }
   ],
   "image": {

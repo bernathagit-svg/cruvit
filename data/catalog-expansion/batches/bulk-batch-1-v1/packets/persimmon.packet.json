@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "persimmon-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "persimmon",
@@ -15,7 +15,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -26,6 +28,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/MG242",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-diospyros-kaki",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Diospyros kaki (Asian Persimmon)",
+      "url": "https://plants.ces.ncsu.edu/plants/diospyros-kaki/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -60,9 +71,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "NCSU: do not tolerate temperatures below 10°F; USDA zones 7a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Survives moderate cold but fails below 10°F → frostSensitivity=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -70,9 +84,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "NCSU: do not tolerate temperatures below 10°F (-12°C); zones 7–10.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Published 10°F limit → coldTolerance=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -110,9 +127,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -120,9 +140,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "NCSU: loamy, moist but well-drained soils; Soil Drainage Good Drainage Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -130,9 +153,12 @@
       "status": "asserted",
       "value": true,
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Reliable flowering/fruiting typically needs winter chill or a cool dormant season."
+      "shortExcerpt": "Temperate deciduous fruit tree with spring bloom; NCSU page does not publish chill-hour numbers. Chill need retained as provisional heuristic pending numeric source.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": null,
+      "enrichmentReason": "No chill-hour figure on consulted NCSU page."
     },
     {
       "claimId": "climate-label",
@@ -224,21 +250,92 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Spring flowering after winter dormancy; some chill improves bloom reliability.",
+      "value": "Generally bloom mid-April; avoid late frost damage to flowers.",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Spring flowering after winter dormancy; some chill improves bloom reliability."
+      "shortExcerpt": "NCSU: Oriental persimmons generally bloom mid-April so avoid damage from late frosts.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Autumn fruit; many cultivars need winter chill and a frost-free ripening season.",
+      "value": "Trees usually need 4–6 years before bearing; may set seedless fruit without pollination (parthenocarpic) though planting more than one variety is recommended for large yields.",
       "sourceIds": [
-        "uf-ifas-persimmon"
+        "ncsu-diospyros-kaki"
       ],
-      "shortExcerpt": "Autumn fruit; many cultivars need winter chill and a frost-free ripening season."
+      "shortExcerpt": "NCSU: need to be 4–6 years old before they start to bear fruit; parthenocarpic — may set seedless fruit without pollination; planting more than one variety recommended for large yields but not required for fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "quantitative-minimum-survival-temperature-c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -12,
+      "sourceIds": [
+        "ncsu-diospyros-kaki"
+      ],
+      "shortExcerpt": "NCSU: 'do not tolerate temperatures below 10°F.'",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "10°F ≈ -12.2°C → stored as -12°C minimum survival guidance.",
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-dioecious",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-diospyros-kaki"
+      ],
+      "shortExcerpt": "NCSU: Trees are usually dioecious, meaning separate male and female trees, but some trees have both male and female flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Usually dioecious → dioecious=true with cultivar variability noted.",
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-self-fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-diospyros-kaki"
+      ],
+      "shortExcerpt": "NCSU: parthenocarpic — may set seedless fruit without pollination; more than one variety recommended for large yields but not required for fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Parthenocarpy → self_fertile/fruit-set-without-pollinator possible = true (yield may still benefit from pollination).",
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-requires-pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-diospyros-kaki"
+      ],
+      "shortExcerpt": "Fruit set without pollination possible (parthenocarpic); pollination not required for fruit set though recommended for large yields.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-reproductive-maturity-requirement",
+      "field": "reproductive.reproductive_maturity_requirement",
+      "status": "asserted",
+      "value": "bear_fruit_after_4_to_6_years",
+      "sourceIds": [
+        "ncsu-diospyros-kaki"
+      ],
+      "shortExcerpt": "NCSU: need to be 4–6 years old before they start to bear fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

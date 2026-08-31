@@ -342,9 +342,16 @@ export function tracePlantEvidenceForDimension(meta, fields, sourcesByField = {}
 
 /**
  * Audit whether a row's confident statuses depend on heuristic/unknown evidence.
+ * Prefer evaluator evidenceStrength traces (actual material fields) when present.
  */
 export function auditConfidentDependsOnWeakEvidence(row, meta) {
   const hits = [];
+  const fieldsFromTrace = (dimension) => {
+    const tr = row?.evidenceStrength?.traces?.[dimension];
+    const list = tr?.materialEvidence?.fields;
+    if (Array.isArray(list) && list.length) return list.map((f) => f.field);
+    return null;
+  };
   const check = (dimension, status, fields) => {
     if (!isConfidentOutcomeStatus(status)) return;
     const summary = summarizeMaterialEvidence(meta, fields);
@@ -361,46 +368,52 @@ export function auditConfidentDependsOnWeakEvidence(row, meta) {
   check(
     'Survival',
     row.survival,
-    inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} })
-  );
-  check('Growth', row.growth, inferGrowthMaterialFields({ meta, growth: row.growth }));
-  check('Flowering', row.flowering, inferFloweringMaterialFields(meta));
-  check('Fruiting', row.fruiting, inferFruitingMaterialFields(meta));
-  if (isConfidentOverall(row.overall)) {
-    // Overall confident must not ride on weak dimension authorizations
-    const weakDims = hits.length > 0;
-    const survWeak = !materialFieldsAuthorizeConfidence(
-      meta,
+    fieldsFromTrace('Survival') ||
       inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} })
-    );
-    const growWeak = !materialFieldsAuthorizeConfidence(
-      meta,
-      inferGrowthMaterialFields({ meta, growth: row.growth })
-    );
-    if (weakDims || survWeak || growWeak || row.overall === 'blocked') {
-      // blocked overall from survival unreliable with weak frost → hit
-      if (row.overall === 'blocked' && survWeak) {
-        hits.push({
-          dimension: 'Overall',
-          status: row.overall,
-          dependsOnHeuristic: true,
-          fields: inferSurvivalMaterialFields({
-            meta,
-            survival: row.survival,
-            env: row.env || {}
-          }).map((f) => ({
-            field: f,
-            evidenceClass: resolveTraitEvidenceClass(meta, f)
-          }))
-        });
-      } else if (row.overall === 'good' || row.overall === 'excellent') {
-        hits.push({
-          dimension: 'Overall',
-          status: row.overall,
-          dependsOnHeuristic: survWeak || growWeak,
-          fields: []
-        });
-      }
+  );
+  check(
+    'Growth',
+    row.growth,
+    fieldsFromTrace('Growth') || inferGrowthMaterialFields({ meta, growth: row.growth })
+  );
+  check(
+    'Flowering',
+    row.flowering,
+    fieldsFromTrace('Flowering') || inferFloweringMaterialFields(meta)
+  );
+  check(
+    'Fruiting',
+    row.fruiting,
+    fieldsFromTrace('Fruiting') || inferFruitingMaterialFields(meta)
+  );
+  if (isConfidentOverall(row.overall)) {
+    const survFields =
+      fieldsFromTrace('Survival') ||
+      inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} });
+    const growFields =
+      fieldsFromTrace('Growth') || inferGrowthMaterialFields({ meta, growth: row.growth });
+    const survWeak = !materialFieldsAuthorizeConfidence(meta, survFields);
+    const growWeak = !materialFieldsAuthorizeConfidence(meta, growFields);
+    if (row.overall === 'blocked' && survWeak) {
+      hits.push({
+        dimension: 'Overall',
+        status: row.overall,
+        dependsOnHeuristic: true,
+        fields: survFields.map((f) => ({
+          field: f,
+          evidenceClass: resolveTraitEvidenceClass(meta, f)
+        }))
+      });
+    } else if (
+      (row.overall === 'good' || row.overall === 'excellent') &&
+      (survWeak || growWeak)
+    ) {
+      hits.push({
+        dimension: 'Overall',
+        status: row.overall,
+        dependsOnHeuristic: survWeak || growWeak,
+        fields: []
+      });
     }
   }
   return hits;

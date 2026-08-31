@@ -10,7 +10,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -20,7 +20,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -30,7 +30,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -40,7 +40,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -53,10 +53,13 @@
       "expected": 460
     },
     "overallCounts": {
-      "borderline": 210
+      "blocked": 4,
+      "borderline": 206
     },
     "survivalCounts": {
-      "constrained": 210
+      "unreliable": 4,
+      "reliable": 96,
+      "constrained": 110
     }
   },
   "mediterraneanSanity": {
@@ -79,7 +82,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "oleander": {
         "overallUnique": [
@@ -98,7 +101,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "common-thyme": {
         "overallUnique": [
@@ -117,7 +120,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "garden-sage": {
         "overallUnique": [
@@ -136,7 +139,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       }
     }
   },
@@ -224,5 +227,5 @@
     "era5": 0
   },
   "gradientExternalClimateCalls": 0,
-  "generatedAt": "2026-08-30T19:23:56.394Z"
+  "generatedAt": "2026-08-31T03:54:55.677Z"
 }

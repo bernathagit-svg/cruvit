@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "english-walnut-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "english-walnut",
@@ -15,7 +15,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -26,6 +28,24 @@
       "url": "https://www.rhs.org.uk/plants/9736/juglans-regia/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-juglans-regia",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Juglans regia (English Walnut)",
+      "url": "https://plants.ces.ncsu.edu/plants/juglans-regia/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
+    },
+    {
+      "sourceId": "ucanr-walnut-chill-portions",
+      "institution": "University of California Agriculture and Natural Resources",
+      "publisher": "UC ANR",
+      "title": "Fruit & Nut Crop Chill Portions Requirements (Walnut)",
+      "url": "https://ucanr.edu/site/fruit-nut-research-information-center/fruit-nut-crop-chill-portions-requirements",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -60,9 +80,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as low for home-landscape use."
+      "shortExcerpt": "NCSU USDA Plant Hardiness Zone: 3a–7b for Juglans regia.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardiness through zone 3 → frostSensitivity=low.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -70,9 +93,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "NCSU USDA zones 3a–7b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3 hardiness → coldTolerance=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -80,19 +106,25 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Heat tolerance characterized as medium."
+      "shortExcerpt": "Doesn't do well in hot, humid southern US climates; prefers temperate production regions (e.g. California commercial).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Heat+humidity constraint → heatTolerance=medium (not tropical-high).",
+      "enrichmentReason": null
     },
     {
       "claimId": "humidity",
       "field": "humidityTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Humidity tolerance characterized as medium."
+      "shortExcerpt": "NCSU: \"This tree doesn't do well in hot, humid climates; therefore, pecans trees are a better choice in the southern United States.\"",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Explicit poor performance in hot humid climates → humidityTolerance=low.",
+      "enrichmentReason": null
     },
     {
       "claimId": "water",
@@ -100,9 +132,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as medium."
+      "shortExcerpt": "NCSU Soil Drainage: Good Drainage Moist (not drought-desert class).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained preference → waterNeeds=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -110,9 +145,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU: prefers full sun; intolerant to shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -120,9 +158,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "NCSU: moist, rich, loamy, well-drained soils; intolerant of poor or wet soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Intolerant of wet soils → drainageNeeds=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -130,9 +171,12 @@
       "status": "asserted",
       "value": true,
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ucanr-walnut-chill-portions"
       ],
-      "shortExcerpt": "Reliable flowering/fruiting typically needs winter chill or a cool dormant season."
+      "shortExcerpt": "UC ANR lists walnut cultivar chill-portion requirements (e.g. Payne 38; Hartley 54; Chandler 45–50).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Cultivar chill portions required for walnut → species-level needsWinterChill=true. No single species chill-hour number invented.",
+      "enrichmentReason": null
     },
     {
       "claimId": "climate-label",
@@ -225,21 +269,41 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Wind-pollinated catkins after dormancy; needs winter chill.",
+      "value": "Spring bloom (May–June per NCSU); reliable leafing/flowering depends on winter chill accumulation (cultivar-specific).",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia",
+        "ucanr-walnut-chill-portions"
       ],
-      "shortExcerpt": "Wind-pollinated catkins after dormancy; needs winter chill."
+      "shortExcerpt": "NCSU blooms May–June; UC ANR documents chill portions required for walnut cultivars.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Nuts require chill and a long growing season; unsuitable for always-hot climates.",
+      "value": "Edible nuts mature in fall; trees begin nuts ~4–6 years, good crops often after 15–20 years (NCSU).",
       "sourceIds": [
-        "rhs-juglans-regia"
+        "ncsu-juglans-regia"
       ],
-      "shortExcerpt": "Nuts require chill and a long growing season; unsuitable for always-hot climates."
+      "shortExcerpt": "NCSU: begin to produce nuts at 4–6 years; generally produce a good crop after about 15–20 years.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-reproductive-maturity-requirement",
+      "field": "reproductive.reproductive_maturity_requirement",
+      "status": "asserted",
+      "value": "nuts_begin_4_to_6_years_good_crop_often_15_to_20_years",
+      "sourceIds": [
+        "ncsu-juglans-regia"
+      ],
+      "shortExcerpt": "NCSU: produce nuts when 4 to 6 years old; good crop after about 15 to 20 years.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

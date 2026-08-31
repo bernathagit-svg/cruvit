@@ -1,0 +1,427 @@
+{
+  "gate": "CRUVIT_BATCH_1_ENRICHMENT_PERSISTENCE_REVIEW",
+  "verdict": "CRUVIT_BATCH_1_ENRICHMENT_PERSISTENCE_REVIEW: PASS",
+  "handoffShaVerification": {
+    "ownerAcceptedLive": "955fab032e37dd115997ec5c1c0350d288b12884ff3e7767a78e2bc8eb8e9cb4",
+    "currentHandoffFile": "5764e44a418d6daa4aa4e38cb0499e21b401e695e84374fac9e957178c35aca3",
+    "matchesOwnerAcceptedLive": false
+  },
+  "rowsAffected": {
+    "represented": 30,
+    "materiallyEnrichedUpdates": 18,
+    "evidenceMetadataOnlyUpdates": 12,
+    "materiallyEnrichedSlugs": [
+      "bay-laurel",
+      "carob",
+      "chinese-wisteria",
+      "common-lilac",
+      "common-thyme",
+      "durian",
+      "english-walnut",
+      "feijoa",
+      "forsythia",
+      "garden-sage",
+      "ginkgo",
+      "loquat",
+      "oleander",
+      "persimmon",
+      "quince",
+      "silver-birch",
+      "southern-magnolia",
+      "sweet-cherry"
+    ],
+    "evidenceMetadataOnlySlugs": [
+      "acerola",
+      "blue-gum",
+      "breadfruit",
+      "common-myrtle",
+      "garden-peony",
+      "gooseberry",
+      "jaboticaba",
+      "longan",
+      "mangosteen",
+      "red-currant",
+      "turmeric",
+      "white-sapote"
+    ],
+    "allBatch1ReceiveEvidenceMetadata": true
+  },
+  "jsonbMapping": {
+    "qualitativeTraitValue": {
+      "column": "climate_traits.<traitKey>",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "evidenceClass": {
+      "column": "climate_traits.traitEvidenceClasses.<field>",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "fieldLevelProvenance": {
+      "column": "climate_traits.traitProvenance.<field>",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "numericClimateEvidence": {
+      "column": "climate_traits.quantitativeEvidence + climate_traits.quantitativeProvenance (+ traitEvidenceClasses quantitative.*)",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "floweringEvidence": {
+      "column": "climate_traits.floweringRequirements + climate_traits.traitEvidenceClasses/traitProvenance; mirrored to flowering_requirements jsonb",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "reproductiveBiology": {
+      "column": "climate_traits.reproductiveBiology + climate_traits.traitEvidenceClasses/traitProvenance reproductive.*",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    },
+    "evidenceClassDistinction": {
+      "column": "climate_traits.traitEvidenceClasses (SOURCE_SUPPORTED|HEURISTIC_ASSERTION|UNKNOWN)",
+      "CAN_PERSIST_LOSSLESSLY": "YES"
+    }
+  },
+  "CAN_PERSIST_LOSSLESSLY": "YES",
+  "SCHEMA_CHANGE_REQUIRED": "NO",
+  "packetInventory": {
+    "SOURCE_SUPPORTED": 189,
+    "HEURISTIC_ASSERTION": 125,
+    "UNKNOWN": 11
+  },
+  "handoffClimateTraitsInventory": {
+    "SOURCE_SUPPORTED": 189,
+    "HEURISTIC_ASSERTION": 125,
+    "UNKNOWN": 11
+  },
+  "roundTrip": {
+    "pass": true,
+    "plants": {
+      "bay-laurel": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "SOURCE_SUPPORTED",
+          "humidityToleranceClass": "HEURISTIC_ASSERTION",
+          "quantitativeMinClass": "SOURCE_SUPPORTED",
+          "minSurvivalC": -5,
+          "reproductive": {
+            "dioecious": true,
+            "requires_pollinator": true,
+            "sex_requirement": "female_plus_male_for_fruit",
+            "self_fertile": false
+          }
+        },
+        "enrichment": "updated"
+      },
+      "persimmon": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "SOURCE_SUPPORTED",
+          "humidityToleranceClass": "HEURISTIC_ASSERTION",
+          "quantitativeMinClass": "SOURCE_SUPPORTED",
+          "minSurvivalC": -12,
+          "reproductive": {
+            "dioecious": true,
+            "self_fertile": true,
+            "requires_pollinator": false,
+            "reproductive_maturity_requirement": "bear_fruit_after_4_to_6_years"
+          }
+        },
+        "enrichment": "updated"
+      },
+      "ginkgo": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "SOURCE_SUPPORTED",
+          "humidityToleranceClass": "HEURISTIC_ASSERTION",
+          "quantitativeMinClass": null,
+          "reproductive": {
+            "dioecious": true,
+            "sex_requirement": "female_for_seeds_male_preferred_ornamental"
+          }
+        },
+        "enrichment": "updated"
+      },
+      "english-walnut": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "SOURCE_SUPPORTED",
+          "humidityToleranceClass": "SOURCE_SUPPORTED",
+          "quantitativeMinClass": null,
+          "reproductive": {
+            "reproductive_maturity_requirement": "nuts_begin_4_to_6_years_good_crop_often_15_to_20_years"
+          }
+        },
+        "enrichment": "updated"
+      },
+      "durian": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "SOURCE_SUPPORTED",
+          "humidityToleranceClass": "HEURISTIC_ASSERTION",
+          "quantitativeMinClass": null,
+          "reproductive": null
+        },
+        "enrichment": "updated"
+      },
+      "blue-gum": {
+        "pass": true,
+        "checks": {
+          "evidenceClassPreserved": true,
+          "provenancePreserved": true,
+          "quantitativePreserved": true,
+          "quantitativeProvenancePreserved": true,
+          "reproductivePreserved": true,
+          "floweringFruitingUnknownSemantics": true,
+          "noStringObjectMismatch": true,
+          "noHeuristicPromotion": true,
+          "mediaPreserved": true,
+          "mediaStatusPreserved": true,
+          "scientificPreserved": true,
+          "sourcePacketPreserved": true,
+          "botanicalValuesPreservedWhenMetadataOnly": true,
+          "blueGumNeedsReview": true
+        },
+        "promotionIssues": [],
+        "evaluatorSees": {
+          "frostSensitivityClass": "HEURISTIC_ASSERTION",
+          "humidityToleranceClass": "HEURISTIC_ASSERTION",
+          "quantitativeMinClass": null,
+          "reproductive": null
+        },
+        "enrichment": "unchanged-heuristic-or-unknown"
+      }
+    }
+  },
+  "bayLaurelExpectedLiveShape": {
+    "climate_traits_keys": [
+      "coldTolerance",
+      "drainageNeeds",
+      "floweringRequirements",
+      "frostSensitivity",
+      "fruitingRequirements",
+      "groupIds",
+      "heatTolerance",
+      "humidityTolerance",
+      "needsReview",
+      "needsWinterChill",
+      "quantitativeEvidence",
+      "quantitativeProvenance",
+      "reproductiveBiology",
+      "sunNeeds",
+      "traitEvidenceClasses",
+      "traitProvenance",
+      "waterNeeds"
+    ],
+    "SOURCE_SUPPORTED_fields": [
+      "frostSensitivity",
+      "coldTolerance",
+      "waterNeeds",
+      "sunNeeds",
+      "drainageNeeds",
+      "needsWinterChill",
+      "floweringRequirements",
+      "fruitingRequirements",
+      "quantitative.minimum_survival_temperature_c",
+      "reproductive.dioecious",
+      "reproductive.requires_pollinator",
+      "reproductive.sex_requirement",
+      "reproductive.self_fertile"
+    ],
+    "HEURISTIC_fields": [
+      "heatTolerance",
+      "humidityTolerance"
+    ],
+    "quantitative": {
+      "minimum_survival_temperature_c": -5
+    },
+    "reproductive": {
+      "dioecious": true,
+      "requires_pollinator": true,
+      "sex_requirement": "female_plus_male_for_fruit",
+      "self_fertile": false
+    },
+    "evaluatorRoundTrip": {
+      "frostSensitivityClass": "SOURCE_SUPPORTED",
+      "humidityToleranceClass": "HEURISTIC_ASSERTION",
+      "quantitativeMinClass": "SOURCE_SUPPORTED",
+      "minSurvivalC": -5,
+      "reproductive": {
+        "dioecious": true,
+        "requires_pollinator": true,
+        "sex_requirement": "female_plus_male_for_fruit",
+        "self_fertile": false
+      }
+    }
+  },
+  "nonDestructiveUpdate": {
+    "updatesColumns": [
+      "climate_traits",
+      "flowering_requirements",
+      "fruiting_requirements",
+      "updated_at"
+    ],
+    "preservesColumns": [
+      "scientific_name",
+      "common_names",
+      "aliases",
+      "provenance",
+      "needs_review",
+      "verification_state",
+      "media",
+      "media_status",
+      "catalog_version",
+      "source_packet"
+    ],
+    "mergeSemantics": "18 enriched: climate_traits = COALESCE(existing,{}) || full accepted enrichment JSONB; flowering/fruiting mirrors updated. 12 botanically unchanged: climate_traits = COALESCE(existing,{}) || evidence metadata only (traitEvidenceClasses, traitProvenance, quantitative/reproductive metadata); botanical trait values and flowering/fruiting columns untouched.",
+    "materiallyEnrichedSlugs": [
+      "bay-laurel",
+      "carob",
+      "chinese-wisteria",
+      "common-lilac",
+      "common-thyme",
+      "durian",
+      "english-walnut",
+      "feijoa",
+      "forsythia",
+      "garden-sage",
+      "ginkgo",
+      "loquat",
+      "oleander",
+      "persimmon",
+      "quince",
+      "silver-birch",
+      "southern-magnolia",
+      "sweet-cherry"
+    ],
+    "evidenceMetadataOnlySlugs": [
+      "acerola",
+      "blue-gum",
+      "breadfruit",
+      "common-myrtle",
+      "garden-peony",
+      "gooseberry",
+      "jaboticaba",
+      "longan",
+      "mangosteen",
+      "red-currant",
+      "turmeric",
+      "white-sapote"
+    ],
+    "allBatch1ReceiveEvidenceMetadata": true,
+    "permanentRule": "UNCHANGED BOTANICAL ROWS MUST STILL PERSIST EVIDENCE METADATA — skip metadata only if plant lacks accepted handoff evidence classes."
+  },
+  "executableSql": {
+    "path": "data/catalog-expansion/batches/bulk-batch-1-v1/handoff/catalog_plants_enrichment_upsert.sql",
+    "sha256": "d2a6146e94428fca99b2ee78e53329041605bbd07c5e495ece1450876badb681",
+    "liveUpsert": false
+  },
+  "verificationSql": {
+    "path": "data/catalog-expansion/batches/bulk-batch-1-v1/handoff/catalog_plants_enrichment_verify.sql",
+    "liveExecute": false
+  },
+  "securityImpact": {
+    "altersRls": false,
+    "altersGrants": false,
+    "expectedAnon": {
+      "SELECT": true,
+      "INSERT": false,
+      "UPDATE": false,
+      "DELETE": false
+    },
+    "expectedAuthenticated": {
+      "SELECT": true,
+      "INSERT": false,
+      "UPDATE": false,
+      "DELETE": false
+    },
+    "note": "SQL is data-only UPDATE on public.catalog_plants; no GRANT/REVOKE/RLS/policy changes."
+  },
+  "remainingBlockers": [
+    "Live persistence CLOSED by Owner — generator now requires evidence metadata on all 30 rows",
+    "Batch 2 remains blocked until Owner authorizes next catalog expansion turn"
+  ],
+  "livePersistenceClosed": true,
+  "persistenceGeneratorRule": "UNCHANGED BOTANICAL ROWS MUST STILL PERSIST EVIDENCE METADATA (traitEvidenceClasses + traitProvenance at minimum)",
+  "liveUpsert": false,
+  "batch2": false
+}

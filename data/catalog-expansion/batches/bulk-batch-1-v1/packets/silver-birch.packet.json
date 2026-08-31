@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "silver-birch-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "silver-birch",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/2217/betula-pendula/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-betula-pendula",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Betula pendula (Silver / European White Birch)",
+      "url": "https://plants.ces.ncsu.edu/plants/betula-pendula/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-betula-pendula"
+        "ncsu-betula-pendula"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as low for home-landscape use."
+      "shortExcerpt": "USDA Plant Hardiness Zone 2a–7b; does best in cool northern climates.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-betula-pendula"
+        "ncsu-betula-pendula"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "Zones 2–7; short-lived in zones 8–9.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -78,9 +95,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-betula-pendula"
+        "ncsu-betula-pendula"
       ],
-      "shortExcerpt": "Heat tolerance characterized as low."
+      "shortExcerpt": "Does best where summer temperatures rarely exceed 75°F; stressed by summer heat and humidity; not recommended south of USDA Zone 7.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "humidity",
@@ -108,19 +128,25 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-betula-pendula"
+        "ncsu-betula-pendula"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Full sun to part shade; best foliage color in full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
       "field": "drainageNeeds",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "rhs-betula-pendula"
+        "ncsu-betula-pendula"
       ],
-      "shortExcerpt": "Drainage needs characterized as medium."
+      "shortExcerpt": "Best in moist, acidic… well-drained loams; Soil Drainage: Good Drainage Moist Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -224,6 +250,19 @@
         "rhs-betula-pendula"
       ],
       "shortExcerpt": "Fruiting / productive requirements not asserted (ornamental/herb or insufficient evidence)."
+    },
+    {
+      "claimId": "reproductive-sexSystem",
+      "field": "reproductive.sexSystem",
+      "status": "asserted",
+      "value": "monoecious",
+      "sourceIds": [
+        "ncsu-betula-pendula"
+      ],
+      "shortExcerpt": "Tiny monoecious (male and female) flowers appear in early spring in separate catkins on the same tree.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

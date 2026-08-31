@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "loquat-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "loquat",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/MG050",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-eriobotrya-japonica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Eriobotrya japonica (Loquat)",
+      "url": "https://plants.ces.ncsu.edu/plants/eriobotrya-japonica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "NCSU: tree can survive temps down to about 10°F; if temperature falls below 28°F, blooms or fruit likely will not survive; USDA zones 8a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Published wood survival ~10°F with bloom/fruit kill near 28°F → frostSensitivity=medium (not tropical high).",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "USDA Plant Hardiness Zone 8a–11b; wood hardy near 10°F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -96,11 +113,14 @@
       "claimId": "water",
       "field": "waterNeeds",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as medium."
+      "shortExcerpt": "NCSU landscape tags: Drought Tolerant; tolerates drought.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -108,9 +128,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Prefers full sun but will tolerate partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +141,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Prefers moist, well-drained, loamy soil; Soil Drainage: Good Drainage Moist Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -210,21 +236,40 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Autumn/winter flowering; flowers and young fruit damaged by hard freezes.",
+      "value": "Blooms late fall through winter; fruit/bloom killed below ~28°F",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Autumn/winter flowering; flowers and young fruit damaged by hard freezes."
+      "shortExcerpt": "Blooms late fall through winter; If the temperature falls below 28 degrees F, blooms or fruit likely will not survive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Spring fruit; crop often lost to frost on flowers/fruit; tree hardier than crop.",
+      "value": "Fruit set climate-limited; usually does not fruit in NC due to cold; harvest spring where set",
       "sourceIds": [
-        "uf-ifas-loquat"
+        "ncsu-eriobotrya-japonica"
       ],
-      "shortExcerpt": "Spring fruit; crop often lost to frost on flowers/fruit; tree hardier than crop."
+      "shortExcerpt": "The plant usually does not fruit in NC due to its cold sensitivity; Display/Harvest Time: Spring.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "quantitative-minimum-survival-temperature-c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -12,
+      "sourceIds": [
+        "ncsu-eriobotrya-japonica"
+      ],
+      "shortExcerpt": "The tree itself can survive in temps down to about 10 degrees F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "10°F ≈ −12°C stored as minimum_survival_temperature_c.",
+      "enrichmentReason": null
     }
   ],
   "image": {

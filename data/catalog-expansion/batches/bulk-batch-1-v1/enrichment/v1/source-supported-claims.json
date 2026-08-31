@@ -1,0 +1,1499 @@
+{
+  "enrichmentId": "bulk-batch-1-source-supported-enrichment-v1",
+  "enrichmentContractVersion": "1.0.0",
+  "verifiedAt": "2026-08-30",
+  "paidApiCostUsd": 0,
+  "aiApiCostUsd": 0,
+  "notes": "Only SOURCE_SUPPORTED where authoritative excerpt maps to value. Unverified fields remain HEURISTIC_ASSERTION or UNKNOWN.",
+  "plants": {
+    "bay-laurel": {
+      "sourcesAdd": [
+        {
+          "sourceId": "rhs-bay-tree-growing-guide",
+          "institution": "Royal Horticultural Society",
+          "publisher": "Royal Horticultural Society",
+          "title": "Bay tree (Laurus nobilis) — RHS Advice Guide",
+          "url": "https://www.rhs.org.uk/plants/bay-tree/growing-guide",
+          "authorityTier": "horticultural_society",
+          "verifiedAt": "2026-08-30"
+        },
+        {
+          "sourceId": "ncsu-laurus-nobilis",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Laurus nobilis (Bay Laurel)",
+          "url": "https://plants.ces.ncsu.edu/plants/laurus-nobilis/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS: 'Generally hardy to -5°C (23°F) but can withstand lower temperatures in sheltered positions' and frost can damage foliage; NCSU: 'needs to be brought indoors in the winter in areas colder than zone 8b to prevent frost damage' (USDA 8b–10b).",
+          "transformation": "Mapped RHS ground hardiness ~-5°C + NCSU zone 8b frost-damage threshold to qualitative frostSensitivity=medium (neither frost-intolerant tropical nor fully frost-hardy temperate)."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS generally hardy to -5°C; NCSU USDA Plant Hardiness Zone 8b–10b; colder than 8b requires winter protection.",
+          "transformation": "Zone 8b–10b / ~-5°C published hardiness → coldTolerance=medium."
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "status": "asserted",
+          "value": -5,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide"],
+          "shortExcerpt": "Hardiness — Generally hardy to -5°C (23°F) but can withstand lower temperatures in sheltered positions. Bay is hardier when planted in the ground.",
+          "transformation": "Stored RHS published general hardiness figure as minimum_survival_temperature_c=-5. Not an absolute extreme-event authority."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["ncsu-laurus-nobilis"],
+          "shortExcerpt": "No explicit heat-tolerance rating found in consulted RHS/NCSU pages; Mediterranean native range retained as provisional heuristic.",
+          "reason": "Authoritative sources do not publish a direct heatTolerance label."
+        },
+        {
+          "field": "humidityTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["ncsu-laurus-nobilis"],
+          "shortExcerpt": "NCSU/RHS pages do not state an atmospheric RH mortality or humidity-tolerance class; Mediterranean origin alone is insufficient for SOURCE_SUPPORTED humidityTolerance.",
+          "reason": "No supporting atmospheric-humidity excerpt."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS: water container-grown bay moderately; over-watering can cause root damage. NCSU Soil Drainage: Good Drainage; Occasionally Dry.",
+          "transformation": "Moderate watering + avoid waterlogging / occasionally dry → waterNeeds=low (drought-tolerant once established; not high-moisture)."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS Aspect: Full sun or partial shade. NCSU Light: Full sun (6 or more hours) / Partial Shade.",
+          "transformation": "Canonical sunNeeds=full_sun as primary recommendation; partial shade also acceptable per sources."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS: 'Bay needs a well-drained soil'. NCSU: Soil Drainage Good Drainage; leaf spots often caused by waterlogged roots.",
+          "transformation": "Well-drained / avoid waterlogging → drainageNeeds=high."
+        },
+        {
+          "field": "needsWinterChill",
+          "status": "asserted",
+          "value": false,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide"],
+          "shortExcerpt": "Evergreen Mediterranean shrub; sources describe frost protection needs, not a temperate winter-chill hour requirement for flowering.",
+          "transformation": "Absence of chill-hour requirement in RHS/NCSU guidance + evergreen Mediterranean habit → needsWinterChill=false."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Small greenish-yellow male or female flowers in spring (RHS); NCSU: green/white/yellow flowers March–May on dioecious trees.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS: Small greenish-yellow male or female flowers are produced in spring. NCSU: Dioecious; flowers appear in the spring from March to May."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Black/purple drupes form on female plants after pollination; not a culinary fruit crop requirement for leaf use.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-bay-tree-growing-guide", "ncsu-laurus-nobilis"],
+          "shortExcerpt": "RHS: flowers followed by black berries on female plants. NCSU: only female plants produce fleshy black/purple drupes."
+        },
+        {
+          "field": "reproductive.dioecious",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-laurus-nobilis", "rhs-bay-tree-growing-guide"],
+          "shortExcerpt": "NCSU: 'It has separate male and female plants (i.e., it is dioecious), with only the female ones producing the fleshy, black drupes.' RHS: male or female flowers; black berries on female plants."
+        },
+        {
+          "field": "reproductive.requires_pollinator",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-laurus-nobilis"],
+          "shortExcerpt": "Dioecious; fruit forms on female plants only — pollen from a male plant is required for seeded fruit set.",
+          "transformation": "Dioecy + female-only fruit → requires_pollinator=true for fruit set (leaf harvest does not require fruit)."
+        },
+        {
+          "field": "reproductive.sex_requirement",
+          "status": "asserted",
+          "value": "female_plus_male_for_fruit",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-laurus-nobilis", "rhs-bay-tree-growing-guide"],
+          "shortExcerpt": "Female plants produce berries/drupes; male or female flowers on separate plants."
+        },
+        {
+          "field": "reproductive.self_fertile",
+          "status": "asserted",
+          "value": false,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-laurus-nobilis"],
+          "shortExcerpt": "Dioecious species — individual plants are not self-fertile for fruit production.",
+          "transformation": "Dioecy implies self_fertile=false for fruit set."
+        }
+      ]
+    },
+    "durian": {
+      "sourcesAdd": [
+        {
+          "sourceId": "prosea-durio-zibethinus",
+          "institution": "PROSEA / Pl@ntUse",
+          "publisher": "Plant Resources of South-East Asia",
+          "title": "Durio zibethinus (PROSEA)",
+          "url": "https://plantuse.plantnet.org/en/Durio_zibethinus_(PROSEA)",
+          "authorityTier": "species_monograph",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA: 'Durian is strictly tropical; it is grown successfully up to 800 m elevation near the equator, and up to 18° from the equator in Thailand and Queensland.'",
+          "transformation": "Strictly tropical cultivation envelope → frostSensitivity=high."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA: strictly tropical; at extreme latitudes extension growth halts when mean temperatures are below 22°C.",
+          "transformation": "Strict tropical + growth halt below ~22°C mean → coldTolerance=low. No published absolute frost-kill °C in this source → no invented minimum_survival_temperature_c."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "Strictly tropical lowland crop grown near equator / tropical latitudes with warm-season production.",
+          "transformation": "Strict tropical production climates → heatTolerance=high."
+        },
+        {
+          "field": "humidityTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA emphasizes rainfall distribution and irrigation; does not publish an atmospheric RH class. Keeping humidityTolerance provisional.",
+          "reason": "Rainfall ≠ atmospheric humidityTolerance SOURCE_SUPPORTED."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA: 'A well-distributed rainfall of 1500 mm or more is needed… If there is a prominent dry season… a dependable irrigation system is essential.'",
+          "transformation": "≥1500 mm + dry-season irrigation need → waterNeeds=high."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA: flowering associated with subdued extension growth following a cool or dry period; monsoon climates flower late in dry season."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "PROSEA: flowering and fruiting appear more prolific at seasonal tropical extremes than in non-seasonal climates; rainfall/irrigation critical."
+        },
+        {
+          "field": "needsWinterChill",
+          "status": "asserted",
+          "value": false,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["prosea-durio-zibethinus"],
+          "shortExcerpt": "Strictly tropical; dry/cool cues described are not temperate winter chill-hour requirements.",
+          "transformation": "Tropical phenology ≠ needsWinterChill."
+        }
+      ]
+    },
+    "english-walnut": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-juglans-regia",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Juglans regia (English Walnut)",
+          "url": "https://plants.ces.ncsu.edu/plants/juglans-regia/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        },
+        {
+          "sourceId": "ucanr-walnut-chill-portions",
+          "institution": "University of California Agriculture and Natural Resources",
+          "publisher": "UC ANR",
+          "title": "Fruit & Nut Crop Chill Portions Requirements (Walnut)",
+          "url": "https://ucanr.edu/site/fruit-nut-research-information-center/fruit-nut-crop-chill-portions-requirements",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU USDA Plant Hardiness Zone: 3a–7b for Juglans regia.",
+          "transformation": "Hardiness through zone 3 → frostSensitivity=low."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU USDA zones 3a–7b.",
+          "transformation": "Zone 3 hardiness → coldTolerance=high."
+        },
+        {
+          "field": "humidityTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU: \"This tree doesn't do well in hot, humid climates; therefore, pecans trees are a better choice in the southern United States.\"",
+          "transformation": "Explicit poor performance in hot humid climates → humidityTolerance=low."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "Doesn't do well in hot, humid southern US climates; prefers temperate production regions (e.g. California commercial).",
+          "transformation": "Heat+humidity constraint → heatTolerance=medium (not tropical-high)."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU: prefers full sun; intolerant to shade."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU: moist, rich, loamy, well-drained soils; intolerant of poor or wet soils.",
+          "transformation": "Intolerant of wet soils → drainageNeeds=high."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU Soil Drainage: Good Drainage Moist (not drought-desert class).",
+          "transformation": "Moist well-drained preference → waterNeeds=medium."
+        },
+        {
+          "field": "needsWinterChill",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ucanr-walnut-chill-portions"],
+          "shortExcerpt": "UC ANR lists walnut cultivar chill-portion requirements (e.g. Payne 38; Hartley 54; Chandler 45–50).",
+          "transformation": "Cultivar chill portions required for walnut → species-level needsWinterChill=true. No single species chill-hour number invented."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Spring bloom (May–June per NCSU); reliable leafing/flowering depends on winter chill accumulation (cultivar-specific).",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia", "ucanr-walnut-chill-portions"],
+          "shortExcerpt": "NCSU blooms May–June; UC ANR documents chill portions required for walnut cultivars."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Edible nuts mature in fall; trees begin nuts ~4–6 years, good crops often after 15–20 years (NCSU).",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU: begin to produce nuts at 4–6 years; generally produce a good crop after about 15–20 years."
+        },
+        {
+          "field": "reproductive.reproductive_maturity_requirement",
+          "status": "asserted",
+          "value": "nuts_begin_4_to_6_years_good_crop_often_15_to_20_years",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-juglans-regia"],
+          "shortExcerpt": "NCSU: produce nuts when 4 to 6 years old; good crop after about 15 to 20 years."
+        }
+      ]
+    },
+    "persimmon": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-diospyros-kaki",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Diospyros kaki (Asian Persimmon)",
+          "url": "https://plants.ces.ncsu.edu/plants/diospyros-kaki/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: do not tolerate temperatures below 10°F; USDA zones 7a–10b.",
+          "transformation": "Survives moderate cold but fails below 10°F → frostSensitivity=medium."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: do not tolerate temperatures below 10°F (-12°C); zones 7–10.",
+          "transformation": "Published 10°F limit → coldTolerance=medium."
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "status": "asserted",
+          "value": -12,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: 'do not tolerate temperatures below 10°F.'",
+          "transformation": "10°F ≈ -12.2°C → stored as -12°C minimum survival guidance."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU Light: Full sun (6 or more hours of direct sunlight a day)."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: loamy, moist but well-drained soils; Soil Drainage Good Drainage Moist."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Generally bloom mid-April; avoid late frost damage to flowers.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: Oriental persimmons generally bloom mid-April so avoid damage from late frosts."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Trees usually need 4–6 years before bearing; may set seedless fruit without pollination (parthenocarpic) though planting more than one variety is recommended for large yields.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: need to be 4–6 years old before they start to bear fruit; parthenocarpic — may set seedless fruit without pollination; planting more than one variety recommended for large yields but not required for fruit set."
+        },
+        {
+          "field": "reproductive.dioecious",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: Trees are usually dioecious, meaning separate male and female trees, but some trees have both male and female flowers.",
+          "transformation": "Usually dioecious → dioecious=true with cultivar variability noted."
+        },
+        {
+          "field": "reproductive.self_fertile",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: parthenocarpic — may set seedless fruit without pollination; more than one variety recommended for large yields but not required for fruit set.",
+          "transformation": "Parthenocarpy → self_fertile/fruit-set-without-pollinator possible = true (yield may still benefit from pollination)."
+        },
+        {
+          "field": "reproductive.requires_pollinator",
+          "status": "asserted",
+          "value": false,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "Fruit set without pollination possible (parthenocarpic); pollination not required for fruit set though recommended for large yields."
+        },
+        {
+          "field": "reproductive.reproductive_maturity_requirement",
+          "status": "asserted",
+          "value": "bear_fruit_after_4_to_6_years",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "NCSU: need to be 4–6 years old before they start to bear fruit."
+        },
+        {
+          "field": "needsWinterChill",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["ncsu-diospyros-kaki"],
+          "shortExcerpt": "Temperate deciduous fruit tree with spring bloom; NCSU page does not publish chill-hour numbers. Chill need retained as provisional heuristic pending numeric source.",
+          "reason": "No chill-hour figure on consulted NCSU page."
+        }
+      ]
+    },
+    "ginkgo": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-ginkgo-biloba",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Ginkgo biloba",
+          "url": "https://plants.ces.ncsu.edu/plants/ginkgo-biloba/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU USDA Plant Hardiness Zone: 3a–9b.",
+          "transformation": "Zone 3 hardiness → frostSensitivity=low."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU USDA zones 3a–9b → coldTolerance=high."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: tolerant of drought, heat and air pollution."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: tolerant of drought; Resistance To Challenges includes Drought; avoid wet soils.",
+          "transformation": "Drought tolerance + avoid wet soils → waterNeeds=low."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: needs a site in full sun and good drainage to thrive."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: good drainage to thrive; Avoid wet soils."
+        },
+        {
+          "field": "reproductive.dioecious",
+          "status": "asserted",
+          "value": true,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: dioecious with separate male and female trees; seeds only on female trees."
+        },
+        {
+          "field": "reproductive.sex_requirement",
+          "status": "asserted",
+          "value": "female_for_seeds_male_preferred_ornamental",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "Seeds from female trees are messy and foul-smelling; planting grafted male trees is often preferable."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Female trees produce foul-smelling fleshy seeds in fall; not a conventional culinary fruit crop in landscape use.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ginkgo-biloba"],
+          "shortExcerpt": "NCSU: seeds only on female trees; outer fleshy pulp foul-smelling when ripe."
+        }
+      ]
+    },
+    "southern-magnolia": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-magnolia-grandiflora",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Magnolia grandiflora (Southern Magnolia)",
+          "url": "https://plants.ces.ncsu.edu/plants/magnolia-grandiflora/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU USDA zones 6a–10b; some cultivars winter hardy to zone 6.",
+          "transformation": "Zone 6–10 evergreen → frostSensitivity=medium."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU USDA Plant Hardiness Zone 6a–10b."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU: prefers rich soil; Tolerates high moisture levels, but intolerant to overly wet or swampy soils and prolonged flooding. Soil Drainage Good Drainage Moist.",
+          "transformation": "Moist preference, not arid → waterNeeds=medium."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "partial_shade",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU: prefers rich soil with partial shade; Light Full sun / Partial Shade.",
+          "transformation": "Primary preference partial shade → sunNeeds=partial_shade (full sun also listed)."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "Intolerant to overly wet or swampy soils and prolonged flooding; Good Drainage Moist."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Large fragrant creamy-white flowers late spring with sparse continued flowering through summer (May–June primary).",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU: fragrant creamy white flowers bloom in late spring, with sparse continued flowering throughout the summer; bloom from May to June."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Cone-like aggregate fruits mature September–October releasing red-coated seeds.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-magnolia-grandiflora"],
+          "shortExcerpt": "NCSU: fruits mature from September to October, releasing rose-red coated seeds."
+        }
+      ]
+    },
+    "oleander": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-nerium-oleander",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Nerium oleander",
+          "url": "https://plants.ces.ncsu.edu/plants/nerium-oleander/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: intolerant of temperatures at or below 32°F and may be damaged by cold winters.",
+          "transformation": "Damage at ≤32°F → frostSensitivity=high."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "Intolerant of ≤32°F; USDA zones 8a–10b."
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "status": "asserted",
+          "value": 0,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: intolerant of temperatures at or below 32 degrees F.",
+          "transformation": "32°F = 0°C stored as minimum_survival_temperature_c."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU Resistance To Challenges includes Heat, Drought, Salt, Urban Conditions."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: Drought-tolerant garden recommendation; Soil Drainage Occasionally Dry; Resistance Drought."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: prefers full sun to partial shade."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: well-drained, fertile soil; Good Drainage."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Blooms late spring to late summer on new growth.",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-nerium-oleander"],
+          "shortExcerpt": "NCSU: blooms in late spring to late summer; flowers appear on new growth."
+        }
+      ]
+    },
+    "common-thyme": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-thymus-vulgaris",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Thymus vulgaris (Common Thyme)",
+          "url": "https://plants.ces.ncsu.edu/plants/thymus-vulgaris/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "NCSU: It is frost and drought-tolerant. USDA zones 5a–9b."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "Frost-tolerant; USDA zones 5a–9b."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "NCSU: performs best in dry, sandy, or rocky soils; drought-tolerant; Occasionally Dry."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "NCSU: prefers full sun."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "NCSU: requires good drainage."
+        },
+        {
+          "field": "humidityTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["ncsu-thymus-vulgaris"],
+          "shortExcerpt": "Dry/rocky Mediterranean herb preference noted; no explicit atmospheric RH class on NCSU page.",
+          "reason": "No atmospheric humidityTolerance quote."
+        }
+      ]
+    },
+    "garden-sage": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-salvia-officinalis",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Salvia officinalis (Garden Sage)",
+          "url": "https://plants.ces.ncsu.edu/plants/salvia-officinalis/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "NCSU USDA Plant Hardiness Zone 4a–8b."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "USDA zones 4a–8b."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "NCSU: well-drained medium to dry soils; intolerant of wet or poorly drained soils; tolerates drought."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "NCSU: prefers full sun."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "Intolerant of wet or poorly drained soils; Good Drainage Occasionally Dry."
+        },
+        {
+          "field": "humidityTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "sourceIds": ["ncsu-salvia-officinalis"],
+          "shortExcerpt": "Mediterranean dry-soil preference; NCSU does not publish atmospheric RH tolerance class.",
+          "reason": "No atmospheric humidityTolerance quote."
+        }
+      ]
+    },
+    "loquat": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-eriobotrya-japonica",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Eriobotrya japonica (Loquat)",
+          "url": "https://plants.ces.ncsu.edu/plants/eriobotrya-japonica/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "NCSU: tree can survive temps down to about 10°F; if temperature falls below 28°F, blooms or fruit likely will not survive; USDA zones 8a–11b.",
+          "transformation": "Published wood survival ~10°F with bloom/fruit kill near 28°F → frostSensitivity=medium (not tropical high)."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 8a–11b; wood hardy near 10°F."
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "status": "asserted",
+          "value": -12,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "The tree itself can survive in temps down to about 10 degrees F.",
+          "transformation": "10°F ≈ −12°C stored as minimum_survival_temperature_c."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "Prefers full sun but will tolerate partial shade."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "Prefers moist, well-drained, loamy soil; Soil Drainage: Good Drainage Moist Occasionally Dry."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "NCSU landscape tags: Drought Tolerant; tolerates drought."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Blooms late fall through winter; fruit/bloom killed below ~28°F",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "Blooms late fall through winter; If the temperature falls below 28 degrees F, blooms or fruit likely will not survive."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Fruit set climate-limited; usually does not fruit in NC due to cold; harvest spring where set",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-eriobotrya-japonica"],
+          "shortExcerpt": "The plant usually does not fruit in NC due to its cold sensitivity; Display/Harvest Time: Spring."
+        }
+      ]
+    },
+    "feijoa": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-acca-sellowiana",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Acca sellowiana (Feijoa / Pineapple Guava)",
+          "url": "https://plants.ces.ncsu.edu/plants/acca-sellowiana/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 8a–10b."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "USDA zones 8a–10b."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "Best flowering and fruiting occurs in full sun but tolerates light shade; Full sun / Partial Shade listed."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "Prefers moist, well-drained soil; Soil Drainage: Good Drainage."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "Consistent soil moisture is important to produce quality fruits. Water deeply and regularly."
+        },
+        {
+          "field": "reproductive.sexSystem",
+          "status": "asserted",
+          "value": "hermaphrodite_cultivar_dependent",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "'Coolidge', 'Nazemata' and 'Pineapple Gem' are self-pollinating; 'Superba' needs another cultivar for good fruit set."
+        },
+        {
+          "field": "reproductive.selfFertility",
+          "status": "asserted",
+          "value": "cultivar_dependent",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "Self-pollinating selections listed; some cultivars need a partner for good fruit set."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Summer harvest; 4–7 months to ripen; cultivar pollination dependent",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-acca-sellowiana"],
+          "shortExcerpt": "Display/Harvest Time: Summer; Takes 4-7 months to ripen depending on the climate."
+        }
+      ]
+    },
+    "carob": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-ceratonia-siliqua",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Ceratonia siliqua (Carob)",
+          "url": "https://plants.ces.ncsu.edu/plants/ceratonia-siliqua/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "It is frost tender and in leaf all year; USDA zones 8a–11b."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Frost tender; USDA Plant Hardiness Zone 8a–11b."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "It does not tolerate shade; Full sun (6 or more hours)."
+        },
+        {
+          "field": "waterNeeds",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Prefers dry or moist soil and can tolerate drought; Drought Tolerant Garden / xeriscaping."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Prefers well-drained soil; Soil Drainage: Good Drainage."
+        },
+        {
+          "field": "reproductive.sexSystem",
+          "status": "asserted",
+          "value": "dioecious",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Individual flowers are either male or female, but only one sex is to be found on any one plant so both male and female plants must be grown if seed is required."
+        },
+        {
+          "field": "reproductive.sexRequirement",
+          "status": "asserted",
+          "value": "male_and_female_plants",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Both male and female plants must be grown if seed is required."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Pods on female plants; autumn flowering; pods take a full year",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-ceratonia-siliqua"],
+          "shortExcerpt": "Fruits form on female plants; pods take a full year to develop and ripen; Display/Harvest Time: Fall."
+        }
+      ]
+    },
+    "quince": {
+      "sourcesAdd": [
+        {
+          "sourceId": "rhs-quince-grow-your-own",
+          "institution": "Royal Horticultural Society",
+          "publisher": "Royal Horticultural Society",
+          "title": "How to grow quinces",
+          "url": "https://www.rhs.org.uk/fruit/quince/grow-your-own",
+          "authorityTier": "horticultural_society",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "RHS: Easy to grow, hardy and generally trouble-free; spring flowers susceptible to frost damage."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Described as hardy; planted dormant Nov–Mar in UK conditions."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Choose a warm, sunny, sheltered spot… sun is needed for the fruit to ripen."
+        },
+        {
+          "field": "reproductive.selfFertility",
+          "status": "asserted",
+          "value": "self_fertile",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Quince trees are self-fertile, so you’ll get a good crop with just one tree, without any need for a pollination partner."
+        },
+        {
+          "field": "reproductive.requiresPollinator",
+          "status": "asserted",
+          "value": false,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Self-fertile; no need for a pollination partner."
+        },
+        {
+          "field": "reproductive.reproductiveMaturityYears",
+          "status": "asserted",
+          "value": 5,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "They usually start cropping when five or six years old."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Late spring blossom; susceptible to late frost",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Quinces flower in late spring and are susceptible to damage by late frost."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Harvest Oct–Nov before first frost; self-fertile",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-quince-grow-your-own"],
+          "shortExcerpt": "Harvested in October or November… harvest before the first frost."
+        }
+      ]
+    },
+    "forsythia": {
+      "sourcesAdd": [
+        {
+          "sourceId": "rhs-forsythia-genus-guide",
+          "institution": "Royal Horticultural Society",
+          "publisher": "Royal Horticultural Society",
+          "title": "Forsythia — RHS Plant Guide",
+          "url": "https://www.rhs.org.uk/plants/forsythia",
+          "authorityTier": "horticultural_society",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-forsythia-genus-guide"],
+          "shortExcerpt": "They are very hardy and cope well in cold sites."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-forsythia-genus-guide"],
+          "shortExcerpt": "Very hardy and cope well in cold sites."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-forsythia-genus-guide"],
+          "shortExcerpt": "Tolerant of most soil types, in full sun or light shade; They flower poorly in shade."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-forsythia-genus-guide"],
+          "shortExcerpt": "Will not do well in excessively dry or permanently wet soil."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Early spring flowers on bare branches before leaves",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["rhs-forsythia-genus-guide"],
+          "shortExcerpt": "Vibrant yellow flowers… appear in early spring all along the bare branches, largely before the leaves unfurl."
+        }
+      ]
+    },
+    "common-lilac": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-syringa-vulgaris",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Syringa vulgaris (Common Lilac)",
+          "url": "https://plants.ces.ncsu.edu/plants/syringa-vulgaris/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-syringa-vulgaris"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 3a–7a; does best in cold winter climates."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-syringa-vulgaris"],
+          "shortExcerpt": "USDA zones 3a–7a; requires long winter chill for buds to mature."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-syringa-vulgaris"],
+          "shortExcerpt": "Light: Full sun (6 or more hours) / Partial Shade."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-syringa-vulgaris"],
+          "shortExcerpt": "Does not do well in soil that is highly acidic or poorly drained; Good Drainage Moist."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Spring bloom; requires winter chill; late frost may kill buds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-syringa-vulgaris"],
+          "shortExcerpt": "Require a long period of winter chill for the buds to mature; Late frost will sometimes kill the buds; Flower Bloom Time: Spring."
+        }
+      ]
+    },
+    "silver-birch": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-betula-pendula",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Betula pendula (Silver / European White Birch)",
+          "url": "https://plants.ces.ncsu.edu/plants/betula-pendula/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 2a–7b; does best in cool northern climates."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "Zones 2–7; short-lived in zones 8–9."
+        },
+        {
+          "field": "heatTolerance",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "Does best where summer temperatures rarely exceed 75°F; stressed by summer heat and humidity; not recommended south of USDA Zone 7."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "Full sun to part shade; best foliage color in full sun."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "Best in moist, acidic… well-drained loams; Soil Drainage: Good Drainage Moist Occasionally Dry."
+        },
+        {
+          "field": "reproductive.sexSystem",
+          "status": "asserted",
+          "value": "monoecious",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-betula-pendula"],
+          "shortExcerpt": "Tiny monoecious (male and female) flowers appear in early spring in separate catkins on the same tree."
+        }
+      ]
+    },
+    "sweet-cherry": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-prunus-avium",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Prunus avium (Sweet Cherry)",
+          "url": "https://plants.ces.ncsu.edu/plants/prunus-avium/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "USDA zones 3a–8b; Late frosts will damage the buds."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 3a–8b."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "Enjoys full sun; Light: Full sun (6 or more hours)."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "Prefers moisture-retentive soils that provide good drainage as it will not tolerate wet soils."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Spring bloom; late frost damages buds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "Showy white flowers in spring; Late frosts will damage the buds."
+        },
+        {
+          "field": "fruitingRequirements",
+          "status": "asserted",
+          "value": "Summer edible drupe; cultivar/pollination details not fully specified on this page",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "Fruit in summer; fleshy yellow to red to purple-red drupe."
+        },
+        {
+          "field": "reproductive.selfFertility",
+          "status": "asserted",
+          "value": "unknown",
+          "evidenceClass": "UNKNOWN",
+          "sourceIds": ["ncsu-prunus-avium"],
+          "shortExcerpt": "NCSU page does not state self-fertility or pollinator cultivar requirements.",
+          "reason": "Do not invent sweet-cherry pollination biology from horticultural lore."
+        }
+      ]
+    },
+    "chinese-wisteria": {
+      "sourcesAdd": [
+        {
+          "sourceId": "ncsu-wisteria-sinensis",
+          "institution": "North Carolina State University Extension Gardener",
+          "publisher": "NC State Extension",
+          "title": "Wisteria sinensis (Chinese Wisteria)",
+          "url": "https://plants.ces.ncsu.edu/plants/wisteria-sinensis/",
+          "authorityTier": "university_extension",
+          "verifiedAt": "2026-08-30"
+        }
+      ],
+      "claimUpdates": [
+        {
+          "field": "frostSensitivity",
+          "status": "asserted",
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "USDA Plant Hardiness Zone 5a–8b; a late spring frost can cause damage."
+        },
+        {
+          "field": "coldTolerance",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "USDA zones 5a–8b."
+        },
+        {
+          "field": "sunNeeds",
+          "status": "asserted",
+          "value": "full_sun",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "Needs full to partial sun."
+        },
+        {
+          "field": "drainageNeeds",
+          "status": "asserted",
+          "value": "medium",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "Moist clay to sandy soil with good drainage; can grow on wet or dry sites."
+        },
+        {
+          "field": "floweringRequirements",
+          "status": "asserted",
+          "value": "Spring racemes; may take 2–3+ years to flower; late frost damage possible",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "Flowers may not produce until the 2nd or 3rd year after planting, sometimes much longer; Flower Bloom Time: Spring."
+        },
+        {
+          "field": "reproductive.reproductiveMaturityYears",
+          "status": "asserted",
+          "value": 2,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "sourceIds": ["ncsu-wisteria-sinensis"],
+          "shortExcerpt": "Flowers may not produce until the 2nd or 3rd year after planting, sometimes much longer."
+        }
+      ]
+    }
+  },
+  "plantsProcessedWithoutNewSourceSupportedClaims": [
+    "mangosteen",
+    "breadfruit",
+    "acerola",
+    "longan",
+    "jaboticaba",
+    "white-sapote",
+    "red-currant",
+    "gooseberry",
+    "common-myrtle",
+    "garden-peony",
+    "blue-gum",
+    "turmeric"
+  ],
+  "plantsProcessedWithoutNewSourceSupportedClaimsReason": "Authoritative excerpts sufficient for safe SOURCE_SUPPORTED mapping were not accepted this turn; prior HEURISTIC_ASSERTION/UNKNOWN retained (no invented certainty)."
+}

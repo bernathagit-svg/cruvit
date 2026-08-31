@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "bay-laurel-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "bay-laurel",
@@ -15,7 +15,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -26,6 +28,24 @@
       "url": "https://www.rhs.org.uk/plants/9968/laurus-nobilis/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "rhs-bay-tree-growing-guide",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Bay tree (Laurus nobilis) — RHS Advice Guide",
+      "url": "https://www.rhs.org.uk/plants/bay-tree/growing-guide",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-30"
+    },
+    {
+      "sourceId": "ncsu-laurus-nobilis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Laurus nobilis (Bay Laurel)",
+      "url": "https://plants.ces.ncsu.edu/plants/laurus-nobilis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -60,9 +80,13 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "RHS: 'Generally hardy to -5°C (23°F) but can withstand lower temperatures in sheltered positions' and frost can damage foliage; NCSU: 'needs to be brought indoors in the winter in areas colder than zone 8b to prevent frost damage' (USDA 8b–10b).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Mapped RHS ground hardiness ~-5°C + NCSU zone 8b frost-damage threshold to qualitative frostSensitivity=medium (neither frost-intolerant tropical nor fully frost-hardy temperate).",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -70,9 +94,13 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "RHS generally hardy to -5°C; NCSU USDA Plant Hardiness Zone 8b–10b; colder than 8b requires winter protection.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 8b–10b / ~-5°C published hardiness → coldTolerance=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -80,9 +108,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Heat tolerance characterized as high."
+      "shortExcerpt": "No explicit heat-tolerance rating found in consulted RHS/NCSU pages; Mediterranean native range retained as provisional heuristic.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": null,
+      "enrichmentReason": "Authoritative sources do not publish a direct heatTolerance label."
     },
     {
       "claimId": "humidity",
@@ -90,9 +121,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Humidity tolerance characterized as low."
+      "shortExcerpt": "NCSU/RHS pages do not state an atmospheric RH mortality or humidity-tolerance class; Mediterranean origin alone is insufficient for SOURCE_SUPPORTED humidityTolerance.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": null,
+      "enrichmentReason": "No supporting atmospheric-humidity excerpt."
     },
     {
       "claimId": "water",
@@ -100,9 +134,13 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as low."
+      "shortExcerpt": "RHS: water container-grown bay moderately; over-watering can cause root damage. NCSU Soil Drainage: Good Drainage; Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moderate watering + avoid waterlogging / occasionally dry → waterNeeds=low (drought-tolerant once established; not high-moisture).",
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -110,9 +148,13 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "RHS Aspect: Full sun or partial shade. NCSU Light: Full sun (6 or more hours) / Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Canonical sunNeeds=full_sun as primary recommendation; partial shade also acceptable per sources.",
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -120,9 +162,13 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "RHS: 'Bay needs a well-drained soil'. NCSU: Soil Drainage Good Drainage; leaf spots often caused by waterlogged roots.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained / avoid waterlogging → drainageNeeds=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -130,9 +176,12 @@
       "status": "asserted",
       "value": false,
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide"
       ],
-      "shortExcerpt": "Not a temperate chill-requiring crop in the sourced home-landscape guidance."
+      "shortExcerpt": "Evergreen Mediterranean shrub; sources describe frost protection needs, not a temperate winter-chill hour requirement for flowering.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Absence of chill-hour requirement in RHS/NCSU guidance + evergreen Mediterranean habit → needsWinterChill=false.",
+      "enrichmentReason": null
     },
     {
       "claimId": "climate-label",
@@ -211,22 +260,97 @@
     {
       "claimId": "flowering",
       "field": "floweringRequirements",
-      "status": "unknown",
-      "value": null,
+      "status": "asserted",
+      "value": "Small greenish-yellow male or female flowers in spring (RHS); NCSU: green/white/yellow flowers March–May on dioecious trees.",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Flowering requirements not asserted beyond identity-level landscape notes."
+      "shortExcerpt": "RHS: Small greenish-yellow male or female flowers are produced in spring. NCSU: Dioecious; flowers appear in the spring from March to May.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
-      "status": "unknown",
-      "value": null,
+      "status": "asserted",
+      "value": "Black/purple drupes form on female plants after pollination; not a culinary fruit crop requirement for leaf use.",
       "sourceIds": [
-        "rhs-laurus-nobilis"
+        "rhs-bay-tree-growing-guide",
+        "ncsu-laurus-nobilis"
       ],
-      "shortExcerpt": "Fruiting / productive requirements not asserted (ornamental/herb or insufficient evidence)."
+      "shortExcerpt": "RHS: flowers followed by black berries on female plants. NCSU: only female plants produce fleshy black/purple drupes.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "quantitative-minimum-survival-temperature-c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -5,
+      "sourceIds": [
+        "rhs-bay-tree-growing-guide"
+      ],
+      "shortExcerpt": "Hardiness — Generally hardy to -5°C (23°F) but can withstand lower temperatures in sheltered positions. Bay is hardier when planted in the ground.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Stored RHS published general hardiness figure as minimum_survival_temperature_c=-5. Not an absolute extreme-event authority.",
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-dioecious",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-laurus-nobilis",
+        "rhs-bay-tree-growing-guide"
+      ],
+      "shortExcerpt": "NCSU: 'It has separate male and female plants (i.e., it is dioecious), with only the female ones producing the fleshy, black drupes.' RHS: male or female flowers; black berries on female plants.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-requires-pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-laurus-nobilis"
+      ],
+      "shortExcerpt": "Dioecious; fruit forms on female plants only — pollen from a male plant is required for seeded fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Dioecy + female-only fruit → requires_pollinator=true for fruit set (leaf harvest does not require fruit).",
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-sex-requirement",
+      "field": "reproductive.sex_requirement",
+      "status": "asserted",
+      "value": "female_plus_male_for_fruit",
+      "sourceIds": [
+        "ncsu-laurus-nobilis",
+        "rhs-bay-tree-growing-guide"
+      ],
+      "shortExcerpt": "Female plants produce berries/drupes; male or female flowers on separate plants.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-self-fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-laurus-nobilis"
+      ],
+      "shortExcerpt": "Dioecious species — individual plants are not self-fertile for fruit production.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Dioecy implies self_fertile=false for fruit set.",
+      "enrichmentReason": null
     }
   ],
   "image": {

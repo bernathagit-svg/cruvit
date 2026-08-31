@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "garden-sage-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "garden-sage",
@@ -15,7 +15,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -26,6 +28,15 @@
       "url": "https://www.rhs.org.uk/plants/16352/salvia-officinalis/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-salvia-officinalis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Salvia officinalis (Garden Sage)",
+      "url": "https://plants.ces.ncsu.edu/plants/salvia-officinalis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,21 +69,27 @@
       "claimId": "frost",
       "field": "frostSensitivity",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "NCSU USDA Plant Hardiness Zone 4a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
       "field": "coldTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "USDA zones 4a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -90,9 +107,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Humidity tolerance characterized as low."
+      "shortExcerpt": "Mediterranean dry-soil preference; NCSU does not publish atmospheric RH tolerance class.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": null,
+      "enrichmentReason": "No atmospheric humidityTolerance quote."
     },
     {
       "claimId": "water",
@@ -100,9 +120,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as low."
+      "shortExcerpt": "NCSU: well-drained medium to dry soils; intolerant of wet or poorly drained soils; tolerates drought.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -110,9 +133,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU: prefers full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -120,9 +146,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-salvia-officinalis"
+        "ncsu-salvia-officinalis"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Intolerant of wet or poorly drained soils; Good Drainage Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",

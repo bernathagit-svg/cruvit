@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "feijoa-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "feijoa",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/MG045",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-acca-sellowiana",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Acca sellowiana (Feijoa / Pineapple Guava)",
+      "url": "https://plants.ces.ncsu.edu/plants/acca-sellowiana/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "USDA Plant Hardiness Zone 8a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "USDA zones 8a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -98,9 +115,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as medium."
+      "shortExcerpt": "Consistent soil moisture is important to produce quality fruits. Water deeply and regularly.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -108,9 +128,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Best flowering and fruiting occurs in full sun but tolerates light shade; Full sun / Partial Shade listed.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +141,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Prefers moist, well-drained soil; Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -220,11 +246,40 @@
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Autumn fruit in mild subtropical/Mediterranean climates; hard freezes damage plants.",
+      "value": "Summer harvest; 4–7 months to ripen; cultivar pollination dependent",
       "sourceIds": [
-        "uf-ifas-feijoa"
+        "ncsu-acca-sellowiana"
       ],
-      "shortExcerpt": "Autumn fruit in mild subtropical/Mediterranean climates; hard freezes damage plants."
+      "shortExcerpt": "Display/Harvest Time: Summer; Takes 4-7 months to ripen depending on the climate.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-sexSystem",
+      "field": "reproductive.sexSystem",
+      "status": "asserted",
+      "value": "hermaphrodite_cultivar_dependent",
+      "sourceIds": [
+        "ncsu-acca-sellowiana"
+      ],
+      "shortExcerpt": "'Coolidge', 'Nazemata' and 'Pineapple Gem' are self-pollinating; 'Superba' needs another cultivar for good fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-selfFertility",
+      "field": "reproductive.selfFertility",
+      "status": "asserted",
+      "value": "cultivar_dependent",
+      "sourceIds": [
+        "ncsu-acca-sellowiana"
+      ],
+      "shortExcerpt": "Self-pollinating selections listed; some cultivars need a partner for good fruit set.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

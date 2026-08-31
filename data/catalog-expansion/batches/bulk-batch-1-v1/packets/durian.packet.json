@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "durian-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "durian",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/MG004",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "prosea-durio-zibethinus",
+      "institution": "PROSEA / Pl@ntUse",
+      "publisher": "Plant Resources of South-East Asia",
+      "title": "Durio zibethinus (PROSEA)",
+      "url": "https://plantuse.plantnet.org/en/Durio_zibethinus_(PROSEA)",
+      "authorityTier": "species_monograph",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as high for home-landscape use."
+      "shortExcerpt": "PROSEA: 'Durian is strictly tropical; it is grown successfully up to 800 m elevation near the equator, and up to 18° from the equator in Thailand and Queensland.'",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Strictly tropical cultivation envelope → frostSensitivity=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Cold tolerance characterized as low."
+      "shortExcerpt": "PROSEA: strictly tropical; at extreme latitudes extension growth halts when mean temperatures are below 22°C.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Strict tropical + growth halt below ~22°C mean → coldTolerance=low. No published absolute frost-kill °C in this source → no invented minimum_survival_temperature_c.",
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -78,9 +95,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Heat tolerance characterized as high."
+      "shortExcerpt": "Strictly tropical lowland crop grown near equator / tropical latitudes with warm-season production.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Strict tropical production climates → heatTolerance=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "humidity",
@@ -88,9 +108,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Humidity tolerance characterized as high."
+      "shortExcerpt": "PROSEA emphasizes rainfall distribution and irrigation; does not publish an atmospheric RH class. Keeping humidityTolerance provisional.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": null,
+      "enrichmentReason": "Rainfall ≠ atmospheric humidityTolerance SOURCE_SUPPORTED."
     },
     {
       "claimId": "water",
@@ -98,9 +121,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as high."
+      "shortExcerpt": "PROSEA: 'A well-distributed rainfall of 1500 mm or more is needed… If there is a prominent dry season… a dependable irrigation system is essential.'",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "≥1500 mm + dry-season irrigation need → waterNeeds=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -128,9 +154,12 @@
       "status": "asserted",
       "value": false,
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Not a temperate chill-requiring crop in the sourced home-landscape guidance."
+      "shortExcerpt": "Strictly tropical; dry/cool cues described are not temperate winter chill-hour requirements.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Tropical phenology ≠ needsWinterChill.",
+      "enrichmentReason": null
     },
     {
       "claimId": "climate-label",
@@ -222,21 +251,27 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set.",
+      "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop.",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+      "shortExcerpt": "PROSEA: flowering associated with subdued extension growth following a cool or dry period; monsoon climates flower late in dry season.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees.",
+      "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates.",
       "sourceIds": [
-        "uf-ifas-durian-hs37"
+        "prosea-durio-zibethinus"
       ],
-      "shortExcerpt": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+      "shortExcerpt": "PROSEA: flowering and fruiting appear more prolific at seasonal tropical extremes than in non-seasonal climates; rainfall/irrigation critical.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

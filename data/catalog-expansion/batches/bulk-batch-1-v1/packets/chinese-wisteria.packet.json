@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "chinese-wisteria-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "chinese-wisteria",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/19014/wisteria-sinensis/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-wisteria-sinensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Wisteria sinensis (Chinese Wisteria)",
+      "url": "https://plants.ces.ncsu.edu/plants/wisteria-sinensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -56,21 +67,27 @@
       "claimId": "frost",
       "field": "frostSensitivity",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-wisteria-sinensis"
+        "ncsu-wisteria-sinensis"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "USDA Plant Hardiness Zone 5a–8b; a late spring frost can cause damage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
       "field": "coldTolerance",
       "status": "asserted",
-      "value": "high",
+      "value": "medium",
       "sourceIds": [
-        "rhs-wisteria-sinensis"
+        "ncsu-wisteria-sinensis"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "USDA zones 5a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -108,9 +125,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-wisteria-sinensis"
+        "ncsu-wisteria-sinensis"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Needs full to partial sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +138,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-wisteria-sinensis"
+        "ncsu-wisteria-sinensis"
       ],
-      "shortExcerpt": "Drainage needs characterized as medium."
+      "shortExcerpt": "Moist clay to sandy soil with good drainage; can grow on wet or dry sites.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -210,11 +233,14 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Spring racemes after winter chill; vigorous vine; invasive risk in some regions.",
+      "value": "Spring racemes; may take 2–3+ years to flower; late frost damage possible",
       "sourceIds": [
-        "rhs-wisteria-sinensis"
+        "ncsu-wisteria-sinensis"
       ],
-      "shortExcerpt": "Spring racemes after winter chill; vigorous vine; invasive risk in some regions."
+      "shortExcerpt": "Flowers may not produce until the 2nd or 3rd year after planting, sometimes much longer; Flower Bloom Time: Spring.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
@@ -225,6 +251,19 @@
         "rhs-wisteria-sinensis"
       ],
       "shortExcerpt": "Fruiting / productive requirements not asserted (ornamental/herb or insufficient evidence)."
+    },
+    {
+      "claimId": "reproductive-reproductiveMaturityYears",
+      "field": "reproductive.reproductiveMaturityYears",
+      "status": "asserted",
+      "value": 2,
+      "sourceIds": [
+        "ncsu-wisteria-sinensis"
+      ],
+      "shortExcerpt": "Flowers may not produce until the 2nd or 3rd year after planting, sometimes much longer.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

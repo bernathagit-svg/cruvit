@@ -1,0 +1,2218 @@
+{
+  "gate": "CRUVIT_BATCH_1_SOURCE_SUPPORTED_ENRICHMENT_V1",
+  "verdict": "CRUVIT_BATCH_1_SOURCE_SUPPORTED_ENRICHMENT_V1: PASS",
+  "baselineEvidence": {
+    "SOURCE_SUPPORTED": 78,
+    "HEURISTIC_ASSERTION": 210,
+    "UNKNOWN": 12
+  },
+  "afterEvidence": {
+    "SOURCE_SUPPORTED": 189,
+    "HEURISTIC_ASSERTION": 125,
+    "UNKNOWN": 11
+  },
+  "sourceSupportedDelta": 111,
+  "byFieldAfter": {
+    "frostSensitivity": {
+      "SOURCE_SUPPORTED": 18,
+      "HEURISTIC_ASSERTION": 12,
+      "UNKNOWN": 0
+    },
+    "coldTolerance": {
+      "SOURCE_SUPPORTED": 18,
+      "HEURISTIC_ASSERTION": 12,
+      "UNKNOWN": 0
+    },
+    "heatTolerance": {
+      "SOURCE_SUPPORTED": 5,
+      "HEURISTIC_ASSERTION": 25,
+      "UNKNOWN": 0
+    },
+    "humidityTolerance": {
+      "SOURCE_SUPPORTED": 1,
+      "HEURISTIC_ASSERTION": 29,
+      "UNKNOWN": 0
+    },
+    "waterNeeds": {
+      "SOURCE_SUPPORTED": 11,
+      "HEURISTIC_ASSERTION": 19,
+      "UNKNOWN": 0
+    },
+    "sunNeeds": {
+      "SOURCE_SUPPORTED": 17,
+      "HEURISTIC_ASSERTION": 13,
+      "UNKNOWN": 0
+    },
+    "drainageNeeds": {
+      "SOURCE_SUPPORTED": 16,
+      "HEURISTIC_ASSERTION": 14,
+      "UNKNOWN": 0
+    },
+    "needsWinterChill": {
+      "SOURCE_SUPPORTED": 29,
+      "HEURISTIC_ASSERTION": 1,
+      "UNKNOWN": 0
+    },
+    "floweringRequirements": {
+      "SOURCE_SUPPORTED": 30,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "fruitingRequirements": {
+      "SOURCE_SUPPORTED": 20,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 10
+    },
+    "quantitative.minimum_survival_temperature_c": {
+      "SOURCE_SUPPORTED": 4,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.dioecious": {
+      "SOURCE_SUPPORTED": 3,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.self_fertile": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.requires_pollinator": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.reproductive_maturity_requirement": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.sexSystem": {
+      "SOURCE_SUPPORTED": 3,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.selfFertility": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 1
+    },
+    "reproductive.requiresPollinator": {
+      "SOURCE_SUPPORTED": 1,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.reproductiveMaturityYears": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.sexRequirement": {
+      "SOURCE_SUPPORTED": 1,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    },
+    "reproductive.sex_requirement": {
+      "SOURCE_SUPPORTED": 2,
+      "HEURISTIC_ASSERTION": 0,
+      "UNKNOWN": 0
+    }
+  },
+  "plantsEnrichedThisTurn": [
+    "bay-laurel",
+    "durian",
+    "english-walnut",
+    "persimmon",
+    "ginkgo",
+    "southern-magnolia",
+    "oleander",
+    "common-thyme",
+    "garden-sage",
+    "loquat",
+    "feijoa",
+    "carob",
+    "quince",
+    "forsythia",
+    "common-lilac",
+    "silver-birch",
+    "sweet-cherry",
+    "chinese-wisteria"
+  ],
+  "plantsProcessedWithoutNewClaims": [
+    "mangosteen",
+    "breadfruit",
+    "acerola",
+    "longan",
+    "jaboticaba",
+    "white-sapote",
+    "red-currant",
+    "gooseberry",
+    "common-myrtle",
+    "garden-peony",
+    "blue-gum",
+    "turmeric"
+  ],
+  "perPlantSummary": [
+    {
+      "slug": "durian",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 7,
+      "heuristicRetainedOrMarked": 1,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "mangosteen",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "breadfruit",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "acerola",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "longan",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "loquat",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 8,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "persimmon",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 11,
+      "heuristicRetainedOrMarked": 1,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "feijoa",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 8,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "jaboticaba",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "white-sapote",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "sweet-cherry",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 6,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "english-walnut",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 11,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "red-currant",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "gooseberry",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "quince",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 8,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "carob",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 8,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "common-myrtle",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "bay-laurel",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 13,
+      "heuristicRetainedOrMarked": 2,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "oleander",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 8,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "garden-peony",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "common-lilac",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 5,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "forsythia",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 5,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "southern-magnolia",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 7,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "chinese-wisteria",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 6,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "ginkgo",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 9,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "silver-birch",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 6,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "blue-gum",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "common-thyme",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 5,
+      "heuristicRetainedOrMarked": 1,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "garden-sage",
+      "enrichedThisTurn": true,
+      "sourceSupportedClaimUpdates": 5,
+      "heuristicRetainedOrMarked": 1,
+      "packetSourceSupportedDelta": 0
+    },
+    {
+      "slug": "turmeric",
+      "enrichedThisTurn": false,
+      "sourceSupportedClaimUpdates": 0,
+      "heuristicRetainedOrMarked": 0,
+      "packetSourceSupportedDelta": 0
+    }
+  ],
+  "sourcesInspected": [
+    "prosea-durio-zibethinus",
+    "ncsu-eriobotrya-japonica",
+    "ncsu-diospyros-kaki",
+    "ncsu-acca-sellowiana",
+    "ncsu-prunus-avium",
+    "ncsu-juglans-regia",
+    "ucanr-walnut-chill-portions",
+    "rhs-quince-grow-your-own",
+    "ncsu-ceratonia-siliqua",
+    "rhs-bay-tree-growing-guide",
+    "ncsu-laurus-nobilis",
+    "ncsu-nerium-oleander",
+    "ncsu-syringa-vulgaris",
+    "rhs-forsythia-genus-guide",
+    "ncsu-magnolia-grandiflora",
+    "ncsu-wisteria-sinensis",
+    "ncsu-ginkgo-biloba",
+    "ncsu-betula-pendula",
+    "ncsu-thymus-vulgaris",
+    "ncsu-salvia-officinalis"
+  ],
+  "acceptedAuthoritativeClaimUpdates": 136,
+  "paidApiCostUsd": 0,
+  "aiApiCostUsd": 0,
+  "bayLaurelSixSite": [
+    {
+      "Location": "yehiam",
+      "Survival": "reliable",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "bounded-or-source-mixed",
+      "authorizingSourceSupported": [
+        {
+          "dimension": "Survival",
+          "status": "reliable",
+          "materialFields": [
+            {
+              "field": "frostSensitivity",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            },
+            {
+              "field": "coldTolerance",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Location": "singapore",
+      "Survival": "reliable",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "source-supported-where-confident",
+      "authorizingSourceSupported": [
+        {
+          "dimension": "Survival",
+          "status": "reliable",
+          "materialFields": [
+            {
+              "field": "frostSensitivity",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            },
+            {
+              "field": "coldTolerance",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Location": "cairo",
+      "Survival": "reliable",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "bounded-or-source-mixed",
+      "authorizingSourceSupported": [
+        {
+          "dimension": "Survival",
+          "status": "reliable",
+          "materialFields": [
+            {
+              "field": "frostSensitivity",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            },
+            {
+              "field": "coldTolerance",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Location": "tokyo",
+      "Survival": "constrained",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "bounded-or-source-mixed",
+      "authorizingSourceSupported": []
+    },
+    {
+      "Location": "helsinki",
+      "Survival": "unreliable",
+      "Growth": "poor",
+      "Flowering": "unknown",
+      "Fruiting": "unreliable",
+      "Overall": "blocked",
+      "Confidence": "source-supported-where-confident",
+      "authorizingSourceSupported": [
+        {
+          "dimension": "Survival",
+          "status": "unreliable",
+          "materialFields": [
+            {
+              "field": "quantitative.minimum_survival_temperature_c",
+              "evidenceClass": "SOURCE_SUPPORTED"
+            }
+          ]
+        },
+        {
+          "dimension": "Growth",
+          "status": "poor",
+          "materialFields": [
+            {
+              "field": "quantitative.minimum_survival_temperature_c",
+              "evidenceClass": "SOURCE_SUPPORTED"
+            }
+          ]
+        },
+        {
+          "dimension": "Fruiting",
+          "status": "unreliable",
+          "materialFields": [
+            {
+              "field": "fruitingRequirements",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "Black/purple drupes form on female plants after pollination; not a culinary fruit crop requirement for leaf use."
+            },
+            {
+              "field": "reproductive.dioecious",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": true
+            },
+            {
+              "field": "reproductive.requires_pollinator",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": true
+            },
+            {
+              "field": "reproductive.sex_requirement",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "female_plus_male_for_fruit"
+            },
+            {
+              "field": "reproductive.self_fertile",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Location": "quito",
+      "Survival": "reliable",
+      "Growth": "constrained",
+      "Flowering": "unknown",
+      "Fruiting": "unknown",
+      "Overall": "borderline",
+      "Confidence": "source-supported-where-confident",
+      "authorizingSourceSupported": [
+        {
+          "dimension": "Survival",
+          "status": "reliable",
+          "materialFields": [
+            {
+              "field": "frostSensitivity",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            },
+            {
+              "field": "coldTolerance",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "value": "medium"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "spotChecks": {
+    "bay-laurel": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": "Authoritative sources do not publish a direct heatTolerance label."
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "low",
+          "reason": "No supporting atmospheric-humidity excerpt."
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "full_sun",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Small greenish-yellow male or female flowers in spring (RHS); NCSU: green/white/yellow flowers March–May on dioecious trees.",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Black/purple drupes form on female plants after pollination; not a culinary fruit crop requirement for leaf use.",
+          "reason": null
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": -5,
+          "reason": null
+        },
+        {
+          "field": "reproductive.dioecious",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": true,
+          "reason": null
+        },
+        {
+          "field": "reproductive.requires_pollinator",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": true,
+          "reason": null
+        },
+        {
+          "field": "reproductive.sex_requirement",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "female_plus_male_for_fruit",
+          "reason": null
+        },
+        {
+          "field": "reproductive.self_fertile",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": false,
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": []
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unknown",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "quantitative.minimum_survival_temperature_c",
+                  "evidenceClass": "SOURCE_SUPPORTED"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "quantitative.minimum_survival_temperature_c",
+                  "evidenceClass": "SOURCE_SUPPORTED"
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Black/purple drupes form on female plants after pollination; not a culinary fruit crop requirement for leaf use."
+                },
+                {
+                  "field": "reproductive.dioecious",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": true
+                },
+                {
+                  "field": "reproductive.requires_pollinator",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": true
+                },
+                {
+                  "field": "reproductive.sex_requirement",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "female_plus_male_for_fruit"
+                },
+                {
+                  "field": "reproductive.self_fertile",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "quito",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "durian": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": "Rainfall ≠ atmospheric humidityTolerance SOURCE_SUPPORTED."
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "full_sun",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop.",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates.",
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "quito",
+          "Survival": "unreliable",
+          "Growth": "poor",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "blocked",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "poor",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Floral development associated with subdued extension growth after cool or dry periods; monsoon/humid tropics timing varies; not temperate chill-hour crop."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Strictly tropical climates; flowering/fruiting more prolific with seasonal cool/dry cues than non-seasonal equatorial climates."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "english-walnut": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "full_sun",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Spring bloom (May–June per NCSU); reliable leafing/flowering depends on winter chill accumulation (cultivar-specific).",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Edible nuts mature in fall; trees begin nuts ~4–6 years, good crops often after 15–20 years (NCSU).",
+          "reason": null
+        },
+        {
+          "field": "reproductive.reproductive_maturity_requirement",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "nuts_begin_4_to_6_years_good_crop_often_15_to_20_years",
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "reliable",
+          "Growth": "supported",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "supported",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom (May–June per NCSU); reliable leafing/flowering depends on winter chill accumulation (cultivar-specific)."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Edible nuts mature in fall; trees begin nuts ~4–6 years, good crops often after 15–20 years (NCSU)."
+                },
+                {
+                  "field": "reproductive.reproductive_maturity_requirement",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "nuts_begin_4_to_6_years_good_crop_often_15_to_20_years"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "reliable",
+          "Growth": "supported",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "supported",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "reliable",
+          "Growth": "supported",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            },
+            {
+              "dimension": "Growth",
+              "status": "supported",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "quito",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "persimmon": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "full_sun",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Generally bloom mid-April; avoid late frost damage to flowers.",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Trees usually need 4–6 years before bearing; may set seedless fruit without pollination (parthenocarpic) though planting more than one variety is recommended for large yields.",
+          "reason": null
+        },
+        {
+          "field": "quantitative.minimum_survival_temperature_c",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": -12,
+          "reason": null
+        },
+        {
+          "field": "reproductive.dioecious",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": true,
+          "reason": null
+        },
+        {
+          "field": "reproductive.self_fertile",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": true,
+          "reason": null
+        },
+        {
+          "field": "reproductive.requires_pollinator",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": false,
+          "reason": null
+        },
+        {
+          "field": "reproductive.reproductive_maturity_requirement",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "bear_fruit_after_4_to_6_years",
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            },
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Generally bloom mid-April; avoid late frost damage to flowers."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Trees usually need 4–6 years before bearing; may set seedless fruit without pollination (parthenocarpic) though planting more than one variety is recommended for large yields."
+                },
+                {
+                  "field": "reproductive.dioecious",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": true
+                },
+                {
+                  "field": "reproductive.self_fertile",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": true
+                },
+                {
+                  "field": "reproductive.requires_pollinator",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": false
+                },
+                {
+                  "field": "reproductive.reproductive_maturity_requirement",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "bear_fruit_after_4_to_6_years"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": []
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": []
+        },
+        {
+          "Location": "quito",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "southern-magnolia": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "partial_shade",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Large fragrant creamy-white flowers late spring with sparse continued flowering through summer (May–June primary).",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Cone-like aggregate fruits mature September–October releasing red-coated seeds.",
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unlikely",
+          "Fruiting": "unreliable",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Flowering",
+              "status": "unlikely",
+              "materialFields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large fragrant creamy-white flowers late spring with sparse continued flowering through summer (May–June primary)."
+                }
+              ]
+            },
+            {
+              "dimension": "Fruiting",
+              "status": "unreliable",
+              "materialFields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cone-like aggregate fruits mature September–October releasing red-coated seeds."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": []
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "constrained",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": []
+        },
+        {
+          "Location": "quito",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "ginkgo": {
+      "evidenceTable": [
+        {
+          "field": "frostSensitivity",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "coldTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "heatTolerance",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "humidityTolerance",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "value": "medium",
+          "reason": null
+        },
+        {
+          "field": "waterNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "low",
+          "reason": null
+        },
+        {
+          "field": "sunNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "full_sun",
+          "reason": null
+        },
+        {
+          "field": "drainageNeeds",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "high",
+          "reason": null
+        },
+        {
+          "field": "floweringRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Dioecious; inconspicuous reproductive structures; grown for foliage.",
+          "reason": null
+        },
+        {
+          "field": "fruitingRequirements",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "Female trees produce foul-smelling fleshy seeds in fall; not a conventional culinary fruit crop in landscape use.",
+          "reason": null
+        },
+        {
+          "field": "reproductive.dioecious",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": true,
+          "reason": null
+        },
+        {
+          "field": "reproductive.sex_requirement",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "value": "female_for_seeds_male_preferred_ornamental",
+          "reason": null
+        }
+      ],
+      "sites": [
+        {
+          "Location": "yehiam",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "singapore",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "cairo",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "tokyo",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "helsinki",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "Location": "quito",
+          "Survival": "reliable",
+          "Growth": "constrained",
+          "Flowering": "unknown",
+          "Fruiting": "unknown",
+          "Overall": "borderline",
+          "authorizingSourceSupported": [
+            {
+              "dimension": "Survival",
+              "status": "reliable",
+              "materialFields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "matrixEvaluations": 210,
+  "CONFIDENT_RESULTS_DEPENDING_ON_HEURISTIC_EVIDENCE": 0,
+  "materialFp": 0,
+  "materialFn": 0,
+  "regression210_250": {
+    "note": "Re-run plant-climate-v2-integration-gate.mjs after enrichment",
+    "required": "materialFp=0 materialFn=0"
+  },
+  "handoff": {
+    "path": "data/catalog-expansion/batches/bulk-batch-1-v1/handoff/catalog_plants_enrichment_handoff.json",
+    "sha256": "5764e44a418d6daa4aa4e38cb0499e21b401e695e84374fac9e957178c35aca3",
+    "liveUpsert": false
+  },
+  "remaining": {
+    "P0": [],
+    "P1": [
+      "Owner review + live persistence of handoff (not done this turn)",
+      "Optional further SOURCE_SUPPORTED for 12 Batch 1 plants without new claims this turn"
+    ],
+    "P2": [
+      "Extreme-event climate authority; CURRENT_NORMAL layer"
+    ],
+    "P3": [
+      "Batch 2 only after persistence closure"
+    ]
+  },
+  "livePersistenceReady": false,
+  "batch2MayBeginOnlyAfterPersistenceClosure": true
+}

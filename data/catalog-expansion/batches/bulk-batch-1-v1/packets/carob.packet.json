@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "carob-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "carob",
@@ -15,7 +15,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -26,6 +28,15 @@
       "url": "https://ucanr.edu/sites/default/files/2021-12/carob.pdf",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-ceratonia-siliqua",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Ceratonia siliqua (Carob)",
+      "url": "https://plants.ces.ncsu.edu/plants/ceratonia-siliqua/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,21 +69,27 @@
       "claimId": "frost",
       "field": "frostSensitivity",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "It is frost tender and in leaf all year; USDA zones 8a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
       "field": "coldTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "Frost tender; USDA Plant Hardiness Zone 8a–11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -100,9 +117,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as low."
+      "shortExcerpt": "Prefers dry or moist soil and can tolerate drought; Drought Tolerant Garden / xeriscaping.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -110,9 +130,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "It does not tolerate shade; Full sun (6 or more hours).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -120,9 +143,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "Prefers well-drained soil; Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -222,11 +248,40 @@
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young.",
+      "value": "Pods on female plants; autumn flowering; pods take a full year",
       "sourceIds": [
-        "ucanr-carob"
+        "ncsu-ceratonia-siliqua"
       ],
-      "shortExcerpt": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+      "shortExcerpt": "Fruits form on female plants; pods take a full year to develop and ripen; Display/Harvest Time: Fall.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-sexSystem",
+      "field": "reproductive.sexSystem",
+      "status": "asserted",
+      "value": "dioecious",
+      "sourceIds": [
+        "ncsu-ceratonia-siliqua"
+      ],
+      "shortExcerpt": "Individual flowers are either male or female, but only one sex is to be found on any one plant so both male and female plants must be grown if seed is required.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-sexRequirement",
+      "field": "reproductive.sexRequirement",
+      "status": "asserted",
+      "value": "male_and_female_plants",
+      "sourceIds": [
+        "ncsu-ceratonia-siliqua"
+      ],
+      "shortExcerpt": "Both male and female plants must be grown if seed is required.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

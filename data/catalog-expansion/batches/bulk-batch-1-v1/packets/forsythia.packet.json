@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "forsythia-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "forsythia",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/7486/forsythia-x-intermedia/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "rhs-forsythia-genus-guide",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Forsythia — RHS Plant Guide",
+      "url": "https://www.rhs.org.uk/plants/forsythia",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-forsythia-intermedia"
+        "rhs-forsythia-genus-guide"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as low for home-landscape use."
+      "shortExcerpt": "They are very hardy and cope well in cold sites.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-forsythia-intermedia"
+        "rhs-forsythia-genus-guide"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "Very hardy and cope well in cold sites.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -108,9 +125,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-forsythia-intermedia"
+        "rhs-forsythia-genus-guide"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Tolerant of most soil types, in full sun or light shade; They flower poorly in shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +138,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "rhs-forsythia-intermedia"
+        "rhs-forsythia-genus-guide"
       ],
-      "shortExcerpt": "Drainage needs characterized as medium."
+      "shortExcerpt": "Will not do well in excessively dry or permanently wet soil.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -209,11 +232,14 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Early spring yellow flowers on previous wood after winter chill.",
+      "value": "Early spring flowers on bare branches before leaves",
       "sourceIds": [
-        "rhs-forsythia-intermedia"
+        "rhs-forsythia-genus-guide"
       ],
-      "shortExcerpt": "Early spring yellow flowers on previous wood after winter chill."
+      "shortExcerpt": "Vibrant yellow flowers… appear in early spring all along the bare branches, largely before the leaves unfurl.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",

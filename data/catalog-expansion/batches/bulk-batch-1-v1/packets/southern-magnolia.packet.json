@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "southern-magnolia-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "southern-magnolia",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://edis.ifas.ufl.edu/publication/ST375",
       "authorityTier": "university_extension",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-magnolia-grandiflora",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Magnolia grandiflora (Southern Magnolia)",
+      "url": "https://plants.ces.ncsu.edu/plants/magnolia-grandiflora/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "NCSU USDA zones 6a–10b; some cultivars winter hardy to zone 6.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 6–10 evergreen → frostSensitivity=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,9 +82,12 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "NCSU USDA Plant Hardiness Zone 6a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -98,29 +115,38 @@
       "status": "asserted",
       "value": "medium",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as medium."
+      "shortExcerpt": "NCSU: prefers rich soil; Tolerates high moisture levels, but intolerant to overly wet or swampy soils and prolonged flooding. Soil Drainage Good Drainage Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist preference, not arid → waterNeeds=medium.",
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
       "field": "sunNeeds",
       "status": "asserted",
-      "value": "full_sun",
+      "value": "partial_shade",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU: prefers rich soil with partial shade; Light Full sun / Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Primary preference partial shade → sunNeeds=partial_shade (full sun also listed).",
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
       "field": "drainageNeeds",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Drainage needs characterized as medium."
+      "shortExcerpt": "Intolerant to overly wet or swampy soils and prolonged flooding; Good Drainage Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -210,21 +236,27 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Large fragrant summer flowers; evergreen in warm-temperate to subtropical climates.",
+      "value": "Large fragrant creamy-white flowers late spring with sparse continued flowering through summer (May–June primary).",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Large fragrant summer flowers; evergreen in warm-temperate to subtropical climates."
+      "shortExcerpt": "NCSU: fragrant creamy white flowers bloom in late spring, with sparse continued flowering throughout the summer; bloom from May to June.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Cone-like aggregate fruit; ornamental, not a food crop focus.",
+      "value": "Cone-like aggregate fruits mature September–October releasing red-coated seeds.",
       "sourceIds": [
-        "uf-ifas-magnolia"
+        "ncsu-magnolia-grandiflora"
       ],
-      "shortExcerpt": "Cone-like aggregate fruit; ornamental, not a food crop focus."
+      "shortExcerpt": "NCSU: fruits mature from September to October, releasing rose-red coated seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

@@ -130,15 +130,18 @@
       "expected": 460
     },
     "overallCounts": {
-      "borderline": 210
+      "blocked": 4,
+      "borderline": 206
     },
     "survivalCounts": {
-      "constrained": 210
+      "unreliable": 4,
+      "reliable": 96,
+      "constrained": 110
     }
   },
   "falsePositiveCandidates": [],
-  "falsePositiveAuditedCount": 8,
-  "falsePositiveAuthorizedCount": 8,
+  "falsePositiveAuditedCount": 102,
+  "falsePositiveAuthorizedCount": 102,
   "falsePositiveMaterialCount": 0,
   "CONFIDENT_RESULTS_DEPENDING_ON_HEURISTIC_EVIDENCE": 0,
   "confidentHeuristicExamples": [],
@@ -558,13 +561,15 @@
     "diversity": {
       "durian": {
         "overallUnique": [
-          "borderline"
+          "borderline",
+          "blocked"
         ],
         "survivalUnique": [
-          "constrained"
+          "constrained",
+          "unreliable"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -581,7 +586,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -601,7 +606,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -621,7 +626,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -641,10 +646,11 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "constrained",
+          "reliable"
         ],
         "climateVaried": true,
-        "outcomeVaried": false,
+        "outcomeVaried": true,
         "moistureRegimes": [
           "semi-arid",
           "dry-subhumid",
@@ -661,7 +667,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -681,7 +687,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -701,7 +707,7 @@
           "borderline"
         ],
         "survivalUnique": [
-          "constrained"
+          "reliable"
         ],
         "climateVaried": true,
         "outcomeVaried": false,
@@ -780,7 +786,10 @@
         "min": 0,
         "max": 681
       },
-      "plantsWithOutcomeVariation": []
+      "plantsWithOutcomeVariation": [
+        "durian",
+        "southern-magnolia"
+      ]
     },
     "note": "Identical nearby outcomes kept when evaluator bands match; climate class diversity recorded separately"
   },
@@ -822,14 +831,12 @@
       ]
     },
     "durianAtYehiam": {
-      "overall": "borderline",
-      "survival": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
       "limiting": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Coldest-month mean lows (~7.75°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "representativenessAdjustment": null
@@ -861,7 +868,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -871,7 +878,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -881,7 +888,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -891,7 +898,7 @@
       "site": "singapore",
       "overallBefore": "good",
       "overallAfter": "borderline",
-      "survivalAfter": "constrained",
+      "survivalAfter": "reliable",
       "growthAfter": "constrained",
       "limiting": "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
       "fixed": true
@@ -917,7 +924,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "oleander": {
         "overallUnique": [
@@ -936,7 +943,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "common-thyme": {
         "overallUnique": [
@@ -955,7 +962,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       },
       "garden-sage": {
         "overallUnique": [
@@ -974,7 +981,7 @@
         "semiAridSampleOverall": [
           "borderline"
         ],
-        "climateSensitive": true
+        "climateSensitive": false
       }
     }
   },
@@ -1037,17 +1044,15 @@
     {
       "plant": "durian",
       "site": "yehiam",
-      "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Coldest-month mean lows (~7.75°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -1096,6 +1101,103 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "unreliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "blocked",
@@ -2425,17 +2527,15 @@
     {
       "plant": "durian",
       "site": "helsinki",
-      "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Frost risk is too high for this plant.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -2482,6 +2582,93 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "unreliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "blocked",
@@ -3796,12 +3983,11 @@
       "plant": "durian",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -3852,6 +4038,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -5163,12 +5473,11 @@
       "plant": "durian",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -5219,6 +5528,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -6587,6 +7020,139 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "unreliable",
+            "reason": "evidence-strength:Survival:confident-unreliable-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Survival"
+          },
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "poor",
+            "reason": "evidence-strength:Growth:confident-poor-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "unreliable",
+            "reason": "evidence-strength:Survival:confident-unreliable-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "poor",
+            "reason": "evidence-strength:Growth:confident-poor-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "high"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "blocked",
         "survivalFit": 25,
@@ -7899,17 +8465,15 @@
     {
       "plant": "durian",
       "site": "tokyo",
-      "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Frost risk is too high for this plant.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -7956,6 +8520,93 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "unreliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "blocked",
@@ -9269,17 +9920,15 @@
     {
       "plant": "durian",
       "site": "quito",
-      "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "overall": "blocked",
+      "survival": "unreliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Warm tropical / high frost-sensitivity plant below damaging-cold monthly mean band.",
         "Coldest-month mean lows (~8.65°C) are below the warm tropical reliability band; damaging cold can occur without literal frost.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [],
@@ -9326,6 +9975,103 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "unreliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Cauliflorous flowering on mature wood in humid tropics; cool nights and drought reduce flower set."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Large spiny fruits; needs sustained tropical warmth, high humidity, and reliable moisture; frost kills trees."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "blocked",
@@ -10640,14 +11386,13 @@
       "plant": "sweet-cherry",
       "site": "yehiam",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Climate is too cool / not frost-free for sourced fruiting needs.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -10698,6 +11443,96 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -12083,6 +12918,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -13397,15 +14321,13 @@
       "plant": "sweet-cherry",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "survival": "reliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Reliable fruiting is unlikely without winter chill or a clear cool season.",
         "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -13453,6 +14375,98 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -14766,15 +15780,13 @@
       "plant": "sweet-cherry",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
-      "growth": "constrained",
+      "survival": "reliable",
+      "growth": "poor",
       "flowering": "unlikely",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Reliable fruiting is unlikely without winter chill or a clear cool season.",
         "Reliable flowering and fruiting need winter chill or a clear cool season; always-hot climates without a cool-season signal are a poor match.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
-        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -14822,6 +15834,98 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "poor",
+        "flowering": "unlikely",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "poor",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unlikely",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Flowering"
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -16135,14 +17239,13 @@
       "plant": "sweet-cherry",
       "site": "cairo",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Climate is too cool / not frost-free for sourced fruiting needs.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -16191,6 +17294,96 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -17560,6 +18753,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -18874,14 +20156,13 @@
       "plant": "sweet-cherry",
       "site": "quito",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unreliable",
       "limitingFactors": [
         "Plant evidence indicates warm / tropical establishment needs; climate is cool, frost-prone, or highland.",
         "Climate is too cool / not frost-free for sourced fruiting needs.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -18931,6 +20212,96 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unreliable",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "high"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Spring bloom after substantial winter chill; early bloom frost can kill flowers."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unreliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Requires winter chill and cool springs; poor in always-hot tropics."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Fruiting"
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -20244,12 +21615,11 @@
       "plant": "carob",
       "site": "yehiam",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -20302,6 +21672,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -21686,6 +23180,94 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 55,
@@ -22998,13 +24580,12 @@
       "plant": "carob",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -23054,6 +24635,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -24365,13 +26035,12 @@
       "plant": "carob",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -24421,6 +26090,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -25732,12 +27490,11 @@
       "plant": "carob",
       "site": "cairo",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -25788,6 +27545,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -27156,6 +29037,129 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 65,
@@ -28468,13 +30472,12 @@
       "plant": "carob",
       "site": "quito",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -28524,6 +30527,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Dioecious or hermaphrodite cultivars; flowers in warm Mediterranean climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Pods in hot dry summers; intolerant of waterlogging and hard freezes when young."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -29835,12 +31927,11 @@
       "plant": "bay-laurel",
       "site": "yehiam",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -29893,6 +31984,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -31277,6 +33492,94 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 55,
@@ -32589,13 +34892,12 @@
       "plant": "bay-laurel",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -32646,6 +34948,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -33957,13 +36348,12 @@
       "plant": "bay-laurel",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -34014,6 +36404,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -35325,12 +37804,11 @@
       "plant": "bay-laurel",
       "site": "cairo",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -35381,6 +37859,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -36749,6 +39351,129 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 65,
@@ -38061,13 +40786,12 @@
       "plant": "bay-laurel",
       "site": "quito",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment.",
         "Near-equatorial / low thermal amplitude — temperate spring/autumn calendar cues are not forced."
       ],
@@ -38118,6 +40842,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Inconspicuous yellowish flowers in spring; grown primarily for foliage."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": null
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -39429,12 +42242,11 @@
       "plant": "oleander",
       "site": "yehiam",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -39487,6 +42299,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -40871,6 +43807,94 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 55,
@@ -42183,13 +45207,12 @@
       "plant": "oleander",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -42239,6 +45262,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -43550,13 +46662,12 @@
       "plant": "oleander",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -43606,6 +46717,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -44917,12 +48117,11 @@
       "plant": "oleander",
       "site": "cairo",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -44973,6 +48172,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -46341,6 +49664,129 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 65,
@@ -47653,13 +51099,12 @@
       "plant": "oleander",
       "site": "quito",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -47709,6 +51154,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -49020,12 +52554,11 @@
       "plant": "garden-sage",
       "site": "yehiam",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -49078,6 +52611,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "low"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -50462,6 +54119,94 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 55,
@@ -51774,13 +55519,12 @@
       "plant": "garden-sage",
       "site": "singapore",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -51830,6 +55574,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -53141,13 +56974,12 @@
       "plant": "garden-sage",
       "site": "kochi",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -53197,6 +57029,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "good",
@@ -54508,12 +58429,11 @@
       "plant": "garden-sage",
       "site": "cairo",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
@@ -54564,6 +58484,130 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -55932,6 +59976,129 @@
         },
         "overall": "high"
       },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "constrained",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [
+          {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          }
+        ],
+        "warnings": [
+          "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+        ],
+        "traces": {
+          "Survival": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": true,
+            "previousStatus": "supported",
+            "reason": "evidence-strength:Growth:confident-supported-requires-SOURCE_SUPPORTED-on-material-traits",
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            },
+            "dimension": "Growth"
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
+      },
       "suitability": {
         "recommendationLevel": "borderline",
         "survivalFit": 65,
@@ -57244,13 +61411,12 @@
       "plant": "garden-sage",
       "site": "quito",
       "overall": "borderline",
-      "survival": "constrained",
+      "survival": "reliable",
       "growth": "constrained",
       "flowering": "unknown",
       "fruiting": "unknown",
       "limitingFactors": [
         "Atmospheric humidity sits in a transition band; qualitative low humidityTolerance constrains growth/confidence without inventing plant-specific RH cutoffs or survival failure.",
-        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
         "Garden sun/drainage context unknown — Overall is climate suitability, not a complete garden-site assessment."
       ],
       "unknownEvidence": [
@@ -57300,6 +61466,95 @@
           "qaVersion": "qa-v1"
         },
         "overall": "high"
+      },
+      "evidenceStrength": {
+        "version": "1.0.0",
+        "survival": "reliable",
+        "growth": "constrained",
+        "flowering": "unknown",
+        "fruiting": "unknown",
+        "demotions": [],
+        "warnings": [],
+        "traces": {
+          "Survival": {
+            "status": "reliable",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "frostSensitivity",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                },
+                {
+                  "field": "coldTolerance",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "medium"
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            },
+            "dimension": "Survival"
+          },
+          "Growth": {
+            "status": "constrained",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "humidityTolerance",
+                  "evidenceClass": "HEURISTIC_ASSERTION",
+                  "value": "low"
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": true,
+              "hasUnknown": false,
+              "allSource": false
+            }
+          },
+          "Flowering": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "floweringRequirements",
+                  "evidenceClass": "SOURCE_SUPPORTED",
+                  "value": "Summer spikes; culinary evergreen/semi-evergreen in mild climates."
+                }
+              ],
+              "hasSource": true,
+              "hasHeuristic": false,
+              "hasUnknown": false,
+              "allSource": true
+            }
+          },
+          "Fruiting": {
+            "status": "unknown",
+            "demoted": false,
+            "reason": null,
+            "materialEvidence": {
+              "fields": [
+                {
+                  "field": "fruitingRequirements",
+                  "evidenceClass": "UNKNOWN",
+                  "value": null
+                }
+              ],
+              "hasSource": false,
+              "hasHeuristic": false,
+              "hasUnknown": true,
+              "allSource": false
+            }
+          }
+        }
       },
       "suitability": {
         "recommendationLevel": "borderline",
@@ -58608,6 +62863,6 @@
       }
     }
   ],
-  "generatedAt": "2026-08-30T19:23:56.394Z",
+  "generatedAt": "2026-08-31T03:54:55.677Z",
   "hardeningVerdict": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS"
 }

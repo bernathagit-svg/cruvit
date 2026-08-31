@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "oleander-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "oleander",
@@ -13,7 +13,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -24,6 +26,15 @@
       "url": "https://www.rhs.org.uk/plants/11648/nerium-oleander/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-nerium-oleander",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Nerium oleander",
+      "url": "https://plants.ces.ncsu.edu/plants/nerium-oleander/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -54,21 +65,27 @@
       "claimId": "frost",
       "field": "frostSensitivity",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "NCSU: intolerant of temperatures at or below 32°F and may be damaged by cold winters.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Damage at ≤32°F → frostSensitivity=high.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
       "field": "coldTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Cold tolerance characterized as medium."
+      "shortExcerpt": "Intolerant of ≤32°F; USDA zones 8a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -76,9 +93,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Heat tolerance characterized as high."
+      "shortExcerpt": "NCSU Resistance To Challenges includes Heat, Drought, Salt, Urban Conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "humidity",
@@ -96,9 +116,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as low."
+      "shortExcerpt": "NCSU: Drought-tolerant garden recommendation; Soil Drainage Occasionally Dry; Resistance Drought.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -106,9 +129,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU: prefers full sun to partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -116,9 +142,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "NCSU: well-drained, fertile soil; Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -209,11 +238,14 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Long summer flowering in heat; hard freezes kill tops in colder zones.",
+      "value": "Blooms late spring to late summer on new growth.",
       "sourceIds": [
-        "rhs-nerium-oleander"
+        "ncsu-nerium-oleander"
       ],
-      "shortExcerpt": "Long summer flowering in heat; hard freezes kill tops in colder zones."
+      "shortExcerpt": "NCSU: blooms in late spring to late summer; flowers appear on new growth.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
@@ -224,6 +256,19 @@
         "rhs-nerium-oleander"
       ],
       "shortExcerpt": "Fruiting / productive requirements not asserted (ornamental/herb or insufficient evidence)."
+    },
+    {
+      "claimId": "quantitative-minimum-survival-temperature-c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": 0,
+      "sourceIds": [
+        "ncsu-nerium-oleander"
+      ],
+      "shortExcerpt": "NCSU: intolerant of temperatures at or below 32 degrees F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "32°F = 0°C stored as minimum_survival_temperature_c.",
+      "enrichmentReason": null
     }
   ],
   "image": {

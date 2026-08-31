@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "ginkgo-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "ginkgo",
@@ -14,7 +14,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -25,6 +27,15 @@
       "url": "https://www.rhs.org.uk/plants/8009/ginkgo-biloba/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "ncsu-ginkgo-biloba",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "NC State Extension",
+      "title": "Ginkgo biloba",
+      "url": "https://plants.ces.ncsu.edu/plants/ginkgo-biloba/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -58,9 +69,12 @@
       "status": "asserted",
       "value": "low",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as low for home-landscape use."
+      "shortExcerpt": "NCSU USDA Plant Hardiness Zone: 3a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3 hardiness → frostSensitivity=low.",
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -68,19 +82,25 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "NCSU USDA zones 3a–9b → coldTolerance=high.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
       "field": "heatTolerance",
       "status": "asserted",
-      "value": "medium",
+      "value": "high",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Heat tolerance characterized as medium."
+      "shortExcerpt": "NCSU: tolerant of drought, heat and air pollution.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "humidity",
@@ -96,11 +116,14 @@
       "claimId": "water",
       "field": "waterNeeds",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Water / moisture needs characterized as medium."
+      "shortExcerpt": "NCSU: tolerant of drought; Resistance To Challenges includes Drought; avoid wet soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought tolerance + avoid wet soils → waterNeeds=low.",
+      "enrichmentReason": null
     },
     {
       "claimId": "sun",
@@ -108,9 +131,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "NCSU: needs a site in full sun and good drainage to thrive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -118,9 +144,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Drainage needs characterized as high."
+      "shortExcerpt": "NCSU: good drainage to thrive; Avoid wet soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "chill",
@@ -220,11 +249,40 @@
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Female trees produce fleshy seeds; often avoided in landscapes for odor.",
+      "value": "Female trees produce foul-smelling fleshy seeds in fall; not a conventional culinary fruit crop in landscape use.",
       "sourceIds": [
-        "rhs-ginkgo-biloba"
+        "ncsu-ginkgo-biloba"
       ],
-      "shortExcerpt": "Female trees produce fleshy seeds; often avoided in landscapes for odor."
+      "shortExcerpt": "NCSU: seeds only on female trees; outer fleshy pulp foul-smelling when ripe.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-dioecious",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-ginkgo-biloba"
+      ],
+      "shortExcerpt": "NCSU: dioecious with separate male and female trees; seeds only on female trees.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-sex-requirement",
+      "field": "reproductive.sex_requirement",
+      "status": "asserted",
+      "value": "female_for_seeds_male_preferred_ornamental",
+      "sourceIds": [
+        "ncsu-ginkgo-biloba"
+      ],
+      "shortExcerpt": "Seeds from female trees are messy and foul-smelling; planting grafted male trees is often preferable.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

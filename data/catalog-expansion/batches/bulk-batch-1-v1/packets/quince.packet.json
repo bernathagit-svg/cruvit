@@ -1,5 +1,5 @@
 {
-  "expansionContractVersion": "1.0.0",
+  "expansionContractVersion": "1.2.0",
   "packetId": "quince-bulk-batch-1-v1",
   "identity": {
     "canonicalSlug": "quince",
@@ -13,7 +13,9 @@
   "flags": {
     "forceClimateNeedsReview": false,
     "botanicalVerified": true,
-    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1)."
+    "notes": "Bulk Batch 1 ingest (bulk-catalog-batch-1-v1).",
+    "sourceSupportedEnrichmentV1": true,
+    "enrichmentVerifiedAt": "2026-08-30"
   },
   "sources": [
     {
@@ -24,6 +26,15 @@
       "url": "https://www.rhs.org.uk/plants/5110/cydonia-oblonga/details",
       "authorityTier": "horticultural_society",
       "verifiedAt": "2026-08-29"
+    },
+    {
+      "sourceId": "rhs-quince-grow-your-own",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "How to grow quinces",
+      "url": "https://www.rhs.org.uk/fruit/quince/grow-your-own",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-30"
     }
   ],
   "claims": [
@@ -54,11 +65,14 @@
       "claimId": "frost",
       "field": "frostSensitivity",
       "status": "asserted",
-      "value": "medium",
+      "value": "low",
       "sourceIds": [
-        "rhs-cydonia-oblonga"
+        "rhs-quince-grow-your-own"
       ],
-      "shortExcerpt": "Frost sensitivity characterized as medium for home-landscape use."
+      "shortExcerpt": "RHS: Easy to grow, hardy and generally trouble-free; spring flowers susceptible to frost damage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "cold",
@@ -66,9 +80,12 @@
       "status": "asserted",
       "value": "high",
       "sourceIds": [
-        "rhs-cydonia-oblonga"
+        "rhs-quince-grow-your-own"
       ],
-      "shortExcerpt": "Cold tolerance characterized as high."
+      "shortExcerpt": "Described as hardy; planted dormant Nov–Mar in UK conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "heat",
@@ -106,9 +123,12 @@
       "status": "asserted",
       "value": "full_sun",
       "sourceIds": [
-        "rhs-cydonia-oblonga"
+        "rhs-quince-grow-your-own"
       ],
-      "shortExcerpt": "Sun exposure characterized as full_sun."
+      "shortExcerpt": "Choose a warm, sunny, sheltered spot… sun is needed for the fruit to ripen.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "drainage",
@@ -221,21 +241,66 @@
       "claimId": "flowering",
       "field": "floweringRequirements",
       "status": "asserted",
-      "value": "Spring blossom after dormancy; late frost can damage flowers.",
+      "value": "Late spring blossom; susceptible to late frost",
       "sourceIds": [
-        "rhs-cydonia-oblonga"
+        "rhs-quince-grow-your-own"
       ],
-      "shortExcerpt": "Spring blossom after dormancy; late frost can damage flowers."
+      "shortExcerpt": "Quinces flower in late spring and are susceptible to damage by late frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     },
     {
       "claimId": "fruiting",
       "field": "fruitingRequirements",
       "status": "asserted",
-      "value": "Autumn aromatic fruit; needs chill and a warm ripening season.",
+      "value": "Harvest Oct–Nov before first frost; self-fertile",
       "sourceIds": [
-        "rhs-cydonia-oblonga"
+        "rhs-quince-grow-your-own"
       ],
-      "shortExcerpt": "Autumn aromatic fruit; needs chill and a warm ripening season."
+      "shortExcerpt": "Harvested in October or November… harvest before the first frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-selfFertility",
+      "field": "reproductive.selfFertility",
+      "status": "asserted",
+      "value": "self_fertile",
+      "sourceIds": [
+        "rhs-quince-grow-your-own"
+      ],
+      "shortExcerpt": "Quince trees are self-fertile, so you’ll get a good crop with just one tree, without any need for a pollination partner.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-requiresPollinator",
+      "field": "reproductive.requiresPollinator",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "rhs-quince-grow-your-own"
+      ],
+      "shortExcerpt": "Self-fertile; no need for a pollination partner.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
+    },
+    {
+      "claimId": "reproductive-reproductiveMaturityYears",
+      "field": "reproductive.reproductiveMaturityYears",
+      "status": "asserted",
+      "value": 5,
+      "sourceIds": [
+        "rhs-quince-grow-your-own"
+      ],
+      "shortExcerpt": "They usually start cropping when five or six years old.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null,
+      "enrichmentReason": null
     }
   ],
   "image": {

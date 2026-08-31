@@ -216,6 +216,7 @@ function evaluate(plant, climateBundle) {
     needsReview: outcomes.needsReview,
     representativenessAdjustment: outcomes.representativenessAdjustment || null,
     climateAuthorityConfidence: outcomes.climateAuthorityConfidence || null,
+    evidenceStrength: outcomes.evidenceStrength || null,
     suitability,
     env: structuralEnvironmentFromClimateProfile(climateBundle.climateProfile)
   };
