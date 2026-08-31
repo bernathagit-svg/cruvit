@@ -1,0 +1,221 @@
+{
+  "gate": "CRUVIT_PLANT_KNOWLEDGE_WARNINGS_V1_FOUNDATION",
+  "generatedAt": "2026-08-31T17:52:54.105Z",
+  "contractVersion": "1.0.0",
+  "validationSetId": "plant-knowledge-warnings-v1-validation-set",
+  "schemaCapability": {
+    "catalogPlantsHasPlantKnowledgeColumn": false,
+    "persistenceStrategy": "climate_traits.plantKnowledge JSONB nest",
+    "liveSchemaChangeRequired": false,
+    "losslessRoundTrip": true
+  },
+  "futureIngestionRule": {
+    "version": "1.0.0",
+    "sequence": [
+      "IDENTITY",
+      "BOTANICAL_EVIDENCE",
+      "REPRODUCTIVE_EVIDENCE",
+      "KNOWLEDGE_WARNINGS",
+      "MEDIA",
+      "SUITABILITY_GATES",
+      "PERSISTENCE"
+    ],
+    "unknownKnowledgeAcceptable": true,
+    "unknownDoesNotBlockCatalogInclusion": "UNKNOWN knowledge/warnings do not block catalog inclusion unless a safety-critical product behavior explicitly requires the field.",
+    "noConfidentGuessing": true,
+    "positiveSafetyRequiresSourceSupported": true,
+    "absenceOfToxicityIsNotSafety": true,
+    "heuristicMustNotRenderAsConfirmedSafetyWarning": true,
+    "runtimeExternalResearchCalls": 0
+  },
+  "safetyGates": {
+    "noConfirmedSafetyFromHeuristic": true,
+    "noSafeFromMissingToxicity": true,
+    "regionalInvasiveNotGlobal": true,
+    "cultivarCaveatRemainsCultivarSpecific": true,
+    "severeUnknownNotConfirmed": true,
+    "explanationNoInventedClaims": true
+  },
+  "validationPlants": [
+    {
+      "slug": "oleander",
+      "batch": 1,
+      "scientific": "Nerium oleander",
+      "proves": [
+        "toxicity"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [
+        "oleander-toxicity-severe"
+      ],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "blue-gum",
+      "batch": 1,
+      "scientific": "Eucalyptus globulus",
+      "proves": [
+        "invasiveness",
+        "regional_caveat"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [
+        "blue-gum-invasive-regional"
+      ],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "bay-laurel",
+      "batch": 1,
+      "scientific": "Laurus nobilis",
+      "proves": [
+        "UNKNOWN_handling"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 0,
+      "confirmedWarnings": [],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "persimmon",
+      "batch": 1,
+      "scientific": "Diospyros kaki",
+      "proves": [
+        "cultivar_caveat",
+        "pollination"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [
+        "persimmon-cultivar-caveat"
+      ],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "hazelnut",
+      "batch": 2,
+      "scientific": "Corylus avellana",
+      "proves": [
+        "pollination"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [],
+      "provisionalOrUnknownWarnings": [
+        {
+          "warningId": "hazelnut-pollinizer",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "severity": "INFO",
+          "render": "provisional"
+        }
+      ]
+    },
+    {
+      "slug": "pecan",
+      "batch": 2,
+      "scientific": "Carya illinoinensis",
+      "proves": [
+        "pollination",
+        "cultivar_caveat"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [],
+      "provisionalOrUnknownWarnings": [
+        {
+          "warningId": "pecan-cultivar-pollination",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "severity": "INFO",
+          "render": "provisional"
+        }
+      ]
+    },
+    {
+      "slug": "yucca",
+      "batch": 2,
+      "scientific": "Yucca filamentosa",
+      "proves": [
+        "physical_hazard"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [
+        "yucca-sharp-leaves"
+      ],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "rhubarb",
+      "batch": 2,
+      "scientific": "Rheum rhabarbarum",
+      "proves": [
+        "harvest_use",
+        "toxicity"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [
+        "rhubarb-leaves-toxic"
+      ],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "sweet-potato",
+      "batch": 2,
+      "scientific": "Ipomoea batatas",
+      "proves": [
+        "harvest_use"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 0,
+      "confirmedWarnings": [],
+      "provisionalOrUnknownWarnings": []
+    },
+    {
+      "slug": "soursop",
+      "batch": 2,
+      "scientific": "Annona muricata",
+      "proves": [
+        "regional_caveat",
+        "UNKNOWN_handling"
+      ],
+      "validateOk": true,
+      "roundTripOk": true,
+      "warningCount": 1,
+      "confirmedWarnings": [],
+      "provisionalOrUnknownWarnings": [
+        {
+          "warningId": "soursop-seed-caution-unconfirmed",
+          "evidenceClass": "UNKNOWN",
+          "severity": "SEVERE",
+          "render": "unknown_notice"
+        }
+      ]
+    }
+  ],
+  "climateRegression": {
+    "verdict": "CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS",
+    "materialFp": 0,
+    "materialFn": 0
+  },
+  "readyForBatch12WarningsEnrichment": true,
+  "remainingGaps": [
+    "Batch 1/2 full warnings enrichment not started (foundation only)",
+    "No Learn More / Warnings UI",
+    "Legal restriction lists need jurisdiction-by-jurisdiction Owner review before product surfaces",
+    "Pet/human toxicity cross-inference remains forbidden — many plants still UNKNOWN"
+  ],
+  "runtimeExternalResearchCalls": 0,
+  "verdict": "CRUVIT_PLANT_KNOWLEDGE_WARNINGS_V1_FOUNDATION: PASS"
+}
