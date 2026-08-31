@@ -1,0 +1,298 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "blackcurrant-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "blackcurrant",
+    "commonNameEn": "Blackcurrant",
+    "acceptedScientificName": "Ribes nigrum",
+    "aliases": [
+      "blackcurrant",
+      "ribes nigrum",
+      "black currant"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-ribes-nigrum",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Ribes nigrum (blackcurrant)",
+      "url": "https://www.rhs.org.uk/plants/14128/ribes-nigrum/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ribes nigrum",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Ribes nigrum — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "blackcurrant",
+        "ribes nigrum",
+        "black currant"
+      ],
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Common / synonym names for Blackcurrant."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool temperate; RHS H6",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Cool temperate; RHS H6"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "shrub",
+        "chill"
+      ],
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, shrub, chill"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun to partial shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Water: Moisture: Moist but well-drained."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Blackcurrant (Ribes nigrum). Cool temperate; RHS H6.",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Cool temperate; RHS H6"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Hardiness: H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Very hardy shrub."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Hardiness: H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H6."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Cool-climate currant; struggles in hot dry summers per RHS growing advice.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cool-climate crop heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist soil."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Aspect: Full sun to partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun preferred."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist but drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Flowers: Yellow-green flowers in spring on bare wood or with young leaves.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Spring bloom after dormancy → chill required."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Yellow-green flowers in spring.",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Flowers: Yellow-green flowers in spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Black berries in mid-summer.",
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Fruit: Black berries in mid-summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -20,
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Hardiness H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H6 lower bound."
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-ribes-nigrum"
+      ],
+      "shortExcerpt": "Blackcurrants largely self-fertile; RHS page does not state explicitly.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Standard cultivar behavior."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

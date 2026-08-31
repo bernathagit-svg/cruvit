@@ -1,0 +1,302 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "soursop-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "soursop",
+    "commonNameEn": "Soursop",
+    "acceptedScientificName": "Annona muricata",
+    "aliases": [
+      "soursop",
+      "annona muricata",
+      "guanabana",
+      "graviola"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-soursop",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Soursop Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG343",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Annona muricata",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Annona muricata — identity from University of Florida IFAS Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "soursop",
+        "annona muricata",
+        "guanabana",
+        "graviola"
+      ],
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Common / synonym names for Soursop."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Humid tropical; frost intolerant below ~−1°C",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Humid tropical; frost intolerant below ~−1°C"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "tropical",
+        "fruit",
+        "tree",
+        "frost-sensitive"
+      ],
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Catalog tags: tropical, fruit, tree, frost-sensitive"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Sun: Plant in full sun for best growth and fruiting."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Water: Trees require regular watering for best growth and fruit production."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Soursop (Annona muricata). Humid tropical; frost intolerant below ~−1°C.",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Humid tropical; frost intolerant below ~−1°C"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Structural groupIds: tropical-frost-sensitive-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Soursop trees are extremely frost sensitive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Explicit frost sensitivity."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Trees are damaged or killed by temperatures below 30°F (−1°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Sub-freezing damage → low cold tolerance."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Tropical lowland species; no explicit heat ceiling published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Tropical native heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Best in humid tropical lowlands per IFAS climate discussion.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Humid tropics heuristic."
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Trees require regular watering for best growth and fruit production.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Regular watering required."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Plant in full sun for best growth and fruiting.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Plant in well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained soil."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Tropical species with no winter chill requirement described.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill for tropical Annona."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowers on new growth in warm humid seasons.",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "IFAS describes flowering in warm months; no chill cue.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Tropical flowering."
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Large spiny green fruit in frost-free tropical warmth.",
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Fruit is a large spiny green syncarp produced in tropical climates.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -1,
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Trees are damaged or killed by temperatures below 30°F (−1°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "30°F converted to −1°C."
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "uf-ifas-soursop"
+      ],
+      "shortExcerpt": "Annona often benefits from hand or insect pollination; IFAS silent.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

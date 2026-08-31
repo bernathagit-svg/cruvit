@@ -1,0 +1,277 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "parsley-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "parsley",
+    "commonNameEn": "Parsley",
+    "acceptedScientificName": "Petroselinum crispum",
+    "aliases": [
+      "parsley",
+      "petroselinum crispum",
+      "curly parsley",
+      "flat-leaf parsley"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-petroselinum-crispum",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Petroselinum crispum (parsley)",
+      "url": "https://www.rhs.org.uk/plants/14207/petroselinum-crispum/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Petroselinum crispum",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Petroselinum crispum — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "parsley",
+        "petroselinum crispum",
+        "curly parsley",
+        "flat-leaf parsley"
+      ],
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Common / synonym names for Parsley."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool-season biennial herb; RHS H5",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Cool-season biennial herb; RHS H5"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "herb",
+        "mediterranean",
+        "biennial",
+        "edible"
+      ],
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Catalog tags: herb, mediterranean, biennial, edible"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun to partial shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Water: Moisture: Moist but well-drained."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Parsley (Petroselinum crispum). Cool-season biennial herb; RHS H5.",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Cool-season biennial herb; RHS H5"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Hardiness: H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H5 hardy biennial."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Hardiness: H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H5."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Cool-season herb; bolts in hot dry weather.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Biennial herb heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist soil."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Aspect: Full sun to partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Sun to shade."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Biennial flowering in second year after winter.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Biennial life cycle."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flat umbels of yellow-green flowers in second summer.",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Flowers: Flat umbels of yellow-green flowers in second summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for leaves; allow to flower for seed in year two.",
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Biennial herb harvested for foliage.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Leaf herb."
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -15,
+      "sourceIds": [
+        "rhs-petroselinum-crispum"
+      ],
+      "shortExcerpt": "Hardiness H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H5 lower bound."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -4,13 +4,17 @@
  * Plants: Batch 1 definitions = traits materialized into public.catalog_plants (no seed rebuild).
  * Climate: CRUVIT V2 pilots + emed-n-israel-v1 tiles only. Zero external provider calls.
  *
- * Usage: node scripts/plant-climate-v2-integration-gate.mjs
+ * Usage:
+ *   node scripts/plant-climate-v2-integration-gate.mjs
+ *   node scripts/plant-climate-v2-integration-gate.mjs --batch=2
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BATCH1_PLANTS } from '../data/catalog-expansion/batches/bulk-batch-1-v1/definitions.mjs';
+import { BATCH2_PLANTS } from '../data/catalog-expansion/batches/bulk-batch-2-v1/definitions.mjs';
+import { climateTraitsFromDefAndPacket } from './catalog-batch2-shared.mjs';
 import {
   deriveSpecificPlantOutcomes,
   structuralEnvironmentFromClimateProfile,
@@ -30,6 +34,10 @@ import { QUANTITATIVE_CLAIM_FIELDS } from '../modules/catalog-expansion/plant-cl
 import { annotatePacketFieldProvenance } from '../modules/catalog-expansion/field-provenance-honesty-v1-contract.js';
 import { auditConfidentDependsOnWeakEvidence } from '../modules/personal-domain/evidence-strength-propagation-v1-contract.js';
 
+const BATCH_ARG = process.argv.includes('--batch=2') ? 2 : 1;
+const BATCH_PLANTS = BATCH_ARG === 2 ? BATCH2_PLANTS : BATCH1_PLANTS;
+const BATCH_LABEL = BATCH_ARG === 2 ? 'bulk-batch-2-v1' : 'bulk-batch-1-v1';
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PILOT = path.join(ROOT, 'data', 'coordinate-climate', 'v2', 'pilot');
 const QA = path.join(ROOT, 'data', 'coordinate-climate', 'v2', 'qa');
@@ -39,14 +47,22 @@ const PACKET_DIR = path.join(
   'data',
   'catalog-expansion',
   'batches',
-  'bulk-batch-1-v1',
+  BATCH_LABEL,
   'packets'
 );
-const OUT = path.join(ROOT, 'tests', '_plant-climate-v2-integration-gate-report.json');
+const OUT = path.join(
+  ROOT,
+  'tests',
+  BATCH_ARG === 2
+    ? '_batch2-plant-climate-v2-integration-gate-report.json'
+    : '_plant-climate-v2-integration-gate-report.json'
+);
 const HARDENING_OUT = path.join(
   ROOT,
   'tests',
-  '_plant-climate-v2-alignment-hardening-report.json'
+  BATCH_ARG === 2
+    ? '_batch2-plant-climate-v2-alignment-hardening-report.json'
+    : '_plant-climate-v2-alignment-hardening-report.json'
 );
 
 /** Prior FAIL snapshot (pre-hardening) for the four material FPs — evidence audit only. */
@@ -70,9 +86,24 @@ const EXTERNAL = {
 };
 
 function plantFromBatchDef(def) {
+  const packetPath = path.join(PACKET_DIR, `${def.slug}.packet.json`);
+  if (BATCH_ARG === 2 && fs.existsSync(packetPath)) {
+    const packet = JSON.parse(fs.readFileSync(packetPath, 'utf8'));
+    const climateTraits = climateTraitsFromDefAndPacket(def, packet);
+    return {
+      slug: def.slug,
+      name: def.common,
+      scientific: def.scientific,
+      aliases: def.aliases || [],
+      climateTraits,
+      provenance: def.sources || [],
+      needsReview: climateTraits.needsReview === true,
+      source: 'batch2-evidence-first-packets'
+    };
+  }
+
   let traitEvidenceClasses = {};
   let traitProvenance = {};
-  const packetPath = path.join(PACKET_DIR, `${def.slug}.packet.json`);
   if (fs.existsSync(packetPath)) {
     const packet = JSON.parse(fs.readFileSync(packetPath, 'utf8'));
     const ann = annotatePacketFieldProvenance(packet);
@@ -455,29 +486,45 @@ function fieldMapping() {
 }
 
 function plantAdequacy(def) {
+  const frost =
+    def.frostSensitivity ?? def.traits?.frostSensitivity?.value ?? null;
+  const humidity =
+    def.humidityTolerance ?? def.traits?.humidityTolerance?.value ?? null;
+  const water = def.waterNeeds ?? def.traits?.waterNeeds?.value ?? null;
+  const flower =
+    def.floweringRequirements ??
+    def.traits?.floweringRequirements?.value ??
+    null;
+  const fruit =
+    def.fruitingRequirements ?? def.traits?.fruitingRequirements?.value ?? null;
+  const hasNumeric = !!(
+    def.quantitative?.minimum_survival_temperature_c ||
+    Object.keys(def.quantitative || {}).length
+  );
+
   const gaps = [];
-  if (!def.frostSensitivity) gaps.push('frostSensitivity');
-  const hasFlower = !!def.floweringRequirements;
-  const hasFruit = !!def.fruitingRequirements;
+  if (!frost) gaps.push('frostSensitivity');
+  const hasFlower = !!flower;
+  const hasFruit = !!fruit;
   if (!hasFlower) gaps.push('floweringRequirements');
   if (!hasFruit) gaps.push('fruitingRequirements');
-  gaps.push('no-numeric-minTempC');
+  if (!hasNumeric) gaps.push('no-numeric-minTempC');
   gaps.push('no-chill-hour-range');
   gaps.push('no-numeric-heat-threshold');
   gaps.push('no-VPD-humidity-range');
   gaps.push('no-numeric-aridity-tolerance');
 
-  const risky =
-    !def.frostSensitivity ||
-    def.needsReview === true ||
-    def.slug === 'blue-gum';
+  const risky = !frost || def.needsReview === true || def.slug === 'blue-gum';
   const partial =
-    !risky &&
-    (!hasFlower || !hasFruit || def.humidityTolerance == null || def.waterNeeds == null);
+    !risky && (!hasFlower || !hasFruit || humidity == null || water == null);
 
   return {
     slug: def.slug,
-    class: risky ? 'INSUFFICIENT_AND_RISKY' : partial ? 'PARTIAL_BUT_SAFE' : 'ADEQUATE_FOR_CURRENT_EVALUATOR',
+    class: risky
+      ? 'INSUFFICIENT_AND_RISKY'
+      : partial
+        ? 'PARTIAL_BUT_SAFE'
+        : 'ADEQUATE_FOR_CURRENT_EVALUATOR',
     gaps,
     needsReview: def.needsReview === true || def.slug === 'blue-gum'
   };
@@ -505,7 +552,7 @@ function climateSignalsConsumed() {
 }
 
 function main() {
-  const plants = BATCH1_PLANTS.map(plantFromBatchDef);
+  const plants = BATCH_PLANTS.map(plantFromBatchDef);
   if (plants.length !== 30) throw new Error(`expected 30 plants, got ${plants.length}`);
 
   const climates = Object.fromEntries(SITES.map((id) => [id, loadClimateProfile(id)]));
@@ -597,20 +644,35 @@ function main() {
       lon: west + (east - west) * v
     });
   }
-  const gradientPlants = [
-    'durian',
-    'sweet-cherry',
-    'carob',
-    'loquat',
-    'southern-magnolia', // high humidity — should flip on semi-arid vs humid moistureRegime
-    'oleander',
-    'garden-sage',
-    'english-walnut',
-    'jaboticaba',
-    'blue-gum'
-  ].map((slug) => plants.find((p) => p.slug === slug));
+  const gradientSlugs =
+    BATCH_ARG === 2
+      ? [
+          'soursop',
+          'hazelnut',
+          'tamarind',
+          'cranberry',
+          'crepe-myrtle',
+          'yucca',
+          'blackberry',
+          'asparagus',
+          'jujube',
+          'sea-buckthorn'
+        ]
+      : [
+          'durian',
+          'sweet-cherry',
+          'carob',
+          'loquat',
+          'southern-magnolia',
+          'oleander',
+          'garden-sage',
+          'english-walnut',
+          'jaboticaba',
+          'blue-gum'
+        ];
+  const gradientPlants = gradientSlugs.map((slug) => plants.find((p) => p.slug === slug));
   if (gradientPlants.some((p) => !p)) {
-    throw new Error('gradient plant missing from Batch 1');
+    throw new Error(`gradient plant missing from Batch ${BATCH_ARG}`);
   }
 
   const gradientRows = [];
@@ -662,9 +724,14 @@ function main() {
     };
   }
 
-  // Part D: Mediterranean sanity for the four prior FP plants (same 25 EMED coords)
-  const medFocusSlugs = ['bay-laurel', 'oleander', 'common-thyme', 'garden-sage'];
-  const medFocusPlants = medFocusSlugs.map((slug) => plants.find((p) => p.slug === slug));
+  // Part D: Mediterranean sanity for low-humidity / Mediterranean archetype plants
+  const medFocusSlugs =
+    BATCH_ARG === 2
+      ? ['artichoke', 'oregano', 'medlar', 'yucca']
+      : ['bay-laurel', 'oleander', 'common-thyme', 'garden-sage'];
+  const medFocusPlants = medFocusSlugs
+    .map((slug) => plants.find((p) => p.slug === slug))
+    .filter(Boolean);
   const medSanityRows = [];
   clearCoverageRuntimeCaches();
   for (const c of coords) {
@@ -710,7 +777,10 @@ function main() {
 
   // Yehiam confidence behavior
   const yehiam = climates.yehiam;
-  const durianYehiam = evaluate(plants.find((p) => p.slug === 'durian'), yehiam);
+  const yehiamSpotSlug = BATCH_ARG === 2 ? 'soursop' : 'durian';
+  const yehiamMoistureSlug = BATCH_ARG === 2 ? 'sapodilla' : 'jaboticaba';
+  const yehiamSpotPlant = plants.find((p) => p.slug === yehiamSpotSlug);
+  const durianYehiam = evaluate(yehiamSpotPlant, yehiam);
   const confAdj = applyRepresentativenessToSuitabilityClaim({
     overallRecommendation: 'good',
     confidence: {
@@ -720,11 +790,11 @@ function main() {
     moistureOrPrecipDependent: true
   });
 
-  const adequacy = BATCH1_PLANTS.map(plantAdequacy);
+  const adequacy = BATCH_PLANTS.map(plantAdequacy);
   const materialFn = fn.filter((x) => x.material);
 
   // Real Yehiam path: moisture-dependent overall=good forced through demotion (acceptance proof)
-  const jaboticaba = plants.find((p) => p.slug === 'jaboticaba');
+  const jaboticaba = plants.find((p) => p.slug === yehiamMoistureSlug);
   const jabYehiamRaw = evaluate(jaboticaba, yehiam);
   const jabForcedGoodAdj = applyRepresentativenessToSuitabilityClaim({
     overallRecommendation: 'good',
@@ -938,30 +1008,43 @@ function main() {
         'Asserted quantitative fields require sourceIds + shortExcerpt; inventing from qualitative labels forbidden'
     },
     matrixSample: matrix.filter((r) =>
-      ['durian', 'sweet-cherry', 'carob', 'bay-laurel', 'oleander', 'garden-sage'].includes(
-        r.plant
-      )
+      (BATCH_ARG === 2
+        ? ['hazelnut', 'soursop', 'asparagus', 'blackberry', 'yucca', 'tamarind']
+        : ['durian', 'sweet-cherry', 'carob', 'bay-laurel', 'oleander', 'garden-sage']
+      ).includes(r.plant)
     ),
+    batchArg: BATCH_ARG,
+    batchLabel: BATCH_LABEL,
     generatedAt: new Date().toISOString()
   };
 
   const hardeningVerdict =
     materialFp.length === 0 &&
     materialFn.length === 0 &&
-    report.originalFpBeforeAfter.every((x) => x.fixed) &&
-    report.lowHumidityRegressionGuard.notBlanketNotRecommended &&
-    report.tileProfileExposureEquivalence.coverageHasRequiredEnums &&
-    report.noSingaporeHardcodeInRule &&
-    report.batch2Recommendation.schemaReady
-      ? 'CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS'
-      : 'CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: FAIL';
+    confidentHeuristicDeps === 0 &&
+    (BATCH_ARG === 2 ||
+      (report.originalFpBeforeAfter.every((x) => x.fixed) &&
+        report.lowHumidityRegressionGuard.notBlanketNotRecommended &&
+        report.tileProfileExposureEquivalence.coverageHasRequiredEnums &&
+        report.noSingaporeHardcodeInRule &&
+        report.batch2Recommendation.schemaReady))
+      ? BATCH_ARG === 2
+        ? 'CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS'
+        : 'CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS'
+      : BATCH_ARG === 2
+        ? 'CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: FAIL'
+        : 'CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: FAIL';
 
   report.hardeningVerdict = hardeningVerdict;
   // Keep integration gate verdict aligned with material FP/FN after fix
   report.verdict =
-    materialFp.length === 0 && materialFn.length === 0
-      ? 'CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS'
-      : 'CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: FAIL';
+    materialFp.length === 0 && materialFn.length === 0 && confidentHeuristicDeps === 0
+      ? BATCH_ARG === 2
+        ? 'CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS'
+        : 'CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS'
+      : BATCH_ARG === 2
+        ? 'CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: FAIL'
+        : 'CRUVIT_PLANT_CLIMATE_V2_INTEGRATION_GATE: FAIL';
 
   // Refresh P0 after fix path
   report.systemicGaps.P0 = materialFp.length

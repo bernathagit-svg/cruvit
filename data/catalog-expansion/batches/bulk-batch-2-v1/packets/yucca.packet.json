@@ -1,0 +1,278 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "yucca-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "yucca",
+    "commonNameEn": "Adam's Needle",
+    "acceptedScientificName": "Yucca filamentosa",
+    "aliases": [
+      "yucca",
+      "yucca filamentosa",
+      "adams needle",
+      "spoon-leaf yucca"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-yucca-filamentosa",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Yucca filamentosa (Adam's Needle)",
+      "url": "https://plants.ces.ncsu.edu/plants/yucca-filamentosa/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Yucca filamentosa",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Yucca filamentosa — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "yucca",
+        "yucca filamentosa",
+        "adams needle",
+        "spoon-leaf yucca"
+      ],
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Common / synonym names for Adam's Needle."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cold-hardy xeric perennial; USDA zones 4a–9b",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Cold-hardy xeric perennial; USDA zones 4a–9b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "perennial",
+        "drought-tolerant",
+        "native"
+      ],
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, perennial, drought-tolerant, native"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Occasionally Dry; drought tolerant."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Adam's Needle (Yucca filamentosa). Cold-hardy xeric perennial; USDA zones 4a–9b.",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Cold-hardy xeric perennial; USDA zones 4a–9b"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 4a very hardy."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 4a."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "USDA zones to 9b; native to sandy coastal plains.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Wide heat range."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Xeric succulent-like foliage; prefers dry air.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Arid-adapted heuristic."
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Occasionally Dry; drought tolerant.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought tolerant."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Excellent drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Evergreen rosette; summer flower spike without chill cue.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Evergreen xeric perennial."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Tall panicle of creamy white bell flowers in summer.",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "A tall panicle of creamy white bell-shaped flowers appears in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Capsules on tall spike; yucca moth pollination in native range.",
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "NCSU describes capsule fruit; moth mutualism not on page.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Ornamental spike."
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-yucca-filamentosa"
+      ],
+      "shortExcerpt": "Yucca species typically require yucca moth pollination for seed.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Ecological mutualism heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,299 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "artichoke-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "artichoke",
+    "commonNameEn": "Globe Artichoke",
+    "acceptedScientificName": "Cynara cardunculus var. scolymus",
+    "aliases": [
+      "artichoke",
+      "globe artichoke",
+      "cynara scolymus",
+      "cynara cardunculus scolymus group",
+      "cynara cardunculus"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "taxonomyContract": {
+      "acceptedRank": "infraspecific",
+      "acceptedScientificName": "Cynara cardunculus var. scolymus",
+      "horticulturalSynonymGroup": "Cynara cardunculus Scolymus Group",
+      "note": "Canonical identity is the accepted infraspecific taxon (var. scolymus). RHS/NCSU Scolymus Group pages are rank-compatible horticultural treatments of globe artichoke; cardoon (species-level Cynara cardunculus without Scolymus Group) is NOT identity evidence."
+    },
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-cynara-cardunculus-scolymus-group",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Cynara cardunculus Scolymus Group (globe artichoke)",
+      "url": "https://www.rhs.org.uk/plants/56390/cynara-cardunculus-scolymus-group/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    },
+    {
+      "sourceId": "ncsu-cynara-cardunculus-scolymus-group",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Cynara cardunculus Scolymus Group (Globe Artichoke)",
+      "url": "https://plants.ces.ncsu.edu/plants/cynara-cardunculus-scolymus-group/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Cynara cardunculus var. scolymus",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Cynara cardunculus var. scolymus — accepted infraspecific identity; supported by rank-compatible Cynara cardunculus Scolymus Group (Royal Horticultural Society).",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "artichoke",
+        "globe artichoke",
+        "cynara scolymus",
+        "cynara cardunculus scolymus group",
+        "cynara cardunculus"
+      ],
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Common / synonym names for Globe Artichoke."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Mediterranean mild-winter perennial vegetable; USDA 7a–10b (NCSU Scolymus Group)",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Mediterranean mild-winter perennial vegetable; USDA 7a–10b (NCSU Scolymus Group)"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "mediterranean",
+        "vegetable",
+        "perennial",
+        "edible"
+      ],
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Catalog tags: mediterranean, vegetable, perennial, edible"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Sun: RHS: full sun; NCSU Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Water: RHS: fertile, well-drained soil; NCSU Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Globe Artichoke (Cynara cardunculus var. scolymus). Mediterranean mild-winter perennial vegetable; USDA 7a–10b (NCSU Scolymus Group).",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Mediterranean mild-winter perennial vegetable; USDA 7a–10b (NCSU Scolymus Group)"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "NCSU USDA Plant Hardiness Zone: 7a–10b for Cynara cardunculus Scolymus Group.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 7a lower bound → frostSensitivity=medium (not fully frost-hardy temperate)."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 7a–10b → coldTolerance=medium."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Mediterranean crop widely grown in warm summers; RHS/NCSU pages do not publish a heat-mortality class.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Mediterranean heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS/NCSU Scolymus Group pages do not state atmospheric humidity tolerance.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: fertile, well-drained soil; NCSU Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist but well-drained → waterNeeds=medium."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: full sun; NCSU Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun → sunNeeds=full_sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: well-drained soil; NCSU Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained → drainageNeeds=high."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "Herbaceous Mediterranean perennial; sources describe winter mulch protection, not temperate chill-hour requirement for flowering.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No chill-hour requirement published → needsWinterChill=false (heuristic)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Large purple thistle-like flower heads in summer if buds are not harvested.",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: green scaly buds open to thistle-like purple flowers in summer and autumn. NCSU: buds can be left to bloom into bright purple thistle-like flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible immature flower buds harvested before opening (globe artichoke vegetable use).",
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group",
+        "ncsu-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: Grown for their edible flower buds. NCSU: The unopened buds can be eaten—fleshy phyllaries and heart are edible.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-cultivar_dependency",
+      "field": "reproductive.cultivar_dependency",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-cynara-cardunculus-scolymus-group"
+      ],
+      "shortExcerpt": "RHS: Many varieties of globe artichokes are available, varying in plant and bud size and bud colour — cultivar choice affects crop performance; no single cultivar chart asserted here.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cultivar dependence noted provisionally from RHS variety statement."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

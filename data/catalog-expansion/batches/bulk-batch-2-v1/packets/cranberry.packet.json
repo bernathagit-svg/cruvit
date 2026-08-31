@@ -1,0 +1,275 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "cranberry-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "cranberry",
+    "commonNameEn": "Cranberry",
+    "acceptedScientificName": "Vaccinium macrocarpon",
+    "aliases": [
+      "cranberry",
+      "vaccinium macrocarpon",
+      "american cranberry"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-vaccinium-macrocarpon",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Vaccinium macrocarpon (American Cranberry)",
+      "url": "https://plants.ces.ncsu.edu/plants/vaccinium-macrocarpon/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Vaccinium macrocarpon",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Vaccinium macrocarpon — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "cranberry",
+        "vaccinium macrocarpon",
+        "american cranberry"
+      ],
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Common / synonym names for Cranberry."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cold temperate bog; USDA zones 2a–7b",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Cold temperate bog; USDA zones 2a–7b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "bog",
+        "acid-soil"
+      ],
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, bog, acid-soil"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Moist; native to bogs."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Cranberry (Vaccinium macrocarpon). Cold temperate bog; USDA zones 2a–7b.",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Cold temperate bog; USDA zones 2a–7b"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 2a–7b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 2a extremely hardy."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 2a–7b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 2a."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "USDA zones only to 7b; native to cool bogs of northeastern North America.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Northern limit → low heat tolerance."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Bog plant requiring acidic wet conditions; atmospheric humidity not rated.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Bog ecology → high humidity heuristic."
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Soil Drainage: Moist; native to bogs.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Bog moisture → high water needs."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Grows in acidic bog soils that stay moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Bog/wet soil → low drainage need (tolerates wet)."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Cold-climate native; flowers late spring.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Northern bog species."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Pink flowers in late spring to early summer.",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Pink flowers appear in late spring to early summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Red berries ripen in autumn.",
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Red berries ripen in autumn.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-vaccinium-macrocarpon"
+      ],
+      "shortExcerpt": "Bee-pollinated Vaccinium; NCSU page does not detail pollination.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Berry crop standard."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

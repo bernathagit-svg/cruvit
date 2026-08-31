@@ -1,0 +1,276 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "jujube-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "jujube",
+    "commonNameEn": "Jujube",
+    "acceptedScientificName": "Ziziphus jujuba",
+    "aliases": [
+      "jujube",
+      "ziziphus jujuba",
+      "chinese date",
+      "red date"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-jujube",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Jujube Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG048",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ziziphus jujuba",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Ziziphus jujuba — identity from University of Florida IFAS Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "jujube",
+        "ziziphus jujuba",
+        "chinese date",
+        "red date"
+      ],
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Common / synonym names for Jujube."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm temperate to subtropical; heat and drought tolerant",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Warm temperate to subtropical; heat and drought tolerant"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "fruit",
+        "tree",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, fruit, tree, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Sun: Plant in full sun."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Water: Trees are drought tolerant once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Jujube (Ziziphus jujuba). Warm temperate to subtropical; heat and drought tolerant.",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Warm temperate to subtropical; heat and drought tolerant"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Jujube trees are hardy but young growth can be damaged by late spring frosts.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy tree, frost on young growth."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Trees tolerate winter temperatures below freezing and hot summers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Freezing winters tolerated."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Trees tolerate winter temperatures below freezing and hot summers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hot summers tolerated."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Trees are drought tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought tolerant established."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Plant in full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Flowers in late spring after dormancy; some cultivars need winter chill for best fruit.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate Asian fruit tree."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Small yellow-green flowers in late spring.",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Small yellow-green flowers appear in late spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Apple-like fruit ripens in late summer to fall.",
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Fruit ripens in late summer to fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-jujube"
+      ],
+      "shortExcerpt": "Many jujube cultivars self-fruitful.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

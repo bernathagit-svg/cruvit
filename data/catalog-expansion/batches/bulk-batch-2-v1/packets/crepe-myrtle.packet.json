@@ -1,0 +1,266 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "crepe-myrtle-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "crepe-myrtle",
+    "commonNameEn": "Crape Myrtle",
+    "acceptedScientificName": "Lagerstroemia indica",
+    "aliases": [
+      "crepe myrtle",
+      "crape myrtle",
+      "lagerstroemia indica",
+      "crepe-myrtle"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-lagerstroemia-indica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Lagerstroemia indica (Crapemyrtle)",
+      "url": "https://plants.ces.ncsu.edu/plants/lagerstroemia-indica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Lagerstroemia indica",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Lagerstroemia indica — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "crepe myrtle",
+        "crape myrtle",
+        "lagerstroemia indica",
+        "crepe-myrtle"
+      ],
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Common / synonym names for Crape Myrtle."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Heat-loving flowering shrub/small tree; USDA 6a–9b",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Heat-loving flowering shrub/small tree; USDA 6a–9b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "shrub",
+        "tree",
+        "heat-tolerant",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, shrub, tree, heat-tolerant, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Water: Drought tolerant once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Crape Myrtle (Lagerstroemia indica). Heat-loving flowering shrub/small tree; USDA 6a–9b.",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Heat-loving flowering shrub/small tree; USDA 6a–9b"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 6a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy to zone 6a with dieback possible."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 6a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 6a lower bound."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Thrives in hot humid southern summers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Southern landscape staple."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Common in humid southeastern US; no RH rating.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Humid south heuristic."
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Drought tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought tolerant established."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun for bloom."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Summer flowering shrub; no chill-hour requirement.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Warm-climate ornamental."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Showy crinkled flowers in summer in many colors.",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Showy crinkled flowers bloom in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Brown capsules persist; grown for flowers not fruit.",
+      "sourceIds": [
+        "ncsu-lagerstroemia-indica"
+      ],
+      "shortExcerpt": "Brown dehiscent capsules persist into winter.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

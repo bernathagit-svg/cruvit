@@ -1,0 +1,215 @@
+{
+  "gate": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING",
+  "verdict": "CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS",
+  "integrationVerdict": "CRUVIT_BATCH_2_PLANT_CLIMATE_V2_INTEGRATION_GATE: PASS",
+  "materialFp": 0,
+  "materialFn": 0,
+  "originalFpBeforeAfter": [
+    {
+      "plant": "bay-laurel",
+      "site": "singapore",
+      "overallBefore": "good",
+      "limiting": null
+    },
+    {
+      "plant": "oleander",
+      "site": "singapore",
+      "overallBefore": "good",
+      "limiting": null
+    },
+    {
+      "plant": "common-thyme",
+      "site": "singapore",
+      "overallBefore": "good",
+      "limiting": null
+    },
+    {
+      "plant": "garden-sage",
+      "site": "singapore",
+      "overallBefore": "good",
+      "limiting": null
+    }
+  ],
+  "matrixSummary": {
+    "totals": {
+      "matrix": 210,
+      "gradient": 250,
+      "expected": 460
+    },
+    "overallCounts": {
+      "borderline": 181,
+      "blocked": 29
+    },
+    "survivalCounts": {
+      "reliable": 166,
+      "constrained": 15,
+      "unreliable": 29
+    }
+  },
+  "mediterraneanSanity": {
+    "evaluations": 100,
+    "byPlant": {
+      "artichoke": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": false
+      },
+      "oregano": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": false
+      },
+      "medlar": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": false
+      },
+      "yucca": {
+        "overallUnique": [
+          "borderline"
+        ],
+        "moistureRegimes": [
+          "semi-arid",
+          "dry-subhumid",
+          "humid",
+          "unknown"
+        ],
+        "notBlanketNotRecommended": true,
+        "humidSampleOverall": [
+          "borderline"
+        ],
+        "semiAridSampleOverall": [
+          "borderline"
+        ],
+        "climateSensitive": false
+      }
+    }
+  },
+  "lowHumidityRegressionGuard": {
+    "plantCount": 2,
+    "evalCount": 14,
+    "blockedCount": 0,
+    "nonBlockedCount": 14,
+    "goodOrBorderlineCount": 14,
+    "notBlanketNotRecommended": true
+  },
+  "tileProfileExposureEquivalence": {
+    "pilotYehiam": {
+      "freezingRisk": "low",
+      "humiditySignal": "medium",
+      "moistureRegime": "humid",
+      "thermalRegime": "cool-seasonal",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "coldestMonthMeanMinC": 7.75
+    },
+    "coverageSample": {
+      "freezingRisk": "medium",
+      "humiditySignal": "medium",
+      "moistureRegime": "humid",
+      "thermalRegime": "cool-seasonal",
+      "coolSeasonSignal": true,
+      "alwaysHot": false,
+      "coldestMonthMeanMinC": 3.15
+    },
+    "coverageHasRequiredEnums": true,
+    "externalCalls": 0
+  },
+  "noSingaporeHardcodeInRule": true,
+  "quantitativeSchema": {
+    "contractVersion": "1.2.0",
+    "compatibleVersions": [
+      "1.0.0",
+      "1.1.0",
+      "1.2.0"
+    ],
+    "optionalClaimFields": [
+      "quantitative.minimum_survival_temperature_c",
+      "quantitative.preferred_minimum_temperature_c",
+      "quantitative.chill_hours_min",
+      "quantitative.chill_hours_max",
+      "quantitative.maximum_tolerated_temperature_c",
+      "quantitative.preferred_maximum_temperature_c",
+      "quantitative.vpd_min_kpa",
+      "quantitative.vpd_max_kpa",
+      "quantitative.drought_tolerance",
+      "quantitative.aridity_tolerance_note",
+      "quantitative.flowering_min_temperature_c",
+      "quantitative.fruiting_min_temperature_c"
+    ],
+    "batch1NumericEnrichment": false,
+    "provenanceRule": "Asserted quantitative fields require sourceIds + shortExcerpt; inventing from qualitative labels forbidden"
+  },
+  "batch2Recommendation": {
+    "schemaReady": true,
+    "everyPlantHasCompleteNumericEvidence": false,
+    "note": "SCHEMA READY for Batch 2: qualitative + optional provenanced quantitative. Do not invent numeric thresholds. UNKNOWN/Borderline when evidence thin."
+  },
+  "systemicGaps": {
+    "P0": [],
+    "P1": [
+      "Optional quantitative fields exist but Batch 1 plants are not populated (by design) — precision hardiness still qualitative",
+      "Climate-side chill-hour series not yet compared to plant chill_hours_min/max (additive when both sides exist later)"
+    ],
+    "P2": [
+      "Continuous PET vs waterNeeds still class-only via moistureRegime",
+      "meanVpdPa unused unless plant supplies provenanced vpd_min/max_kpa"
+    ],
+    "P3": [
+      "sunNeeds / drainageNeeds unused by climate outcomes evaluator"
+    ]
+  },
+  "externalCalls": {
+    "botanicalApi": 0,
+    "aiLlm": 0,
+    "catalogEnrichment": 0,
+    "chelsa": 0,
+    "terrain": 0,
+    "openMeteoStructural": 0,
+    "era5": 0
+  },
+  "gradientExternalClimateCalls": 0,
+  "generatedAt": "2026-08-31T17:51:46.697Z"
+}

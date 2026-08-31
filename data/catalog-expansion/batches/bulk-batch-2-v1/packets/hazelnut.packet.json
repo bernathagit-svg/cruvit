@@ -1,0 +1,314 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "hazelnut-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "hazelnut",
+    "commonNameEn": "Hazelnut",
+    "acceptedScientificName": "Corylus avellana",
+    "aliases": [
+      "hazelnut",
+      "corylus avellana",
+      "european hazel",
+      "filbert",
+      "cobnut"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-corylus-avellana",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Corylus avellana (European Hazel)",
+      "url": "https://plants.ces.ncsu.edu/plants/corylus-avellana/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Corylus avellana",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Corylus avellana — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "hazelnut",
+        "corylus avellana",
+        "european hazel",
+        "filbert",
+        "cobnut"
+      ],
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Common / synonym names for Hazelnut."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool to mild temperate; USDA zones 4a–8b",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Cool to mild temperate; USDA zones 4a–8b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "nut",
+        "shrub",
+        "tree"
+      ],
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, nut, shrub, tree"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day); Partial Shade (2–6 hours)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Hazelnut (Corylus avellana). Cool to mild temperate; USDA zones 4a–8b.",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Cool to mild temperate; USDA zones 4a–8b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 4a lower bound → frostSensitivity=low (hardy temperate shrub/tree)."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Survives zone 4a winters → coldTolerance=high."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "NCSU lists zones to 8b but does not publish a heat-mortality rating; temperate native range used as provisional heuristic.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No direct heat-tolerance excerpt → HEURISTIC_ASSERTION."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "NCSU page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist but well-drained soils → waterNeeds=medium."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day); Partial Shade (2–6 hours).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Primary recommendation full sun; partial shade tolerated."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage requirement → drainageNeeds=high."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Male catkins hang all winter; bloom late winter to early spring on bare branches — temperate dormancy cue implied but no chill-hour figure published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate nut crop with winter catkins → needsWinterChill=true (heuristic; no hour count)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Both male and female flowers on the same plant; yellow-brown male catkins release pollen in late winter to early spring.",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Both male and female flowers can be found on this plant. They bloom in late winter to early spring on the still bare branches.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible nuts ripen in late summer; clusters of 1–5 nuts released from husk when ripe.",
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "The fruit, in the form of a nut, is enclosed by a short leafy involucre… released from the husk in late summer when the nut has ripened.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-monoecious",
+      "field": "reproductive.monoecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Both male and female flowers can be found on this plant.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Monoecious with wind-pollinated catkins; named cultivars often need cross-pollination for best nut set — not explicitly stated on NCSU page.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Commercial hazelnut production typically uses pollinizer cultivars."
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-corylus-avellana"
+      ],
+      "shortExcerpt": "Wind-pollinated catkins; cross-pollination between compatible cultivars improves yield.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Wind pollination + cultivar guidance → requires_pollinator=true (wind as vector)."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,301 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "sapodilla-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "sapodilla",
+    "commonNameEn": "Sapodilla",
+    "acceptedScientificName": "Manilkara zapota",
+    "aliases": [
+      "sapodilla",
+      "manilkara zapota",
+      "chiku",
+      "naseberry"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-sapodilla",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Sapodilla Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG051",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Manilkara zapota",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Manilkara zapota — identity from University of Florida IFAS Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "sapodilla",
+        "manilkara zapota",
+        "chiku",
+        "naseberry"
+      ],
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Common / synonym names for Sapodilla."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Tropical to warm subtropical; frost sensitive",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Tropical to warm subtropical; frost sensitive"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "tropical",
+        "subtropical",
+        "fruit",
+        "tree"
+      ],
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Catalog tags: tropical, subtropical, fruit, tree"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Sun: Plant in full sun."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Water: Water regularly during dry periods."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Sapodilla (Manilkara zapota). Tropical to warm subtropical; frost sensitive.",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Tropical to warm subtropical; frost sensitive"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Structural groupIds: tropical-frost-sensitive-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Sapodilla trees are injured by frost and freeze.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost injury stated."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Young trees are killed by temperatures in the mid-20s°F (−4 to −3°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Mid-20s°F kill young trees."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Native to tropical America; thrives in warm climates.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Tropical/subtropical heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "IFAS does not publish humidity tolerance class.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Water regularly during dry periods.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Regular water in dry periods."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Plant in full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Well-drained soil is essential.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained essential."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Tropical evergreen fruit tree; no chill requirement mentioned.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Small white flowers throughout warm season.",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "IFAS notes year-round flowering potential in warm climates.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Evergreen tropical."
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Brown sweet fruit when fully ripe; slow to bear from seed.",
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Fruit is brown, sweet, and sandy-textured when ripe.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -4,
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Young trees are killed by temperatures in the mid-20s°F.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Mid-20s°F ≈ −4°C lower bound for young trees."
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-sapodilla"
+      ],
+      "shortExcerpt": "Many sapodilla cultivars self-fruitful; IFAS does not state explicitly.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

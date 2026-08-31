@@ -1,0 +1,276 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "elderberry-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "elderberry",
+    "commonNameEn": "Elderberry",
+    "acceptedScientificName": "Sambucus canadensis",
+    "aliases": [
+      "elderberry",
+      "sambucus canadensis",
+      "american elder",
+      "common elderberry"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-sambucus-canadensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Sambucus canadensis (American Elder)",
+      "url": "https://plants.ces.ncsu.edu/plants/sambucus-canadensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Sambucus canadensis",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Sambucus canadensis — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "elderberry",
+        "sambucus canadensis",
+        "american elder",
+        "common elderberry"
+      ],
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Common / synonym names for Elderberry."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Temperate; USDA zones 3a–9b",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Temperate; USDA zones 3a–9b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "shrub",
+        "native"
+      ],
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, shrub, native"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Elderberry (Sambucus canadensis). Temperate; USDA zones 3a–9b.",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Temperate; USDA zones 3a–9b"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3a hardy."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Wide cold range."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "USDA zones to 9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Southern range to 9b."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist sites."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist but drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Large white flower clusters in summer on new wood.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate native."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Large flat-topped white flower clusters in summer.",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Large flat-topped clusters of white flowers bloom in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Purple-black berries in late summer to fall; cook before eating.",
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Purple-black berries ripen in late summer to fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-sambucus-canadensis"
+      ],
+      "shortExcerpt": "Cross-pollination between cultivars improves yield; not explicit on NCSU.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Elderberry orchard practice."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

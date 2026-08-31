@@ -1,0 +1,276 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "clematis-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "clematis",
+    "commonNameEn": "Clematis",
+    "acceptedScientificName": "Clematis viticella",
+    "aliases": [
+      "clematis",
+      "clematis viticella",
+      "italian clematis",
+      "virgins bower"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-clematis-viticella",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Clematis viticella (Italian clematis)",
+      "url": "https://www.rhs.org.uk/plants/914/clematis-viticella/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Clematis viticella",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Clematis viticella — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "clematis",
+        "clematis viticella",
+        "italian clematis",
+        "virgins bower"
+      ],
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Common / synonym names for Clematis."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Hardy flowering vine; RHS H6",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Hardy flowering vine; RHS H6"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "vine",
+        "perennial",
+        "flowering"
+      ],
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, vine, perennial, flowering"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun; roots in shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Water: Moisture: Moist but well-drained."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Clematis (Clematis viticella). Hardy flowering vine; RHS H6.",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Hardy flowering vine; RHS H6"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Hardiness: H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy climber."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Hardiness: H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H6."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Roots prefer cool; tops in sun.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Clematis culture heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist roots."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Aspect: Full sun; roots in shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Head in sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Group 3 pruning; flowers on new wood after winter dieback.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate vine."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Bell-shaped flowers in summer on current season growth.",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Flowers: Bell-shaped flowers in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Feathery seed heads in autumn.",
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Fruit: Feathery seed heads in autumn.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -20,
+      "sourceIds": [
+        "rhs-clematis-viticella"
+      ],
+      "shortExcerpt": "Hardiness H6 (−20°C to −15°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H6 lower bound."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

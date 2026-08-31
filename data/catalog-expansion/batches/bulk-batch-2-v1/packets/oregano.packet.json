@@ -1,0 +1,278 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "oregano-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "oregano",
+    "commonNameEn": "Oregano",
+    "acceptedScientificName": "Origanum vulgare",
+    "aliases": [
+      "oregano",
+      "origanum vulgare",
+      "wild marjoram",
+      "greek oregano"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-origanum-vulgare",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Origanum vulgare (oregano)",
+      "url": "https://www.rhs.org.uk/plants/11017/origanum-vulgare/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Origanum vulgare",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Origanum vulgare — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "oregano",
+        "origanum vulgare",
+        "wild marjoram",
+        "greek oregano"
+      ],
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Common / synonym names for Oregano."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Mediterranean perennial herb; RHS H5",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Mediterranean perennial herb; RHS H5"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "herb",
+        "mediterranean",
+        "perennial",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Catalog tags: herb, mediterranean, perennial, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Water: Moisture: Well-drained; drought tolerant once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Oregano (Origanum vulgare). Mediterranean perennial herb; RHS H5.",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Mediterranean perennial herb; RHS H5"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Hardiness: H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy perennial herb."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Hardiness: H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H5."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Mediterranean native; thrives in hot dry summers.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Mediterranean drought herb."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Mediterranean dry-summer ecology; no RH rating.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Low humidity heuristic."
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Moisture: Well-drained; drought tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought tolerant."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Aspect: Full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Moisture: Well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained essential."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Evergreen to semi-evergreen Mediterranean perennial.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No chill described."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Pink to purple flowers in summer.",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Flowers: Pink to purple flowers in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for aromatic leaves; flowers attract pollinators.",
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Culinary leaf herb.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Leaf crop."
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -15,
+      "sourceIds": [
+        "rhs-origanum-vulgare"
+      ],
+      "shortExcerpt": "Hardiness H5 (−15°C to −10°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H5 lower bound."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

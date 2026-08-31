@@ -1,0 +1,300 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "sea-buckthorn-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "sea-buckthorn",
+    "commonNameEn": "Sea Buckthorn",
+    "acceptedScientificName": "Hippophae rhamnoides",
+    "aliases": [
+      "sea buckthorn",
+      "hippophae rhamnoides",
+      "seaberry",
+      "sallowthorn"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-hippophae-rhamnoides",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Hippophae rhamnoides (sea buckthorn)",
+      "url": "https://www.rhs.org.uk/plants/8264/hippophae-rhamnoides/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Hippophae rhamnoides",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Hippophae rhamnoides — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "sea buckthorn",
+        "hippophae rhamnoides",
+        "seaberry",
+        "sallowthorn"
+      ],
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Common / synonym names for Sea Buckthorn."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cold hardy coastal/temperate; RHS H7",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Cold hardy coastal/temperate; RHS H7"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "shrub",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, shrub, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Water: Moisture: Well-drained; tolerates dry coastal sites."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Sea Buckthorn (Hippophae rhamnoides). Cold hardy coastal/temperate; RHS H7.",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Cold hardy coastal/temperate; RHS H7"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Hardiness: H7 (−20°C and below).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H7 very hardy."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Hardiness: H7 (−20°C and below).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H7."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Coastal and continental range; no heat rating.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Moisture: Well-drained; tolerates dry coastal sites.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought-tolerant coastal shrub."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Aspect: Full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Moisture: Well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Deciduous temperate shrub; spring flowers.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Northern species."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Inconspicuous spring flowers before leaves.",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Flowers: Inconspicuous spring flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Orange berries on female plants in autumn.",
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Fruit: Orange berries on female plants in autumn.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -20,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Hardiness H7 (−20°C and below).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H7 lower bound at −20°C."
+    },
+    {
+      "claimId": "reproductive-dioecious",
+      "field": "reproductive.dioecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Fruit: Orange berries on female plants in autumn.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Female-only fruit → dioecious."
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "rhs-hippophae-rhamnoides"
+      ],
+      "shortExcerpt": "Orange berries on female plants — male plant needed for pollination.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Dioecious pollination."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

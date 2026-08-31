@@ -1,0 +1,276 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "serviceberry-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "serviceberry",
+    "commonNameEn": "Serviceberry",
+    "acceptedScientificName": "Amelanchier canadensis",
+    "aliases": [
+      "serviceberry",
+      "amelanchier canadensis",
+      "juneberry",
+      "shadbush"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-amelanchier-canadensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Amelanchier canadensis (Canadian Serviceberry)",
+      "url": "https://plants.ces.ncsu.edu/plants/amelanchier-canadensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Amelanchier canadensis",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Amelanchier canadensis — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "serviceberry",
+        "amelanchier canadensis",
+        "juneberry",
+        "shadbush"
+      ],
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Common / synonym names for Serviceberry."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool temperate; USDA zones 3a–8b",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Cool temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "shrub",
+        "native"
+      ],
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, shrub, native"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Serviceberry (Amelanchier canadensis). Cool temperate; USDA zones 3a–8b.",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Cool temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3a → low frost sensitivity."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3a → high cold tolerance."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Zones to 8b; no heat-mortality rating published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Not stated on NCSU page.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun listed."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Early spring white flowers before leaves fully expand; native to cool eastern North America.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate berry tree."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Showy white flowers in early spring.",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Showy white flowers in early spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible red to purple berries in early summer.",
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Edible berries ripen in early summer; sweet flavor when fully ripe.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-amelanchier-canadensis"
+      ],
+      "shortExcerpt": "Pollination details not on NCSU page; Amelanchier often self-fertile.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,274 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "dill-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "dill",
+    "commonNameEn": "Dill",
+    "acceptedScientificName": "Anethum graveolens",
+    "aliases": [
+      "dill",
+      "anethum graveolens",
+      "dill weed"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "rhs-anethum-graveolens",
+      "institution": "Royal Horticultural Society",
+      "publisher": "Royal Horticultural Society",
+      "title": "Anethum graveolens (dill)",
+      "url": "https://www.rhs.org.uk/plants/703/anethum-graveolens/details",
+      "authorityTier": "horticultural_society",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Anethum graveolens",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Anethum graveolens — identity from Royal Horticultural Society.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "dill",
+        "anethum graveolens",
+        "dill weed"
+      ],
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Common / synonym names for Dill."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool-season annual herb; RHS H4",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Cool-season annual herb; RHS H4"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "herb",
+        "annual",
+        "mediterranean",
+        "edible"
+      ],
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Catalog tags: herb, annual, mediterranean, edible"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Sun: Aspect: Full sun."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Water: Moisture: Moist but well-drained."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Dill (Anethum graveolens). Cool-season annual herb; RHS H4.",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Cool-season annual herb; RHS H4"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Hardiness: H4 (−10°C to −5°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H4 annual."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Hardiness: H4 (−10°C to −5°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H4."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Cool-season annual; tolerates warm but bolts in heat.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Annual herb."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist soil."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Aspect: Full sun.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Moisture: Moist but well-drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Annual herb; no chill requirement.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Annual."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Yellow umbel flowers in summer.",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Flowers: Yellow umbel flowers in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Flat seeds used as dill spice.",
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Fruit: Flat seeds used as dill spice.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -10,
+      "sourceIds": [
+        "rhs-anethum-graveolens"
+      ],
+      "shortExcerpt": "Hardiness H4 (−10°C to −5°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "H4 lower bound."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

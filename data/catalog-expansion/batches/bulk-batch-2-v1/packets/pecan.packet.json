@@ -1,0 +1,310 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "pecan-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "pecan",
+    "commonNameEn": "Pecan",
+    "acceptedScientificName": "Carya illinoinensis",
+    "aliases": [
+      "pecan",
+      "carya illinoinensis",
+      "hardy pecan"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-carya-illinoinensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Carya illinoinensis (Hardy Pecan)",
+      "url": "https://plants.ces.ncsu.edu/plants/carya-illinoinensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Carya illinoinensis",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Carya illinoinensis — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "pecan",
+        "carya illinoinensis",
+        "hardy pecan"
+      ],
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Common / synonym names for Pecan."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm temperate to subtropical; USDA zones 5a–9b",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Warm temperate to subtropical; USDA zones 5a–9b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "nut",
+        "tree",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, nut, tree, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Sun: Hardy pecan grows best in full sun to partial shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist; Occasionally Dry."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Pecan (Carya illinoinensis). Warm temperate to subtropical; USDA zones 5a–9b.",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Warm temperate to subtropical; USDA zones 5a–9b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a–9b; late frosts can reduce nut production.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy to zone 5a but crop frost-sensitive → frostSensitivity=medium."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 5a lower bound → coldTolerance=medium."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Native central/east-central US to Mexico; zones to 9b — heat-tolerant range inferred, no explicit rating.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Southern US native range → heatTolerance=high (heuristic)."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "NCSU does not publish humidity tolerance class.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist; Occasionally Dry.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained but tolerates occasional dry → waterNeeds=medium."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Hardy pecan grows best in full sun to partial shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Best in full sun → sunNeeds=full_sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Tolerates clay, sand, and loam soils as long as they are well drained.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained soils required → drainageNeeds=high."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Nut production can be reduced in the northern part of its growing range, especially when spring is late and the summer is cool.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Northern limit tied to season length/chill → needsWinterChill=true (heuristic)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Monoecious; separate male catkins and female spikes; type I and type II cultivars for cross-pollination.",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Pecan trees are monoecious… Pollen is not released when flowers are receptive… planting at least three cultivars with at least one of each pollination type.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Sweet edible nuts ripen in fall; scab and late frost can reduce crop.",
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Sweet edible nuts with a husk that splits into four sections when they ripen in the fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-monoecious",
+      "field": "reproductive.monoecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Pecan trees are monoecious: they have separate male and female flowers on the same tree.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": null
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "Pollen is not released when flowers are receptive, so pollination within and between the same cultivars is limited.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Self-incompatibility timing → self_fertile=false."
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-carya-illinoinensis"
+      ],
+      "shortExcerpt": "For optimum pollination, NC State Extension recommends planting at least three cultivars with at least one of each pollination type.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Cross-pollination between type I and II cultivars required for best crops."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,262 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "sweet-potato-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "sweet-potato",
+    "commonNameEn": "Sweet Potato",
+    "acceptedScientificName": "Ipomoea batatas",
+    "aliases": [
+      "sweet potato",
+      "ipomoea batatas",
+      "yam (colloquial)"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-ipomoea-batatas",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Ipomoea batatas (Sweet Potato)",
+      "url": "https://plants.ces.ncsu.edu/plants/ipomoea-batatas/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ipomoea batatas",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Ipomoea batatas — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "sweet potato",
+        "ipomoea batatas",
+        "yam (colloquial)"
+      ],
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Common / synonym names for Sweet Potato."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm season; frost kills vines (zones 9a–11 perennial)",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Warm season; frost kills vines (zones 9a–11 perennial)"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "vegetable",
+        "tuber",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, vegetable, tuber, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Sweet Potato (Ipomoea batatas). Warm season; frost kills vines (zones 9a–11 perennial).",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Warm season; frost kills vines (zones 9a–11 perennial)"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "USDA zones 9a–11; frost kills vines.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Tropical vine killed by frost."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Only hardy in zones 9+."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Thrives in hot summer conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hot summer crop."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Warm-season annual/perennial vine; no chill requirement.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Heat-loving crop."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Ornamental morning-glory type flowers occasionally.",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Produces morning glory-like flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible tuberous roots harvested before first frost.",
+      "sourceIds": [
+        "ncsu-ipomoea-batatas"
+      ],
+      "shortExcerpt": "Edible tuberous roots form in warm soils.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

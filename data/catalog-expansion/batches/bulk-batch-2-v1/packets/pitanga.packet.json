@@ -1,0 +1,300 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "pitanga-bulk-batch-2-v1",
+  "identity": {
+    "canonicalSlug": "pitanga",
+    "commonNameEn": "Surinam Cherry",
+    "acceptedScientificName": "Eugenia uniflora",
+    "aliases": [
+      "pitanga",
+      "eugenia uniflora",
+      "surinam cherry",
+      "brazilian cherry"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk Batch 2 evidence-first ingest (bulk-catalog-batch-2-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "uf-ifas-surinam-cherry",
+      "institution": "University of Florida IFAS Extension",
+      "publisher": "University of Florida IFAS Extension",
+      "title": "Surinam Cherry Growing in the Florida Home Landscape",
+      "url": "https://edis.ifas.ufl.edu/publication/MG055",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Eugenia uniflora",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Eugenia uniflora — identity from University of Florida IFAS Extension.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "pitanga",
+        "eugenia uniflora",
+        "surinam cherry",
+        "brazilian cherry"
+      ],
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Common / synonym names for Surinam Cherry."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Frost-free subtropical to tropical",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Frost-free subtropical to tropical"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "tropical",
+        "fruit",
+        "shrub"
+      ],
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, tropical, fruit, shrub"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Sun: Plant in full sun for best flowering and fruiting."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Water: Water during prolonged dry periods."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Surinam Cherry (Eugenia uniflora). Frost-free subtropical to tropical.",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Frost-free subtropical to tropical"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "tropical-frost-sensitive-fruit"
+      ],
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Structural groupIds: tropical-frost-sensitive-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Surinam cherry is damaged by frost and freezes.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost damage stated."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Trees are injured by temperatures below 28°F (−2°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "28°F injury threshold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Subtropical to tropical shrub; thrives in warm climates.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Warm climate heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Not stated.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Water during prolonged dry periods.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Water in dry periods."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Plant in full sun for best flowering and fruiting.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Well-drained soil.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Well-drained."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Evergreen subtropical shrub; no chill requirement.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White fragrant flowers followed by ribbed red fruit.",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Fragrant white flowers are followed by ribbed red fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Red to dark purple berries; multiple flushes per year in warm climates.",
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Fruit may be produced several times a year in warm climates.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "quantitative-minimum_survival_temperature_c",
+      "field": "quantitative.minimum_survival_temperature_c",
+      "status": "asserted",
+      "value": -2,
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Trees are injured by temperatures below 28°F (−2°C).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "28°F → −2°C."
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "uf-ifas-surinam-cherry"
+      ],
+      "shortExcerpt": "Surinam cherry generally self-fertile.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}
