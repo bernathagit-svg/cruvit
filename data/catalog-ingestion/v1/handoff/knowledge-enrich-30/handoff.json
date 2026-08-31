@@ -1,0 +1,1336 @@
+{
+  "manifest": {
+    "batchId": "synthetic-knowledge-enrich-30",
+    "batchVersion": "1.0.0",
+    "generatedAt": "2026-08-31T20:00:00.000Z",
+    "mode": "KNOWLEDGE_ENRICHMENT",
+    "plantCount": 30,
+    "expectedSlugs": [
+      "synthetic-know-base-0001",
+      "synthetic-know-base-0002",
+      "synthetic-know-base-0003",
+      "synthetic-know-base-0004",
+      "synthetic-know-base-0005",
+      "synthetic-know-base-0006",
+      "synthetic-know-base-0007",
+      "synthetic-know-base-0008",
+      "synthetic-know-base-0009",
+      "synthetic-know-base-0010",
+      "synthetic-know-base-0011",
+      "synthetic-know-base-0012",
+      "synthetic-know-base-0013",
+      "synthetic-know-base-0014",
+      "synthetic-know-base-0015",
+      "synthetic-know-base-0016",
+      "synthetic-know-base-0017",
+      "synthetic-know-base-0018",
+      "synthetic-know-base-0019",
+      "synthetic-know-base-0020",
+      "synthetic-know-base-0021",
+      "synthetic-know-base-0022",
+      "synthetic-know-base-0023",
+      "synthetic-know-base-0024",
+      "synthetic-know-base-0025",
+      "synthetic-know-base-0026",
+      "synthetic-know-base-0027",
+      "synthetic-know-base-0028",
+      "synthetic-know-base-0029",
+      "synthetic-know-base-0030"
+    ],
+    "handoffSha256": "01fb7dcbedc807e74250b42c5e9909cdb28ab01f294dc9f391476d9b2aad8629",
+    "contractVersions": {
+      "catalogIngestion": "1.0.0"
+    },
+    "expectedEvidenceInventory": null,
+    "expectedKnowledgeInventory": null,
+    "chunkSize": 75,
+    "updateAuthorized": false,
+    "chunkingStrategy": "SINGLE_TRANSACTION_MULTI_CHUNK",
+    "sequence": [
+      "IDENTITY",
+      "BOTANICAL_EVIDENCE",
+      "REPRODUCTIVE_EVIDENCE",
+      "KNOWLEDGE_WARNINGS",
+      "MEDIA",
+      "SUITABILITY_GATES",
+      "PERSISTENCE_HANDOFF",
+      "BULK_PREFLIGHT",
+      "ATOMIC_BULK_UPSERT",
+      "POST_WRITE_VERIFY"
+    ],
+    "runtimeCostRules": {
+      "externalBotanicalApis": 0,
+      "webResearch": 0,
+      "aiResearch": 0,
+      "imageSearch": 0,
+      "toxicityLookup": 0,
+      "invasiveLookup": 0
+    },
+    "notes": null
+  },
+  "plants": [
+    {
+      "slug": "synthetic-know-base-0001",
+      "scientific_name": "Synthetica ingestus0001",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0002",
+      "scientific_name": "Synthetica ingestus0002",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0003",
+      "scientific_name": "Synthetica ingestus0003",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0004",
+      "scientific_name": "Synthetica ingestus0004",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0005",
+      "scientific_name": "Synthetica ingestus0005",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0006",
+      "scientific_name": "Synthetica ingestus0006",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0007",
+      "scientific_name": "Synthetica ingestus0007",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0008",
+      "scientific_name": "Synthetica ingestus0008",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0009",
+      "scientific_name": "Synthetica ingestus0009",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0010",
+      "scientific_name": "Synthetica ingestus0010",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0011",
+      "scientific_name": "Synthetica ingestus0011",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0012",
+      "scientific_name": "Synthetica ingestus0012",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0013",
+      "scientific_name": "Synthetica ingestus0013",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0014",
+      "scientific_name": "Synthetica ingestus0014",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0015",
+      "scientific_name": "Synthetica ingestus0015",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0016",
+      "scientific_name": "Synthetica ingestus0016",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0017",
+      "scientific_name": "Synthetica ingestus0017",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0018",
+      "scientific_name": "Synthetica ingestus0018",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0019",
+      "scientific_name": "Synthetica ingestus0019",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0020",
+      "scientific_name": "Synthetica ingestus0020",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0021",
+      "scientific_name": "Synthetica ingestus0021",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0022",
+      "scientific_name": "Synthetica ingestus0022",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0023",
+      "scientific_name": "Synthetica ingestus0023",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0024",
+      "scientific_name": "Synthetica ingestus0024",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0025",
+      "scientific_name": "Synthetica ingestus0025",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0026",
+      "scientific_name": "Synthetica ingestus0026",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0027",
+      "scientific_name": "Synthetica ingestus0027",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0028",
+      "scientific_name": "Synthetica ingestus0028",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0029",
+      "scientific_name": "Synthetica ingestus0029",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    },
+    {
+      "slug": "synthetic-know-base-0030",
+      "scientific_name": "Synthetica ingestus0030",
+      "plantKnowledge": {
+        "plantKnowledgeContractVersion": "1.0.0",
+        "sources": [
+          {
+            "sourceId": "synthetic-knowledge",
+            "institution": "CRUVIT Synthetic",
+            "title": "Synthetic knowledge",
+            "url": "https://example.invalid/synthetic",
+            "authorityTier": "university_extension",
+            "verifiedAt": "2026-08-31"
+          }
+        ],
+        "toxicity": {},
+        "invasiveness": {},
+        "regionalRestrictions": [],
+        "physicalHazards": {},
+        "allergenicity": {},
+        "pestsAndDiseases": [],
+        "cultivarCaveats": {},
+        "plantingRequirements": {},
+        "soilRequirements": {},
+        "maintenance": {},
+        "harvestUseWarnings": {
+          "edibleParts": {
+            "value": [
+              "none_synthetic"
+            ],
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "sourceIds": [
+              "synthetic-knowledge"
+            ],
+            "shortExcerpt": "Synthetic non-edible fixture note.",
+            "status": "asserted"
+          }
+        },
+        "importantNotes": [],
+        "warnings": []
+      }
+    }
+  ],
+  "allowedTargetTable": "public.catalog_plants",
+  "liveWrite": false,
+  "contentSha256": "01fb7dcbedc807e74250b42c5e9909cdb28ab01f294dc9f391476d9b2aad8629"
+}

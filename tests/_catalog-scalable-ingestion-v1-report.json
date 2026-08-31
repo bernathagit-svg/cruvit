@@ -1,0 +1,323 @@
+{
+  "generatedAt": "2026-08-31T19:16:40.603Z",
+  "contractVersion": "1.0.0",
+  "liveWrite": false,
+  "batch3Started": false,
+  "architecture": {
+    "sequence": [
+      "IDENTITY",
+      "BOTANICAL_EVIDENCE",
+      "REPRODUCTIVE_EVIDENCE",
+      "KNOWLEDGE_WARNINGS",
+      "MEDIA",
+      "SUITABILITY_GATES",
+      "PERSISTENCE_HANDOFF",
+      "BULK_PREFLIGHT",
+      "ATOMIC_BULK_UPSERT",
+      "POST_WRITE_VERIFY"
+    ],
+    "chunkingStrategy": {
+      "id": "SINGLE_TRANSACTION_MULTI_CHUNK",
+      "description": "Deterministic VALUES chunks inside one PostgreSQL transaction. Partial chunk success cannot commit.",
+      "defaultChunkSize": 75,
+      "partialCompletionAllowed": false
+    },
+    "modes": [
+      "NEW_PLANT_BATCH",
+      "KNOWLEDGE_ENRICHMENT",
+      "BOTANICAL_EVIDENCE_ENRICHMENT",
+      "MEDIA_ENRICHMENT",
+      "OWNER_APPROVED_CANONICAL_CORRECTION"
+    ],
+    "atomicity": "SINGLE_TRANSACTION_MULTI_CHUNK — ALL succeed or ROLLBACK",
+    "collisionDefault": "NEW_PLANT_BATCH blocks existing slug/scientific",
+    "dbCallModel": "O(chunks) statements per batch, one transaction"
+  },
+  "benchmarks": {
+    "plants30": {
+      "plantCount": 30,
+      "ok": true,
+      "preflight": "PREFLIGHT: PASS",
+      "timingsMs": {
+        "manifest": 0.075,
+        "seal": 0.853,
+        "validationPreflight": 1.528,
+        "sqlGeneration": 0.599,
+        "total": 12.268
+      },
+      "payloadBytes": 60461,
+      "upsertBytes": 60461,
+      "chunkCount": 1,
+      "dbExecutionCalls": {
+        "begin": 1,
+        "dmlChunks": 1,
+        "verifyDoBlock": 1,
+        "commit": 1,
+        "totalStatements": 4,
+        "note": "O(chunks) statements inside one transaction; not O(plants)"
+      },
+      "contentSha256": "a32219f4f062fc768613760a64efaa2781e7eb2a35cfbe2f5a0d8162ce42115b"
+    },
+    "plants100": {
+      "plantCount": 100,
+      "ok": true,
+      "preflight": "PREFLIGHT: PASS",
+      "timingsMs": {
+        "manifest": 0.014,
+        "seal": 1.941,
+        "validationPreflight": 0.736,
+        "sqlGeneration": 1.067,
+        "total": 8.879
+      },
+      "payloadBytes": 198158,
+      "upsertBytes": 198158,
+      "chunkCount": 2,
+      "dbExecutionCalls": {
+        "begin": 1,
+        "dmlChunks": 2,
+        "verifyDoBlock": 1,
+        "commit": 1,
+        "totalStatements": 5,
+        "note": "O(chunks) statements inside one transaction; not O(plants)"
+      },
+      "contentSha256": "fabfc08e01d7b96b54b825c82f7166266e8ee9f14c0cd79e5214e3efd770bbdc"
+    },
+    "plants300": {
+      "plantCount": 300,
+      "ok": true,
+      "preflight": "PREFLIGHT: PASS",
+      "timingsMs": {
+        "manifest": 0.025,
+        "seal": 4.881,
+        "validationPreflight": 2.039,
+        "sqlGeneration": 2.215,
+        "total": 21.08
+      },
+      "payloadBytes": 590962,
+      "upsertBytes": 590962,
+      "chunkCount": 4,
+      "dbExecutionCalls": {
+        "begin": 1,
+        "dmlChunks": 4,
+        "verifyDoBlock": 1,
+        "commit": 1,
+        "totalStatements": 7,
+        "note": "O(chunks) statements inside one transaction; not O(plants)"
+      },
+      "contentSha256": "2ca40e29439494d8265fc6fc6a0c4bdeae4deeecc81095f1b756cb5a4ac8c2d8"
+    }
+  },
+  "knowledgeEnrichmentSimulation": {
+    "ok": true,
+    "preflight": "PREFLIGHT: PASS",
+    "simulationRolledBack": false,
+    "checksumPreserved": true
+  },
+  "safetyFailureTests": [
+    {
+      "name": "duplicateSlug",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "manifest: duplicate expectedSlugs: synthetic-fail-0001",
+        "duplicate slugs in batch: synthetic-fail-0001"
+      ]
+    },
+    {
+      "name": "duplicateScientific",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "duplicate scientific identities in batch: synthetica ingestus0001"
+      ]
+    },
+    {
+      "name": "missingPlant",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "plant count 4 !== manifest.plantCount 5",
+        "plant slugs do not match manifest.expectedSlugs"
+      ]
+    },
+    {
+      "name": "extraPlant",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "plant count 6 !== manifest.plantCount 5",
+        "plant slugs do not match manifest.expectedSlugs"
+      ]
+    },
+    {
+      "name": "invalidEvidenceClass",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-fail-0001: evidence: invalid class frostSensitivity=GUESSED"
+      ]
+    },
+    {
+      "name": "missingProvenance",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-fail-0001: provenance: traitProvenance missing while evidence present"
+      ]
+    },
+    {
+      "name": "invalidPlantKnowledge",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-fail-0001: plantKnowledge: plantKnowledge.sources must be an array"
+      ]
+    },
+    {
+      "name": "unsafeWarningHeuristicConfirmed",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-fail-0001: warning: positive safety rejected on toxicity.humanToxicity: positive-safety-requires-SOURCE_SUPPORTED",
+        "synthetic-fail-0001: warning: confirmed safety from HEURISTIC on toxicity.humanToxicity"
+      ]
+    },
+    {
+      "name": "unsafeUnknownActiveWarning",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-fail-0001: warning: confirmed/active safety warning from UNKNOWN: unknown-active-tox"
+      ]
+    },
+    {
+      "name": "existingCollision",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "existing slug collision blocks NEW_PLANT_BATCH: synthetic-fail-0001",
+        "existing scientific collision blocks NEW_PLANT_BATCH: synthetica ingestus0001"
+      ]
+    },
+    {
+      "name": "sqlTargetTampering",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "forbidden SQL target table: public.users"
+      ]
+    },
+    {
+      "name": "staleSha",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "handoff: stale or mismatched contentSha256"
+      ]
+    },
+    {
+      "name": "oneMalformedInLargeBatch",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "synthetic-malformed-0051: evidence: invalid class frostSensitivity=NOT_A_CLASS"
+      ]
+    },
+    {
+      "name": "atomicRollbackOnMidBatchFailure",
+      "ok": false,
+      "expectedFail": true,
+      "passed": true,
+      "errors": [
+        "injected failure at plant synthetic-rollback-0051"
+      ]
+    }
+  ],
+  "safetyFailureAllBlocked": true,
+  "existing60Regression": {
+    "batch1": {
+      "actual": {
+        "SOURCE_SUPPORTED": 189,
+        "HEURISTIC_ASSERTION": 125,
+        "UNKNOWN": 11
+      },
+      "expected": {
+        "SOURCE_SUPPORTED": 189,
+        "HEURISTIC_ASSERTION": 125,
+        "UNKNOWN": 11
+      },
+      "pass": true
+    },
+    "batch2": {
+      "actual": {
+        "SOURCE_SUPPORTED": 248,
+        "HEURISTIC_ASSERTION": 71,
+        "UNKNOWN": 25
+      },
+      "expected": {
+        "SOURCE_SUPPORTED": 248,
+        "HEURISTIC_ASSERTION": 71,
+        "UNKNOWN": 25
+      },
+      "pass": true
+    },
+    "plantKnowledge": {
+      "actual": {
+        "SOURCE_SUPPORTED": 100,
+        "HEURISTIC_ASSERTION": 136,
+        "UNKNOWN": 405
+      },
+      "expected": {
+        "SOURCE_SUPPORTED": 100,
+        "HEURISTIC_ASSERTION": 136,
+        "UNKNOWN": 405
+      },
+      "pass": true
+    },
+    "plantClimateV2": {
+      "materialFp": 0,
+      "materialFn": 0,
+      "heuristicDependentConfident": 0,
+      "verdict": "CRUVIT_PLANT_CLIMATE_V2_ALIGNMENT_HARDENING: PASS",
+      "pass": true
+    }
+  },
+  "remainingScalabilityLimits": [
+    "Owner still applies SQL handoff manually (no live agent write)",
+    "Chunk size tunable; very large JSONB rows may hit Postgres parameter/packet limits — reduce chunkSize",
+    "Multi-region / concurrent writers not in V1",
+    "Strategy B (chunk compensation across connections) not implemented — V1 uses Strategy A only",
+    "Synthetic fixtures are non-production and must not be upserted live"
+  ],
+  "readyForBatch3": true,
+  "readyForBatch3Note": "Architecture ready for Batch 3 to consume this pipeline; Batch 3 plant research/content not started.",
+  "filesChanged": [
+    "modules/catalog-ingestion/catalog-ingestion-v1-contract.js",
+    "modules/catalog-ingestion/ingestion-modes-v1.js",
+    "modules/catalog-ingestion/preflight-v1.js",
+    "modules/catalog-ingestion/sql-emit-v1.js",
+    "modules/catalog-ingestion/simulate-v1.js",
+    "modules/catalog-ingestion/fixtures-v1.js",
+    "modules/catalog-ingestion/pipeline-v1.js",
+    "scripts/catalog-bulk-ingest-v1.mjs",
+    "tests/catalog-scalable-ingestion-v1.test.mjs",
+    "tests/_catalog-scalable-ingestion-v1-report.json",
+    "data/catalog-ingestion/v1/fixtures/",
+    "data/catalog-ingestion/v1/handoff/"
+  ],
+  "blockers": [],
+  "verdict": "CRUVIT_SCALABLE_CATALOG_INGESTION_V1: PASS"
+}
