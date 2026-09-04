@@ -1,0 +1,1000 @@
+{
+  "checkpoint": "CRUVIT_GLOBAL_BAKE_PROJECTION_REGATE_V1",
+  "generatedAt": "2026-09-04T04:46:00.911Z",
+  "productionConfig": {
+    "tileCells": 64,
+    "macroTiles": 8,
+    "workers": 4,
+    "source": "LOCAL_MIRROR",
+    "landContainingTiles": 61964
+  },
+  "A_oldP95Formula": "p95Hours = projectedObjectCount * (p95TileMs / 1000) / 3600; conservativeHours = max(p95Hours, slowestRegionHours); where p95TileMs = percentile_floor(amortizedMacroTileMs, 95); amortizedMacroTileMs[i] = macroWallMs[i] / selectedTilesInBenchmarkFilter[i]",
+  "B_oldP95LatencyMs": 3306.756012500002,
+  "oldP95Meta": {
+    "latencyPopulation": "Per-macro amortized effective tile latency: macro_wall_ms / selected_benchmark_tiles_in_that_macro. NOT independent cold single-tile jobs. Sample count equals macro-block count, not tile count.",
+    "sampleCount": 27,
+    "unit": "macro-amortized-ms-per-selected-tile",
+    "exactP95Ms": 3306.756012500002,
+    "formula": "p95Hours = projectedObjectCount * (p95TileMs / 1000) / 3600; conservativeHours = max(p95Hours, slowestRegionHours); where p95TileMs = percentile_floor(amortizedMacroTileMs, 95); amortizedMacroTileMs[i] = macroWallMs[i] / selectedTilesInBenchmarkFilter[i]",
+    "computedP95Hours": 56.916619321819475,
+    "reportedConservativeHours": 56.916619321819475
+  },
+  "C_tailRootCause": {
+    "primary": "sparse-macro-amortization",
+    "causeCountsInTop10Macros": {
+      "sparse-macro-amortization": 3,
+      "partial-selection-within-macro": 3,
+      "mixed-ocean-geometry": 3,
+      "source-raster-read-dominant": 3
+    },
+    "top1pct": [
+      {
+        "macroKey": "42:6",
+        "region": "temperate",
+        "amortizedTileMs": 13643.690999999992,
+        "wallMs": 27287.381999999983,
+        "selectedTiles": 2,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 2,
+        "tilesPerSec": 0.07329394956247548,
+        "rasterReadMs": 80596.36229999969,
+        "tiffOpenMs": 5.02489999961108,
+        "decodeMs": 195.1707000003662,
+        "encodeGzipMs": 1030.9525000000722,
+        "checksumMs": 3.1611999998567626,
+        "writeMs": 1.051099999982398,
+        "transformMs": 1226.1232000004384,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      }
+    ],
+    "top5pct": [
+      {
+        "macroKey": "42:6",
+        "region": "temperate",
+        "amortizedTileMs": 13643.690999999992,
+        "wallMs": 27287.381999999983,
+        "selectedTiles": 2,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 2,
+        "tilesPerSec": 0.07329394956247548,
+        "rasterReadMs": 80596.36229999969,
+        "tiffOpenMs": 5.02489999961108,
+        "decodeMs": 195.1707000003662,
+        "encodeGzipMs": 1030.9525000000722,
+        "checksumMs": 3.1611999998567626,
+        "writeMs": 1.051099999982398,
+        "transformMs": 1226.1232000004384,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      },
+      {
+        "macroKey": "43:6",
+        "region": "temperate",
+        "amortizedTileMs": 6730.457999999999,
+        "wallMs": 26921.831999999995,
+        "selectedTiles": 4,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 4,
+        "tilesPerSec": 0.14857829883196658,
+        "rasterReadMs": 78320.80229999992,
+        "tiffOpenMs": 4.72479999990901,
+        "decodeMs": 202.56980000023032,
+        "encodeGzipMs": 1001.2979000000632,
+        "checksumMs": 3.6708999999100342,
+        "writeMs": 1.9093999998876825,
+        "transformMs": 1203.8677000002936,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      }
+    ],
+    "top10pct": [
+      {
+        "macroKey": "42:6",
+        "region": "temperate",
+        "amortizedTileMs": 13643.690999999992,
+        "wallMs": 27287.381999999983,
+        "selectedTiles": 2,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 2,
+        "tilesPerSec": 0.07329394956247548,
+        "rasterReadMs": 80596.36229999969,
+        "tiffOpenMs": 5.02489999961108,
+        "decodeMs": 195.1707000003662,
+        "encodeGzipMs": 1030.9525000000722,
+        "checksumMs": 3.1611999998567626,
+        "writeMs": 1.051099999982398,
+        "transformMs": 1226.1232000004384,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      },
+      {
+        "macroKey": "43:6",
+        "region": "temperate",
+        "amortizedTileMs": 6730.457999999999,
+        "wallMs": 26921.831999999995,
+        "selectedTiles": 4,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 4,
+        "tilesPerSec": 0.14857829883196658,
+        "rasterReadMs": 78320.80229999992,
+        "tiffOpenMs": 4.72479999990901,
+        "decodeMs": 202.56980000023032,
+        "encodeGzipMs": 1001.2979000000632,
+        "checksumMs": 3.6708999999100342,
+        "writeMs": 1.9093999998876825,
+        "transformMs": 1203.8677000002936,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      },
+      {
+        "macroKey": "23:18",
+        "region": "high-altitude",
+        "amortizedTileMs": 3393.740287499997,
+        "wallMs": 27149.922299999977,
+        "selectedTiles": 8,
+        "landTilesInMacro": 64,
+        "landOnlySelected": 0,
+        "mixedSelected": 8,
+        "tilesPerSec": 0.29466014346567787,
+        "rasterReadMs": 75260.4780999996,
+        "tiffOpenMs": 5.3609000000869855,
+        "decodeMs": 219.2388999996474,
+        "encodeGzipMs": 1638.9570999994176,
+        "checksumMs": 5.596700000343844,
+        "writeMs": 5.423799999989569,
+        "transformMs": 1858.195999999065,
+        "isFirstInRegion": false,
+        "tailCauses": [
+          "sparse-macro-amortization",
+          "partial-selection-within-macro",
+          "mixed-ocean-geometry",
+          "source-raster-read-dominant"
+        ]
+      }
+    ],
+    "note": "Tail of amortizedTileMs is dominated by macros with few selected tiles and/or first-region cold reads, not by consistently slow climate science work across all tiles."
+  },
+  "D_tileP95TimesAllTilesValid": "NO",
+  "D_reason": "p95TileMs is the p95 of ~27 macro-amortized ratios (macroWall/selectedTiles), not 1230 independent tile latencies. Sparse/partial macros and cold first reads dominate the upper tail; production wall time is the sum of macro workloads with shared source windows. Extrapolating that ratio × 61964 assumes every tile pays the sparse-macro amortized cost continuously, which contradicts measured sustained aggregate (1.676 t/s → 10.27h) and slowest-region sustained (1.13 t/s → 15.19h).",
+  "E_macroThroughput": {
+    "p50": 1.8717617674289952,
+    "p75": 2.206466967822524,
+    "p90": 2.3169800698985843,
+    "p95": 2.6189773051580363,
+    "p99": 2.630781978362442,
+    "p5": 0.14857829883196658,
+    "p10": 0.29466014346567787,
+    "min": 0.07329394956247548,
+    "mean": 1.6748262976979948
+  },
+  "E_macroCellsThroughput": {
+    "p50": 7666.7361993891645,
+    "p90": 9490.350366304601,
+    "p95": 10727.331041927317,
+    "p99": 10775.682983372562
+  },
+  "F_rollingThroughput": [
+    {
+      "windowSize": 25,
+      "samples": 1363,
+      "p50Rate": 2.031418933188948,
+      "p5Rate": 0.7555583824300584,
+      "p10Rate": 1.084040843605829,
+      "p95LowThroughputRate": 0.7555583824300584,
+      "minRate": 0.3877129601515318,
+      "meanRate": 1.9133421447759182,
+      "method": "macro-wall-attributed-per-selected-tile"
+    },
+    {
+      "windowSize": 50,
+      "samples": 1338,
+      "p50Rate": 2.009447474191821,
+      "p5Rate": 0.8680127545088427,
+      "p10Rate": 0.987480426586555,
+      "p95LowThroughputRate": 0.8680127545088427,
+      "minRate": 0.6410602021996001,
+      "meanRate": 1.8628508480483728,
+      "method": "macro-wall-attributed-per-selected-tile"
+    },
+    {
+      "windowSize": 100,
+      "samples": 1288,
+      "p50Rate": 1.9627576973941327,
+      "p5Rate": 0.9795019485825985,
+      "p10Rate": 1.1200526358297813,
+      "p95LowThroughputRate": 0.9795019485825985,
+      "minRate": 0.900530984035977,
+      "meanRate": 1.789778645183578,
+      "method": "macro-wall-attributed-per-selected-tile"
+    },
+    {
+      "windowSize": 250,
+      "samples": 1138,
+      "p50Rate": 1.6741193845457452,
+      "p5Rate": 1.2382384554940602,
+      "p10Rate": 1.3567433267537887,
+      "p95LowThroughputRate": 1.2382384554940602,
+      "minRate": 1.231176514735013,
+      "meanRate": 1.6954806666676134,
+      "method": "macro-wall-attributed-per-selected-tile"
+    }
+  ],
+  "G_weightedRegionalHours": 9.58076357937452,
+  "G_weightedRegionalRate": 1.7965397099743405,
+  "G_regionWeights": {
+    "humid-tropical": {
+      "weight": 0.15934959349593497,
+      "tilesPerSec": 1.5081217592843865,
+      "tiles": 196
+    },
+    "hot-desert": {
+      "weight": 0.11626016260162601,
+      "tilesPerSec": 1.2876379754290552,
+      "tiles": 143
+    },
+    "mediterranean": {
+      "weight": 0.15609756097560976,
+      "tilesPerSec": 2.2667277075974814,
+      "tiles": 192
+    },
+    "temperate": {
+      "weight": 0.12926829268292683,
+      "tilesPerSec": 1.1333705830188088,
+      "tiles": 159
+    },
+    "continental-cold": {
+      "weight": 0.15121951219512195,
+      "tilesPerSec": 2.0881745630407713,
+      "tiles": 186
+    },
+    "high-altitude": {
+      "weight": 0.14065040650406505,
+      "tilesPerSec": 1.6748991574682202,
+      "tiles": 173
+    },
+    "southern-hemisphere": {
+      "weight": 0.14715447154471545,
+      "tilesPerSec": 2.411293273127358,
+      "tiles": 181
+    }
+  },
+  "H_allWorldSlowestRegionHours": 15.186755753247372,
+  "H_slowestRegionRate": 1.1333705830188088,
+  "I_bootstrapSeed": 1129469270,
+  "I_bootstrapSimulations": 10000,
+  "J_bootstrapP50": 8.756332923119807,
+  "K_bootstrapP90": 8.83396612374241,
+  "L_bootstrapP95": 8.858357255748855,
+  "M_bootstrapP99": 8.902644549503746,
+  "bootstrapDetail": {
+    "seed": 1129469270,
+    "simulations": 10000,
+    "p50": 8.756332923119807,
+    "p90": 8.83396612374241,
+    "p95": 8.858357255748855,
+    "p99": 8.902644549503746,
+    "mean": 8.757064627018144,
+    "min": 8.525515319707504,
+    "max": 8.984353985755696
+  },
+  "N_operationalSafetyBuffer": {
+    "pct": 0.2,
+    "hours": 3.0373511506494744,
+    "appliedOn": "max(bootstrap.p95, all_world_slowest_region, rolling_250_p5_window)",
+    "excludesDoubleCount": "timed benchmark already includes raster I/O, gzip, checksum, tile writes"
+  },
+  "O_stressPlus25": 18.983444691559214,
+  "P_stressPlus50": 22.78013362987106,
+  "Q_stressPlus100": 30.373511506494744,
+  "R_confirmatoryBenchmark": {
+    "required": true,
+    "reason": "Prior report lacked per-macro wall samples; remeasured production config with instrumentation",
+    "tiles": 1387,
+    "macros": 30,
+    "durationMs": 830722.6843,
+    "tilesPerSec": 1.6696305833621738,
+    "networkChelsaCalls": 0,
+    "peakRamMb": 1963.474944,
+    "perRegion": {
+      "humid-tropical": {
+        "tiles": 196,
+        "durationMs": 136898.0902,
+        "tilesPerSec": 1.4317219452342658
+      },
+      "hot-desert": {
+        "tiles": 190,
+        "durationMs": 143249.02510000006,
+        "tilesPerSec": 1.3263615572068554
+      },
+      "mediterranean": {
+        "tiles": 192,
+        "durationMs": 85107.0722,
+        "tilesPerSec": 2.255981730270355
+      },
+      "temperate": {
+        "tiles": 214,
+        "durationMs": 167992.49349999992,
+        "tilesPerSec": 1.2738664421336188
+      },
+      "continental-cold": {
+        "tiles": 186,
+        "durationMs": 89612.12389999977,
+        "tilesPerSec": 2.0756120032102094
+      },
+      "high-altitude": {
+        "tiles": 228,
+        "durationMs": 134218.9756,
+        "tilesPerSec": 1.698716585943009
+      },
+      "southern-hemisphere": {
+        "tiles": 181,
+        "durationMs": 73021.85759999999,
+        "tilesPerSec": 2.478709881519092
+      }
+    }
+  },
+  "measuredExpectedFullBakeHours": 10.309000322431547,
+  "workloadConservativeBaseHours": 15.186755753247372,
+  "macroP5ProjectionHoursNote": "Reported for diagnostics only; not used as sole full-job estimator (sparse macros would recreate tile-p95 artifact).",
+  "macroP5ProjectionHours": 115.84613875333334,
+  "rolling250P5Hours": 13.900571530347523,
+  "S_defensibleConservativeHours": 18.224106903896846,
+  "T_FULL_GLOBAL_BAKE_ALLOWED": "YES",
+  "U_blockers": [],
+  "estimates": {
+    "measuredExpectedHours": 10.309000322431547,
+    "defensibleConservativeHours": 18.224106903896846,
+    "components": {
+      "aggregateSustainedHours": 10.309000322431547,
+      "weightedRegionalHours": 9.58076357937452,
+      "allWorldSlowestHours": 15.186755753247372,
+      "macroP5ProjectionHours": 115.84613875333334,
+      "macroP10ProjectionHours": 58.41381199295828,
+      "rolling250P5Hours": 13.900571530347523,
+      "bootstrapP95Hours": 8.858357255748855,
+      "oldInvalidP95Hours": 56.916619321819475
+    }
+  },
+  "verdict": "CRUVIT_GLOBAL_BAKE_PROJECTION_REGATE_V1: PASS",
+  "selectionByRegion": {
+    "humid-tropical": 196,
+    "hot-desert": 190,
+    "mediterranean": 192,
+    "temperate": 214,
+    "continental-cold": 186,
+    "high-altitude": 228,
+    "southern-hemisphere": 181
+  },
+  "macrosRaw": [
+    {
+      "macroKey": "66:19",
+      "wallMs": 28348.2171,
+      "selectedTiles": 54,
+      "tilesPerSec": 1.9048817006555236,
+      "amortizedTileMs": 524.9669833333334,
+      "dominantRegion": "humid-tropical",
+      "mixedSelected": 38,
+      "landOnlySelected": 16,
+      "rasterReadMs": 27280.648200000007,
+      "tiffOpenMs": 50556.40239999999,
+      "encodeGzipMs": 1458.6030999999857,
+      "decodeMs": 251.7706000000054,
+      "writeMs": 21.349400000010064,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "first-read-or-region-cold-cache",
+        "tiff-open-overhead",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "65:18",
+      "wallMs": 28253.976899999998,
+      "selectedTiles": 45,
+      "tilesPerSec": 1.5926961418305685,
+      "amortizedTileMs": 627.8661533333333,
+      "dominantRegion": "humid-tropical",
+      "mixedSelected": 32,
+      "landOnlySelected": 13,
+      "rasterReadMs": 79513.5747,
+      "tiffOpenMs": 6.162299999978131,
+      "encodeGzipMs": 1552.4189000000042,
+      "decodeMs": 251.36779999996725,
+      "writeMs": 20.44500000001426,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "66:18",
+      "wallMs": 26954.1532,
+      "selectedTiles": 28,
+      "tilesPerSec": 1.038800951832536,
+      "amortizedTileMs": 962.6483285714286,
+      "dominantRegion": "humid-tropical",
+      "mixedSelected": 13,
+      "landOnlySelected": 15,
+      "rasterReadMs": 74043.12009999997,
+      "tiffOpenMs": 5.732400000051712,
+      "encodeGzipMs": 1490.7123999999749,
+      "decodeMs": 231.78900000001158,
+      "writeMs": 11.587199999994482,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "67:18",
+      "wallMs": 26643.7742,
+      "selectedTiles": 11,
+      "tilesPerSec": 0.41285442210360723,
+      "amortizedTileMs": 2422.161290909091,
+      "dominantRegion": "humid-tropical",
+      "mixedSelected": 11,
+      "landOnlySelected": 0,
+      "rasterReadMs": 73527.75869999995,
+      "tiffOpenMs": 5.619799999942188,
+      "encodeGzipMs": 1335.7670999999536,
+      "decodeMs": 207.1412000000273,
+      "writeMs": 7.21820000000298,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "partial-selection-within-macro",
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "65:19",
+      "wallMs": 26697.968800000002,
+      "selectedTiles": 58,
+      "tilesPerSec": 2.172449913118484,
+      "amortizedTileMs": 460.3098068965518,
+      "dominantRegion": "humid-tropical",
+      "mixedSelected": 33,
+      "landOnlySelected": 25,
+      "rasterReadMs": 72799.81019999998,
+      "tiffOpenMs": 5.49839999996766,
+      "encodeGzipMs": 1536.6596999998728,
+      "decodeMs": 276.868799999982,
+      "writeMs": 25.647100000205683,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "49:12",
+      "wallMs": 29872.429000000004,
+      "selectedTiles": 47,
+      "tilesPerSec": 1.5733571582009616,
+      "amortizedTileMs": 635.5835957446809,
+      "dominantRegion": "hot-desert",
+      "mixedSelected": 18,
+      "landOnlySelected": 29,
+      "rasterReadMs": 86969.9120000001,
+      "tiffOpenMs": 5.077000000193948,
+      "encodeGzipMs": 1223.42350000015,
+      "decodeMs": 249.65619999999763,
+      "writeMs": 20.27039999992121,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "48:11",
+      "wallMs": 29327.04800000001,
+      "selectedTiles": 30,
+      "tilesPerSec": 1.022946462255594,
+      "amortizedTileMs": 977.568266666667,
+      "dominantRegion": "hot-desert",
+      "mixedSelected": 30,
+      "landOnlySelected": 0,
+      "rasterReadMs": 84792.35780000017,
+      "tiffOpenMs": 5.311500000098022,
+      "encodeGzipMs": 1245.9105000000563,
+      "decodeMs": 212.82280000013998,
+      "writeMs": 13.261299999983748,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "49:11",
+      "wallMs": 28042.34170000002,
+      "selectedTiles": 19,
+      "tilesPerSec": 0.6775468398204415,
+      "amortizedTileMs": 1475.9127210526326,
+      "dominantRegion": "hot-desert",
+      "mixedSelected": 15,
+      "landOnlySelected": 4,
+      "rasterReadMs": 80872.476,
+      "tiffOpenMs": 5.458500000124332,
+      "encodeGzipMs": 1344.7550000000047,
+      "decodeMs": 219.9505000000354,
+      "writeMs": 10.627599999919767,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "partial-selection-within-macro",
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "50:11",
+      "wallMs": 28458.941300000006,
+      "selectedTiles": 47,
+      "tilesPerSec": 1.6515020535918528,
+      "amortizedTileMs": 605.5093893617022,
+      "dominantRegion": "hot-desert",
+      "mixedSelected": 22,
+      "landOnlySelected": 25,
+      "rasterReadMs": 80846.99120000008,
+      "tiffOpenMs": 4.782000000006519,
+      "encodeGzipMs": 1465.9451999999292,
+      "decodeMs": 249.68540000007488,
+      "writeMs": 21.7772999999288,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "48:12",
+      "wallMs": 27548.26510000002,
+      "selectedTiles": 47,
+      "tilesPerSec": 1.7060965483448889,
+      "amortizedTileMs": 586.1333000000004,
+      "dominantRegion": "hot-desert",
+      "mixedSelected": 10,
+      "landOnlySelected": 37,
+      "rasterReadMs": 79744.35320000004,
+      "tiffOpenMs": 5.0612000002583954,
+      "encodeGzipMs": 1212.6089000001084,
+      "decodeMs": 251.34740000002785,
+      "writeMs": 18.24810000002617,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "49:10",
+      "wallMs": 28547.044999999984,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.2419133048622033,
+      "amortizedTileMs": 446.04757812499975,
+      "dominantRegion": "mediterranean",
+      "mixedSelected": 7,
+      "landOnlySelected": 57,
+      "rasterReadMs": 83964.51550000015,
+      "tiffOpenMs": 6.295200000167824,
+      "encodeGzipMs": 1349.3703000002424,
+      "decodeMs": 284.658500000136,
+      "writeMs": 28.098100000235718,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "50:10",
+      "wallMs": 28017.285199999984,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.284304119515478,
+      "amortizedTileMs": 437.77008124999975,
+      "dominantRegion": "mediterranean",
+      "mixedSelected": 3,
+      "landOnlySelected": 61,
+      "rasterReadMs": 80570.12460000021,
+      "tiffOpenMs": 5.287099999492057,
+      "encodeGzipMs": 1371.655999999959,
+      "decodeMs": 284.1217999999062,
+      "writeMs": 33.059099999663886,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "51:10",
+      "wallMs": 28542.742000000027,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.2422512875602467,
+      "amortizedTileMs": 445.98034375000043,
+      "dominantRegion": "mediterranean",
+      "mixedSelected": 7,
+      "landOnlySelected": 57,
+      "rasterReadMs": 82952.43119999947,
+      "tiffOpenMs": 5.3338000000221655,
+      "encodeGzipMs": 1419.194799999881,
+      "decodeMs": 288.7768999999971,
+      "writeMs": 27.249900000111666,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "42:7",
+      "wallMs": 29408.896300000022,
+      "selectedTiles": 43,
+      "tilesPerSec": 1.462142596626449,
+      "amortizedTileMs": 683.9278209302331,
+      "dominantRegion": "temperate",
+      "mixedSelected": 26,
+      "landOnlySelected": 17,
+      "rasterReadMs": 87508.63419999991,
+      "tiffOpenMs": 4.962600000377279,
+      "encodeGzipMs": 1176.2006000001566,
+      "decodeMs": 246.93809999985388,
+      "writeMs": 16.364400000078604,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "41:6",
+      "wallMs": 28111.413699999976,
+      "selectedTiles": 52,
+      "tilesPerSec": 1.8497824604246085,
+      "amortizedTileMs": 540.6041096153841,
+      "dominantRegion": "temperate",
+      "mixedSelected": 30,
+      "landOnlySelected": 22,
+      "rasterReadMs": 82044.22560000006,
+      "tiffOpenMs": 4.852300000027753,
+      "encodeGzipMs": 1253.9774000000325,
+      "decodeMs": 255.44769999966957,
+      "writeMs": 22.167300000204705,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "42:6",
+      "wallMs": 27287.381999999983,
+      "selectedTiles": 2,
+      "tilesPerSec": 0.07329394956247548,
+      "amortizedTileMs": 13643.690999999992,
+      "dominantRegion": "temperate",
+      "mixedSelected": 2,
+      "landOnlySelected": 0,
+      "rasterReadMs": 80596.36229999969,
+      "tiffOpenMs": 5.02489999961108,
+      "encodeGzipMs": 1030.9525000000722,
+      "decodeMs": 195.1707000003662,
+      "writeMs": 1.051099999982398,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "sparse-macro-amortization",
+        "partial-selection-within-macro",
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "43:6",
+      "wallMs": 26921.831999999995,
+      "selectedTiles": 4,
+      "tilesPerSec": 0.14857829883196658,
+      "amortizedTileMs": 6730.457999999999,
+      "dominantRegion": "temperate",
+      "mixedSelected": 4,
+      "landOnlySelected": 0,
+      "rasterReadMs": 78320.80229999992,
+      "tiffOpenMs": 4.72479999990901,
+      "encodeGzipMs": 1001.2979000000632,
+      "decodeMs": 202.56980000023032,
+      "writeMs": 1.9093999998876825,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "sparse-macro-amortization",
+        "partial-selection-within-macro",
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "41:7",
+      "wallMs": 28610.93909999996,
+      "selectedTiles": 58,
+      "tilesPerSec": 2.027196653604428,
+      "amortizedTileMs": 493.29205344827517,
+      "dominantRegion": "temperate",
+      "mixedSelected": 33,
+      "landOnlySelected": 25,
+      "rasterReadMs": 82358.0281,
+      "tiffOpenMs": 4.944699999992736,
+      "encodeGzipMs": 1310.6802999997162,
+      "decodeMs": 251.97780000045896,
+      "writeMs": 24.163099999947008,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "43:7",
+      "wallMs": 27652.03039999999,
+      "selectedTiles": 55,
+      "tilesPerSec": 1.9890040334976637,
+      "amortizedTileMs": 502.76418909090887,
+      "dominantRegion": "temperate",
+      "mixedSelected": 20,
+      "landOnlySelected": 35,
+      "rasterReadMs": 81520.2811000002,
+      "tiffOpenMs": 4.6529999996419065,
+      "encodeGzipMs": 1169.1878000003053,
+      "decodeMs": 237.22829999995884,
+      "writeMs": 23.10999999998603,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "48:5",
+      "wallMs": 29005.646099999896,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.206466967822524,
+      "amortizedTileMs": 453.2132203124984,
+      "dominantRegion": "continental-cold",
+      "mixedSelected": 19,
+      "landOnlySelected": 45,
+      "rasterReadMs": 85021.65640000044,
+      "tiffOpenMs": 5.013399999472313,
+      "encodeGzipMs": 1370.2748999997275,
+      "decodeMs": 246.0139000004856,
+      "writeMs": 25.256399999838322,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "47:4",
+      "wallMs": 30986.84939999995,
+      "selectedTiles": 58,
+      "tilesPerSec": 1.8717617674289952,
+      "amortizedTileMs": 534.2560241379301,
+      "dominantRegion": "continental-cold",
+      "mixedSelected": 27,
+      "landOnlySelected": 31,
+      "rasterReadMs": 93133.81969999953,
+      "tiffOpenMs": 5.053599999519065,
+      "encodeGzipMs": 1228.9644000000553,
+      "decodeMs": 252.66279999969993,
+      "writeMs": 23.657100000302307,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "48:4",
+      "wallMs": 29619.62839999993,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.160729335821112,
+      "amortizedTileMs": 462.8066937499989,
+      "dominantRegion": "continental-cold",
+      "mixedSelected": 3,
+      "landOnlySelected": 61,
+      "rasterReadMs": 87172.41819999949,
+      "tiffOpenMs": 4.700200000661425,
+      "encodeGzipMs": 1362.2833000001265,
+      "decodeMs": 266.5996999994386,
+      "writeMs": 27.686300000408664,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "23:19",
+      "wallMs": 26207.36560000002,
+      "selectedTiles": 37,
+      "tilesPerSec": 1.4118168367140256,
+      "amortizedTileMs": 708.3071783783789,
+      "dominantRegion": "high-altitude",
+      "mixedSelected": 15,
+      "landOnlySelected": 22,
+      "rasterReadMs": 73768.40069999977,
+      "tiffOpenMs": 5.334199999808334,
+      "encodeGzipMs": 1415.160600000061,
+      "decodeMs": 256.5300999995088,
+      "writeMs": 19.011700000148267,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "23:18",
+      "wallMs": 27149.922299999977,
+      "selectedTiles": 8,
+      "tilesPerSec": 0.29466014346567787,
+      "amortizedTileMs": 3393.740287499997,
+      "dominantRegion": "high-altitude",
+      "mixedSelected": 8,
+      "landOnlySelected": 0,
+      "rasterReadMs": 75260.4780999996,
+      "tiffOpenMs": 5.3609000000869855,
+      "encodeGzipMs": 1638.9570999994176,
+      "decodeMs": 219.2388999996474,
+      "writeMs": 5.423799999989569,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "sparse-macro-amortization",
+        "partial-selection-within-macro",
+        "mixed-ocean-geometry",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "24:18",
+      "wallMs": 26238.604099999997,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.4391541469235403,
+      "amortizedTileMs": 409.97818906249995,
+      "dominantRegion": "high-altitude",
+      "mixedSelected": 8,
+      "landOnlySelected": 56,
+      "rasterReadMs": 73959.3286000007,
+      "tiffOpenMs": 5.222700000274926,
+      "encodeGzipMs": 1453.6371999995317,
+      "decodeMs": 306.6240999995498,
+      "writeMs": 30.29759999969974,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "24:19",
+      "wallMs": 27622.162499999977,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.3169800698985843,
+      "amortizedTileMs": 431.59628906249964,
+      "dominantRegion": "high-altitude",
+      "mixedSelected": 0,
+      "landOnlySelected": 64,
+      "rasterReadMs": 78783.32069999946,
+      "tiffOpenMs": 5.648600000189617,
+      "encodeGzipMs": 1384.7610000002896,
+      "decodeMs": 307.14899999985937,
+      "writeMs": 27.05710000009276,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "23:20",
+      "wallMs": 27000.921100000036,
+      "selectedTiles": 55,
+      "tilesPerSec": 2.0369675462664096,
+      "amortizedTileMs": 490.92583818181885,
+      "dominantRegion": "high-altitude",
+      "mixedSelected": 14,
+      "landOnlySelected": 41,
+      "rasterReadMs": 78071.67829999921,
+      "tiffOpenMs": 5.3260999992489815,
+      "encodeGzipMs": 1380.2230999998283,
+      "decodeMs": 278.856300000567,
+      "writeMs": 23.863700000103563,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "77:27",
+      "wallMs": 24257.47039999999,
+      "selectedTiles": 53,
+      "tilesPerSec": 2.184893936838526,
+      "amortizedTileMs": 457.6881207547168,
+      "dominantRegion": "southern-hemisphere",
+      "mixedSelected": 11,
+      "landOnlySelected": 42,
+      "rasterReadMs": 66411.27459999966,
+      "tiffOpenMs": 4.895500000216998,
+      "encodeGzipMs": 1322.0336999997962,
+      "decodeMs": 285.37190000049304,
+      "writeMs": 22.773199999821372,
+      "isFirstInRegion": true,
+      "tailCauses": [
+        "first-read-or-region-cold-cache",
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "76:26",
+      "wallMs": 24327.367499999935,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.630781978362442,
+      "amortizedTileMs": 380.115117187499,
+      "dominantRegion": "southern-hemisphere",
+      "mixedSelected": 0,
+      "landOnlySelected": 64,
+      "rasterReadMs": 67990.67269999965,
+      "tiffOpenMs": 4.773399999947287,
+      "encodeGzipMs": 1165.904700000654,
+      "decodeMs": 252.5629999996163,
+      "writeMs": 24.32949999975972,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    },
+    {
+      "macroKey": "77:26",
+      "wallMs": 24437.019700000063,
+      "selectedTiles": 64,
+      "tilesPerSec": 2.6189773051580363,
+      "amortizedTileMs": 381.828432812501,
+      "dominantRegion": "southern-hemisphere",
+      "mixedSelected": 0,
+      "landOnlySelected": 64,
+      "rasterReadMs": 66951.72810000076,
+      "tiffOpenMs": 4.95690000068862,
+      "encodeGzipMs": 1267.5215999999782,
+      "decodeMs": 272.27639999985695,
+      "writeMs": 29.7351999997627,
+      "isFirstInRegion": false,
+      "tailCauses": [
+        "source-raster-read-dominant"
+      ]
+    }
+  ],
+  "F_rollingNote": "Rolling rates attribute each selected tile an equal share of its macro wall time (avoids intra-macro write-timestamp artifact)."
+}

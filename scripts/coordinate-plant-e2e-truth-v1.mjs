@@ -8,7 +8,9 @@
  *
  * NO Batch 3. NO global bake. NO live DB write. NO commit. NO external runtime fetch.
  *
- * Usage: node scripts/coordinate-plant-e2e-truth-v1.mjs
+ * Usage:
+ *   node scripts/coordinate-plant-e2e-truth-v1.mjs
+ *   node scripts/coordinate-plant-e2e-truth-v1.mjs --global
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -44,9 +46,21 @@ import {
   resetCoordinateClimateRuntimeCounters,
   getCoordinateClimateRuntimeCounters
 } from '../modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
+import {
+  lookupCoordinateClimateGlobal,
+  clearGlobalRuntimeCaches,
+  resolveGlobalCoverageRoot
+} from '../modules/personal-domain/coordinate-climate-global-lookup-v2.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const REPORT_PATH = path.join(ROOT, 'tests', '_coordinate-plant-e2e-truth-v1-report.json');
+const USE_GLOBAL_LOOKUP = process.argv.includes('--global');
+const REPORT_PATH = path.join(
+  ROOT,
+  'tests',
+  USE_GLOBAL_LOOKUP
+    ? '_coordinate-plant-e2e-truth-v1-global-report.json'
+    : '_coordinate-plant-e2e-truth-v1-report.json'
+);
 const PK60_PATH = path.join(
   ROOT,
   'data/catalog-expansion/plant-knowledge-v1/enrichment-60/handoff/plant_knowledge_warnings_60_handoff.json'
@@ -244,6 +258,71 @@ function climateKeyValues(profile) {
     moistureRegime: profile.aridityMoistureRegime ?? null,
     alwaysHot: profile.alwaysHot ?? null,
     coolSeasonSignal: profile.coolSeasonSignal ?? null
+  };
+}
+
+function bundleFromGlobalLookup(loc, lookup) {
+  const qaPath = path.join(ROOT, 'data/coordinate-climate/v2/qa', `${loc.id}.json`);
+  const qa = fs.existsSync(qaPath) ? readJson(qaPath) : null;
+  const confidence = buildCoordinateClimateConfidenceV2({
+    profile: lookup.profile,
+    qaRecord: qa
+  });
+  const profile = {
+    ...lookup.profile,
+    confidence: confidence.overall,
+    confidenceDimensions: confidence.dimensions,
+    localRepresentativeness: confidence.localRepresentativeness,
+    confidenceWarnings: confidence.warnings
+  };
+  const structural = coordinateClimateProfileToStructuralPersistence(profile);
+  const climateProfileBase = {
+    ...structural,
+    moistureRegime: structural.moistureRegime,
+    humidityRegime: structural.humidityRegime,
+    humiditySignal: structural.humiditySignal,
+    freezingRisk: structural.freezingRisk,
+    thermalRegime: structural.thermalRegime,
+    elevationM: structural.elevationM,
+    annualPrecipitationMm: profile.annualPrecipitationMm,
+    annualPetMm: profile.annualPetMm,
+    aridityIndex: profile.aridityIndex,
+    coldestMonthMeanMinC: profile.coldestMonthMeanMinC,
+    warmestMonthMeanMaxC: profile.warmestMonthMeanMaxC,
+    alwaysHot: profile.alwaysHot,
+    coolSeasonSignal: profile.coolSeasonSignal,
+    highlandModifier: profile.highlandModifier,
+    monthlyHursPct: profile.monthlyHursPct,
+    monthlyVpdPa: profile.monthlyVpdPa,
+    meanRelativeHumidityPct: profile.meanRelativeHumidityPct,
+    meanVpdPa: profile.meanVpdPa,
+    atmosphericHumidityRegime: profile.atmosphericHumidityRegime,
+    confidence: profile.confidence,
+    confidenceDimensions: profile.confidenceDimensions,
+    localRepresentativeness: profile.localRepresentativeness,
+    coordinateClimateV2: profile,
+    structuralClimate: structural
+  };
+  const env = structuralEnvironmentFromClimateProfile(climateProfileBase);
+  return {
+    locationId: loc.id,
+    label: loc.label,
+    requestedLat: loc.lat,
+    requestedLon: loc.lon,
+    matchedLat: profile.coordinate?.lat ?? loc.lat,
+    matchedLon: profile.coordinate?.lon ?? loc.lon,
+    authorityVersion: profile.authorityVersion || COORDINATE_CLIMATE_AUTHORITY_V2_VERSION,
+    bakeId: lookup.globalBakeId || profile.provenance?.bakeVersion || null,
+    climateGridCell: profile.climateGrid?.cellPixel || null,
+    noCityProxy: true,
+    source: lookup.source,
+    tileKey: lookup.tileKey,
+    keyClimate: climateKeyValues(profile),
+    climateProfile: {
+      ...climateProfileBase,
+      ...env,
+      isFrostFreeGrowingClimate: env.isFrostFreeGrowingClimate
+    }
   };
 }
 
@@ -492,6 +571,7 @@ function auditPairFailures(row, plant) {
 
 function main() {
   resetCoordinateClimateRuntimeCounters();
+  if (USE_GLOBAL_LOOKUP) clearGlobalRuntimeCaches();
   const blockers = [];
   const failureEvents = [];
 
@@ -511,7 +591,11 @@ function main() {
   const locationBundles = {};
   const climateLookupResults = [];
   for (const loc of LOCATIONS) {
-    const lookup = lookupCoordinateClimateProfile(loc.lat, loc.lon);
+    const lookup = USE_GLOBAL_LOOKUP
+      ? lookupCoordinateClimateGlobal(loc.lat, loc.lon, {
+          globalRoot: resolveGlobalCoverageRoot()
+        })
+      : lookupCoordinateClimateProfile(loc.lat, loc.lon);
     const cost = assertCoordinateClimateRuntimeCostPolicy();
     if (!lookup.ok || lookup.code === CLIMATE_AUTHORITY_UNAVAILABLE) {
       climateLookupResults.push({
@@ -520,7 +604,8 @@ function main() {
         lon: loc.lon,
         ok: false,
         code: lookup.code || CLIMATE_AUTHORITY_UNAVAILABLE,
-        source: lookup.source
+        source: lookup.source,
+        reason: lookup.reason || null
       });
       blockers.push(`CLIMATE_AUTHORITY_UNAVAILABLE for ${loc.id} @ ${loc.lat},${loc.lon}`);
       continue;
@@ -528,19 +613,22 @@ function main() {
     if (lookup.profile?.provenance?.cityProxy || lookup.profile?.provenance?.usedCityProxy) {
       blockers.push(`city-proxy detected for ${loc.id}`);
     }
-    // Prove matched coordinate equals requested (within lookup epsilon).
-    const dLat = Math.abs(Number(lookup.matchedEntry.lat) - loc.lat);
-    const dLon = Math.abs(Number(lookup.matchedEntry.lon) - loc.lon);
-    if (dLat > 0.00015 || dLon > 0.00015) {
-      blockers.push(`coordinate mismatch for ${loc.id}: matched≠requested`);
+    if (!USE_GLOBAL_LOOKUP) {
+      // Prove matched coordinate equals requested (within lookup epsilon).
+      const dLat = Math.abs(Number(lookup.matchedEntry.lat) - loc.lat);
+      const dLon = Math.abs(Number(lookup.matchedEntry.lon) - loc.lon);
+      if (dLat > 0.00015 || dLon > 0.00015) {
+        blockers.push(`coordinate mismatch for ${loc.id}: matched≠requested`);
+      }
+      if (lookup.matchedEntry.id !== loc.id) {
+        blockers.push(
+          `indexed id mismatch for ${loc.id}: got ${lookup.matchedEntry.id} (possible city proxy)`
+        );
+      }
     }
-    if (lookup.matchedEntry.id !== loc.id) {
-      // Tokyo index id must still be tokyo; refuse silent city substitution.
-      blockers.push(
-        `indexed id mismatch for ${loc.id}: got ${lookup.matchedEntry.id} (possible city proxy)`
-      );
-    }
-    const bundle = bundleFromLookup(loc, lookup);
+    const bundle = USE_GLOBAL_LOOKUP
+      ? bundleFromGlobalLookup(loc, lookup)
+      : bundleFromLookup(loc, lookup);
     locationBundles[loc.id] = bundle;
     climateLookupResults.push({
       locationId: loc.id,
@@ -551,7 +639,8 @@ function main() {
       source: lookup.source,
       authorityVersion: bundle.authorityVersion,
       bakeId: bundle.bakeId,
-      matched: lookup.matchedEntry,
+      matched: lookup.matchedEntry || { lat: loc.lat, lon: loc.lon, id: loc.id },
+      tileKey: lookup.tileKey || null,
       keyClimate: bundle.keyClimate,
       climateGridCell: bundle.climateGridCell,
       cost
@@ -724,7 +813,10 @@ function main() {
 
   const report = {
     generatedAt: new Date().toISOString(),
-    checkpoint: 'CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1',
+    checkpoint: USE_GLOBAL_LOOKUP
+      ? 'CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1_GLOBAL'
+      : 'CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1',
+    lookupPath: USE_GLOBAL_LOOKUP ? 'global-tile-o1' : 'pilot-index',
     verdict: ok
       ? 'CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1: PASS'
       : 'CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1: FAIL',

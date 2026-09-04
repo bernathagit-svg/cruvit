@@ -1,75 +1,16 @@
 {
-  "title": "CRUVIT climate coverage object-storage contract",
-  "architecture": "CRUVIT CENTRAL BAKE → COMPRESSED CLIMATE TILES → CRUVIT-CONTROLLED OBJECT STORAGE → manifest/index → runtime exact coordinate lookup",
-  "uploadedInThisCheckpoint": false,
-  "r2Upload": "NOT_YET_GLOBAL",
+  "kind": "cruvit-climate-object-storage-contract-v1",
   "preferredBackend": "cloudflare-r2",
-  "preferredBackendStatus": "PREFERRED — production wiring/upload not yet complete",
-  "tileObjectKeyPattern": "climate/v2/coverage/{regionId}/{bakeVersion}/tiles/{tileKey}.cctb.gz",
-  "manifestObjectKeyPattern": "climate/v2/coverage/{regionId}/{bakeVersion}/manifest.json",
-  "requiredManifestFields": [
-    "regionId",
-    "bakeVersion",
-    "schemaVersion",
-    "format",
-    "bounds",
-    "sourceVersions",
-    "tiles[].tileKey",
-    "tiles[].sha256",
-    "tiles[].gzipBytes",
-    "checksums"
+  "immutablePathPattern": "climate/global-v1/{globalBakeId}/tiles/{tileFileName}",
+  "cacheControl": "public, max-age=31536000, immutable",
+  "uploadStatus": "NOT_CONNECTED",
+  "requiredEnvironment": [
+    "R2_ACCOUNT_ID",
+    "R2_ACCESS_KEY_ID",
+    "R2_SECRET_ACCESS_KEY",
+    "R2_BUCKET"
   ],
-  "runtimeRules": {
-    "userTriggeredBake": false,
-    "userTriggeredChelsa": false,
-    "missBehavior": "CLIMATE_AUTHORITY_UNAVAILABLE or background prep queue",
-    "runtimePattern": "simple object GET + manifest/index — no R2 SQL / Data Catalog / Workers unless later Owner-required"
-  },
-  "r2CostModelNotFree": {
-    "note": "R2 is NOT free. Include storage $/GB-month, Class A ops, Class B ops, and any future optional R2 services actually used. Zero internet egress is an advantage, not a $0 total claim.",
-    "storageUsdPerGbMonth": 0.015,
-    "egressToInternetUsd": 0,
-    "classAOps": "writes/lists — priced",
-    "classBOps": "reads — priced",
-    "forbiddenUnlessNeeded": ["R2 SQL", "R2 Data Catalog", "Workers for climate tile serving"]
-  },
-  "supabaseRemainsAuthoritativeFor": [
-    "Garden persistence",
-    "Garden CoordinateClimateProfile",
-    "application metadata where appropriate"
-  ],
-  "forbids": [
-    "full global climate-cell inventory as Postgres rows",
-    "coupling large climate-byte delivery to Supabase Storage egress"
-  ],
-  "candidates": {
-    "supabaseStorage": {
-      "storageUsdPerGbMonth": 0.021,
-      "egressNotes": "Included quotas vary by plan; overage can dominate",
-      "requestCosts": "API requests billed on some plans",
-      "opsComplexity": "Low if already on Supabase",
-      "reliability": "Good",
-      "integration": "Native to existing auth/DB stack",
-      "soloOwnerAutomation": "Good",
-      "lockInRisk": "Medium (coupled to Supabase project)",
-      "fit": "Fine for small regional packs; review egress before global"
-    },
-    "cloudflareR2": {
-      "storageUsdPerGbMonth": 0.015,
-      "egressNotes": "Zero egress to Internet under current R2 pricing (major advantage for tile downloads)",
-      "requestCosts": "Class A/B operations priced — must be in cost model",
-      "opsComplexity": "Low–medium (S3-compatible)",
-      "reliability": "Good",
-      "integration": "S3 API; separate from Supabase",
-      "soloOwnerAutomation": "Excellent with wrangler/R2 API",
-      "lockInRisk": "Low–medium (S3-compatible portable)",
-      "fit": "Preferred production climate object storage"
-    }
-  },
-  "recommendation": {
-    "backend": "cloudflare-r2",
-    "why": "S3-compatible CRUVIT-controlled store; zero internet egress under current R2 pricing; immutable versioned tiles; avoids Supabase egress coupling. Keep Garden profiles in Supabase DB; keep climate tiles in R2. R2 is preferred, not claimed free.",
-    "doNotMigrateFullGlobalYet": true,
-    "doNotUploadFullWorldInThisClosure": true
-  }
+  "optionalEnvironment": ["R2_ENDPOINT", "R2_PREFIX"],
+  "blockerWhenMissing": "GLOBAL_STORAGE_CONNECTION_REQUIRED",
+  "notes": "Do not commit secrets. Upload script: scripts/coordinate-climate-v2-upload-r2.mjs"
 }

@@ -1,0 +1,29 @@
+{
+  "kind": "cruvit-chelsa-local-mirror-contract-v1",
+  "sourceClimatology": "chelsa-v2.1-climatologies-1981-2010",
+  "authorityVersion": "2.0.3-vpd-scale",
+  "mirrorRoot": "data/coordinate-climate/v2/source-mirror/files",
+  "manifestPath": "data/coordinate-climate/v2/source-mirror/mirror-manifest.json",
+  "sourceModes": ["REMOTE_COG", "LOCAL_MIRROR"],
+  "defaultBenchmarkMode": "LOCAL_MIRROR",
+  "noSilentFallback": true,
+  "entryFields": [
+    "sourceId",
+    "variable",
+    "month",
+    "remoteUrl",
+    "localPath",
+    "expectedBytes",
+    "downloadedBytes",
+    "status",
+    "sha256",
+    "dimensions",
+    "crs",
+    "nodata",
+    "downloadedAt"
+  ],
+  "statusValues": ["pending", "downloading", "complete", "failed", "validated"],
+  "partialDownloadPolicy": "NEVER_TREAT_PARTIAL_AS_COMPLETE",
+  "resumable": true,
+  "validatedCompleteRequires": ["status=validated", "downloadedBytes>=expectedBytes", "sha256 recorded"]
+}

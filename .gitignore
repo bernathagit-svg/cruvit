@@ -14,9 +14,16 @@
 # Local outputs
 .tmp-*
 coverage/
-# Exception: CRUVIT climate coverage tiles (not JS test coverage)
+# CRUVIT climate coverage: keep contracts/manifests in git; ignore bulk tiles/cache
 !data/coordinate-climate/v2/coverage/
-!data/coordinate-climate/v2/coverage/**
+data/coordinate-climate/v2/coverage/**/tiles/
+data/coordinate-climate/v2/coverage/**/_layer-cache/
+data/coordinate-climate/v2/coverage/**/_*-bench*/
+data/coordinate-climate/v2/coverage/**/_*-bench/
+data/coordinate-climate/v2/coverage/**/tile-checksums.json
+data/coordinate-climate/v2/source-mirror/files/
+data/coordinate-climate/v2/source-mirror/**/*.part
+*.part
 *.log
 *.replay.json
 *-proof-output.json

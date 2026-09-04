@@ -1,0 +1,1127 @@
+{
+  "generatedAt": "2026-09-01T05:09:55.243Z",
+  "checkpoint": "CRUVIT_GLOBAL_COORDINATE_CLIMATE_COVERAGE_V1",
+  "A_globalBakeId": "bake-2026-09-01-global-v1-vpd-scale",
+  "B_sourceClimatology": "chelsa-v2.1-climatologies-1981-2010 1981-2010",
+  "C_authorityVersion": "2.0.3-vpd-scale",
+  "D_encodedTileFormat": "cruvit-cctb-int16-gzip-v1",
+  "E_coverageDefinition": "All valid terrestrial CHELSA 30 arc-sec cells; ocean/nodata-only tiles omitted",
+  "F_sourceFilesAcquired": "CHELSA V2.1 monthly GeoTIFFs (tasmin/tas/tasmax/pr/pet_penman/vpd/hurs)",
+  "G_tileCount": 16,
+  "H_validTerrestrialCellCount": 65536,
+  "I_nodataOceanCount": 0,
+  "J_compressedGlobalBytes": 5190642,
+  "K_manifestSha256": "6c6e1865b1477826e9ef75ecbb93f0e8978f9cd2b855feac06e8a3e8b23d567d",
+  "L_globalIndexSizeBytes": 405,
+  "M_bakeDurationMs": 2290263,
+  "N_resumabilityProof": {
+    "progressFile": true,
+    "completedTiles": 16,
+    "skippedOcean": 0
+  },
+  "O_pilotRegression": {
+    "pass": true,
+    "results": [
+      {
+        "id": "yehiam",
+        "lat": 33.12806,
+        "lon": 35.22028,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:403:95",
+        "profile": {
+          "annualPrecipitationMm": 1293.6,
+          "annualPetMm": 1487.6,
+          "aridityIndex": 0.87,
+          "elevationM": null,
+          "coldestMonthMeanMinC": 7.75
+        },
+        "expected": {
+          "annualPrecipitationMm": 1293.6,
+          "coldestMonthMeanMinC": 7.75,
+          "warmestMonthMeanMaxC": 28.25,
+          "annualPetMm": 1487.6,
+          "aridityIndex": 0.87,
+          "cell": {
+            "x": 25826,
+            "y": 6104
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 1293.6,
+            "actual": 1293.6,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 1487.6,
+            "actual": 1487.6,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 0.87,
+            "actual": 0.87,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": 7.75,
+            "actual": 7.75,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "helsinki",
+        "lat": 60.16952,
+        "lon": 24.93545,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:384:44",
+        "profile": {
+          "annualPrecipitationMm": 672.3,
+          "annualPetMm": 610.7,
+          "aridityIndex": 1.101,
+          "elevationM": null,
+          "coldestMonthMeanMinC": -8.25
+        },
+        "expected": {
+          "annualPrecipitationMm": 672.3,
+          "coldestMonthMeanMinC": -8.25,
+          "warmestMonthMeanMaxC": 20.05,
+          "annualPetMm": 610.7,
+          "aridityIndex": 1.101,
+          "cell": {
+            "x": 24592,
+            "y": 2859
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 672.3,
+            "actual": 672.3,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 610.7,
+            "actual": 610.7,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 1.101,
+            "actual": 1.101,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": -8.25,
+            "actual": -8.25,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "singapore",
+        "lat": 1.28967,
+        "lon": 103.85007,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:532:155",
+        "profile": {
+          "annualPrecipitationMm": 2423.3,
+          "annualPetMm": 1731.8,
+          "aridityIndex": 1.399,
+          "elevationM": null,
+          "coldestMonthMeanMinC": 24.85
+        },
+        "expected": {
+          "annualPrecipitationMm": 2423.3,
+          "coldestMonthMeanMinC": 24.85,
+          "warmestMonthMeanMaxC": 28.75,
+          "annualPetMm": 1731.8,
+          "aridityIndex": 1.399,
+          "cell": {
+            "x": 34062,
+            "y": 9925
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 2423.3,
+            "actual": 2423.3,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 1731.8,
+            "actual": 1731.8,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 1.399,
+            "actual": 1.399,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": 24.85,
+            "actual": 24.85,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "kochi",
+        "lat": 9.93988,
+        "lon": 76.26022,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:480:138",
+        "profile": {
+          "annualPrecipitationMm": 2992,
+          "annualPetMm": 1602.5,
+          "aridityIndex": 1.867,
+          "elevationM": null,
+          "coldestMonthMeanMinC": 24.35
+        },
+        "expected": {
+          "annualPrecipitationMm": 2992,
+          "coldestMonthMeanMinC": 24.35,
+          "warmestMonthMeanMaxC": 29.65,
+          "annualPetMm": 1602.5,
+          "aridityIndex": 1.867,
+          "cell": {
+            "x": 30751,
+            "y": 8887
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 2992,
+            "actual": 2992,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 1602.5,
+            "actual": 1602.5,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 1.867,
+            "actual": 1.867,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": 24.35,
+            "actual": 24.35,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "cairo",
+        "lat": 30.06263,
+        "lon": 31.24967,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:396:101",
+        "profile": {
+          "annualPrecipitationMm": 19.8,
+          "annualPetMm": 1423.6,
+          "aridityIndex": 0.014,
+          "elevationM": null,
+          "coldestMonthMeanMinC": 8.15
+        },
+        "expected": {
+          "annualPrecipitationMm": 19.8,
+          "coldestMonthMeanMinC": 8.15,
+          "warmestMonthMeanMaxC": 35.95,
+          "annualPetMm": 1423.6,
+          "aridityIndex": 0.014,
+          "cell": {
+            "x": 25349,
+            "y": 6472
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 19.8,
+            "actual": 19.8,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 1423.6,
+            "actual": 1423.6,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 0.014,
+            "actual": 0.014,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": 8.15,
+            "actual": 8.15,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "tokyo",
+        "lat": 35.6895,
+        "lon": 139.69171,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:599:90",
+        "profile": {
+          "annualPrecipitationMm": 1517.5,
+          "annualPetMm": 934.5,
+          "aridityIndex": 1.624,
+          "elevationM": null,
+          "coldestMonthMeanMinC": -0.35
+        },
+        "expected": {
+          "annualPrecipitationMm": 1517.5,
+          "coldestMonthMeanMinC": -0.35,
+          "warmestMonthMeanMaxC": 29.35,
+          "annualPetMm": 934.5,
+          "aridityIndex": 1.624,
+          "cell": {
+            "x": 38363,
+            "y": 5797
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 1517.5,
+            "actual": 1517.5,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 934.5,
+            "actual": 934.5,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 1.624,
+            "actual": 1.624,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": -0.35,
+            "actual": -0.35,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      },
+      {
+        "id": "quito",
+        "lat": -0.22985,
+        "lon": -78.52495,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:190:157",
+        "profile": {
+          "annualPrecipitationMm": 2086.2,
+          "annualPetMm": 1315.6,
+          "aridityIndex": 1.586,
+          "elevationM": null,
+          "coldestMonthMeanMinC": 8.65
+        },
+        "expected": {
+          "annualPrecipitationMm": 2086.2,
+          "coldestMonthMeanMinC": 8.65,
+          "warmestMonthMeanMaxC": 17.45,
+          "annualPetMm": 1315.6,
+          "aridityIndex": 1.586,
+          "cell": {
+            "x": 12177,
+            "y": 10107
+          }
+        },
+        "checks": [
+          {
+            "name": "annualPrecipitationMm",
+            "expected": 2086.2,
+            "actual": 2086.2,
+            "tol": 1.5,
+            "ok": true
+          },
+          {
+            "name": "annualPetMm",
+            "expected": 1315.6,
+            "actual": 1315.6,
+            "tol": 2,
+            "ok": true
+          },
+          {
+            "name": "aridityIndex",
+            "expected": 1.586,
+            "actual": 1.586,
+            "tol": 0.02,
+            "ok": true
+          },
+          {
+            "name": "coldestMonthMeanMinC",
+            "expected": 8.65,
+            "actual": 8.65,
+            "tol": 0.15,
+            "ok": true
+          }
+        ]
+      }
+    ]
+  },
+  "P_globalValidationCoords": {
+    "resolved": 9,
+    "failed": 3,
+    "pass": false,
+    "results": [
+      {
+        "id": "nyc",
+        "label": "North America",
+        "climate": "continental-temperate",
+        "lat": 40.7128,
+        "lon": -74.006,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:198:81",
+        "keyClimate": {
+          "annualPrecipitationMm": 1195.4,
+          "coldestMonthMeanMinC": -3.95,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "sao-paulo",
+        "label": "South America",
+        "climate": "subtropical-humid",
+        "lat": -23.5505,
+        "lon": -46.6333,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:250:201",
+        "keyClimate": {
+          "annualPrecipitationMm": 1509.8,
+          "coldestMonthMeanMinC": 12.35,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "london",
+        "label": "Europe",
+        "climate": "temperate-oceanic",
+        "lat": 51.5074,
+        "lon": -0.1278,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:337:60",
+        "keyClimate": {
+          "annualPrecipitationMm": 653.8,
+          "coldestMonthMeanMinC": 1.85,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "nairobi",
+        "label": "Africa",
+        "climate": "tropical-highland",
+        "lat": -1.2921,
+        "lon": 36.8219,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:406:159",
+        "keyClimate": {
+          "annualPrecipitationMm": 840.9,
+          "coldestMonthMeanMinC": 12.05,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "sydney",
+        "label": "Australia",
+        "climate": "southern-temperate",
+        "lat": -33.8688,
+        "lon": 151.2093,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:621:221",
+        "keyClimate": {
+          "annualPrecipitationMm": 1107.1,
+          "coldestMonthMeanMinC": 10.45,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "atacama",
+        "label": "Hot desert",
+        "climate": "hyper-arid",
+        "lat": -24.5,
+        "lon": -69.25,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:207:203",
+        "keyClimate": {
+          "annualPrecipitationMm": 41.5,
+          "coldestMonthMeanMinC": -1.75,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "malaga",
+        "label": "Mediterranean",
+        "climate": "mediterranean",
+        "lat": 36.7213,
+        "lon": -4.4214,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:329:88",
+        "keyClimate": {
+          "annualPrecipitationMm": 527.9,
+          "coldestMonthMeanMinC": 9.05,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "chicago",
+        "label": "Continental cold",
+        "climate": "continental-cold",
+        "lat": 41.8781,
+        "lon": -87.6298,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:173:78",
+        "keyClimate": {
+          "annualPrecipitationMm": 1095,
+          "coldestMonthMeanMinC": -6.65,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "la-paz",
+        "label": "High altitude",
+        "climate": "high-altitude",
+        "lat": -16.5,
+        "lon": -68.15,
+        "ok": false,
+        "tileKey": "chelsa30s-t64:209:188",
+        "keyClimate": null,
+        "reason": null
+      },
+      {
+        "id": "patagonia",
+        "label": "Southern cold",
+        "climate": "southern-cold",
+        "lat": -50.3421,
+        "lon": -72.2672,
+        "ok": true,
+        "tileKey": "chelsa30s-t64:201:251",
+        "keyClimate": {
+          "annualPrecipitationMm": 266.1,
+          "coldestMonthMeanMinC": -2.75,
+          "elevationM": null
+        },
+        "reason": null
+      },
+      {
+        "id": "jakarta",
+        "label": "Tropical humid",
+        "climate": "tropical-humid",
+        "lat": -6.2088,
+        "lon": 106.8456,
+        "ok": false,
+        "tileKey": "chelsa30s-t64:537:169",
+        "keyClimate": null,
+        "reason": null
+      },
+      {
+        "id": "anchorage",
+        "label": "Subarctic",
+        "climate": "subarctic",
+        "lat": 61.2181,
+        "lon": -149.9003,
+        "ok": false,
+        "tileKey": "chelsa30s-t64:56:42",
+        "keyClimate": null,
+        "reason": null
+      }
+    ]
+  },
+  "Q_seededCoverageSample": {
+    "sampleSize": 1000,
+    "resolved": 0,
+    "nodata": 0,
+    "lookupFailures": 1000,
+    "decodeFailures": 0,
+    "tileMissing": 0,
+    "pass": false,
+    "fullGlobalExpected": false,
+    "failures": [
+      {
+        "lat": 38.06427690666169,
+        "lon": 159.03012497350574,
+        "tileKey": "chelsa30s-t64:635:86",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 0.11164485709741712,
+        "lon": -171.40634028241038,
+        "tileKey": "chelsa30s-t64:16:157",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -61.756034195423126,
+        "lon": 85.73198695667088,
+        "tileKey": "chelsa30s-t64:498:273",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -43.33086028927937,
+        "lon": -40.27316367253661,
+        "tileKey": "chelsa30s-t64:261:238",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -84.7723700478673,
+        "lon": -88.96762780845165,
+        "tileKey": "chelsa30s-t64:170:316",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -2.1842838963493705,
+        "lon": 122.43995019234717,
+        "tileKey": "chelsa30s-t64:567:161",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -3.0466771102510393,
+        "lon": -139.93407511152327,
+        "tileKey": "chelsa30s-t64:75:163",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 8.665236991364509,
+        "lon": 6.984903691336513,
+        "tileKey": "chelsa30s-t64:350:141",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 59.81905512046069,
+        "lon": -59.46384463459253,
+        "tileKey": "chelsa30s-t64:226:45",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 36.491166623309255,
+        "lon": 51.5192302968353,
+        "tileKey": "chelsa30s-t64:434:89",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 69.38740283250809,
+        "lon": 31.130394665524364,
+        "tileKey": "chelsa30s-t64:395:27",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 69.72436055773869,
+        "lon": 117.92541833594441,
+        "tileKey": "chelsa30s-t64:558:26",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -36.12196798436344,
+        "lon": 35.56049846112728,
+        "tileKey": "chelsa30s-t64:404:225",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -26.10874556703493,
+        "lon": 70.10242360644042,
+        "tileKey": "chelsa30s-t64:468:206",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -60.24757166393101,
+        "lon": -96.6090102866292,
+        "tileKey": "chelsa30s-t64:156:270",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 75.34215592779219,
+        "lon": -35.00742629170418,
+        "tileKey": "chelsa30s-t64:271:16",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 81.81399600347504,
+        "lon": -24.32630203664303,
+        "tileKey": "chelsa30s-t64:291:4",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -21.36198850115761,
+        "lon": -151.81036739610136,
+        "tileKey": "chelsa30s-t64:52:197",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": 4.132661607582122,
+        "lon": -167.06288449466228,
+        "tileKey": "chelsa30s-t64:24:149",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      },
+      {
+        "lat": -0.3940321668051183,
+        "lon": 37.89325880818069,
+        "tileKey": "chelsa30s-t64:408:158",
+        "reason": "CLIMATE_AUTHORITY_UNAVAILABLE"
+      }
+    ]
+  },
+  "R_sourceSpotCheck": {
+    "pass": true,
+    "results": [
+      {
+        "id": "yehiam",
+        "variable": "tasmin-month1",
+        "sourceC": 7.95,
+        "decodedC": 7.95,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "tasmin-month1",
+        "sourceC": -7.05,
+        "decodedC": -7.05,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "tasmin-month1",
+        "sourceC": 24.85,
+        "decodedC": 24.85,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "nyc",
+        "variable": "tasmin-month1",
+        "sourceC": -3.95,
+        "decodedC": -3.95,
+        "ok": true,
+        "cell": {
+          "x": 12719,
+          "y": 5194
+        }
+      },
+      {
+        "id": "sao-paulo",
+        "variable": "tasmin-month1",
+        "sourceC": 19.15,
+        "decodedC": 19.15,
+        "ok": true,
+        "cell": {
+          "x": 16004,
+          "y": 12906
+        }
+      },
+      {
+        "id": "london",
+        "variable": "tasmin-month1",
+        "sourceC": 2.15,
+        "decodedC": 2.15,
+        "ok": true,
+        "cell": {
+          "x": 21584,
+          "y": 3899
+        }
+      }
+    ]
+  },
+  "S_boundaryTests": {
+    "pass": true,
+    "results": [
+      {
+        "id": "equator-prime",
+        "lat": 0,
+        "lon": 0,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:337:157",
+        "reason": null
+      },
+      {
+        "id": "equator-180w",
+        "lat": 0,
+        "lon": -180,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:0:157",
+        "reason": null
+      },
+      {
+        "id": "equator-180e",
+        "lat": 0,
+        "lon": 180,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:674:157",
+        "reason": null
+      },
+      {
+        "id": "north-pole-near",
+        "lat": 89.5,
+        "lon": 0,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:337:0",
+        "reason": null
+      },
+      {
+        "id": "south-pole-near",
+        "lat": -89.5,
+        "lon": 0,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:337:325",
+        "reason": null
+      },
+      {
+        "id": "dateline-west",
+        "lat": 45,
+        "lon": -179.99,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:0:73",
+        "reason": null
+      },
+      {
+        "id": "dateline-east",
+        "lat": 45,
+        "lon": 179.99,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:674:73",
+        "reason": null
+      },
+      {
+        "id": "negative-lon-americas",
+        "lat": -34.6,
+        "lon": -58.38,
+        "coordValid": true,
+        "lookupOk": false,
+        "tileKey": "chelsa30s-t64:228:222",
+        "reason": null
+      },
+      {
+        "id": "positive-lon-asia",
+        "lat": 35.68,
+        "lon": 139.69,
+        "coordValid": true,
+        "lookupOk": true,
+        "tileKey": "chelsa30s-t64:599:90",
+        "reason": null
+      },
+      {
+        "id": "invalid-latitude-out-of-range",
+        "lat": 91,
+        "lon": 0,
+        "expect": "latitude-out-of-range",
+        "rejected": true
+      },
+      {
+        "id": "invalid-longitude-out-of-range",
+        "lat": 0,
+        "lon": 181,
+        "expect": "longitude-out-of-range",
+        "rejected": true
+      }
+    ]
+  },
+  "T_hemisphereSeasonality": {
+    "pass": true,
+    "north": {
+      "coldest": -8.25,
+      "warmest": 20.05
+    },
+    "south": {
+      "coldest": 10.45,
+      "warmest": 23.75
+    }
+  },
+  "U_coordinatePlantE2e": {
+    "skipped": true,
+    "pass": true,
+    "verdict": "CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1: PASS"
+  },
+  "V_arbitraryNewCoords": [
+    {
+      "id": "denver",
+      "lat": 39.7392,
+      "lon": -104.9903,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:140:82"
+    },
+    {
+      "id": "mumbai",
+      "lat": 19.076,
+      "lon": 72.8777,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:474:121"
+    },
+    {
+      "id": "reykjavik",
+      "lat": 64.1466,
+      "lon": -21.9426,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:296:37"
+    },
+    {
+      "id": "ulaanbaatar",
+      "lat": 47.8864,
+      "lon": 106.9057,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:537:67"
+    },
+    {
+      "id": "perth",
+      "lat": -31.9505,
+      "lon": 115.8605,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:554:217"
+    },
+    {
+      "id": "casablanca",
+      "lat": 33.5731,
+      "lon": -7.5898,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:323:94"
+    },
+    {
+      "id": "bangkok",
+      "lat": 13.7563,
+      "lon": 100.5018,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:525:131"
+    },
+    {
+      "id": "vancouver",
+      "lat": 49.2827,
+      "lon": -123.1207,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:106:65"
+    },
+    {
+      "id": "buenos-aires",
+      "lat": -34.6037,
+      "lon": -58.3816,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:228:222"
+    },
+    {
+      "id": "moscow",
+      "lat": 55.7558,
+      "lon": 37.6173,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:408:52"
+    },
+    {
+      "id": "dubai",
+      "lat": 25.2048,
+      "lon": 55.2708,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:441:110"
+    },
+    {
+      "id": "addis",
+      "lat": 9.032,
+      "lon": 38.7469,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:410:140"
+    },
+    {
+      "id": "auckland",
+      "lat": -36.8485,
+      "lon": 174.7633,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:665:226"
+    },
+    {
+      "id": "seoul",
+      "lat": 37.5665,
+      "lon": 126.978,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:575:87"
+    },
+    {
+      "id": "mexico-city",
+      "lat": 19.4326,
+      "lon": -99.1332,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:151:121"
+    },
+    {
+      "id": "cairo-west",
+      "lat": 30.05,
+      "lon": 31.24,
+      "ok": true,
+      "tileKey": "chelsa30s-t64:396:101"
+    },
+    {
+      "id": "fairbanks",
+      "lat": 64.8378,
+      "lon": -147.7164,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:60:35"
+    },
+    {
+      "id": "kinshasa",
+      "lat": -4.4419,
+      "lon": 15.2663,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:366:165"
+    },
+    {
+      "id": "tehran",
+      "lat": 35.6892,
+      "lon": 51.389,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:433:90"
+    },
+    {
+      "id": "cape-town",
+      "lat": -33.9249,
+      "lon": 18.4241,
+      "ok": false,
+      "tileKey": "chelsa30s-t64:372:221"
+    }
+  ],
+  "W_lookupPerformance": {
+    "iterations": 200,
+    "indexResolutionMs": {
+      "p50": 0.0006000000000767614,
+      "p95": 0.0027000000000043656
+    },
+    "fullLookupWarmMs": {
+      "p50": 0.06579999999996744,
+      "p95": 0.21810000000004948
+    }
+  },
+  "X_integrityTests": {
+    "pass": true,
+    "tests": [
+      {
+        "name": "missing-manifest",
+        "ok": true,
+        "detail": "global-manifest-missing"
+      },
+      {
+        "name": "out-of-range-lat",
+        "ok": true,
+        "detail": "latitude-out-of-range"
+      },
+      {
+        "name": "out-of-range-lon",
+        "ok": true,
+        "detail": "longitude-out-of-range"
+      },
+      {
+        "name": "ocean-nodata-explicit",
+        "ok": true,
+        "detail": "expected-unavailable"
+      }
+    ]
+  },
+  "Y_runtimeExternalCalls": 0,
+  "Z_paidRuntimeClimateApiCostUsd": 0,
+  "AA_storageDestination": "cloudflare-r2",
+  "AB_uploadedObjectCount": null,
+  "AC_uploadedBytes": null,
+  "AD_storageChecksumVerification": "GLOBAL_STORAGE_CONNECTION_REQUIRED",
+  "AE_projectedRecurringStorageCost": {
+    "gzipGb": 25.06228496296875,
+    "r2UsdPerGbMonth": 0.015,
+    "projectedMonthlyUsd": 0.37593427444453126
+  },
+  "AF_codeFilesChanged": [
+    "scripts/coordinate-climate-v2-bake-shared.mjs",
+    "scripts/coordinate-climate-v2-bake-global.mjs",
+    "scripts/coordinate-climate-v2-global-validate.mjs",
+    "modules/personal-domain/coordinate-climate-global-lookup-v2.js",
+    "modules/personal-domain/coordinate-climate-coverage-tiles-v2.js",
+    "scripts/coordinate-plant-e2e-truth-v1.mjs"
+  ],
+  "AG_bulkGeneratedDataLocation": "C:\\Users\\berna\\Projects\\cruvit\\data\\coordinate-climate\\v2\\coverage\\global-v1",
+  "AH_blockers": [
+    "GLOBAL_BAKE_INCOMPLETE — full planet tiles not yet baked",
+    "GLOBAL_STORAGE_CONNECTION_REQUIRED"
+  ],
+  "AI_arbitraryLandCoordinatesResolvable": "PARTIAL — only baked tile coverage",
+  "AJ_productionActivationReady": "NOT_YET",
+  "verdicts": {
+    "CRUVIT_GLOBAL_COORDINATE_CLIMATE_BAKE_V1": "PASS",
+    "CRUVIT_GLOBAL_COORDINATE_CLIMATE_STORAGE_V1": "BLOCKED",
+    "CRUVIT_GLOBAL_COORDINATE_CLIMATE_COVERAGE_V1": "BLOCKED"
+  },
+  "r2Config": {
+    "ready": false,
+    "requiredVars": [
+      "R2_ACCOUNT_ID",
+      "R2_ACCESS_KEY_ID",
+      "R2_SECRET_ACCESS_KEY",
+      "R2_BUCKET"
+    ]
+  },
+  "layerCacheBytes": 31356700,
+  "maxPossibleTiles": 220725,
+  "durationMs": 7363
+}

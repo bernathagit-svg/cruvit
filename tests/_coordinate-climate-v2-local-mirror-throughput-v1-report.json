@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-09-01T15:45:00.000Z",
+  "checkpoint": "CRUVIT_LOCAL_CHELSA_MIRROR_BAKE_THROUGHPUT_V1",
+  "A_freeDiskGb": 804.5,
+  "A_totalDiskGb": 951.2,
+  "B_ramGb": 31.7,
+  "B_cpuLogical": 28,
+  "B_cpuModel": "Intel Core i7-14700HX",
+  "C_sourceInventory": {
+    "fileCount": 84,
+    "variables": ["tasmin", "tas", "tasmax", "pr", "pet_penman", "vpd", "hurs"],
+    "monthsEach": 12,
+    "dimensions": "43200×20880",
+    "crs": "WGS84 geographic",
+    "nodata": 65535,
+    "format": "GeoTIFF COG",
+    "inventoryPath": "data/coordinate-climate/v2/source-mirror/source-inventory.json"
+  },
+  "D_projectedMirrorGb": 21.36,
+  "D_measuredRemoteBytesTotal": 21359644112,
+  "E_workingSpaceRequirementGb": {
+    "mirror": 21.36,
+    "outputCorpusEstimate": 15,
+    "workingTemp": 10,
+    "safetyReserve": 50,
+    "totalRequired": 96.36
+  },
+  "F_diskFeasibility": "PASS",
+  "F_note": "804 GB free >> 96 GB required; LOCAL_MIRROR_DISK_BLOCKED does not apply",
+  "G_mirrorContract": "data/coordinate-climate/v2/source-mirror/mirror-contract.json",
+  "H_boundedLocalDataset": {
+    "status": "PARTIAL",
+    "validatedFiles": 13,
+    "totalRequired": 84,
+    "completedVariables": ["tasmin (12/12)", "tas (1/12)"],
+    "bytesOnDiskGb": 1.55,
+    "proofDownloads": "3-file proof + 10-file batch validated with SHA256"
+  },
+  "I_timedBenchmarkNetworkChelsaCalls": null,
+  "I_note": "500+ tile timed benchmark NOT RUN — requires full 84-file mirror",
+  "J_landMask": {
+    "status": "IN_PROGRESS",
+    "method": "LOCAL_MIRROR tasmin month-1 probe per candidate tile",
+    "script": "scripts/coordinate-climate-v2-land-mask-local.mjs",
+    "candidatePositions": 220725
+  },
+  "K_benchmark64": null,
+  "L_benchmark128": null,
+  "M_benchmark256": null,
+  "N_chosenTileDimensions": 64,
+  "O_chosenMacroDimensions": 8,
+  "P_chosenWorkerCount": 4,
+  "Q_benchmarkOutputTileCount": null,
+  "R_cellsPerSec": null,
+  "S_tilesPerSec": null,
+  "T_resourceMetrics": {
+    "local512x512ReadMs": 80,
+    "local512x512ReadNote": "Measured single tasmin-01 window from LOCAL_MIRROR",
+    "projectedMacro8ReadSec": 6.7,
+    "projectedMsPerTileFromMicrobench": 136
+  },
+  "U_projectedTerrestrialObjects": null,
+  "V_projectedCorpusGb": null,
+  "W_conservativeFullBakeHours": null,
+  "X_bestCaseFullBakeHours": null,
+  "W_projectedFromMicrobenchConservativeHours": 3.5,
+  "W_derivation": "136ms/tile × terrestrial tiles (pending land mask) × 1.15 p95 margin; macro8 layer4 local reads",
+  "Y_oneTimeMirrorAcquisitionHours": 4.5,
+  "Y_mirrorAcquisitionGb": 21.36,
+  "Y_measuredDownloadRateMinPerFile": 3.5,
+  "Z_pilotRegression": {
+    "pass": true,
+    "note": "Existing 37 baked tiles unchanged; 7/7 pilots match on stored tiles"
+  },
+  "AA_spotCheckRegression": "PASS prior validation",
+  "AB_coordinatePlantE2e": {
+    "pass": true,
+    "note": "Prior global E2E PASS on existing tiles"
+  },
+  "AC_materialCounts": {
+    "materialFp": 0,
+    "materialFn": 0,
+    "heuristicDependent": 0,
+    "unknownFailures": 0
+  },
+  "AD_resumability": {
+    "preservedTiles": 37,
+    "progressJson": true,
+    "mirrorResumable": true
+  },
+  "AE_filesChanged": [
+    "scripts/coordinate-climate-v2-source-resolver.mjs",
+    "scripts/coordinate-climate-v2-chelsa-source-inventory.mjs",
+    "scripts/coordinate-climate-v2-chelsa-mirror.mjs",
+    "scripts/coordinate-climate-v2-land-mask-local.mjs",
+    "scripts/coordinate-climate-v2-local-throughput-benchmark.mjs",
+    "scripts/coordinate-climate-v2-bake-engine.mjs",
+    "data/coordinate-climate/v2/source-mirror/mirror-contract.json",
+    ".gitignore"
+  ],
+  "AF_blockers": [
+    "MIRROR_INCOMPLETE_13_OF_84",
+    "TIMED_500_TILE_BENCHMARK_NOT_RUN",
+    "LAND_MASK_IN_PROGRESS",
+    "FULL_GLOBAL_BAKE_NOT_AUTHORIZED"
+  ],
+  "AG_fullGlobalBakeAllowed": "NO",
+  "AG_nextSteps": [
+    "Complete mirror: node scripts/coordinate-climate-v2-chelsa-mirror.mjs",
+    "Run land mask: node scripts/coordinate-climate-v2-land-mask-local.mjs",
+    "Run throughput benchmark: node scripts/coordinate-climate-v2-local-throughput-benchmark.mjs",
+    "Re-gate before full bake launch"
+  ],
+  "sourceModeContract": {
+    "modes": ["REMOTE_COG", "LOCAL_MIRROR"],
+    "noSilentFallback": true,
+    "implementation": "scripts/coordinate-climate-v2-source-resolver.mjs"
+  },
+  "verdict": "CRUVIT_LOCAL_CHELSA_MIRROR_BAKE_THROUGHPUT_V1: BLOCKED"
+}

@@ -1,0 +1,1409 @@
+{
+  "generatedAt": "2026-09-03T21:58:35.059Z",
+  "checkpoint": "CRUVIT_LOCAL_GLOBAL_BAKE_FINAL_REGATE",
+  "sourceMode": "LOCAL_MIRROR",
+  "mirror": {
+    "validated": 84,
+    "bytes": 21359644112,
+    "manifestSha256": "5bd6154c8c2a1dae1f0eeeef6fb964ffb4facebdabf749dfb778604c6b00960b",
+    "retries": 26
+  },
+  "landMask": {
+    "candidateTiles": 220725,
+    "landOnly": 49022,
+    "mixed": 12942,
+    "oceanNodata": 158761,
+    "landContainingTiles": 61964
+  },
+  "benchmarkTileCount": 1230,
+  "selectionMethodology": {
+    "mode": "contiguous-macro-clusters-across-climate-regimes",
+    "regions": [
+      "humid-tropical",
+      "hot-desert",
+      "mediterranean",
+      "temperate",
+      "continental-cold",
+      "high-altitude",
+      "southern-hemisphere"
+    ],
+    "sample64ByRegion": {
+      "humid-tropical": 196,
+      "hot-desert": 143,
+      "mediterranean": 192,
+      "temperate": 159,
+      "continental-cold": 186,
+      "high-altitude": 173,
+      "southern-hemisphere": 181
+    },
+    "sample128ByRegion": {
+      "humid-tropical": 78,
+      "hot-desert": 87,
+      "mediterranean": 80,
+      "temperate": 75,
+      "continental-cold": 79,
+      "high-altitude": 81,
+      "southern-hemisphere": 82
+    },
+    "note": "Conservative projection uses max(p95 tile timing, slowest-region sustained rate); not fastest-cluster only."
+  },
+  "networkChelsaCallsDuringTiming": 0,
+  "workerResults": {
+    "worker1": {
+      "label": "worker-1",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 1,
+      "benchmarkTileCount": 243,
+      "benchmarkMacroBlockCount": 6,
+      "totalCells": 995328,
+      "durationMs": 161414.9401,
+      "cellsPerSec": 6166.26936381089,
+      "tilesPerSec": 1.5054368563991432,
+      "macroBlocksPerSec": 0.037171280404917115,
+      "cpuUtilPct": 7.636175786325848,
+      "peakRamMb": 1842.413568,
+      "sourceBytesRead": 264241152,
+      "gzipBytes": 68901288,
+      "diskReadMbSec": 1.6370303259183876,
+      "diskWriteMbSec": 0.4268581827513251,
+      "avgObjectBytes": 283544.39506172837,
+      "p95ObjectBytes": 454456,
+      "avgDecodeMs": 10.52866666666523,
+      "avgWarmLookupMs": 0.0010333333326949894,
+      "p50TileMs": 589.1358311111111,
+      "p95TileMs": 937.6994392857143,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 132537.8632,
+          "tilesPerSec": 1.478822694645646,
+          "cellsPerSec": 6057.257757268566,
+          "avgObjectBytes": 297787.76020408166
+        },
+        "hot-desert": {
+          "tiles": 47,
+          "cells": 192512,
+          "durationMs": 28755.383299999987,
+          "tilesPerSec": 1.6344765607767093,
+          "cellsPerSec": 6694.815992941401,
+          "avgObjectBytes": 224146.53191489363
+        }
+      },
+      "slowestRegion": {
+        "id": "humid-tropical",
+        "tiles": 196,
+        "cells": 802816,
+        "durationMs": 132537.8632,
+        "tilesPerSec": 1.478822694645646,
+        "cellsPerSec": 6057.257757268566,
+        "avgObjectBytes": 297787.76020408166
+      },
+      "phaseMs": {
+        "layerFetchMs": 112763.40330000012,
+        "decodeMs": 1455.3762999999187,
+        "encodeGzipMs": 8696.872299999904,
+        "checksumMs": 45.97680000006585,
+        "rasterReadMs": 111109.52700000015,
+        "tiffOpenMs": 95.45060000008999,
+        "tileWriteMs": 118.82189999997354
+      }
+    },
+    "worker2": {
+      "label": "worker-2",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 2,
+      "benchmarkTileCount": 243,
+      "benchmarkMacroBlockCount": 6,
+      "totalCells": 995328,
+      "durationMs": 171672.6851,
+      "cellsPerSec": 5797.823919514148,
+      "tilesPerSec": 1.4154843553501337,
+      "macroBlocksPerSec": 0.0349502309962996,
+      "cpuUtilPct": 7.73311307469196,
+      "peakRamMb": 1964.404736,
+      "sourceBytesRead": 264241152,
+      "gzipBytes": 68901880,
+      "diskReadMbSec": 1.5392148835213857,
+      "diskWriteMbSec": 0.40135610367988594,
+      "avgObjectBytes": 283546.83127572015,
+      "p95ObjectBytes": 454459,
+      "avgDecodeMs": 11.246962500001246,
+      "avgWarmLookupMs": 0.0009291666671439695,
+      "p50TileMs": 596.3633822222221,
+      "p95TileMs": 934.6627321428574,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 140767.59110000002,
+          "tilesPerSec": 1.3923659449479628,
+          "cellsPerSec": 5703.130910506856,
+          "avgObjectBytes": 297790.3367346939
+        },
+        "hot-desert": {
+          "tiles": 47,
+          "cells": 192512,
+          "durationMs": 30782.51000000001,
+          "tilesPerSec": 1.526841053572304,
+          "cellsPerSec": 6253.940955432157,
+          "avgObjectBytes": 224148.3829787234
+        }
+      },
+      "slowestRegion": {
+        "id": "humid-tropical",
+        "tiles": 196,
+        "cells": 802816,
+        "durationMs": 140767.59110000002,
+        "tilesPerSec": 1.3923659449479628,
+        "cellsPerSec": 5703.130910506856,
+        "avgObjectBytes": 297790.3367346939
+      },
+      "phaseMs": {
+        "layerFetchMs": 241336.3337999998,
+        "decodeMs": 1534.277599999099,
+        "encodeGzipMs": 8944.558700000081,
+        "checksumMs": 46.65419999984442,
+        "rasterReadMs": 224441.9404000001,
+        "tiffOpenMs": 15267.551199999521,
+        "tileWriteMs": 119.56459999998333
+      }
+    },
+    "worker4": {
+      "label": "worker-4",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 4,
+      "benchmarkTileCount": 243,
+      "benchmarkMacroBlockCount": 6,
+      "totalCells": 995328,
+      "durationMs": 157503.6988,
+      "cellsPerSec": 6319.39444967498,
+      "tilesPerSec": 1.5428209105651807,
+      "macroBlocksPerSec": 0.0380943434707452,
+      "cpuUtilPct": 7.769794854947422,
+      "peakRamMb": 2127.806464,
+      "sourceBytesRead": 264241152,
+      "gzipBytes": 68901884,
+      "diskReadMbSec": 1.6776822005655652,
+      "diskWriteMbSec": 0.43746200581290723,
+      "avgObjectBytes": 283546.8477366255,
+      "p95ObjectBytes": 454457,
+      "avgDecodeMs": 10.642699999994269,
+      "avgWarmLookupMs": 0.0008041666684827457,
+      "p50TileMs": 582.8499644444454,
+      "p95TileMs": 914.5548107142864,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 128879.99070000008,
+          "tilesPerSec": 1.5207946472950813,
+          "cellsPerSec": 6229.174875320653,
+          "avgObjectBytes": 297790.22959183675
+        },
+        "hot-desert": {
+          "tiles": 47,
+          "cells": 192512,
+          "durationMs": 28499.700100000016,
+          "tilesPerSec": 1.6491401606011977,
+          "cellsPerSec": 6754.878097822506,
+          "avgObjectBytes": 224148.914893617
+        }
+      },
+      "slowestRegion": {
+        "id": "humid-tropical",
+        "tiles": 196,
+        "cells": 802816,
+        "durationMs": 128879.99070000008,
+        "tilesPerSec": 1.5207946472950813,
+        "cellsPerSec": 6229.174875320653,
+        "avgObjectBytes": 297790.22959183675
+      },
+      "phaseMs": {
+        "layerFetchMs": 443347.3860999991,
+        "decodeMs": 1402.5098999999464,
+        "encodeGzipMs": 8401.274800000247,
+        "checksumMs": 43.01000000105705,
+        "rasterReadMs": 413446.1613000007,
+        "tiffOpenMs": 28415.189799999876,
+        "tileWriteMs": 120.88120000023628
+      }
+    },
+    "worker8": {
+      "label": "worker-8",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 8,
+      "benchmarkTileCount": 243,
+      "benchmarkMacroBlockCount": 6,
+      "totalCells": 995328,
+      "durationMs": 159054.77300000004,
+      "cellsPerSec": 6257.768825334149,
+      "tilesPerSec": 1.527775592122595,
+      "macroBlocksPerSec": 0.03772285412648383,
+      "cpuUtilPct": 7.797538488742579,
+      "peakRamMb": 2143.186944,
+      "sourceBytesRead": 264241152,
+      "gzipBytes": 68901869,
+      "diskReadMbSec": 1.66132173851834,
+      "diskWriteMbSec": 0.43319585888818307,
+      "avgObjectBytes": 283546.78600823047,
+      "p95ObjectBytes": 454459,
+      "avgDecodeMs": 10.560629166662693,
+      "avgWarmLookupMs": 0.0007833333268839245,
+      "p50TileMs": 593.6698851063823,
+      "p95TileMs": 922.1920535714265,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 131040.47239999991,
+          "tilesPerSec": 1.4957211036427867,
+          "cellsPerSec": 6126.473640520854,
+          "avgObjectBytes": 297790.22959183675
+        },
+        "hot-desert": {
+          "tiles": 47,
+          "cells": 192512,
+          "durationMs": 27902.484599999967,
+          "tilesPerSec": 1.684437808093981,
+          "cellsPerSec": 6899.457261952946,
+          "avgObjectBytes": 224148.59574468085
+        }
+      },
+      "slowestRegion": {
+        "id": "humid-tropical",
+        "tiles": 196,
+        "cells": 802816,
+        "durationMs": 131040.47239999991,
+        "tilesPerSec": 1.4957211036427867,
+        "cellsPerSec": 6126.473640520854,
+        "avgObjectBytes": 297790.22959183675
+      },
+      "phaseMs": {
+        "layerFetchMs": 876909.6383999988,
+        "decodeMs": 1448.3386000016471,
+        "encodeGzipMs": 8335.986899999669,
+        "checksumMs": 43.51220000087051,
+        "rasterReadMs": 813177.1959999994,
+        "tiffOpenMs": 62203.31970000081,
+        "tileWriteMs": 109.23859999945853
+      }
+    }
+  },
+  "chosenWorkerCount": 4,
+  "macroResults": {
+    "macro8": {
+      "label": "macro-8x8",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 4,
+      "benchmarkTileCount": 1230,
+      "benchmarkMacroBlockCount": 27,
+      "totalCells": 5038080,
+      "durationMs": 734004.6289,
+      "cellsPerSec": 6863.8259237550155,
+      "tilesPerSec": 1.6757387509167518,
+      "macroBlocksPerSec": 0.03678450916646528,
+      "cpuUtilPct": 7.707079656071013,
+      "peakRamMb": 2223.489024,
+      "sourceBytesRead": 1189085184,
+      "gzipBytes": 384646483,
+      "diskReadMbSec": 1.619996846316891,
+      "diskWriteMbSec": 0.5240382251763752,
+      "avgObjectBytes": 312720.71788617887,
+      "p95ObjectBytes": 478417,
+      "avgDecodeMs": 10.589962499992302,
+      "avgWarmLookupMs": 0.000750000006519258,
+      "p50TileMs": 514.1803689655158,
+      "p95TileMs": 3306.756012500002,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 129962.9813000001,
+          "tilesPerSec": 1.5081217592843865,
+          "cellsPerSec": 6177.266726028847,
+          "avgObjectBytes": 297791.53571428574
+        },
+        "hot-desert": {
+          "tiles": 143,
+          "cells": 585728,
+          "durationMs": 111056.05979999993,
+          "tilesPerSec": 1.2876379754290552,
+          "cellsPerSec": 5274.16514735741,
+          "avgObjectBytes": 277874.2377622378
+        },
+        "mediterranean": {
+          "tiles": 192,
+          "cells": 786432,
+          "durationMs": 84703.60129999998,
+          "tilesPerSec": 2.2667277075974814,
+          "cellsPerSec": 9284.516690319284,
+          "avgObjectBytes": 407169.5677083333
+        },
+        "temperate": {
+          "tiles": 159,
+          "cells": 651264,
+          "durationMs": 140289.5066999999,
+          "tilesPerSec": 1.1333705830188088,
+          "cellsPerSec": 4642.285908045041,
+          "avgObjectBytes": 278251.0188679245
+        },
+        "continental-cold": {
+          "tiles": 186,
+          "cells": 761856,
+          "durationMs": 89073.01300000004,
+          "tilesPerSec": 2.0881745630407713,
+          "cellsPerSec": 8553.163010215,
+          "avgObjectBytes": 234629.48387096773
+        },
+        "high-altitude": {
+          "tiles": 173,
+          "cells": 708608,
+          "durationMs": 103289.80059999973,
+          "tilesPerSec": 1.6748991574682202,
+          "cellsPerSec": 6860.38694898983,
+          "avgObjectBytes": 387070.0693641619
+        },
+        "southern-hemisphere": {
+          "tiles": 181,
+          "cells": 741376,
+          "durationMs": 75063.45330000017,
+          "tilesPerSec": 2.411293273127358,
+          "cellsPerSec": 9876.65724672966,
+          "avgObjectBytes": 295694.2044198895
+        }
+      },
+      "slowestRegion": {
+        "id": "temperate",
+        "tiles": 159,
+        "cells": 651264,
+        "durationMs": 140289.5066999999,
+        "tilesPerSec": 1.1333705830188088,
+        "cellsPerSec": 4642.285908045041,
+        "avgObjectBytes": 278251.0188679245
+      },
+      "phaseMs": {
+        "layerFetchMs": 2102132.3961000033,
+        "decodeMs": 6744.004000002518,
+        "encodeGzipMs": 36259.477699999115,
+        "checksumMs": 218.4140999969095,
+        "rasterReadMs": 2062757.6487999987,
+        "tiffOpenMs": 32252.04509999347,
+        "tileWriteMs": 555.5794000001624
+      }
+    },
+    "macro16": {
+      "label": "macro-16x16",
+      "tileCells": 64,
+      "macroTiles": 16,
+      "layerConcurrency": 4,
+      "benchmarkTileCount": 1230,
+      "benchmarkMacroBlockCount": 12,
+      "totalCells": 5038080,
+      "durationMs": 1059424.2757,
+      "cellsPerSec": 4755.488538028031,
+      "tilesPerSec": 1.1610079438544998,
+      "macroBlocksPerSec": 0.011326906769312193,
+      "cpuUtilPct": 9.330367524957458,
+      "peakRamMb": 4056.219648,
+      "sourceBytesRead": 2113929216,
+      "gzipBytes": 384649002,
+      "diskReadMbSec": 1.995356595546435,
+      "diskWriteMbSec": 0.3630736153802483,
+      "avgObjectBytes": 312722.76585365855,
+      "p95ObjectBytes": 478419,
+      "avgDecodeMs": 10.611479166759333,
+      "avgWarmLookupMs": 0.0007083332942177852,
+      "p50TileMs": 812.1785572727274,
+      "p95TileMs": 1849.8167911111066,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 175133.71259999997,
+          "tilesPerSec": 1.1191448927235272,
+          "cellsPerSec": 4584.017480595568,
+          "avgObjectBytes": 297793.6275510204
+        },
+        "hot-desert": {
+          "tiles": 143,
+          "cells": 585728,
+          "durationMs": 153900.24280551224,
+          "tilesPerSec": 0.9291733228823611,
+          "cellsPerSec": 3805.893930526151,
+          "avgObjectBytes": 277876.7832167832
+        },
+        "mediterranean": {
+          "tiles": 192,
+          "cells": 786432,
+          "durationMs": 116900.91499448814,
+          "tilesPerSec": 1.6424165714105212,
+          "cellsPerSec": 6727.338276497495,
+          "avgObjectBytes": 407171.1822916667
+        },
+        "temperate": {
+          "tiles": 159,
+          "cells": 651264,
+          "durationMs": 179823.46350000007,
+          "tilesPerSec": 0.8842005203620158,
+          "cellsPerSec": 3621.6853314028167,
+          "avgObjectBytes": 278253.0503144654
+        },
+        "continental-cold": {
+          "tiles": 186,
+          "cells": 761856,
+          "durationMs": 184484.50689999992,
+          "tilesPerSec": 1.0082147445629217,
+          "cellsPerSec": 4129.647593729727,
+          "avgObjectBytes": 234631.69892473117
+        },
+        "high-altitude": {
+          "tiles": 173,
+          "cells": 708608,
+          "durationMs": 167003.75889999978,
+          "tilesPerSec": 1.0359048271697329,
+          "cellsPerSec": 4243.066172087226,
+          "avgObjectBytes": 387071.9537572254
+        },
+        "southern-hemisphere": {
+          "tiles": 181,
+          "cells": 741376,
+          "durationMs": 81601.2278,
+          "tilesPerSec": 2.218103880049707,
+          "cellsPerSec": 9085.3534926836,
+          "avgObjectBytes": 295696.27071823203
+        }
+      },
+      "slowestRegion": {
+        "id": "temperate",
+        "tiles": 159,
+        "cells": 651264,
+        "durationMs": 179823.46350000007,
+        "tilesPerSec": 0.8842005203620158,
+        "cellsPerSec": 3621.6853314028167,
+        "avgObjectBytes": 278253.0503144654
+      },
+      "phaseMs": {
+        "layerFetchMs": 2196210.6755999993,
+        "decodeMs": 12837.855799999088,
+        "encodeGzipMs": 65963.42529998883,
+        "checksumMs": 371.8089999924414,
+        "rasterReadMs": 2083724.7883000013,
+        "tiffOpenMs": 99463.75039999792,
+        "tileWriteMs": 567.6242999914102
+      }
+    }
+  },
+  "chosenMacroSize": 8,
+  "tileDimensionResults": {
+    "bench64": {
+      "label": "tile-64",
+      "tileCells": 64,
+      "macroTiles": 8,
+      "layerConcurrency": 4,
+      "benchmarkTileCount": 1230,
+      "benchmarkMacroBlockCount": 27,
+      "totalCells": 5038080,
+      "durationMs": 734004.6289,
+      "cellsPerSec": 6863.8259237550155,
+      "tilesPerSec": 1.6757387509167518,
+      "macroBlocksPerSec": 0.03678450916646528,
+      "cpuUtilPct": 7.707079656071013,
+      "peakRamMb": 2223.489024,
+      "sourceBytesRead": 1189085184,
+      "gzipBytes": 384646483,
+      "diskReadMbSec": 1.619996846316891,
+      "diskWriteMbSec": 0.5240382251763752,
+      "avgObjectBytes": 312720.71788617887,
+      "p95ObjectBytes": 478417,
+      "avgDecodeMs": 10.589962499992302,
+      "avgWarmLookupMs": 0.000750000006519258,
+      "p50TileMs": 514.1803689655158,
+      "p95TileMs": 3306.756012500002,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 196,
+          "cells": 802816,
+          "durationMs": 129962.9813000001,
+          "tilesPerSec": 1.5081217592843865,
+          "cellsPerSec": 6177.266726028847,
+          "avgObjectBytes": 297791.53571428574
+        },
+        "hot-desert": {
+          "tiles": 143,
+          "cells": 585728,
+          "durationMs": 111056.05979999993,
+          "tilesPerSec": 1.2876379754290552,
+          "cellsPerSec": 5274.16514735741,
+          "avgObjectBytes": 277874.2377622378
+        },
+        "mediterranean": {
+          "tiles": 192,
+          "cells": 786432,
+          "durationMs": 84703.60129999998,
+          "tilesPerSec": 2.2667277075974814,
+          "cellsPerSec": 9284.516690319284,
+          "avgObjectBytes": 407169.5677083333
+        },
+        "temperate": {
+          "tiles": 159,
+          "cells": 651264,
+          "durationMs": 140289.5066999999,
+          "tilesPerSec": 1.1333705830188088,
+          "cellsPerSec": 4642.285908045041,
+          "avgObjectBytes": 278251.0188679245
+        },
+        "continental-cold": {
+          "tiles": 186,
+          "cells": 761856,
+          "durationMs": 89073.01300000004,
+          "tilesPerSec": 2.0881745630407713,
+          "cellsPerSec": 8553.163010215,
+          "avgObjectBytes": 234629.48387096773
+        },
+        "high-altitude": {
+          "tiles": 173,
+          "cells": 708608,
+          "durationMs": 103289.80059999973,
+          "tilesPerSec": 1.6748991574682202,
+          "cellsPerSec": 6860.38694898983,
+          "avgObjectBytes": 387070.0693641619
+        },
+        "southern-hemisphere": {
+          "tiles": 181,
+          "cells": 741376,
+          "durationMs": 75063.45330000017,
+          "tilesPerSec": 2.411293273127358,
+          "cellsPerSec": 9876.65724672966,
+          "avgObjectBytes": 295694.2044198895
+        }
+      },
+      "slowestRegion": {
+        "id": "temperate",
+        "tiles": 159,
+        "cells": 651264,
+        "durationMs": 140289.5066999999,
+        "tilesPerSec": 1.1333705830188088,
+        "cellsPerSec": 4642.285908045041,
+        "avgObjectBytes": 278251.0188679245
+      },
+      "phaseMs": {
+        "layerFetchMs": 2102132.3961000033,
+        "decodeMs": 6744.004000002518,
+        "encodeGzipMs": 36259.477699999115,
+        "checksumMs": 218.4140999969095,
+        "rasterReadMs": 2062757.6487999987,
+        "tiffOpenMs": 32252.04509999347,
+        "tileWriteMs": 555.5794000001624
+      },
+      "projectedObjectCount": 61964,
+      "projectedCorpusGb": 19.377426563099185,
+      "estimatedColdFetchSizeBytes": 478417
+    },
+    "bench128": {
+      "label": "tile-128",
+      "tileCells": 128,
+      "macroTiles": 4,
+      "layerConcurrency": 4,
+      "benchmarkTileCount": 562,
+      "benchmarkMacroBlockCount": 44,
+      "totalCells": 9207808,
+      "durationMs": 1173448.7884999998,
+      "cellsPerSec": 7846.791517651306,
+      "tilesPerSec": 0.4789301463410221,
+      "macroBlocksPerSec": 0.037496310389688564,
+      "cpuUtilPct": 7.704368721888322,
+      "peakRamMb": 4064.043008,
+      "sourceBytesRead": 1937768448,
+      "gzipBytes": 639339691,
+      "diskReadMbSec": 1.6513447088534792,
+      "diskWriteMbSec": 0.5448381704132631,
+      "avgObjectBytes": 1137615.1085409252,
+      "p95ObjectBytes": 1878041,
+      "avgDecodeMs": 40.84449999996772,
+      "avgWarmLookupMs": 0.001370833352363358,
+      "p50TileMs": 1833.575450000004,
+      "p95TileMs": 5983.913500000024,
+      "networkChelsaCalls": 0,
+      "perRegion": {
+        "humid-tropical": {
+          "tiles": 78,
+          "cells": 1277952,
+          "durationMs": 179410.0484000002,
+          "tilesPerSec": 0.43475825738643475,
+          "cellsPerSec": 7123.079289019347,
+          "avgObjectBytes": 1035974.9615384615
+        },
+        "hot-desert": {
+          "tiles": 87,
+          "cells": 1425408,
+          "durationMs": 192964.4129999997,
+          "tilesPerSec": 0.4508603355790797,
+          "cellsPerSec": 7386.895738127641,
+          "avgObjectBytes": 1007827.6896551724
+        },
+        "mediterranean": {
+          "tiles": 80,
+          "cells": 1310720,
+          "durationMs": 137745.30129999947,
+          "tilesPerSec": 0.5807820611300977,
+          "cellsPerSec": 9515.53328955552,
+          "avgObjectBytes": 1393495.6875
+        },
+        "temperate": {
+          "tiles": 75,
+          "cells": 1228800,
+          "durationMs": 194983.09149999963,
+          "tilesPerSec": 0.38464873760605106,
+          "cellsPerSec": 6302.084916937541,
+          "avgObjectBytes": 969898.1333333333
+        },
+        "continental-cold": {
+          "tiles": 79,
+          "cells": 1294336,
+          "durationMs": 146584.81130000018,
+          "tilesPerSec": 0.5389371470303206,
+          "cellsPerSec": 8829.946216944772,
+          "avgObjectBytes": 954561.6075949367
+        },
+        "high-altitude": {
+          "tiles": 81,
+          "cells": 1327104,
+          "durationMs": 153508.33689999953,
+          "tilesPerSec": 0.527658638193482,
+          "cellsPerSec": 8645.15912816201,
+          "avgObjectBytes": 1428926.5802469135
+        },
+        "southern-hemisphere": {
+          "tiles": 82,
+          "cells": 1343488,
+          "durationMs": 167794.44039999973,
+          "tilesPerSec": 0.48869318795380146,
+          "cellsPerSec": 8006.749191435083,
+          "avgObjectBytes": 1164356.0975609757
+        }
+      },
+      "slowestRegion": {
+        "id": "temperate",
+        "tiles": 75,
+        "cells": 1228800,
+        "durationMs": 194983.09149999963,
+        "tilesPerSec": 0.38464873760605106,
+        "cellsPerSec": 6302.084916937541,
+        "avgObjectBytes": 969898.1333333333
+      },
+      "phaseMs": {
+        "layerFetchMs": 3347116.404399996,
+        "decodeMs": 10927.746700014453,
+        "encodeGzipMs": 57204.82649999857,
+        "checksumMs": 302.9325999934226,
+        "rasterReadMs": 3295115.661300018,
+        "tiffOpenMs": 40486.2264000196,
+        "tileWriteMs": 441.95300000254065
+      },
+      "projectedObjectCount": 16897,
+      "projectedCorpusGb": 19.222282489016013,
+      "estimatedColdFetchSizeBytes": 1878041
+    },
+    "bench256": null
+  },
+  "chosenTileDimensions": 64,
+  "chosenResult": {
+    "label": "tile-64",
+    "tileCells": 64,
+    "macroTiles": 8,
+    "layerConcurrency": 4,
+    "benchmarkTileCount": 1230,
+    "benchmarkMacroBlockCount": 27,
+    "totalCells": 5038080,
+    "durationMs": 734004.6289,
+    "cellsPerSec": 6863.8259237550155,
+    "tilesPerSec": 1.6757387509167518,
+    "macroBlocksPerSec": 0.03678450916646528,
+    "cpuUtilPct": 7.707079656071013,
+    "peakRamMb": 2223.489024,
+    "sourceBytesRead": 1189085184,
+    "gzipBytes": 384646483,
+    "diskReadMbSec": 1.619996846316891,
+    "diskWriteMbSec": 0.5240382251763752,
+    "avgObjectBytes": 312720.71788617887,
+    "p95ObjectBytes": 478417,
+    "avgDecodeMs": 10.589962499992302,
+    "avgWarmLookupMs": 0.000750000006519258,
+    "p50TileMs": 514.1803689655158,
+    "p95TileMs": 3306.756012500002,
+    "networkChelsaCalls": 0,
+    "perRegion": {
+      "humid-tropical": {
+        "tiles": 196,
+        "cells": 802816,
+        "durationMs": 129962.9813000001,
+        "tilesPerSec": 1.5081217592843865,
+        "cellsPerSec": 6177.266726028847,
+        "avgObjectBytes": 297791.53571428574
+      },
+      "hot-desert": {
+        "tiles": 143,
+        "cells": 585728,
+        "durationMs": 111056.05979999993,
+        "tilesPerSec": 1.2876379754290552,
+        "cellsPerSec": 5274.16514735741,
+        "avgObjectBytes": 277874.2377622378
+      },
+      "mediterranean": {
+        "tiles": 192,
+        "cells": 786432,
+        "durationMs": 84703.60129999998,
+        "tilesPerSec": 2.2667277075974814,
+        "cellsPerSec": 9284.516690319284,
+        "avgObjectBytes": 407169.5677083333
+      },
+      "temperate": {
+        "tiles": 159,
+        "cells": 651264,
+        "durationMs": 140289.5066999999,
+        "tilesPerSec": 1.1333705830188088,
+        "cellsPerSec": 4642.285908045041,
+        "avgObjectBytes": 278251.0188679245
+      },
+      "continental-cold": {
+        "tiles": 186,
+        "cells": 761856,
+        "durationMs": 89073.01300000004,
+        "tilesPerSec": 2.0881745630407713,
+        "cellsPerSec": 8553.163010215,
+        "avgObjectBytes": 234629.48387096773
+      },
+      "high-altitude": {
+        "tiles": 173,
+        "cells": 708608,
+        "durationMs": 103289.80059999973,
+        "tilesPerSec": 1.6748991574682202,
+        "cellsPerSec": 6860.38694898983,
+        "avgObjectBytes": 387070.0693641619
+      },
+      "southern-hemisphere": {
+        "tiles": 181,
+        "cells": 741376,
+        "durationMs": 75063.45330000017,
+        "tilesPerSec": 2.411293273127358,
+        "cellsPerSec": 9876.65724672966,
+        "avgObjectBytes": 295694.2044198895
+      }
+    },
+    "slowestRegion": {
+      "id": "temperate",
+      "tiles": 159,
+      "cells": 651264,
+      "durationMs": 140289.5066999999,
+      "tilesPerSec": 1.1333705830188088,
+      "cellsPerSec": 4642.285908045041,
+      "avgObjectBytes": 278251.0188679245
+    },
+    "phaseMs": {
+      "layerFetchMs": 2102132.3961000033,
+      "decodeMs": 6744.004000002518,
+      "encodeGzipMs": 36259.477699999115,
+      "checksumMs": 218.4140999969095,
+      "rasterReadMs": 2062757.6487999987,
+      "tiffOpenMs": 32252.04509999347,
+      "tileWriteMs": 555.5794000001624
+    },
+    "projectedObjectCount": 61964,
+    "projectedCorpusGb": 19.377426563099185,
+    "estimatedColdFetchSizeBytes": 478417
+  },
+  "perRegionThroughput": {
+    "humid-tropical": {
+      "tiles": 196,
+      "cells": 802816,
+      "durationMs": 129962.9813000001,
+      "tilesPerSec": 1.5081217592843865,
+      "cellsPerSec": 6177.266726028847,
+      "avgObjectBytes": 297791.53571428574
+    },
+    "hot-desert": {
+      "tiles": 143,
+      "cells": 585728,
+      "durationMs": 111056.05979999993,
+      "tilesPerSec": 1.2876379754290552,
+      "cellsPerSec": 5274.16514735741,
+      "avgObjectBytes": 277874.2377622378
+    },
+    "mediterranean": {
+      "tiles": 192,
+      "cells": 786432,
+      "durationMs": 84703.60129999998,
+      "tilesPerSec": 2.2667277075974814,
+      "cellsPerSec": 9284.516690319284,
+      "avgObjectBytes": 407169.5677083333
+    },
+    "temperate": {
+      "tiles": 159,
+      "cells": 651264,
+      "durationMs": 140289.5066999999,
+      "tilesPerSec": 1.1333705830188088,
+      "cellsPerSec": 4642.285908045041,
+      "avgObjectBytes": 278251.0188679245
+    },
+    "continental-cold": {
+      "tiles": 186,
+      "cells": 761856,
+      "durationMs": 89073.01300000004,
+      "tilesPerSec": 2.0881745630407713,
+      "cellsPerSec": 8553.163010215,
+      "avgObjectBytes": 234629.48387096773
+    },
+    "high-altitude": {
+      "tiles": 173,
+      "cells": 708608,
+      "durationMs": 103289.80059999973,
+      "tilesPerSec": 1.6748991574682202,
+      "cellsPerSec": 6860.38694898983,
+      "avgObjectBytes": 387070.0693641619
+    },
+    "southern-hemisphere": {
+      "tiles": 181,
+      "cells": 741376,
+      "durationMs": 75063.45330000017,
+      "tilesPerSec": 2.411293273127358,
+      "cellsPerSec": 9876.65724672966,
+      "avgObjectBytes": 295694.2044198895
+    }
+  },
+  "slowestRegionThroughput": {
+    "id": "temperate",
+    "tiles": 159,
+    "cells": 651264,
+    "durationMs": 140289.5066999999,
+    "tilesPerSec": 1.1333705830188088,
+    "cellsPerSec": 4642.285908045041,
+    "avgObjectBytes": 278251.0188679245
+  },
+  "bestCaseFullBakeHours": 10.271423402249232,
+  "p95FullBakeHours": 56.916619321819475,
+  "slowestRegionFullBakeHours": 15.186755753247372,
+  "conservativeFullBakeHours": 56.916619321819475,
+  "regression7": {
+    "pass": true,
+    "results": [
+      {
+        "id": "yehiam",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:403:95"
+      },
+      {
+        "id": "helsinki",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:384:44"
+      },
+      {
+        "id": "singapore",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:532:155"
+      },
+      {
+        "id": "kochi",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:480:138"
+      },
+      {
+        "id": "cairo",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:396:101"
+      },
+      {
+        "id": "tokyo",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:599:90"
+      },
+      {
+        "id": "quito",
+        "ok": true,
+        "tileKey": "chelsa30s-t64:190:157"
+      }
+    ]
+  },
+  "sourcePixelEquivalence": {
+    "pass": true,
+    "networkChelsaCalls": 0,
+    "results": [
+      {
+        "id": "yehiam",
+        "variable": "tasmin",
+        "raw": 2811,
+        "source": 7.95,
+        "decoded": 7.95,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "yehiam",
+        "variable": "pr",
+        "raw": 3398,
+        "source": 339.8,
+        "decoded": 339.8,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "yehiam",
+        "variable": "pet_penman",
+        "raw": 6554,
+        "source": 65.5,
+        "decoded": 65.5,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "yehiam",
+        "variable": "vpd",
+        "raw": 5405,
+        "source": 540.5,
+        "decoded": 541,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "yehiam",
+        "variable": "hurs",
+        "raw": 5779,
+        "source": 57.8,
+        "decoded": 57.8,
+        "ok": true,
+        "cell": {
+          "x": 25826,
+          "y": 6104
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "tasmin",
+        "raw": 2661,
+        "source": -7.05,
+        "decoded": -7.05,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "pr",
+        "raw": 487,
+        "source": 48.7,
+        "decoded": 48.7,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "pet_penman",
+        "raw": 1045,
+        "source": 10.5,
+        "decoded": 10.5,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "vpd",
+        "raw": 1251,
+        "source": 125.1,
+        "decoded": 125,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "helsinki",
+        "variable": "hurs",
+        "raw": 7305,
+        "source": 73.1,
+        "decoded": 73.1,
+        "ok": true,
+        "cell": {
+          "x": 24592,
+          "y": 2859
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "tasmin",
+        "raw": 2980,
+        "source": 24.85,
+        "decoded": 24.85,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "pr",
+        "raw": 2327,
+        "source": 232.7,
+        "decoded": 232.7,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "pet_penman",
+        "raw": 14429,
+        "source": 144.3,
+        "decoded": 144.3,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "vpd",
+        "raw": 11492,
+        "source": 1149.2,
+        "decoded": 1149,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "singapore",
+        "variable": "hurs",
+        "raw": 6560,
+        "source": 65.6,
+        "decoded": 65.6,
+        "ok": true,
+        "cell": {
+          "x": 34062,
+          "y": 9925
+        }
+      },
+      {
+        "id": "cairo",
+        "variable": "tasmin",
+        "raw": 2813,
+        "source": 8.15,
+        "decoded": 8.15,
+        "ok": true,
+        "cell": {
+          "x": 25349,
+          "y": 6472
+        }
+      },
+      {
+        "id": "cairo",
+        "variable": "pr",
+        "raw": 38,
+        "source": 3.8,
+        "decoded": 3.8,
+        "ok": true,
+        "cell": {
+          "x": 25349,
+          "y": 6472
+        }
+      },
+      {
+        "id": "cairo",
+        "variable": "pet_penman",
+        "raw": 5613,
+        "source": 56.1,
+        "decoded": 56.1,
+        "ok": true,
+        "cell": {
+          "x": 25349,
+          "y": 6472
+        }
+      },
+      {
+        "id": "cairo",
+        "variable": "vpd",
+        "raw": 7424,
+        "source": 742.4,
+        "decoded": 742,
+        "ok": true,
+        "cell": {
+          "x": 25349,
+          "y": 6472
+        }
+      },
+      {
+        "id": "cairo",
+        "variable": "hurs",
+        "raw": 5278,
+        "source": 52.8,
+        "decoded": 52.8,
+        "ok": true,
+        "cell": {
+          "x": 25349,
+          "y": 6472
+        }
+      },
+      {
+        "id": "tokyo",
+        "variable": "tasmin",
+        "raw": 2728,
+        "source": -0.35,
+        "decoded": -0.35,
+        "ok": true,
+        "cell": {
+          "x": 38363,
+          "y": 5797
+        }
+      },
+      {
+        "id": "tokyo",
+        "variable": "pr",
+        "raw": 504,
+        "source": 50.4,
+        "decoded": 50.4,
+        "ok": true,
+        "cell": {
+          "x": 38363,
+          "y": 5797
+        }
+      },
+      {
+        "id": "tokyo",
+        "variable": "pet_penman",
+        "raw": 3587,
+        "source": 35.9,
+        "decoded": 35.9,
+        "ok": true,
+        "cell": {
+          "x": 38363,
+          "y": 5797
+        }
+      },
+      {
+        "id": "tokyo",
+        "variable": "vpd",
+        "raw": 3971,
+        "source": 397.1,
+        "decoded": 397,
+        "ok": true,
+        "cell": {
+          "x": 38363,
+          "y": 5797
+        }
+      },
+      {
+        "id": "tokyo",
+        "variable": "hurs",
+        "raw": 5280,
+        "source": 52.8,
+        "decoded": 52.8,
+        "ok": true,
+        "cell": {
+          "x": 38363,
+          "y": 5797
+        }
+      }
+    ]
+  },
+  "boundaryHemisphere": {
+    "pass": true,
+    "boundary": [
+      {
+        "id": "equator-prime",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "equator-180w",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "equator-180e",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "dateline-west",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "dateline-east",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "negative-lon",
+        "ok": true,
+        "lookupOk": false,
+        "reason": null
+      },
+      {
+        "id": "positive-lon",
+        "ok": true,
+        "lookupOk": true,
+        "reason": null
+      }
+    ],
+    "hemisphere": {
+      "pass": true
+    }
+  },
+  "coordinatePlantE2E": {
+    "exitCode": 0,
+    "pass": true,
+    "pairCount": 70,
+    "materialFp": 0,
+    "materialFn": 0,
+    "heuristicDependent": 0,
+    "unknownFailures": 0,
+    "cityProxy": 0,
+    "externalCalls": 0,
+    "catalogRegression": {
+      "batch1": {
+        "expected": {
+          "SOURCE_SUPPORTED": 189,
+          "HEURISTIC_ASSERTION": 125,
+          "UNKNOWN": 11
+        },
+        "actual": {
+          "SOURCE_SUPPORTED": 189,
+          "HEURISTIC_ASSERTION": 125,
+          "UNKNOWN": 11
+        },
+        "pass": true
+      },
+      "batch2": {
+        "expected": {
+          "SOURCE_SUPPORTED": 248,
+          "HEURISTIC_ASSERTION": 71,
+          "UNKNOWN": 25
+        },
+        "actual": {
+          "SOURCE_SUPPORTED": 248,
+          "HEURISTIC_ASSERTION": 71,
+          "UNKNOWN": 25
+        },
+        "pass": true
+      },
+      "plantKnowledge": {
+        "expected": {
+          "SOURCE_SUPPORTED": 100,
+          "HEURISTIC_ASSERTION": 136,
+          "UNKNOWN": 405
+        },
+        "actual": {
+          "SOURCE_SUPPORTED": 100,
+          "HEURISTIC_ASSERTION": 136,
+          "UNKNOWN": 405
+        },
+        "pass": true
+      }
+    },
+    "verdict": "CRUVIT_COORDINATE_PLANT_E2E_TRUTH_V1: PASS"
+  },
+  "materialCounts": {
+    "materialFp": 0,
+    "materialFn": 0,
+    "heuristicDependent": 0,
+    "unknownFailures": 0
+  },
+  "existingCatalogRegression": {
+    "batch1": {
+      "expected": {
+        "SOURCE_SUPPORTED": 189,
+        "HEURISTIC_ASSERTION": 125,
+        "UNKNOWN": 11
+      },
+      "actual": {
+        "SOURCE_SUPPORTED": 189,
+        "HEURISTIC_ASSERTION": 125,
+        "UNKNOWN": 11
+      },
+      "pass": true
+    },
+    "batch2": {
+      "expected": {
+        "SOURCE_SUPPORTED": 248,
+        "HEURISTIC_ASSERTION": 71,
+        "UNKNOWN": 25
+      },
+      "actual": {
+        "SOURCE_SUPPORTED": 248,
+        "HEURISTIC_ASSERTION": 71,
+        "UNKNOWN": 25
+      },
+      "pass": true
+    },
+    "plantKnowledge": {
+      "expected": {
+        "SOURCE_SUPPORTED": 100,
+        "HEURISTIC_ASSERTION": 136,
+        "UNKNOWN": 405
+      },
+      "actual": {
+        "SOURCE_SUPPORTED": 100,
+        "HEURISTIC_ASSERTION": 136,
+        "UNKNOWN": 405
+      },
+      "pass": true
+    }
+  },
+  "resumability": {
+    "preservedVerifiedTiles": 188,
+    "compatible": true,
+    "note": "Existing verified 64x64 tiles remain reusable if checksum/authority/format match."
+  },
+  "filesChanged": [
+    "scripts/coordinate-climate-v2-final-regate.mjs"
+  ],
+  "blockers": [
+    "conservative-hours:56.92"
+  ],
+  "fullGlobalBakeAllowed": "NO",
+  "verdict": "CRUVIT_LOCAL_GLOBAL_BAKE_FINAL_REGATE: BLOCKED",
+  "reportSha256": "e14827f8cc82026ab71e288736490aefe99b1ec354cdfd60027d36a1718c1359"
+}

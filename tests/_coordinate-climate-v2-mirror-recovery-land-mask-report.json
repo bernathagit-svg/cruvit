@@ -1,0 +1,59 @@
+{
+  "checkpoint": "CRUVIT_CHELSA_MIRROR_RECOVERY_AND_LAND_MASK",
+  "generatedAt": "2026-09-02T17:05:00.000Z",
+  "A_stalledProcessTerminated": "YES",
+  "B_preservedValidatedFiles": "57/84 (56 preserved + pet_penman-09 already complete at recovery)",
+  "B_note": "At kill time pet_penman-09 had already completed (56→57). Prior stalled session eventually finished that file; 56 validated files preserved plus pet_penman-09.",
+  "C_hardenedDownloader": "PASS",
+  "D_timeoutValues": {
+    "requestTimeoutMs": 900000,
+    "inactivityTimeoutMs": 120000
+  },
+  "E_retryBackoffPolicy": {
+    "maxAttempts": 6,
+    "backoffBaseMs": 3000,
+    "backoffCapMs": 60000,
+    "formula": "min(60000, 3000 * 2^(attempt-1))"
+  },
+  "F_streamingPartBehavior": "PASS — stream response body to .part via pipeline; Range resume when server returns 206; restart .part if server returns 200 on Range; atomic rename only after size + GeoTIFF validation; SHA256 only after rename",
+  "G_petPenman09Recovery": "PASS",
+  "H_mirrorCountAfterRecovery": "57/84",
+  "I_landMaskRootCause": "Land mask probed tasmin month-1. CHELSA tasmin/tas/tasmax carry numeric values over ocean (GDALNoData metadata -2147483647 never appears in UInt16 raster). pet_penman correctly uses UInt16 65535 ocean nodata. Validity test treated any finite number ≠65535 as land, so every tile passed.",
+  "J_oceanControls": [
+    { "id": "0,-140", "raw": 65535, "nodata": 65535, "valid": false, "class": "NODATA" },
+    { "id": "0,-30", "raw": 65535, "nodata": 65535, "valid": false, "class": "NODATA" },
+    { "id": "-40,-130", "raw": 65535, "nodata": 65535, "valid": false, "class": "NODATA" },
+    { "id": "30,-150", "raw": 65535, "nodata": 65535, "valid": false, "class": "NODATA" },
+    { "id": "-50,20", "raw": 65535, "nodata": 65535, "valid": false, "class": "NODATA" }
+  ],
+  "K_landControls": [
+    { "id": "yehiam", "raw": 6554, "nodata": 65535, "valid": true, "class": "LAND" },
+    { "id": "tokyo", "raw": 3587, "nodata": 65535, "valid": true, "class": "LAND" },
+    { "id": "quito", "raw": 11436, "nodata": 65535, "valid": true, "class": "LAND" },
+    { "id": "singapore", "raw": 14429, "nodata": 65535, "valid": true, "class": "LAND" },
+    { "id": "cairo", "raw": 5613, "nodata": 65535, "valid": true, "class": "LAND" }
+  ],
+  "L_correctedLandOnlyTileCount": 49022,
+  "M_correctedMixedTileCount": 12942,
+  "N_correctedOceanNodataTileCount": 158761,
+  "O_validLandNodataCellCounts": {
+    "validLandCells": 224368589,
+    "nodataCells": 677647411,
+    "candidateTiles": 220725,
+    "landContainingTiles": 61964
+  },
+  "P_mirrorResumed": "YES",
+  "Q_currentMirrorCount": "58/84",
+  "R_remainingBlocker": "Mirror incomplete — 26 files remaining (pet_penman 11-12, vpd×12, hurs×12). Throughput benchmark and full global bake still blocked until 84/84.",
+  "filesChanged": [
+    "scripts/coordinate-climate-v2-chelsa-mirror.mjs",
+    "scripts/coordinate-climate-v2-bake-engine.mjs",
+    "scripts/coordinate-climate-v2-land-mask-local.mjs",
+    "scripts/coordinate-climate-v2-land-mask-controls.mjs"
+  ],
+  "artifacts": [
+    "data/coordinate-climate/v2/coverage/global-v1/land-tile-mask.json",
+    "tests/_coordinate-climate-v2-land-mask-controls.json"
+  ],
+  "verdict": "CRUVIT_CHELSA_MIRROR_RECOVERY_AND_LAND_MASK: PASS"
+}

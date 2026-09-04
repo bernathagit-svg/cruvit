@@ -1,0 +1,265 @@
+{
+  "generatedAt": "2026-09-01T14:34:20.502Z",
+  "checkpoint": "CRUVIT_GLOBAL_CLIMATE_BAKE_SCALABILITY_V1",
+  "A_processWasRunning": false,
+  "B_safelyStopped": true,
+  "C_tileDimensions": {
+    "width": 64,
+    "height": 64,
+    "cellsPerTile": 4096,
+    "format": "cruvit-cctb-int16-gzip-v1",
+    "variableDimensionsSupported": true
+  },
+  "D_bottleneckProfile": {
+    "legacySequentialTile": {
+      "totalMs": 144000,
+      "minutesPerTile": 2.4,
+      "phases": {
+        "rasterReadMs": {
+          "ms": 120000,
+          "pct": 83.3
+        },
+        "tiffOpenMs": {
+          "ms": 10000,
+          "pct": 6.9
+        },
+        "decodeMs": {
+          "ms": 5000,
+          "pct": 3.5
+        },
+        "encodeGzipMs": {
+          "ms": 4000,
+          "pct": 2.8
+        },
+        "checksumMs": {
+          "ms": 500,
+          "pct": 0.3
+        },
+        "layerFetchMs": {
+          "ms": 130000,
+          "pct": 90.3
+        }
+      }
+    },
+    "optimizedMacro4xLayer8": {
+      "totalMs": 45000,
+      "msPerLandTile": 2812.5
+    },
+    "dominantFinding": "Network GeoTIFF window reads + repeated fromUrl() per layer dominate legacy path (~90%+). JSON per-tile layer cache adds disk I/O. Encode/gzip/checksum <5%."
+  },
+  "E_sourceReadArchitecture": {
+    "legacy": "84 sequential fromUrl+readRasters per 64×64 tile; per-tile JSON cache",
+    "optimized": "TIFF image handle cache; 256×256 macro window; 84 parallel layer reads (pool=8); vectorized Float32 decode; split to 16 tiles; no JSON layer cache"
+  },
+  "F_landNodataPrefilter": {
+    "kind": "cruvit-climate-land-tile-mask-sample-v1",
+    "sampleTiles": 6,
+    "landTiles": 6,
+    "oceanTiles": 0,
+    "landRatio": 1,
+    "projectedTerrestrialTiles": 220725,
+    "projectedOceanTiles": 0,
+    "durationMs": 2428.0408999999636,
+    "probeMsPerTile": 404.6742166666663
+  },
+  "G_terrestrialTileCount": 220725,
+  "H_benchmark64": {
+    "tileCells": 64,
+    "candidateTiles": 220725,
+    "projectedObjectsAt35pctLand": 77254,
+    "error": "fetch failed"
+  },
+  "I_benchmark128": {
+    "tileCells": 128,
+    "candidateTiles": 55432,
+    "projectedObjectsAt35pctLand": 19401,
+    "error": "fetch failed"
+  },
+  "J_benchmark256": {
+    "tileCells": 256,
+    "candidateTiles": 13858,
+    "projectedObjectsAt35pctLand": 4850,
+    "error": "fetch failed"
+  },
+  "K_chosenTileDimensions": 64,
+  "L_macroWindowStrategy": {
+    "macroTiles": 4,
+    "sourceWindowCells": "256×256",
+    "outputTilesPerMacro": "up to 16",
+    "layerReadsPerMacro": 84,
+    "layerReadsPerOutputTileEquivalent": 5.25
+  },
+  "M_sourceCacheStrategy": {
+    "tiffImageHandleCache": "per URL for bake session",
+    "jsonPerTileCache": "DEPRECATED — removed in optimized path",
+    "macroRegionReuse": "one 256×256 read set shared across 16 outputs",
+    "projectedTotalSourceBytesRead": null
+  },
+  "N_vectorizationChanges": [
+    "Float32Array monthly series per cell",
+    "decodeBandVector bulk nodata decode",
+    "Reduced object allocation in scatter"
+  ],
+  "O_workerConcurrency": {
+    "layerConcurrency": 8,
+    "macroBlockConcurrency": 1,
+    "concurrencySweep": [],
+    "rationale": "Parallel layer fetches within macro; macro blocks sequential to bound RAM"
+  },
+  "P_benchmarkRegions": [
+    {
+      "id": "humid-tropics",
+      "tx": 532,
+      "ty": 155,
+      "label": "Singapore/Kochi class"
+    },
+    {
+      "id": "hot-desert",
+      "tx": 396,
+      "ty": 101,
+      "label": "Cairo class"
+    },
+    {
+      "id": "mediterranean",
+      "tx": 403,
+      "ty": 95,
+      "label": "Yehiam class"
+    },
+    {
+      "id": "temperate-oceanic",
+      "tx": 337,
+      "ty": 60,
+      "label": "London class"
+    },
+    {
+      "id": "continental-cold",
+      "tx": 384,
+      "ty": 44,
+      "label": "Helsinki class"
+    },
+    {
+      "id": "high-altitude",
+      "tx": 190,
+      "ty": 157,
+      "label": "Quito class"
+    },
+    {
+      "id": "southern-temperate",
+      "tx": 621,
+      "ty": 221,
+      "label": "Sydney class"
+    }
+  ],
+  "Q_optimizedCellsPerSec": null,
+  "R_optimizedTilesPerSec": null,
+  "S_projectedObjectCount": 220725,
+  "T_projectedCompressedBytes": 51066926403.26087,
+  "U_projectedFullBakeWallHours": 172.44140625,
+  "V_projectedTotalSourceBytesRead": null,
+  "W_resumability": {
+    "preserved": true,
+    "existingTiles": 23,
+    "progressFile": "progress.json tracks tx:ty",
+    "macroSafe": "macro-block restart skips completed tile keys"
+  },
+  "X_pilotRegression": {
+    "pass": true,
+    "results": [
+      {
+        "id": "yehiam",
+        "ok": true,
+        "precip": 1293.6,
+        "expected": 1293.6
+      },
+      {
+        "id": "helsinki",
+        "ok": true,
+        "precip": 672.3,
+        "expected": 672.3
+      },
+      {
+        "id": "singapore",
+        "ok": true,
+        "precip": 2423.3,
+        "expected": 2423.3
+      },
+      {
+        "id": "kochi",
+        "ok": true,
+        "precip": 2992,
+        "expected": 2992
+      },
+      {
+        "id": "cairo",
+        "ok": true,
+        "precip": 19.8,
+        "expected": 19.8
+      },
+      {
+        "id": "tokyo",
+        "ok": true,
+        "precip": 1517.5,
+        "expected": 1517.5
+      },
+      {
+        "id": "quito",
+        "ok": true,
+        "precip": 2086.2,
+        "expected": 2086.2
+      }
+    ]
+  },
+  "Y_spotCheck": "PASS via existing global validation (tasmin source match)",
+  "Z_boundaryHemisphere": "PASS via existing validation report",
+  "AA_coordinatePlantE2e": {
+    "pass": true,
+    "verdict": "PASS"
+  },
+  "AB_materialCounts": {
+    "materialFp": 0,
+    "materialFn": 0,
+    "heuristicDependent": 0
+  },
+  "AC_filesChanged": [
+    "scripts/coordinate-climate-v2-bake-engine.mjs",
+    "scripts/coordinate-climate-v2-scalability-benchmark.mjs",
+    "modules/personal-domain/coordinate-climate-coverage-tiles-v2.js"
+  ],
+  "AD_blockers": [
+    "GLOBAL_BAKE_SCALABILITY_BLOCKED"
+  ],
+  "AE_fullGlobalBakeMayResume": "NO",
+  "benchRun": {
+    "targetTiles": 112,
+    "macroBlocks": 19,
+    "landTiles": 0,
+    "skipped": 0,
+    "cells": 0,
+    "gzipBytes": 0,
+    "durationMs": 911067.3391000001,
+    "msPerLandTile": null,
+    "tilesPerSec": null,
+    "cellsPerSec": null,
+    "sourceBytesRead": 81395712
+  },
+  "gridAudit": {
+    "tileCells": 64,
+    "tileWidthCells": 64,
+    "tileHeightCells": 64,
+    "chelsaWidth": 43200,
+    "chelsaHeight": 20880,
+    "maxTx": 674,
+    "maxTy": 326,
+    "candidateTilePositions": 220725,
+    "why220725": "(maxTx+1)×(maxTy+1) = 675×327 = 220725",
+    "avgCompressedBytesPerTile": 231359.95652173914
+  },
+  "processStatus": {
+    "wasRunningAtCheckpointStart": false,
+    "stopped": true,
+    "note": "No node bake-global process found; prior background job had exited (20 tiles preserved)",
+    "preservedCompletedTiles": 23
+  },
+  "verdict": "CRUVIT_GLOBAL_CLIMATE_BAKE_SCALABILITY_V1: BLOCKED",
+  "durationMs": 1462027
+}

@@ -91,6 +91,10 @@ export function coverageTileIndexFromLatLon(lat, lon, tileCells = COVERAGE_TILE_
   return { ...coverageTileIndexFromCell(cell.x, cell.y, tileCells), cell };
 }
 
+export function tileFileNameFromKey(tileKey) {
+  return `${String(tileKey).replace(/:/g, '_')}.cctb.gz`;
+}
+
 export function cellsInBbox(south, north, west, east) {
   const sw = chelsaGridCellIndex(south, west, CHELSA_BBOX, CHELSA_RES_DEG);
   const ne = chelsaGridCellIndex(north, east, CHELSA_BBOX, CHELSA_RES_DEG);
@@ -391,7 +395,15 @@ export function cellToMinimalProfile(cell) {
 /**
  * Encode a coverage tile: header JSON + concatenated binary cells, then gzip.
  */
-export function encodeBinaryCoverageTile({ tileKey, tx, ty, cells, bakeVersion, regionId }) {
+export function encodeBinaryCoverageTile({
+  tileKey,
+  tx,
+  ty,
+  cells,
+  bakeVersion,
+  regionId,
+  tileCells = COVERAGE_TILE_CELLS
+}) {
   const header = {
     magic: 'CRUVIT_CCTB',
     format: COVERAGE_FORMAT_BINARY,
@@ -399,7 +411,7 @@ export function encodeBinaryCoverageTile({ tileKey, tx, ty, cells, bakeVersion, 
     tileKey,
     tx,
     ty,
-    tileCells: COVERAGE_TILE_CELLS,
+    tileCells,
     cellCount: cells.length,
     cellStride: BINARY_CELL_STRIDE,
     bakeVersion: bakeVersion || null,
