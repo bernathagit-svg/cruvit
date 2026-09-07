@@ -1,0 +1,105 @@
+{
+  "generatedAt": "2026-09-07T13:12:21.472Z",
+  "checkpoint": "CRUVIT_FULL_GLOBAL_BAKE_AUTHORITATIVE_METADATA_REBUILD",
+  "immutable": {
+    "tileChecksumsUnchanged": true,
+    "progressUnchanged": true,
+    "statusUnchanged": true,
+    "landMaskUnchanged": true,
+    "tileSamplesUnchanged": true,
+    "quarantineSamplesUnchanged": true,
+    "tileCountUnchanged": true,
+    "qCountUnchanged": true,
+    "manifestChanged": true,
+    "indexChanged": true
+  },
+  "counts": {
+    "manifestTileCount": 61964,
+    "landMask": 61964,
+    "filesystem": 61964,
+    "checksumLand": 61964,
+    "checksumNonLandPreserved": 172,
+    "manifestChecksums": 61964,
+    "shaOk": 61964,
+    "shaMismatch": 0,
+    "manShaMismatch": 0,
+    "missing": 0,
+    "extra": 0,
+    "zero": 0,
+    "gzipBad": 0,
+    "decodeFail": 0,
+    "headerBad": 0,
+    "macrosDone": 1459,
+    "expectedMacros": 1459,
+    "quarantineFiles": 172,
+    "quarantineProgKeys": 172,
+    "quarantineChecksumKeys": 172
+  },
+  "macrosComplete": true,
+  "m5022": {
+    "ok": true,
+    "expected": 64,
+    "recorded": true
+  },
+  "quarantineIntact": true,
+  "manifestOk": true,
+  "networkChelsaCalls": 0,
+  "statusNetwork": 0,
+  "lookupSmoke": [
+    {
+      "id": "tlv",
+      "ok": true,
+      "bakeId": "bake-2026-09-01-global-v1-vpd-scale",
+      "reason": null
+    },
+    {
+      "id": "hel",
+      "ok": true,
+      "bakeId": "bake-2026-09-01-global-v1-vpd-scale",
+      "reason": null
+    },
+    {
+      "id": "syd",
+      "ok": true,
+      "bakeId": "bake-2026-09-01-global-v1-vpd-scale",
+      "reason": null
+    },
+    {
+      "id": "nyc",
+      "ok": true,
+      "bakeId": "bake-2026-09-01-global-v1-vpd-scale",
+      "reason": null
+    }
+  ],
+  "verdictCandidates": {
+    "allCorePass": true
+  },
+  "localValidateSuite": {
+    "pilot": true,
+    "globalCoords": true,
+    "invalidRejection": true,
+    "hemisphere": true,
+    "sourceSpotCheck": "SKIPPED_BY_SAFETY_RULE_NO_REMOTE_CHELSA",
+    "fullScriptcoordinateClimateV2GlobalValidate": "NOT_RUN_AVOID_REMOTE_CHELSA_AND_STALE_100k_THRESHOLD",
+    "plantE2eGlobal": "PASS",
+    "r2": "NOT_STARTED",
+    "batch3": "NOT_STARTED"
+  },
+  "primaryVerdict": "AUTHORITATIVE_GLOBAL_BAKE_METADATA_VALIDATED",
+  "filesTouchedThisCheckpoint": {
+    "modified": [
+      "data/coordinate-climate/v2/coverage/global-v1/manifest.json",
+      "data/coordinate-climate/v2/coverage/global-v1/global-index.json",
+      "tests/_coordinate-plant-e2e-truth-v1-global-report.json"
+    ],
+    "created": [
+      "tests/_coordinate-climate-v2-post-bake-metadata-rebuild-report.json"
+    ],
+    "intentionallyUnchanged": [
+      "data/coordinate-climate/v2/coverage/global-v1/tile-checksums.json",
+      "data/coordinate-climate/v2/coverage/global-v1/tiles/**",
+      "data/coordinate-climate/v2/coverage/global-v1/_quarantine-nonland-partial/**",
+      "data/coordinate-climate/v2/coverage/global-v1/progress-optimized.json"
+    ]
+  }
+}
