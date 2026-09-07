@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -630,36 +630,36 @@
       </div>
     </header>
     <div class="sr-app-panel">
-      <section id="srHeroAnswerPreview" class="sr-hero-answer-preview" aria-label="Cautious garden answer preview">
+      <section id="srHeroAnswerPreview" class="sr-hero-answer-preview" aria-label="Plant suitability answer">
         <div class="sr-ha-card">
-          <p class="sr-ha-kicker" id="srHaKicker">Preview · not final</p>
-          <h2 class="sr-ha-title" id="srHaTitle">CRUVIT’s cautious garden answer</h2>
-          <span class="sr-ha-status" id="srHaStatus">Useful preview — not a final plant recommendation</span>
-          <p class="sr-ha-lead" id="srHaLead">Based on the garden context available so far, CRUVIT can help narrow the decision before choosing plants, but it still needs a few key details before making a final recommendation.</p>
+          <p class="sr-ha-kicker" id="srHaKicker">Suitability · selected plant</p>
+          <h2 class="sr-ha-title" id="srHaTitle">CRUVIT plant suitability answer</h2>
+          <span class="sr-ha-status" id="srHaStatus">Select a plant</span>
+          <p class="sr-ha-lead" id="srHaLead">Select a catalog plant to check climate suitability.</p>
           <div class="sr-ha-grid">
             <div class="sr-ha-block">
               <h3 id="srHaUnderstandsLabel">What CRUVIT understands</h3>
               <ul id="srHaUnderstandsList">
-                <li id="srHaGoal">Goal: coverage / privacy need (local preview context)</li>
-                <li id="srHaSite">Site: in-ground bed · about 6 hours of sun · medium drainage (local placeholder)</li>
-                <li id="srHaConstraint">Constraint: prefer lower insect / wasp attraction when possible</li>
+                <li id="srHaGoal">Garden location and plant selection drive this answer</li>
+                <li id="srHaSite">Uses existing Specific Plant suitability — not a ranked list</li>
+                <li id="srHaConstraint" hidden></li>
               </ul>
             </div>
             <div class="sr-ha-block">
               <h3 id="srHaConfidenceLabel">Confidence</h3>
-              <p id="srHaConfidence">Low–medium — useful for narrowing, not enough for a final plant choice.</p>
+              <p id="srHaConfidence">Honest limits from the existing suitability engine.</p>
             </div>
           </div>
           <div class="sr-ha-block" style="margin-bottom:10px;">
-            <h3 id="srHaTradeoffLabel">Important trade-off</h3>
-            <p id="srHaTradeoff">More flowering can increase visual impact, but may also attract more insects or wasps.</p>
+            <h3 id="srHaTradeoffLabel">What matters</h3>
+            <p id="srHaTradeoff">Confirm location and select a plant for a real suitability decision.</p>
           </div>
-          <div class="sr-ha-optional">
+          <div class="sr-ha-optional" id="srHaOptionalBlock" hidden>
             <h3 id="srHaQuestionsLabel">Optional precision questions</h3>
-            <p class="sr-ha-note" id="srHaQuestionsNote">Optional — you can continue without answering.</p>
-            <div class="sr-ha-q" id="srHaQ1">Will this area have regular irrigation?</div>
-            <div class="sr-ha-q" id="srHaQ2">How deep is the soil or planting space?</div>
-            <div class="sr-ha-q" id="srHaQ3">Is the area exposed to strong wind or frost?</div>
+            <p class="sr-ha-note" id="srHaQuestionsNote">Optional — not required for the current suitability decision.</p>
+            <div class="sr-ha-q" id="srHaQ1" hidden></div>
+            <div class="sr-ha-q" id="srHaQ2" hidden></div>
+            <div class="sr-ha-q" id="srHaQ3" hidden></div>
           </div>
           <div class="sr-ha-feedback">
             <p class="sr-ha-feedback-label" id="srHaFeedbackLabel">Was this answer useful?</p>
@@ -670,7 +670,7 @@
             </div>
             <p class="sr-ha-fb-status" id="srHaFbStatus" aria-live="polite"></p>
           </div>
-          <p class="sr-ha-fine" id="srHaFine">Local preview only. Not live Garden Memory. Feedback is not saved. No plant recommendation, suitability score, System Validation, or Product Proof.</p>
+          <p class="sr-ha-fine" id="srHaFine">Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority. Feedback is not saved.</p>
         </div>
       </section>
       <section class="sr-chat-pane" aria-label="Garden advisor chat">
@@ -4155,6 +4155,7 @@ async function refreshAppWeatherIfStale(){
 
 function onAppLocationChanged(){
   renderAppLocationControl();
+  try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(err){ console.warn('Hero answer location refresh skipped:',err&&err.message?err.message:err); }
   if(typeof smartRecOnLocationUpdated!=='function') return;
   try{smartRecOnLocationUpdated();}catch(err){console.warn('App location refresh hook skipped:',err&&err.message?err.message:err);}
 }
@@ -6237,6 +6238,7 @@ function smartRecBootMessages(){
 function smartRecOnLocationUpdated(){
   const root=document.getElementById('smart-rec-root');
   if(!root||!root.classList.contains('sr-active'))return;
+  try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(_){}
   if(smartRecSession.step==='results'){
     refreshSmartRecBrowse();
   }else{
@@ -6792,6 +6794,11 @@ function showPlantSetup(slug,source='My Garden'){
   const ref=resolvePlantProfileRaw(slug)||scanProfileCache[slug]; if(!ref)return;
   const srRoot=document.getElementById('smart-rec-root');
   const fromSmartRecOverlay=!!(srRoot&&srRoot.classList.contains('sr-active'));
+  const fromSmartRec=fromSmartRecOverlay||/smart\s*recommendations/i.test(String(source||''));
+  if(fromSmartRec){
+    setSrHeroSelectedPlant(ref);
+    try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(_){}
+  }
   addPlantSetupReturnTarget=fromSmartRecOverlay?'smart-rec':null;
   currentPlantSetup={slug,source};
   document.getElementById('addPlantModal')?.classList.add('open');
@@ -7347,96 +7354,204 @@ function setPlantIdentifierShellOpen(open){
 }
 
 /* ── Smart Recommendations (dedicated in-app screen; reuses the recommendation engine) ── */
-/* Bounded Hero Answer product-surface preview: UI-only feedback, no persistence/network. */
+/* Hero Answer: Specific Plant suitability truth states → #srHeroAnswerPreview. */
 let srHeroAnswerPreviewFb=null;
 let srHeroAnswerPreviewBound=false;
+/** @type {object|null} */
+let srHeroSelectedPlant=null;
 
-function getSrHeroAnswerPreviewCopy(){
-  let he=false;
+function srHeroLangHe(){
   try{
-    if(typeof getAppLanguage==='function') he=getAppLanguage()==='he';
-    else if(typeof getEntryLang==='function') he=getEntryLang()==='he';
-    else he=(document.documentElement.lang||'en')==='he';
-  }catch(_){ he=false; }
-  if(he){
+    if(typeof getAppLanguage==='function') return getAppLanguage()==='he';
+    if(typeof getEntryLang==='function') return getEntryLang()==='he';
+    return (document.documentElement.lang||'en')==='he';
+  }catch(_){ return false; }
+}
+
+function setSrHeroSelectedPlant(plantOrSlug){
+  if(plantOrSlug==null||plantOrSlug===''){
+    srHeroSelectedPlant=null;
+    return;
+  }
+  if(typeof plantOrSlug==='object'){
+    srHeroSelectedPlant=plantOrSlug;
+    return;
+  }
+  const slug=String(plantOrSlug||'').trim();
+  if(!slug){ srHeroSelectedPlant=null; return; }
+  const resolved=(typeof resolvePlantProfileRaw==='function'?resolvePlantProfileRaw(slug):null)
+    ||(typeof PLANT_INDEX!=='undefined'?PLANT_INDEX[slug]:null)
+    ||(Array.isArray(PLANT_LIBRARY)?PLANT_LIBRARY.find(p=>p&&p.slug===slug):null)
+    ||null;
+  srHeroSelectedPlant=resolved;
+}
+
+function getSrHeroSelectedPlant(){
+  if(srHeroSelectedPlant&&typeof srHeroSelectedPlant==='object') return srHeroSelectedPlant;
+  try{
+    const ui=window.cruvitSpecificPlantSuitabilityUi;
+    if(ui&&typeof ui.getSelectedPlant==='function'){
+      const p=ui.getSelectedPlant();
+      if(p&&typeof p==='object') return p;
+    }
+  }catch(_){}
+  return null;
+}
+
+function isSrHeroClimateKnown(climateProfile){
+  if(!climateProfile||typeof climateProfile!=='object') return false;
+  if(climateProfile.structuralClimateStatus==='known') return true;
+  if(climateProfile.structuralClimate&&climateProfile.structuralClimate.status==='known') return true;
+  return false;
+}
+
+function computeSrHeroAnswerViewModel(){
+  const trusted=typeof hasTrustedAppLocation==='function'&&hasTrustedAppLocation()===true;
+  const climateProfile=typeof getAppClimateProfile==='function'?getAppClimateProfile():null;
+  const climateKnown=isSrHeroClimateKnown(climateProfile);
+  const plant=getSrHeroSelectedPlant();
+  let suitability=null;
+  if(trusted&&climateKnown&&plant&&typeof evaluateSpecificPlantSuitability==='function'){
+    suitability=evaluateSpecificPlantSuitability(plant);
+  }
+  const loc=typeof getAppLocation==='function'?getAppLocation():null;
+  const input={
+    langHe:srHeroLangHe(),
+    trusted,
+    climateKnown,
+    plant,
+    suitability,
+    climateProfile,
+    locationLabel:String(loc?.label||climateProfile?.locationLabel||'').trim()
+  };
+  if(typeof window.cruvitBuildSrHeroAnswerViewModel==='function'){
+    return window.cruvitBuildSrHeroAnswerViewModel(input);
+  }
+  /* Module not loaded yet — never invent suitability; safe gate copy only. */
+  if(!trusted){
     return {
-      kicker:'תצוגה מקדימה · לא סופי',
-      title:'תשובת CRUVIT הזהירה לגינה',
-      status:'תצוגה שימושית — לא המלצת צמח סופית',
-      lead:'על סמך הקשר הזמין כרגע, CRUVIT יכולה לעזור לצמצם את ההחלטה לפני בחירת צמחים, אבל עדיין חסרים כמה פרטים חשובים לפני המלצה סופית.',
-      understandsLabel:'מה CRUVIT הבינה',
-      goal:'מטרה: כיסוי / פרטיות (הקשר מקומי לתצוגה)',
-      site:'מקום: ערוגה בקרקע · כ‑6 שעות שמש · ניקוז בינוני (מציין מקום מקומי)',
-      constraint:'רגישות: להעדיף פחות משיכת חרקים / צרעות כשאפשר',
-      confidenceLabel:'ודאות',
-      confidence:'נמוכה–בינונית — שימושי לצמצום, לא מספיק לבחירת צמח סופית.',
-      tradeoffLabel:'איזון חשוב',
-      tradeoff:'יותר פריחה יכולה להגדיל נוכחות ויזואלית, אבל גם למשוך יותר חרקים או צרעות.',
-      questionsLabel:'שאלות דיוק אופציונליות',
-      questionsNote:'אופציונלי — אפשר להמשיך בלי לענות.',
-      q1:'האם תהיה השקיה קבועה באזור?',
-      q2:'מה עומק הקרקע או נפח השתילה?',
-      q3:'האם האזור חשוף לרוח חזקה או לקרה?',
-      feedbackLabel:'האם התשובה הייתה שימושית?',
-      yes:'כן',
-      partly:'חלקית',
-      notYet:'עדיין לא',
-      thanks:'תודה — המשוב נשאר במסך הזה בלבד ולא נשמר.',
-      fine:'תצוגה מקומית בלבד. לא זיכרון גינה חי. משוב לא נשמר. אין המלצת צמח, ציון התאמה, System Validation או Product Proof.'
+      truthState:'C_UNTRUSTED',
+      kicker:'Suitability · selected plant',
+      title:'CRUVIT plant suitability answer',
+      status:'Location confirmation required',
+      lead:'Confirm your garden location before suitability can be determined.',
+      understandsLabel:'What CRUVIT understands',
+      understands:['Garden location is not confirmed','No suitability recommendation without a trusted location'],
+      confidenceLabel:'Confidence',
+      confidence:'No suitability authority until location is confirmed',
+      tradeoffLabel:'What matters',
+      tradeoff:'Confirm your garden location before suitability can be determined.',
+      questionsLabel:'',
+      questionsNote:'',
+      q1:'',q2:'',q3:'',
+      feedbackLabel:'Was this answer useful?',
+      yes:'Yes',partly:'Partly',notYet:'Not yet',
+      thanks:'Thanks — this feedback stays on this screen only and is not saved.',
+      fine:'Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority.',
+      recommendationLevel:null,
+      plantName:null
     };
   }
+  if(!climateKnown){
+    return {
+      truthState:'B_CLIMATE_UNAVAILABLE',
+      kicker:'Suitability · selected plant',
+      title:'CRUVIT plant suitability answer',
+      status:'Climate not available yet',
+      lead:'Structural climate is not available for this location yet. No suitability decision can be made.',
+      understandsLabel:'What CRUVIT understands',
+      understands:['Trusted location set','Structural climate profile not available'],
+      confidenceLabel:'Confidence',
+      confidence:'No suitability decision without climate',
+      tradeoffLabel:'What matters',
+      tradeoff:'Structural climate is not available for this location yet. No suitability decision can be made.',
+      questionsLabel:'',questionsNote:'',q1:'',q2:'',q3:'',
+      feedbackLabel:'Was this answer useful?',yes:'Yes',partly:'Partly',notYet:'Not yet',
+      thanks:'Thanks — this feedback stays on this screen only and is not saved.',
+      fine:'Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority.',
+      recommendationLevel:null,plantName:plant?String(plant.name||plant.slug||''):null
+    };
+  }
+  if(!plant){
+    return {
+      truthState:'D_NO_PLANT',
+      kicker:'Suitability · selected plant',
+      title:'CRUVIT plant suitability answer',
+      status:'Select a plant',
+      lead:'Select a catalog plant to check climate suitability.',
+      understandsLabel:'What CRUVIT understands',
+      understands:['Trusted location ready','Climate available for a suitability check'],
+      confidenceLabel:'Confidence',
+      confidence:'Based on the available climate profile and the existing suitability engine.',
+      tradeoffLabel:'What matters',
+      tradeoff:'Select a catalog plant to check climate suitability.',
+      questionsLabel:'',questionsNote:'',q1:'',q2:'',q3:'',
+      feedbackLabel:'Was this answer useful?',yes:'Yes',partly:'Partly',notYet:'Not yet',
+      thanks:'Thanks — this feedback stays on this screen only and is not saved.',
+      fine:'Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority.',
+      recommendationLevel:null,plantName:null
+    };
+  }
+  const level=String(suitability?.recommendationLevel||'borderline').toLowerCase();
+  const explanation=String(suitability?.explanationText||(suitability?.warnings&&suitability.warnings[0])||'').trim();
+  const plantName=String(plant.name||plant.slug||'Plant');
+  const warn0=Array.isArray(suitability?.warnings)?String(suitability.warnings[0]||'').trim():'';
   return {
-    kicker:'Preview · not final',
-    title:'CRUVIT’s cautious garden answer',
-    status:'Useful preview — not a final plant recommendation',
-    lead:'Based on the garden context available so far, CRUVIT can help narrow the decision before choosing plants, but it still needs a few key details before making a final recommendation.',
+    truthState:level==='blocked'?'E_BLOCKED':(level==='good'||level==='excellent'?'A_SUITABILITY':'F_BORDERLINE'),
+    kicker:'Suitability · selected plant',
+    title:'CRUVIT plant suitability answer',
+    status:level,
+    lead:explanation||plantName,
     understandsLabel:'What CRUVIT understands',
-    goal:'Goal: coverage / privacy need (local preview context)',
-    site:'Site: in-ground bed · about 6 hours of sun · medium drainage (local placeholder)',
-    constraint:'Constraint: prefer lower insect / wasp attraction when possible',
+    understands:[`Plant: ${plantName}`,`Suitability: ${level}`,explanation].filter(Boolean),
     confidenceLabel:'Confidence',
-    confidence:'Low–medium — useful for narrowing, not enough for a final plant choice.',
-    tradeoffLabel:'Important trade-off',
-    tradeoff:'More flowering can increase visual impact, but may also attract more insects or wasps.',
-    questionsLabel:'Optional precision questions',
-    questionsNote:'Optional — you can continue without answering.',
-    q1:'Will this area have regular irrigation?',
-    q2:'How deep is the soil or planting space?',
-    q3:'Is the area exposed to strong wind or frost?',
-    feedbackLabel:'Was this answer useful?',
-    yes:'Yes',
-    partly:'Partly',
-    notYet:'Not yet',
+    confidence:level==='blocked'?'The engine blocks a recommendation for this location/context.':(level==='good'||level==='excellent'?'Based on the available climate profile and the existing suitability engine.':'Partial confidence — the engine signals caution or review.'),
+    tradeoffLabel:'What matters',
+    tradeoff:warn0||explanation||'No additional engine warnings for this result.',
+    questionsLabel:'',questionsNote:'',q1:'',q2:'',q3:'',
+    feedbackLabel:'Was this answer useful?',yes:'Yes',partly:'Partly',notYet:'Not yet',
     thanks:'Thanks — this feedback stays on this screen only and is not saved.',
-    fine:'Local preview only. Not live Garden Memory. Feedback is not saved. No plant recommendation, suitability score, System Validation, or Product Proof.'
+    fine:'Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority.',
+    recommendationLevel:level,
+    plantName
   };
 }
 
 function applySrHeroAnswerPreviewCopy(){
-  const c=getSrHeroAnswerPreviewCopy();
-  const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text;};
+  const c=computeSrHeroAnswerViewModel();
+  const set=(id,text)=>{const el=document.getElementById(id);if(el)el.textContent=text==null?'':String(text);};
   set('srHaKicker',c.kicker);
   set('srHaTitle',c.title);
   set('srHaStatus',c.status);
   set('srHaLead',c.lead);
   set('srHaUnderstandsLabel',c.understandsLabel);
-  set('srHaGoal',c.goal);
-  set('srHaSite',c.site);
-  set('srHaConstraint',c.constraint);
   set('srHaConfidenceLabel',c.confidenceLabel);
   set('srHaConfidence',c.confidence);
   set('srHaTradeoffLabel',c.tradeoffLabel);
   set('srHaTradeoff',c.tradeoff);
-  set('srHaQuestionsLabel',c.questionsLabel);
-  set('srHaQuestionsNote',c.questionsNote);
-  set('srHaQ1',c.q1);
-  set('srHaQ2',c.q2);
-  set('srHaQ3',c.q3);
+  set('srHaQuestionsLabel',c.questionsLabel||'');
+  set('srHaQuestionsNote',c.questionsNote||'');
+  set('srHaQ1',c.q1||'');
+  set('srHaQ2',c.q2||'');
+  set('srHaQ3',c.q3||'');
   set('srHaFeedbackLabel',c.feedbackLabel);
   set('srHaFbYes',c.yes);
   set('srHaFbPartly',c.partly);
   set('srHaFbNotYet',c.notYet);
   set('srHaFine',c.fine);
+  const list=document.getElementById('srHaUnderstandsList');
+  if(list){
+    const items=Array.isArray(c.understands)?c.understands:[];
+    list.innerHTML=items.map(function(t){return '<li>'+String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</li>';}).join('');
+  }
+  const optional=document.getElementById('srHaOptionalBlock');
+  if(optional) optional.hidden=true;
+  const root=document.getElementById('srHeroAnswerPreview');
+  if(root){
+    root.setAttribute('data-sr-hero-truth',c.truthState||'');
+    if(c.recommendationLevel!=null) root.setAttribute('data-sr-hero-level',String(c.recommendationLevel));
+    else root.removeAttribute('data-sr-hero-level');
+  }
   const status=document.getElementById('srHaFbStatus');
   if(status){
     status.textContent=srHeroAnswerPreviewFb?c.thanks:'';
@@ -7455,7 +7570,7 @@ function bindSrHeroAnswerPreviewFeedback(){
       buttons.forEach(function(b){
         b.classList.toggle('is-selected',b===btn);
       });
-      const c=getSrHeroAnswerPreviewCopy();
+      const c=computeSrHeroAnswerViewModel();
       const status=document.getElementById('srHaFbStatus');
       if(status) status.textContent=c.thanks;
     });
@@ -7467,6 +7582,13 @@ function refreshSrHeroAnswerPreview(){
   applySrHeroAnswerPreviewCopy();
   bindSrHeroAnswerPreviewFeedback();
 }
+window.refreshSrHeroAnswerPreview=refreshSrHeroAnswerPreview;
+window.cruvitSrHeroAnswer={
+  refresh:refreshSrHeroAnswerPreview,
+  getViewModel:computeSrHeroAnswerViewModel,
+  setSelectedPlant:function(p){ setSrHeroSelectedPlant(p); refreshSrHeroAnswerPreview(); },
+  getSelectedPlant:getSrHeroSelectedPlant
+};
 
 function setSmartRecShellOpen(open){
   const root=document.getElementById('smart-rec-root');

@@ -41,6 +41,16 @@ function gateState() {
   };
 }
 
+function notifySrHeroAnswerRefresh() {
+  try {
+    if (typeof window.refreshSrHeroAnswerPreview === 'function') {
+      window.refreshSrHeroAnswerPreview();
+    }
+  } catch (_) {
+    /* Hero refresh is best-effort; Specific Plant UI remains authoritative for its own panel. */
+  }
+}
+
 function setSelectedPlant(plant) {
   selectedPlant = plant && typeof plant === 'object' ? plant : null;
   const label = document.getElementById('pdV0PlantSelected');
@@ -56,6 +66,7 @@ function setSelectedPlant(plant) {
     }
   }
   if (btn) btn.disabled = !selectedPlant;
+  notifySrHeroAnswerRefresh();
 }
 
 function renderHits(plants) {
@@ -177,6 +188,7 @@ function runCheck() {
     outcomes
   });
   renderResult(vm);
+  notifySrHeroAnswerRefresh();
 }
 
 export function onActiveGardenChanged() {
