@@ -52,7 +52,8 @@ test('PART A: Garden hydrate uses V2 local lookup; miss → UNAVAILABLE + prep e
   assert.equal(ok.cost.openMeteoStructuralCalls, 0);
   assert.equal(ok.cost.chelsaExternalCalls, 0);
 
-  const miss = resolveGardenStructuralClimateFromCoordinateV2(12.345678, 98.765432, {
+  // Deep ocean: global land corpus + sparse pilot index both miss (no CHELSA fetch).
+  const miss = resolveGardenStructuralClimateFromCoordinateV2(0, -150, {
     dataRoot: DATA,
     enqueuePrep: true
   });
@@ -137,7 +138,7 @@ test('PART H: 100/500 + unprepared coordinate zero external', () => {
   assert.equal(p100.externalClimateProviderCalls, 0);
   assert.equal(p500.externalClimateProviderCalls, 0);
 
-  const miss = resolveGardenStructuralClimateFromCoordinateV2(-11.11, 22.22, {
+  const miss = resolveGardenStructuralClimateFromCoordinateV2(0, -150, {
     dataRoot: DATA,
     enqueuePrep: false
   });

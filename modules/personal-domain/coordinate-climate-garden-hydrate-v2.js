@@ -6,6 +6,8 @@
  * Miss → CLIMATE_AUTHORITY_UNAVAILABLE (+ optional background prep enqueue record).
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import {
   CLIMATE_AUTHORITY_UNAVAILABLE,
   COORDINATE_CLIMATE_AUTHORITY_V2_VERSION,
@@ -14,8 +16,31 @@ import {
   buildClimateAuthorityUnavailable
 } from './coordinate-climate-authority-v2-contract.js';
 import { lookupCoordinateClimateProfile } from './coordinate-climate-lookup-v2.js';
+import {
+  loadGlobalManifest,
+  lookupCoordinateClimateGlobal,
+  resolveGlobalCoverageRoot
+} from './coordinate-climate-global-lookup-v2.js';
 import { buildStructuralClimateServerFields } from './structural-climate-persistence-contract.js';
 import { isPersistedClimateAuthorityStale } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
+
+/**
+ * Prefer validated local global-v1 O(1) tile lookup when authoritative corpus is present.
+ * Does not scan the corpus — only checks manifest + tiles directory presence.
+ */
+export function isAuthoritativeGlobalCorpusAvailable(globalRoot) {
+  try {
+    const root = resolveGlobalCoverageRoot(globalRoot);
+    const manifest = loadGlobalManifest(root);
+    if (!manifest || manifest.kind !== 'cruvit-climate-global-manifest-v1') return false;
+    const tileCount = Number(manifest.tileCount || manifest.stats?.landTiles || 0);
+    if (!(tileCount > 0)) return false;
+    if (!fs.existsSync(path.join(root, 'tiles'))) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /** Frozen resolution contract labels (never claim 30 m climate). */
 export const RESOLUTION_CONTRACT_V2 = Object.freeze({
@@ -155,9 +180,29 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
     }
   }
 
-  const lookup = lookupCoordinateClimateProfile(latitude, longitude, {
-    dataRoot: options.dataRoot
-  });
+  // Prefer validated local global-tile O(1) lookup when corpus+manifest are available.
+  // On miss/unavailable → fall back to sparse pilot/regional index (unchanged).
+  // Options: preferGlobal:false | disableGlobal:true skips global path (tests / ops).
+  const preferGlobal = options.preferGlobal !== false && options.disableGlobal !== true;
+  let lookup = null;
+  let lookupSource = null;
+
+  if (preferGlobal && isAuthoritativeGlobalCorpusAvailable(options.globalRoot)) {
+    const globalLookup = lookupCoordinateClimateGlobal(latitude, longitude, {
+      globalRoot: options.globalRoot
+    });
+    if (globalLookup.ok) {
+      lookup = globalLookup;
+      lookupSource = 'global-tile-o1';
+    }
+  }
+
+  if (!lookup) {
+    lookup = lookupCoordinateClimateProfile(latitude, longitude, {
+      dataRoot: options.dataRoot
+    });
+    if (lookup.ok) lookupSource = 'local-index';
+  }
 
   if (!lookup.ok) {
     _runtimeCounters.unavailable += 1;
@@ -179,7 +224,8 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
       profile: lookup.profile,
       cost: getCoordinateClimateRuntimeCounters(),
       prepEnqueued: prep,
-      resolutionContract: RESOLUTION_CONTRACT_V2
+      resolutionContract: RESOLUTION_CONTRACT_V2,
+      lookupSource: null
     };
   }
 
@@ -193,7 +239,10 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
     cost: getCoordinateClimateRuntimeCounters(),
     prepEnqueued: null,
     resolutionContract: RESOLUTION_CONTRACT_V2,
-    matchedEntry: lookup.matchedEntry || null
+    matchedEntry: lookup.matchedEntry || null,
+    lookupSource,
+    tileKey: lookup.tileKey || null,
+    globalBakeId: lookup.globalBakeId || null
   };
 }
 

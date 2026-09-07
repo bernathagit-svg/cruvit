@@ -102,7 +102,8 @@ test('PART E/G: compact tile lookup + resolution truth', () => {
 test('PART F: cache miss does not fetch externally', () => {
   resetCoordinateClimateRuntimeCounters();
   drainBackgroundClimatePrepQueue();
-  const miss = resolveGardenStructuralClimateFromCoordinateV2(-33.86, 151.21, {
+  // Deep ocean miss (not Sydney land): proves hydrate does not fetch externally on miss.
+  const miss = resolveGardenStructuralClimateFromCoordinateV2(0, -150, {
     dataRoot: DATA,
     enqueuePrep: true
   });
