@@ -1,17 +1,22 @@
 /**
  * Evidence-strength propagation — plant trait provenance constrains suitability confidence.
  *
- * SOURCE_SUPPORTED may authorize confident plant-specific outcomes (with climate support).
- * HEURISTIC_ASSERTION may only bound to Borderline / Conditional / Constrained.
- * UNKNOWN cannot authorize positive or negative botanical truth.
+ * SOURCE_SUPPORTED may authorize confident POSITIVE plant-specific outcomes (with climate support).
+ * HEURISTIC_ASSERTION must not authorize confident positives (Reliable/Supported → Constrained).
  *
- * Does not discard heuristic values — preserves them as provisional for enrichment.
- * Does not invent botanical facts. Does not auto-convert heuristic → confident negative.
+ * Product freeze (outcome semantics hardening):
+ * Severe climate incompatibilities already computed from plant trait values + authoritative climate
+ * (Unreliable / Unlikely / Poor) must NOT be softened to Constrained/Borderline merely because
+ * trait evidenceClass is HEURISTIC rather than SOURCE_SUPPORTED. Severity is preserved;
+ * confidence is marked provisional via warnings / severityPreserved traces.
+ *
+ * UNKNOWN-only material fields (missing trait text/value) cannot authorize severe negatives → UNKNOWN.
+ * Does not invent botanical facts.
  */
 
 import { FIELD_PROVENANCE_EVIDENCE_CLASSES } from '../catalog-expansion/field-provenance-honesty-v1-contract.js';
 
-export const EVIDENCE_STRENGTH_PROPAGATION_VERSION = '1.0.0';
+export const EVIDENCE_STRENGTH_PROPAGATION_VERSION = '1.1.0-outcome-severity-preserve';
 
 export const EVIDENCE_CLASS = FIELD_PROVENANCE_EVIDENCE_CLASSES;
 
@@ -24,8 +29,24 @@ export const CONFIDENT_OUTCOME_STATUSES = Object.freeze([
   'poor'
 ]);
 
+/** Confident POSITIVE outcomes — these require SOURCE_SUPPORTED material traits. */
+export const CONFIDENT_POSITIVE_OUTCOME_STATUSES = Object.freeze(['reliable', 'supported']);
+
+/**
+ * Severe NEGATIVE outcomes — may remain with heuristic plant traits + known climate.
+ * Evidence uncertainty reduces confidence messaging, not outcome severity.
+ */
+export const SEVERE_NEGATIVE_OUTCOME_STATUSES = Object.freeze([
+  'unreliable',
+  'unlikely',
+  'poor'
+]);
+
 /** Overall levels that claim confident botanical recommendation truth. */
 export const CONFIDENT_OVERALL_LEVELS = Object.freeze(['good', 'excellent', 'blocked']);
+
+/** Positive overall levels that require SOURCE_SUPPORTED for confidence audits. */
+export const CONFIDENT_POSITIVE_OVERALL_LEVELS = Object.freeze(['good', 'excellent']);
 
 /** Batch 2 ingestion rule (frozen). */
 export const BATCH_2_EVIDENCE_INGESTION_RULE = Object.freeze({
@@ -86,8 +107,20 @@ export function isConfidentOutcomeStatus(status) {
   return CONFIDENT_OUTCOME_STATUSES.includes(String(status || '').toLowerCase());
 }
 
+export function isConfidentPositiveOutcomeStatus(status) {
+  return CONFIDENT_POSITIVE_OUTCOME_STATUSES.includes(String(status || '').toLowerCase());
+}
+
+export function isSevereNegativeOutcomeStatus(status) {
+  return SEVERE_NEGATIVE_OUTCOME_STATUSES.includes(String(status || '').toLowerCase());
+}
+
 export function isConfidentOverall(overall) {
   return CONFIDENT_OVERALL_LEVELS.includes(String(overall || '').toLowerCase());
+}
+
+export function isConfidentPositiveOverall(overall) {
+  return CONFIDENT_POSITIVE_OVERALL_LEVELS.includes(String(overall || '').toLowerCase());
 }
 
 /**
@@ -127,9 +160,12 @@ export function summarizeMaterialEvidence(meta, fields = []) {
 }
 
 /**
- * Demote a confident dimension status when material authorizing traits lack SOURCE_SUPPORTED.
- * Heuristic → Constrained (provisional). Unknown-only → UNKNOWN.
- * Already-bounded statuses (constrained/unknown) pass through.
+ * Bound a dimension status by evidence strength without erasing hard climate severity.
+ *
+ * - Positive confident (reliable/supported) without SOURCE_SUPPORTED → constrained
+ * - Severe negative (unreliable/unlikely/poor) with heuristic trait values → severity preserved
+ *   (confidence provisional); unknown-only material fields → unknown
+ * - Already-bounded statuses (constrained/unknown) pass through
  */
 export function boundOutcomeByEvidenceStrength(status, meta, materialFields, { dimension } = {}) {
   const s = String(status || '').toLowerCase();
@@ -151,13 +187,39 @@ export function boundOutcomeByEvidenceStrength(status, meta, materialFields, { d
       dimension
     };
   }
-  // Prefer UNKNOWN when authorizing traits are missing/unknown and none are source-supported.
-  const next =
-    !summary.hasSource && !summary.hasHeuristic && summary.hasUnknown
-      ? 'unknown'
-      : 'constrained';
+
+  const unknownOnly =
+    !summary.hasSource && !summary.hasHeuristic && summary.hasUnknown === true;
+
+  // Missing authorizing trait text/value cannot claim severe botanical negatives.
+  if (unknownOnly) {
+    return {
+      status: 'unknown',
+      demoted: true,
+      previousStatus: s,
+      reason: `evidence-strength:${dimension || 'dimension'}:confident-${s}-requires-material-trait-value`,
+      materialEvidence: summary,
+      dimension
+    };
+  }
+
+  // Hard climate incompatibility: keep severity; mark confidence provisional.
+  if (isSevereNegativeOutcomeStatus(s)) {
+    return {
+      status: s,
+      demoted: false,
+      severityPreserved: true,
+      confidenceProvisional: true,
+      previousStatus: s,
+      reason: `evidence-strength:${dimension || 'dimension'}:severe-${s}-preserved-heuristic-with-authoritative-climate`,
+      materialEvidence: summary,
+      dimension
+    };
+  }
+
+  // Confident positives require SOURCE_SUPPORTED.
   return {
-    status: next,
+    status: 'constrained',
     demoted: true,
     previousStatus: s,
     reason: `evidence-strength:${dimension || 'dimension'}:confident-${s}-requires-SOURCE_SUPPORTED-on-material-traits`,
@@ -266,6 +328,11 @@ export function applyEvidenceStrengthPropagation({
     warnings.push(
       'Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.'
     );
+  } else if (survBound.severityPreserved) {
+    demotions.push(survBound);
+    warnings.push(
+      'Survival severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).'
+    );
   }
 
   const growFields = inferGrowthMaterialFields({ meta, growth, evidenceHints });
@@ -277,6 +344,11 @@ export function applyEvidenceStrengthPropagation({
     warnings.push(
       'Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.'
     );
+  } else if (growBound.severityPreserved) {
+    demotions.push(growBound);
+    warnings.push(
+      'Growth severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).'
+    );
   }
 
   const flowerFields = inferFloweringMaterialFields(meta);
@@ -286,7 +358,14 @@ export function applyEvidenceStrengthPropagation({
   if (flowerBound.demoted) {
     demotions.push(flowerBound);
     warnings.push(
-      'Flowering confidence bounded: floweringRequirements not SOURCE_SUPPORTED.'
+      flowerBound.status === 'unknown'
+        ? 'Flowering UNKNOWN: floweringRequirements missing or not evidenced.'
+        : 'Flowering confidence bounded: floweringRequirements not SOURCE_SUPPORTED.'
+    );
+  } else if (flowerBound.severityPreserved) {
+    demotions.push(flowerBound);
+    warnings.push(
+      'Flowering severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).'
     );
   }
 
@@ -297,7 +376,14 @@ export function applyEvidenceStrengthPropagation({
   if (fruitBound.demoted) {
     demotions.push(fruitBound);
     warnings.push(
-      'Fruiting confidence bounded: fruiting/reproductive traits not SOURCE_SUPPORTED.'
+      fruitBound.status === 'unknown'
+        ? 'Fruiting UNKNOWN: fruiting/reproductive traits missing or not evidenced.'
+        : 'Fruiting confidence bounded: fruiting/reproductive traits not SOURCE_SUPPORTED.'
+    );
+  } else if (fruitBound.severityPreserved) {
+    demotions.push(fruitBound);
+    warnings.push(
+      'Fruiting severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).'
     );
   }
 
@@ -341,7 +427,8 @@ export function tracePlantEvidenceForDimension(meta, fields, sourcesByField = {}
 }
 
 /**
- * Audit whether a row's confident statuses depend on heuristic/unknown evidence.
+ * Audit whether a row's confident POSITIVE statuses depend on heuristic/unknown evidence.
+ * Severe negatives preserved with heuristic traits + known climate are allowed (severity freeze).
  * Prefer evaluator evidenceStrength traces (actual material fields) when present.
  */
 export function auditConfidentDependsOnWeakEvidence(row, meta) {
@@ -353,7 +440,8 @@ export function auditConfidentDependsOnWeakEvidence(row, meta) {
     return null;
   };
   const check = (dimension, status, fields) => {
-    if (!isConfidentOutcomeStatus(status)) return;
+    // Only flag confident POSITIVE outcomes that lack SOURCE_SUPPORTED.
+    if (!isConfidentPositiveOutcomeStatus(status)) return;
     const summary = summarizeMaterialEvidence(meta, fields);
     if (!summary.allSource) {
       hits.push({
@@ -386,7 +474,7 @@ export function auditConfidentDependsOnWeakEvidence(row, meta) {
     row.fruiting,
     fieldsFromTrace('Fruiting') || inferFruitingMaterialFields(meta)
   );
-  if (isConfidentOverall(row.overall)) {
+  if (isConfidentPositiveOverall(row.overall)) {
     const survFields =
       fieldsFromTrace('Survival') ||
       inferSurvivalMaterialFields({ meta, survival: row.survival, env: row.env || {} });
@@ -394,20 +482,7 @@ export function auditConfidentDependsOnWeakEvidence(row, meta) {
       fieldsFromTrace('Growth') || inferGrowthMaterialFields({ meta, growth: row.growth });
     const survWeak = !materialFieldsAuthorizeConfidence(meta, survFields);
     const growWeak = !materialFieldsAuthorizeConfidence(meta, growFields);
-    if (row.overall === 'blocked' && survWeak) {
-      hits.push({
-        dimension: 'Overall',
-        status: row.overall,
-        dependsOnHeuristic: true,
-        fields: survFields.map((f) => ({
-          field: f,
-          evidenceClass: resolveTraitEvidenceClass(meta, f)
-        }))
-      });
-    } else if (
-      (row.overall === 'good' || row.overall === 'excellent') &&
-      (survWeak || growWeak)
-    ) {
+    if (survWeak || growWeak) {
       hits.push({
         dimension: 'Overall',
         status: row.overall,

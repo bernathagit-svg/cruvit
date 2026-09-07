@@ -32,8 +32,10 @@ import {
   wireSpecificPlantSuitabilityUi
 } from './specific-plant-suitability-ui.js';
 import { buildSrHeroAnswerViewModel } from './smart-rec-hero-answer-view-v1.js';
+import { deriveSpecificPlantOutcomes } from './specific-plant-suitability-contract.js';
 
 window.cruvitBuildSrHeroAnswerViewModel = buildSrHeroAnswerViewModel;
+window.cruvitDeriveSpecificPlantOutcomes = deriveSpecificPlantOutcomes;
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';

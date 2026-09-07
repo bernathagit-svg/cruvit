@@ -155,7 +155,12 @@ test('3. survival can be YES while fruiting is UNRELIABLE', () => {
     frostSensitivity: 'low',
     groupIds: ['tropical-frost-sensitive-fruit'],
     fruitingRequirements: 'Frost-free warmth for reliable fruiting',
-    floweringRequirements: ''
+    floweringRequirements: '',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      fruitingRequirements: 'SOURCE_SUPPORTED',
+      groupIds: 'SOURCE_SUPPORTED'
+    }
   };
   const outcomes = deriveSpecificPlantOutcomes({
     meta,
@@ -186,7 +191,15 @@ test('4. growth viable while flowering remains UNKNOWN', () => {
     frostSensitivity: 'low',
     groupIds: ['tropical-shade-houseplant'],
     floweringRequirements: '',
-    fruitingRequirements: ''
+    fruitingRequirements: '',
+    traitEvidenceClasses: {
+      frostSensitivity: 'SOURCE_SUPPORTED',
+      humidityTolerance: 'SOURCE_SUPPORTED',
+      heatTolerance: 'SOURCE_SUPPORTED',
+      groupIds: 'SOURCE_SUPPORTED'
+    },
+    humidityTolerance: 'medium',
+    heatTolerance: 'medium'
   };
   assert.equal(hasFloweringEvidence(meta, plant), false);
   const outcomes = deriveSpecificPlantOutcomes({
@@ -492,4 +505,117 @@ test('protected growing may keep high-frost plant from outdoor survival fail', (
   });
   assert.equal(outdoor.overall, 'blocked');
   assert.notEqual(sheltered.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+});
+
+test('null optional plant metadata does not crash finalize path', () => {
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta: null,
+    climateProfile: climateYehiam(),
+    suitability: insufficientClimateMetaSuitabilityResult(),
+    plant: null,
+    protectedGrowing: false
+  });
+  assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.ok(outcomes.overall === 'borderline' || outcomes.overall === 'blocked');
+});
+
+test('Pineapple × Ljubljana — multidimensional outdoor frost case (no invented reproductive facts)', () => {
+  const plant = findCatalogPlantBySlugOrName(loadSeedPlants(), 'pineapple');
+  assert.ok(plant);
+  assert.match(String(plant.scientific || ''), /Ananas comosus/i);
+  const t = plant.climateTraits;
+  assert.equal(t.frostSensitivity, 'high');
+  const meta = {
+    frostSensitivity: t.frostSensitivity,
+    heatTolerance: t.heatTolerance,
+    coldTolerance: t.coldTolerance,
+    humidityTolerance: t.humidityTolerance,
+    groupIds: t.groupIds || [],
+    needsReview: t.needsReview === true,
+    floweringRequirements: t.floweringRequirements || '',
+    fruitingRequirements: t.fruitingRequirements || ''
+  };
+  const climateLjubljana = {
+    locationLabel: 'ljubljana',
+    climateLabel: 'Temperate',
+    broadClimate: 'temperate',
+    freezingRisk: 'high',
+    isFrostFreeGrowingClimate: false,
+    thermalRegime: 'frost-prone',
+    moistureRegime: 'humid',
+    humiditySignal: 'medium',
+    coldestMonthMeanMinC: -3.55,
+    structuralClimateStatus: 'known'
+  };
+  const suitability = {
+    recommendationLevel: 'blocked',
+    suitabilityScore: 0,
+    survivalFit: 0,
+    thriveFit: 15,
+    floweringFit: 40,
+    fruitingFit: 20,
+    warnings: ['Frost risk is too high for this plant.'],
+    explanationText: 'Frost risk is too high for this plant.'
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: climateLjubljana,
+    suitability,
+    plant,
+    protectedGrowing: false
+  });
+  assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  assert.ok(
+    outcomes.growth === SPECIFIC_OUTCOME_STATUS.POOR ||
+      outcomes.growth === SPECIFIC_OUTCOME_STATUS.UNRELIABLE
+  );
+  // Missing flowering/fruiting requirement text → UNKNOWN (do not invent)
+  assert.equal(outcomes.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.fruiting, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.overall, 'blocked');
+  assert.equal(outcomes.overallLabel, 'Not recommended');
+  assert.ok(outcomes.limitingFactors.some((w) => /Frost risk|frost-free|severity preserved/i.test(w)));
+  // Hero/scorer alignment: outcomes.overall is authoritative blocked
+  const vm = buildSpecificPlantSuitabilityViewModel({
+    plant,
+    gardenName: 'Ljubljana',
+    locationLabel: 'Ljubljana, Slovenia',
+    climateLabel: 'Temperate',
+    suitability,
+    outcomes
+  });
+  assert.equal(vm.recommendationLevel, 'blocked');
+  assert.equal(vm.levelLabel, 'Not recommended');
+  assert.equal(vm.survivalLabel, 'Unreliable');
+  assert.equal(vm.floweringLabel, 'UNKNOWN');
+  assert.equal(vm.fruitingLabel, 'UNKNOWN');
+});
+
+test('partial metadata plant stays UNKNOWN on reproductive dimensions', () => {
+  const plant = { slug: 'partial-demo', name: 'Partial Demo', tags: ['tropical'] };
+  const meta = {
+    frostSensitivity: 'high',
+    heatTolerance: 'high',
+    coldTolerance: 'low',
+    floweringRequirements: '',
+    fruitingRequirements: ''
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: climateLondon(),
+    suitability: {
+      recommendationLevel: 'blocked',
+      survivalFit: 0,
+      thriveFit: 10,
+      floweringFit: 10,
+      fruitingFit: 10,
+      warnings: ['Frost risk is too high for this plant.'],
+      explanationText: 'Frost risk is too high for this plant.'
+    },
+    plant
+  });
+  assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  assert.equal(outcomes.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.fruiting, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.overall, 'blocked');
 });

@@ -341,8 +341,10 @@ export function gardenSiteSuitabilityDimensions(meta, gardenContext = {}) {
 }
 
 export function cultivarPrecisionStatus(plant = {}, meta = {}) {
+  const p = plant && typeof plant === 'object' ? plant : {};
+  const m = meta && typeof meta === 'object' ? meta : {};
   const cultivar =
-    plant.cultivar || plant.cultivarName || meta.cultivar || plant.variety || null;
+    p.cultivar || p.cultivarName || m.cultivar || p.variety || null;
   const speciesLevel = !cultivar || String(cultivar).trim() === '';
   return {
     level: speciesLevel ? 'species' : 'cultivar',

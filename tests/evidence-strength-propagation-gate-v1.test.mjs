@@ -28,6 +28,7 @@ import {
   inferGrowthMaterialFields,
   inferSurvivalMaterialFields,
   isConfidentOutcomeStatus,
+  isConfidentPositiveOutcomeStatus,
   resolveTraitEvidenceClass,
   tracePlantEvidenceForDimension
 } from '../modules/personal-domain/evidence-strength-propagation-v1-contract.js';
@@ -188,7 +189,7 @@ function evaluate(plant, climateBundle) {
 }
 
 test('contract version + Batch 2 rule frozen', () => {
-  assert.equal(EVIDENCE_STRENGTH_PROPAGATION_VERSION, '1.0.0');
+  assert.equal(EVIDENCE_STRENGTH_PROPAGATION_VERSION, '1.1.0-outcome-severity-preserve');
   assert.equal(BATCH_2_EVIDENCE_INGESTION_RULE.templateExcerptIsNotSourceQuote, true);
   assert.equal(CATALOG_EXPANSION_BATCH_2_EVIDENCE_RULE.unknownAcceptable, true);
   assert.equal(
@@ -208,7 +209,7 @@ test('contract version + Batch 2 rule frozen', () => {
   );
 });
 
-test('SOURCE_SUPPORTED may keep confident outcome; HEURISTIC demotes', () => {
+test('SOURCE_SUPPORTED may keep confident outcome; HEURISTIC demotes positives', () => {
   const heuristic = applyEvidenceStrengthPropagation({
     meta: {
       frostSensitivity: 'medium',
@@ -247,7 +248,7 @@ test('SOURCE_SUPPORTED may keep confident outcome; HEURISTIC demotes', () => {
   assert.equal(sourced.growth, 'supported');
 });
 
-test('heuristic frostSensitivity=high does not keep confident Unreliable', () => {
+test('heuristic frostSensitivity=high preserves severe Unreliable/Poor (does not soften to Constrained)', () => {
   const bound = applyEvidenceStrengthPropagation({
     meta: {
       frostSensitivity: 'high',
@@ -263,9 +264,13 @@ test('heuristic frostSensitivity=high does not keep confident Unreliable', () =>
       growthFields: ['frostSensitivity']
     }
   });
-  assert.equal(bound.survival, 'constrained');
-  assert.equal(bound.growth, 'constrained');
-  assert.equal(bound.flowering, 'unknown'); // floweringRequirements unknown field
+  assert.equal(bound.survival, 'unreliable');
+  assert.equal(bound.growth, 'poor');
+  // floweringRequirements missing → UNKNOWN (cannot claim severe flowering without trait text)
+  assert.equal(bound.flowering, 'unknown');
+  assert.equal(bound.fruiting, 'unknown');
+  assert.equal(bound.traces.Survival.severityPreserved, true);
+  assert.equal(bound.traces.Growth.severityPreserved, true);
 });
 
 test('PART A/D — Bay Laurel evidence trace + six-site after propagation', () => {
@@ -296,17 +301,29 @@ test('PART A/D — Bay Laurel evidence trace + six-site after propagation', () =
       Fruiting: tracePlantEvidenceForDimension(bay.climateTraits, ['fruitingRequirements']),
       demotions: row.evidenceStrength?.demotions || []
     };
-    // Yehiam/Cairo: must NOT stay Reliable/Supported on heuristic traits
+    // Yehiam/Cairo: heuristic positives must not stay Reliable/Supported;
+    // SOURCE_SUPPORTED frost may authorize confident positives.
     if (s === 'yehiam' || s === 'cairo') {
-      assert.notEqual(row.survival, 'reliable', `${s} survival`);
-      assert.notEqual(row.growth, 'supported', `${s} growth`);
+      const frostClass = resolveTraitEvidenceClass(bay.climateTraits, 'frostSensitivity');
+      if (
+        frostClass === FIELD_PROVENANCE_EVIDENCE_CLASSES.HEURISTIC_ASSERTION ||
+        frostClass === FIELD_PROVENANCE_EVIDENCE_CLASSES.UNKNOWN
+      ) {
+        assert.notEqual(row.survival, 'reliable', `${s} survival`);
+        assert.notEqual(row.growth, 'supported', `${s} growth`);
+      }
     }
-    assert.ok(!isConfidentOutcomeStatus(row.survival) || false);
-    // After propagation, no confident dimension statuses for Bay Laurel (all traits heuristic/unknown)
+    // After propagation: confident POSITIVES require SOURCE_SUPPORTED material traits.
+    // Severe negatives may remain with heuristic + known climate (severity freeze).
     for (const dim of [row.survival, row.growth, row.flowering, row.fruiting]) {
-      assert.equal(isConfidentOutcomeStatus(dim), false, `${s} ${dim}`);
+      if (isConfidentPositiveOutcomeStatus(dim)) {
+        assert.equal(
+          resolveTraitEvidenceClass(bay.climateTraits, 'frostSensitivity'),
+          FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED,
+          `${s} confident positive ${dim} requires SOURCE_SUPPORTED frost`
+        );
+      }
     }
-    assert.notEqual(row.overall, 'good');
     assert.notEqual(row.overall, 'blocked');
     table.push({
       Location: s,
@@ -315,13 +332,15 @@ test('PART A/D — Bay Laurel evidence trace + six-site after propagation', () =
       Flowering: row.flowering,
       Fruiting: row.fruiting,
       Overall: row.overall,
-      Confidence: 'bounded-heuristic-plant-evidence'
+      Confidence: 'evidence-strength-bounded'
     });
   }
-  // Explain Yehiam/Cairo authorization: previously heuristic frost/humidity masqueraded as truth
+  // Explain Yehiam/Cairo authorization: frost may be SOURCE_SUPPORTED after Batch 1 enrichment
   assert.ok(
     resolveTraitEvidenceClass(bay.climateTraits, 'frostSensitivity') ===
-      FIELD_PROVENANCE_EVIDENCE_CLASSES.HEURISTIC_ASSERTION
+      FIELD_PROVENANCE_EVIDENCE_CLASSES.SOURCE_SUPPORTED ||
+      resolveTraitEvidenceClass(bay.climateTraits, 'frostSensitivity') ===
+        FIELD_PROVENANCE_EVIDENCE_CLASSES.HEURISTIC_ASSERTION
   );
   fs.writeFileSync(
     path.join(ROOT, 'tests', '_bay-laurel-evidence-trace.json'),

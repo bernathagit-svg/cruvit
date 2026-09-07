@@ -197,6 +197,7 @@ test('app.html wires Hero to evaluateSpecificPlantSuitability + refresh hooks', 
   assert.match(app, /showPlantSetup[\s\S]*setSrHeroSelectedPlant/);
   assert.match(app, /window\.refreshSrHeroAnswerPreview/);
   assert.match(app, /cruvitBuildSrHeroAnswerViewModel/);
+  assert.match(app, /cruvitDeriveSpecificPlantOutcomes|window\.cruvitDeriveSpecificPlantOutcomes/);
   assert.doesNotMatch(app, /Local preview only\. Not live Garden Memory\. Feedback is not saved\. No plant recommendation, suitability score/);
   assert.match(app, /Not a ranked list, Garden Memory, or Product Authority/);
   assert.doesNotMatch(app, /Goal: coverage \/ privacy need \(local preview context\)/);
@@ -209,6 +210,7 @@ test('Specific Plant UI notifies Hero on select/check; garden-profile exposes bu
   assert.match(ui, /refreshSrHeroAnswerPreview/);
   assert.match(gp, /smart-rec-hero-answer-view-v1\.js/);
   assert.match(gp, /cruvitBuildSrHeroAnswerViewModel/);
+  assert.match(gp, /cruvitDeriveSpecificPlantOutcomes/);
 });
 
 test('TRUSTED REAL CASE — NYC global climate + coconut blocked authority → Hero E_BLOCKED', () => {

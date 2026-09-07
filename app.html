@@ -7413,6 +7413,31 @@ function computeSrHeroAnswerViewModel(){
   let suitability=null;
   if(trusted&&climateKnown&&plant&&typeof evaluateSpecificPlantSuitability==='function'){
     suitability=evaluateSpecificPlantSuitability(plant);
+    // Align Hero overall with Specific Plant four-outcome gate (sole product overall authority).
+    try{
+      if(typeof window.cruvitDeriveSpecificPlantOutcomes==='function'){
+        const meta=typeof smartRecClimateMetaForPlant==='function'
+          ?smartRecClimateMetaForPlant(plant)
+          :(plant.climateTraits||null);
+        const outcomes=window.cruvitDeriveSpecificPlantOutcomes({
+          meta,
+          climateProfile,
+          suitability,
+          plant,
+          protectedGrowing:false
+        });
+        const overall=String(outcomes?.overall||suitability.recommendationLevel||'borderline').toLowerCase();
+        const factors=Array.isArray(outcomes?.limitingFactors)?outcomes.limitingFactors:[];
+        suitability=Object.assign({},suitability,{
+          recommendationLevel:overall,
+          warnings:factors.length?factors:(suitability.warnings||[]),
+          explanationText:String(factors[0]||suitability.explanationText||'').trim(),
+          specificPlantOutcomes:outcomes
+        });
+      }
+    }catch(err){
+      console.warn('Hero Specific Plant outcome align skipped:',err&&err.message?err.message:err);
+    }
   }
   const loc=typeof getAppLocation==='function'?getAppLocation():null;
   const input={

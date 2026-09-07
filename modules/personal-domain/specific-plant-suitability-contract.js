@@ -1251,6 +1251,18 @@ export function deriveSpecificPlantOutcomes({
   } else if (!frostSensitivity) {
     survival = SPECIFIC_OUTCOME_STATUS.UNKNOWN;
     unknownGaps.push('frostSensitivity');
+  } else if (sheltered) {
+    // Protected / greenhouse / indoor overwintering: outdoor frost-free requirement does not force Unreliable.
+    survival = review ? SPECIFIC_OUTCOME_STATUS.CONSTRAINED : SPECIFIC_OUTCOME_STATUS.RELIABLE;
+    evidenceHints.survivalFields.push('frostSensitivity');
+    limiting.push(
+      'Protected growing assumed — outdoor frost-free climate requirement is not applied to survival.'
+    );
+    if (review) {
+      limiting.push(
+        'Catalog marks climate traits as needing review - protected survival stays conservative.'
+      );
+    }
   } else {
     const coldAssess = assessPlantClimateColdSurvival(meta, env);
     evidenceHints.survivalFields.push('frostSensitivity');
