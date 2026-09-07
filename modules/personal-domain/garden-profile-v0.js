@@ -33,9 +33,27 @@ import {
 } from './specific-plant-suitability-ui.js';
 import { buildSrHeroAnswerViewModel } from './smart-rec-hero-answer-view-v1.js';
 import { deriveSpecificPlantOutcomes } from './specific-plant-suitability-contract.js';
+import {
+  SMART_REC_CLIMATE_META_AUTHORITY_VERSION,
+  plantHasCanonicalClimateTraits,
+  mergeSmartRecClimateMeta,
+  climateMetaFromCatalogTraits as authorityClimateMetaFromCatalogTraits,
+  resolveSmartRecClimateMetaForPlant,
+  stripSyntheticCoreDefaults,
+  META_AUTHORITY
+} from './smart-rec-climate-meta-authority-v1.js';
 
 window.cruvitBuildSrHeroAnswerViewModel = buildSrHeroAnswerViewModel;
 window.cruvitDeriveSpecificPlantOutcomes = deriveSpecificPlantOutcomes;
+window.cruvitSmartRecClimateMetaAuthority = {
+  version: SMART_REC_CLIMATE_META_AUTHORITY_VERSION,
+  META_AUTHORITY,
+  plantHasCanonicalClimateTraits,
+  mergeSmartRecClimateMeta,
+  climateMetaFromCatalogTraits: authorityClimateMetaFromCatalogTraits,
+  resolveSmartRecClimateMetaForPlant,
+  stripSyntheticCoreDefaults
+};
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';

@@ -947,6 +947,8 @@ function smartRecUniqueValues(values){
   return [...new Set((values||[]).flat().filter(Boolean))];
 }
 
+/* Single-authority climate meta: track synthetic merge defaults; preserve structured fields. */
+const SMART_REC_MERGE_CORE_DEFAULT_KEYS=['heatTolerance','coldTolerance','frostSensitivity','humidityTolerance','drainageNeeds'];
 function smartRecMergeClimateMeta(){
   const merged={
     heatTolerance:'medium',
@@ -964,9 +966,10 @@ function smartRecMergeClimateMeta(){
     groupIds:[],
     needsReview:false
   };
+  const assertedCore=new Set();
   [...arguments].filter(Boolean).forEach(meta=>{
-    ['heatTolerance','coldTolerance','frostSensitivity','humidityTolerance','drainageNeeds'].forEach(key=>{
-      if(meta[key]) merged[key]=meta[key];
+    SMART_REC_MERGE_CORE_DEFAULT_KEYS.forEach(key=>{
+      if(meta[key]){ merged[key]=meta[key]; assertedCore.add(key); }
     });
     // sunNeeds / waterNeeds: absence means no opinion — copy only explicit own non-empty strings
     ['sunNeeds','waterNeeds'].forEach(key=>{
@@ -981,11 +984,55 @@ function smartRecMergeClimateMeta(){
     if(meta.needsWinterChill===true) merged.needsWinterChill=true;
     if(meta.needsDrySeason===true) merged.needsDrySeason=true;
     if(meta.needsReview===true) merged.needsReview=true;
+    if(meta.floweringOutcomeApplicable===false) merged.floweringOutcomeApplicable=false;
+    if(meta.fruitingOutcomeApplicable===false) merged.fruitingOutcomeApplicable=false;
     merged.warningFlags=smartRecUniqueValues([merged.warningFlags,meta.warningFlags||[]]);
     merged.hardBlockRules=smartRecUniqueValues([merged.hardBlockRules,meta.hardBlockRules||[]]);
     merged.groupIds=smartRecUniqueValues([merged.groupIds,meta.groupIds||[]]);
+    if(meta.traitEvidenceClasses&&typeof meta.traitEvidenceClasses==='object'){
+      merged.traitEvidenceClasses=Object.assign({},merged.traitEvidenceClasses||{},meta.traitEvidenceClasses);
+    }
+    if(meta.fieldEvidenceClasses&&typeof meta.fieldEvidenceClasses==='object'){
+      merged.fieldEvidenceClasses=Object.assign({},merged.fieldEvidenceClasses||{},meta.fieldEvidenceClasses);
+    }
+    if(meta.reproductiveBiology&&typeof meta.reproductiveBiology==='object'){
+      merged.reproductiveBiology=Object.assign({},merged.reproductiveBiology||{},meta.reproductiveBiology);
+    }
+    if(meta.quantitativeEvidence&&typeof meta.quantitativeEvidence==='object'){
+      merged.quantitativeEvidence=Object.assign({},merged.quantitativeEvidence||{},meta.quantitativeEvidence);
+    }
+    if(meta.quantitative&&typeof meta.quantitative==='object'){
+      merged.quantitative=Object.assign({},merged.quantitative||{},meta.quantitative);
+    }
+    if(meta.quantitativeProvenance&&typeof meta.quantitativeProvenance==='object'){
+      merged.quantitativeProvenance=Object.assign({},merged.quantitativeProvenance||{},meta.quantitativeProvenance);
+    }
   });
+  merged.syntheticDefaultFields=SMART_REC_MERGE_CORE_DEFAULT_KEYS.filter(k=>!assertedCore.has(k));
   return merged;
+}
+function smartRecStripSyntheticCoreDefaults(meta){
+  if(!meta||typeof meta!=='object') return meta;
+  const out=Object.assign({},meta);
+  const syn=Array.isArray(out.syntheticDefaultFields)?out.syntheticDefaultFields:[];
+  syn.forEach(k=>{ if(SMART_REC_MERGE_CORE_DEFAULT_KEYS.includes(k)) delete out[k]; });
+  return out;
+}
+function smartRecPlantHasCanonicalClimateTraits(p){
+  const t=p&&p.climateTraits;
+  if(!t||typeof t!=='object') return false;
+  const keys=SMART_REC_MERGE_CORE_DEFAULT_KEYS.concat([
+    'sunNeeds','waterNeeds','floweringRequirements','fruitingRequirements',
+    'groupIds','needsWinterChill','traitEvidenceClasses','reproductiveBiology'
+  ]);
+  return keys.some(k=>{
+    const v=t[k];
+    if(v==null) return false;
+    if(typeof v==='string') return !!v.trim();
+    if(Array.isArray(v)) return v.length>0;
+    if(typeof v==='object') return Object.keys(v).length>0;
+    return true;
+  });
 }
 
 const SMART_REC_CLIMATE_GROUPS={
@@ -1704,11 +1751,30 @@ function climateMetaFromCatalogTraits(traits,scientific){
   const groupMeta=groupIds.map(groupId=>
     smartRecMergeClimateMeta({groupIds:[groupId]},SMART_REC_CLIMATE_GROUPS[groupId]||null)
   );
-  const merged=smartRecMergeClimateMeta(...groupMeta,traits);
+  // Canonical traits last so asserted plant values win over group templates.
+  let merged=smartRecMergeClimateMeta(...groupMeta,traits);
   const sci=String(scientific||'');
   if(merged.needsReview||traits.needsReview===true||/\bspp\.?\b/i.test(sci)||/various/i.test(sci)){
-    return smartRecMergeClimateMeta(merged,{needsReview:true});
+    merged=smartRecMergeClimateMeta(merged,{needsReview:true});
   }
+  if(traits.traitEvidenceClasses&&typeof traits.traitEvidenceClasses==='object'){
+    merged.traitEvidenceClasses=Object.assign({},traits.traitEvidenceClasses);
+  }
+  if(traits.reproductiveBiology&&typeof traits.reproductiveBiology==='object'){
+    merged.reproductiveBiology=Object.assign({},traits.reproductiveBiology);
+  }
+  if(traits.quantitativeEvidence&&typeof traits.quantitativeEvidence==='object'){
+    merged.quantitativeEvidence=Object.assign({},traits.quantitativeEvidence);
+  }
+  if(traits.quantitative&&typeof traits.quantitative==='object'){
+    merged.quantitative=Object.assign({},traits.quantitative);
+  }
+  if(traits.quantitativeProvenance&&typeof traits.quantitativeProvenance==='object'){
+    merged.quantitativeProvenance=Object.assign({},traits.quantitativeProvenance);
+  }
+  // Synthetic merge "medium" defaults are not plant knowledge on the canonical path.
+  merged=smartRecStripSyntheticCoreDefaults(merged);
+  merged._metaAuthority='canonical-climateTraits';
   return merged;
 }
 
@@ -5324,14 +5390,32 @@ function smartRecMetaKeyForPlant(p){
 }
 
 function smartRecClimateMetaForPlant(p){
+  // Single authority: canonical climateTraits win when present; legacy inline is fallback only.
+  if(smartRecPlantHasCanonicalClimateTraits(p)){
+    let meta=climateMetaFromCatalogTraits(p.climateTraits,p?.scientific);
+    if(!meta) return null;
+    const scientific=String(p?.scientific||'');
+    if(meta.needsReview||/\bspp\.?\b/i.test(scientific)||/various/i.test(scientific)){
+      meta=smartRecStripSyntheticCoreDefaults(smartRecMergeClimateMeta(meta,{needsReview:true}));
+      if(p.climateTraits?.traitEvidenceClasses) meta.traitEvidenceClasses=Object.assign({},p.climateTraits.traitEvidenceClasses);
+      if(p.climateTraits?.reproductiveBiology) meta.reproductiveBiology=Object.assign({},p.climateTraits.reproductiveBiology);
+      if(p.climateTraits?.quantitativeEvidence) meta.quantitativeEvidence=Object.assign({},p.climateTraits.quantitativeEvidence);
+      if(p.climateTraits?.quantitative) meta.quantitative=Object.assign({},p.climateTraits.quantitative);
+      meta._metaAuthority='canonical-climateTraits';
+    }
+    return meta;
+  }
   let meta=SMART_REC_CLIMATE_METADATA[smartRecMetaKeyForPlant(p)]||null;
   if(!meta){
     meta=climateMetaFromCatalogTraits(p?.climateTraits,p?.scientific);
     if(!meta) return null;
+  }else{
+    meta=Object.assign({},meta,{_metaAuthority:'legacy-inline-smart-rec'});
   }
   const scientific=String(p?.scientific||'');
   if(meta.needsReview||/\bspp\.?\b/i.test(scientific)||/various/i.test(scientific)){
-    return smartRecMergeClimateMeta(meta,{needsReview:true});
+    meta=smartRecMergeClimateMeta(meta,{needsReview:true});
+    meta._metaAuthority=meta._metaAuthority||'legacy-inline-smart-rec';
   }
   return meta;
 }
