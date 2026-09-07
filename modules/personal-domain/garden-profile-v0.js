@@ -42,6 +42,11 @@ import {
   stripSyntheticCoreDefaults,
   META_AUTHORITY
 } from './smart-rec-climate-meta-authority-v1.js';
+import {
+  applyBootstrapSafeClimateTraitsMigration,
+  getBootstrapSafeClimateTraitsMigrationPayload,
+  BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION
+} from './bootstrap-safe-climate-traits-migration-v1.js';
 
 window.cruvitBuildSrHeroAnswerViewModel = buildSrHeroAnswerViewModel;
 window.cruvitDeriveSpecificPlantOutcomes = deriveSpecificPlantOutcomes;
@@ -53,6 +58,11 @@ window.cruvitSmartRecClimateMetaAuthority = {
   climateMetaFromCatalogTraits: authorityClimateMetaFromCatalogTraits,
   resolveSmartRecClimateMetaForPlant,
   stripSyntheticCoreDefaults
+};
+window.cruvitBootstrapSafeClimateTraitsMigration = {
+  version: BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION,
+  apply: applyBootstrapSafeClimateTraitsMigration,
+  getPayload: getBootstrapSafeClimateTraitsMigrationPayload
 };
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';

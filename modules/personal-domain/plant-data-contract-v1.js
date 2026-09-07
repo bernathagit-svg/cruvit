@@ -295,7 +295,11 @@ export function classifyPlantDataReadiness(plant, options = {}) {
     plant,
     mergedRuntimeMeta: options.mergedRuntimeMeta || null,
     legacyAssertedMeta: options.legacyAssertedMeta || null,
-    fieldOrigins: options.fieldOrigins || null
+    fieldOrigins:
+      options.fieldOrigins ||
+      (plant?.climateTraits && typeof plant.climateTraits.fieldOrigins === 'object'
+        ? plant.climateTraits.fieldOrigins
+        : null)
   };
 
   const slug = resolvePlantSlug(plant);
@@ -353,11 +357,20 @@ export function classifyPlantDataReadiness(plant, options = {}) {
     ...(corePresence.humidityTolerance ? ['humidityTolerance'] : [])
   ];
   let evidenceOk = false;
+  let sourceSupportedMaterialOk = false;
   if (evMap && typeof evMap === 'object') {
     evidenceOk = materialFieldsForEvidence.every((f) => {
       const c = evMap[f];
       return c && ALLOWED_EVIDENCE_CLASSES.includes(c);
     });
+    // Class A = real suitability ready: confident product claims require SOURCE_SUPPORTED
+    // on frost+cold (survival material axis). Aligns with evidence-strength propagation:
+    // HEURISTIC may preserve severe negatives but must not authorize Class A / confident positives.
+    // heatTolerance may remain HEURISTIC (existing Class A fixture); broader SOURCE_SUPPORTED
+    // on all material cores is a separate future policy.
+    sourceSupportedMaterialOk = ['frostSensitivity', 'coldTolerance'].every(
+      (f) => evMap[f] === EVIDENCE_CLASS.SOURCE_SUPPORTED
+    );
   }
   if (!evidenceOk) reasons.push(PLANT_DATA_REASON.MISSING_TRAIT_EVIDENCE);
 
@@ -416,6 +429,7 @@ export function classifyPlantDataReadiness(plant, options = {}) {
     flower.ready &&
     fruit.ready &&
     evidenceOk &&
+    sourceSupportedMaterialOk &&
     !needsReview &&
     !ambiguousBlocksA
   ) {
@@ -426,7 +440,7 @@ export function classifyPlantDataReadiness(plant, options = {}) {
   } else if (materialOk) {
     readiness = PLANT_DATA_READINESS.B_PARTIAL_OUTCOME_READY;
     readinessShort = 'B';
-    gate = needsReview || !evidenceOk ? 'HOLD' : 'PARTIAL';
+    gate = needsReview || !evidenceOk || !sourceSupportedMaterialOk ? 'HOLD' : 'PARTIAL';
   } else if (frostOk) {
     readiness = PLANT_DATA_READINESS.C_BASIC_CLIMATE_ONLY;
     readinessShort = 'C';

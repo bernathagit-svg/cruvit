@@ -22,6 +22,10 @@ import {
   resolveClimateFieldValueOrigin,
   readAssertedClimateField
 } from '../modules/personal-domain/plant-data-contract-v1.js';
+import {
+  applyBootstrapSafeClimateTraitsMigration,
+  getBootstrapSafeClimateTraitsMigrationPayload
+} from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -279,6 +283,95 @@ test('8. valid complete supported plant → A', () => {
   assert.equal(r.allowedClaims.fruiting, true);
 });
 
+test('anti-gaming 1: HEURISTIC frost+cold complete plant must NOT be Class A', () => {
+  const plant = completeClassAPlant({
+    climateTraits: {
+      traitEvidenceClasses: {
+        frostSensitivity: 'HEURISTIC_ASSERTION',
+        coldTolerance: 'HEURISTIC_ASSERTION',
+        heatTolerance: 'HEURISTIC_ASSERTION',
+        humidityTolerance: 'HEURISTIC_ASSERTION',
+        sunNeeds: 'SOURCE_SUPPORTED',
+        waterNeeds: 'SOURCE_SUPPORTED',
+        drainageNeeds: 'SOURCE_SUPPORTED',
+        floweringRequirements: 'SOURCE_SUPPORTED',
+        fruitingRequirements: 'SOURCE_SUPPORTED'
+      }
+    }
+  });
+  const r = classifyPlantDataReadiness(plant);
+  assert.equal(r.evidenceOk, true, 'HEURISTIC is allowed evidence class for B path');
+  assert.notEqual(r.readinessShort, 'A');
+  assert.equal(r.readinessShort, 'B');
+  assert.equal(assertPlantRealSuitabilityReady(plant).ok, false);
+});
+
+test('anti-gaming 2: SOURCE_SUPPORTED frost+cold otherwise complete → may be Class A', () => {
+  const plant = completeClassAPlant();
+  assert.equal(plant.climateTraits.traitEvidenceClasses.frostSensitivity, 'SOURCE_SUPPORTED');
+  assert.equal(plant.climateTraits.traitEvidenceClasses.coldTolerance, 'SOURCE_SUPPORTED');
+  const r = classifyPlantDataReadiness(plant);
+  assert.equal(r.readinessShort, 'A');
+  assert.equal(assertPlantRealSuitabilityReady(plant).ok, true);
+});
+
+test('anti-gaming 3: HEURISTIC severe frost does not soften readiness gap into A; severity separate', async () => {
+  const { boundOutcomeByEvidenceStrength, SEVERE_NEGATIVE_OUTCOME_STATUSES } = await import(
+    '../modules/personal-domain/evidence-strength-propagation-v1-contract.js'
+  );
+  const plant = completeClassAPlant({
+    climateTraits: {
+      frostSensitivity: 'high',
+      coldTolerance: 'low',
+      traitEvidenceClasses: {
+        frostSensitivity: 'HEURISTIC_ASSERTION',
+        coldTolerance: 'HEURISTIC_ASSERTION',
+        heatTolerance: 'HEURISTIC_ASSERTION',
+        humidityTolerance: 'HEURISTIC_ASSERTION',
+        sunNeeds: 'SOURCE_SUPPORTED',
+        waterNeeds: 'SOURCE_SUPPORTED',
+        drainageNeeds: 'SOURCE_SUPPORTED',
+        floweringRequirements: 'SOURCE_SUPPORTED',
+        fruitingRequirements: 'SOURCE_SUPPORTED'
+      }
+    }
+  });
+  const readiness = classifyPlantDataReadiness(plant);
+  assert.notEqual(readiness.readinessShort, 'A');
+  assert.equal(readiness.readinessShort, 'B');
+  const bound = boundOutcomeByEvidenceStrength(
+    'unreliable',
+    plant.climateTraits,
+    ['frostSensitivity', 'coldTolerance'],
+    { dimension: 'survival' }
+  );
+  assert.equal(bound.status, 'unreliable');
+  assert.equal(bound.severityPreserved, true);
+  assert.ok(SEVERE_NEGATIVE_OUTCOME_STATUSES.includes(bound.status));
+  // Readiness confidence ≠ outcome severity
+  assert.notEqual(readiness.readinessShort, 'A');
+  assert.equal(bound.status, 'unreliable');
+});
+
+test('anti-gaming 4: missing frost/cold → not Class A', () => {
+  const plant = completeClassAPlant({
+    climateTraits: {
+      frostSensitivity: undefined,
+      coldTolerance: undefined
+    }
+  });
+  delete plant.climateTraits.frostSensitivity;
+  delete plant.climateTraits.coldTolerance;
+  delete plant.climateTraits.traitEvidenceClasses.frostSensitivity;
+  delete plant.climateTraits.traitEvidenceClasses.coldTolerance;
+  const r = classifyPlantDataReadiness(plant);
+  assert.notEqual(r.readinessShort, 'A');
+  assert.ok(
+    r.readinessShort === 'D' || r.readinessShort === 'C' || r.readinessShort === 'B'
+  );
+  assert.ok(r.reasons.includes(PLANT_DATA_REASON.MISSING_FROST_SENSITIVITY));
+});
+
 test('explicit floweringOutcomeApplicable false satisfies flowering stance', () => {
   const plant = completeClassAPlant({
     climateTraits: {
@@ -318,15 +411,22 @@ test('Pineapple / Ananas comosus → PARTIAL_OUTCOME_READY', () => {
 test('read-only current catalog classification (seed + bootstrap)', () => {
   const seed = loadSeedPlants();
   const bootstrap = bootstrapSlugsFromApp();
+  const migration = getBootstrapSafeClimateTraitsMigrationPayload();
   const bySlug = new Map();
   for (const slug of bootstrap) {
+    const migrated = migration.plants[slug];
     bySlug.set(slug, {
       slug,
-      name: slug,
-      scientific: 'Various bootstrap species',
+      name: migrated?.name || slug,
+      scientific: migrated?.scientific || 'Various bootstrap species',
+      aliases: migrated?.aliases || [],
       _source: 'bootstrap'
     });
   }
+  applyBootstrapSafeClimateTraitsMigration(
+    [...bySlug.values()],
+    Object.fromEntries(bySlug)
+  );
   for (const p of seed) {
     const slug = String(p.slug || '').toLowerCase();
     if (!slug) continue;
@@ -336,10 +436,14 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   const report = classifyCatalogReadOnly(catalog);
   assert.equal(report.total, catalog.length);
   assert.ok(report.total >= 100 && report.total <= 120, `unexpected total=${report.total}`);
-  // Seed plants should dominate B; bootstrap-only D (no climateTraits / ambiguous scientific)
+  // Seed plants dominate B; SAFE bootstrap migrates structurally (still not Class A);
+  // IDENTITY_CONFLICT bootstrap (~26) remain D.
   assert.equal(report.counts.A, 0, 'no Class A expected in current catalog');
   assert.ok(report.counts.B >= 60, `expected many B, got ${report.counts.B}`);
-  assert.ok(report.counts.D >= 40, `expected many D bootstrap, got ${report.counts.D}`);
+  assert.ok(
+    report.counts.D >= 20 && report.counts.D <= 40,
+    `expected ~26 conflict bootstrap D, got ${report.counts.D}`
+  );
   // Persist machine-readable summary for owner report (test artifact under tests/)
   const out = {
     generatedAt: new Date().toISOString(),
@@ -350,6 +454,7 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
     gates: report.gates,
     seedCount: seed.length,
     bootstrapUniqueCount: bootstrap.length,
+    safeMigratedCount: migration.safeCount,
     reasonFrequency: {}
   };
   for (const row of report.rows) {

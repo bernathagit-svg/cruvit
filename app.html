@@ -729,6 +729,7 @@
 </div>
 <script src="garden-modes.js?v=20250631a"></script>
 <script src="scripts/plant-identifier-loader.js?v=20250655"></script>
+<script src="modules/personal-domain/bootstrap-safe-climate-traits-migration-data-v1.browser.js?v=20260908a"></script>
 <script>
 
 /*
@@ -794,6 +795,39 @@ const PLANT_LIBRARY=[
 
 ];
 const PLANT_INDEX=Object.fromEntries(PLANT_LIBRARY.map(p=>[p.slug,p]));
+
+/* ── SAFE bootstrap structural climateTraits migration (explicit legacy only) ── */
+(function applyBootstrapSafeClimateTraitsMigrationInline(){
+  const payload=typeof window!=='undefined'?window.__CRUVIT_BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1:null;
+  if(!payload||!payload.plants||typeof payload.plants!=='object') return;
+  const applied=[];
+  Object.keys(payload.plants).forEach(slug=>{
+    const plant=PLANT_INDEX[slug];
+    if(!plant) return;
+    // Do not overwrite non-migration canonical traits (seed attach path / future).
+    if(plant.climateTraits&&plant.climateTraits.migration?.kind!=='bootstrap-safe-structural-v1'){
+      const t=plant.climateTraits;
+      const hasReal=t&&typeof t==='object'&&(
+        t.frostSensitivity!=null||t.coldTolerance!=null||t.heatTolerance!=null||
+        t.sunNeeds!=null||t.waterNeeds!=null||t.humidityTolerance!=null||t.drainageNeeds!=null||
+        (Array.isArray(t.groupIds)&&t.groupIds.length)||t.traitEvidenceClasses||t.reproductiveBiology
+      );
+      if(hasReal) return;
+    }
+    const next=payload.plants[slug]&&payload.plants[slug].climateTraits;
+    if(!next||typeof next!=='object') return;
+    plant.climateTraits=next;
+    applied.push(slug);
+  });
+  if(typeof window!=='undefined'){
+    window.__cruvitBootstrapSafeClimateMigration={
+      version:payload.version||'1.0.0',
+      migrationId:payload.migrationId||null,
+      appliedCount:applied.length,
+      appliedSlugs:applied.slice().sort()
+    };
+  }
+})();
 
 /* ── Global Plant Catalog Foundation v1a: legacy bridge (not loaded at startup) ── */
 function catalogItemToLegacyFlat(item){
