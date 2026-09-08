@@ -109,10 +109,12 @@ test('PHASE1: SAFE set re-derives to exactly 26 expected slugs', () => {
 test('app.html wires sync migration before climate meta use', () => {
   const html = fs.readFileSync(APP, 'utf8');
   assert.match(html, /bootstrap-safe-climate-traits-migration-data-v1\.browser\.js/);
-  assert.match(html, /applyBootstrapSafeClimateTraitsMigrationInline/);
+  assert.match(html, /bootstrap-unlocked-six-climate-traits-migration-data-v1\.browser\.js/);
+  assert.match(html, /applyBootstrapStructuralClimateTraitsMigrationsInline/);
   assert.match(html, /__CRUVIT_BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1/);
+  assert.match(html, /__CRUVIT_BOOTSTRAP_UNLOCKED_SIX_CLIMATE_TRAITS_MIGRATION_V1/);
   const idxLib = html.indexOf('const PLANT_INDEX=');
-  const idxApply = html.indexOf('applyBootstrapSafeClimateTraitsMigrationInline');
+  const idxApply = html.indexOf('applyBootstrapStructuralClimateTraitsMigrationsInline');
   const idxMeta = html.indexOf('function smartRecClimateMetaForPlant');
   assert.ok(idxLib >= 0 && idxApply > idxLib && idxMeta > idxApply);
 });
@@ -174,7 +176,7 @@ test('B. lemon: no invented reproductive biology; flowering/fruiting only if leg
   assert.equal(meta.frostSensitivity, 'high');
 });
 
-test('C. identity-conflict fig remains legacy fallback; untouched by migration', () => {
+test('C. SAFE payload alone leaves fig on legacy fallback (unlocked-six migrates separately)', () => {
   const library = bootstrapEntriesFromApp();
   const index = Object.fromEntries(library.map((p) => [p.slug, p]));
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();

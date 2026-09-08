@@ -2,16 +2,36 @@
  * Bootstrap SAFE structural climateTraits migration applier v1.
  * Attaches pre-derived LEGACY_ASSERTED_METADATA climateTraits onto bootstrap plants
  * that lack canonical traits. Does not invent botanical facts.
+ *
+ * Extended cleanly for unlocked-six species via the same applier + sibling payload
+ * (kind: bootstrap-unlocked-species-structural-v1).
  */
 import {
   BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1
 } from './bootstrap-safe-climate-traits-migration-data-v1.js';
+import {
+  BOOTSTRAP_UNLOCKED_SIX_CLIMATE_TRAITS_MIGRATION_V1
+} from './bootstrap-unlocked-six-climate-traits-migration-data-v1.js';
 import { plantHasCanonicalClimateTraits } from './smart-rec-climate-meta-authority-v1.js';
 
 export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION = '1.0.0';
 
+/** Migration kinds that may re-apply / replace prior structural migration attachments. */
+export const BOOTSTRAP_STRUCTURAL_CLIMATE_MIGRATION_KINDS = Object.freeze([
+  'bootstrap-safe-structural-v1',
+  'bootstrap-unlocked-species-structural-v1'
+]);
+
+function isStructuralMigrationKind(kind) {
+  return BOOTSTRAP_STRUCTURAL_CLIMATE_MIGRATION_KINDS.includes(kind);
+}
+
 export function getBootstrapSafeClimateTraitsMigrationPayload() {
   return BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1;
+}
+
+export function getBootstrapUnlockedSixClimateTraitsMigrationPayload() {
+  return BOOTSTRAP_UNLOCKED_SIX_CLIMATE_TRAITS_MIGRATION_V1;
 }
 
 /**
@@ -43,7 +63,7 @@ export function applyBootstrapSafeClimateTraitsMigration(
     // Do not overwrite real seed/canonical traits that already exist (non-migration).
     if (
       plantHasCanonicalClimateTraits(target) &&
-      target.climateTraits?.migration?.kind !== 'bootstrap-safe-structural-v1'
+      !isStructuralMigrationKind(target.climateTraits?.migration?.kind)
     ) {
       skipped.push({ slug, reason: 'already-has-non-migration-climateTraits' });
       continue;
@@ -76,5 +96,31 @@ export function applyBootstrapSafeClimateTraitsMigration(
     appliedCount: applied.length,
     appliedSlugs: applied.sort(),
     skipped
+  };
+}
+
+/**
+ * Apply unlocked-six structural payload using the same applier (no second migration system).
+ */
+export function applyBootstrapUnlockedSixClimateTraitsMigration(library, index = null) {
+  return applyBootstrapSafeClimateTraitsMigration(
+    library,
+    index,
+    BOOTSTRAP_UNLOCKED_SIX_CLIMATE_TRAITS_MIGRATION_V1
+  );
+}
+
+/**
+ * Apply SAFE then unlocked-six structural migrations in order.
+ */
+export function applyAllBootstrapStructuralClimateTraitsMigrations(library, index = null) {
+  const safe = applyBootstrapSafeClimateTraitsMigration(library, index);
+  const unlocked = applyBootstrapUnlockedSixClimateTraitsMigration(library, index);
+  return {
+    version: BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION,
+    safe,
+    unlocked,
+    appliedCount: safe.appliedCount + unlocked.appliedCount,
+    appliedSlugs: [...safe.appliedSlugs, ...unlocked.appliedSlugs].sort()
   };
 }

@@ -24,7 +24,10 @@ import {
 } from '../modules/personal-domain/plant-data-contract-v1.js';
 import {
   applyBootstrapSafeClimateTraitsMigration,
-  getBootstrapSafeClimateTraitsMigrationPayload
+  applyBootstrapUnlockedSixClimateTraitsMigration,
+  applyAllBootstrapStructuralClimateTraitsMigrations,
+  getBootstrapSafeClimateTraitsMigrationPayload,
+  getBootstrapUnlockedSixClimateTraitsMigrationPayload
 } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -412,9 +415,10 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   const seed = loadSeedPlants();
   const bootstrap = bootstrapSlugsFromApp();
   const migration = getBootstrapSafeClimateTraitsMigrationPayload();
+  const unlocked = getBootstrapUnlockedSixClimateTraitsMigrationPayload();
   const bySlug = new Map();
   for (const slug of bootstrap) {
-    const migrated = migration.plants[slug];
+    const migrated = migration.plants[slug] || unlocked.plants[slug];
     bySlug.set(slug, {
       slug,
       name: migrated?.name || slug,
@@ -423,7 +427,7 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
       _source: 'bootstrap'
     });
   }
-  applyBootstrapSafeClimateTraitsMigration(
+  applyAllBootstrapStructuralClimateTraitsMigrations(
     [...bySlug.values()],
     Object.fromEntries(bySlug)
   );
@@ -436,13 +440,13 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   const report = classifyCatalogReadOnly(catalog);
   assert.equal(report.total, catalog.length);
   assert.ok(report.total >= 100 && report.total <= 120, `unexpected total=${report.total}`);
-  // Seed plants dominate B; SAFE bootstrap migrates structurally (still not Class A);
-  // IDENTITY_CONFLICT bootstrap (~26) remain D.
+  // Seed plants dominate B; SAFE + unlocked-six bootstrap migrate structurally (still not Class A);
+  // remaining unresolved bootstrap remain D.
   assert.equal(report.counts.A, 0, 'no Class A expected in current catalog');
-  assert.ok(report.counts.B >= 60, `expected many B, got ${report.counts.B}`);
+  assert.ok(report.counts.B >= 90, `expected many B, got ${report.counts.B}`);
   assert.ok(
-    report.counts.D >= 12 && report.counts.D <= 30,
-    `expected ~19 remaining conflict bootstrap D after alias collapse, got ${report.counts.D}`
+    report.counts.D >= 10 && report.counts.D <= 20,
+    `expected ~13 remaining conflict bootstrap D after unlocked-six migration, got ${report.counts.D}`
   );
   // Persist machine-readable summary for owner report (test artifact under tests/)
   const out = {
@@ -455,6 +459,7 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
     seedCount: seed.length,
     bootstrapUniqueCount: bootstrap.length,
     safeMigratedCount: migration.safeCount,
+    unlockedSixMigratedCount: unlocked.unlockedCount,
     reasonFrequency: {}
   };
   for (const row of report.rows) {

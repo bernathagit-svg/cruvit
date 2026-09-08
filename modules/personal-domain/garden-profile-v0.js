@@ -44,7 +44,10 @@ import {
 } from './smart-rec-climate-meta-authority-v1.js';
 import {
   applyBootstrapSafeClimateTraitsMigration,
+  applyBootstrapUnlockedSixClimateTraitsMigration,
+  applyAllBootstrapStructuralClimateTraitsMigrations,
   getBootstrapSafeClimateTraitsMigrationPayload,
+  getBootstrapUnlockedSixClimateTraitsMigrationPayload,
   BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION
 } from './bootstrap-safe-climate-traits-migration-v1.js';
 
@@ -62,7 +65,10 @@ window.cruvitSmartRecClimateMetaAuthority = {
 window.cruvitBootstrapSafeClimateTraitsMigration = {
   version: BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_VERSION,
   apply: applyBootstrapSafeClimateTraitsMigration,
-  getPayload: getBootstrapSafeClimateTraitsMigrationPayload
+  getPayload: getBootstrapSafeClimateTraitsMigrationPayload,
+  applyUnlockedSix: applyBootstrapUnlockedSixClimateTraitsMigration,
+  getUnlockedSixPayload: getBootstrapUnlockedSixClimateTraitsMigrationPayload,
+  applyAll: applyAllBootstrapStructuralClimateTraitsMigrations
 };
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';

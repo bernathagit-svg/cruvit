@@ -124,16 +124,15 @@ test('excluded broad/generic identities untouched in library', () => {
   for (const s of EXCLUDED) assert.ok(slugs.has(s), s);
 });
 
-test('no climateTraits migration for unlocked six + plum', () => {
+test('SAFE payload still excludes unlocked six + plum; unlocked payload covers six only', () => {
   const html = loadApp();
   for (const slug of ['apple', 'pear', 'peach', 'fig', 'grapevine', 'passionfruit', 'plum']) {
     const line = plantLine(html, slug);
-    assert.equal(line.includes('climateTraits'), false, slug);
+    assert.equal(line.includes('climateTraits'), false, `inline library must not embed climateTraits: ${slug}`);
   }
-  // SAFE migration payload still does not include them
-  const payload = getBootstrapSafeClimateTraitsMigrationPayload();
+  const safe = getBootstrapSafeClimateTraitsMigrationPayload();
   for (const slug of ['apple', 'pear', 'peach', 'fig', 'grapevine', 'passionfruit', 'plum']) {
-    assert.equal(payload.plants[slug], undefined);
+    assert.equal(safe.plants[slug], undefined);
   }
 });
 
