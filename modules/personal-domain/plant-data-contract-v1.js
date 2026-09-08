@@ -440,11 +440,14 @@ export function classifyPlantDataReadiness(plant, options = {}) {
   } else if (materialOk) {
     readiness = PLANT_DATA_READINESS.B_PARTIAL_OUTCOME_READY;
     readinessShort = 'B';
-    gate = needsReview || !evidenceOk || !sourceSupportedMaterialOk ? 'HOLD' : 'PARTIAL';
+    // PRODUCT GATE: ordinary B is PARTIAL (needs enrichment / incomplete Class A).
+    // HOLD is reserved for real hold conditions (needsReview / policy conflict),
+    // not merely missing SOURCE_SUPPORTED frost+cold (that is enrichment debt).
+    gate = needsReview ? 'HOLD' : 'PARTIAL';
   } else if (frostOk) {
     readiness = PLANT_DATA_READINESS.C_BASIC_CLIMATE_ONLY;
     readinessShort = 'C';
-    gate = 'HOLD';
+    gate = needsReview ? 'HOLD' : 'PARTIAL';
   } else {
     readiness = PLANT_DATA_READINESS.D_NOT_PRODUCT_READY;
     readinessShort = 'D';

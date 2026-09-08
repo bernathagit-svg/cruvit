@@ -1,0 +1,78 @@
+{
+  "summaryId": "current-catalog-enrichment-summary-v1",
+  "queueContractVersion": "1.1.0",
+  "scannerVersion": "1.1.0",
+  "generatedAt": "2026-09-08T07:26:42.518Z",
+  "parentCommit": "b6b4efa63533713c5d17988e0c0b6cf17ef6edc9",
+  "catalogSnapshot": {
+    "total": 108,
+    "counts": {
+      "A": 0,
+      "B": 95,
+      "C": 0,
+      "D": 13
+    },
+    "gates": {
+      "PASS": 0,
+      "PARTIAL": 69,
+      "HOLD": 26,
+      "REJECT": 13
+    }
+  },
+  "summary": {
+    "totalJobs": 108,
+    "byReadiness": {
+      "A": 0,
+      "B": 95,
+      "C": 0,
+      "D": 13
+    },
+    "byProductGate": {
+      "PASS": 0,
+      "PARTIAL": 69,
+      "HOLD": 26,
+      "REJECT": 13
+    },
+    "byGate": {
+      "PASS": 0,
+      "PARTIAL": 69,
+      "HOLD": 26,
+      "REJECT": 13
+    },
+    "byEnrichmentExecution": {
+      "AUTO": 91,
+      "HOLD_FOR_REVIEW": 17,
+      "NONE": 0
+    },
+    "byPriority": {
+      "P0": 9,
+      "P1": 43,
+      "P2": 48,
+      "P3": 0,
+      "P4": 8
+    },
+    "gapFrequency": {
+      "BROAD_TAXON_POLICY": 12,
+      "IDENTITY_SPECIES_REQUIRED": 17,
+      "LEGACY_META_ONLY": 13,
+      "MISSING_FROST_EVIDENCE": 108,
+      "MISSING_COLD_EVIDENCE": 108,
+      "MISSING_HEAT_EVIDENCE": 13,
+      "MISSING_FLOWERING_REQUIREMENTS": 45,
+      "MISSING_FRUITING_REQUIREMENTS": 65,
+      "EVIDENCE_NOT_SOURCE_SUPPORTED": 108,
+      "NEEDS_REVIEW": 26,
+      "CATEGORY_ONLY_POLICY": 1
+    },
+    "evidenceOnlyNearACandidates": 43,
+    "floweringGapJobs": 45,
+    "fruitingGapJobs": 65,
+    "reviewHoldJobs": 26,
+    "speciesSelectionJobs": 9,
+    "categoryOrBroadJobs": 8,
+    "AUTO_JOB_COUNT": 91,
+    "OWNER_REVIEW_JOB_COUNT": 17,
+    "NONE_JOB_COUNT": 0
+  },
+  "note": "Read-only enrichment observation queue. Not plant truth. Not runtime suitability authority. Safe to regenerate. No SOURCE_SUPPORTED invented."
+}

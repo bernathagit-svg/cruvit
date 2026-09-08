@@ -1,0 +1,3757 @@
+{
+  "queueId": "batch3-dry-enrichment-queue-v1",
+  "queueContractVersion": "1.1.0",
+  "scannerId": "enrichment-gap-scanner-v1",
+  "scannerVersion": "1.1.0",
+  "dryRun": true,
+  "ingested": false,
+  "note": "Batch 3 dry adapter only. Does not write runtime catalog.",
+  "generatedAt": "2026-09-08T07:26:42.518Z",
+  "parentCommit": "b6b4efa63533713c5d17988e0c0b6cf17ef6edc9",
+  "packetCount": 75,
+  "catalogSnapshot": {
+    "total": 75,
+    "counts": {
+      "A": 1,
+      "B": 74,
+      "C": 0,
+      "D": 0
+    },
+    "gates": {
+      "PASS": 1,
+      "PARTIAL": 74,
+      "HOLD": 0,
+      "REJECT": 0
+    }
+  },
+  "dryReport": {
+    "PASS": 1,
+    "PARTIAL": 74,
+    "HOLD": 0,
+    "REJECT": 0,
+    "byReadiness": {
+      "A": 1,
+      "B": 74,
+      "C": 0,
+      "D": 0
+    },
+    "byProductGate": {
+      "PASS": 1,
+      "PARTIAL": 74,
+      "HOLD": 0,
+      "REJECT": 0
+    },
+    "byEnrichmentExecution": {
+      "AUTO": 72,
+      "HOLD_FOR_REVIEW": 2,
+      "NONE": 0
+    },
+    "byPriority": {
+      "P0": 2,
+      "P1": 0,
+      "P2": 0,
+      "P3": 72,
+      "P4": 0
+    },
+    "slugIdentityConflicts": [
+      "blueberry",
+      "plum"
+    ],
+    "scientificConflicts": [],
+    "humidityGapJobs": 74,
+    "evidenceGapJobs": 0,
+    "queueJobs": 74,
+    "AUTO_JOB_COUNT": 72,
+    "OWNER_REVIEW_JOB_COUNT": 2
+  },
+  "summary": {
+    "totalJobs": 74,
+    "byReadiness": {
+      "A": 0,
+      "B": 74,
+      "C": 0,
+      "D": 0
+    },
+    "byProductGate": {
+      "PASS": 0,
+      "PARTIAL": 74,
+      "HOLD": 0,
+      "REJECT": 0
+    },
+    "byGate": {
+      "PASS": 0,
+      "PARTIAL": 74,
+      "HOLD": 0,
+      "REJECT": 0
+    },
+    "byEnrichmentExecution": {
+      "AUTO": 72,
+      "HOLD_FOR_REVIEW": 2,
+      "NONE": 0
+    },
+    "byPriority": {
+      "P0": 2,
+      "P1": 0,
+      "P2": 0,
+      "P3": 72,
+      "P4": 0
+    },
+    "gapFrequency": {
+      "BROAD_TAXON_POLICY": 2,
+      "IDENTITY_SPECIES_REQUIRED": 2,
+      "MISSING_CLIMATE_CORE": 74,
+      "MISSING_HUMIDITY": 74
+    },
+    "evidenceOnlyNearACandidates": 0,
+    "floweringGapJobs": 0,
+    "fruitingGapJobs": 0,
+    "reviewHoldJobs": 0,
+    "speciesSelectionJobs": 2,
+    "categoryOrBroadJobs": 0,
+    "AUTO_JOB_COUNT": 72,
+    "OWNER_REVIEW_JOB_COUNT": 2,
+    "NONE_JOB_COUNT": 0
+  },
+  "jobs": [
+    {
+      "jobId": "enrich-v1:blueberry",
+      "canonicalSlug": "blueberry",
+      "scientificName": "Vaccinium corymbosum",
+      "commonName": "Blueberry",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "HOLD_FOR_REVIEW",
+      "gapCodes": [
+        "BROAD_TAXON_POLICY",
+        "IDENTITY_SPECIES_REQUIRED",
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "BROAD_TAXON_POLICY": [],
+        "IDENTITY_SPECIES_REQUIRED": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A"
+        ],
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "IDENTITY_SPECIES_RESOLUTION",
+      "priority": "P0",
+      "identityStatus": "SPECIES_SELECTION_REQUIRED",
+      "reviewStatus": "HOLD_IDENTITY",
+      "sourceRetrievalRequired": false,
+      "allowedAutoAction": "HOLD",
+      "futureClaimTypes": [
+        "accepted_taxonomy",
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": "SPECIES_SELECTION_REQUIRED",
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:plum",
+      "canonicalSlug": "plum",
+      "scientificName": "Prunus domestica",
+      "commonName": "Plum",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "HOLD_FOR_REVIEW",
+      "gapCodes": [
+        "BROAD_TAXON_POLICY",
+        "IDENTITY_SPECIES_REQUIRED",
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "BROAD_TAXON_POLICY": [],
+        "IDENTITY_SPECIES_REQUIRED": [
+          "SCIENTIFIC_AMBIGUOUS_FOR_CLASS_A"
+        ],
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "IDENTITY_SPECIES_RESOLUTION",
+      "priority": "P0",
+      "identityStatus": "SPECIES_SELECTION_REQUIRED",
+      "reviewStatus": "HOLD_IDENTITY",
+      "sourceRetrievalRequired": false,
+      "allowedAutoAction": "HOLD",
+      "futureClaimTypes": [
+        "accepted_taxonomy",
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": "SPECIES_SELECTION_REQUIRED",
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:apple",
+      "canonicalSlug": "apple",
+      "scientificName": "Malus domestica",
+      "commonName": "Apple",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:apricot",
+      "canonicalSlug": "apricot",
+      "scientificName": "Prunus armeniaca",
+      "commonName": "Apricot",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:arborvitae",
+      "canonicalSlug": "arborvitae",
+      "scientificName": "Thuja occidentalis",
+      "commonName": "Arborvitae",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:avocado",
+      "canonicalSlug": "avocado",
+      "scientificName": "Persea americana",
+      "commonName": "Avocado",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:basil",
+      "canonicalSlug": "basil",
+      "scientificName": "Ocimum basilicum",
+      "commonName": "Basil",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:bearded-iris",
+      "canonicalSlug": "bearded-iris",
+      "scientificName": "Iris germanica",
+      "commonName": "Bearded iris",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:beet",
+      "canonicalSlug": "beet",
+      "scientificName": "Beta vulgaris",
+      "commonName": "Beet",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:bell-pepper",
+      "canonicalSlug": "bell-pepper",
+      "scientificName": "Capsicum annuum",
+      "commonName": "Bell pepper",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:bigleaf-hydrangea",
+      "canonicalSlug": "bigleaf-hydrangea",
+      "scientificName": "Hydrangea macrophylla",
+      "commonName": "Bigleaf hydrangea",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:black-mulberry",
+      "canonicalSlug": "black-mulberry",
+      "scientificName": "Morus nigra",
+      "commonName": "Black mulberry",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:borage",
+      "canonicalSlug": "borage",
+      "scientificName": "Borago officinalis",
+      "commonName": "Borage",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:broccoli",
+      "canonicalSlug": "broccoli",
+      "scientificName": "Brassica oleracea var. italica",
+      "commonName": "Broccoli",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:cape-leadwort",
+      "canonicalSlug": "cape-leadwort",
+      "scientificName": "Plumbago auriculata",
+      "commonName": "Cape leadwort",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:carrot",
+      "canonicalSlug": "carrot",
+      "scientificName": "Daucus carota subsp. sativus",
+      "commonName": "Carrot",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:catawba-rhododendron",
+      "canonicalSlug": "catawba-rhododendron",
+      "scientificName": "Rhododendron catawbiense",
+      "commonName": "Catawba rhododendron",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:chinese-hibiscus",
+      "canonicalSlug": "chinese-hibiscus",
+      "scientificName": "Hibiscus rosa-sinensis",
+      "commonName": "Chinese hibiscus",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:common-jasmine",
+      "canonicalSlug": "common-jasmine",
+      "scientificName": "Jasminum officinale",
+      "commonName": "Common jasmine",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:common-juniper",
+      "canonicalSlug": "common-juniper",
+      "scientificName": "Juniperus communis",
+      "commonName": "Common juniper",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:common-privet",
+      "canonicalSlug": "common-privet",
+      "scientificName": "Ligustrum vulgare",
+      "commonName": "Common privet",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:cork-oak",
+      "canonicalSlug": "cork-oak",
+      "scientificName": "Quercus suber",
+      "commonName": "Cork oak",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:cucumber",
+      "canonicalSlug": "cucumber",
+      "scientificName": "Cucumis sativus",
+      "commonName": "Cucumber",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:dahlia",
+      "canonicalSlug": "dahlia",
+      "scientificName": "Dahlia pinnata",
+      "commonName": "Dahlia",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:eggplant",
+      "canonicalSlug": "eggplant",
+      "scientificName": "Solanum melongena",
+      "commonName": "Eggplant",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:english-lavender",
+      "canonicalSlug": "english-lavender",
+      "scientificName": "Lavandula angustifolia",
+      "commonName": "English lavender",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:english-oak",
+      "canonicalSlug": "english-oak",
+      "scientificName": "Quercus robur",
+      "commonName": "English oak",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:fennel",
+      "canonicalSlug": "fennel",
+      "scientificName": "Foeniculum vulgare",
+      "commonName": "Fennel",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:fig",
+      "canonicalSlug": "fig",
+      "scientificName": "Ficus carica",
+      "commonName": "Fig",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:french-marigold",
+      "canonicalSlug": "french-marigold",
+      "scientificName": "Tagetes patula",
+      "commonName": "French marigold",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:garden-pea",
+      "canonicalSlug": "garden-pea",
+      "scientificName": "Pisum sativum",
+      "commonName": "Garden pea",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:garden-sorrel",
+      "canonicalSlug": "garden-sorrel",
+      "scientificName": "Rumex acetosa",
+      "commonName": "Garden sorrel",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:garden-tulip",
+      "canonicalSlug": "garden-tulip",
+      "scientificName": "Tulipa gesneriana",
+      "commonName": "Garden tulip",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:german-chamomile",
+      "canonicalSlug": "german-chamomile",
+      "scientificName": "Matricaria chamomilla",
+      "commonName": "German chamomile",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:grapefruit",
+      "canonicalSlug": "grapefruit",
+      "scientificName": "Citrus × paradisi",
+      "commonName": "Grapefruit",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:green-bean",
+      "canonicalSlug": "green-bean",
+      "scientificName": "Phaseolus vulgaris",
+      "commonName": "Green bean",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:italian-cypress",
+      "canonicalSlug": "italian-cypress",
+      "scientificName": "Cupressus sempervirens",
+      "commonName": "Italian cypress",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:japanese-camellia",
+      "canonicalSlug": "japanese-camellia",
+      "scientificName": "Camellia japonica",
+      "commonName": "Japanese camellia",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:japanese-maple",
+      "canonicalSlug": "japanese-maple",
+      "scientificName": "Acer palmatum",
+      "commonName": "Japanese maple",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:japanese-pittosporum",
+      "canonicalSlug": "japanese-pittosporum",
+      "scientificName": "Pittosporum tobira",
+      "commonName": "Japanese pittosporum",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lantana",
+      "canonicalSlug": "lantana",
+      "scientificName": "Lantana camara",
+      "commonName": "Lantana",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:laurustinus",
+      "canonicalSlug": "laurustinus",
+      "scientificName": "Viburnum tinus",
+      "commonName": "Laurustinus",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lemon",
+      "canonicalSlug": "lemon",
+      "scientificName": "Citrus × limon",
+      "commonName": "Lemon",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lemon-balm",
+      "canonicalSlug": "lemon-balm",
+      "scientificName": "Melissa officinalis",
+      "commonName": "Lemon balm",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lemongrass",
+      "canonicalSlug": "lemongrass",
+      "scientificName": "Cymbopogon citratus",
+      "commonName": "Lemongrass",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lesser-bougainvillea",
+      "canonicalSlug": "lesser-bougainvillea",
+      "scientificName": "Bougainvillea glabra",
+      "commonName": "Lesser bougainvillea",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:lettuce",
+      "canonicalSlug": "lettuce",
+      "scientificName": "Lactuca sativa",
+      "commonName": "Lettuce",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:marjoram",
+      "canonicalSlug": "marjoram",
+      "scientificName": "Origanum majorana",
+      "commonName": "Marjoram",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:muskmelon",
+      "canonicalSlug": "muskmelon",
+      "scientificName": "Cucumis melo",
+      "commonName": "Muskmelon",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:nasturtium",
+      "canonicalSlug": "nasturtium",
+      "scientificName": "Tropaeolum majus",
+      "commonName": "Nasturtium",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:norway-spruce",
+      "canonicalSlug": "norway-spruce",
+      "scientificName": "Picea abies",
+      "commonName": "Norway spruce",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:olive",
+      "canonicalSlug": "olive",
+      "scientificName": "Olea europaea",
+      "commonName": "Olive",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:peach",
+      "canonicalSlug": "peach",
+      "scientificName": "Prunus persica",
+      "commonName": "Peach",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:pear",
+      "canonicalSlug": "pear",
+      "scientificName": "Pyrus communis",
+      "commonName": "Pear",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:pomegranate",
+      "canonicalSlug": "pomegranate",
+      "scientificName": "Punica granatum",
+      "commonName": "Pomegranate",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:pumpkin",
+      "canonicalSlug": "pumpkin",
+      "scientificName": "Cucurbita maxima",
+      "commonName": "Pumpkin",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:raspberry",
+      "canonicalSlug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "commonName": "Raspberry",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:red-maple",
+      "canonicalSlug": "red-maple",
+      "scientificName": "Acer rubrum",
+      "commonName": "Red maple",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:rockspray-cotoneaster",
+      "canonicalSlug": "rockspray-cotoneaster",
+      "scientificName": "Cotoneaster horizontalis",
+      "commonName": "Rockspray cotoneaster",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:rosemary",
+      "canonicalSlug": "rosemary",
+      "scientificName": "Salvia rosmarinus",
+      "commonName": "Rosemary",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:scots-pine",
+      "canonicalSlug": "scots-pine",
+      "scientificName": "Pinus sylvestris",
+      "commonName": "Scots pine",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:spearmint",
+      "canonicalSlug": "spearmint",
+      "scientificName": "Mentha spicata",
+      "commonName": "Spearmint",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:spinach",
+      "canonicalSlug": "spinach",
+      "scientificName": "Spinacia oleracea",
+      "commonName": "Spinach",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:stevia",
+      "canonicalSlug": "stevia",
+      "scientificName": "Stevia rebaudiana",
+      "commonName": "Stevia",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:summer-savory",
+      "canonicalSlug": "summer-savory",
+      "scientificName": "Satureja hortensis",
+      "commonName": "Summer savory",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:sunflower",
+      "canonicalSlug": "sunflower",
+      "scientificName": "Helianthus annuus",
+      "commonName": "Sunflower",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:sweet-orange",
+      "canonicalSlug": "sweet-orange",
+      "scientificName": "Citrus × sinensis",
+      "commonName": "Sweet orange",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:tarragon",
+      "canonicalSlug": "tarragon",
+      "scientificName": "Artemisia dracunculus",
+      "commonName": "Tarragon",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:tomato",
+      "canonicalSlug": "tomato",
+      "scientificName": "Solanum lycopersicum",
+      "commonName": "Tomato",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:watermelon",
+      "canonicalSlug": "watermelon",
+      "scientificName": "Citrullus lanatus",
+      "commonName": "Watermelon",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:wild-daffodil",
+      "canonicalSlug": "wild-daffodil",
+      "scientificName": "Narcissus pseudonarcissus",
+      "commonName": "Wild daffodil",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:zinnia",
+      "canonicalSlug": "zinnia",
+      "scientificName": "Zinnia elegans",
+      "commonName": "Zinnia",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:zonal-geranium",
+      "canonicalSlug": "zonal-geranium",
+      "scientificName": "Pelargonium zonale",
+      "commonName": "Zonal geranium",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    },
+    {
+      "jobId": "enrich-v1:zucchini",
+      "canonicalSlug": "zucchini",
+      "scientificName": "Cucurbita pepo",
+      "commonName": "Zucchini",
+      "currentReadinessClass": "B",
+      "productGate": "PARTIAL",
+      "currentGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_CLIMATE_CORE",
+        "MISSING_HUMIDITY"
+      ],
+      "contractReasons": [
+        "HUMIDITY_UNKNOWN",
+        "MISSING_CLIMATE_CORE"
+      ],
+      "gapContractReasonTrace": {
+        "MISSING_CLIMATE_CORE": [
+          "MISSING_CLIMATE_CORE"
+        ],
+        "MISSING_HUMIDITY": [
+          "HUMIDITY_UNKNOWN"
+        ]
+      },
+      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
+      "priority": "P3",
+      "identityStatus": "CANONICAL_SPECIES",
+      "reviewStatus": "AUTO",
+      "sourceRetrievalRequired": true,
+      "allowedAutoAction": "AUTO",
+      "futureClaimTypes": [
+        "cold",
+        "drainage",
+        "frost",
+        "heat",
+        "humidity",
+        "sun",
+        "water"
+      ],
+      "productRole": null,
+      "contractId": "plant-data-contract-v1",
+      "contractVersion": "1.0.0",
+      "queueContractVersion": "1.1.0",
+      "scannerId": "enrichment-gap-scanner-v1",
+      "scannerVersion": "1.1.0",
+      "sourcePolicyVersion": "catalog-source-policy-pending-v0",
+      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
+    }
+  ]
+}

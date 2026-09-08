@@ -541,10 +541,31 @@ test('Batch 3 dry classification (no ingest)', () => {
 test('scale gate labels are deterministic PASS/PARTIAL/HOLD/REJECT', () => {
   const a = classifyPlantDataReadiness(completeClassAPlant());
   assert.equal(a.gate, 'PASS');
-  const b = classifyPlantDataReadiness(
+  // Ordinary B (missing SS frost/cold only) is PARTIAL — enrichment debt, not product HOLD
+  const bPartial = classifyPlantDataReadiness(
+    completeClassAPlant({
+      climateTraits: {
+        traitEvidenceClasses: {
+          frostSensitivity: 'HEURISTIC_ASSERTION',
+          coldTolerance: 'HEURISTIC_ASSERTION',
+          heatTolerance: 'HEURISTIC_ASSERTION',
+          humidityTolerance: 'HEURISTIC_ASSERTION',
+          sunNeeds: 'HEURISTIC_ASSERTION',
+          waterNeeds: 'HEURISTIC_ASSERTION',
+          drainageNeeds: 'HEURISTIC_ASSERTION',
+          floweringRequirements: 'HEURISTIC_ASSERTION',
+          fruitingRequirements: 'HEURISTIC_ASSERTION'
+        }
+      }
+    })
+  );
+  assert.equal(bPartial.readinessShort, 'B');
+  assert.equal(bPartial.gate, 'PARTIAL');
+  // Real hold: needsReview
+  const bHold = classifyPlantDataReadiness(
     completeClassAPlant({ climateTraits: { needsReview: true } })
   );
-  assert.equal(b.gate, 'HOLD');
+  assert.equal(bHold.gate, 'HOLD');
   const d = classifyPlantDataReadiness({ slug: 'x', name: 'X', scientific: 'X x' });
   assert.equal(d.gate, 'REJECT');
 });
