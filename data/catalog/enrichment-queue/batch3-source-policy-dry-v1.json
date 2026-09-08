@@ -1,0 +1,3845 @@
+{
+  "policyRef": "catalog-source-policy-v1@1.0.0",
+  "dryRun": true,
+  "ingested": false,
+  "note": "Batch 3 source-policy dry evaluation only. No catalog writes. No fetch.",
+  "totals": {
+    "packets": 75,
+    "claims": 1532,
+    "SOURCE_SUPPORTED_eligible": 1051,
+    "HEURISTIC": 481,
+    "UNKNOWN": 0,
+    "HOLD": 0,
+    "policyViolations": 142,
+    "unsupportedSourceTypes": 0
+  },
+  "unsupportedSourceTypeLabels": [],
+  "packetReports": [
+    {
+      "packetId": "apple-bulk-batch-3-v1",
+      "slug": "apple",
+      "scientific": "Malus domestica",
+      "claimCount": 22,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 16,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.cultivar_dependency"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "apricot-bulk-batch-3-v1",
+      "slug": "apricot",
+      "scientific": "Prunus armeniaca",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "arborvitae-bulk-batch-3-v1",
+      "slug": "arborvitae",
+      "scientific": "Thuja occidentalis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "avocado-bulk-batch-3-v1",
+      "slug": "avocado",
+      "scientific": "Persea americana",
+      "claimCount": 22,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.requires_pollinator"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "basil-bulk-batch-3-v1",
+      "slug": "basil",
+      "scientific": "Ocimum basilicum",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "bearded-iris-bulk-batch-3-v1",
+      "slug": "bearded-iris",
+      "scientific": "Iris germanica",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "beet-bulk-batch-3-v1",
+      "slug": "beet",
+      "scientific": "Beta vulgaris",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "bell-pepper-bulk-batch-3-v1",
+      "slug": "bell-pepper",
+      "scientific": "Capsicum annuum",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 16,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 0,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "bigleaf-hydrangea-bulk-batch-3-v1",
+      "slug": "bigleaf-hydrangea",
+      "scientific": "Hydrangea macrophylla",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "black-mulberry-bulk-batch-3-v1",
+      "slug": "black-mulberry",
+      "scientific": "Morus nigra",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "blueberry-bulk-batch-3-v1",
+      "slug": "blueberry",
+      "scientific": "Vaccinium corymbosum",
+      "claimCount": 22,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "reproductive.cultivar_dependency"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "borage-bulk-batch-3-v1",
+      "slug": "borage",
+      "scientific": "Borago officinalis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "broccoli-bulk-batch-3-v1",
+      "slug": "broccoli",
+      "scientific": "Brassica oleracea var. italica",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "cape-leadwort-bulk-batch-3-v1",
+      "slug": "cape-leadwort",
+      "scientific": "Plumbago auriculata",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "carrot-bulk-batch-3-v1",
+      "slug": "carrot",
+      "scientific": "Daucus carota subsp. sativus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "floweringRequirements",
+          "field": "floweringRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "catawba-rhododendron-bulk-batch-3-v1",
+      "slug": "catawba-rhododendron",
+      "scientific": "Rhododendron catawbiense",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "sunNeeds",
+          "field": "sunNeeds",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "chinese-hibiscus-bulk-batch-3-v1",
+      "slug": "chinese-hibiscus",
+      "scientific": "Hibiscus rosa-sinensis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "common-jasmine-bulk-batch-3-v1",
+      "slug": "common-jasmine",
+      "scientific": "Jasminum officinale",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "common-juniper-bulk-batch-3-v1",
+      "slug": "common-juniper",
+      "scientific": "Juniperus communis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 4,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "floweringRequirements",
+          "field": "floweringRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "common-privet-bulk-batch-3-v1",
+      "slug": "common-privet",
+      "scientific": "Ligustrum vulgare",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "cork-oak-bulk-batch-3-v1",
+      "slug": "cork-oak",
+      "scientific": "Quercus suber",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 10,
+        "HEURISTIC": 11,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 5,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "floweringRequirements",
+          "field": "floweringRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "cucumber-bulk-batch-3-v1",
+      "slug": "cucumber",
+      "scientific": "Cucumis sativus",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 4,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 0,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.monoecious"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "dahlia-bulk-batch-3-v1",
+      "slug": "dahlia",
+      "scientific": "Dahlia pinnata",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 3,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 0,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "eggplant-bulk-batch-3-v1",
+      "slug": "eggplant",
+      "scientific": "Solanum melongena",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 16,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "english-lavender-bulk-batch-3-v1",
+      "slug": "english-lavender",
+      "scientific": "Lavandula angustifolia",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "english-oak-bulk-batch-3-v1",
+      "slug": "english-oak",
+      "scientific": "Quercus robur",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 4,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "floweringRequirements",
+          "field": "floweringRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "reproductive.monoecious"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "fennel-bulk-batch-3-v1",
+      "slug": "fennel",
+      "scientific": "Foeniculum vulgare",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 10,
+        "HEURISTIC": 10,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 4,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "floweringRequirements",
+          "field": "floweringRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "fig-bulk-batch-3-v1",
+      "slug": "fig",
+      "scientific": "Ficus carica",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.self_fertile"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "french-marigold-bulk-batch-3-v1",
+      "slug": "french-marigold",
+      "scientific": "Tagetes patula",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "garden-pea-bulk-batch-3-v1",
+      "slug": "garden-pea",
+      "scientific": "Pisum sativum",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "garden-sorrel-bulk-batch-3-v1",
+      "slug": "garden-sorrel",
+      "scientific": "Rumex acetosa",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "garden-tulip-bulk-batch-3-v1",
+      "slug": "garden-tulip",
+      "scientific": "Tulipa gesneriana",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 3,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 0,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "gardenia-bulk-batch-3-v1",
+      "slug": "gardenia",
+      "scientific": "Gardenia jasminoides",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "german-chamomile-bulk-batch-3-v1",
+      "slug": "german-chamomile",
+      "scientific": "Matricaria chamomilla",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "grapefruit-bulk-batch-3-v1",
+      "slug": "grapefruit",
+      "scientific": "Citrus × paradisi",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 4,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "aliases",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.self_fertile"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "green-bean-bulk-batch-3-v1",
+      "slug": "green-bean",
+      "scientific": "Phaseolus vulgaris",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "italian-cypress-bulk-batch-3-v1",
+      "slug": "italian-cypress",
+      "scientific": "Cupressus sempervirens",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 11,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 4,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "japanese-camellia-bulk-batch-3-v1",
+      "slug": "japanese-camellia",
+      "scientific": "Camellia japonica",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "japanese-maple-bulk-batch-3-v1",
+      "slug": "japanese-maple",
+      "scientific": "Acer palmatum",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "japanese-pittosporum-bulk-batch-3-v1",
+      "slug": "japanese-pittosporum",
+      "scientific": "Pittosporum tobira",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 11,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lantana-bulk-batch-3-v1",
+      "slug": "lantana",
+      "scientific": "Lantana camara",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "laurustinus-bulk-batch-3-v1",
+      "slug": "laurustinus",
+      "scientific": "Viburnum tinus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lemon-balm-bulk-batch-3-v1",
+      "slug": "lemon-balm",
+      "scientific": "Melissa officinalis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lemon-bulk-batch-3-v1",
+      "slug": "lemon",
+      "scientific": "Citrus × limon",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 4,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.self_fertile"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lemongrass-bulk-batch-3-v1",
+      "slug": "lemongrass",
+      "scientific": "Cymbopogon citratus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lesser-bougainvillea-bulk-batch-3-v1",
+      "slug": "lesser-bougainvillea",
+      "scientific": "Bougainvillea glabra",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "lettuce-bulk-batch-3-v1",
+      "slug": "lettuce",
+      "scientific": "Lactuca sativa",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "marjoram-bulk-batch-3-v1",
+      "slug": "marjoram",
+      "scientific": "Origanum majorana",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "muskmelon-bulk-batch-3-v1",
+      "slug": "muskmelon",
+      "scientific": "Cucumis melo",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "nasturtium-bulk-batch-3-v1",
+      "slug": "nasturtium",
+      "scientific": "Tropaeolum majus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "norway-spruce-bulk-batch-3-v1",
+      "slug": "norway-spruce",
+      "scientific": "Picea abies",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "olive-bulk-batch-3-v1",
+      "slug": "olive",
+      "scientific": "Olea europaea",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "peach-bulk-batch-3-v1",
+      "slug": "peach",
+      "scientific": "Prunus persica",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "pear-bulk-batch-3-v1",
+      "slug": "pear",
+      "scientific": "Pyrus communis",
+      "claimCount": 22,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "plum-bulk-batch-3-v1",
+      "slug": "plum",
+      "scientific": "Prunus domestica",
+      "claimCount": 22,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 16,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.cultivar_dependency"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "pomegranate-bulk-batch-3-v1",
+      "slug": "pomegranate",
+      "scientific": "Punica granatum",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.self_fertile"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "pumpkin-bulk-batch-3-v1",
+      "slug": "pumpkin",
+      "scientific": "Cucurbita maxima",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "raspberry-bulk-batch-3-v1",
+      "slug": "raspberry",
+      "scientific": "Rubus idaeus",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "red-maple-bulk-batch-3-v1",
+      "slug": "red-maple",
+      "scientific": "Acer rubrum",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "rockspray-cotoneaster-bulk-batch-3-v1",
+      "slug": "rockspray-cotoneaster",
+      "scientific": "Cotoneaster horizontalis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "rosemary-bulk-batch-3-v1",
+      "slug": "rosemary",
+      "scientific": "Salvia rosmarinus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "scots-pine-bulk-batch-3-v1",
+      "slug": "scots-pine",
+      "scientific": "Pinus sylvestris",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "spearmint-bulk-batch-3-v1",
+      "slug": "spearmint",
+      "scientific": "Mentha spicata",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 11,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 4,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "drainageNeeds",
+          "field": "drainageNeeds",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "spinach-bulk-batch-3-v1",
+      "slug": "spinach",
+      "scientific": "Spinacia oleracea",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "stevia-bulk-batch-3-v1",
+      "slug": "stevia",
+      "scientific": "Stevia rebaudiana",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 8,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "summer-savory-bulk-batch-3-v1",
+      "slug": "summer-savory",
+      "scientific": "Satureja hortensis",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "sunflower-bulk-batch-3-v1",
+      "slug": "sunflower",
+      "scientific": "Helianthus annuus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 3,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "aliases",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "sweet-orange-bulk-batch-3-v1",
+      "slug": "sweet-orange",
+      "scientific": "Citrus × sinensis",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 4,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.self_fertile"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "tarragon-bulk-batch-3-v1",
+      "slug": "tarragon",
+      "scientific": "Artemisia dracunculus",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 12,
+        "HEURISTIC": 9,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 3,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "fruitingRequirements",
+          "field": "fruitingRequirements",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "tomato-bulk-batch-3-v1",
+      "slug": "tomato",
+      "scientific": "Solanum lycopersicum",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 17,
+        "HEURISTIC": 4,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 0,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "watermelon-bulk-batch-3-v1",
+      "slug": "watermelon",
+      "scientific": "Citrullus lanatus",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 18,
+        "HEURISTIC": 3,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "heatTolerance",
+          "field": "heatTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "aliases",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "coldTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.monoecious"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "wild-daffodil-bulk-batch-3-v1",
+      "slug": "wild-daffodil",
+      "scientific": "Narcissus pseudonarcissus",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 13,
+        "HEURISTIC": 7,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 2,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "frostSensitivity",
+          "field": "frostSensitivity",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        },
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "zinnia-bulk-batch-3-v1",
+      "slug": "zinnia",
+      "scientific": "Zinnia elegans",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 15,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "tags",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "zonal-geranium-bulk-batch-3-v1",
+      "slug": "zonal-geranium",
+      "scientific": "Pelargonium zonale",
+      "claimCount": 20,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 14,
+        "HEURISTIC": 6,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements"
+      ],
+      "holdFields": []
+    },
+    {
+      "packetId": "zucchini-bulk-batch-3-v1",
+      "slug": "zucchini",
+      "scientific": "Cucurbita pepo",
+      "claimCount": 21,
+      "counts": {
+        "SOURCE_SUPPORTED_eligible": 16,
+        "HEURISTIC": 5,
+        "UNKNOWN": 0,
+        "HOLD": 0,
+        "policyViolations": 1,
+        "unsupportedSourceTypes": 0
+      },
+      "unsupportedSourceTypeLabels": [],
+      "violations": [
+        {
+          "claimId": "coldTolerance",
+          "field": "coldTolerance",
+          "packetDeclared": "SOURCE_SUPPORTED",
+          "policyClass": "HEURISTIC_ASSERTION",
+          "reasons": [
+            "excerpt_does_not_support_field_value"
+          ]
+        }
+      ],
+      "eligibleFields": [
+        "scientific",
+        "climateLabel",
+        "care.sun",
+        "care.water",
+        "care.guide",
+        "groupIds",
+        "frostSensitivity",
+        "heatTolerance",
+        "humidityTolerance",
+        "waterNeeds",
+        "sunNeeds",
+        "drainageNeeds",
+        "needsWinterChill",
+        "floweringRequirements",
+        "fruitingRequirements",
+        "reproductive.monoecious"
+      ],
+      "holdFields": []
+    }
+  ],
+  "generatedAt": "2026-09-08T08:20:24.486Z",
+  "parentCommit": "f9b347ead8559220fe21e6f670885f95f8db8d17"
+}

@@ -15,12 +15,18 @@ import {
   getTraitEvidenceMap,
   plantNeedsReview
 } from './plant-data-contract-v1.js';
+import {
+  CATALOG_SOURCE_POLICY_REF,
+  CATALOG_SOURCE_POLICY_ID,
+  CATALOG_SOURCE_POLICY_VERSION
+} from './catalog-source-policy-v1.js';
 
 export const ENRICHMENT_GAP_SCANNER_VERSION = '1.1.0';
 export const ENRICHMENT_GAP_SCANNER_ID = 'enrichment-gap-scanner-v1';
 export const ENRICHMENT_QUEUE_CONTRACT_VERSION = '1.1.0';
-/** Placeholder until catalog source-policy registry exists (reuse SR enums later). */
-export const SOURCE_POLICY_VERSION_PLACEHOLDER = 'catalog-source-policy-pending-v0';
+/** @deprecated Use CATALOG_SOURCE_POLICY_REF — pending placeholder retired. */
+export const SOURCE_POLICY_VERSION_PLACEHOLDER = CATALOG_SOURCE_POLICY_REF;
+export { CATALOG_SOURCE_POLICY_REF, CATALOG_SOURCE_POLICY_ID, CATALOG_SOURCE_POLICY_VERSION };
 
 /** Enrichment execution mode — independent of product gate. */
 export const ENRICHMENT_EXECUTION = Object.freeze({
@@ -457,7 +463,7 @@ export function buildEnrichmentJob(plant, options = {}) {
     queueContractVersion: ENRICHMENT_QUEUE_CONTRACT_VERSION,
     scannerId: ENRICHMENT_GAP_SCANNER_ID,
     scannerVersion: ENRICHMENT_GAP_SCANNER_VERSION,
-    sourcePolicyVersion: SOURCE_POLICY_VERSION_PLACEHOLDER,
+    sourcePolicyVersion: CATALOG_SOURCE_POLICY_REF,
     provenanceNote:
       'Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution.'
   };
@@ -557,7 +563,7 @@ export function buildCurrentCatalogEnrichmentQueue(plants, meta = {}) {
     scannerVersion: ENRICHMENT_GAP_SCANNER_VERSION,
     contractId: PLANT_DATA_CONTRACT_ID,
     contractVersion: PLANT_DATA_CONTRACT_VERSION,
-    sourcePolicyVersion: SOURCE_POLICY_VERSION_PLACEHOLDER,
+    sourcePolicyVersion: CATALOG_SOURCE_POLICY_REF,
     generatedAt: meta.generatedAt || null,
     parentCommit: meta.parentCommit || null,
     note: 'Read-only enrichment observation queue. Not plant truth. Not runtime suitability authority. Safe to regenerate. No SOURCE_SUPPORTED invented.',
