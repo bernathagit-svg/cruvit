@@ -108,8 +108,13 @@ export const FIELD_TO_CLAIM_FAMILY = Object.freeze({
   aliases: CATALOG_CLAIM_FAMILY.IDENTITY,
   frostSensitivity: CATALOG_CLAIM_FAMILY.CLIMATE,
   frost: CATALOG_CLAIM_FAMILY.CLIMATE,
+  frostInjuryStatement: CATALOG_CLAIM_FAMILY.CLIMATE,
+  coldDamageThreshold: CATALOG_CLAIM_FAMILY.CLIMATE,
   coldTolerance: CATALOG_CLAIM_FAMILY.CLIMATE,
   cold: CATALOG_CLAIM_FAMILY.CLIMATE,
+  hardinessZoneBand: CATALOG_CLAIM_FAMILY.CLIMATE,
+  hardinessZoneMin: CATALOG_CLAIM_FAMILY.CLIMATE,
+  hardinessZoneMax: CATALOG_CLAIM_FAMILY.CLIMATE,
   heatTolerance: CATALOG_CLAIM_FAMILY.CLIMATE,
   heat: CATALOG_CLAIM_FAMILY.CLIMATE,
   humidityTolerance: CATALOG_CLAIM_FAMILY.CLIMATE,
@@ -235,14 +240,30 @@ export function resolveSourceTypeFromSource(source) {
   return null;
 }
 
-function excerptSupportsValue(excerpt, value) {
+function excerptSupportsValue(excerpt, value, field) {
   const ex = String(excerpt || '').trim();
   if (!ex) return false;
   if (TEMPLATE_EXCERPT_RE.test(ex)) return false;
+  // Unrelated page sections must not authorize climate claims
+  if (/Fruit\s*Color:|Download Image|data-downloadurl|CC BY-NC/i.test(ex) && !/Hardiness\s*Zone|killed to the ground|frost|freez/i.test(ex)) {
+    return false;
+  }
   const valueStr = Array.isArray(value) ? value.join(',') : String(value ?? '');
-  if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific/i.test(ex);
+  const f = String(field || '');
+  if (/hardiness|ZoneBand|ZoneMin|ZoneMax/i.test(f)) {
+    if (!/Hardiness\s*Zones?/i.test(ex)) return false;
+    if (valueStr && (ex.includes(String(valueStr).split('-')[0]) || ex.toLowerCase().includes(valueStr.toLowerCase()))) {
+      return true;
+    }
+    return /\b(?:1[0-3]|[3-9])[ab]?\b/.test(ex);
+  }
+  if (/frostInjury|coldDamage|frostSensitivity|^frost$/i.test(f)) {
+    if (valueStr && ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
+    return /frost|freez|killed to the ground|winter.?kill|tender/i.test(ex);
+  }
+  if (!valueStr) return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
   if (ex.toLowerCase().includes(valueStr.toLowerCase())) return true;
-  return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific/i.test(ex);
+  return /frost|cold|heat|humid|water|sun|drain|chill|flower|fruit|species|scientific|hardiness/i.test(ex);
 }
 
 function normalizeIdentityToken(s) {
@@ -429,7 +450,7 @@ export function evaluateSourceSupportedEligibility(candidate = {}) {
   if (TEMPLATE_EXCERPT_RE.test(excerpt)) {
     return deny(EVIDENCE_CLASS.HEURISTIC_ASSERTION, ['template_excerpt_not_source_quote'], CONTRADICTION_CLASS.INSUFFICIENT_EVIDENCE);
   }
-  if (!excerptSupportsValue(excerpt, candidate.value)) {
+  if (!excerptSupportsValue(excerpt, candidate.value, field)) {
     return deny(EVIDENCE_CLASS.HEURISTIC_ASSERTION, [
       'excerpt_does_not_support_field_value'
     ], CONTRADICTION_CLASS.INSUFFICIENT_EVIDENCE);

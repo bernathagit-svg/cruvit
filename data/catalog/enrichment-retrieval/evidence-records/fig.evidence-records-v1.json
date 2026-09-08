@@ -1,0 +1,87 @@
+{
+  "slug": "fig",
+  "generatedAt": "2026-09-08T16:14:43.014Z",
+  "records": [
+    {
+      "sourceId": "ncsu-ficus-carica",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+      "title": "Ficus carica (Edible Fig)",
+      "retrievedAt": "2026-09-08T15:38:54.260Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "5bac63f13d1e5785b0c0475013ef229470740ca00da2bfb66748b523cb747570",
+      "canonicalPlantIdentity": {
+        "slug": "fig",
+        "scientificName": "Ficus carica"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 7,
+        "hardinessZoneMax": 10,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "7-10",
+        "displayValue": "USDA 7-10",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b",
+        "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-ficus-carica",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=FICA",
+      "title": "Ficus carica - USDA PLANTS",
+      "retrievedAt": "2026-09-08T15:38:54.899Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "fig",
+        "scientificName": "Ficus carica"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-08T16:14:43.017Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 3,
+  "externalRequestCount": 0,
+  "cache": {
+    "hits": 6,
+    "misses": 0,
+    "writes": 0,
+    "urls": [],
+    "uniqueUrls": []
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "apple",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "high"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-malus-domestica",
+          "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-malus-domestica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=MADO4",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-retrieval\\candidate-packets\\apple.candidate-packet-v1.json",
+      "fingerprint": "ae97ad49fbf35a88ced14a87f4fc988e626203b9ff5c6bb4a6a6ed07490ded7d"
+    },
+    {
+      "slug": "fig",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "low"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-ficus-carica",
+          "url": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-ficus-carica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=FICA",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-retrieval\\candidate-packets\\fig.candidate-packet-v1.json",
+      "fingerprint": "bfa094391e83a4f95779b0f9b71e3e5f1ecdb6dc84d3496d8104ddd815a7388a"
+    },
+    {
+      "slug": "pomegranate",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "cold_damage_threshold",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "high"
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "low"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "fieldsAppliedInSimulation": 2,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-punica-granatum",
+          "url": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-punica-granatum",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PUGR2",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-retrieval\\candidate-packets\\pomegranate.candidate-packet-v1.json",
+      "fingerprint": "0c323438070c6ec9118814106d4fda965394d89d57233fd82a0f5a302641dd48"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}
