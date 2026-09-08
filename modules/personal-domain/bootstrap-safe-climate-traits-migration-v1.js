@@ -81,6 +81,9 @@ export function applyBootstrapSafeClimateTraitsMigration(
     if (nextTraits.fieldOrigins) {
       target.climateTraits.fieldOrigins = { ...nextTraits.fieldOrigins };
     }
+    if (nextTraits.enrichmentProvenance) {
+      target.climateTraits.enrichmentProvenance = structuredClone(nextTraits.enrichmentProvenance);
+    }
     if (Array.isArray(nextTraits.groupIds)) {
       target.climateTraits.groupIds = nextTraits.groupIds.slice();
     }

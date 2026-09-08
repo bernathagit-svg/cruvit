@@ -440,9 +440,9 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   const report = classifyCatalogReadOnly(catalog);
   assert.equal(report.total, catalog.length);
   assert.ok(report.total >= 100 && report.total <= 120, `unexpected total=${report.total}`);
-  // Seed plants dominate B; SAFE + unlocked-six bootstrap migrate structurally (still not Class A);
-  // remaining unresolved bootstrap remain D.
-  assert.equal(report.counts.A, 0, 'no Class A expected in current catalog');
+  // Seed plants dominate B; SAFE + unlocked-six bootstrap migrate structurally.
+  // First real enrichment apply: pomegranate alone is Class A (SOURCE_SUPPORTED frost+cold).
+  assert.equal(report.counts.A, 1, 'exactly one Class A expected (pomegranate)');
   assert.ok(report.counts.B >= 90, `expected many B, got ${report.counts.B}`);
   assert.ok(
     report.counts.D >= 10 && report.counts.D <= 20,

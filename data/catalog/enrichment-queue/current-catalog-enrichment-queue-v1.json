@@ -6,52 +6,52 @@
   "contractId": "plant-data-contract-v1",
   "contractVersion": "1.0.0",
   "sourcePolicyVersion": "catalog-source-policy-v1@1.0.0",
-  "generatedAt": "2026-09-08T08:20:25.172Z",
+  "generatedAt": "2026-09-08T16:40:49.471Z",
   "parentCommit": "b6b4efa63533713c5d17988e0c0b6cf17ef6edc9",
   "note": "Read-only enrichment observation queue. Not plant truth. Not runtime suitability authority. Safe to regenerate. No SOURCE_SUPPORTED invented.",
   "catalogSnapshot": {
     "total": 108,
     "counts": {
-      "A": 0,
-      "B": 95,
+      "A": 1,
+      "B": 94,
       "C": 0,
       "D": 13
     },
     "gates": {
-      "PASS": 0,
-      "PARTIAL": 69,
+      "PASS": 1,
+      "PARTIAL": 68,
       "HOLD": 26,
       "REJECT": 13
     }
   },
   "summary": {
-    "totalJobs": 108,
+    "totalJobs": 107,
     "byReadiness": {
       "A": 0,
-      "B": 95,
+      "B": 94,
       "C": 0,
       "D": 13
     },
     "byProductGate": {
       "PASS": 0,
-      "PARTIAL": 69,
+      "PARTIAL": 68,
       "HOLD": 26,
       "REJECT": 13
     },
     "byGate": {
       "PASS": 0,
-      "PARTIAL": 69,
+      "PARTIAL": 68,
       "HOLD": 26,
       "REJECT": 13
     },
     "byEnrichmentExecution": {
-      "AUTO": 91,
+      "AUTO": 90,
       "HOLD_FOR_REVIEW": 17,
       "NONE": 0
     },
     "byPriority": {
       "P0": 9,
-      "P1": 43,
+      "P1": 42,
       "P2": 48,
       "P3": 0,
       "P4": 8
@@ -60,22 +60,22 @@
       "BROAD_TAXON_POLICY": 12,
       "IDENTITY_SPECIES_REQUIRED": 17,
       "LEGACY_META_ONLY": 13,
-      "MISSING_FROST_EVIDENCE": 108,
-      "MISSING_COLD_EVIDENCE": 108,
+      "MISSING_FROST_EVIDENCE": 107,
+      "MISSING_COLD_EVIDENCE": 107,
       "MISSING_HEAT_EVIDENCE": 13,
       "MISSING_FLOWERING_REQUIREMENTS": 45,
       "MISSING_FRUITING_REQUIREMENTS": 65,
-      "EVIDENCE_NOT_SOURCE_SUPPORTED": 108,
+      "EVIDENCE_NOT_SOURCE_SUPPORTED": 107,
       "NEEDS_REVIEW": 26,
       "CATEGORY_ONLY_POLICY": 1
     },
-    "evidenceOnlyNearACandidates": 43,
+    "evidenceOnlyNearACandidates": 42,
     "floweringGapJobs": 45,
     "fruitingGapJobs": 65,
     "reviewHoldJobs": 26,
     "speciesSelectionJobs": 9,
     "categoryOrBroadJobs": 8,
-    "AUTO_JOB_COUNT": 91,
+    "AUTO_JOB_COUNT": 90,
     "OWNER_REVIEW_JOB_COUNT": 17,
     "NONE_JOB_COUNT": 0
   },
@@ -2430,53 +2430,6 @@
       "contractReasons": [
         "MISSING_TRAIT_EVIDENCE"
       ],
-      "gapContractReasonTrace": {
-        "MISSING_FROST_EVIDENCE": [
-          "MISSING_FROST_SENSITIVITY",
-          "MISSING_TRAIT_EVIDENCE"
-        ],
-        "MISSING_COLD_EVIDENCE": [
-          "MISSING_CLIMATE_CORE",
-          "MISSING_TRAIT_EVIDENCE"
-        ],
-        "EVIDENCE_NOT_SOURCE_SUPPORTED": [
-          "MISSING_TRAIT_EVIDENCE"
-        ]
-      },
-      "suggestedStage": "SOURCE_RETRIEVAL_EVIDENCE",
-      "priority": "P1",
-      "identityStatus": "CANONICAL_SPECIES",
-      "reviewStatus": "AUTO",
-      "sourceRetrievalRequired": true,
-      "allowedAutoAction": "AUTO",
-      "futureClaimTypes": [
-        "cold",
-        "frost"
-      ],
-      "productRole": null,
-      "contractId": "plant-data-contract-v1",
-      "contractVersion": "1.0.0",
-      "queueContractVersion": "1.1.0",
-      "scannerId": "enrichment-gap-scanner-v1",
-      "scannerVersion": "1.1.0",
-      "sourcePolicyVersion": "catalog-source-policy-v1@1.0.0",
-      "provenanceNote": "Queue observation only. Not plant truth. Not runtime suitability authority. Cannot invent SOURCE_SUPPORTED. productGate ≠ enrichmentExecution."
-    },
-    {
-      "jobId": "enrich-v1:pomegranate",
-      "canonicalSlug": "pomegranate",
-      "scientificName": "Punica granatum",
-      "commonName": "Pomegranate Tree",
-      "currentReadinessClass": "B",
-      "productGate": "PARTIAL",
-      "currentGate": "PARTIAL",
-      "enrichmentExecution": "AUTO",
-      "gapCodes": [
-        "MISSING_FROST_EVIDENCE",
-        "MISSING_COLD_EVIDENCE",
-        "EVIDENCE_NOT_SOURCE_SUPPORTED"
-      ],
-      "contractReasons": [],
       "gapContractReasonTrace": {
         "MISSING_FROST_EVIDENCE": [
           "MISSING_FROST_SENSITIVITY",

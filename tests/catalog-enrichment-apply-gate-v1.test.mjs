@@ -83,7 +83,8 @@ test('1. valid pomegranate candidate set → APPLY_ALLOWED', () => {
   assert.equal(r.selectedForPilotWrite, true);
   assert.ok(r.mutationPlan?.ok);
   assert.equal(r.mutationPlan.writesCatalog, false);
-  assert.equal(r.readinessSimulation.current.readinessShort, 'B');
+  // Post first real apply: canonical pomegranate is already Class A / SOURCE_SUPPORTED.
+  assert.equal(r.readinessSimulation.current.readinessShort, 'A');
   assert.equal(r.readinessSimulation.simulated.readinessShort, 'A');
   assert.equal(r.externalRequests, 0);
   assert.equal(r.catalogMutated, false);
@@ -153,14 +154,14 @@ test('6. conflicting SS current value → HOLD', () => {
   assert.equal(r.decision, APPLY_DECISION.HOLD_CONFLICT);
 });
 
-test('7. heuristic current + compatible SS → allowed', () => {
-  assert.equal(pomPlant.climateTraits.traitEvidenceClasses.coldTolerance, 'HEURISTIC_ASSERTION');
-  assert.equal(pomPlant.climateTraits.coldTolerance, 'medium');
+test('7. already SOURCE_SUPPORTED equivalent → allowed (idempotent upgrade path)', () => {
+  assert.equal(pomPlant.climateTraits.traitEvidenceClasses.coldTolerance, 'SOURCE_SUPPORTED');
+  assert.equal(pomPlant.climateTraits.coldTolerance, 'low');
   const fp = pomPacket.fieldPackets.find((f) => f.targetField === 'coldTolerance');
   assert.equal(fp.proposedValue, 'low');
   const r = evaluateCandidateForApply(fp, { plant: pomPlant, packet: pomPacket });
   assert.equal(r.decision, APPLY_DECISION.APPLY_ALLOWED);
-  assert.ok(r.reasons.includes('heuristic_current_compatible_ss_upgrade'));
+  assert.ok(r.reasons.includes('same_value_evidence_provenance_upgrade'));
 });
 
 test('8. tampered packet fingerprint → blocked', () => {
@@ -184,7 +185,7 @@ test('9. repeat evaluation idempotent', () => {
   );
 });
 
-test('10. dry-run mutation changes only authorized fields', () => {
+test('10. dry-run mutation changes only authorized fields (idempotent after real apply)', () => {
   const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
   const beforeHash = plantContentHash(pomPlant);
   const { before, after, guards } = r.mutationPlan;
@@ -193,16 +194,19 @@ test('10. dry-run mutation changes only authorized fields', () => {
   assert.equal(guards.needsReviewUnchanged, true);
   assert.equal(before.climateTraits.floweringRequirements, after.climateTraits.floweringRequirements);
   assert.equal(before.climateTraits.fruitingRequirements, after.climateTraits.fruitingRequirements);
-  assert.notEqual(before.climateTraits.frostSensitivity, after.climateTraits.frostSensitivity);
-  assert.notEqual(before.climateTraits.coldTolerance, after.climateTraits.coldTolerance);
+  // Already applied: values stay equivalent; dry-run must not invent alternate ordinals
+  assert.equal(before.climateTraits.frostSensitivity, after.climateTraits.frostSensitivity);
+  assert.equal(before.climateTraits.coldTolerance, after.climateTraits.coldTolerance);
+  assert.equal(after.climateTraits.frostSensitivity, 'high');
+  assert.equal(after.climateTraits.coldTolerance, 'low');
   // original plant unchanged
   assert.equal(plantContentHash(pomPlant), beforeHash);
-  assert.equal(pomPlant.climateTraits.frostSensitivity, 'medium');
+  assert.equal(pomPlant.climateTraits.frostSensitivity, 'high');
 });
 
-test('11. pomegranate simulated readiness correct', () => {
+test('11. pomegranate simulated readiness correct (post real apply)', () => {
   const r = evaluateCandidateSetForPlant({ packet: pomPacket, plant: pomPlant });
-  assert.equal(r.readinessSimulation.current.readinessShort, 'B');
+  assert.equal(r.readinessSimulation.current.readinessShort, 'A');
   assert.equal(r.readinessSimulation.simulated.readinessShort, 'A');
   assert.ok(r.readinessSimulation.blockersCleared.length >= 0);
 });

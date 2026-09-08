@@ -204,7 +204,12 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
   const lav = payload.plants.lavender.climateTraits;
   assert.equal(lav.coldTolerance, 'medium');
   assert.equal(lav.fieldOrigins.coldTolerance, VALUE_ORIGIN.LEGACY_ASSERTED_METADATA);
-  // No plant should get a core field without fieldOrigins LEGACY_ASSERTED_METADATA
+  // Enrichment overlay (pomegranate frost/cold only) may use ASSERTED_SOURCE; all other SAFE
+  // structural fields remain LEGACY_ASSERTED_METADATA.
+  const enrichmentOverlayFields = new Set([
+    'pomegranate.frostSensitivity',
+    'pomegranate.coldTolerance'
+  ]);
   for (const slug of payload.safeSlugs) {
     const ct = payload.plants[slug].climateTraits;
     for (const k of [
@@ -217,7 +222,12 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
       'waterNeeds'
     ]) {
       if (ct[k] != null) {
-        assert.equal(ct.fieldOrigins[k], VALUE_ORIGIN.LEGACY_ASSERTED_METADATA, `${slug}.${k}`);
+        const key = `${slug}.${k}`;
+        if (enrichmentOverlayFields.has(key)) {
+          assert.equal(ct.fieldOrigins[k], VALUE_ORIGIN.ASSERTED_SOURCE, key);
+        } else {
+          assert.equal(ct.fieldOrigins[k], VALUE_ORIGIN.LEGACY_ASSERTED_METADATA, key);
+        }
       }
     }
   }
@@ -276,7 +286,7 @@ test('G. pineapple unchanged (not in SAFE set); remains B/UNKNOWN reproductive s
   assert.equal(after.fruitingStanceReady, false);
 });
 
-test('PHASE5: readiness before/after for SAFE plants — no Class A inflation', () => {
+test('PHASE5: readiness before/after for SAFE plants — Class A only via enrichment overlay', () => {
   const library = bootstrapEntriesFromApp();
   const index = Object.fromEntries(library.map((p) => [p.slug, { ...p }]));
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();
@@ -294,14 +304,18 @@ test('PHASE5: readiness before/after for SAFE plants — no Class A inflation', 
       class: shortClass(r),
       blockers: r.reasons || []
     });
-    assert.notEqual(shortClass(r), 'A', `no Class A inflation for ${slug}`);
+    if (slug === 'pomegranate') {
+      assert.equal(shortClass(r), 'A', 'pomegranate real enrichment apply → Class A');
+    } else {
+      assert.notEqual(shortClass(r), 'A', `no Class A inflation for ${slug}`);
+    }
   }
   const beforeCounts = { A: 0, B: 0, C: 0, D: 0 };
   const afterCounts = { A: 0, B: 0, C: 0, D: 0 };
   for (const row of beforeRows) beforeCounts[row.class] = (beforeCounts[row.class] || 0) + 1;
   for (const row of afterRows) afterCounts[row.class] = (afterCounts[row.class] || 0) + 1;
   assert.equal(beforeCounts.D, 26);
-  assert.equal(afterCounts.A, 0);
+  assert.equal(afterCounts.A, 1);
   assert.ok(afterCounts.D < 26 || afterCounts.B + afterCounts.C > 0);
 
   const seed = loadSeed();
@@ -319,7 +333,7 @@ test('PHASE5: readiness before/after for SAFE plants — no Class A inflation', 
     const c = shortClass(classifyPlantDataReadiness(p));
     catalogCounts[c] = (catalogCounts[c] || 0) + 1;
   }
-  assert.equal(catalogCounts.A, 0);
+  assert.equal(catalogCounts.A, 1);
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -384,14 +398,26 @@ test('PHASE7: identity safety — no new duplicates; remaining conflict plants u
   }
 });
 
-test('provenance: no SOURCE_SUPPORTED invented by migration', () => {
+test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate frost/cold)', () => {
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();
+  const allowedSs = new Set([
+    'pomegranate.frostSensitivity',
+    'pomegranate.coldTolerance'
+  ]);
   for (const slug of payload.safeSlugs) {
     const classes = payload.plants[slug].climateTraits.traitEvidenceClasses || {};
     for (const [field, v] of Object.entries(classes)) {
-      assert.notEqual(v, 'SOURCE_SUPPORTED', `${slug}.${field}`);
-      assert.equal(v, 'HEURISTIC_ASSERTION');
+      const key = `${slug}.${field}`;
+      if (allowedSs.has(key)) {
+        assert.equal(v, 'SOURCE_SUPPORTED', key);
+      } else {
+        assert.notEqual(v, 'SOURCE_SUPPORTED', key);
+        assert.equal(v, 'HEURISTIC_ASSERTION');
+      }
     }
     assert.equal(payload.plants[slug].climateTraits.migration.provenance, 'LEGACY_ASSERTED_METADATA');
   }
+  const pom = payload.plants.pomegranate.climateTraits;
+  assert.ok(pom.enrichmentProvenance?.frostSensitivity?.transformRef);
+  assert.ok(pom.enrichmentProvenance?.coldTolerance?.transformRef);
 });

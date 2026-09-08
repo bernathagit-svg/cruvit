@@ -1,0 +1,669 @@
+{
+  "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+  "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+  "parentCommit": "59159449a8dded8470ac05f1bc00a104216f3ef1",
+  "generatedAt": "2026-09-08T16:40:02.499Z",
+  "futureAtomicWrite": {
+    "version": "1.0.0-design",
+    "steps": [
+      "verify current plant content hash / catalog version",
+      "re-run evaluateCandidateSetForPlant; require APPLY_ALLOWED",
+      "apply exact approved climateTraits fields + traitEvidenceClasses + fieldOrigins + enrichmentProvenance only",
+      "re-run plant-data-contract-v1 on mutated record",
+      "re-run product regression gates (survival/growth/flowering-fruiting unchanged guards)",
+      "persist plant + readiness report atomically (file write / replace)",
+      "on any failure: discard mutation; leave prior plant bytes unchanged"
+    ],
+    "repositoryFit": "Deterministic file-backed catalog (app.html PLANT_LIBRARY + seed + bootstrap migrations) can support hash-check + write-temp + rename without a database. Prefer a single plant-record serializer once apply is authorized; do not partial-write mid-gate.",
+    "executed": false,
+    "executedByWriter": true
+  },
+  "externalRequests": 0,
+  "phases": {
+    "phase1_baseline": {
+      "canonicalSlug": "pomegranate",
+      "scientificName": "Punica granatum",
+      "readinessShort": "B",
+      "productGate": "PARTIAL",
+      "frostSensitivity": "medium",
+      "coldTolerance": "medium",
+      "traitEvidenceClasses": {
+        "frostSensitivity": "HEURISTIC_ASSERTION",
+        "coldTolerance": "HEURISTIC_ASSERTION"
+      },
+      "fieldOrigins": {
+        "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+        "coldTolerance": "LEGACY_ASSERTED_METADATA"
+      },
+      "needsReview": null,
+      "floweringRequirements": "Best flowering comes with full sun, airflow, and a clear dry-season rhythm.",
+      "fruitingRequirements": "Reliable fruiting prefers warm dry seasons, deep but not constant watering, and good drainage.",
+      "fileHashes": {
+        "json": "eab42129315c870116f9c39712b6a442462077f35d0b930e2e16b3decaa7e71e",
+        "js": "0a8e7f14e225c386356fadea205d42c7eaa464086b27cb579c3dbc04655903ab",
+        "browser": "74947b329448de959939bcc9425964731dff084244ff252aab1880e92ab40e19"
+      },
+      "plantLogicalFingerprint": "acbe31d5a783994e33d7841c5b597a1ff5ad95286fd7ad082c4f858f4f3a0eb0",
+      "migrationPayloadMatchesRuntime": {
+        "frostSensitivity": true,
+        "coldTolerance": true
+      },
+      "storageFiles": {
+        "json": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\bootstrap-safe-climate-traits-migration-v1.json",
+        "js": "C:\\Users\\berna\\Projects\\cruvit\\modules\\personal-domain\\bootstrap-safe-climate-traits-migration-data-v1.js",
+        "browser": "C:\\Users\\berna\\Projects\\cruvit\\modules\\personal-domain\\bootstrap-safe-climate-traits-migration-data-v1.browser.js"
+      },
+      "queueBefore": {
+        "total": 108,
+        "auto": 91,
+        "hold": 17,
+        "pomegranate": {
+          "jobId": "enrich-v1:pomegranate",
+          "readinessClass": "B",
+          "productGate": "PARTIAL",
+          "gapCodes": [
+            "MISSING_FROST_EVIDENCE",
+            "MISSING_COLD_EVIDENCE",
+            "EVIDENCE_NOT_SOURCE_SUPPORTED"
+          ],
+          "enrichmentExecution": "AUTO"
+        },
+        "note": "Corrected to full-catalog HEAD queue (bootstrap+seed). Apply-script interim scan omitted seed."
+      }
+    },
+    "phase2_regate": {
+      "setDecision": "APPLY_ALLOWED",
+      "setReasons": [
+        "all_apply_gates_passed"
+      ],
+      "fieldResults": [
+        {
+          "field": "frostSensitivity",
+          "decision": "APPLY_ALLOWED",
+          "reasons": [
+            "heuristic_current_compatible_ss_upgrade",
+            "all_apply_gates_passed"
+          ],
+          "currentValue": "medium",
+          "candidateValue": "high",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "contradictionClass": "CONSISTENT"
+        },
+        {
+          "field": "coldTolerance",
+          "decision": "APPLY_ALLOWED",
+          "reasons": [
+            "heuristic_current_compatible_ss_upgrade",
+            "all_apply_gates_passed"
+          ],
+          "currentValue": "medium",
+          "candidateValue": "low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "contradictionClass": "CONSISTENT"
+        }
+      ],
+      "mutationPlanOk": true,
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "blockersCleared": [],
+        "blockersAdded": [
+          "COMPLETE_FOR_CLASS_A"
+        ],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    "phase3_mutationPlan": {
+      "jsonDiff": [
+        {
+          "path": "climateTraits.frostSensitivity",
+          "before": {
+            "value": "medium",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+          },
+          "after": {
+            "value": "high",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "fieldOrigin": "ASSERTED_SOURCE"
+          },
+          "provenancePath": "climateTraits.enrichmentProvenance.frostSensitivity",
+          "provenance": {
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "The plant usually survives the winter but will be killed to the ground at temperatures below 10&deg; F.",
+            "sourceClaim": {
+              "claimType": "cold_damage_threshold",
+              "rawValue": "killed_to_ground",
+              "displayValue": "killed_to_ground below 10F",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "killed_to_ground",
+              "minimumWinterTemperatureF": 10,
+              "units": "F",
+              "claimFingerprint": "353fa67e2d7bec1fa2b92ee4614adbf06f17c5b85a404d96a1ff4be34111ea56"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "high",
+                "retainedSourceIds": [
+                  "ncsu-punica-granatum"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pomegranate\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-punica-granatum\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
+        },
+        {
+          "path": "climateTraits.coldTolerance",
+          "before": {
+            "value": "medium",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+          },
+          "after": {
+            "value": "low",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "fieldOrigin": "ASSERTED_SOURCE"
+          },
+          "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+          "provenance": {
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 8a, 8b, 9a, 9b, 10a, 10b",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "8-10",
+              "displayValue": "USDA 8-10",
+              "hardinessZoneMin": 8,
+              "hardinessZoneMax": 10,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "16ca4c56dc81362f5f6462edcaff8fff00f7fa62ed6fc68cdad47613f29c87f3"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "low",
+                "retainedSourceIds": [
+                  "ncsu-punica-granatum"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pomegranate\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-punica-granatum\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
+        }
+      ],
+      "planFingerprint": "62d178e0ca8d38119856ebc441ef9dc6765fc20eb75b217bc2394386d8cd34e5",
+      "guards": {
+        "floweringRequirementsUnchanged": true,
+        "fruitingRequirementsUnchanged": true,
+        "needsReviewUnchanged": true,
+        "slugUnchanged": true,
+        "scientificUnchanged": true,
+        "aliasesUnchanged": true
+      },
+      "beforeAfter": [
+        {
+          "field": "frostSensitivity",
+          "before": {
+            "value": "medium",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+          },
+          "after": {
+            "value": "high",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "fieldOrigin": "ASSERTED_SOURCE",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contradictionClass": "CONSISTENT",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ]
+          },
+          "action": "replace_value_and_upgrade_evidence"
+        },
+        {
+          "field": "coldTolerance",
+          "before": {
+            "value": "medium",
+            "evidenceClass": "HEURISTIC_ASSERTION",
+            "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+          },
+          "after": {
+            "value": "low",
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "fieldOrigin": "ASSERTED_SOURCE",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contradictionClass": "CONSISTENT",
+            "sourceIds": [
+              "ncsu-punica-granatum"
+            ]
+          },
+          "action": "replace_value_and_upgrade_evidence"
+        }
+      ]
+    },
+    "phase4_atomicWrite": {
+      "ok": true,
+      "skipped": false,
+      "catalogMutated": true,
+      "slug": "pomegranate",
+      "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+      "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+      "appliedAt": "2026-09-08T16:40:02.522Z",
+      "mutationPlan": {
+        "jsonDiff": [
+          {
+            "path": "climateTraits.frostSensitivity",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "high",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.frostSensitivity",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-punica-granatum"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "The plant usually survives the winter but will be killed to the ground at temperatures below 10&deg; F.",
+              "sourceClaim": {
+                "claimType": "cold_damage_threshold",
+                "rawValue": "killed_to_ground",
+                "displayValue": "killed_to_ground below 10F",
+                "hardinessZoneMin": null,
+                "hardinessZoneMax": null,
+                "hardinessZoneSystem": null,
+                "damageMode": "killed_to_ground",
+                "minimumWinterTemperatureF": 10,
+                "units": "F",
+                "claimFingerprint": "353fa67e2d7bec1fa2b92ee4614adbf06f17c5b85a404d96a1ff4be34111ea56"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "high",
+                  "retainedSourceIds": [
+                    "ncsu-punica-granatum"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pomegranate\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-punica-granatum\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+              },
+              "transformId": "frost-injury-to-frost-sensitivity-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          },
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-punica-granatum"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 8a, 8b, 9a, 9b, 10a, 10b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "8-10",
+                "displayValue": "USDA 8-10",
+                "hardinessZoneMin": 8,
+                "hardinessZoneMax": 10,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "16ca4c56dc81362f5f6462edcaff8fff00f7fa62ed6fc68cdad47613f29c87f3"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "low",
+                  "retainedSourceIds": [
+                    "ncsu-punica-granatum"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pomegranate\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-punica-granatum\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "planFingerprint": "62d178e0ca8d38119856ebc441ef9dc6765fc20eb75b217bc2394386d8cd34e5",
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessBeforeWriteSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "blockersCleared": [],
+        "blockersAdded": [
+          "COMPLETE_FOR_CLASS_A"
+        ],
+        "note": "Simulation only — no catalog write."
+      },
+      "proposedClassification": {
+        "readinessShort": "A",
+        "gate": "PASS",
+        "reasons": [
+          "COMPLETE_FOR_CLASS_A"
+        ]
+      },
+      "fileHashesBefore": {
+        "json": "eab42129315c870116f9c39712b6a442462077f35d0b930e2e16b3decaa7e71e",
+        "js": "0a8e7f14e225c386356fadea205d42c7eaa464086b27cb579c3dbc04655903ab",
+        "browser": "74947b329448de959939bcc9425964731dff084244ff252aab1880e92ab40e19"
+      },
+      "fileHashesAfter": {
+        "json": "370d94bc79a91286a703c0ece8bd55109b354cd14ee673cf5b4c30fdc2cb6441",
+        "js": "bfa86123c4851cd476cb12d1af464f7dcde78e09c169362c97c981a9d20a4ff8",
+        "browser": "f4c224d909dfe909552d8f97c009082965e1f9a1ae8cd5fd350f0d4f3749c822"
+      },
+      "externalRequests": 0,
+      "appleFigUntouched": true
+    },
+    "phase5_readiness": {
+      "BEFORE": "B",
+      "AFTER": "A",
+      "afterGate": "PASS",
+      "afterReasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ],
+      "plantLogicalFingerprintAfter": "fb0ed79fc62eeacdb4143e1a9deeb3235dfb87f88e1522e3f835c7bf8b8da86b",
+      "fileHashesAfter": {
+        "json": "370d94bc79a91286a703c0ece8bd55109b354cd14ee673cf5b4c30fdc2cb6441",
+        "js": "bfa86123c4851cd476cb12d1af464f7dcde78e09c169362c97c981a9d20a4ff8",
+        "browser": "f4c224d909dfe909552d8f97c009082965e1f9a1ae8cd5fd350f0d4f3749c822"
+      }
+    },
+    "phase6_provenance": {
+      "frostSensitivity": {
+        "finalValue": "high",
+        "finalEvidenceClass": "SOURCE_SUPPORTED",
+        "fieldOrigin": "ASSERTED_SOURCE",
+        "sourceClaim": {
+          "claimType": "cold_damage_threshold",
+          "rawValue": "killed_to_ground",
+          "displayValue": "killed_to_ground below 10F",
+          "hardinessZoneMin": null,
+          "hardinessZoneMax": null,
+          "hardinessZoneSystem": null,
+          "damageMode": "killed_to_ground",
+          "minimumWinterTemperatureF": 10,
+          "units": "F",
+          "claimFingerprint": "353fa67e2d7bec1fa2b92ee4614adbf06f17c5b85a404d96a1ff4be34111ea56"
+        },
+        "sourceId": "ncsu-punica-granatum",
+        "sourceIds": [
+          "ncsu-punica-granatum"
+        ],
+        "transformId": "frost-injury-to-frost-sensitivity-v1",
+        "transformVersion": "1.0.0",
+        "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+        "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+        "contradictionResult": "CONSISTENT",
+        "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+        "sourcePolicyMaySS": true,
+        "evidenceClassFromPolicy": "SOURCE_SUPPORTED"
+      },
+      "coldTolerance": {
+        "finalValue": "low",
+        "finalEvidenceClass": "SOURCE_SUPPORTED",
+        "fieldOrigin": "ASSERTED_SOURCE",
+        "sourceClaim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "8-10",
+          "displayValue": "USDA 8-10",
+          "hardinessZoneMin": 8,
+          "hardinessZoneMax": 10,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "16ca4c56dc81362f5f6462edcaff8fff00f7fa62ed6fc68cdad47613f29c87f3"
+        },
+        "sourceId": "ncsu-punica-granatum",
+        "sourceIds": [
+          "ncsu-punica-granatum"
+        ],
+        "transformId": "hardiness-zone-to-cold-traits-v1",
+        "transformVersion": "1.0.0",
+        "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+        "contradictionResult": "CONSISTENT",
+        "contentHash": "990f941a7fa8aa9d34ca4b2ed033496cfb7b944d91390490f47279a8610fb843",
+        "sourcePolicyMaySS": true,
+        "evidenceClassFromPolicy": "SOURCE_SUPPORTED"
+      },
+      "floweringUnchanged": true,
+      "fruitingUnchanged": true,
+      "needsReviewUnchanged": true
+    },
+    "phase7_product": {
+      "note": "In-process contract/trait regression; full node:test suite run separately",
+      "frostSensitivity": "high",
+      "coldTolerance": "low",
+      "heatToleranceUnchanged": true,
+      "floweringUnchanged": true,
+      "fruitingUnchanged": true,
+      "appleUnchanged": true,
+      "figUnchanged": true,
+      "externalRequests": 0,
+      "chelsaCalls": 0
+    },
+    "phase8_queue": {
+      "before": {
+        "total": 108,
+        "auto": 91,
+        "hold": 17,
+        "catalogCounts": { "A": 0, "B": 95, "C": 0, "D": 13 },
+        "pomegranate": {
+          "jobId": "enrich-v1:pomegranate",
+          "readinessClass": "B",
+          "productGate": "PARTIAL",
+          "gapCodes": [
+            "MISSING_FROST_EVIDENCE",
+            "MISSING_COLD_EVIDENCE",
+            "EVIDENCE_NOT_SOURCE_SUPPORTED"
+          ],
+          "enrichmentExecution": "AUTO"
+        },
+        "note": "Authoritative full-catalog queue from HEAD summary before apply (bootstrap+seed)."
+      },
+      "after": {
+        "total": 107,
+        "auto": 90,
+        "hold": 17,
+        "catalogCounts": { "A": 1, "B": 94, "C": 0, "D": 13 },
+        "pomegranate": null,
+        "note": "Pomegranate job disappeared entirely (Class A / no enrichment job)."
+      }
+    },
+    "phase9_idempotence": {
+      "SECOND_APPLY_WOULD_MUTATE": "NO",
+      "gate2Decision": "APPLY_ALLOWED",
+      "secondWriteSkipped": true,
+      "secondWriteCatalogMutated": false,
+      "secondWriteReason": "already_equivalent_no_mutation"
+    },
+    "phase11_files": {
+      "canonicalCatalogFiles": [
+        "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\bootstrap-safe-climate-traits-migration-v1.json",
+        "C:\\Users\\berna\\Projects\\cruvit\\modules\\personal-domain\\bootstrap-safe-climate-traits-migration-data-v1.js",
+        "C:\\Users\\berna\\Projects\\cruvit\\modules\\personal-domain\\bootstrap-safe-climate-traits-migration-data-v1.browser.js"
+      ],
+      "fieldsModified": [
+        "climateTraits.frostSensitivity",
+        "climateTraits.coldTolerance"
+      ],
+      "evidenceMaps": [
+        "traitEvidenceClasses.frostSensitivity",
+        "traitEvidenceClasses.coldTolerance",
+        "fieldOrigins.frostSensitivity",
+        "fieldOrigins.coldTolerance",
+        "enrichmentProvenance.frostSensitivity",
+        "enrichmentProvenance.coldTolerance"
+      ],
+      "queueArtifact": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-queue\\current-catalog-enrichment-queue-v1.json",
+      "reportArtifact": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-retrieval\\pomegranate-real-enrichment-apply-v1-report.json"
+    }
+  },
+  "confirmations": {
+    "realPlantWritePerformed": "YES",
+    "onlyPomegranateChanged": "YES",
+    "coldToleranceUpdated": "YES",
+    "frostSensitivityUpdated": "YES",
+    "sourceSupportedLineageValid": "YES",
+    "floweringChanged": "NO",
+    "fruitingChanged": "NO",
+    "needsReviewChanged": "NO",
+    "appleChanged": "NO",
+    "figChanged": "NO",
+    "externalRetrievalDuringApply": "NO",
+    "runtimeRefetchRequired": "NO",
+    "batch3Ingested": "NO",
+    "deployed": "NO",
+    "unrelatedWipTouched": "NO"
+  },
+  "verdict": "POMEGRANATE_REAL_ENRICHMENT_APPLY_VALIDATED"
+}
