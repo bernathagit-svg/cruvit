@@ -441,8 +441,8 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   assert.equal(report.counts.A, 0, 'no Class A expected in current catalog');
   assert.ok(report.counts.B >= 60, `expected many B, got ${report.counts.B}`);
   assert.ok(
-    report.counts.D >= 20 && report.counts.D <= 40,
-    `expected ~26 conflict bootstrap D, got ${report.counts.D}`
+    report.counts.D >= 12 && report.counts.D <= 30,
+    `expected ~19 remaining conflict bootstrap D after alias collapse, got ${report.counts.D}`
   );
   // Persist machine-readable summary for owner report (test artifact under tests/)
   const out = {

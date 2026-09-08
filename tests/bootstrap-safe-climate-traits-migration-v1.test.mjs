@@ -339,7 +339,7 @@ test('PHASE5: readiness before/after for SAFE plants — no Class A inflation', 
   );
 });
 
-test('PHASE7: identity safety — no new duplicates; conflict plants unmodified', () => {
+test('PHASE7: identity safety — no new duplicates; remaining conflict plants unmodified', () => {
   const library = bootstrapEntriesFromApp();
   const uniqueLibrary = [];
   const seen = new Set();
@@ -350,7 +350,8 @@ test('PHASE7: identity safety — no new duplicates; conflict plants unmodified'
   }
   const index = Object.fromEntries(uniqueLibrary.map((p) => [p.slug, p]));
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();
-  const conflict = payload.conflictSlugs;
+  // Alias rows may already be collapsed out of PLANT_LIBRARY; only assert remaining conflicts.
+  const conflict = payload.conflictSlugs.filter((s) => index[s]);
   const beforeConflict = Object.fromEntries(
     conflict.map((s) => [s, JSON.stringify(index[s])])
   );
@@ -361,7 +362,7 @@ test('PHASE7: identity safety — no new duplicates; conflict plants unmodified'
   }
   const slugs = uniqueLibrary.map((p) => p.slug);
   assert.equal(new Set(slugs).size, slugs.length);
-  assert.equal(slugs.length, 52);
+  assert.equal(slugs.length, 45);
   const sciMap = new Map();
   for (const p of uniqueLibrary) {
     const sci = String(p.scientific || '')
