@@ -674,8 +674,14 @@
       ],
       "recommendedCanonicalScientificName": "Morus spp.",
       "needsReview": true,
-      "resolutionStatus": "pending",
-      "notes": "Two distinct records share slug 'mulberry'. Genus-level 'Morus spp.' only (species not reliably determined). Documented only. No record correction, merge, or deletion in this task."
+      "resolutionStatus": "resolved-row-dedupe-v1",
+      "resolvedBy": "mulberry-row-dedupe-v1",
+      "retainedPolicy": "CANONICAL_WINS last-key-wins PLANT_LIBRARY row",
+      "scientificAfter": "Morus spp.",
+      "speciesNotSelected": true,
+      "climateTraitsMigrated": false,
+      "auditPath": "data/catalog/mulberry-row-dedupe-audit-v1.json",
+      "notes": "Two distinct records shared slug 'mulberry'. Collapsed to one PLANT_LIBRARY row via canonical-wins + lossless audit. Scientific remains Morus spp. (species not selected). Divergent care/product copy preserved in audit only."
     }
   ]
 }

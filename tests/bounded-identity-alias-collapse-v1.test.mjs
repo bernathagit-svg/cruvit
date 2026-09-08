@@ -99,7 +99,8 @@ test('alias rows removed from PLANT_LIBRARY; canonicals remain; unique ≈45', (
     assert.ok(slugs.includes(canon), `canonical missing: ${canon}`);
   }
   assert.equal(unique.size, 45);
-  assert.ok(slugs.length === 45 || slugs.length === 46); // mulberry dup row may remain
+  assert.equal(slugs.length, 45); // mulberry duplicate row collapsed
+  assert.equal(slugs.filter((s) => s === 'mulberry').length, 1);
 });
 
 test('search aliases unioned; care/product copy not promoted from audit', () => {
