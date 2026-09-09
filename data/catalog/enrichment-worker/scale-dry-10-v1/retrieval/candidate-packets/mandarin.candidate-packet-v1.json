@@ -1,0 +1,226 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:mandarin",
+    "canonicalSlug": "mandarin",
+    "scientificName": "Citrus reticulata",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "MISSING_COLD_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "mandarin",
+    "scientificName": "Citrus reticulata",
+    "whySafe": "P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-citrus-reticulata",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-reticulata/",
+      "title": "Citrus reticulata (Mandarin)",
+      "retrievedAt": "2026-09-09T18:24:11.999Z",
+      "fromCache": false,
+      "httpStatus": 404,
+      "contentHash": "df1c3e90726c8e39d779fc45e98c31f896ba23d0b6df633b4e9fc9049c71f243",
+      "canonicalPlantIdentity": {
+        "slug": "mandarin",
+        "scientificName": "Citrus reticulata"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "genus_only_or_species_absent",
+        "code": "IDENTITY_MISMATCH"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "IDENTITY_MISMATCH"
+        ]
+      }
+    },
+    {
+      "sourceId": "usda-plants-citrus-reticulata",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=CIRE3",
+      "title": "Citrus reticulata - USDA PLANTS",
+      "retrievedAt": "2026-09-09T18:24:12.408Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "mandarin",
+        "scientificName": "Citrus reticulata"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "high",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "low",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-09T18:24:12.409Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 0,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "011bf90db6e1afa2493006992f38375e3954d283667462fa1fedea107be97d63"
+}

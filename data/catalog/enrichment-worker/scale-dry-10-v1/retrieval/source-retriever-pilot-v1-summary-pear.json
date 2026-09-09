@@ -1,0 +1,82 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-09T18:24:18.665Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 2,
+  "cache": {
+    "hits": 0,
+    "misses": 0,
+    "writes": 2,
+    "urls": [
+      "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+      "https://plants.usda.gov/home/plantProfile?symbol=PYCO"
+    ],
+    "uniqueUrls": [
+      "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+      "https://plants.usda.gov/home/plantProfile?symbol=PYCO"
+    ]
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "pear",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "high"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-pyrus-communis",
+          "url": "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-pyrus-communis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PYCO",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\scale-dry-10-v1\\retrieval\\candidate-packets\\pear.candidate-packet-v1.json",
+      "fingerprint": "ee53abf010e396ba7113c157338e6ace66bafa3ee16b79ce9b13810149668226"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}

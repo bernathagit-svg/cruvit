@@ -1,0 +1,70 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "jobId": "enrich-v1:mango",
+  "slug": "mango",
+  "scientificName": "Mangifera indica",
+  "dryRun": true,
+  "beforePlantHash": "7b01f0fd668ec94aefdfcc30006d14f7e16e41d3ca0bf06a714ca884f01dc604",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "PARTIAL_NO_APPLY",
+  "hardStop": null,
+  "externalRequests": 2,
+  "cacheHits": 0,
+  "appliedFields": [],
+  "ownerDecisionRequired": false,
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-mangifera-indica",
+      "url": "https://plants.ces.ncsu.edu/plants/mangifera-indica/",
+      "status": 404,
+      "fromCache": false
+    },
+    {
+      "sourceId": "usda-plants-mangifera-indica",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=MAIN3",
+      "status": 200,
+      "fromCache": false
+    }
+  ],
+  "packetFingerprint": "710b1ace51024246891143b6ef73cbec531a85b4f0b95c0832682e2f77d854e1",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    }
+  ],
+  "applyGate": {
+    "setDecision": "NEEDS_MORE_EVIDENCE",
+    "setReasons": [
+      "apply_status_not_ready"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      }
+    ]
+  },
+  "note": "insufficient_evidence_or_incomplete_ready_set"
+}

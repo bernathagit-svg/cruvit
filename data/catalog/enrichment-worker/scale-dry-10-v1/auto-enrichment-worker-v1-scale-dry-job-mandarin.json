@@ -1,0 +1,70 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "jobId": "enrich-v1:mandarin",
+  "slug": "mandarin",
+  "scientificName": "Citrus reticulata",
+  "dryRun": true,
+  "beforePlantHash": "f5f0cb4247cefe94e309aae79e8c4b09fe8066babd0f61221ffdf48550e6d793",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "PARTIAL_NO_APPLY",
+  "hardStop": null,
+  "externalRequests": 2,
+  "cacheHits": 0,
+  "appliedFields": [],
+  "ownerDecisionRequired": false,
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-citrus-reticulata",
+      "url": "https://plants.ces.ncsu.edu/plants/citrus-reticulata/",
+      "status": 404,
+      "fromCache": false
+    },
+    {
+      "sourceId": "usda-plants-citrus-reticulata",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=CIRE3",
+      "status": 200,
+      "fromCache": false
+    }
+  ],
+  "packetFingerprint": "011bf90db6e1afa2493006992f38375e3954d283667462fa1fedea107be97d63",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    }
+  ],
+  "applyGate": {
+    "setDecision": "NEEDS_MORE_EVIDENCE",
+    "setReasons": [
+      "apply_status_not_ready"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      }
+    ]
+  },
+  "note": "insufficient_evidence_or_incomplete_ready_set"
+}

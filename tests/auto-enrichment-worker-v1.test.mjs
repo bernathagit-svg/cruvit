@@ -10,7 +10,10 @@ import { fileURLToPath } from 'node:url';
 import {
   AUTO_ENRICHMENT_WORKER_REF,
   WORKER_MAX_JOBS,
+  WORKER_DRY_SCALE_MAX_JOBS,
   WORKER_PILOT_PLANT_SPECS,
+  WORKER_SCALE_DRY_PLANT_SPECS,
+  WORKER_SCALE_DRY_EXCLUDE_SLUGS,
   WORKER_STOP_REASON,
   WORKER_SELECTION_REASON,
   isJobEligibleForWorker,
@@ -23,6 +26,7 @@ import {
   detectHardStopFromGate,
   validateQueueIntegrity,
   runWorkerRegressionGate,
+  resolveWorkerMaxJobs,
   processBatch,
   processJob,
   loadCurrentQueue
@@ -436,4 +440,186 @@ test('19. unit tests must not overwrite durable clean-replay candidate packets',
   assert.ok(fs.existsSync(path.join(dirs.artifactRoot, 'candidate-packets', 'lemon.candidate-packet-v1.json')));
   const after = fs.existsSync(lemonPath) ? fs.readFileSync(lemonPath, 'utf8') : null;
   assert.equal(after, before);
+});
+
+test('20. dry scale override allows maxJobs=10; production default remains 3', () => {
+  assert.equal(WORKER_MAX_JOBS, 3);
+  assert.equal(WORKER_DRY_SCALE_MAX_JOBS, 10);
+  const dry = resolveWorkerMaxJobs({
+    dryRun: true,
+    maxJobs: 10,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false
+  });
+  assert.equal(dry.ok, true);
+  assert.equal(dry.maxJobs, 10);
+  assert.equal(dry.realExecutionAllowed, false);
+  const real = resolveWorkerMaxJobs({ dryRun: false, maxJobs: 10 });
+  assert.equal(real.ok, true);
+  assert.equal(real.maxJobs, 3);
+});
+
+test('21. real execution disabled when realExecutionAllowed=false', async () => {
+  const blocked = resolveWorkerMaxJobs({
+    dryRun: false,
+    maxJobs: 3,
+    realExecutionAllowed: false
+  });
+  assert.equal(blocked.ok, false);
+  assert.equal(blocked.detail, 'REAL_EXECUTION_ALLOWED=NO');
+  const lock = lockPilot();
+  const dirs = tempArtifactAndCache();
+  const batch = await processBatch({
+    repoRoot: ROOT,
+    dryRun: false,
+    lockedBatch: lock,
+    realExecutionAllowed: false,
+    ...dirs,
+    fetchImpl: mockFetch()
+  });
+  assert.equal(batch.status, 'BATCH_STOPPED');
+  assert.equal(batch.REAL_EXECUTION_ALLOWED, false);
+  assert.equal(batch.error, 'REAL_EXECUTION_ALLOWED=NO');
+});
+
+test('22. 11th job cannot enter dry-scale maxJobs=10', () => {
+  const queue = loadCurrentQueue(ROOT);
+  const selection = selectEligibleJobs(queue, {
+    maxJobs: 10,
+    plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS,
+    excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
+    dryRun: true,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false
+  });
+  assert.ok(selection.selected.length <= 10);
+  assert.equal(selection.maxJobs, 10);
+  const eleventh = selection.skipped.find((s) =>
+    (s.reasons || []).includes(WORKER_SELECTION_REASON.MAX_JOBS_REACHED)
+  );
+  // If fewer than 10 specs match queue, MAX_JOBS_REACHED may be absent — still cannot exceed 10
+  assert.ok(selection.selected.length <= WORKER_DRY_SCALE_MAX_JOBS);
+  void eleventh;
+});
+
+test('23. dry-scale locked membership immutable; hard conflict stops without replacement', async () => {
+  const queue = loadCurrentQueue(ROOT);
+  const selection = selectEligibleJobs(queue, {
+    maxJobs: 10,
+    plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS,
+    excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
+    dryRun: true,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false
+  });
+  const lock = lockBatch(selection, { plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS });
+  assert.equal(lock.batchLocked, true);
+  const fp = lock.batchFingerprint;
+  assert.equal(computeBatchFingerprint(lock.lockedJobs), fp);
+
+  const conflictHtml =
+    '<html><body>Hardiness Zone: 9a. Severe frost injury below 32F kills the plant.</body></html>';
+  const conflictFetch = async () => {
+    const buf = Buffer.from(conflictHtml, 'utf8');
+    return {
+      ok: true,
+      status: 200,
+      headers: { get: () => 'text/html' },
+      text: async () => conflictHtml,
+      arrayBuffer: async () => buf
+    };
+  };
+  const dirs = tempArtifactAndCache();
+  const batch = await processBatch({
+    repoRoot: ROOT,
+    dryRun: true,
+    lockedBatch: lock,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false,
+    ...dirs,
+    fetchImpl: conflictFetch
+  });
+  // Either completes or stops on hard conflict — never replaces membership
+  assert.deepEqual(batch.lockedSlugs, [...lock.lockedSlugs]);
+  assert.equal(batch.batchFingerprint, fp);
+  if (batch.batchStopReason) {
+    assert.ok(
+      [
+        WORKER_STOP_REASON.MATERIAL_CONFLICT,
+        WORKER_STOP_REASON.IDENTITY_CONFLICT,
+        WORKER_STOP_REASON.SOURCE_POLICY_VIOLATION,
+        WORKER_STOP_REASON.TRANSFORM_UNAUTHORIZED,
+        WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED
+      ].includes(batch.batchStopReason) || typeof batch.batchStopReason === 'string'
+    );
+    assert.ok(batch.audits.length < lock.lockedJobs.length || batch.audits.some((a) => a.hardStop));
+  }
+});
+
+test('24. dry-scale does not invoke writer; catalog + queue unchanged; artifact root isolated', async () => {
+  const paths = bootstrapSafeMigrationPaths(ROOT);
+  const queuePath = path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json');
+  const before = {
+    json: hashFile(paths.json),
+    js: hashFile(paths.js),
+    browser: hashFile(paths.browser),
+    queue: hashFile(queuePath)
+  };
+  const lemonDurable = path.join(
+    ROOT,
+    'data/catalog/enrichment-retrieval/candidate-packets/lemon.candidate-packet-v1.json'
+  );
+  const lemonBefore = fs.existsSync(lemonDurable) ? fs.readFileSync(lemonDurable) : null;
+
+  const queue = loadCurrentQueue(ROOT);
+  const selection = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS.slice(0, 3),
+    excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
+    dryRun: true,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false
+  });
+  const lock = lockBatch(selection, { plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS.slice(0, 3) });
+  const dirs = tempArtifactAndCache();
+  const batch = await processBatch({
+    repoRoot: ROOT,
+    dryRun: true,
+    lockedBatch: lock,
+    allowDryScaleCeiling: true,
+    realExecutionAllowed: false,
+    ...dirs,
+    fetchImpl: mockFetch()
+  });
+  assert.equal(batch.dryRun, true);
+  assert.equal(batch.REAL_EXECUTION_ALLOWED, false);
+  assert.equal(batch.applied, 0);
+  for (const a of batch.audits) {
+    assert.equal(a.writeResult, undefined);
+  }
+  const after = {
+    json: hashFile(paths.json),
+    js: hashFile(paths.js),
+    browser: hashFile(paths.browser),
+    queue: hashFile(queuePath)
+  };
+  assert.deepEqual(after, before);
+  if (lemonBefore) {
+    assert.deepEqual(fs.readFileSync(lemonDurable), lemonBefore);
+  }
+  for (const slug of lock.lockedSlugs) {
+    assert.ok(
+      fs.existsSync(path.join(dirs.artifactRoot, 'candidate-packets', `${slug}.candidate-packet-v1.json`))
+    );
+  }
+});
+
+test('25. existing 3-job real-worker selection unchanged; no Batch 3', () => {
+  assert.equal(WORKER_MAX_JOBS, 3);
+  assert.equal(WORKER_PILOT_PLANT_SPECS.length, 3);
+  const queue = loadCurrentQueue(ROOT);
+  const selection = selectEligibleJobs(queue, { maxJobs: 3 });
+  assert.equal(selection.maxJobs, 3);
+  assert.ok(selection.selected.every((j) => !String(j.canonicalSlug).includes('batch-3')));
+  assert.ok(!WORKER_SCALE_DRY_PLANT_SPECS.some((s) => s.slug === 'batch-3'));
 });

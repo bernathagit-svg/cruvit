@@ -1,0 +1,87 @@
+{
+  "slug": "raspberry",
+  "generatedAt": "2026-09-09T18:24:14.785Z",
+  "records": [
+    {
+      "sourceId": "ncsu-rubus-idaeus",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+      "title": "Rubus idaeus (Raspberry)",
+      "retrievedAt": "2026-09-09T18:24:14.327Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "d98b2dda4cb7a2d36f58ec82ff0e45cff4db6b2a8fa1153a7bdadd289f5a9f3c",
+      "canonicalPlantIdentity": {
+        "slug": "raspberry",
+        "scientificName": "Rubus idaeus"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 4,
+        "hardinessZoneMax": 8,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "4-8",
+        "displayValue": "USDA 4-8",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+        "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-rubus-idaeus",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=RUID",
+      "title": "Rubus idaeus - USDA PLANTS",
+      "retrievedAt": "2026-09-09T18:24:14.764Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "raspberry",
+        "scientificName": "Rubus idaeus"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ]
+}

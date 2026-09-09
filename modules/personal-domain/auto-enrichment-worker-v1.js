@@ -57,6 +57,251 @@ export const WORKER_MAX_JOBS = 3;
 export const WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT = 2;
 export const WORKER_MAX_EXTERNAL_REQUESTS_TOTAL = 6;
 
+/** Dry-only scale ceiling — never expands real execution (real stays WORKER_MAX_JOBS). */
+export const WORKER_DRY_SCALE_MAX_JOBS = 10;
+export const WORKER_DRY_SCALE_MAX_EXTERNAL_REQUESTS_TOTAL = 20;
+
+/**
+ * Untouched P1 AUTO scale-dry plant specs (Tier A NCSU + USDA). Prefer SAFE-writable first.
+ * Excludes lemon/olive/avocado (already processed), apricot, pomegranate, strawberry-guava.
+ */
+export const WORKER_SCALE_DRY_PLANT_SPECS = Object.freeze([
+  {
+    slug: 'guava',
+    scientificName: 'Psidium guajava',
+    safeWritable: true,
+    whySafe:
+      'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-psidium-guajava',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/psidium-guajava/',
+        title: 'Psidium guajava (Guava)'
+      },
+      {
+        sourceId: 'usda-plants-psidium-guajava',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=PSGU',
+        title: 'Psidium guajava - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'lychee',
+    scientificName: 'Litchi chinensis',
+    safeWritable: true,
+    whySafe: 'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-litchi-chinensis',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/litchi-chinensis/',
+        title: 'Litchi chinensis (Lychee)'
+      },
+      {
+        sourceId: 'usda-plants-litchi-chinensis',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=LICH',
+        title: 'Litchi chinensis - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'mandarin',
+    scientificName: 'Citrus reticulata',
+    safeWritable: true,
+    whySafe: 'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-citrus-reticulata',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/citrus-reticulata/',
+        title: 'Citrus reticulata (Mandarin)'
+      },
+      {
+        sourceId: 'usda-plants-citrus-reticulata',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=CIRE3',
+        title: 'Citrus reticulata - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'mango',
+    scientificName: 'Mangifera indica',
+    safeWritable: true,
+    whySafe: 'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-mangifera-indica',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/mangifera-indica/',
+        title: 'Mangifera indica (Mango)'
+      },
+      {
+        sourceId: 'usda-plants-mangifera-indica',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=MAIN3',
+        title: 'Mangifera indica - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'orange',
+    scientificName: 'Citrus sinensis',
+    safeWritable: true,
+    whySafe: 'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-citrus-x-sinensis',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/',
+        title: 'Citrus x sinensis (Sweet Orange)'
+      },
+      {
+        sourceId: 'usda-plants-citrus-sinensis',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=CISI3',
+        title: 'Citrus sinensis - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'raspberry',
+    scientificName: 'Rubus idaeus',
+    safeWritable: true,
+    whySafe: 'P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-rubus-idaeus',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/rubus-idaeus/',
+        title: 'Rubus idaeus (Raspberry)'
+      },
+      {
+        sourceId: 'usda-plants-rubus-idaeus',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=RUID',
+        title: 'Rubus idaeus - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'apple',
+    scientificName: 'Malus domestica',
+    safeWritable: false,
+    whySafe:
+      'P1 AUTO PARTIAL; retrieval-scale only (not SAFE-writable); Tier A NCSU/USDA for dry cost/evidence.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-malus-domestica',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/malus-domestica/',
+        title: 'Malus domestica (Apple)'
+      },
+      {
+        sourceId: 'usda-plants-malus-domestica',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=MADO4',
+        title: 'Malus domestica - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'fig',
+    scientificName: 'Ficus carica',
+    safeWritable: false,
+    whySafe:
+      'P1 AUTO PARTIAL; retrieval-scale only (not SAFE-writable); Tier A NCSU/USDA for dry cost/evidence.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-ficus-carica',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/ficus-carica/',
+        title: 'Ficus carica (Fig)'
+      },
+      {
+        sourceId: 'usda-plants-ficus-carica',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=FICA',
+        title: 'Ficus carica - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'peach',
+    scientificName: 'Prunus persica',
+    safeWritable: false,
+    whySafe:
+      'P1 AUTO PARTIAL; retrieval-scale only (not SAFE-writable); Tier A NCSU/USDA for dry cost/evidence.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-prunus-persica',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/prunus-persica/',
+        title: 'Prunus persica (Peach)'
+      },
+      {
+        sourceId: 'usda-plants-prunus-persica',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=PRPE3',
+        title: 'Prunus persica - USDA PLANTS'
+      }
+    ])
+  },
+  {
+    slug: 'pear',
+    scientificName: 'Pyrus communis',
+    safeWritable: false,
+    whySafe:
+      'P1 AUTO PARTIAL; retrieval-scale only (not SAFE-writable); Tier A NCSU/USDA for dry cost/evidence.',
+    approvedSources: Object.freeze([
+      {
+        sourceId: 'ncsu-pyrus-communis',
+        sourceType: 'university_extension',
+        institution: 'North Carolina State University Extension Gardener',
+        url: 'https://plants.ces.ncsu.edu/plants/pyrus-communis/',
+        title: 'Pyrus communis (Pear)'
+      },
+      {
+        sourceId: 'usda-plants-pyrus-communis',
+        sourceType: 'government',
+        institution: 'USDA PLANTS Database',
+        url: 'https://plants.usda.gov/home/plantProfile?symbol=PYCO',
+        title: 'Pyrus communis - USDA PLANTS'
+      }
+    ])
+  }
+]);
+
+export const WORKER_SCALE_DRY_EXCLUDE_SLUGS = Object.freeze([
+  'pomegranate',
+  'apricot',
+  'lemon',
+  'olive',
+  'avocado',
+  'strawberry-guava'
+]);
+
 /**
  * Bounded worker pilot plant specs (SAFE-writable + approved Tier A pages).
  * Final locked set: lemon, olive, avocado. No apricot. No pomegranate.
@@ -151,6 +396,42 @@ export const WORKER_STOP_REASON = Object.freeze({
 export const WORKER_SELECTION_REASON = Object.freeze({
   MAX_JOBS_REACHED: 'MAX_JOBS_REACHED'
 });
+
+/**
+ * Resolve effective maxJobs. Real execution is hard-capped at WORKER_MAX_JOBS=3.
+ * Dry scale may raise ceiling to WORKER_DRY_SCALE_MAX_JOBS when allowDryScaleCeiling=true.
+ */
+export function resolveWorkerMaxJobs({
+  dryRun = true,
+  maxJobs = WORKER_MAX_JOBS,
+  allowDryScaleCeiling = false,
+  realExecutionAllowed = true
+} = {}) {
+  if (realExecutionAllowed === false && dryRun !== true) {
+    return {
+      ok: false,
+      maxJobs: 0,
+      realExecutionAllowed: false,
+      reason: WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE,
+      detail: 'REAL_EXECUTION_ALLOWED=NO'
+    };
+  }
+  if (dryRun !== true) {
+    return {
+      ok: true,
+      maxJobs: Math.min(maxJobs ?? WORKER_MAX_JOBS, WORKER_MAX_JOBS),
+      realExecutionAllowed: true,
+      ceiling: WORKER_MAX_JOBS
+    };
+  }
+  const ceiling = allowDryScaleCeiling ? WORKER_DRY_SCALE_MAX_JOBS : WORKER_MAX_JOBS;
+  return {
+    ok: true,
+    maxJobs: Math.min(maxJobs ?? WORKER_MAX_JOBS, ceiling),
+    realExecutionAllowed: false,
+    ceiling
+  };
+}
 
 const DISQUALIFY_GAPS = new Set([
   ENRICHMENT_GAP_CODE.CATEGORY_ONLY_POLICY,
@@ -277,12 +558,29 @@ export function isJobEligibleForWorker(job, options = {}) {
 }
 
 export function selectEligibleJobs(queueDoc, options = {}) {
-  const maxJobs = Math.min(options.maxJobs ?? WORKER_MAX_JOBS, WORKER_MAX_JOBS);
+  const resolved = resolveWorkerMaxJobs({
+    dryRun: options.dryRun !== false,
+    maxJobs: options.maxJobs ?? WORKER_MAX_JOBS,
+    allowDryScaleCeiling: options.allowDryScaleCeiling === true,
+    realExecutionAllowed: options.realExecutionAllowed !== false
+  });
+  if (!resolved.ok) {
+    return {
+      maxJobs: 0,
+      selected: [],
+      skipped: [],
+      plantSpecs: [],
+      realExecutionAllowed: false,
+      error: resolved.detail
+    };
+  }
+  const maxJobs = resolved.maxJobs;
   const plantSpecs = options.plantSpecs || WORKER_PILOT_PLANT_SPECS;
   const preferredOrder = plantSpecs.map((s) => s.slug);
   const jobs = queueDoc?.jobs || [];
   const eligible = [];
   const skipped = [];
+  const excludeSlugs = options.excludeSlugs || ['pomegranate', 'apricot'];
 
   const ordered = [
     ...preferredOrder
@@ -294,7 +592,7 @@ export function selectEligibleJobs(queueDoc, options = {}) {
   for (const job of ordered) {
     const el = isJobEligibleForWorker(job, {
       plantSpecs,
-      excludeSlugs: options.excludeSlugs || ['pomegranate', 'apricot']
+      excludeSlugs
     });
     if (!el.ok) {
       skipped.push({ jobId: job.jobId, slug: job.canonicalSlug, reasons: el.reasons });
@@ -315,7 +613,9 @@ export function selectEligibleJobs(queueDoc, options = {}) {
     maxJobs,
     selected: eligible.slice(0, maxJobs),
     skipped,
-    plantSpecs: plantSpecs.filter((s) => eligible.some((j) => j.canonicalSlug === s.slug))
+    plantSpecs: plantSpecs.filter((s) => eligible.some((j) => j.canonicalSlug === s.slug)),
+    realExecutionAllowed: resolved.realExecutionAllowed,
+    jobCeiling: resolved.ceiling
   };
 }
 
@@ -642,12 +942,15 @@ export async function processJob({
   audit.sourcesFetched = retriever.results?.[0]?.sourcesFetched || [];
   if (requestBudget) {
     requestBudget.used += audit.externalRequests;
-    if (requestBudget.used > requestBudget.maxTotal) {
+    const maxTotal = requestBudget.maxTotal ?? WORKER_MAX_EXTERNAL_REQUESTS_TOTAL;
+    const maxPerPlant =
+      requestBudget.maxPerPlant ?? WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT;
+    if (requestBudget.used > maxTotal) {
       audit.status = 'FAILED';
       audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
       return audit;
     }
-    if (audit.externalRequests > WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT) {
+    if (audit.externalRequests > maxPerPlant) {
       audit.status = 'FAILED';
       audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
       return audit;
@@ -830,17 +1133,49 @@ export async function processBatch({
   cacheDir = null,
   artifactRoot = null,
   lockedBatch = null,
-  dryValidation = null
+  dryValidation = null,
+  allowDryScaleCeiling = false,
+  realExecutionAllowed = true,
+  maxExternalRequestsTotal = null,
+  maxExternalRequestsPerPlant = null
 }) {
   const plantsBySlug = loadCatalogPlants(repoRoot);
   const queueDoc = loadCurrentQueue(repoRoot);
 
+  const resolved = resolveWorkerMaxJobs({
+    dryRun,
+    maxJobs,
+    allowDryScaleCeiling,
+    realExecutionAllowed
+  });
+  if (!resolved.ok) {
+    return {
+      workerRef: AUTO_ENRICHMENT_WORKER_REF,
+      dryRun,
+      status: 'BATCH_STOPPED',
+      batchStopReason: resolved.reason,
+      error: resolved.detail,
+      batchLocked: !!lockedBatch?.batchLocked,
+      audits: [],
+      selectedJobs: [],
+      lockedSlugs: lockedBatch?.lockedSlugs || [],
+      externalRequests: 0,
+      plantsChanged: [],
+      fieldsChanged: {},
+      REAL_EXECUTION_ALLOWED: false,
+      recoveryPolicy: 'none'
+    };
+  }
+
   let lock = lockedBatch;
   if (!lock) {
     const selection = selectEligibleJobs(queueDoc, {
-      maxJobs: Math.min(maxJobs, WORKER_MAX_JOBS),
+      maxJobs: resolved.maxJobs,
       plantSpecs,
-      excludeSlugs
+      excludeSlugs,
+      dryRun,
+      allowDryScaleCeiling,
+      realExecutionAllowed
     });
     lock = lockBatch(selection, { plantSpecs });
   }
@@ -858,6 +1193,28 @@ export async function processBatch({
       externalRequests: 0,
       plantsChanged: [],
       fieldsChanged: {},
+      REAL_EXECUTION_ALLOWED: dryRun ? false : true,
+      recoveryPolicy: 'none'
+    };
+  }
+
+  // Guard: locked dry-scale batches cannot silently exceed production real cap on real path
+  if (!dryRun && lock.lockedJobs.length > WORKER_MAX_JOBS) {
+    return {
+      workerRef: AUTO_ENRICHMENT_WORKER_REF,
+      dryRun,
+      status: 'BATCH_STOPPED',
+      batchStopReason: WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE,
+      error: 'real_batch_exceeds_WORKER_MAX_JOBS',
+      batchLocked: true,
+      batchFingerprint: lock.batchFingerprint,
+      lockedSlugs: [...lock.lockedSlugs],
+      audits: [],
+      selectedJobs: lock.lockedJobs.map((j) => ({ ...j })),
+      externalRequests: 0,
+      plantsChanged: [],
+      fieldsChanged: {},
+      REAL_EXECUTION_ALLOWED: false,
       recoveryPolicy: 'none'
     };
   }
@@ -887,6 +1244,8 @@ export async function processBatch({
     batchStopReason: null,
     status: 'RUNNING',
     dryBatchValidated: false,
+    REAL_EXECUTION_ALLOWED: dryRun ? false : realExecutionAllowed !== false,
+    allowDryScaleCeiling: !!allowDryScaleCeiling,
     recoveryPolicy: dryRun
       ? 'n/a_dry'
       : 'per_plant_triad_atomic_only__batch_not_transactional__restore_parent_baseline_on_regression'
@@ -916,7 +1275,15 @@ export async function processBatch({
   }
 
   const writeSelectedSlugs = [...lock.lockedSlugs];
-  const requestBudget = { used: 0, maxTotal: WORKER_MAX_EXTERNAL_REQUESTS_TOTAL };
+  const requestBudget = {
+    used: 0,
+    maxTotal:
+      maxExternalRequestsTotal ??
+      (allowDryScaleCeiling && dryRun
+        ? WORKER_DRY_SCALE_MAX_EXTERNAL_REQUESTS_TOTAL
+        : WORKER_MAX_EXTERNAL_REQUESTS_TOTAL),
+    maxPerPlant: maxExternalRequestsPerPlant ?? WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT
+  };
   let expectedTriadHashes = triadHashes(repoRoot);
   const safePayloadBefore = loadBootstrapSafeMigrationPayload(repoRoot).payload;
   const otherSlugsBefore = Object.fromEntries(
@@ -969,6 +1336,7 @@ export async function processBatch({
     });
     batch.audits.push(audit);
     batch.externalRequests += audit.externalRequests || 0;
+    batch.cacheHits = (batch.cacheHits || 0) + (audit.cacheHits || 0);
 
     if (audit.hardStop) {
       batch.batchStopReason = audit.hardStop;

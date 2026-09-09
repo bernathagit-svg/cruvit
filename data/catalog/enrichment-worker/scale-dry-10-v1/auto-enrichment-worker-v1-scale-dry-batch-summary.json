@@ -1,0 +1,2291 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "dryRun": true,
+  "maxJobs": 10,
+  "startedAt": "2026-09-09T18:24:07.270Z",
+  "batchLocked": true,
+  "lockedAt": "2026-09-09T18:24:07.261Z",
+  "batchFingerprint": "a8be4ddf795b5096a376b5ec6082f8222c03bb9a76316d21c5ee2ab1a040917a",
+  "lockedSlugs": [
+    "guava",
+    "lychee",
+    "mandarin",
+    "mango",
+    "orange",
+    "raspberry",
+    "apple",
+    "fig",
+    "peach",
+    "pear"
+  ],
+  "lockedJobIds": [
+    "enrich-v1:guava",
+    "enrich-v1:lychee",
+    "enrich-v1:mandarin",
+    "enrich-v1:mango",
+    "enrich-v1:orange",
+    "enrich-v1:raspberry",
+    "enrich-v1:apple",
+    "enrich-v1:fig",
+    "enrich-v1:peach",
+    "enrich-v1:pear"
+  ],
+  "selectedJobs": [
+    {
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "scientificName": "Psidium guajava",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mango",
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "scientificName": "Citrus sinensis",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:apple",
+      "slug": "apple",
+      "scientificName": "Malus domestica",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:fig",
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:peach",
+      "slug": "peach",
+      "scientificName": "Prunus persica",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pear",
+      "slug": "pear",
+      "scientificName": "Pyrus communis",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    }
+  ],
+  "selectionSkipped": [
+    {
+      "jobId": "enrich-v1:azalea",
+      "slug": "azalea",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:blueberry",
+      "slug": "blueberry",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:camellia",
+      "slug": "camellia",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jasmine",
+      "slug": "jasmine",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:oak-tree",
+      "slug": "oak-tree",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:orchid",
+      "slug": "orchid",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pine-tree",
+      "slug": "pine-tree",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:plum",
+      "slug": "plum",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rose",
+      "slug": "rose",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:acerola",
+      "slug": "acerola",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:almond",
+      "slug": "almond",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "reasons": [
+        "apricot_excluded_from_worker_pilot",
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "reasons": [
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:breadfruit",
+      "slug": "breadfruit",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cacao",
+      "slug": "cacao",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:carob",
+      "slug": "carob",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cherimoya",
+      "slug": "cherimoya",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:coconut",
+      "slug": "coconut",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-myrtle",
+      "slug": "common-myrtle",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:durian",
+      "slug": "durian",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:english-walnut",
+      "slug": "english-walnut",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:feijoa",
+      "slug": "feijoa",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ginkgo",
+      "slug": "ginkgo",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:gooseberry",
+      "slug": "gooseberry",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:grapevine",
+      "slug": "grapevine",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jaboticaba",
+      "slug": "jaboticaba",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:kiwi",
+      "slug": "kiwi",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lemon",
+      "slug": "lemon",
+      "reasons": [
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:longan",
+      "slug": "longan",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:loquat",
+      "slug": "loquat",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mangosteen",
+      "slug": "mangosteen",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "reasons": [
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:passionfruit",
+      "slug": "passionfruit",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:persimmon",
+      "slug": "persimmon",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pistachio",
+      "slug": "pistachio",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:quince",
+      "slug": "quince",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:red-currant",
+      "slug": "red-currant",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:southern-magnolia",
+      "slug": "southern-magnolia",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:strawberry-guava",
+      "slug": "strawberry-guava",
+      "reasons": [
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sweet-cherry",
+      "slug": "sweet-cherry",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:white-sapote",
+      "slug": "white-sapote",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:aloe-vera",
+      "slug": "aloe-vera",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:areca-palm",
+      "slug": "areca-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:basil",
+      "slug": "basil",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:bay-laurel",
+      "slug": "bay-laurel",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:black-eyed-susan-vine",
+      "slug": "black-eyed-susan-vine",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:blue-gum",
+      "slug": "blue-gum",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cedar",
+      "slug": "cedar",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:chinese-wisteria",
+      "slug": "chinese-wisteria",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:coffee",
+      "slug": "coffee",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-lilac",
+      "slug": "common-lilac",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-thyme",
+      "slug": "common-thyme",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cucumber",
+      "slug": "cucumber",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cycas",
+      "slug": "cycas",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cyclamen",
+      "slug": "cyclamen",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cypress",
+      "slug": "cypress",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:date-palm",
+      "slug": "date-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:dragon-fruit",
+      "slug": "dragon-fruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:eggplant",
+      "slug": "eggplant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ficus-benjamina",
+      "slug": "ficus-benjamina",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:fiddle-leaf-fig",
+      "slug": "fiddle-leaf-fig",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:forsythia",
+      "slug": "forsythia",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:garden-peony",
+      "slug": "garden-peony",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:garden-sage",
+      "slug": "garden-sage",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ginger",
+      "slug": "ginger",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:hibiscus",
+      "slug": "hibiscus",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:hydrangea",
+      "slug": "hydrangea",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jackfruit",
+      "slug": "jackfruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:japanese-maple",
+      "slug": "japanese-maple",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lavender",
+      "slug": "lavender",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lemongrass",
+      "slug": "lemongrass",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:monstera",
+      "slug": "monstera",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:moringa",
+      "slug": "moringa",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:oleander",
+      "slug": "oleander",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:papaya",
+      "slug": "papaya",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pineapple",
+      "slug": "pineapple",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:plumeria",
+      "slug": "plumeria",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:queen-palm",
+      "slug": "queen-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rambutan",
+      "slug": "rambutan",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rosemary",
+      "slug": "rosemary",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:silver-birch",
+      "slug": "silver-birch",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:snake-plant",
+      "slug": "snake-plant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:starfruit",
+      "slug": "starfruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:strelitzia",
+      "slug": "strelitzia",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sunflower",
+      "slug": "sunflower",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sweet-pepper",
+      "slug": "sweet-pepper",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:tomato",
+      "slug": "tomato",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:turmeric",
+      "slug": "turmeric",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:zz-plant",
+      "slug": "zz-plant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:agapanthus",
+      "slug": "agapanthus",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:banana",
+      "slug": "banana",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:bougainvillea",
+      "slug": "bougainvillea",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:geranium",
+      "slug": "geranium",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:melaleuca",
+      "slug": "melaleuca",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mint",
+      "slug": "mint",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mulberry",
+      "slug": "mulberry",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:succulent",
+      "slug": "succulent",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "category_only",
+        "identity_or_broad_gap",
+        "identityStatus:CATEGORY_ONLY",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "scientificName": "Psidium guajava",
+      "dryRun": true,
+      "beforePlantHash": "4d873f7999693dfdb3069b9c3fc83b997b84fe907eb27b3cf510b0fa24b09c14",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-psidium-guajava",
+          "url": "https://plants.ces.ncsu.edu/plants/psidium-guajava/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-psidium-guajava",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PSGU",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "dd27538987c4b31d11b752424d00e685d71df5d9084e0a0ed5b722cc3ef7508f",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        }
+      ],
+      "applyGate": {
+        "setDecision": "NEEDS_MORE_EVIDENCE",
+        "setReasons": [
+          "apply_status_not_ready"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          }
+        ]
+      },
+      "note": "insufficient_evidence_or_incomplete_ready_set"
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "dryRun": true,
+      "beforePlantHash": "4fd555e14ad0653caf3035890a2fd053a9d5f3f4f1f3cd464220e582402d10ff",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-litchi-chinensis",
+          "url": "https://plants.ces.ncsu.edu/plants/litchi-chinensis/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-litchi-chinensis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=LICH",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "ad309822a319a8d1a604b6ab4b501b69c925011e79ce09ff2a79991fb326b8de",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        }
+      ],
+      "applyGate": {
+        "setDecision": "NEEDS_MORE_EVIDENCE",
+        "setReasons": [
+          "apply_status_not_ready"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          }
+        ]
+      },
+      "note": "insufficient_evidence_or_incomplete_ready_set"
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "dryRun": true,
+      "beforePlantHash": "f5f0cb4247cefe94e309aae79e8c4b09fe8066babd0f61221ffdf48550e6d793",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-reticulata",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-reticulata/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-citrus-reticulata",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CIRE3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "011bf90db6e1afa2493006992f38375e3954d283667462fa1fedea107be97d63",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        }
+      ],
+      "applyGate": {
+        "setDecision": "NEEDS_MORE_EVIDENCE",
+        "setReasons": [
+          "apply_status_not_ready"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          }
+        ]
+      },
+      "note": "insufficient_evidence_or_incomplete_ready_set"
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:mango",
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "dryRun": true,
+      "beforePlantHash": "7b01f0fd668ec94aefdfcc30006d14f7e16e41d3ca0bf06a714ca884f01dc604",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-mangifera-indica",
+          "url": "https://plants.ces.ncsu.edu/plants/mangifera-indica/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-mangifera-indica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=MAIN3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "710b1ace51024246891143b6ef73cbec531a85b4f0b95c0832682e2f77d854e1",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        }
+      ],
+      "applyGate": {
+        "setDecision": "NEEDS_MORE_EVIDENCE",
+        "setReasons": [
+          "apply_status_not_ready"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          }
+        ]
+      },
+      "note": "insufficient_evidence_or_incomplete_ready_set"
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "scientificName": "Citrus sinensis",
+      "dryRun": true,
+      "beforePlantHash": "d4012cde68d0c546c378005e977e9e768605de7660f33ad46264e3dcb17ab7a0",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-x-sinensis",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-citrus-sinensis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CISI3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "48897dd6f004c2782fd92e64306a319f7f27b879b86c9e4c85ca59f0e53766eb",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "aeadc3eaea481ccce4575f12fa7a4cf242163fc117b9a493b89fb641ebaf7556",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "low",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "very_low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "9-11",
+                "displayValue": "USDA 9-11",
+                "hardinessZoneMin": 9,
+                "hardinessZoneMax": 11,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "very_low",
+                  "retainedSourceIds": [
+                    "ncsu-citrus-x-sinensis"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "dryRun": true,
+      "beforePlantHash": "5027567e8349d13d1a292077bb395ed37fbe20901345de8a9e72d93368615e59",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-rubus-idaeus",
+          "url": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-rubus-idaeus",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=RUID",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "e7a4ae95f136fae559a2b9d29e84acb852f4cd8900cd04aed2b3ef18710078af",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "high",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "d81a302168650fd48b31167330b382daab097f73c7c0fd906fb7f989cf82e4ce",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "high",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-rubus-idaeus"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "4-8",
+                "displayValue": "USDA 4-8",
+                "hardinessZoneMin": 4,
+                "hardinessZoneMax": 8,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "high",
+                  "retainedSourceIds": [
+                    "ncsu-rubus-idaeus"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-rubus-idaeus\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "d98b2dda4cb7a2d36f58ec82ff0e45cff4db6b2a8fa1153a7bdadd289f5a9f3c",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:apple",
+      "slug": "apple",
+      "scientificName": "Malus domestica",
+      "dryRun": true,
+      "beforePlantHash": "526f41eb5248d93e171a83a8fa7f0c02189fb65d27ccac083c9adc2512dd652c",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-malus-domestica",
+          "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-malus-domestica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=MADO4",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "f4430f141b0cf8105da5c888b9faaed6119afcfd538bd7e08800a8952ace6406",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "high",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "5753f0a1e6fc81b8bf2f399e6d4a4c0593b0d04e83bef9bf56f5f1ef7f140cca",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "high",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-malus-domestica"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "4-9",
+                "displayValue": "USDA 4-9",
+                "hardinessZoneMin": 4,
+                "hardinessZoneMax": 9,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "7a5cb198e84164009683a6d82a97d25e8c7532e144fd67b1f72deda814aec1af"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "high",
+                  "retainedSourceIds": [
+                    "ncsu-malus-domestica"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apple\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-malus-domestica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "d65d90c090d56242de7edda9b68a96ba922d2e7eb4635f9576d104b30d35ae3e",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:fig",
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "dryRun": true,
+      "beforePlantHash": "af2508b224e522a30f856075ee5533344b0969c23ad2df46b2cf4f08fa42db84",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-ficus-carica",
+          "url": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-ficus-carica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=FICA",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "361217543f458d9555f674e05eb781b4a14ed71f39d489ef38e2889ec556f621",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "defa671081db3667e47137c7d1eac447c639c9d8208e56ebdf6ff7e8ac29b39b",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-ficus-carica"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "7-10",
+                "displayValue": "USDA 7-10",
+                "hardinessZoneMin": 7,
+                "hardinessZoneMax": 10,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "low",
+                  "retainedSourceIds": [
+                    "ncsu-ficus-carica"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"fig\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-ficus-carica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "aba1927b864c5f74d3355702075755a5acaa9caf476463796fbc3ed363bd2cc5",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:peach",
+      "slug": "peach",
+      "scientificName": "Prunus persica",
+      "dryRun": true,
+      "beforePlantHash": "1274e7531a0855bf163842d781ea9dc897916f1d848298d848f581c811732938",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-prunus-persica",
+          "url": "https://plants.ces.ncsu.edu/plants/prunus-persica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-prunus-persica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PRPE3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "d98be59152c4060cacb6313c8bf1e1a95c4d2822e233d45b592b7fc7f147573a",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "medium",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "same_value_evidence_provenance_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "6ee239de2513fbb04360a15c6b29e6225c7ecbff8e6b4937c6a9f976ff08afc1",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "medium",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-prunus-persica"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/prunus-persica/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "5-9",
+                "displayValue": "USDA 5-9",
+                "hardinessZoneMin": 5,
+                "hardinessZoneMax": 9,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "4e82b81194de0bac02e8f71e0d3bac433e9c38609ba89b9da889cecb6ebdd197"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "medium",
+                  "retainedSourceIds": [
+                    "ncsu-prunus-persica"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"peach\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"medium\"],\"sourceIds\":[\"ncsu-prunus-persica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"medium\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "5cc84b4cf0122329841a7cba1613c094594347681e4aacfdf8a7d74376204065",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:pear",
+      "slug": "pear",
+      "scientificName": "Pyrus communis",
+      "dryRun": true,
+      "beforePlantHash": "dbbb64931956f73c1b6a5952f2a9bbdb6222c1d31738319c1ce33debc414275d",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 2,
+      "cacheHits": 0,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-pyrus-communis",
+          "url": "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-pyrus-communis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PYCO",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetFingerprint": "ee53abf010e396ba7113c157338e6ace66bafa3ee16b79ce9b13810149668226",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "high",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "c06ee7cf01bbd802881a9fb58545c46746dbacb371929ac71e79432a8b45c678",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "high",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-pyrus-communis"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "4-8",
+                "displayValue": "USDA 4-8",
+                "hardinessZoneMin": 4,
+                "hardinessZoneMax": 8,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "high",
+                  "retainedSourceIds": [
+                    "ncsu-pyrus-communis"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pear\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-pyrus-communis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "b1dfb2a256968d3ee111937bc1112fa24c1ca786ef771bb3ca1f3d21e026962c",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    }
+  ],
+  "completed": 10,
+  "partial": 10,
+  "hold": 0,
+  "skipped": 0,
+  "failed": 0,
+  "applied": 0,
+  "externalRequests": 20,
+  "plantsChanged": [],
+  "fieldsChanged": {},
+  "batchStopReason": null,
+  "status": "BATCH_COMPLETE",
+  "dryBatchValidated": true,
+  "REAL_EXECUTION_ALLOWED": false,
+  "allowDryScaleCeiling": true,
+  "recoveryPolicy": "n/a_dry",
+  "cacheHits": 0,
+  "finishedAt": "2026-09-09T18:24:18.667Z",
+  "ownerReviewRequiredCount": 0,
+  "requestBudget": {
+    "used": 20,
+    "maxTotal": 20,
+    "maxPerPlant": 2
+  }
+}
