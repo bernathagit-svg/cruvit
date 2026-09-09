@@ -1,0 +1,87 @@
+{
+  "slug": "lemon",
+  "generatedAt": "2026-09-08T20:50:11.148Z",
+  "records": [
+    {
+      "sourceId": "ncsu-citrus-x-limon",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "title": "Citrus x limon (Lemon)",
+      "retrievedAt": "2026-09-08T17:15:20.365Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "aec9a5b21b44ee03d9c027a74ff6d5f638cd19187d3025642e04eb3abb67b6bf",
+      "canonicalPlantIdentity": {
+        "slug": "lemon",
+        "scientificName": "Citrus × limon"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 9,
+        "hardinessZoneMax": 11,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "9-11",
+        "displayValue": "USDA 9-11",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+        "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-citrus-limon",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=CILI5",
+      "title": "Citrus limon - USDA PLANTS",
+      "retrievedAt": "2026-09-08T17:15:21.651Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "lemon",
+        "scientificName": "Citrus × limon"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ]
+}

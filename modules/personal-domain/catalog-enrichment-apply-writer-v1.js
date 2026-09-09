@@ -165,7 +165,8 @@ export function applyEnrichmentAtomic({
   plant,
   packet,
   expectedFileHashes = null,
-  allowSlugs = ['pomegranate']
+  allowSlugs = ['pomegranate'],
+  requireBothFrostAndCold = true
 }) {
   if (!allowSlugs.includes(slug)) {
     return {
@@ -196,7 +197,13 @@ export function applyEnrichmentAtomic({
     return { ok: false, reason: 'plant_missing_in_migration', catalogMutated: false };
   }
 
-  const gate = evaluateCandidateSetForPlant({ packet, plant, writePlanRequested: true });
+  const gate = evaluateCandidateSetForPlant({
+    packet,
+    plant,
+    writePlanRequested: true,
+    writeSelectedSlugs: allowSlugs,
+    requireBothFrostAndCold
+  });
   if (gate.setDecision !== APPLY_DECISION.APPLY_ALLOWED || !gate.mutationPlan?.ok) {
     return {
       ok: false,

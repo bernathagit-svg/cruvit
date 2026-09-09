@@ -1,0 +1,87 @@
+{
+  "slug": "olive",
+  "generatedAt": "2026-09-08T20:50:11.160Z",
+  "records": [
+    {
+      "sourceId": "ncsu-olea-europaea",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+      "title": "Olea europaea (Olive)",
+      "retrievedAt": "2026-09-08T17:15:38.317Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "287247659de5e6c2a642bd8c036dbfdeb1cd5ae50a2ab8e8bd4d1f2c4c32c0c5",
+      "canonicalPlantIdentity": {
+        "slug": "olive",
+        "scientificName": "Olea europaea"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 7,
+        "hardinessZoneMax": 10,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "7-10",
+        "displayValue": "USDA 7-10",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 7a",
+        "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 7a",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-olea-europaea",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=OLEU",
+      "title": "Olea europaea - USDA PLANTS",
+      "retrievedAt": "2026-09-08T17:15:39.427Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "olive",
+        "scientificName": "Olea europaea"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.0.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ]
+}

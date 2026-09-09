@@ -142,7 +142,7 @@
       ],
       "climateTraits": {
         "frostSensitivity": "high",
-        "coldTolerance": "low",
+        "coldTolerance": "very_low",
         "heatTolerance": "medium",
         "humidityTolerance": "medium",
         "drainageNeeds": "high",
@@ -159,7 +159,7 @@
         ],
         "traitEvidenceClasses": {
           "frostSensitivity": "HEURISTIC_ASSERTION",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -171,7 +171,7 @@
         },
         "fieldOrigins": {
           "frostSensitivity": "LEGACY_ASSERTED_METADATA",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -195,7 +195,72 @@
               "type": "specific",
               "id": "SMART_REC_SPECIFIC_CLIMATE_METADATA"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-08T17:51:22.577Z",
+            "fields": [
+              "coldTolerance"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "coldTolerance": {
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "9-11",
+              "displayValue": "USDA 9-11",
+              "hardinessZoneMin": 9,
+              "hardinessZoneMax": 11,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_low",
+                "retainedSourceIds": [
+                  "ncsu-citrus-x-limon"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "aec9a5b21b44ee03d9c027a74ff6d5f638cd19187d3025642e04eb3abb67b6bf",
+            "appliedAt": "2026-09-08T17:51:22.577Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },
@@ -464,7 +529,7 @@
       ],
       "climateTraits": {
         "frostSensitivity": "medium",
-        "coldTolerance": "medium",
+        "coldTolerance": "low",
         "heatTolerance": "high",
         "humidityTolerance": "medium",
         "drainageNeeds": "high",
@@ -479,7 +544,7 @@
         ],
         "traitEvidenceClasses": {
           "frostSensitivity": "HEURISTIC_ASSERTION",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -492,7 +557,7 @@
         },
         "fieldOrigins": {
           "frostSensitivity": "LEGACY_ASSERTED_METADATA",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -516,7 +581,72 @@
               "type": "specific",
               "id": "SMART_REC_SPECIFIC_CLIMATE_METADATA"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-08T17:51:22.610Z",
+            "fields": [
+              "coldTolerance"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "coldTolerance": {
+            "sourceIds": [
+              "ncsu-olea-europaea"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 7a",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "7-10",
+              "displayValue": "USDA 7-10",
+              "hardinessZoneMin": 7,
+              "hardinessZoneMax": 10,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "low",
+                "retainedSourceIds": [
+                  "ncsu-olea-europaea"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "287247659de5e6c2a642bd8c036dbfdeb1cd5ae50a2ab8e8bd4d1f2c4c32c0c5",
+            "appliedAt": "2026-09-08T17:51:22.610Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },
@@ -1833,7 +1963,7 @@
       ],
       "climateTraits": {
         "frostSensitivity": "high",
-        "coldTolerance": "low",
+        "coldTolerance": "very_low",
         "heatTolerance": "high",
         "humidityTolerance": "medium",
         "drainageNeeds": "high",
@@ -1847,7 +1977,7 @@
         ],
         "traitEvidenceClasses": {
           "frostSensitivity": "HEURISTIC_ASSERTION",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -1859,7 +1989,7 @@
         },
         "fieldOrigins": {
           "frostSensitivity": "LEGACY_ASSERTED_METADATA",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -1882,7 +2012,72 @@
               "type": "specific",
               "id": "SMART_REC_SPECIFIC_CLIMATE_METADATA"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-08T17:51:22.636Z",
+            "fields": [
+              "coldTolerance"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "coldTolerance": {
+            "sourceIds": [
+              "ncsu-persea-americana"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "9-12",
+              "displayValue": "USDA 9-12",
+              "hardinessZoneMin": 9,
+              "hardinessZoneMax": 12,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_low",
+                "retainedSourceIds": [
+                  "ncsu-persea-americana"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "d27eafe773b3e294551e01f3bd9b24ea9aa0e6820d6b441959b96cc16353890d",
+            "appliedAt": "2026-09-08T17:51:22.636Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },

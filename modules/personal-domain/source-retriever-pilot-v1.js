@@ -169,13 +169,22 @@ export function mapHardinessZonesToTraits() {
 }
 
 export function identityMatchText(text, scientificName, slug) {
-  const hay = String(text || '').toLowerCase();
-  const sci = String(scientificName || '').toLowerCase();
-  const parts = sci.split(/\s+/).filter(Boolean);
+  const hay = String(text || '')
+    .toLowerCase()
+    .replace(/×/g, 'x');
+  const sci = String(scientificName || '')
+    .toLowerCase()
+    .replace(/×/g, 'x')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const parts = sci.split(/\s+/).filter((p) => p && p !== 'x');
   if (parts.length >= 2) {
     const binomial = parts[0] + ' ' + parts[1];
-    if (hay.includes(binomial)) return { ok: true, reason: 'binomial_in_page' };
-    if (hay.includes(parts[0]) && !hay.includes(binomial)) {
+    const hybridBinomial = parts[0] + ' x ' + parts[1];
+    if (hay.includes(binomial) || hay.includes(hybridBinomial)) {
+      return { ok: true, reason: 'binomial_in_page' };
+    }
+    if (hay.includes(parts[0]) && !hay.includes(binomial) && !hay.includes(hybridBinomial)) {
       return { ok: false, reason: 'genus_only_or_species_absent', code: 'IDENTITY_MISMATCH' };
     }
   }
@@ -705,15 +714,24 @@ export async function runSourceRetrieverPilot({
   queueDoc,
   plantsBySlug,
   fetchImpl = globalThis.fetch,
-  plantSpecs = PILOT_PLANT_SPECS
+  plantSpecs = PILOT_PLANT_SPECS,
+  cacheDir = null,
+  /**
+   * When set, candidate packets / evidence / summaries write under this root
+   * instead of durable data/catalog/enrichment-retrieval. Tests MUST pass a
+   * temp directory so they never overwrite clean-replay artifacts.
+   */
+  artifactRoot = null,
+  /** When false, skip writing shared multi-plant summary.json (per-slug still written). */
+  writeSharedSummary = true
 }) {
-  const root = defaultRetrievalRoot(repoRoot);
-  const cacheDir = path.join(root, 'cache');
+  const root = artifactRoot || defaultRetrievalRoot(repoRoot);
+  const resolvedCacheDir = cacheDir || path.join(defaultRetrievalRoot(repoRoot), 'cache');
   const packetsDir = path.join(root, 'candidate-packets');
   const evidenceDir = path.join(root, 'evidence-records');
   fs.mkdirSync(packetsDir, { recursive: true });
   fs.mkdirSync(evidenceDir, { recursive: true });
-  const cache = createUrlCache(cacheDir);
+  const cache = createUrlCache(resolvedCacheDir);
 
   let externalRequests = 0;
   const results = [];
@@ -818,7 +836,21 @@ export async function runSourceRetrieverPilot({
     })),
     note: 'Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes.'
   };
-  const summaryPath = path.join(root, 'source-retriever-pilot-v1-summary.json');
-  fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
-  return { summary, summaryPath, results, cacheStats: cache.stats() };
+  const summaryName =
+    plantSpecs.length === 1
+      ? `source-retriever-pilot-v1-summary-${plantSpecs[0].slug}.json`
+      : 'source-retriever-pilot-v1-summary.json';
+  const summaryPath = path.join(root, summaryName);
+  const shouldWriteSummary = plantSpecs.length === 1 || writeSharedSummary !== false;
+  if (shouldWriteSummary) {
+    try {
+      fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
+    } catch (err) {
+      // Non-fatal: Windows file locks / AV can block overwrite of shared summary path.
+      summary.writeError = String(err?.message || err);
+    }
+  } else {
+    summary.skippedSharedSummaryWrite = true;
+  }
+  return { summary, summaryPath, results, cacheStats: cache.stats(), externalRequests };
 }

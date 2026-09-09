@@ -1,0 +1,85 @@
+{
+  "phase": "clean_replay_final",
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "WORKER_REPLAY_BASELINE_RESTORED": "YES",
+  "lockedSlugs": [
+    "lemon",
+    "olive",
+    "avocado"
+  ],
+  "batchFingerprint": "490176274cd6939156eb291633724c8dc94a752cb41204cbea1803adab08536e",
+  "dryStatus": "BATCH_COMPLETE",
+  "realStatus": "BATCH_COMPLETE",
+  "DRY_RUN_STARTED": "2026-09-08T17:51:22.515Z",
+  "DRY_RUN_FINISHED": "2026-09-08T17:51:22.551Z",
+  "REAL_RUN_STARTED": "2026-09-08T17:51:22.564Z",
+  "REAL_RUN_FINISHED": "2026-09-08T17:51:22.657Z",
+  "REAL_WRITE_COUNT_BEFORE_DRY_FINISH": 0,
+  "dryCompletedBeforeAnyRealWrite": "YES",
+  "lemonChangedOnlyDuringCleanReal": "YES",
+  "catalogBefore": {
+    "total": 108,
+    "counts": {
+      "A": 1,
+      "B": 94,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "catalogAfter": {
+    "total": 108,
+    "counts": {
+      "A": 1,
+      "B": 94,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "plantsChanged": [
+    "lemon",
+    "olive",
+    "avocado"
+  ],
+  "fieldsChanged": {
+    "lemon": [
+      "coldTolerance"
+    ],
+    "olive": [
+      "coldTolerance"
+    ],
+    "avocado": [
+      "coldTolerance"
+    ]
+  },
+  "coldAfterReal": {
+    "lemon": {
+      "value": "very_low",
+      "evidence": "SOURCE_SUPPORTED",
+      "hasProv": true
+    },
+    "olive": {
+      "value": "low",
+      "evidence": "SOURCE_SUPPORTED",
+      "hasProv": true
+    },
+    "avocado": {
+      "value": "very_low",
+      "evidence": "SOURCE_SUPPORTED",
+      "hasProv": true
+    }
+  },
+  "dryExternalRequests": 0,
+  "realExternalRequests": 0,
+  "secondExternalRequests": 0,
+  "ownerReviewRequiredCount": 0,
+  "secondRun": {
+    "status": "BATCH_COMPLETE",
+    "appliedCount": 0,
+    "SECOND_WORKER_RUN_WOULD_MUTATE": "NO"
+  },
+  "reports": {
+    "dry": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\clean-replay\\auto-enrichment-worker-v1-clean-dry-batch-summary.json",
+    "real": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\clean-replay\\auto-enrichment-worker-v1-clean-real-batch-summary.json"
+  },
+  "verdict": "AUTO_ENRICHMENT_WORKER_V1_READY_TO_COMMIT"
+}

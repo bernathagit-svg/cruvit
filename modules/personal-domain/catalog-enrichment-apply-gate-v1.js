@@ -567,7 +567,9 @@ export function evaluateCandidateSetForPlant({
   packet,
   plant,
   writePlanRequested = true,
-  verifyFingerprint = true
+  verifyFingerprint = true,
+  writeSelectedSlugs = null,
+  requireBothFrostAndCold = true
 } = {}) {
   const slug = packet?.plant?.slug || plant?.slug;
   const fieldResults = [];
@@ -587,7 +589,10 @@ export function evaluateCandidateSetForPlant({
   const allowed = fieldResults.filter((r) => r.decision === APPLY_DECISION.APPLY_ALLOWED);
   const blocked = fieldResults.filter((r) => r.decision !== APPLY_DECISION.APPLY_ALLOWED);
 
-  const selectedForPilotWrite = PILOT_WRITE_SELECTED_SLUGS.includes(slug);
+  const writeAllowList = Array.isArray(writeSelectedSlugs)
+    ? writeSelectedSlugs
+    : PILOT_WRITE_SELECTED_SLUGS;
+  const selectedForPilotWrite = writeAllowList.includes(slug);
   let setDecision = APPLY_DECISION.APPLY_BLOCKED;
   let setReasons = [];
 
@@ -602,10 +607,11 @@ export function evaluateCandidateSetForPlant({
     setDecision = holds ? APPLY_DECISION.HOLD_CONFLICT : APPLY_DECISION.APPLY_BLOCKED;
     setReasons = [APPLY_REASON.SET_INCOMPLETE_FOR_WRITE, ...blocked.flatMap((b) => b.reasons)];
   } else if (
-    !readyFields.some((f) => (f.targetField || f.proposedField) === 'frostSensitivity') ||
-    !readyFields.some((f) => (f.targetField || f.proposedField) === 'coldTolerance')
+    requireBothFrostAndCold &&
+    (!readyFields.some((f) => (f.targetField || f.proposedField) === 'frostSensitivity') ||
+      !readyFields.some((f) => (f.targetField || f.proposedField) === 'coldTolerance'))
   ) {
-    // Pomegranate pilot write requires both frost+cold READY+ALLOWED
+    // Historical pomegranate pilot required both frost+cold READY+ALLOWED
     setDecision = APPLY_DECISION.NEEDS_MORE_EVIDENCE;
     setReasons = [APPLY_REASON.SET_INCOMPLETE_FOR_WRITE, 'pilot_requires_frost_and_cold_ready'];
   } else {

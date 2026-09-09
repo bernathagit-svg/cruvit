@@ -1,0 +1,1453 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "dryRun": true,
+  "maxJobs": 3,
+  "startedAt": "2026-09-08T17:51:22.515Z",
+  "batchLocked": true,
+  "lockedAt": "2026-09-08T17:51:22.509Z",
+  "batchFingerprint": "490176274cd6939156eb291633724c8dc94a752cb41204cbea1803adab08536e",
+  "lockedSlugs": [
+    "lemon",
+    "olive",
+    "avocado"
+  ],
+  "lockedJobIds": [
+    "enrich-v1:lemon",
+    "enrich-v1:olive",
+    "enrich-v1:avocado"
+  ],
+  "selectedJobs": [
+    {
+      "jobId": "enrich-v1:lemon",
+      "slug": "lemon",
+      "scientificName": "Citrus × limon",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "scientificName": "Olea europaea",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "scientificName": "Persea americana",
+      "priority": "P1",
+      "enrichmentExecution": "AUTO",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ]
+    }
+  ],
+  "selectionSkipped": [
+    {
+      "jobId": "enrich-v1:azalea",
+      "slug": "azalea",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:blueberry",
+      "slug": "blueberry",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:camellia",
+      "slug": "camellia",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jasmine",
+      "slug": "jasmine",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:oak-tree",
+      "slug": "oak-tree",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:orchid",
+      "slug": "orchid",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pine-tree",
+      "slug": "pine-tree",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:plum",
+      "slug": "plum",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rose",
+      "slug": "rose",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:acerola",
+      "slug": "acerola",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:almond",
+      "slug": "almond",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:apple",
+      "slug": "apple",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "reasons": [
+        "apricot_excluded_from_worker_pilot",
+        "excluded_slug",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:breadfruit",
+      "slug": "breadfruit",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cacao",
+      "slug": "cacao",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:carob",
+      "slug": "carob",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cherimoya",
+      "slug": "cherimoya",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:coconut",
+      "slug": "coconut",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-myrtle",
+      "slug": "common-myrtle",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:durian",
+      "slug": "durian",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:english-walnut",
+      "slug": "english-walnut",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:feijoa",
+      "slug": "feijoa",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:fig",
+      "slug": "fig",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ginkgo",
+      "slug": "ginkgo",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:gooseberry",
+      "slug": "gooseberry",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:grapevine",
+      "slug": "grapevine",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jaboticaba",
+      "slug": "jaboticaba",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:kiwi",
+      "slug": "kiwi",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:longan",
+      "slug": "longan",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:loquat",
+      "slug": "loquat",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mango",
+      "slug": "mango",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mangosteen",
+      "slug": "mangosteen",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:passionfruit",
+      "slug": "passionfruit",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:peach",
+      "slug": "peach",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pear",
+      "slug": "pear",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:persimmon",
+      "slug": "persimmon",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pistachio",
+      "slug": "pistachio",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:quince",
+      "slug": "quince",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:red-currant",
+      "slug": "red-currant",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:southern-magnolia",
+      "slug": "southern-magnolia",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:strawberry-guava",
+      "slug": "strawberry-guava",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sweet-cherry",
+      "slug": "sweet-cherry",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:white-sapote",
+      "slug": "white-sapote",
+      "reasons": [
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:aloe-vera",
+      "slug": "aloe-vera",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:areca-palm",
+      "slug": "areca-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:basil",
+      "slug": "basil",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:bay-laurel",
+      "slug": "bay-laurel",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:black-eyed-susan-vine",
+      "slug": "black-eyed-susan-vine",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:blue-gum",
+      "slug": "blue-gum",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cedar",
+      "slug": "cedar",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:chinese-wisteria",
+      "slug": "chinese-wisteria",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:coffee",
+      "slug": "coffee",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-lilac",
+      "slug": "common-lilac",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:common-thyme",
+      "slug": "common-thyme",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cucumber",
+      "slug": "cucumber",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cycas",
+      "slug": "cycas",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cyclamen",
+      "slug": "cyclamen",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:cypress",
+      "slug": "cypress",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:date-palm",
+      "slug": "date-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:dragon-fruit",
+      "slug": "dragon-fruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:eggplant",
+      "slug": "eggplant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ficus-benjamina",
+      "slug": "ficus-benjamina",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:fiddle-leaf-fig",
+      "slug": "fiddle-leaf-fig",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:forsythia",
+      "slug": "forsythia",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:garden-peony",
+      "slug": "garden-peony",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:garden-sage",
+      "slug": "garden-sage",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:ginger",
+      "slug": "ginger",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:hibiscus",
+      "slug": "hibiscus",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:hydrangea",
+      "slug": "hydrangea",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:jackfruit",
+      "slug": "jackfruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:japanese-maple",
+      "slug": "japanese-maple",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lavender",
+      "slug": "lavender",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:lemongrass",
+      "slug": "lemongrass",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:monstera",
+      "slug": "monstera",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:moringa",
+      "slug": "moringa",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:oleander",
+      "slug": "oleander",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:papaya",
+      "slug": "papaya",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:pineapple",
+      "slug": "pineapple",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:plumeria",
+      "slug": "plumeria",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:queen-palm",
+      "slug": "queen-palm",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rambutan",
+      "slug": "rambutan",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:rosemary",
+      "slug": "rosemary",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:silver-birch",
+      "slug": "silver-birch",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:snake-plant",
+      "slug": "snake-plant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:starfruit",
+      "slug": "starfruit",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:strelitzia",
+      "slug": "strelitzia",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sunflower",
+      "slug": "sunflower",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:sweet-pepper",
+      "slug": "sweet-pepper",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:tomato",
+      "slug": "tomato",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:turmeric",
+      "slug": "turmeric",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:zz-plant",
+      "slug": "zz-plant",
+      "reasons": [
+        "not_P1",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:agapanthus",
+      "slug": "agapanthus",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:banana",
+      "slug": "banana",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:bougainvillea",
+      "slug": "bougainvillea",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:geranium",
+      "slug": "geranium",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:melaleuca",
+      "slug": "melaleuca",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mint",
+      "slug": "mint",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:mulberry",
+      "slug": "mulberry",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "identity_or_broad_gap",
+        "identityStatus:BROAD_PROVISIONAL",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    },
+    {
+      "jobId": "enrich-v1:succulent",
+      "slug": "succulent",
+      "reasons": [
+        "not_AUTO",
+        "not_P1",
+        "HOLD_FOR_REVIEW",
+        "category_only",
+        "identity_or_broad_gap",
+        "identityStatus:CATEGORY_ONLY",
+        "sourceRetrievalRequired_not_true",
+        "no_worker_plant_spec"
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:lemon",
+      "slug": "lemon",
+      "scientificName": "Citrus × limon",
+      "dryRun": true,
+      "beforePlantHash": "c2b10b502757d8e6727128c1a09257a9aa733af307323f606573cf99434021b9",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 0,
+      "cacheHits": 2,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-x-limon",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-citrus-limon",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CILI5",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetFingerprint": "ff1ba2b8b3cd554eed80c46ed24ea497fef9fe93a6897a04d35e50c2b75d37c1",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "4051330411257b90f5e2e2b15039276bc959f8fb52a2f2b809938c6710ee2568",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "low",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "very_low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-citrus-x-limon"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "9-11",
+                "displayValue": "USDA 9-11",
+                "hardinessZoneMin": 9,
+                "hardinessZoneMax": 11,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "very_low",
+                  "retainedSourceIds": [
+                    "ncsu-citrus-x-limon"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "aec9a5b21b44ee03d9c027a74ff6d5f638cd19187d3025642e04eb3abb67b6bf",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "scientificName": "Olea europaea",
+      "dryRun": true,
+      "beforePlantHash": "312177073b1b7b6760785b036bbe7abe66e60873c5f3913bed6b146335a916bf",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 0,
+      "cacheHits": 2,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-olea-europaea",
+          "url": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-olea-europaea",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=OLEU",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetFingerprint": "448ba341b75fffd09373587d1f76f31bf6fdccd9ba5b7831e4d162fc0ecfb10c",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "f1381b98b698758ea3d45040c282eefb7c7e570ee1d4705c227ee56994d8a068",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "medium",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-olea-europaea"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 7a",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "7-10",
+                "displayValue": "USDA 7-10",
+                "hardinessZoneMin": 7,
+                "hardinessZoneMax": 10,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "low",
+                  "retainedSourceIds": [
+                    "ncsu-olea-europaea"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "287247659de5e6c2a642bd8c036dbfdeb1cd5ae50a2ab8e8bd4d1f2c4c32c0c5",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    },
+    {
+      "workerRef": "auto-enrichment-worker-v1@1.1.0",
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "scientificName": "Persea americana",
+      "dryRun": true,
+      "beforePlantHash": "e9e7de44026553d3490104edef363bc9607c26eb771e0eba3f822c5881dc1d4c",
+      "beforeReadiness": {
+        "readinessShort": "B",
+        "gate": "PARTIAL"
+      },
+      "status": "DRY_RUN_APPLY_ALLOWED",
+      "hardStop": null,
+      "externalRequests": 0,
+      "cacheHits": 2,
+      "appliedFields": [
+        "coldTolerance"
+      ],
+      "ownerDecisionRequired": false,
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-persea-americana",
+          "url": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-persea-americana",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PEAM3",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetFingerprint": "98e88d01c0526030bf28f4960d25ec01991734a3636fd30de36cbd21840467b7",
+      "fieldPackets": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_low",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+        }
+      ],
+      "applyGate": {
+        "setDecision": "APPLY_ALLOWED",
+        "setReasons": [
+          "all_apply_gates_passed"
+        ],
+        "fieldResults": [
+          {
+            "field": "frostSensitivity",
+            "decision": "NEEDS_MORE_EVIDENCE",
+            "reasons": [
+              "apply_status_not_ready"
+            ]
+          },
+          {
+            "field": "coldTolerance",
+            "decision": "APPLY_ALLOWED",
+            "reasons": [
+              "heuristic_current_compatible_ss_upgrade",
+              "all_apply_gates_passed"
+            ],
+            "contradictionClass": "CONSISTENT"
+          }
+        ]
+      },
+      "mutationPlan": {
+        "planFingerprint": "0c623cbbd105e19cbfd56afe04a48bb40391550974ae48982bfaab547cb62385",
+        "jsonDiff": [
+          {
+            "path": "climateTraits.coldTolerance",
+            "before": {
+              "value": "low",
+              "evidenceClass": "HEURISTIC_ASSERTION",
+              "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+            },
+            "after": {
+              "value": "very_low",
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "fieldOrigin": "ASSERTED_SOURCE"
+            },
+            "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+            "provenance": {
+              "sourceIds": [
+                "ncsu-persea-americana"
+              ],
+              "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+              "sourceType": "university_extension",
+              "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+              "sourceClaim": {
+                "claimType": "usda_hardiness_zone_band",
+                "rawValue": "9-12",
+                "displayValue": "USDA 9-12",
+                "hardinessZoneMin": 9,
+                "hardinessZoneMax": 12,
+                "hardinessZoneSystem": "USDA",
+                "damageMode": null,
+                "minimumWinterTemperatureF": null,
+                "units": "usda_zone",
+                "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+              },
+              "sourcePolicyResult": {
+                "mayBeSourceSupported": true,
+                "evidenceClass": "SOURCE_SUPPORTED",
+                "reasons": [
+                  "tier_a_preferred_source_independent_ok",
+                  "source_supported_gate_passed",
+                  "policy=catalog-source-policy-v1@1.0.0",
+                  "fieldProvenanceHonesty=1.0.0"
+                ]
+              },
+              "contradictionClass": "CONSISTENT",
+              "contradictionResult": {
+                "contradictionClass": "CONSISTENT",
+                "queueAction": "AUTO_CONTINUE",
+                "hold": false,
+                "normalizedResult": {
+                  "value": "very_low",
+                  "retainedSourceIds": [
+                    "ncsu-persea-americana"
+                  ]
+                },
+                "reasons": [
+                  "single_authoritative_claim"
+                ],
+                "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+              },
+              "transformId": "hardiness-zone-to-cold-traits-v1",
+              "transformVersion": "1.0.0",
+              "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+              "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+              "contentHash": "d27eafe773b3e294551e01f3bd9b24ea9aa0e6820d6b441959b96cc16353890d",
+              "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+            }
+          }
+        ],
+        "guards": {
+          "floweringRequirementsUnchanged": true,
+          "fruitingRequirementsUnchanged": true,
+          "needsReviewUnchanged": true,
+          "slugUnchanged": true,
+          "scientificUnchanged": true,
+          "aliasesUnchanged": true
+        }
+      },
+      "readinessSimulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "blockersCleared": [],
+        "blockersAdded": [],
+        "note": "Simulation only — no catalog write."
+      }
+    }
+  ],
+  "completed": 3,
+  "partial": 3,
+  "hold": 0,
+  "skipped": 0,
+  "failed": 0,
+  "applied": 0,
+  "externalRequests": 0,
+  "plantsChanged": [],
+  "fieldsChanged": {},
+  "batchStopReason": null,
+  "status": "BATCH_COMPLETE",
+  "dryBatchValidated": true,
+  "recoveryPolicy": "n/a_dry",
+  "finishedAt": "2026-09-08T17:51:22.551Z",
+  "ownerReviewRequiredCount": 0,
+  "requestBudget": {
+    "used": 0,
+    "maxTotal": 6
+  }
+}

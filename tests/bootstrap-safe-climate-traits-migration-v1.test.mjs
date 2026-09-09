@@ -208,7 +208,10 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
   // structural fields remain LEGACY_ASSERTED_METADATA.
   const enrichmentOverlayFields = new Set([
     'pomegranate.frostSensitivity',
-    'pomegranate.coldTolerance'
+    'pomegranate.coldTolerance',
+    'lemon.coldTolerance',
+    'olive.coldTolerance',
+    'avocado.coldTolerance'
   ]);
   for (const slug of payload.safeSlugs) {
     const ct = payload.plants[slug].climateTraits;
@@ -398,11 +401,14 @@ test('PHASE7: identity safety — no new duplicates; remaining conflict plants u
   }
 });
 
-test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate frost/cold)', () => {
+test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate frost/cold + worker cold)', () => {
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();
   const allowedSs = new Set([
     'pomegranate.frostSensitivity',
-    'pomegranate.coldTolerance'
+    'pomegranate.coldTolerance',
+    'lemon.coldTolerance',
+    'olive.coldTolerance',
+    'avocado.coldTolerance'
   ]);
   for (const slug of payload.safeSlugs) {
     const classes = payload.plants[slug].climateTraits.traitEvidenceClasses || {};
@@ -420,4 +426,7 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate fros
   const pom = payload.plants.pomegranate.climateTraits;
   assert.ok(pom.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(pom.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.lemon.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.olive.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.avocado.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
 });
