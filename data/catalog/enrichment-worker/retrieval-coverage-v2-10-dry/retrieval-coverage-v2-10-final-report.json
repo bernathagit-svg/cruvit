@@ -1,0 +1,583 @@
+{
+  "verdict": "RETRIEVAL_COVERAGE_V2_10_PLANT_DRY_VALIDATED",
+  "coverageRef": "catalog-retrieval-coverage-v2@1.0.0",
+  "baselineCommit": "e6137a9d71a3447d87ddf96c3eb9c8a8d02389c1",
+  "experimentFingerprint": "2301a470a07388cd3c21f8d6ef959c738011e2fb97f4d9b03c8c5a49090b404c",
+  "sameTenPlants": true,
+  "requestCaps": {
+    "baselineEquivalentPerPlant": 2,
+    "additionalFrostOrFallbackPerPlant": 2,
+    "maxPerPlant": 4,
+    "maxTotal": 40,
+    "cacheFirst": true,
+    "dedupeUrls": true,
+    "noUnlimitedFallbackLoops": true
+  },
+  "frostTaxonomy": {
+    "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+    "allowedClaimExamples": [
+      "frost injury",
+      "frost damage",
+      "frost tender / frost sensitive",
+      "killed by frost",
+      "damaged below a stated frost/freezing temperature",
+      "flower/fruit/young-growth frost injury",
+      "freeze injury directly described",
+      "institutional wording about sensitivity/intolerance to freezing/frost"
+    ],
+    "notSufficientAlone": [
+      "USDA hardiness zone",
+      "minimum winter temperature alone",
+      "hardy to zone X",
+      "general cold tolerance",
+      "climate zone range"
+    ],
+    "zoneToFrostMisuseForbidden": true
+  },
+  "coldFailureDiagnosis": {
+    "guava": {
+      "class": "source_page_unavailable_or_wrong_url",
+      "detail": "NCSU 404; USDA SPA shell without Hardiness Zone / binomial text"
+    },
+    "lychee": {
+      "class": "source_page_unavailable_or_wrong_url",
+      "detail": "NCSU 404; USDA SPA shell without Hardiness Zone / binomial text"
+    },
+    "mandarin": {
+      "class": "source_page_unavailable_or_identity_mismatch",
+      "detail": "NCSU 404 / genus-only citrus page; USDA SPA shell"
+    },
+    "mango": {
+      "class": "source_page_unavailable_or_wrong_url",
+      "detail": "NCSU 404; USDA SPA shell without Hardiness Zone / binomial text"
+    }
+  },
+  "coverage": {
+    "baseline": {
+      "coldReady": "6/10",
+      "frostReady": "0/10"
+    },
+    "v2": {
+      "coldReady": "8/10",
+      "frostReady": "3/10",
+      "coldReadySlugs": [
+        "lychee",
+        "mango",
+        "orange",
+        "raspberry",
+        "apple",
+        "fig",
+        "peach",
+        "pear"
+      ],
+      "frostReadySlugs": [
+        "guava",
+        "mango",
+        "orange"
+      ],
+      "both": [
+        "mango",
+        "orange"
+      ],
+      "coldOnly": [
+        "lychee",
+        "raspberry",
+        "apple",
+        "fig",
+        "peach",
+        "pear"
+      ],
+      "frostOnly": [
+        "guava"
+      ],
+      "neither": [
+        "mandarin"
+      ]
+    }
+  },
+  "perPlant": [
+    {
+      "slug": "guava",
+      "scientificName": "Psidium guajava",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "READY",
+        "value": "high",
+        "transform": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+        "sourceIds": [
+          "uf-ifas-gs-guava"
+        ],
+        "claim": {
+          "claimType": "frost_injury_statement",
+          "rawValue": "frost_sensitive",
+          "displayValue": "frost_sensitive",
+          "hardinessZoneMin": null,
+          "hardinessZoneMax": null,
+          "hardinessZoneSystem": null,
+          "damageMode": "frost_sensitive",
+          "minimumWinterTemperatureF": null,
+          "units": null,
+          "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+        },
+        "excerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+        "contradiction": "CONSISTENT",
+        "remainReason": null
+      }
+    },
+    {
+      "slug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "NEEDS_MORE",
+        "v2": "READY",
+        "value": "very_low",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "uf-ifas-gs-lychee"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "10-11",
+          "displayValue": "USDA 10-11",
+          "hardinessZoneMin": 10,
+          "hardinessZoneMax": 11,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+        },
+        "excerpt": "Hardiness Zone: 10A",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "mango",
+      "scientificName": "Mangifera indica",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "NEEDS_MORE",
+        "v2": "READY",
+        "value": "very_low",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "uf-ifas-gs-mango"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "10-11",
+          "displayValue": "USDA 10-11",
+          "hardinessZoneMin": 10,
+          "hardinessZoneMax": 11,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+        },
+        "excerpt": "Hardiness Zone: 10A",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "READY",
+        "value": "very_high",
+        "transform": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+        "sourceIds": [
+          "uf-ifas-gs-mango"
+        ],
+        "claim": {
+          "claimType": "frost_injury_statement",
+          "rawValue": "frost_tender",
+          "displayValue": "frost_tender",
+          "hardinessZoneMin": null,
+          "hardinessZoneMax": null,
+          "hardinessZoneSystem": null,
+          "damageMode": "frost_tender",
+          "minimumWinterTemperatureF": null,
+          "units": null,
+          "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+        },
+        "excerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home.",
+        "contradiction": "CONSISTENT",
+        "remainReason": null
+      }
+    },
+    {
+      "slug": "orange",
+      "scientificName": "Citrus sinensis",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "very_low",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-citrus-x-sinensis"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "9-11",
+          "displayValue": "USDA 9-11",
+          "hardinessZoneMin": 9,
+          "hardinessZoneMax": 11,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+        },
+        "excerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "READY",
+        "value": "very_high",
+        "transform": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-citrus-x-sinensis"
+        ],
+        "claim": {
+          "claimType": "frost_injury_statement",
+          "rawValue": "frost_tender",
+          "displayValue": "frost_tender",
+          "hardinessZoneMin": null,
+          "hardinessZoneMax": null,
+          "hardinessZoneSystem": null,
+          "damageMode": "frost_tender",
+          "minimumWinterTemperatureF": null,
+          "units": null,
+          "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+        },
+        "excerpt": "Plant is frost tender.",
+        "contradiction": "CONSISTENT",
+        "remainReason": null
+      }
+    },
+    {
+      "slug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "high",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-rubus-idaeus"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "4-8",
+          "displayValue": "USDA 4-8",
+          "hardinessZoneMin": 4,
+          "hardinessZoneMax": 8,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+        },
+        "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "apple",
+      "scientificName": "Malus domestica",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "high",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-malus-domestica"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "4-9",
+          "displayValue": "USDA 4-9",
+          "hardinessZoneMin": 4,
+          "hardinessZoneMax": 9,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "7a5cb198e84164009683a6d82a97d25e8c7532e144fd67b1f72deda814aec1af"
+        },
+        "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "fig",
+      "scientificName": "Ficus carica",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "low",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-ficus-carica"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "7-10",
+          "displayValue": "USDA 7-10",
+          "hardinessZoneMin": 7,
+          "hardinessZoneMax": 10,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+        },
+        "excerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "peach",
+      "scientificName": "Prunus persica",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "medium",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-prunus-persica"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "5-9",
+          "displayValue": "USDA 5-9",
+          "hardinessZoneMin": 5,
+          "hardinessZoneMax": 9,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "4e82b81194de0bac02e8f71e0d3bac433e9c38609ba89b9da889cecb6ebdd197"
+        },
+        "excerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    },
+    {
+      "slug": "pear",
+      "scientificName": "Pyrus communis",
+      "currentReadiness": "B",
+      "cold": {
+        "v1": "READY",
+        "v2": "READY",
+        "value": "high",
+        "transform": "hardiness-zone-to-cold-traits-v1@1.0.0",
+        "sourceIds": [
+          "ncsu-pyrus-communis"
+        ],
+        "claim": {
+          "claimType": "usda_hardiness_zone_band",
+          "rawValue": "4-8",
+          "displayValue": "USDA 4-8",
+          "hardinessZoneMin": 4,
+          "hardinessZoneMax": 8,
+          "hardinessZoneSystem": "USDA",
+          "damageMode": null,
+          "minimumWinterTemperatureF": null,
+          "units": "usda_zone",
+          "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+        },
+        "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+        "contradiction": "CONSISTENT"
+      },
+      "frost": {
+        "v1": "NEEDS_MORE",
+        "v2": "NEEDS_MORE_EVIDENCE",
+        "value": null,
+        "transform": null,
+        "sourceIds": [],
+        "claim": null,
+        "excerpt": null,
+        "contradiction": "INSUFFICIENT_EVIDENCE",
+        "remainReason": "no_authoritative_direct_frost_claim_found"
+      }
+    }
+  ],
+  "evidenceQuality": {
+    "ZONE_TO_FROST_MISUSE_COUNT": 0
+  },
+  "conflicts": {
+    "note": "see per-plant contradiction classes",
+    "materialConflicts": 0
+  },
+  "cost": {
+    "baselineRequests": 20,
+    "TOTAL_REQUESTS": 11,
+    "BASELINE_EQUIVALENT_REQUESTS": 11,
+    "ADDITIONAL_V2_REQUESTS": 0,
+    "cacheHits": 16,
+    "uniqueUrls": 27,
+    "newColdReadyFields": 2,
+    "newFrostReadyFields": 3,
+    "totalNewReadyFields": 5,
+    "extraRequestsPerNewReadyField": 0,
+    "note": "Cache-first: 16/27 URL attempts served from durable cache; 11 external fetches this run.",
+    "REQUESTS_PER_PROCESSED_PLANT": 1.1,
+    "externalRequestsPerNewReadyField": 2.2,
+    "V2_EXTERNAL_REQUESTS_THIS_RUN": 11,
+    "BASELINE_REQUESTS_REFERENCE": 20
+  },
+  "ownerWorkload": {
+    "OWNER_REVIEW_COUNT": 0,
+    "automaticallyReadyFields": 11,
+    "automaticallyNeedsMore": 9
+  },
+  "frostBottleneckDiagnosis": {
+    "no_authoritative_direct_frost_claim_found": 7
+  },
+  "noWriteProof": {
+    "PLANT_WRITE_COUNT": 0,
+    "QUEUE_WRITE_COUNT": 0,
+    "before": {
+      "triad": {
+        "json": "545a172b51746dfacaa42acb3e61a95e1c3a10a12b4654483f85e213a1b5a434",
+        "js": "9a8465f8b6c2465d2eea77ff0eca2e2501011a40cf39c848339ddf6b26132fd1",
+        "browser": "1fbef60002a6fc0a88e737de902c3d45ffe6cc0f1fdf2bb5885f415bd5ed214d"
+      },
+      "queue": "dab39ad48ffdbaa2284e2cffb35f59d90d594ebe0d2d36bfdd679596678ed147",
+      "queueSummary": "d70efea075bc2b7010bc77f759b719c8d3d83882e892339206118df6fbe4d9cc"
+    },
+    "after": {
+      "triad": {
+        "json": "545a172b51746dfacaa42acb3e61a95e1c3a10a12b4654483f85e213a1b5a434",
+        "js": "9a8465f8b6c2465d2eea77ff0eca2e2501011a40cf39c848339ddf6b26132fd1",
+        "browser": "1fbef60002a6fc0a88e737de902c3d45ffe6cc0f1fdf2bb5885f415bd5ed214d"
+      },
+      "queue": "dab39ad48ffdbaa2284e2cffb35f59d90d594ebe0d2d36bfdd679596678ed147",
+      "queueSummary": "d70efea075bc2b7010bc77f759b719c8d3d83882e892339206118df6fbe4d9cc"
+    },
+    "readinessUnchanged": "A1 / B94 / C0 / D13"
+  },
+  "durableUntouched": {
+    "lemonOliveAvocado": {
+      "lemon": "ff1ba2b8b3cd554eed80c46ed24ea497fef9fe93a6897a04d35e50c2b75d37c1",
+      "olive": "448ba341b75fffd09373587d1f76f31bf6fdccd9ba5b7831e4d162fc0ecfb10c",
+      "avocado": "98e88d01c0526030bf28f4960d25ec01991734a3636fd30de36cbd21840467b7"
+    },
+    "scaleDryV1OrangeUnchanged": true
+  },
+  "scaleValue": {
+    "RETRIEVAL_COVERAGE_V2_SCALE_VALUE": "HIGH",
+    "RECOMMEND_REAL_APPLY_NEXT": "YES"
+  },
+  "artifactRoot": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval",
+  "pilotSummaryLite": {
+    "TOTAL_REQUESTS": 11,
+    "cacheHits": 16,
+    "uniqueUrls": 27,
+    "budget": {
+      "used": 11,
+      "maxTotal": 40,
+      "maxPerPlant": 4,
+      "stopped": null
+    }
+  },
+  "generatedAt": "2026-09-09T18:43:03.076Z"
+}

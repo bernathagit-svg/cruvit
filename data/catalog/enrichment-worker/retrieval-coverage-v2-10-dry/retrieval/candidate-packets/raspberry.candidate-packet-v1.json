@@ -1,0 +1,279 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:raspberry",
+    "canonicalSlug": "raspberry",
+    "scientificName": "Rubus idaeus",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "MISSING_COLD_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "raspberry",
+    "scientificName": "Rubus idaeus",
+    "whySafe": "coverage-v2 overlay on P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-rubus-idaeus",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+      "title": "Rubus idaeus (Raspberry)",
+      "retrievedAt": "2026-09-09T18:43:02.961Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "d98b2dda4cb7a2d36f58ec82ff0e45cff4db6b2a8fa1153a7bdadd289f5a9f3c",
+      "canonicalPlantIdentity": {
+        "slug": "raspberry",
+        "scientificName": "Rubus idaeus"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 4,
+        "hardinessZoneMax": 8,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "4-8",
+        "displayValue": "USDA 4-8",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+        "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-rubus-idaeus",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=RUID",
+      "title": "Rubus idaeus - USDA PLANTS",
+      "retrievedAt": "2026-09-09T18:43:02.962Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "raspberry",
+        "scientificName": "Rubus idaeus"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "low",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "medium",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "rawValue": "4-8",
+        "displayValue": "USDA 4-8",
+        "hardinessZoneMin": 4,
+        "hardinessZoneMax": 8,
+        "hardinessZoneSystem": "USDA",
+        "damageMode": null,
+        "minimumWinterTemperatureF": null,
+        "units": "usda_zone",
+        "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+      },
+      "normalizedTraitCandidate": {
+        "field": "coldTolerance",
+        "value": "high"
+      },
+      "proposedValue": "high",
+      "proposedNormalizedValue": "high",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-rubus-idaeus",
+          "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b"
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "hardiness-zone-to-cold-traits-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+      "transformReason": "zone_band_mapped_to_cold_tolerance",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "high",
+          "retainedSourceIds": [
+            "ncsu-rubus-idaeus"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-rubus-idaeus\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+      },
+      "contentHash": "d98b2dda4cb7a2d36f58ec82ff0e45cff4db6b2a8fa1153a7bdadd289f5a9f3c",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "high",
+        "retainedSourceIds": [
+          "ncsu-rubus-idaeus"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-rubus-idaeus\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-09T18:43:02.980Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 1,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "e7a4ae95f136fae559a2b9d29e84acb852f4cd8900cd04aed2b3ef18710078af"
+}

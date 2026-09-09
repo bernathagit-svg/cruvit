@@ -6,7 +6,8 @@
 import crypto from 'node:crypto';
 
 export const HARDINESS_EVIDENCE_CLAIMS_ID = 'hardiness-evidence-claims-v1';
-export const HARDINESS_EVIDENCE_CLAIMS_VERSION = '1.0.0';
+/** 1.1.0: additive zone "through" ranges + direct freeze-injury excerpts (no transform broadening). */
+export const HARDINESS_EVIDENCE_CLAIMS_VERSION = '1.1.0';
 export const HARDINESS_EVIDENCE_CLAIMS_REF = `${HARDINESS_EVIDENCE_CLAIMS_ID}@${HARDINESS_EVIDENCE_CLAIMS_VERSION}`;
 
 export const HARDINESS_CLAIM_TYPE = Object.freeze({
@@ -42,7 +43,7 @@ export function extractExplicitHardinessZones(text) {
   if (!zones.length) {
     const near = [
       ...t.matchAll(
-        /hardiness[^.]{0,40}zones?\s*(1[0-3]|[3-9])[ab]?\s*(?:[-–to]+|\s+to\s+)\s*(1[0-3]|[3-9])[ab]?/gi
+        /hardiness[^.]{0,50}zones?\s*(1[0-3]|[3-9])[ab]?\s*(?:[-–to]+|\s+to\s+|\s+through\s+)\s*(1[0-3]|[3-9])[ab]?/gi
       )
     ];
     for (const nm of near) {
@@ -57,12 +58,21 @@ export function extractExplicitHardinessZones(text) {
  */
 export function extractHardinessZoneExcerpt(text) {
   const t = String(text || '');
-  const m = t.match(
+  const list = t.match(
     /(?:USDA\s*)?(?:Plant\s*)?Hardiness\s*Zones?\s*[:.]?\s*((?:1[0-3]|[3-9])[ab]?(?:\s*,\s*(?:1[0-3]|[3-9])[ab]?)*)/i
   );
-  if (!m) return null;
-  const excerpt = `Hardiness Zone: ${m[1].replace(/\s+/g, ' ').trim()}`;
-  return excerpt.slice(0, 160);
+  if (list) {
+    const excerpt = `Hardiness Zone: ${list[1].replace(/\s+/g, ' ').trim()}`;
+    return excerpt.slice(0, 160);
+  }
+  const range = t.match(
+    /(?:USDA\s*)?(?:Plant\s*)?Hardiness\s*Zones?\s*[:.]?\s*((?:1[0-3]|[3-9])[ab]?)\s*(?:[-–to]+|\s+to\s+|\s+through\s+)\s*((?:1[0-3]|[3-9])[ab]?)/i
+  );
+  if (range) {
+    const excerpt = `Hardiness Zone: ${range[1]}-${range[2]}`.replace(/\s+/g, ' ').trim();
+    return excerpt.slice(0, 160);
+  }
+  return null;
 }
 
 /**
@@ -103,6 +113,8 @@ export function extractFrostInjuryExcerpt(text) {
   const patterns = [
     /[^.]{0,60}killed to the ground[^.]{0,100}\./i,
     /[^.]{0,60}(?:frost.?tender|intolerant of frost|killed by frost)[^.]{0,80}\./i,
+    /[^.]{0,80}(?:intoleran(?:t|ce)\s+(?:of|for)\s+freezing(?:\s+temperatures?)?)[^.]{0,80}\./i,
+    /[^.]{0,80}(?:freeze\s+(?:damage|injury)|damaged by freez(?:e|ing)|damage may occur if the freeze)[^.]{0,100}\./i,
     /[^.]{0,60}(?:frost.?sensitive|sensitive to frost|protect(?:ed)? from frost)[^.]{0,80}\./i,
     /[^.]{0,60}(?:freezing or late frost|late (?:spring )?frost[^.]{0,40}blossom|blossom[^.]{0,40}frost)[^.]{0,60}\./i
   ];
@@ -110,9 +122,18 @@ export function extractFrostInjuryExcerpt(text) {
     const m = t.match(re);
     if (!m) continue;
     let s = m[0].replace(/\s+/g, ' ').trim();
-    if (/data-downloadurl|Download Image|CC BY|s3\.amazonaws/i.test(s)) continue;
-    if (s.length < 24) continue;
+    if (/data-downloadurl|Download Image|s3\.amazonaws/i.test(s)) continue;
+    if (/CC BY/i.test(s) && !/frost.?tender|freeze\s+(?:damage|injury)/i.test(s)) continue;
+    // Tag/chip noise: isolate a clean frost-tender token when license junk trails.
+    if (/frost.?tender/i.test(s) && /CC BY|#\w+/i.test(s)) {
+      s = 'Plant is frost tender.';
+    }
+    if (s.length < 18) continue;
     return s.slice(0, 220);
+  }
+  // Compact token fallback (NCSU tag chips) — still direct frost-tender wording.
+  if (/\bfrost\s*tender\b/i.test(t) && !/CC BY-SA 4\.0 license applies to entire page body/i.test(t)) {
+    return 'Plant is frost tender.';
   }
   return null;
 }
@@ -136,9 +157,17 @@ export function extractFrostInjuryClaim(text) {
     damageMode = 'killed_to_ground';
     claimType = HARDINESS_CLAIM_TYPE.COLD_DAMAGE_THRESHOLD;
     if (kill) minimumWinterTemperatureF = Number(kill[1]);
-  } else if (/frost.?tender|intolerant of frost|killed by frost/i.test(excerpt)) {
+  } else if (
+    /frost.?tender|intolerant of frost|killed by frost|intoleran(?:t|ce)\s+(?:of|for)\s+freezing/i.test(
+      excerpt
+    )
+  ) {
     damageMode = 'frost_tender';
-  } else if (/frost.?sensitive|sensitive to frost|protect(?:ed)? from frost/i.test(excerpt)) {
+  } else if (
+    /frost.?sensitive|sensitive to frost|protect(?:ed)? from frost|freeze\s+(?:damage|injury)|damaged by freez(?:e|ing)|damage may occur if the freeze/i.test(
+      excerpt
+    )
+  ) {
     damageMode = 'frost_sensitive';
   } else if (/late (?:spring )?frost|freezing or late frost|blossom.*frost|frost.*blossom/i.test(excerpt)) {
     damageMode = 'late_frost_blossom_risk';

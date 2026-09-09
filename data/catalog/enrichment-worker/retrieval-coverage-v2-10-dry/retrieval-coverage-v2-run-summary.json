@@ -1,0 +1,1838 @@
+{
+  "coverageRef": "catalog-retrieval-coverage-v2@1.0.0",
+  "retrieverRef": "source-retriever-pilot-v1@1.1.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "coldTransformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+  "frostTransformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+  "experimentFingerprint": "2301a470a07388cd3c21f8d6ef959c738011e2fb97f4d9b03c8c5a49090b404c",
+  "baselineCommit": "e6137a9d71a3447d87ddf96c3eb9c8a8d02389c1",
+  "lockedSlugs": [
+    "guava",
+    "lychee",
+    "mandarin",
+    "mango",
+    "orange",
+    "raspberry",
+    "apple",
+    "fig",
+    "peach",
+    "pear"
+  ],
+  "requestCaps": {
+    "baselineEquivalentPerPlant": 2,
+    "additionalFrostOrFallbackPerPlant": 2,
+    "maxPerPlant": 4,
+    "maxTotal": 40,
+    "cacheFirst": true,
+    "dedupeUrls": true,
+    "noUnlimitedFallbackLoops": true
+  },
+  "BASELINE_EQUIVALENT_REQUESTS": 11,
+  "ADDITIONAL_V2_REQUESTS": 0,
+  "TOTAL_REQUESTS": 11,
+  "cacheHits": 16,
+  "uniqueUrls": 27,
+  "budget": {
+    "used": 11,
+    "maxTotal": 40,
+    "maxPerPlant": 4,
+    "stopped": null
+  },
+  "perPlantPrefetch": {
+    "guava": 3,
+    "lychee": 3,
+    "mandarin": 2,
+    "mango": 3,
+    "orange": 0,
+    "raspberry": 0,
+    "apple": 0,
+    "fig": 0,
+    "peach": 0,
+    "pear": 0
+  },
+  "pilotResults": [
+    {
+      "slug": "guava",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\guava.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\guava.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:guava",
+        "canonicalSlug": "guava",
+        "scientificName": "Psidium guajava",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "guava",
+          "scientificName": "Psidium guajava",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "high",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_sensitive",
+            "displayValue": "frost_sensitive",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_sensitive",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+          },
+          "normalizedTraitCandidate": {
+            "field": "frostSensitivity",
+            "value": "high"
+          },
+          "proposedValue": "high",
+          "proposedNormalizedValue": "high",
+          "sourceIds": [
+            "uf-ifas-gs-guava"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+          "excerpts": [
+            {
+              "sourceId": "uf-ifas-gs-guava",
+              "excerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25."
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "transformReason": "frost_injury_mapped_to_frost_sensitivity",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-guava"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-gs-guava\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "contentHash": "9b2a5efad61b0ad2b074704f3eccd683844bd27734bdfd871aea493196747a09",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "guava",
+          "scientificName": "Psidium guajava",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "18264120791b99a48716331e2950f13ac0430c3dadb3b9624dfcfaf160d83d26",
+      "sourcesFetched": [
+        {
+          "sourceId": "uf-ifas-gs-guava",
+          "url": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "uf-edis-mg045-guava",
+          "url": "https://edis.ifas.ufl.edu/publication/MG045",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "ncsu-psidium-guajava",
+          "url": "https://plants.ces.ncsu.edu/plants/psidium-guajava/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-psidium-guajava",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PSGU",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "lychee",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\lychee.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\lychee.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:lychee",
+        "canonicalSlug": "lychee",
+        "scientificName": "Litchi chinensis",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "lychee",
+          "scientificName": "Litchi chinensis",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "high",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "lychee",
+          "scientificName": "Litchi chinensis",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "10-11",
+            "displayValue": "USDA 10-11",
+            "hardinessZoneMin": 10,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "very_low"
+          },
+          "proposedValue": "very_low",
+          "proposedNormalizedValue": "very_low",
+          "sourceIds": [
+            "uf-ifas-gs-lychee"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/tropical/lychee.html",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 10A",
+          "excerpts": [
+            {
+              "sourceId": "uf-ifas-gs-lychee",
+              "excerpt": "Hardiness Zone: 10A"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "uf-ifas-gs-lychee"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"uf-ifas-gs-lychee\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "contentHash": "385043eff182bae58a599d6423b84db31d802ba1c78f7ad3d39463693d88c7fc",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "fb687299f82704c1d542d2e483ca1f249ab7304e2c2f7fe5011d9ca4b08dc9b3",
+      "sourcesFetched": [
+        {
+          "sourceId": "uf-ifas-gs-lychee",
+          "url": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/tropical/lychee.html",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "uf-edis-mg051-lychee",
+          "url": "https://edis.ifas.ufl.edu/publication/MG051",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "ncsu-litchi-chinensis",
+          "url": "https://plants.ces.ncsu.edu/plants/litchi-chinensis/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-litchi-chinensis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=LICH",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "mandarin",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\mandarin.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\mandarin.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:mandarin",
+        "canonicalSlug": "mandarin",
+        "scientificName": "Citrus reticulata",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "mandarin",
+          "scientificName": "Citrus reticulata",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "high",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "mandarin",
+          "scientificName": "Citrus reticulata",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mandarin\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 0,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "dc18dbb5534e8a8fc97574650401035acdd534dd931cdb2c4acdb9f608a5d19e",
+      "sourcesFetched": [
+        {
+          "sourceId": "uf-ifas-gs-citrus",
+          "url": "https://gardeningsolutions.ifas.ufl.edu/plants/edibles/fruits/citrus.html",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "ncsu-citrus-reticulata",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-reticulata/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-citrus-reticulata",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CIRE3",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "mango",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\mango.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\mango.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:mango",
+        "canonicalSlug": "mango",
+        "scientificName": "Mangifera indica",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "mango",
+          "scientificName": "Mangifera indica",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "high",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "normalizedTraitCandidate": {
+            "field": "frostSensitivity",
+            "value": "very_high"
+          },
+          "proposedValue": "very_high",
+          "proposedNormalizedValue": "very_high",
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home.",
+          "excerpts": [
+            {
+              "sourceId": "uf-ifas-gs-mango",
+              "excerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home."
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "transformReason": "frost_injury_mapped_to_frost_sensitivity",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "mango",
+          "scientificName": "Mangifera indica",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "10-11",
+            "displayValue": "USDA 10-11",
+            "hardinessZoneMin": 10,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "very_low"
+          },
+          "proposedValue": "very_low",
+          "proposedNormalizedValue": "very_low",
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 10A",
+          "excerpts": [
+            {
+              "sourceId": "uf-ifas-gs-mango",
+              "excerpt": "Hardiness Zone: 10A"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "fieldsAppliedInSimulation": 2,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "165fc5124674a33486d047ceab8544968c7cfc4ffd6975090e5636357ae304e5",
+      "sourcesFetched": [
+        {
+          "sourceId": "uf-ifas-gs-mango",
+          "url": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "uf-edis-mg216-mango",
+          "url": "https://edis.ifas.ufl.edu/publication/MG216",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "ncsu-mangifera-indica",
+          "url": "https://plants.ces.ncsu.edu/plants/mangifera-indica/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-mangifera-indica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=MAIN3",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "orange",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\orange.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\orange.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:orange",
+        "canonicalSlug": "orange",
+        "scientificName": "Citrus sinensis",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "orange",
+          "scientificName": "Citrus sinensis",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "high",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "normalizedTraitCandidate": {
+            "field": "frostSensitivity",
+            "value": "very_high"
+          },
+          "proposedValue": "very_high",
+          "proposedNormalizedValue": "very_high",
+          "sourceIds": [
+            "ncsu-citrus-x-sinensis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Plant is frost tender.",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-citrus-x-sinensis",
+              "excerpt": "Plant is frost tender."
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "transformReason": "frost_injury_mapped_to_frost_sensitivity",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "orange",
+          "scientificName": "Citrus sinensis",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "9-11",
+            "displayValue": "USDA 9-11",
+            "hardinessZoneMin": 9,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "very_low"
+          },
+          "proposedValue": "very_low",
+          "proposedNormalizedValue": "very_low",
+          "sourceIds": [
+            "ncsu-citrus-x-sinensis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-citrus-x-sinensis",
+              "excerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "fieldsAppliedInSimulation": 2,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "b2855d97fe03dd06ed5b8120fcd9f52d3e2350c35ac5a17bc03e86a75eeea784",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-x-sinensis",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-citrus-sinensis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CISI3",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "raspberry",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\raspberry.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\raspberry.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:raspberry",
+        "canonicalSlug": "raspberry",
+        "scientificName": "Rubus idaeus",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "raspberry",
+          "scientificName": "Rubus idaeus",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "raspberry",
+          "scientificName": "Rubus idaeus",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "4-8",
+            "displayValue": "USDA 4-8",
+            "hardinessZoneMin": 4,
+            "hardinessZoneMax": 8,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "high"
+          },
+          "proposedValue": "high",
+          "proposedNormalizedValue": "high",
+          "sourceIds": [
+            "ncsu-rubus-idaeus"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-rubus-idaeus",
+              "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "ncsu-rubus-idaeus"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"raspberry\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-rubus-idaeus\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "contentHash": "d98b2dda4cb7a2d36f58ec82ff0e45cff4db6b2a8fa1153a7bdadd289f5a9f3c",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "e7a4ae95f136fae559a2b9d29e84acb852f4cd8900cd04aed2b3ef18710078af",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-rubus-idaeus",
+          "url": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-rubus-idaeus",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=RUID",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "apple",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\apple.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\apple.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:apple",
+        "canonicalSlug": "apple",
+        "scientificName": "Malus domestica",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "apple",
+          "scientificName": "Malus domestica",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apple\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "apple",
+          "scientificName": "Malus domestica",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "4-9",
+            "displayValue": "USDA 4-9",
+            "hardinessZoneMin": 4,
+            "hardinessZoneMax": 9,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "7a5cb198e84164009683a6d82a97d25e8c7532e144fd67b1f72deda814aec1af"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "high"
+          },
+          "proposedValue": "high",
+          "proposedNormalizedValue": "high",
+          "sourceIds": [
+            "ncsu-malus-domestica"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-malus-domestica",
+              "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "ncsu-malus-domestica"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apple\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-malus-domestica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "contentHash": "d65d90c090d56242de7edda9b68a96ba922d2e7eb4635f9576d104b30d35ae3e",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "f4430f141b0cf8105da5c888b9faaed6119afcfd538bd7e08800a8952ace6406",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-malus-domestica",
+          "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-malus-domestica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=MADO4",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "fig",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\fig.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\fig.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:fig",
+        "canonicalSlug": "fig",
+        "scientificName": "Ficus carica",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "fig",
+          "scientificName": "Ficus carica",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"fig\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "fig",
+          "scientificName": "Ficus carica",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "7-10",
+            "displayValue": "USDA 7-10",
+            "hardinessZoneMin": 7,
+            "hardinessZoneMax": 10,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "low"
+          },
+          "proposedValue": "low",
+          "proposedNormalizedValue": "low",
+          "sourceIds": [
+            "ncsu-ficus-carica"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-ficus-carica",
+              "excerpt": "Hardiness Zone: 7a, 7b, 8a, 8b, 9a, 9b, 10a, 10b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "low",
+              "retainedSourceIds": [
+                "ncsu-ficus-carica"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"fig\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-ficus-carica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+          },
+          "contentHash": "aba1927b864c5f74d3355702075755a5acaa9caf476463796fbc3ed363bd2cc5",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "361217543f458d9555f674e05eb781b4a14ed71f39d489ef38e2889ec556f621",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-ficus-carica",
+          "url": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-ficus-carica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=FICA",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "peach",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\peach.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\peach.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:peach",
+        "canonicalSlug": "peach",
+        "scientificName": "Prunus persica",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "peach",
+          "scientificName": "Prunus persica",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"peach\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "peach",
+          "scientificName": "Prunus persica",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "5-9",
+            "displayValue": "USDA 5-9",
+            "hardinessZoneMin": 5,
+            "hardinessZoneMax": 9,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "4e82b81194de0bac02e8f71e0d3bac433e9c38609ba89b9da889cecb6ebdd197"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "medium"
+          },
+          "proposedValue": "medium",
+          "proposedNormalizedValue": "medium",
+          "sourceIds": [
+            "ncsu-prunus-persica"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/prunus-persica/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-prunus-persica",
+              "excerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b, 9a, 9b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "medium",
+              "retainedSourceIds": [
+                "ncsu-prunus-persica"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"peach\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"medium\"],\"sourceIds\":[\"ncsu-prunus-persica\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"medium\"}"
+          },
+          "contentHash": "5cc84b4cf0122329841a7cba1613c094594347681e4aacfdf8a7d74376204065",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "d98be59152c4060cacb6313c8bf1e1a95c4d2822e233d45b592b7fc7f147573a",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-prunus-persica",
+          "url": "https://plants.ces.ncsu.edu/plants/prunus-persica/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-prunus-persica",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PRPE3",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    },
+    {
+      "slug": "pear",
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\candidate-packets\\pear.candidate-packet-v1.json",
+      "evidencePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\retrieval-coverage-v2-10-dry\\retrieval\\evidence-records\\pear.evidence-records-v1.json",
+      "queueJob": {
+        "jobId": "enrich-v1:pear",
+        "canonicalSlug": "pear",
+        "scientificName": "Pyrus communis",
+        "currentReadinessClass": "B",
+        "productGate": "PARTIAL",
+        "enrichmentExecution": "AUTO",
+        "priority": "P1",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "futureClaimTypes": [
+          "cold",
+          "frost"
+        ]
+      },
+      "fieldPackets": [
+        {
+          "canonicalSlug": "pear",
+          "scientificName": "Pyrus communis",
+          "targetField": "frostSensitivity",
+          "targetGapCode": "MISSING_FROST_EVIDENCE",
+          "currentPlantValue": "low",
+          "sourceClaim": null,
+          "normalizedTraitCandidate": null,
+          "proposedValue": null,
+          "proposedNormalizedValue": null,
+          "sourceIds": [],
+          "sourceUrl": null,
+          "sourceType": null,
+          "authorityTier": null,
+          "supportingExcerpt": null,
+          "excerpts": [],
+          "sourcePolicyResult": null,
+          "transformId": null,
+          "transformVersion": null,
+          "transformRef": null,
+          "transformReason": null,
+          "evidenceLineage": null,
+          "evidenceClass": "UNKNOWN",
+          "contradictionResult": {
+            "contradictionClass": "INSUFFICIENT_EVIDENCE",
+            "queueAction": "AUTO_RETRIEVE_MORE",
+            "hold": false,
+            "normalizedResult": null,
+            "reasons": [
+              "no_authoritative_claims"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pear\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+          },
+          "contentHash": null,
+          "confidence": "low",
+          "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        },
+        {
+          "canonicalSlug": "pear",
+          "scientificName": "Pyrus communis",
+          "targetField": "coldTolerance",
+          "targetGapCode": "MISSING_COLD_EVIDENCE",
+          "currentPlantValue": "medium",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "4-8",
+            "displayValue": "USDA 4-8",
+            "hardinessZoneMin": 4,
+            "hardinessZoneMax": 8,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "f944d1cc29a5c92a6c62cd09a27d579a0911bc967e2aa376c24ae2be772aae4e"
+          },
+          "normalizedTraitCandidate": {
+            "field": "coldTolerance",
+            "value": "high"
+          },
+          "proposedValue": "high",
+          "proposedNormalizedValue": "high",
+          "sourceIds": [
+            "ncsu-pyrus-communis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+          "sourceType": "university_extension",
+          "authorityTier": "A",
+          "supportingExcerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b",
+          "excerpts": [
+            {
+              "sourceId": "ncsu-pyrus-communis",
+              "excerpt": "Hardiness Zone: 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b"
+            }
+          ],
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "transformReason": "zone_band_mapped_to_cold_tolerance",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "ncsu-pyrus-communis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"pear\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"ncsu-pyrus-communis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "contentHash": "b1dfb2a256968d3ee111937bc1112fa24c1ca786ef771bb3ca1f3d21e026962c",
+          "confidence": "medium",
+          "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+          "applyStatus": "READY_TO_APPLY",
+          "runtimeAuthority": false,
+          "writesProductFact": false
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "fingerprint": "ee53abf010e396ba7113c157338e6ace66bafa3ee16b79ce9b13810149668226",
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-pyrus-communis",
+          "url": "https://plants.ces.ncsu.edu/plants/pyrus-communis/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-pyrus-communis",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PYCO",
+          "status": 200,
+          "fromCache": false
+        }
+      ]
+    }
+  ],
+  "ZONE_TO_FROST_MISUSE_COUNT": 0
+}
