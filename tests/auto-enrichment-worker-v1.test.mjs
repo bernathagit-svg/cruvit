@@ -30,7 +30,10 @@ import {
   processBatch,
   processJob,
   loadCurrentQueue,
-  loadCatalogPlants
+  loadCatalogPlants,
+  loadSafeWriterSlugSet,
+  resolveWorkerRetrievalSpec,
+  countSpeciesNameSelectionExclusions
 } from '../modules/personal-domain/auto-enrichment-worker-v1.js';
 import { ENRICHMENT_EXECUTION } from '../modules/personal-domain/enrichment-gap-scanner-v1.js';
 import {
@@ -46,6 +49,11 @@ import {
 } from '../modules/personal-domain/catalog-enrichment-apply-writer-v1.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const SAFE_SLUGS = loadSafeWriterSlugSet(ROOT);
+
+function eligOpts(extra = {}) {
+  return { safeSlugs: SAFE_SLUGS, requireWorkerSpec: false, ...extra };
+}
 
 /** Zone-only HTML — no frost-injury claim (avoids MATERIAL_CONFLICT vs heuristic frost). */
 function mockFetch() {
@@ -59,6 +67,10 @@ function mockFetch() {
       html = '<html><body>Hardiness Zone: 9a, 10a, 11a, 12a USDA hardiness zones 9-12.</body></html>';
     } else if (u.includes('citrus') || u.includes('limon')) {
       html = '<html><body>Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b USDA hardiness zones 9-11.</body></html>';
+    } else if (u.includes('prunus-armeniaca') || u.includes('apricot')) {
+      html = '<html><body>Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b, 8a USDA hardiness zones 5-8.</body></html>';
+    } else if (u.includes('psidium-guajava') || u.includes('guava')) {
+      html = '<html><body>Hardiness Zone: 9a, 10a, 11a USDA hardiness zones 9-11.</body></html>';
     }
     const buf = Buffer.from(html, 'utf8');
     return {
@@ -79,95 +91,104 @@ function tempArtifactAndCache() {
   };
 }
 
-function lockPilot() {
+function lockQueueAuthorityTop3() {
   const queue = loadCurrentQueue(ROOT);
-  const selection = selectEligibleJobs(queue, { maxJobs: 3 });
+  const selection = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  });
   return lockBatch(selection);
 }
 
-test('worker ref + maxJobs frozen at 3; no apricot/pomegranate', () => {
-  assert.match(AUTO_ENRICHMENT_WORKER_REF, /^auto-enrichment-worker-v1@/);
+test('worker ref + maxJobs frozen at 3; pilot specs remain retrieval-only', () => {
+  assert.match(AUTO_ENRICHMENT_WORKER_REF, /^auto-enrichment-worker-v1@1\.2\.0$/);
   assert.equal(WORKER_MAX_JOBS, 3);
   assert.equal(WORKER_PILOT_PLANT_SPECS.length, 3);
   assert.deepEqual(
     WORKER_PILOT_PLANT_SPECS.map((s) => s.slug).sort(),
     ['avocado', 'lemon', 'olive']
   );
+  assert.equal(countSpeciesNameSelectionExclusions(), 0);
 });
 
 test('1. non-P1 job cannot enter', () => {
-  const r = isJobEligibleForWorker({
-    jobId: 'enrich-v1:x',
-    canonicalSlug: 'lemon',
-    priority: 'P2',
-    enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
-    sourceRetrievalRequired: true,
-    identityStatus: 'CANONICAL_SPECIES',
-    gapCodes: ['MISSING_FROST_EVIDENCE']
-  });
+  const r = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P2',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
   assert.equal(r.ok, false);
   assert.ok(r.reasons.includes('not_P1'));
 });
 
 test('2. HOLD job cannot enter', () => {
-  const r = isJobEligibleForWorker({
-    jobId: 'enrich-v1:x',
-    canonicalSlug: 'lemon',
-    priority: 'P1',
-    enrichmentExecution: ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW,
-    sourceRetrievalRequired: true,
-    identityStatus: 'CANONICAL_SPECIES',
-    gapCodes: ['MISSING_FROST_EVIDENCE']
-  });
+  const r = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
   assert.equal(r.ok, false);
 });
 
 test('3. fourth plant cannot enter maxJobs=3 batch', () => {
   const queue = loadCurrentQueue(ROOT);
-  const sel = selectEligibleJobs(queue, { maxJobs: 3 });
-  // Lemon is Class A / removed from queue after production frost apply — remaining
-  // WORKER_PILOT_PLANT_SPECS eligibles are olive + avocado (≤ maxJobs).
-  assert.ok(sel.selected.length <= 3);
-  assert.ok(sel.selected.length >= 1);
-  assert.ok(!sel.selected.some((j) => j.canonicalSlug === 'lemon'));
+  const sel = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  });
+  assert.equal(sel.selected.length, 3);
   assert.ok(
-    sel.skipped.some(
-      (s) =>
-        s.reasons.includes(WORKER_SELECTION_REASON.MAX_JOBS_REACHED) ||
-        s.reasons.includes('no_worker_plant_spec') ||
-        s.reasons.length > 0
-    )
+    sel.skipped.some((s) => s.reasons.includes(WORKER_SELECTION_REASON.MAX_JOBS_REACHED))
   );
 });
 
-test('4. apricot and pomegranate excluded', () => {
-  for (const slug of ['apricot', 'pomegranate']) {
-    const r = isJobEligibleForWorker({
-      jobId: `enrich-v1:${slug}`,
-      canonicalSlug: slug,
+test('4. species-name exclusions absent; apricot eligible when SAFE P1 AUTO', () => {
+  assert.equal(countSpeciesNameSelectionExclusions(), 0);
+  const apricot = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:apricot',
+      canonicalSlug: 'apricot',
       priority: 'P1',
       enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
       sourceRetrievalRequired: true,
       identityStatus: 'CANONICAL_SPECIES',
-      gapCodes: ['MISSING_FROST_EVIDENCE']
-    });
-    assert.equal(r.ok, false, slug);
-  }
+      gapCodes: ['MISSING_FROST_EVIDENCE', 'MISSING_COLD_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(apricot.ok, true);
 });
 
-test('5. lockBatch freezes olive/avocado membership (lemon Class A already complete)', () => {
-  const lock = lockPilot();
+test('5. lockBatch freezes queue-authority top-3 membership', () => {
+  const lock = lockQueueAuthorityTop3();
   assert.equal(lock.batchLocked, true);
-  assert.deepEqual([...lock.lockedSlugs].sort(), ['avocado', 'olive']);
+  assert.equal(lock.lockedSlugs.length, 3);
+  assert.equal(lock.maxJobs, 3);
   assert.equal(lock.batchFingerprint, computeBatchFingerprint(lock.lockedJobs));
   const mem = assertBatchMembershipImmutable(lock, lock.lockedSlugs);
   assert.equal(mem.ok, true);
-  const drift = assertBatchMembershipImmutable(lock, ['olive', 'apricot']);
+  const drift = assertBatchMembershipImmutable(lock, ['olive', 'lemon', 'avocado']);
   assert.equal(drift.ok, false);
 });
 
 test('6. real run impossible before full dry success', async () => {
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const blocked = assertRealWriteAllowed(lock, null);
   assert.equal(blocked.ok, false);
   assert.equal(blocked.reason, WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE);
@@ -393,7 +414,9 @@ test('11b. adversarial queue-integrity — Class A removal narrow contract', () 
 
 test('12. REGRESSION_FAILURE / UNRELATED_PLANT_MUTATION via runWorkerRegressionGate', () => {
   const q = loadCurrentQueue(ROOT);
-  const lock = lockBatch(selectEligibleJobs(q, { maxJobs: 3 }));
+  const lock = lockBatch(
+    selectEligibleJobs(q, { maxJobs: 3, repoRoot: ROOT, safeSlugs: SAFE_SLUGS })
+  );
   const ok = runWorkerRegressionGate({
     repoRoot: ROOT,
     changedSlugs: [],
@@ -437,7 +460,7 @@ test('14. dry run cannot mutate catalog hashes', async () => {
     js: hashFile(paths.js),
     browser: hashFile(paths.browser)
   };
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const dirs = tempArtifactAndCache();
   const batch = await processBatch({
     repoRoot: ROOT,
@@ -468,7 +491,7 @@ test('14. dry run cannot mutate catalog hashes', async () => {
 });
 
 test('15. locked membership cannot be replaced after dry token', async () => {
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const dirs = tempArtifactAndCache();
   const dry = await processBatch({
     repoRoot: ROOT,
@@ -541,7 +564,7 @@ test('17. all declared hard-stop reasons are wired (no enum-only dead codes)', (
 });
 
 test('18. processJob real path blocked without dryValidation', async () => {
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const job = { ...lock.lockedJobs[0], canonicalSlug: lock.lockedJobs[0].slug };
   const audit = await processJob({
     repoRoot: ROOT,
@@ -564,7 +587,7 @@ test('19. unit tests must not overwrite durable clean-replay candidate packets',
   const durableDir = path.join(ROOT, 'data/catalog/enrichment-retrieval/candidate-packets');
   const olivePath = path.join(durableDir, 'olive.candidate-packet-v1.json');
   const before = fs.existsSync(olivePath) ? fs.readFileSync(olivePath, 'utf8') : null;
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const dirs = tempArtifactAndCache();
   await processBatch({
     repoRoot: ROOT,
@@ -608,7 +631,7 @@ test('21. real execution disabled when realExecutionAllowed=false', async () => 
   });
   assert.equal(blocked.ok, false);
   assert.equal(blocked.detail, 'REAL_EXECUTION_ALLOWED=NO');
-  const lock = lockPilot();
+  const lock = lockQueueAuthorityTop3();
   const dirs = tempArtifactAndCache();
   const batch = await processBatch({
     repoRoot: ROOT,
@@ -631,7 +654,9 @@ test('22. 11th job cannot enter dry-scale maxJobs=10', () => {
     excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
     dryRun: true,
     allowDryScaleCeiling: true,
-    realExecutionAllowed: false
+    realExecutionAllowed: false,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
   });
   assert.ok(selection.selected.length <= 10);
   assert.equal(selection.maxJobs, 10);
@@ -651,7 +676,9 @@ test('23. dry-scale locked membership immutable; hard conflict stops without rep
     excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
     dryRun: true,
     allowDryScaleCeiling: true,
-    realExecutionAllowed: false
+    realExecutionAllowed: false,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
   });
   const lock = lockBatch(selection, { plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS });
   assert.equal(lock.batchLocked, true);
@@ -719,7 +746,9 @@ test('24. dry-scale does not invoke writer; catalog + queue unchanged; artifact 
     excludeSlugs: [...WORKER_SCALE_DRY_EXCLUDE_SLUGS],
     dryRun: true,
     allowDryScaleCeiling: true,
-    realExecutionAllowed: false
+    realExecutionAllowed: false,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
   });
   const lock = lockBatch(selection, { plantSpecs: WORKER_SCALE_DRY_PLANT_SPECS.slice(0, 3) });
   const dirs = tempArtifactAndCache();
@@ -755,12 +784,246 @@ test('24. dry-scale does not invoke writer; catalog + queue unchanged; artifact 
   }
 });
 
-test('25. existing 3-job real-worker selection unchanged; no Batch 3', () => {
+test('25. maxJobs=3 queue-authority selection; no Batch 3', () => {
   assert.equal(WORKER_MAX_JOBS, 3);
   assert.equal(WORKER_PILOT_PLANT_SPECS.length, 3);
   const queue = loadCurrentQueue(ROOT);
-  const selection = selectEligibleJobs(queue, { maxJobs: 3 });
+  const selection = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  });
   assert.equal(selection.maxJobs, 3);
+  assert.equal(selection.selected.length, 3);
+  assert.equal(selection.selectionAuthority, 'QUEUE_ORDER_SAFE_P1_AUTO');
   assert.ok(selection.selected.every((j) => !String(j.canonicalSlug).includes('batch-3')));
   assert.ok(!WORKER_SCALE_DRY_PLANT_SPECS.some((s) => s.slug === 'batch-3'));
+});
+
+test('26. SAFE P1 AUTO plant without WORKER_PILOT_PLANT_SPECS can be selected', () => {
+  const queue = loadCurrentQueue(ROOT);
+  const sel = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS,
+    plantSpecs: WORKER_PILOT_PLANT_SPECS
+  });
+  assert.ok(sel.selected.some((j) => j.canonicalSlug === 'apricot'));
+  assert.ok(!WORKER_PILOT_PLANT_SPECS.some((s) => s.slug === 'apricot'));
+});
+
+test('27. pilot preferredOrder cannot override queue rank', () => {
+  const queue = loadCurrentQueue(ROOT);
+  const sel = selectEligibleJobs(queue, {
+    maxJobs: 3,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS,
+    plantSpecs: WORKER_PILOT_PLANT_SPECS
+  });
+  // Queue order SAFE P1 AUTO starts apricot → avocado → guava (not lemon/olive preference).
+  assert.deepEqual(
+    sel.selected.map((j) => j.canonicalSlug),
+    ['apricot', 'avocado', 'guava']
+  );
+});
+
+test('28. missing custom retrieval spec does not exclude selection', () => {
+  const r = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:apricot',
+      canonicalSlug: 'apricot',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts({ plantSpecs: WORKER_PILOT_PLANT_SPECS, requireWorkerSpec: false })
+  );
+  assert.equal(r.ok, true);
+  const resolved = resolveWorkerRetrievalSpec({
+    slug: 'apricot',
+    scientificName: 'Prunus armeniaca',
+    plantSpecs: WORKER_PILOT_PLANT_SPECS
+  });
+  assert.equal(resolved.ok, true);
+  assert.equal(resolved.source, 'generic-v2');
+});
+
+test('29. non-SAFE job cannot enter; broad/category cannot enter', () => {
+  const nonSafe = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:apple',
+      canonicalSlug: 'apple',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(nonSafe.ok, false);
+  assert.ok(nonSafe.reasons.includes('not_SAFE_writer_eligible'));
+
+  const broad = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['BROAD_TAXON_POLICY', 'MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(broad.ok, false);
+  assert.ok(broad.reasons.includes('identity_or_broad_gap'));
+});
+
+test('29b. AUTO+productGate HOLD cannot enter; AUTO alone insufficient; needsReview blocks', () => {
+  const autoHold = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      productGate: 'HOLD',
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(autoHold.ok, false);
+  assert.ok(autoHold.reasons.includes('productGate_HOLD'));
+
+  const needsReviewGap = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      productGate: 'PARTIAL',
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE', 'NEEDS_REVIEW']
+    },
+    eligOpts()
+  );
+  assert.equal(needsReviewGap.ok, false);
+  assert.ok(needsReviewGap.reasons.includes('NEEDS_REVIEW_gap'));
+
+  const needsReviewFlag = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.AUTO,
+      productGate: 'PARTIAL',
+      needsReview: true,
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(needsReviewFlag.ok, false);
+  assert.ok(needsReviewFlag.reasons.includes('needsReview'));
+
+  const holdExec = isJobEligibleForWorker(
+    {
+      jobId: 'enrich-v1:x',
+      canonicalSlug: 'lemon',
+      priority: 'P1',
+      enrichmentExecution: ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW,
+      productGate: 'HOLD',
+      sourceRetrievalRequired: true,
+      identityStatus: 'CANONICAL_SPECIES',
+      gapCodes: ['MISSING_FROST_EVIDENCE']
+    },
+    eligOpts()
+  );
+  assert.equal(holdExec.ok, false);
+
+  const queue = loadCurrentQueue(ROOT);
+  const sel = selectEligibleJobs(queue, {
+    maxJobs: 10,
+    dryRun: true,
+    allowDryScaleCeiling: true,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  });
+  assert.ok(!sel.selected.some((j) => j.canonicalSlug === 'strawberry-guava'));
+  assert.ok(
+    sel.skipped.some(
+      (s) =>
+        s.slug === 'strawberry-guava' &&
+        (s.reasons.includes('productGate_HOLD') || s.reasons.includes('NEEDS_REVIEW_gap'))
+    )
+  );
+});
+
+test('30. hard-stop does not substitute a fourth-ranked job into locked batch', async () => {
+  const lock = lockQueueAuthorityTop3();
+  assert.deepEqual([...lock.lockedSlugs], ['apricot', 'avocado', 'guava']);
+  const withFour = selectEligibleJobs(loadCurrentQueue(ROOT), {
+    maxJobs: 4,
+    dryRun: true,
+    allowDryScaleCeiling: true,
+    repoRoot: ROOT,
+    safeSlugs: SAFE_SLUGS
+  });
+  assert.ok(withFour.selected.length >= 4);
+  const fourth = withFour.selected[3];
+  assert.ok(fourth);
+  assert.ok(!lock.lockedSlugs.includes(fourth.canonicalSlug));
+
+  const dirs = tempArtifactAndCache();
+  const dry = await processBatch({
+    repoRoot: ROOT,
+    dryRun: true,
+    lockedBatch: lock,
+    ...dirs,
+    fetchImpl: async () => ({
+      ok: false,
+      status: 500,
+      headers: { get: () => 'text/html' },
+      text: async () => '',
+      arrayBuffer: async () => Buffer.alloc(0)
+    })
+  });
+  // Membership immutable — no fourth slug appears even if retrieval fails / batch stops.
+  assert.deepEqual([...lock.lockedSlugs], ['apricot', 'avocado', 'guava']);
+  assert.ok(!dry.audits.some((a) => a.slug === fourth.canonicalSlug));
+  assert.ok(!dry.lockedSlugs?.includes?.(fourth.canonicalSlug));
+});
+
+test('31. dry-only validation invokes no writer (catalog hashes unchanged)', async () => {
+  const paths = bootstrapSafeMigrationPaths(ROOT);
+  const before = {
+    json: hashFile(paths.json),
+    js: hashFile(paths.js),
+    browser: hashFile(paths.browser)
+  };
+  const qBefore = hashFile(
+    path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json')
+  );
+  const dry = await processBatch({
+    repoRoot: ROOT,
+    dryRun: true,
+    maxJobs: 3,
+    ...tempArtifactAndCache(),
+    fetchImpl: mockFetch()
+  });
+  assert.ok(['BATCH_COMPLETE', 'BATCH_STOPPED'].includes(dry.status));
+  assert.deepEqual(dry.plantsChanged || [], []);
+  assert.equal(hashFile(paths.json), before.json);
+  assert.equal(hashFile(paths.js), before.js);
+  assert.equal(hashFile(paths.browser), before.browser);
+  assert.equal(
+    hashFile(path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json')),
+    qBefore
+  );
 });

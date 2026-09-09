@@ -1,0 +1,80 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-09T20:51:42.212Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 2,
+  "cache": {
+    "hits": 0,
+    "misses": 0,
+    "writes": 1,
+    "urls": [
+      "https://plants.usda.gov/home/plantProfile?symbol=PSGU"
+    ],
+    "uniqueUrls": [
+      "https://plants.usda.gov/home/plantProfile?symbol=PSGU"
+    ]
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "guava",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 0,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-psidium-guajava",
+          "url": "https://plants.ces.ncsu.edu/plants/psidium-guajava/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-psidium-guajava",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PSGU",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\queue-authority-dry-v1\\artifacts\\candidate-packets\\guava.candidate-packet-v1.json",
+      "fingerprint": "464604f6c7932b556b198de98641663ef2b7c4a1c6510ebaed62581cf2e64062"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}

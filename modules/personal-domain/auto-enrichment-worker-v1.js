@@ -1,10 +1,14 @@
 /**
- * Auto Enrichment Worker v1 — bounded P1 AUTO pilot orchestrator.
+ * Auto Enrichment Worker v1 — bounded P1 AUTO orchestrator.
  *
  * Calls existing scanner / retriever / policy / transforms / contradiction /
  * Apply Gate / atomic writer / plant-data-contract. Does not invent plant facts.
  *
- * Hard caps: maxJobs=3, P1 AUTO only, SAFE-writable plant specs only.
+ * Hard caps: maxJobs=3, P1 AUTO only, SAFE-writer-eligible plants only.
+ *
+ * Selection authority (v1.2.0+): derives from current SAFE P1 AUTO queue order.
+ * WORKER_PILOT_PLANT_SPECS is retrieval configuration only — not a selection allowlist.
+ * No species-name selection exclusions; no pilot preferredOrder override of queue rank.
  *
  * Orchestration contract:
  *   lockBatch → processDryBatch (all locked jobs) → dryBatchValidated
@@ -50,7 +54,7 @@ import {
 } from './bootstrap-safe-climate-traits-migration-v1.js';
 
 export const AUTO_ENRICHMENT_WORKER_ID = 'auto-enrichment-worker-v1';
-export const AUTO_ENRICHMENT_WORKER_VERSION = '1.1.0';
+export const AUTO_ENRICHMENT_WORKER_VERSION = '1.2.0';
 export const AUTO_ENRICHMENT_WORKER_REF = `${AUTO_ENRICHMENT_WORKER_ID}@${AUTO_ENRICHMENT_WORKER_VERSION}`;
 
 export const WORKER_MAX_JOBS = 3;
@@ -303,8 +307,8 @@ export const WORKER_SCALE_DRY_EXCLUDE_SLUGS = Object.freeze([
 ]);
 
 /**
- * Bounded worker pilot plant specs (SAFE-writable + approved Tier A pages).
- * Final locked set: lemon, olive, avocado. No apricot. No pomegranate.
+ * Retrieval configuration only (preferred Tier A URLs). Not a selection allowlist.
+ * Historical pilot batch used lemon/olive/avocado; queue authority may select others.
  */
 export const WORKER_PILOT_PLANT_SPECS = Object.freeze([
   {
@@ -523,6 +527,104 @@ export function refreshEnrichmentQueue(repoRoot, plantsBySlug, parentCommit) {
   return { queue, queuePath, summaryPath };
 }
 
+export function loadSafeWriterSlugSet(repoRoot) {
+  const jsonPath = path.join(
+    repoRoot,
+    'data',
+    'catalog',
+    'bootstrap-safe-climate-traits-migration-v1.json'
+  );
+  const doc = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  return new Set(doc.safeSlugs || []);
+}
+
+/** Scientific name → NCSU plants.ces path segment (generic Tier A). */
+export function scientificNameToNcsuPathSegment(scientificName) {
+  return String(scientificName || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/×/g, 'x')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-+/g, '-');
+}
+
+/**
+ * Known retrieval configs (pilot + scale-dry). Selection does NOT require membership.
+ */
+export function knownWorkerRetrievalSpecs() {
+  return [...WORKER_PILOT_PLANT_SPECS, ...WORKER_SCALE_DRY_PLANT_SPECS];
+}
+
+/**
+ * Resolve retrieval configuration for a selected plant.
+ * Custom specs preferred; otherwise generic NCSU Tier A from scientific name.
+ */
+export function resolveWorkerRetrievalSpec({
+  slug,
+  scientificName,
+  plantSpecs = null
+} = {}) {
+  const catalog = [...(plantSpecs || []), ...knownWorkerRetrievalSpecs()];
+  const found = catalog.find((s) => s && s.slug === slug);
+  if (found && Array.isArray(found.approvedSources) && found.approvedSources.length > 0) {
+    const source =
+      found.retrievalSource === 'generic-v2'
+        ? 'generic-v2'
+        : knownWorkerRetrievalSpecs().some((s) => s.slug === slug)
+          ? 'custom'
+          : found.retrievalSource || 'custom';
+    return {
+      ok: true,
+      source,
+      plantSpec: Object.freeze({ ...found, approvedSources: [...found.approvedSources] })
+    };
+  }
+  const segment = scientificNameToNcsuPathSegment(scientificName);
+  if (!segment) {
+    return { ok: false, source: 'none', reason: 'retrieval_config_unavailable', plantSpec: null };
+  }
+  const url = `https://plants.ces.ncsu.edu/plants/${segment}/`;
+  return {
+    ok: true,
+    source: 'generic-v2',
+    plantSpec: Object.freeze({
+      slug,
+      scientificName: scientificName || slug,
+      retrievalSource: 'generic-v2',
+      whySafe: 'generic Tier A NCSU path from scientific name; not a curated plantSpec',
+      approvedSources: Object.freeze([
+        Object.freeze({
+          sourceId: `ncsu-generic-${segment}`,
+          sourceType: 'university_extension',
+          institution: 'North Carolina State University Extension Gardener',
+          url,
+          title: `${scientificName || slug} - NCSU (generic)`
+        })
+      ])
+    })
+  };
+}
+
+/**
+ * Count hard-coded species-name selection exclusions in eligibility (must stay 0).
+ */
+export function countSpeciesNameSelectionExclusions() {
+  const src = isJobEligibleForWorker.toString();
+  const hits = [];
+  if (/canonicalSlug\s*===\s*'apricot'/.test(src) || /canonicalSlug\s*===\s*"apricot"/.test(src)) {
+    hits.push('apricot');
+  }
+  if (
+    /canonicalSlug\s*===\s*'pomegranate'/.test(src) ||
+    /canonicalSlug\s*===\s*"pomegranate"/.test(src)
+  ) {
+    hits.push('pomegranate');
+  }
+  return hits.length;
+}
+
 export function isJobEligibleForWorker(job, options = {}) {
   const reasons = [];
   if (!job) return { ok: false, reasons: ['missing_job'] };
@@ -531,10 +633,19 @@ export function isJobEligibleForWorker(job, options = {}) {
   if (job.enrichmentExecution === ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW) {
     reasons.push('HOLD_FOR_REVIEW');
   }
+  // Product gate HOLD/REJECT blocks production selection even when execution is AUTO.
+  // (Scanner may keep evidence retrieval AUTO while productGate=HOLD for needsReview.)
+  if (job.productGate === 'HOLD') reasons.push('productGate_HOLD');
+  if (job.productGate === 'REJECT') reasons.push('productGate_REJECT');
+  if (job.needsReview === true) reasons.push('needsReview');
+  if ((job.gapCodes || []).includes(ENRICHMENT_GAP_CODE.NEEDS_REVIEW)) {
+    reasons.push('NEEDS_REVIEW_gap');
+  }
   if (job.productRole === 'CATEGORY_ONLY') reasons.push('category_only');
   if ((job.gapCodes || []).some((g) => DISQUALIFY_GAPS.has(g))) {
     reasons.push('identity_or_broad_gap');
   }
+  if (!(job.gapCodes || []).length) reasons.push('no_unresolved_gaps');
   if (job.identityStatus && !['CANONICAL_SPECIES', 'SPECIES_OK', 'OK'].includes(job.identityStatus)) {
     if (
       String(job.identityStatus).includes('CONFLICT') ||
@@ -545,10 +656,23 @@ export function isJobEligibleForWorker(job, options = {}) {
     }
   }
   if (job.sourceRetrievalRequired !== true) reasons.push('sourceRetrievalRequired_not_true');
-  if (job.canonicalSlug === 'pomegranate') reasons.push('pomegranate_already_applied');
-  if (job.canonicalSlug === 'apricot') reasons.push('apricot_excluded_from_worker_pilot');
+
+  if (options.requireSafeWriter !== false) {
+    const safeSlugs =
+      options.safeSlugs ||
+      (options.repoRoot ? loadSafeWriterSlugSet(options.repoRoot) : null);
+    if (!safeSlugs) {
+      reasons.push('safe_writer_context_missing');
+    } else if (!safeSlugs.has(job.canonicalSlug)) {
+      reasons.push('not_SAFE_writer_eligible');
+    }
+  }
+
+  // Optional explicit exclude list only (no default species-name hacks).
   if (options.excludeSlugs?.includes(job.canonicalSlug)) reasons.push('excluded_slug');
-  if (options.requireWorkerSpec !== false) {
+
+  // Retrieval specs must NOT gate selection (default requireWorkerSpec=false).
+  if (options.requireWorkerSpec === true) {
     const spec = (options.plantSpecs || WORKER_PILOT_PLANT_SPECS).find(
       (s) => s.slug === job.canonicalSlug
     );
@@ -575,24 +699,24 @@ export function selectEligibleJobs(queueDoc, options = {}) {
     };
   }
   const maxJobs = resolved.maxJobs;
-  const plantSpecs = options.plantSpecs || WORKER_PILOT_PLANT_SPECS;
-  const preferredOrder = plantSpecs.map((s) => s.slug);
+  const retrievalPlantSpecs = options.plantSpecs || knownWorkerRetrievalSpecs();
   const jobs = queueDoc?.jobs || [];
   const eligible = [];
   const skipped = [];
-  const excludeSlugs = options.excludeSlugs || ['pomegranate', 'apricot'];
+  const excludeSlugs = options.excludeSlugs || [];
+  const safeSlugs =
+    options.safeSlugs ||
+    (options.repoRoot ? loadSafeWriterSlugSet(options.repoRoot) : null);
 
-  const ordered = [
-    ...preferredOrder
-      .map((slug) => jobs.find((j) => j.canonicalSlug === slug))
-      .filter(Boolean),
-    ...jobs.filter((j) => !preferredOrder.includes(j.canonicalSlug))
-  ];
-
-  for (const job of ordered) {
+  // Authoritative queue order only — no pilot preferredOrder.
+  for (const job of jobs) {
     const el = isJobEligibleForWorker(job, {
-      plantSpecs,
-      excludeSlugs
+      plantSpecs: retrievalPlantSpecs,
+      excludeSlugs,
+      safeSlugs,
+      repoRoot: options.repoRoot,
+      requireWorkerSpec: options.requireWorkerSpec === true,
+      requireSafeWriter: options.requireSafeWriter
     });
     if (!el.ok) {
       skipped.push({ jobId: job.jobId, slug: job.canonicalSlug, reasons: el.reasons });
@@ -609,13 +733,25 @@ export function selectEligibleJobs(queueDoc, options = {}) {
     eligible.push(job);
   }
 
+  const resolvedSpecs = eligible
+    .map((j) =>
+      resolveWorkerRetrievalSpec({
+        slug: j.canonicalSlug,
+        scientificName: j.scientificName,
+        plantSpecs: retrievalPlantSpecs
+      })
+    )
+    .filter((r) => r.ok)
+    .map((r) => r.plantSpec);
+
   return {
     maxJobs,
     selected: eligible.slice(0, maxJobs),
     skipped,
-    plantSpecs: plantSpecs.filter((s) => eligible.some((j) => j.canonicalSlug === s.slug)),
+    plantSpecs: resolvedSpecs,
     realExecutionAllowed: resolved.realExecutionAllowed,
-    jobCeiling: resolved.ceiling
+    jobCeiling: resolved.ceiling,
+    selectionAuthority: 'QUEUE_ORDER_SAFE_P1_AUTO'
   };
 }
 
@@ -641,7 +777,19 @@ export function lockBatch(selection, options = {}) {
     })
   );
   const batchFingerprint = computeBatchFingerprint(lockedJobs);
-  const plantSpecs = options.plantSpecs || selection.plantSpecs || WORKER_PILOT_PLANT_SPECS;
+  const retrievalCatalog = options.plantSpecs || selection.plantSpecs || knownWorkerRetrievalSpecs();
+  const plantSpecs = Object.freeze(
+    lockedJobs
+      .map((j) =>
+        resolveWorkerRetrievalSpec({
+          slug: j.slug,
+          scientificName: j.scientificName,
+          plantSpecs: retrievalCatalog
+        })
+      )
+      .filter((r) => r.ok)
+      .map((r) => Object.freeze({ ...r.plantSpec }))
+  );
   return Object.freeze({
     batchLocked: true,
     lockedAt: new Date().toISOString(),
@@ -650,9 +798,8 @@ export function lockBatch(selection, options = {}) {
     lockedJobIds: Object.freeze(lockedJobs.map((j) => j.jobId)),
     batchFingerprint,
     maxJobs: selection.maxJobs ?? WORKER_MAX_JOBS,
-    plantSpecs: Object.freeze(
-      plantSpecs.filter((s) => lockedJobs.some((j) => j.slug === s.slug)).map((s) => Object.freeze({ ...s }))
-    ),
+    plantSpecs,
+    selectionAuthority: selection.selectionAuthority || 'QUEUE_ORDER_SAFE_P1_AUTO',
     selectionSkipped: selection.skipped || []
   });
 }
@@ -1017,7 +1164,10 @@ export async function processJob({
    */
   reusePacketsBySlug = null,
   /** Slugs already successfully catalog-mutated earlier in this batch. */
-  batchWrittenSlugs = null
+  batchWrittenSlugs = null,
+  safeSlugs = null,
+  retrievalPlantSpecs = null,
+  excludeSlugs = null
 }) {
   const audit = {
     workerRef: AUTO_ENRICHMENT_WORKER_REF,
@@ -1051,7 +1201,12 @@ export async function processJob({
 
   const el = isJobEligibleForWorker(
     { ...job, canonicalSlug: job.canonicalSlug || job.slug },
-    { plantSpecs: [plantSpec] }
+    {
+      requireWorkerSpec: false,
+      safeSlugs,
+      repoRoot,
+      excludeSlugs: excludeSlugs || []
+    }
   );
   if (!el.ok) {
     audit.status = 'SKIPPED';
@@ -1073,6 +1228,22 @@ export async function processJob({
   }
 
   const slugKey = plant.slug || job.canonicalSlug || job.slug;
+  const resolvedRetrieval = resolveWorkerRetrievalSpec({
+    slug: slugKey,
+    scientificName: job.scientificName || plant?.scientific,
+    plantSpecs: plantSpec
+      ? [plantSpec, ...(retrievalPlantSpecs || [])]
+      : retrievalPlantSpecs || null
+  });
+  audit.retrievalConfigSource = resolvedRetrieval.source;
+  if (!resolvedRetrieval.ok || !resolvedRetrieval.plantSpec?.approvedSources?.length) {
+    audit.status = 'PARTIAL_NO_APPLY';
+    audit.note = 'retrieval_config_unavailable';
+    audit.ownerDecisionRequired = false;
+    return audit;
+  }
+  const effectivePlantSpec = resolvedRetrieval.plantSpec;
+
   const reusePathRaw =
     reusePacketsBySlug && typeof reusePacketsBySlug === 'object'
       ? reusePacketsBySlug[slugKey]
@@ -1096,13 +1267,14 @@ export async function processJob({
     audit.sourcesFetched = [];
     audit.note = 'reused_committed_candidate_packet';
     audit.reusedPacketPath = path.relative(repoRoot, packetPath).replace(/\\/g, '/');
+    audit.retrievalConfigSource = 'cache';
   } else {
     const retriever = await runSourceRetrieverPilot({
       repoRoot,
       queueDoc,
       plantsBySlug: { [plant.slug]: plant },
       fetchImpl,
-      plantSpecs: [plantSpec],
+      plantSpecs: [effectivePlantSpec],
       cacheDir,
       artifactRoot,
       writeSharedSummary: false
@@ -1305,10 +1477,10 @@ export async function processBatch({
   repoRoot,
   dryRun = true,
   maxJobs = WORKER_MAX_JOBS,
-  plantSpecs = WORKER_PILOT_PLANT_SPECS,
+  plantSpecs = null,
   fetchImpl = globalThis.fetch,
   parentCommit = '687a17fe53adf55265451a8bc1f6817194e46c85',
-  excludeSlugs = ['pomegranate', 'apricot'],
+  excludeSlugs = [],
   cacheDir = null,
   artifactRoot = null,
   lockedBatch = null,
@@ -1321,6 +1493,8 @@ export async function processBatch({
 }) {
   const plantsBySlug = loadCatalogPlants(repoRoot);
   const queueDoc = loadCurrentQueue(repoRoot);
+  const safeSlugs = loadSafeWriterSlugSet(repoRoot);
+  const retrievalPlantSpecs = plantSpecs || knownWorkerRetrievalSpecs();
 
   const resolved = resolveWorkerMaxJobs({
     dryRun,
@@ -1351,13 +1525,15 @@ export async function processBatch({
   if (!lock) {
     const selection = selectEligibleJobs(queueDoc, {
       maxJobs: resolved.maxJobs,
-      plantSpecs,
+      plantSpecs: retrievalPlantSpecs,
       excludeSlugs,
       dryRun,
       allowDryScaleCeiling,
-      realExecutionAllowed
+      realExecutionAllowed,
+      repoRoot,
+      safeSlugs
     });
-    lock = lockBatch(selection, { plantSpecs });
+    lock = lockBatch(selection, { plantSpecs: retrievalPlantSpecs });
   }
 
   if (!lock.batchLocked) {
@@ -1496,7 +1672,14 @@ export async function processBatch({
     }
 
     const plant = plantsBySlug[lockedJob.slug];
-    const plantSpec = lock.plantSpecs.find((s) => s.slug === lockedJob.slug);
+    const plantSpec =
+      lock.plantSpecs.find((s) => s.slug === lockedJob.slug) ||
+      resolveWorkerRetrievalSpec({
+        slug: lockedJob.slug,
+        scientificName: lockedJob.scientificName,
+        plantSpecs: retrievalPlantSpecs
+      }).plantSpec ||
+      null;
     const job = {
       ...liveJob,
       jobId: lockedJob.jobId,
@@ -1521,7 +1704,10 @@ export async function processBatch({
       dryValidation,
       lockedBatch: lock,
       reusePacketsBySlug,
-      batchWrittenSlugs
+      batchWrittenSlugs,
+      safeSlugs,
+      retrievalPlantSpecs,
+      excludeSlugs
     });
     batch.audits.push(audit);
     batch.externalRequests += audit.externalRequests || 0;

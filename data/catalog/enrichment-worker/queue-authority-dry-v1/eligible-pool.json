@@ -1,0 +1,425 @@
+{
+  "parentCommit": "a18dd6d55cfd866cd2b71b159fbe722c1e97fd26",
+  "note": "SAFE_P1_QUEUE_CANDIDATES includes HOLD/ineligible audit rows. SAFE_P1_AUTO_EXECUTION_ELIGIBLE_POOL is selectEligibleJobs-only. productGate HOLD is not execution-eligible even if enrichmentExecution=AUTO.",
+  "AUTO_PLUS_HOLD_SELECTABLE": "NO",
+  "SAFE_P1_QUEUE_CANDIDATES": [
+    {
+      "queueRank": 13,
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "scientificName": "Prunus armeniaca",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "generic-v2",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 14,
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "scientificName": "Persea americana",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 28,
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "scientificName": "Psidium guajava",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 33,
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 34,
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 36,
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "scientificName": "Olea europaea",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 37,
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "scientificName": "Citrus sinensis",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 44,
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 47,
+      "jobId": "enrich-v1:strawberry-guava",
+      "slug": "strawberry-guava",
+      "scientificName": "Psidium cattleyanum",
+      "readiness": "B",
+      "productGate": "HOLD",
+      "enrichmentExecution": "AUTO",
+      "needsReview": true,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "generic-v2",
+      "selectable": "NO",
+      "exclusionReasons": [
+        "productGate_HOLD",
+        "NEEDS_REVIEW_gap"
+      ],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "NEEDS_REVIEW",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "PRESENT_IN_QUEUE_BUT_NOT_EXECUTION_ELIGIBLE"
+    }
+  ],
+  "SAFE_P1_AUTO_EXECUTION_ELIGIBLE_POOL": [
+    {
+      "queueRank": 13,
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "scientificName": "Prunus armeniaca",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "generic-v2",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 14,
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "scientificName": "Persea americana",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 28,
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "scientificName": "Psidium guajava",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 33,
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 34,
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "scientificName": "Citrus reticulata",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 36,
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "scientificName": "Olea europaea",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 37,
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "scientificName": "Citrus sinensis",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    },
+    {
+      "queueRank": 44,
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "scientificName": "Rubus idaeus",
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "enrichmentExecution": "AUTO",
+      "needsReview": false,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "custom",
+      "selectable": "YES",
+      "exclusionReasons": [],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "ELIGIBLE_FOR_PRODUCTION_SELECTION"
+    }
+  ],
+  "SAFE_P1_QUEUE_PRESENT_BUT_INELIGIBLE": [
+    {
+      "queueRank": 47,
+      "jobId": "enrich-v1:strawberry-guava",
+      "slug": "strawberry-guava",
+      "scientificName": "Psidium cattleyanum",
+      "readiness": "B",
+      "productGate": "HOLD",
+      "enrichmentExecution": "AUTO",
+      "needsReview": true,
+      "SAFE_writer_eligible": true,
+      "P1": true,
+      "AUTO": true,
+      "retrievalConfigAvailable": "YES",
+      "retrievalConfigSource": "generic-v2",
+      "selectable": "NO",
+      "exclusionReasons": [
+        "productGate_HOLD",
+        "NEEDS_REVIEW_gap"
+      ],
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "NEEDS_REVIEW",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "classification": "PRESENT_IN_QUEUE_BUT_NOT_EXECUTION_ELIGIBLE"
+    }
+  ]
+}

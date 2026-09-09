@@ -1,0 +1,245 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:apricot",
+    "canonicalSlug": "apricot",
+    "scientificName": "Prunus armeniaca",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "MISSING_COLD_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "apricot",
+    "scientificName": "Prunus armeniaca",
+    "whySafe": "generic Tier A NCSU path from scientific name; not a curated plantSpec"
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-generic-prunus-armeniaca",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+      "title": "Prunus armeniaca - NCSU (generic)",
+      "retrievedAt": "2026-09-09T20:51:40.263Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "c8dda01ab51f0028bbe96e53546d68db35c784114754200a7a528a01b5f315c1",
+      "canonicalPlantIdentity": {
+        "slug": "apricot",
+        "scientificName": "Prunus armeniaca"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 5,
+        "hardinessZoneMax": 7,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "5-7",
+        "displayValue": "USDA 5-7",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b",
+        "claimFingerprint": "f8adddb1b5c3a4fc50dda10c0132eb67f2ce396aae8c42028e59c4a3b8fdd17e"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "apricot",
+      "scientificName": "Prunus armeniaca",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "low",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apricot\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "apricot",
+      "scientificName": "Prunus armeniaca",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "medium",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "rawValue": "5-7",
+        "displayValue": "USDA 5-7",
+        "hardinessZoneMin": 5,
+        "hardinessZoneMax": 7,
+        "hardinessZoneSystem": "USDA",
+        "damageMode": null,
+        "minimumWinterTemperatureF": null,
+        "units": "usda_zone",
+        "claimFingerprint": "f8adddb1b5c3a4fc50dda10c0132eb67f2ce396aae8c42028e59c4a3b8fdd17e"
+      },
+      "normalizedTraitCandidate": {
+        "field": "coldTolerance",
+        "value": "medium"
+      },
+      "proposedValue": "medium",
+      "proposedNormalizedValue": "medium",
+      "sourceIds": [
+        "ncsu-generic-prunus-armeniaca"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-generic-prunus-armeniaca",
+          "excerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b"
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "hardiness-zone-to-cold-traits-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+      "transformReason": "zone_band_mapped_to_cold_tolerance",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "medium",
+          "retainedSourceIds": [
+            "ncsu-generic-prunus-armeniaca"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apricot\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"medium\"],\"sourceIds\":[\"ncsu-generic-prunus-armeniaca\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"medium\"}"
+      },
+      "contentHash": "c8dda01ab51f0028bbe96e53546d68db35c784114754200a7a528a01b5f315c1",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apricot\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "medium",
+        "retainedSourceIds": [
+          "ncsu-generic-prunus-armeniaca"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apricot\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"medium\"],\"sourceIds\":[\"ncsu-generic-prunus-armeniaca\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"medium\"}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-09T20:51:40.274Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 1,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "a9f1ac2cfccc476dbdeca8d29fe29fde30cbbf8f13f0ff1cf3a05c39804e3e3c"
+}

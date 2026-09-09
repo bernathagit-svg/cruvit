@@ -1,0 +1,285 @@
+{
+  "phase": "safe_p1_queue_authority_dry_v1",
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "parentCommit": "a18dd6d55cfd866cd2b71b159fbe722c1e97fd26",
+  "PRODUCTION_SELECTION_AUTHORITY": "QUEUE_ORDER_SAFE_P1_AUTO",
+  "WORKER_PILOT_PLANT_SPECS_IS_SELECTION_ALLOWLIST_AFTER_FIX": "NO",
+  "SPECIES_NAME_SELECTION_EXCLUSION_COUNT": 0,
+  "FULL_SAFE_P1_QUEUE_AUTHORITY_PROVEN": "YES",
+  "SAFE_P1_PRODUCTION_CAN_CONTINUE_AUTONOMOUSLY": "NO",
+  "SAFE_P1_PRODUCTION_READY_FOR_NEXT_REAL_BATCH": "YES",
+  "nextBlocker": "owner-authorized real batch under queue authority (not executed here)",
+  "OLD_ALLOWLIST_BATCH": [
+    "lemon",
+    "olive",
+    "avocado"
+  ],
+  "QUEUE_AUTHORITY_TOP_3": [
+    "apricot",
+    "avocado",
+    "guava"
+  ],
+  "SELECTION_CHANGED_AFTER_GENERALIZATION": "YES",
+  "batchFingerprint": "ea9c68e00976705b332e27c9e05c1c40eec2a6f9c68772347cb33c85640d4818",
+  "maxJobs": 3,
+  "requestBudget": {
+    "maxTotal": 6,
+    "maxPerPlant": 2
+  },
+  "catalogBefore": {
+    "A": 3,
+    "B": 92,
+    "C": 0,
+    "D": 13
+  },
+  "catalogAfter": {
+    "A": 3,
+    "B": 92,
+    "C": 0,
+    "D": 13
+  },
+  "dry": {
+    "status": "BATCH_COMPLETE",
+    "batchStopReason": null,
+    "externalRequests": 5,
+    "cacheHits": 0,
+    "plantsChanged": [],
+    "ownerReviewRequiredCount": 0,
+    "audits": [
+      {
+        "slug": "apricot",
+        "status": "DRY_RUN_APPLY_ALLOWED",
+        "hardStop": null,
+        "retrievalConfigSource": "generic-v2",
+        "externalRequests": 1,
+        "cacheHits": 0,
+        "appliedFieldsWouldBe": [
+          "coldTolerance"
+        ],
+        "fieldPackets": [
+          {
+            "field": "frostSensitivity",
+            "applyStatus": "NEEDS_MORE_EVIDENCE",
+            "value": null,
+            "transformRef": null
+          },
+          {
+            "field": "coldTolerance",
+            "applyStatus": "READY_TO_APPLY",
+            "value": "medium",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+          }
+        ],
+        "applyGate": {
+          "setDecision": "APPLY_ALLOWED",
+          "setReasons": [
+            "all_apply_gates_passed"
+          ],
+          "fieldResults": [
+            {
+              "field": "frostSensitivity",
+              "decision": "NEEDS_MORE_EVIDENCE",
+              "reasons": [
+                "apply_status_not_ready"
+              ]
+            },
+            {
+              "field": "coldTolerance",
+              "decision": "APPLY_ALLOWED",
+              "reasons": [
+                "same_value_evidence_provenance_upgrade",
+                "all_apply_gates_passed"
+              ],
+              "contradictionClass": "CONSISTENT"
+            }
+          ]
+        },
+        "readinessSimulation": {
+          "current": {
+            "readinessShort": "B",
+            "gate": "PARTIAL",
+            "reasons": []
+          },
+          "simulated": {
+            "readinessShort": "B",
+            "gate": "PARTIAL",
+            "reasons": []
+          },
+          "blockersCleared": [],
+          "blockersAdded": [],
+          "note": "Simulation only — no catalog write."
+        },
+        "beforeReadiness": {
+          "readinessShort": "B",
+          "gate": "PARTIAL"
+        },
+        "ownerDecisionRequired": false,
+        "note": null
+      },
+      {
+        "slug": "avocado",
+        "status": "DRY_RUN_APPLY_ALLOWED",
+        "hardStop": null,
+        "retrievalConfigSource": "custom",
+        "externalRequests": 2,
+        "cacheHits": 0,
+        "appliedFieldsWouldBe": [
+          "coldTolerance"
+        ],
+        "fieldPackets": [
+          {
+            "field": "frostSensitivity",
+            "applyStatus": "NEEDS_MORE_EVIDENCE",
+            "value": null,
+            "transformRef": null
+          },
+          {
+            "field": "coldTolerance",
+            "applyStatus": "READY_TO_APPLY",
+            "value": "very_low",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+          }
+        ],
+        "applyGate": {
+          "setDecision": "APPLY_ALLOWED",
+          "setReasons": [
+            "all_apply_gates_passed"
+          ],
+          "fieldResults": [
+            {
+              "field": "frostSensitivity",
+              "decision": "NEEDS_MORE_EVIDENCE",
+              "reasons": [
+                "apply_status_not_ready"
+              ]
+            },
+            {
+              "field": "coldTolerance",
+              "decision": "APPLY_ALLOWED",
+              "reasons": [
+                "same_value_evidence_provenance_upgrade",
+                "all_apply_gates_passed"
+              ],
+              "contradictionClass": "CONSISTENT"
+            }
+          ]
+        },
+        "readinessSimulation": {
+          "current": {
+            "readinessShort": "B",
+            "gate": "PARTIAL",
+            "reasons": []
+          },
+          "simulated": {
+            "readinessShort": "B",
+            "gate": "PARTIAL",
+            "reasons": []
+          },
+          "blockersCleared": [],
+          "blockersAdded": [],
+          "note": "Simulation only — no catalog write."
+        },
+        "beforeReadiness": {
+          "readinessShort": "B",
+          "gate": "PARTIAL"
+        },
+        "ownerDecisionRequired": false,
+        "note": null
+      },
+      {
+        "slug": "guava",
+        "status": "PARTIAL_NO_APPLY",
+        "hardStop": null,
+        "retrievalConfigSource": "custom",
+        "externalRequests": 2,
+        "cacheHits": 0,
+        "appliedFieldsWouldBe": [],
+        "fieldPackets": [
+          {
+            "field": "frostSensitivity",
+            "applyStatus": "NEEDS_MORE_EVIDENCE",
+            "value": null,
+            "transformRef": null
+          },
+          {
+            "field": "coldTolerance",
+            "applyStatus": "NEEDS_MORE_EVIDENCE",
+            "value": null,
+            "transformRef": null
+          }
+        ],
+        "applyGate": {
+          "setDecision": "NEEDS_MORE_EVIDENCE",
+          "setReasons": [
+            "apply_status_not_ready"
+          ],
+          "fieldResults": [
+            {
+              "field": "frostSensitivity",
+              "decision": "NEEDS_MORE_EVIDENCE",
+              "reasons": [
+                "apply_status_not_ready"
+              ]
+            },
+            {
+              "field": "coldTolerance",
+              "decision": "NEEDS_MORE_EVIDENCE",
+              "reasons": [
+                "apply_status_not_ready"
+              ]
+            }
+          ]
+        },
+        "readinessSimulation": null,
+        "beforeReadiness": {
+          "readinessShort": "B",
+          "gate": "PARTIAL"
+        },
+        "ownerDecisionRequired": false,
+        "note": "insufficient_evidence_or_incomplete_ready_set"
+      }
+    ]
+  },
+  "noWriteProof": {
+    "PLANT_WRITE_COUNT": 0,
+    "QUEUE_WRITE_COUNT": 0,
+    "hashesBefore": {
+      "json": "181c7b3b084554a087f30f0f0b902964a7b5b7ebccf76083f634c7c2950ebc91",
+      "js": "1bbd550d53609a6b81692d99ba3bb50ef244b53926e5b34efce7f58d177ffd35",
+      "browser": "e76aee65a27791211bf760a4cecd6322affb865ff09cb595b33a45705e35adf2",
+      "queue": "94e4324451fed2371c5665d5915ca760d77bb0729885d930ddd4133bd52e709e",
+      "summary": "9617992276ee88d5dae7067e188bbbdcdc10011cfcf8e9b2393b2716204d4ae4"
+    },
+    "hashesAfter": {
+      "json": "181c7b3b084554a087f30f0f0b902964a7b5b7ebccf76083f634c7c2950ebc91",
+      "js": "1bbd550d53609a6b81692d99ba3bb50ef244b53926e5b34efce7f58d177ffd35",
+      "browser": "e76aee65a27791211bf760a4cecd6322affb865ff09cb595b33a45705e35adf2",
+      "queue": "94e4324451fed2371c5665d5915ca760d77bb0729885d930ddd4133bd52e709e",
+      "summary": "9617992276ee88d5dae7067e188bbbdcdc10011cfcf8e9b2393b2716204d4ae4"
+    }
+  },
+  "APRICOT_EXCLUSION_CLASSIFICATION": "B_STALE_PILOT_ONLY_EXCLUSION_REMOVED",
+  "eligiblePoolCount": 8,
+  "reports": {
+    "batch": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\queue-authority-dry-v1\\auto-enrichment-worker-v1-queue-authority-dry-batch-summary.json"
+  },
+  "AUTO_PLUS_HOLD_SELECTABLE": "NO",
+  "STRAWBERRY_GUAVA_SELECTION_BLOCKED": "YES",
+  "CORRECTED_TOP_3_MATCHES_DRY_BATCH": "YES",
+  "SAFE_P1_AUTO_EXECUTION_ELIGIBLE_POOL_SLUGS": [
+    "apricot",
+    "avocado",
+    "guava",
+    "lychee",
+    "mandarin",
+    "olive",
+    "orange",
+    "raspberry"
+  ],
+  "SAFE_P1_QUEUE_PRESENT_BUT_INELIGIBLE_SLUGS": [
+    "strawberry-guava"
+  ],
+  "queueCandidateCount": 9,
+  "presentButIneligibleCount": 1,
+  "note": "Execution-eligible pool excludes productGate HOLD / needsReview even when enrichmentExecution=AUTO."
+}
