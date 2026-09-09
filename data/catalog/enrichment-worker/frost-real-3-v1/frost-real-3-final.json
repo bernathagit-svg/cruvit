@@ -1,0 +1,832 @@
+{
+  "phase": "frost_real_3_final",
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "parentCommit": "e0ad9f1413b9447a3be6124960e43eeb0a60cf9d",
+  "GUAVA_SAFE_WRITABLE": "YES",
+  "MANGO_SAFE_WRITABLE": "YES",
+  "ORANGE_SAFE_WRITABLE": "YES",
+  "lockedSlugs": [
+    "guava",
+    "mango",
+    "orange"
+  ],
+  "batchFingerprint": "658afca702b67f6662fb754c912748f5b61932387cd0a36473a82d72da1b91f2",
+  "sourceTruth": {
+    "rows": {
+      "guava": {
+        "frost": {
+          "applyStatus": "READY_TO_APPLY",
+          "value": "high",
+          "claimType": "frost_injury_statement",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "mayBeSS": true,
+          "contradiction": "CONSISTENT",
+          "sourceId": "uf-ifas-gs-guava",
+          "authorityTier": [
+            "A"
+          ]
+        },
+        "cold": {
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "transformRef": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE"
+        },
+        "fingerprint": "18264120791b99a48716331e2950f13ac0430c3dadb3b9624dfcfaf160d83d26"
+      },
+      "mango": {
+        "frost": {
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_high",
+          "claimType": "frost_injury_statement",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "mayBeSS": true,
+          "contradiction": "CONSISTENT",
+          "sourceId": "uf-ifas-gs-mango",
+          "authorityTier": [
+            "A",
+            "A"
+          ]
+        },
+        "cold": {
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_low",
+          "claimType": "usda_hardiness_zone_band",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "mayBeSS": true,
+          "contradiction": "CONSISTENT",
+          "sourceId": "uf-ifas-gs-mango"
+        },
+        "fingerprint": "165fc5124674a33486d047ceab8544968c7cfc4ffd6975090e5636357ae304e5"
+      },
+      "orange": {
+        "frost": {
+          "applyStatus": "READY_TO_APPLY",
+          "value": "very_high",
+          "claimType": "frost_injury_statement",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "mayBeSS": true,
+          "contradiction": "CONSISTENT",
+          "sourceId": "ncsu-citrus-x-sinensis",
+          "authorityTier": [
+            "A",
+            "A"
+          ]
+        },
+        "cold": {
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "value": null,
+          "claimType": "usda_hardiness_zone_band",
+          "transformRef": null,
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "mayBeSS": true,
+          "contradiction": "CONSISTENT",
+          "sourceId": "ncsu-citrus-x-sinensis"
+        },
+        "fingerprint": "6139cce38bce052af3aa20184444797e7f9d716398a666c0f7939ab01e93fbd5"
+      }
+    },
+    "ZONE_TO_FROST_MISUSE_COUNT": 0
+  },
+  "before": {
+    "plants": {
+      "guava": {
+        "coldTolerance": {
+          "value": "low",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "frostSensitivity": {
+          "value": "high",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "readiness": "B",
+        "productGate": "PARTIAL",
+        "plantHash": "4d873f7999693dfdb3069b9c3fc83b997b84fe907eb27b3cf510b0fa24b09c14",
+        "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+        "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+        "needsReview": null
+      },
+      "mango": {
+        "coldTolerance": {
+          "value": "low",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "frostSensitivity": {
+          "value": "high",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "readiness": "B",
+        "productGate": "PARTIAL",
+        "plantHash": "7b01f0fd668ec94aefdfcc30006d14f7e16e41d3ca0bf06a714ca884f01dc604",
+        "flowering": "Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.",
+        "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+        "needsReview": null
+      },
+      "orange": {
+        "coldTolerance": {
+          "value": "low",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "frostSensitivity": {
+          "value": "high",
+          "evidence": "HEURISTIC_ASSERTION",
+          "origin": "LEGACY_ASSERTED_METADATA",
+          "provenance": null
+        },
+        "readiness": "B",
+        "productGate": "PARTIAL",
+        "plantHash": "d4012cde68d0c546c378005e977e9e768605de7660f33ad46264e3dcb17ab7a0",
+        "flowering": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+        "fruiting": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+        "needsReview": null
+      }
+    },
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 1,
+        "B": 94,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 107,
+      "auto": 90,
+      "hold": 26,
+      "selected": {
+        "guava": {
+          "jobId": "enrich-v1:guava",
+          "gapCodes": [
+            "MISSING_FROST_EVIDENCE",
+            "MISSING_COLD_EVIDENCE",
+            "EVIDENCE_NOT_SOURCE_SUPPORTED"
+          ],
+          "enrichmentExecution": "AUTO",
+          "productGate": "PARTIAL"
+        },
+        "mango": {
+          "jobId": "enrich-v1:mango",
+          "gapCodes": [
+            "MISSING_FROST_EVIDENCE",
+            "MISSING_COLD_EVIDENCE",
+            "EVIDENCE_NOT_SOURCE_SUPPORTED"
+          ],
+          "enrichmentExecution": "AUTO",
+          "productGate": "PARTIAL"
+        },
+        "orange": {
+          "jobId": "enrich-v1:orange",
+          "gapCodes": [
+            "MISSING_FROST_EVIDENCE",
+            "MISSING_COLD_EVIDENCE",
+            "EVIDENCE_NOT_SOURCE_SUPPORTED"
+          ],
+          "enrichmentExecution": "AUTO",
+          "productGate": "PARTIAL"
+        }
+      },
+      "completeHash": "dab39ad48ffdbaa2284e2cffb35f59d90d594ebe0d2d36bfdd679596678ed147"
+    },
+    "triad": {
+      "json": "545a172b51746dfacaa42acb3e61a95e1c3a10a12b4654483f85e213a1b5a434",
+      "js": "9a8465f8b6c2465d2eea77ff0eca2e2501011a40cf39c848339ddf6b26132fd1",
+      "browser": "1fbef60002a6fc0a88e737de902c3d45ffe6cc0f1fdf2bb5885f415bd5ed214d"
+    }
+  },
+  "dry": {
+    "status": "BATCH_COMPLETE",
+    "DRY_RUN_STARTED": "2026-09-09T19:03:39.776Z",
+    "DRY_RUN_FINISHED": "2026-09-09T19:03:39.784Z",
+    "REAL_WRITE_COUNT_BEFORE_DRY_FINISH": 0,
+    "externalRequests": 0,
+    "cacheHits": 3
+  },
+  "real": {
+    "status": "BATCH_COMPLETE",
+    "REAL_RUN_STARTED": "2026-09-09T19:03:39.809Z",
+    "REAL_RUN_FINISHED": "2026-09-09T19:03:39.873Z",
+    "plantsChanged": [
+      "orange"
+    ],
+    "fieldsChanged": {
+      "orange": [
+        "frostSensitivity"
+      ]
+    },
+    "externalRequests": 0,
+    "cacheHits": 3,
+    "ownerReviewRequiredCount": 0
+  },
+  "plantsBeforeReal": {
+    "guava": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-guava"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_sensitive",
+            "displayValue": "frost_sensitive",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_sensitive",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-guava"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-gs-guava\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "9b2a5efad61b0ad2b074704f3eccd683844bd27734bdfd871aea493196747a09",
+          "appliedAt": "2026-09-09T19:00:26.387Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "574a3ee7b9242e31ef4622cfda22caa28962a6e5a2b1d5e797999762afd9932f",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "mango": {
+      "coldTolerance": {
+        "value": "very_low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 10A",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "10-11",
+            "displayValue": "USDA 10-11",
+            "hardinessZoneMin": 10,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "appliedAt": "2026-09-09T19:00:26.412Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "very_high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "appliedAt": "2026-09-09T19:00:26.412Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "A",
+      "productGate": "PASS",
+      "plantHash": "24566ff8304ad478b1f37a2377ee612e5e85fe1e9f752ec313026e875719eadc",
+      "flowering": "Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "orange": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "d4012cde68d0c546c378005e977e9e768605de7660f33ad46264e3dcb17ab7a0",
+      "flowering": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+      "fruiting": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+      "needsReview": null
+    }
+  },
+  "plantsAfterReal": {
+    "guava": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-guava"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_sensitive",
+            "displayValue": "frost_sensitive",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_sensitive",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-guava"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-gs-guava\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "9b2a5efad61b0ad2b074704f3eccd683844bd27734bdfd871aea493196747a09",
+          "appliedAt": "2026-09-09T19:00:26.387Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "574a3ee7b9242e31ef4622cfda22caa28962a6e5a2b1d5e797999762afd9932f",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "mango": {
+      "coldTolerance": {
+        "value": "very_low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 10A",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "10-11",
+            "displayValue": "USDA 10-11",
+            "hardinessZoneMin": 10,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "appliedAt": "2026-09-09T19:00:26.412Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "very_high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-mango"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-mango"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+          "appliedAt": "2026-09-09T19:00:26.412Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "A",
+      "productGate": "PASS",
+      "plantHash": "24566ff8304ad478b1f37a2377ee612e5e85fe1e9f752ec313026e875719eadc",
+      "flowering": "Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "orange": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "very_high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-citrus-x-sinensis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Plant is frost tender.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
+          "appliedAt": "2026-09-09T19:03:39.847Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "06f87b7685271070d600cd0c224b12472fd01797b563ad256ee4d54973570759",
+      "flowering": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+      "fruiting": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+      "needsReview": null
+    }
+  },
+  "countsBeforeReal": {
+    "total": 108,
+    "counts": {
+      "A": 2,
+      "B": 93,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "countsAfterReal": {
+    "total": 108,
+    "counts": {
+      "A": 2,
+      "B": 93,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "queueBeforeReal": {
+    "totalJobs": 106,
+    "auto": 89,
+    "hold": 26,
+    "selected": {
+      "guava": {
+        "jobId": "enrich-v1:guava",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      },
+      "mango": null,
+      "orange": {
+        "jobId": "enrich-v1:orange",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      }
+    },
+    "completeHash": "e84f86d4dd96bb2d6093545679d82ad866034102926fc1a2ade455384c8762a3"
+  },
+  "queueAfterReal": {
+    "totalJobs": 106,
+    "auto": 89,
+    "hold": 26,
+    "selected": {
+      "guava": {
+        "jobId": "enrich-v1:guava",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      },
+      "mango": null,
+      "orange": {
+        "jobId": "enrich-v1:orange",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      }
+    },
+    "completeHash": "18806adf7ae99af2f4c0e58696c31dbd22343d10da9a0b50d32e7cb7ba134535"
+  },
+  "REAL_FROST_SOURCE_SUPPORTED_WRITES": 3,
+  "REAL_COLD_SOURCE_SUPPORTED_WRITES": 1,
+  "CHANGED_PLANT_SLUGS": [
+    "guava",
+    "mango",
+    "orange"
+  ],
+  "ZONE_TO_FROST_MISUSE_COUNT": 0,
+  "secondRun": {
+    "status": "BATCH_COMPLETE",
+    "appliedCount": 0,
+    "SECOND_WORKER_RUN_WOULD_MUTATE": "NO",
+    "externalRequests": 0,
+    "cacheHits": 3
+  },
+  "reusePacketsBySlug": {
+    "guava": "data/catalog/enrichment-worker/frost-real-3-v1/reuse-packets/guava.candidate-packet-v1.json",
+    "mango": "data/catalog/enrichment-worker/frost-real-3-v1/reuse-packets/mango.candidate-packet-v1.json",
+    "orange": "data/catalog/enrichment-worker/frost-real-3-v1/reuse-packets/orange.candidate-packet-v1.json"
+  },
+  "reports": {
+    "dry": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\frost-real-3-v1\\auto-enrichment-worker-v1-frost-dry-batch-summary.json",
+    "real": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\frost-real-3-v1\\auto-enrichment-worker-v1-frost-real-batch-summary.json"
+  },
+  "triadAfter": {
+    "json": "8a7298fd420f529e601bebc5cd787443b0298c543cb0417c469f37a212e7d63a",
+    "js": "69650de9f32872bd2f9aadd47ab278c145d9d122a6c7c53ab279e72fbaf00de1",
+    "browser": "ebda9b75a93ebef3ba4ff628fa6b4a396e39bd3582a3b6548fc47725a24d2393"
+  }
+}

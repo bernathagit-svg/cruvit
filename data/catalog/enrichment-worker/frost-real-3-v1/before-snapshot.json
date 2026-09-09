@@ -1,0 +1,116 @@
+{
+  "plants": {
+    "guava": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "4d873f7999693dfdb3069b9c3fc83b997b84fe907eb27b3cf510b0fa24b09c14",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "mango": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "7b01f0fd668ec94aefdfcc30006d14f7e16e41d3ca0bf06a714ca884f01dc604",
+      "flowering": "Warmth, sun, and low frost risk are essential; humidity can reduce bloom quality through disease pressure.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "orange": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "d4012cde68d0c546c378005e977e9e768605de7660f33ad46264e3dcb17ab7a0",
+      "flowering": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+      "fruiting": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+      "needsReview": null
+    }
+  },
+  "catalog": {
+    "total": 108,
+    "counts": {
+      "A": 1,
+      "B": 94,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "queue": {
+    "totalJobs": 107,
+    "auto": 90,
+    "hold": 26,
+    "selected": {
+      "guava": {
+        "jobId": "enrich-v1:guava",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      },
+      "mango": {
+        "jobId": "enrich-v1:mango",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      },
+      "orange": {
+        "jobId": "enrich-v1:orange",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL"
+      }
+    },
+    "completeHash": "dab39ad48ffdbaa2284e2cffb35f59d90d594ebe0d2d36bfdd679596678ed147"
+  },
+  "triad": {
+    "json": "545a172b51746dfacaa42acb3e61a95e1c3a10a12b4654483f85e213a1b5a434",
+    "js": "9a8465f8b6c2465d2eea77ff0eca2e2501011a40cf39c848339ddf6b26132fd1",
+    "browser": "1fbef60002a6fc0a88e737de902c3d45ffe6cc0f1fdf2bb5885f415bd5ed214d"
+  }
+}

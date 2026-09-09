@@ -29,7 +29,8 @@ import {
   resolveWorkerMaxJobs,
   processBatch,
   processJob,
-  loadCurrentQueue
+  loadCurrentQueue,
+  loadCatalogPlants
 } from '../modules/personal-domain/auto-enrichment-worker-v1.js';
 import { ENRICHMENT_EXECUTION } from '../modules/personal-domain/enrichment-gap-scanner-v1.js';
 import {
@@ -38,6 +39,7 @@ import {
   evaluateCandidateSetForPlant
 } from '../modules/personal-domain/catalog-enrichment-apply-gate-v1.js';
 import { CONTRADICTION_CLASS } from '../modules/personal-domain/catalog-contradiction-gate-v1.js';
+import { classifyPlantDataReadiness } from '../modules/personal-domain/plant-data-contract-v1.js';
 import {
   hashFile,
   bootstrapSafeMigrationPaths
@@ -250,8 +252,139 @@ test('11. QUEUE_CORRUPTION detected by validateQueueIntegrity', () => {
   const bad = validateQueueIntegrity({ jobs: 'nope', summary: {} }, ['lemon']);
   assert.equal(bad.ok, false);
   const q = loadCurrentQueue(ROOT);
-  const ok = validateQueueIntegrity(q, ['lemon', 'olive', 'avocado']);
+  const plants = loadCatalogPlants(ROOT);
+  const ok = validateQueueIntegrity(q, ['lemon', 'olive', 'avocado'], plants, {
+    queueBefore: q,
+    batchWrittenSlugs: []
+  });
   assert.equal(ok.ok, true);
+});
+
+test('11b. adversarial queue-integrity — Class A removal narrow contract', () => {
+  const q = loadCurrentQueue(ROOT);
+  const plants = loadCatalogPlants(ROOT);
+  assert.equal(classifyPlantDataReadiness(plants.mango).readinessShort, 'A');
+  assert.equal(classifyPlantDataReadiness(plants.guava).readinessShort, 'B');
+  assert.ok(q.jobs.find((j) => j.canonicalSlug === 'guava'));
+  assert.ok(q.jobs.find((j) => j.canonicalSlug === 'orange'));
+  assert.equal(
+    q.jobs.find((j) => j.canonicalSlug === 'mango'),
+    undefined
+  );
+
+  // A. legitimate terminal Class A selected plant already absent + scanner omits → pass
+  const a = validateQueueIntegrity(q, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: q,
+    batchWrittenSlugs: ['mango']
+  });
+  assert.equal(a.ok, true, 'A: stable Class A absence');
+
+  // Simulate pre-write queue where mango still present
+  const beforeWithMango = structuredClone(q);
+  beforeWithMango.jobs = [
+    ...q.jobs,
+    {
+      jobId: 'enrich-v1:mango',
+      canonicalSlug: 'mango',
+      slug: 'mango',
+      gapCodes: ['MISSING_FROST_EVIDENCE'],
+      enrichmentExecution: 'AUTO',
+      productGate: 'PARTIAL',
+      priority: 'P1'
+    }
+  ];
+  beforeWithMango.summary = {
+    ...q.summary,
+    totalJobs: beforeWithMango.jobs.length
+  };
+
+  // A'/E. NEW Class A removal with successful write + count delta → pass
+  const ae = validateQueueIntegrity(q, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: beforeWithMango,
+    justWrittenSlugs: ['mango'],
+    batchWrittenSlugs: ['mango']
+  });
+  assert.equal(ae.ok, true, 'E: Class A removal + delta');
+
+  // B. selected B→B job disappearing fails
+  const qMissingGuava = structuredClone(q);
+  qMissingGuava.jobs = q.jobs.filter((j) => j.canonicalSlug !== 'guava');
+  qMissingGuava.summary = { ...q.summary, totalJobs: qMissingGuava.jobs.length };
+  const b = validateQueueIntegrity(qMissingGuava, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: q,
+    justWrittenSlugs: ['guava'],
+    batchWrittenSlugs: ['guava']
+  });
+  assert.equal(b.ok, false);
+  assert.match(b.reason, /missing_job_incomplete:guava/);
+
+  // C. unrelated job disappearing fails
+  const victim = q.jobs.find((j) => !['guava', 'mango', 'orange'].includes(j.canonicalSlug));
+  assert.ok(victim);
+  const qMissingUnrelated = structuredClone(q);
+  qMissingUnrelated.jobs = q.jobs.filter((j) => j.jobId !== victim.jobId);
+  qMissingUnrelated.summary = {
+    ...q.summary,
+    totalJobs: qMissingUnrelated.jobs.length
+  };
+  const c = validateQueueIntegrity(qMissingUnrelated, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: q,
+    batchWrittenSlugs: ['mango']
+  });
+  assert.equal(c.ok, false);
+  assert.match(c.reason, /unrelated_job_removed/);
+
+  // D. unrelated job changing gaps unexpectedly fails
+  const qGapDrift = structuredClone(q);
+  const drift = qGapDrift.jobs.find((j) => j.jobId === victim.jobId);
+  drift.gapCodes = [...(drift.gapCodes || []), 'EVIDENCE_NOT_SOURCE_SUPPORTED', 'FABRICATED_GAP'];
+  const d = validateQueueIntegrity(qGapDrift, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: q,
+    batchWrittenSlugs: ['mango']
+  });
+  assert.equal(d.ok, false);
+  assert.match(d.reason, /unrelated_job_changed/);
+
+  // F. two jobs disappearing when only one became A fails
+  const qTwoGone = structuredClone(q);
+  qTwoGone.jobs = q.jobs.filter((j) => j.canonicalSlug !== 'guava');
+  qTwoGone.summary = { ...q.summary, totalJobs: qTwoGone.jobs.length };
+  // mango already gone in live q; remove guava too vs beforeWithMango that had both
+  const f = validateQueueIntegrity(qTwoGone, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: beforeWithMango,
+    justWrittenSlugs: ['mango'],
+    batchWrittenSlugs: ['mango']
+  });
+  assert.equal(f.ok, false);
+  assert.match(f.reason, /missing_job_incomplete:guava/);
+
+  // G. queue job removed before successful plant write fails
+  const g = validateQueueIntegrity(q, ['guava', 'mango', 'orange'], plants, {
+    queueBefore: beforeWithMango,
+    justWrittenSlugs: [],
+    batchWrittenSlugs: []
+  });
+  assert.equal(g.ok, false);
+  assert.match(g.reason, /missing_job_not_written_this_batch:mango/);
+
+  // H. fabricated terminal marker cannot bypass scanner/readiness
+  const fakePlants = { ...plants, guava: { ...plants.guava, _fabricatedTerminal: true } };
+  assert.equal(classifyPlantDataReadiness(fakePlants.guava).readinessShort, 'B');
+  const h = validateQueueIntegrity(qMissingGuava, ['guava'], fakePlants, {
+    queueBefore: q,
+    justWrittenSlugs: ['guava'],
+    batchWrittenSlugs: ['guava']
+  });
+  assert.equal(h.ok, false);
+  assert.match(h.reason, /missing_job_incomplete:guava/);
+
+  // H2. missing plantsBySlug cannot authorize removal
+  const h2 = validateQueueIntegrity(q, ['mango'], null, {
+    queueBefore: beforeWithMango,
+    justWrittenSlugs: ['mango']
+  });
+  assert.equal(h2.ok, false);
+  assert.match(h2.reason, /missing_job:mango/);
 });
 
 test('12. REGRESSION_FAILURE / UNRELATED_PLANT_MUTATION via runWorkerRegressionGate', () => {

@@ -800,8 +800,8 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
         "mangoes"
       ],
       "climateTraits": {
-        "frostSensitivity": "high",
-        "coldTolerance": "low",
+        "frostSensitivity": "very_high",
+        "coldTolerance": "very_low",
         "heatTolerance": "high",
         "humidityTolerance": "medium",
         "drainageNeeds": "high",
@@ -817,8 +817,8 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "tropical-frost-sensitive-fruit"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -829,8 +829,8 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "survivalVsThriveNotes": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -854,7 +854,127 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
               "type": "specific",
               "id": "SMART_REC_SPECIFIC_CLIMATE_METADATA"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-09T19:00:26.412Z",
+            "fields": [
+              "frostSensitivity",
+              "coldTolerance"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "frostSensitivity": {
+            "sourceIds": [
+              "uf-ifas-gs-mango"
+            ],
+            "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Planting and Care Mango tree’s preference for warm climates and intolerance for freezing temperatures make it an ideal candidate for the South Florida home.",
+            "sourceClaim": {
+              "claimType": "frost_injury_statement",
+              "rawValue": "frost_tender",
+              "displayValue": "frost_tender",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "frost_tender",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_high",
+                "retainedSourceIds": [
+                  "uf-ifas-gs-mango"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+            "appliedAt": "2026-09-09T19:00:26.412Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          },
+          "coldTolerance": {
+            "sourceIds": [
+              "uf-ifas-gs-mango"
+            ],
+            "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/mango.html",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 10A",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "10-11",
+              "displayValue": "USDA 10-11",
+              "hardinessZoneMin": 10,
+              "hardinessZoneMax": 11,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "e0fcd86fdd7ba1c564a3d886ddaccb2d4211c473a75c32463cf4bc49a4413c98"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_low",
+                "retainedSourceIds": [
+                  "uf-ifas-gs-mango"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"mango\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"uf-ifas-gs-mango\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "e2aab19e1c315331e828362b1704ba5b118eb1ffae013d2a9b700122cd5a58c3",
+            "appliedAt": "2026-09-09T19:00:26.412Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },
@@ -962,7 +1082,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "tropical-frost-sensitive-fruit"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
           "coldTolerance": "HEURISTIC_ASSERTION",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
@@ -974,7 +1094,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "survivalVsThriveNotes": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
           "coldTolerance": "LEGACY_ASSERTED_METADATA",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
@@ -994,7 +1114,72 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
               "type": "group",
               "id": "tropical-frost-sensitive-fruit"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-09T19:00:26.387Z",
+            "fields": [
+              "frostSensitivity"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "frostSensitivity": {
+            "sourceIds": [
+              "uf-ifas-gs-guava"
+            ],
+            "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+            "sourceClaim": {
+              "claimType": "frost_injury_statement",
+              "rawValue": "frost_sensitive",
+              "displayValue": "frost_sensitive",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "frost_sensitive",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "high",
+                "retainedSourceIds": [
+                  "uf-ifas-gs-guava"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-gs-guava\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "9b2a5efad61b0ad2b074704f3eccd683844bd27734bdfd871aea493196747a09",
+            "appliedAt": "2026-09-09T19:00:26.387Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },
@@ -1075,7 +1260,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
         "עץ תפוז"
       ],
       "climateTraits": {
-        "frostSensitivity": "high",
+        "frostSensitivity": "very_high",
         "coldTolerance": "low",
         "heatTolerance": "medium",
         "humidityTolerance": "medium",
@@ -1092,7 +1277,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "warm-citrus-fruit-tree"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
           "coldTolerance": "HEURISTIC_ASSERTION",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
@@ -1104,7 +1289,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "survivalVsThriveNotes": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
           "coldTolerance": "LEGACY_ASSERTED_METADATA",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
@@ -1129,7 +1314,72 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
               "type": "specific",
               "id": "SMART_REC_SPECIFIC_CLIMATE_METADATA"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-09T19:03:39.847Z",
+            "fields": [
+              "frostSensitivity"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "frostSensitivity": {
+            "sourceIds": [
+              "ncsu-citrus-x-sinensis"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Plant is frost tender.",
+            "sourceClaim": {
+              "claimType": "frost_injury_statement",
+              "rawValue": "frost_tender",
+              "displayValue": "frost_tender",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "frost_tender",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_high",
+                "retainedSourceIds": [
+                  "ncsu-citrus-x-sinensis"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "eafad9c883b33ffb3ee6b3530624ef8a6fff42bc94ab177aca51759f6ef50993",
+            "appliedAt": "2026-09-09T19:03:39.847Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },

@@ -211,7 +211,11 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
     'pomegranate.coldTolerance',
     'lemon.coldTolerance',
     'olive.coldTolerance',
-    'avocado.coldTolerance'
+    'avocado.coldTolerance',
+    'guava.frostSensitivity',
+    'mango.frostSensitivity',
+    'mango.coldTolerance',
+    'orange.frostSensitivity'
   ]);
   for (const slug of payload.safeSlugs) {
     const ct = payload.plants[slug].climateTraits;
@@ -307,8 +311,9 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
       class: shortClass(r),
       blockers: r.reasons || []
     });
-    if (slug === 'pomegranate') {
-      assert.equal(shortClass(r), 'A', 'pomegranate real enrichment apply → Class A');
+    const classAAllowed = new Set(['pomegranate', 'mango']);
+    if (classAAllowed.has(slug)) {
+      assert.equal(shortClass(r), 'A', `${slug} real enrichment apply → Class A`);
     } else {
       assert.notEqual(shortClass(r), 'A', `no Class A inflation for ${slug}`);
     }
@@ -318,7 +323,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
   for (const row of beforeRows) beforeCounts[row.class] = (beforeCounts[row.class] || 0) + 1;
   for (const row of afterRows) afterCounts[row.class] = (afterCounts[row.class] || 0) + 1;
   assert.equal(beforeCounts.D, 26);
-  assert.equal(afterCounts.A, 1);
+  assert.equal(afterCounts.A, 2);
   assert.ok(afterCounts.D < 26 || afterCounts.B + afterCounts.C > 0);
 
   const seed = loadSeed();
@@ -336,7 +341,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
     const c = shortClass(classifyPlantDataReadiness(p));
     catalogCounts[c] = (catalogCounts[c] || 0) + 1;
   }
-  assert.equal(catalogCounts.A, 1);
+  assert.equal(catalogCounts.A, 2);
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -401,14 +406,18 @@ test('PHASE7: identity safety — no new duplicates; remaining conflict plants u
   }
 });
 
-test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate frost/cold + worker cold)', () => {
+test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate + worker cold/frost pilots)', () => {
   const payload = getBootstrapSafeClimateTraitsMigrationPayload();
   const allowedSs = new Set([
     'pomegranate.frostSensitivity',
     'pomegranate.coldTolerance',
     'lemon.coldTolerance',
     'olive.coldTolerance',
-    'avocado.coldTolerance'
+    'avocado.coldTolerance',
+    'guava.frostSensitivity',
+    'mango.frostSensitivity',
+    'mango.coldTolerance',
+    'orange.frostSensitivity'
   ]);
   for (const slug of payload.safeSlugs) {
     const classes = payload.plants[slug].climateTraits.traitEvidenceClasses || {};
@@ -429,4 +438,8 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate fros
   assert.ok(payload.plants.lemon.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.olive.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.avocado.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.guava.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
+  assert.ok(payload.plants.mango.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
+  assert.ok(payload.plants.mango.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.orange.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
 });

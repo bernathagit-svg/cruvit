@@ -1,0 +1,130 @@
+﻿{
+    "batchFingerprint":  "658afca702b67f6662fb754c912748f5b61932387cd0a36473a82d72da1b91f2",
+    "RESUME_SEMANTICS_CONTRACT_COMPLIANT":  "YES",
+    "events":  [
+                   {
+                       "event":  "dry_start_attempt1",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.353Z",
+                       "queue":  "none",
+                       "status":  "RUNNING"
+                   },
+                   {
+                       "event":  "dry_finish_attempt1",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.360Z",
+                       "queue":  "none",
+                       "status":  "BATCH_COMPLETE"
+                   },
+                   {
+                       "event":  "real_start_attempt1",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.382Z",
+                       "queue":  "none",
+                       "status":  "RUNNING"
+                   },
+                   {
+                       "event":  "guava_apply",
+                       "catalog":  "guava frost SS",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.387Z",
+                       "queue":  "refresh guava gaps",
+                       "status":  "APPLIED"
+                   },
+                   {
+                       "event":  "mango_apply",
+                       "catalog":  "mango frost+cold SS",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.412Z",
+                       "queue":  "refresh; mango job removed",
+                       "status":  "write_ok_then_integrity_fail"
+                   },
+                   {
+                       "event":  "mango_readiness_A",
+                       "catalog":  "A/PASS",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.412Z",
+                       "queue":  "enrich-v1:mango absent",
+                       "status":  "post_write"
+                   },
+                   {
+                       "event":  "queue_integrity_detection",
+                       "catalog":  "guava+mango landed",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:00:26.424Z",
+                       "queue":  "106",
+                       "batchStopReason":  "QUEUE_CORRUPTION",
+                       "status":  "BATCH_STOPPED"
+                   },
+                   {
+                       "event":  "code_correction",
+                       "catalog":  "none",
+                       "fp":  "same",
+                       "at":  "implementation",
+                       "queue":  "none",
+                       "status":  "validateQueueIntegrity narrowed"
+                   },
+                   {
+                       "event":  "new_validation_dry_start",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.776Z",
+                       "queue":  "none",
+                       "status":  "RUNNING"
+                   },
+                   {
+                       "event":  "new_validation_dry_finish",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.784Z",
+                       "queue":  "none",
+                       "status":  "BATCH_COMPLETE"
+                   },
+                   {
+                       "event":  "new_validation_real_start",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.809Z",
+                       "queue":  "none",
+                       "status":  "RUNNING"
+                   },
+                   {
+                       "event":  "guava_mango_already_equivalent",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.809Z",
+                       "queue":  "stable",
+                       "status":  "ALREADY_EQUIVALENT"
+                   },
+                   {
+                       "event":  "orange_apply",
+                       "catalog":  "orange frost SS",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.847Z",
+                       "queue":  "orange gaps refresh",
+                       "status":  "APPLIED"
+                   },
+                   {
+                       "event":  "final_regression",
+                       "catalog":  "unchanged unrelated",
+                       "fp":  "658afca7...",
+                       "at":  "2026-09-09T19:03:39.873Z",
+                       "queue":  "106",
+                       "status":  "BATCH_COMPLETE"
+                   },
+                   {
+                       "event":  "idempotence",
+                       "catalog":  "none",
+                       "fp":  "658afca7...",
+                       "at":  "post-real",
+                       "queue":  "stable 106/89/17",
+                       "status":  "BATCH_COMPLETE appliedCount=0"
+                   }
+               ],
+    "note":  "First processBatch formally returned BATCH_STOPPED/QUEUE_CORRUPTION. Code corrected. New dry+real validation run reused same locked fingerprint; not an in-process continuation.",
+    "QUEUE_EVENT_ORIGINAL_STATUS":  "BATCH_STOPPED_QUEUE_CORRUPTION",
+    "SAME_BATCH_FINGERPRINT_AFTER_RESUME":  "YES"
+}

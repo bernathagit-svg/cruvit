@@ -776,7 +776,31 @@ export function detectHardStopFromGate(gate, fieldPackets = []) {
   return null;
 }
 
-export function validateQueueIntegrity(queueDoc, lockedSlugs = []) {
+/**
+ * Queue integrity after refresh.
+ *
+ * Selected locked jobs may disappear ONLY when ALL of:
+ * 1. plant is Class A / productGate PASS (Plant Data Contract)
+ * 2. gap scanner independently recomputes no job for that plant
+ * 3. for a NEW disappearance vs queueBefore: plant was successfully written
+ *    in this batch (catalogMutated) — not fabricated / pre-write deletion
+ * 4. no unrelated (non-locked) job disappeared
+ * 5. summary.totalJobs === jobs.length
+ *
+ * Stable absence (already missing in queueBefore) of a terminal Class A plant
+ * is allowed when the scanner still omits it (idempotent / resume).
+ */
+export function validateQueueIntegrity(queueDoc, lockedSlugs = [], plantsBySlug = null, options = {}) {
+  const queueBefore = options.queueBefore || null;
+  const justWrittenSlugs = new Set(
+    Array.isArray(options.justWrittenSlugs)
+      ? options.justWrittenSlugs
+      : options.justWrittenSlug
+        ? [options.justWrittenSlug]
+        : []
+  );
+  const batchWrittenSlugs = new Set(options.batchWrittenSlugs || []);
+
   if (!queueDoc || typeof queueDoc !== 'object') {
     return { ok: false, reason: 'queue_missing' };
   }
@@ -789,12 +813,125 @@ export function validateQueueIntegrity(queueDoc, lockedSlugs = []) {
   if (queueDoc.summary.totalJobs !== queueDoc.jobs.length) {
     return { ok: false, reason: 'job_count_mismatch' };
   }
+
+  let expectedByScanner = null;
+  if (plantsBySlug && typeof plantsBySlug === 'object') {
+    expectedByScanner = buildCurrentCatalogEnrichmentQueue(Object.values(plantsBySlug), {
+      generatedAt: 'queue-integrity-recompute'
+    });
+  }
+
+  const afterBySlug = new Map(
+    (queueDoc.jobs || []).map((j) => [j.canonicalSlug || j.slug, j])
+  );
+  const beforeBySlug = queueBefore
+    ? new Map((queueBefore.jobs || []).map((j) => [j.canonicalSlug || j.slug, j]))
+    : null;
+
   for (const slug of lockedSlugs) {
-    const job = queueDoc.jobs.find((j) => j.canonicalSlug === slug);
-    if (!job) return { ok: false, reason: `missing_job:${slug}` };
-    if (!Array.isArray(job.gapCodes)) return { ok: false, reason: `gapCodes_corrupt:${slug}` };
+    const job = afterBySlug.get(slug);
+    if (!job) {
+      const plant = plantsBySlug?.[slug];
+      if (!plant) {
+        return { ok: false, reason: `missing_job:${slug}` };
+      }
+      const r = classifyPlantDataReadiness(plant);
+      const terminal = r.readinessShort === 'A' || r.gate === 'PASS';
+      if (!terminal) {
+        return { ok: false, reason: `missing_job_incomplete:${slug}` };
+      }
+      if (expectedByScanner) {
+        const stillQueued = expectedByScanner.jobs.some(
+          (j) => (j.canonicalSlug || j.slug) === slug
+        );
+        if (stillQueued) {
+          return { ok: false, reason: `missing_job_scanner_still_has:${slug}` };
+        }
+      } else {
+        // Without plants, cannot authorize Class A removal — hard fail.
+        return { ok: false, reason: `missing_job:${slug}` };
+      }
+
+      const wasPresentBefore = beforeBySlug ? beforeBySlug.has(slug) : null;
+      if (wasPresentBefore === true) {
+        // NEW disappearance this refresh: require successful write this batch.
+        const written =
+          justWrittenSlugs.has(slug) || batchWrittenSlugs.has(slug);
+        if (!written) {
+          return { ok: false, reason: `missing_job_not_written_this_batch:${slug}` };
+        }
+      }
+      // wasPresentBefore === false → stable terminal absence (resume/idempotent)
+      // wasPresentBefore === null → no before snapshot; terminal+scanner already required
+      continue;
+    }
+    if (!Array.isArray(job.gapCodes)) {
+      return { ok: false, reason: `gapCodes_corrupt:${slug}` };
+    }
     if (!job.jobId) return { ok: false, reason: `jobId_missing:${slug}` };
   }
+
+  if (beforeBySlug) {
+    for (const [slug, beforeJob] of beforeBySlug.entries()) {
+      if (afterBySlug.has(slug)) continue;
+      // Job disappeared
+      if (!lockedSlugs.includes(slug)) {
+        return {
+          ok: false,
+          reason: `unrelated_job_removed:${beforeJob.jobId || slug}`
+        };
+      }
+      // Locked disappearance already validated in locked loop above
+    }
+
+    // Unrelated jobs must be byte-stable for gapCodes / execution / gate
+    for (const [slug, beforeJob] of beforeBySlug.entries()) {
+      if (lockedSlugs.includes(slug)) continue;
+      const afterJob = afterBySlug.get(slug);
+      if (!afterJob) continue; // unrelated removal already failed above
+      const beforeKey = JSON.stringify({
+        gapCodes: [...(beforeJob.gapCodes || [])].sort(),
+        enrichmentExecution: beforeJob.enrichmentExecution || null,
+        productGate: beforeJob.productGate || null,
+        priority: beforeJob.priority || null
+      });
+      const afterKey = JSON.stringify({
+        gapCodes: [...(afterJob.gapCodes || [])].sort(),
+        enrichmentExecution: afterJob.enrichmentExecution || null,
+        productGate: afterJob.productGate || null,
+        priority: afterJob.priority || null
+      });
+      if (beforeKey !== afterKey) {
+        return { ok: false, reason: `unrelated_job_changed:${beforeJob.jobId || slug}` };
+      }
+    }
+
+    // Count reconciliation: only locked terminal removals may reduce size
+    const removedLocked = lockedSlugs.filter(
+      (slug) => beforeBySlug.has(slug) && !afterBySlug.has(slug)
+    );
+    const removedUnrelated = [...beforeBySlug.keys()].filter(
+      (slug) => !afterBySlug.has(slug) && !lockedSlugs.includes(slug)
+    );
+    if (removedUnrelated.length) {
+      return {
+        ok: false,
+        reason: `unrelated_job_removed:${removedUnrelated[0]}`
+      };
+    }
+    const expectedMin = (queueBefore.jobs || []).length - removedLocked.length;
+    const added = [...afterBySlug.keys()].filter((slug) => !beforeBySlug.has(slug));
+    if (added.length) {
+      return { ok: false, reason: `unexpected_job_added:${added[0]}` };
+    }
+    if (queueDoc.jobs.length !== expectedMin) {
+      return {
+        ok: false,
+        reason: `queue_delta_mismatch:expected_${expectedMin}_got_${queueDoc.jobs.length}`
+      };
+    }
+  }
+
   return { ok: true };
 }
 
@@ -872,7 +1009,15 @@ export async function processJob({
   cacheDir = null,
   artifactRoot = null,
   dryValidation = null,
-  lockedBatch = null
+  lockedBatch = null,
+  /**
+   * When set for this job slug, skip network retrieval and load a frozen
+   * candidate packet from disk (committed Retrieval Coverage v2 reuse).
+   * Map: { [slug]: absoluteOrRepoRelativePacketPath }
+   */
+  reusePacketsBySlug = null,
+  /** Slugs already successfully catalog-mutated earlier in this batch. */
+  batchWrittenSlugs = null
 }) {
   const audit = {
     workerRef: AUTO_ENRICHMENT_WORKER_REF,
@@ -927,44 +1072,70 @@ export async function processJob({
     }
   }
 
-  const retriever = await runSourceRetrieverPilot({
-    repoRoot,
-    queueDoc,
-    plantsBySlug: { [plant.slug]: plant },
-    fetchImpl,
-    plantSpecs: [plantSpec],
-    cacheDir,
-    artifactRoot,
-    writeSharedSummary: false
-  });
-  audit.externalRequests = retriever.summary?.externalRequestCount || 0;
-  audit.cacheHits = retriever.cacheStats?.hits ?? 0;
-  audit.sourcesFetched = retriever.results?.[0]?.sourcesFetched || [];
-  if (requestBudget) {
-    requestBudget.used += audit.externalRequests;
-    const maxTotal = requestBudget.maxTotal ?? WORKER_MAX_EXTERNAL_REQUESTS_TOTAL;
-    const maxPerPlant =
-      requestBudget.maxPerPlant ?? WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT;
-    if (requestBudget.used > maxTotal) {
-      audit.status = 'FAILED';
-      audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
-      return audit;
-    }
-    if (audit.externalRequests > maxPerPlant) {
-      audit.status = 'FAILED';
-      audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
-      return audit;
-    }
-  }
+  const slugKey = plant.slug || job.canonicalSlug || job.slug;
+  const reusePathRaw =
+    reusePacketsBySlug && typeof reusePacketsBySlug === 'object'
+      ? reusePacketsBySlug[slugKey]
+      : null;
+  let packetPath = null;
+  let packet = null;
 
-  const packetPath = retriever.results?.[0]?.packetPath;
-  if (!packetPath || !fs.existsSync(packetPath)) {
-    audit.status = 'FAILED';
-    audit.hardStop = WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE;
-    audit.error = 'missing_candidate_packet';
-    return audit;
+  if (reusePathRaw) {
+    packetPath = path.isAbsolute(reusePathRaw)
+      ? reusePathRaw
+      : path.join(repoRoot, reusePathRaw);
+    if (!fs.existsSync(packetPath)) {
+      audit.status = 'FAILED';
+      audit.hardStop = WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE;
+      audit.error = 'missing_reused_candidate_packet';
+      return audit;
+    }
+    packet = JSON.parse(fs.readFileSync(packetPath, 'utf8'));
+    audit.externalRequests = 0;
+    audit.cacheHits = 1;
+    audit.sourcesFetched = [];
+    audit.note = 'reused_committed_candidate_packet';
+    audit.reusedPacketPath = path.relative(repoRoot, packetPath).replace(/\\/g, '/');
+  } else {
+    const retriever = await runSourceRetrieverPilot({
+      repoRoot,
+      queueDoc,
+      plantsBySlug: { [plant.slug]: plant },
+      fetchImpl,
+      plantSpecs: [plantSpec],
+      cacheDir,
+      artifactRoot,
+      writeSharedSummary: false
+    });
+    audit.externalRequests = retriever.summary?.externalRequestCount || 0;
+    audit.cacheHits = retriever.cacheStats?.hits ?? 0;
+    audit.sourcesFetched = retriever.results?.[0]?.sourcesFetched || [];
+    if (requestBudget) {
+      requestBudget.used += audit.externalRequests;
+      const maxTotal = requestBudget.maxTotal ?? WORKER_MAX_EXTERNAL_REQUESTS_TOTAL;
+      const maxPerPlant =
+        requestBudget.maxPerPlant ?? WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT;
+      if (requestBudget.used > maxTotal) {
+        audit.status = 'FAILED';
+        audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
+        return audit;
+      }
+      if (audit.externalRequests > maxPerPlant) {
+        audit.status = 'FAILED';
+        audit.hardStop = WORKER_STOP_REASON.REQUEST_CAP_EXCEEDED;
+        return audit;
+      }
+    }
+
+    packetPath = retriever.results?.[0]?.packetPath;
+    if (!packetPath || !fs.existsSync(packetPath)) {
+      audit.status = 'FAILED';
+      audit.hardStop = WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE;
+      audit.error = 'missing_candidate_packet';
+      return audit;
+    }
+    packet = JSON.parse(fs.readFileSync(packetPath, 'utf8'));
   }
-  const packet = JSON.parse(fs.readFileSync(packetPath, 'utf8'));
   audit.packetFingerprint = packet.fingerprint;
   audit.fieldPackets = (packet.fieldPackets || []).map((f) => ({
     field: f.targetField,
@@ -1098,7 +1269,15 @@ export async function processJob({
   }
 
   const refreshed = refreshEnrichmentQueue(repoRoot, plantsAfter, parentCommit);
-  const qCheck = validateQueueIntegrity(refreshed.queue, writeSelectedSlugs);
+  const writtenThisJob = write.catalogMutated ? [plant.slug] : [];
+  const qCheck = validateQueueIntegrity(refreshed.queue, writeSelectedSlugs, plantsAfter, {
+    queueBefore: queueDoc,
+    justWrittenSlugs: writtenThisJob,
+    batchWrittenSlugs: [
+      ...(batchWrittenSlugs || []),
+      ...writtenThisJob
+    ]
+  });
   if (!qCheck.ok) {
     audit.status = 'FAILED';
     audit.hardStop = WORKER_STOP_REASON.QUEUE_CORRUPTION;
@@ -1137,7 +1316,8 @@ export async function processBatch({
   allowDryScaleCeiling = false,
   realExecutionAllowed = true,
   maxExternalRequestsTotal = null,
-  maxExternalRequestsPerPlant = null
+  maxExternalRequestsPerPlant = null,
+  reusePacketsBySlug = null
 }) {
   const plantsBySlug = loadCatalogPlants(repoRoot);
   const queueDoc = loadCurrentQueue(repoRoot);
@@ -1292,6 +1472,8 @@ export async function processBatch({
       .map((s) => [s, JSON.stringify(safePayloadBefore.plants[s])])
   );
   const triadHashesBeforeBatch = { ...expectedTriadHashes };
+  const queueBeforeBatch = loadCurrentQueue(repoRoot);
+  const batchWrittenSlugs = [];
 
   for (const lockedJob of lock.lockedJobs) {
     if (batch.batchStopReason) break;
@@ -1300,7 +1482,12 @@ export async function processBatch({
     const liveQueue = loadCurrentQueue(repoRoot);
     const liveJob = loadQueueJob(liveQueue, lockedJob.slug) || {
       ...lockedJob,
-      canonicalSlug: lockedJob.slug
+      canonicalSlug: lockedJob.slug,
+      // Completed Class A plants drop out of the queue; locked membership still applies.
+      sourceRetrievalRequired: lockedJob.sourceRetrievalRequired ?? true,
+      identityStatus: lockedJob.identityStatus || 'CANONICAL_SPECIES',
+      enrichmentExecution: lockedJob.enrichmentExecution || ENRICHMENT_EXECUTION.AUTO,
+      priority: lockedJob.priority || 'P1'
     };
     if ((liveJob.canonicalSlug || liveJob.slug) !== lockedJob.slug) {
       batch.batchStopReason = WORKER_STOP_REASON.APPLY_UNEXPECTED_FAILURE;
@@ -1332,7 +1519,9 @@ export async function processBatch({
       cacheDir,
       artifactRoot,
       dryValidation,
-      lockedBatch: lock
+      lockedBatch: lock,
+      reusePacketsBySlug,
+      batchWrittenSlugs
     });
     batch.audits.push(audit);
     batch.externalRequests += audit.externalRequests || 0;
@@ -1356,6 +1545,7 @@ export async function processBatch({
         batch.applied += 1;
         batch.plantsChanged.push(audit.slug);
         batch.fieldsChanged[audit.slug] = audit.appliedFields;
+        if (!batchWrittenSlugs.includes(audit.slug)) batchWrittenSlugs.push(audit.slug);
       }
       expectedTriadHashes = triadHashes(repoRoot);
       Object.assign(plantsBySlug, loadCatalogPlants(repoRoot));
@@ -1397,7 +1587,12 @@ export async function processBatch({
         'BATCH_NOT_TRANSACTIONAL__plant_writes_may_have_landed__restore_parent_687a17f_baseline';
     } else {
       const qLive = loadCurrentQueue(repoRoot);
-      const qCheck = validateQueueIntegrity(qLive, writeSelectedSlugs);
+      const plantsLive = loadCatalogPlants(repoRoot);
+      const qCheck = validateQueueIntegrity(qLive, writeSelectedSlugs, plantsLive, {
+        queueBefore: queueBeforeBatch,
+        batchWrittenSlugs,
+        justWrittenSlugs: batchWrittenSlugs
+      });
       if (!qCheck.ok) {
         batch.batchStopReason = WORKER_STOP_REASON.QUEUE_CORRUPTION;
         batch.status = 'BATCH_STOPPED';
