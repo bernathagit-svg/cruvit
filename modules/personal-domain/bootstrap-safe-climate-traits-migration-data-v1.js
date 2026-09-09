@@ -142,7 +142,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
         "עץ לימון"
       ],
       "climateTraits": {
-        "frostSensitivity": "high",
+        "frostSensitivity": "very_high",
         "coldTolerance": "very_low",
         "heatTolerance": "medium",
         "humidityTolerance": "medium",
@@ -159,7 +159,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "warm-citrus-fruit-tree"
         ],
         "traitEvidenceClasses": {
-          "frostSensitivity": "HEURISTIC_ASSERTION",
+          "frostSensitivity": "SOURCE_SUPPORTED",
           "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
@@ -171,7 +171,7 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "survivalVsThriveNotes": "HEURISTIC_ASSERTION"
         },
         "fieldOrigins": {
-          "frostSensitivity": "LEGACY_ASSERTED_METADATA",
+          "frostSensitivity": "ASSERTED_SOURCE",
           "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
@@ -200,8 +200,9 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
           "enrichmentApply": {
             "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
-            "appliedAt": "2026-09-08T17:51:22.577Z",
+            "appliedAt": "2026-09-09T19:25:09.268Z",
             "fields": [
+              "frostSensitivity",
               "coldTolerance"
             ],
             "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
@@ -257,8 +258,62 @@ export const BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 = {
             "transformVersion": "1.0.0",
             "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
             "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
-            "contentHash": "aec9a5b21b44ee03d9c027a74ff6d5f638cd19187d3025642e04eb3abb67b6bf",
-            "appliedAt": "2026-09-08T17:51:22.577Z",
+            "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+            "appliedAt": "2026-09-09T19:25:09.268Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          },
+          "frostSensitivity": {
+            "sourceIds": [
+              "ncsu-citrus-x-limon"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Plant is frost tender.",
+            "sourceClaim": {
+              "claimType": "frost_injury_statement",
+              "rawValue": "frost_tender",
+              "displayValue": "frost_tender",
+              "hardinessZoneMin": null,
+              "hardinessZoneMax": null,
+              "hardinessZoneSystem": null,
+              "damageMode": "frost_tender",
+              "minimumWinterTemperatureF": null,
+              "units": null,
+              "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "very_high",
+                "retainedSourceIds": [
+                  "ncsu-citrus-x-limon"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+            },
+            "transformId": "frost-injury-to-frost-sensitivity-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+            "appliedAt": "2026-09-09T19:25:09.268Z",
             "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
             "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
           }

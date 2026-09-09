@@ -336,11 +336,11 @@ test('current catalog queue aggregates — PRODUCT_GATE ≠ ENRICHMENT_EXECUTION
     parentCommit: 'b6b4efa63533713c5d17988e0c0b6cf17ef6edc9'
   });
   assert.equal(queue.catalogSnapshot.total, 108);
-  assert.equal(queue.catalogSnapshot.counts.A, 2);
-  assert.equal(queue.catalogSnapshot.counts.B, 93);
+  assert.equal(queue.catalogSnapshot.counts.A, 3);
+  assert.equal(queue.catalogSnapshot.counts.B, 92);
   assert.equal(queue.catalogSnapshot.counts.D, 13);
   // Class A plants drop from enrichment queue; jobs = catalog - A
-  assert.equal(queue.summary.totalJobs, 106);
+  assert.equal(queue.summary.totalJobs, 105);
   // Ordinary B is PARTIAL; HOLD reserved for needsReview / real holds
   assert.ok(queue.summary.byProductGate.PARTIAL >= 60);
   assert.ok(queue.summary.byProductGate.PARTIAL > queue.summary.byProductGate.HOLD);
@@ -349,7 +349,7 @@ test('current catalog queue aggregates — PRODUCT_GATE ≠ ENRICHMENT_EXECUTION
       queue.summary.byProductGate.HOLD +
       queue.summary.byProductGate.REJECT +
       queue.summary.byProductGate.PASS,
-    106
+    105
   );
   assert.ok(queue.summary.byEnrichmentExecution.AUTO > queue.summary.byEnrichmentExecution.HOLD_FOR_REVIEW);
   assert.ok(queue.summary.AUTO_JOB_COUNT > queue.summary.OWNER_REVIEW_JOB_COUNT);

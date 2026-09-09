@@ -1,0 +1,191 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.1.0",
+  "jobId": "enrich-v1:olive",
+  "slug": "olive",
+  "scientificName": "Olea europaea",
+  "dryRun": false,
+  "beforePlantHash": "ab7e047da4a515f02acff58f96482b0d21879e44a9400dab92ef62281e657f47",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "ALREADY_EQUIVALENT",
+  "hardStop": null,
+  "externalRequests": 0,
+  "cacheHits": 2,
+  "appliedFields": [],
+  "ownerDecisionRequired": false,
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-olea-europaea",
+      "url": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+      "status": 200,
+      "fromCache": true
+    },
+    {
+      "sourceId": "usda-plants-olea-europaea",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=OLEU",
+      "status": 200,
+      "fromCache": true
+    }
+  ],
+  "packetFingerprint": "ef9c42d533df15383b66324103d68b5241530e5f50b543c5cdd75d240b3a60ef",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "READY_TO_APPLY",
+      "value": "low",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+    }
+  ],
+  "applyGate": {
+    "setDecision": "APPLY_ALLOWED",
+    "setReasons": [
+      "all_apply_gates_passed"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "APPLY_ALLOWED",
+        "reasons": [
+          "same_value_evidence_provenance_upgrade",
+          "all_apply_gates_passed"
+        ],
+        "contradictionClass": "CONSISTENT"
+      }
+    ]
+  },
+  "mutationPlan": {
+    "planFingerprint": "71789a2a672859bdf1dd0558c5a268e66b93d7976625638e7062f84a5b98d63f",
+    "jsonDiff": [
+      {
+        "path": "climateTraits.coldTolerance",
+        "before": {
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "fieldOrigin": "ASSERTED_SOURCE"
+        },
+        "after": {
+          "value": "low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "fieldOrigin": "ASSERTED_SOURCE"
+        },
+        "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-olea-europaea"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 7a",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "7-10",
+            "displayValue": "USDA 7-10",
+            "hardinessZoneMin": 7,
+            "hardinessZoneMax": 10,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "low",
+              "retainedSourceIds": [
+                "ncsu-olea-europaea"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "2ca757dee7a66ac013f324bf5fe20717269018542b50810e2206e332964d6cf5",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      }
+    ],
+    "guards": {
+      "floweringRequirementsUnchanged": true,
+      "fruitingRequirementsUnchanged": true,
+      "needsReviewUnchanged": true,
+      "slugUnchanged": true,
+      "scientificUnchanged": true,
+      "aliasesUnchanged": true
+    }
+  },
+  "readinessSimulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "blockersCleared": [],
+    "blockersAdded": [],
+    "note": "Simulation only — no catalog write."
+  },
+  "writeResult": {
+    "ok": true,
+    "skipped": true,
+    "catalogMutated": false,
+    "reason": "already_equivalent_no_mutation"
+  },
+  "afterReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "afterPlantHash": "ab7e047da4a515f02acff58f96482b0d21879e44a9400dab92ef62281e657f47",
+  "idempotence": {
+    "SECOND_APPLY_WOULD_MUTATE": "NO",
+    "gate2Decision": "APPLY_ALLOWED"
+  },
+  "queueAfter": {
+    "totalJobs": 105,
+    "jobPresent": true,
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ]
+  },
+  "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+  "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+  "retrieverRef": "source-retriever-pilot-v1@1.1.0"
+}

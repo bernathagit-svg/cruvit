@@ -173,7 +173,7 @@ test('B. lemon: no invented reproductive biology; flowering/fruiting only if leg
   assert.equal(lemon.climateTraits.quantitative, undefined);
   const meta = resolveSmartRecClimateMetaForPlant(lemon, { legacyInlineTable: {} });
   assert.equal(meta._metaAuthority, META_AUTHORITY.CANONICAL_CLIMATE_TRAITS);
-  assert.equal(meta.frostSensitivity, 'high');
+  assert.equal(meta.frostSensitivity, 'very_high');
 });
 
 test('C. SAFE payload alone leaves fig on legacy fallback (unlocked-six migrates separately)', () => {
@@ -210,6 +210,7 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
     'pomegranate.frostSensitivity',
     'pomegranate.coldTolerance',
     'lemon.coldTolerance',
+    'lemon.frostSensitivity',
     'olive.coldTolerance',
     'avocado.coldTolerance',
     'guava.frostSensitivity',
@@ -311,7 +312,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
       class: shortClass(r),
       blockers: r.reasons || []
     });
-    const classAAllowed = new Set(['pomegranate', 'mango']);
+    const classAAllowed = new Set(['pomegranate', 'mango', 'lemon']);
     if (classAAllowed.has(slug)) {
       assert.equal(shortClass(r), 'A', `${slug} real enrichment apply → Class A`);
     } else {
@@ -323,7 +324,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
   for (const row of beforeRows) beforeCounts[row.class] = (beforeCounts[row.class] || 0) + 1;
   for (const row of afterRows) afterCounts[row.class] = (afterCounts[row.class] || 0) + 1;
   assert.equal(beforeCounts.D, 26);
-  assert.equal(afterCounts.A, 2);
+  assert.equal(afterCounts.A, 3);
   assert.ok(afterCounts.D < 26 || afterCounts.B + afterCounts.C > 0);
 
   const seed = loadSeed();
@@ -341,7 +342,7 @@ test('PHASE5: readiness before/after for SAFE plants — Class A only via enrich
     const c = shortClass(classifyPlantDataReadiness(p));
     catalogCounts[c] = (catalogCounts[c] || 0) + 1;
   }
-  assert.equal(catalogCounts.A, 2);
+  assert.equal(catalogCounts.A, 3);
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -412,6 +413,7 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate + wo
     'pomegranate.frostSensitivity',
     'pomegranate.coldTolerance',
     'lemon.coldTolerance',
+    'lemon.frostSensitivity',
     'olive.coldTolerance',
     'avocado.coldTolerance',
     'guava.frostSensitivity',
@@ -436,6 +438,7 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate + wo
   assert.ok(pom.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(pom.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.lemon.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.lemon.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(payload.plants.olive.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.avocado.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.guava.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);

@@ -2,51 +2,51 @@
   "summaryId": "current-catalog-enrichment-summary-v1",
   "queueContractVersion": "1.1.0",
   "scannerVersion": "1.1.0",
-  "generatedAt": "2026-09-09T19:03:39.928Z",
-  "parentCommit": "e0ad9f1413b9447a3be6124960e43eeb0a60cf9d",
+  "generatedAt": "2026-09-09T19:25:09.445Z",
+  "parentCommit": "9ac4919ef237441f981870da24615238f321b06d",
   "catalogSnapshot": {
     "total": 108,
     "counts": {
-      "A": 2,
-      "B": 93,
+      "A": 3,
+      "B": 92,
       "C": 0,
       "D": 13
     },
     "gates": {
-      "PASS": 2,
-      "PARTIAL": 67,
+      "PASS": 3,
+      "PARTIAL": 66,
       "HOLD": 26,
       "REJECT": 13
     }
   },
   "summary": {
-    "totalJobs": 106,
+    "totalJobs": 105,
     "byReadiness": {
       "A": 0,
-      "B": 93,
+      "B": 92,
       "C": 0,
       "D": 13
     },
     "byProductGate": {
       "PASS": 0,
-      "PARTIAL": 67,
+      "PARTIAL": 66,
       "HOLD": 26,
       "REJECT": 13
     },
     "byGate": {
       "PASS": 0,
-      "PARTIAL": 67,
+      "PARTIAL": 66,
       "HOLD": 26,
       "REJECT": 13
     },
     "byEnrichmentExecution": {
-      "AUTO": 89,
+      "AUTO": 88,
       "HOLD_FOR_REVIEW": 17,
       "NONE": 0
     },
     "byPriority": {
       "P0": 9,
-      "P1": 41,
+      "P1": 40,
       "P2": 48,
       "P3": 0,
       "P4": 8
@@ -55,22 +55,22 @@
       "BROAD_TAXON_POLICY": 12,
       "IDENTITY_SPECIES_REQUIRED": 17,
       "LEGACY_META_ONLY": 13,
-      "MISSING_FROST_EVIDENCE": 104,
+      "MISSING_FROST_EVIDENCE": 103,
       "MISSING_COLD_EVIDENCE": 103,
       "MISSING_HEAT_EVIDENCE": 13,
       "MISSING_FLOWERING_REQUIREMENTS": 45,
       "MISSING_FRUITING_REQUIREMENTS": 65,
-      "EVIDENCE_NOT_SOURCE_SUPPORTED": 106,
+      "EVIDENCE_NOT_SOURCE_SUPPORTED": 105,
       "NEEDS_REVIEW": 26,
       "CATEGORY_ONLY_POLICY": 1
     },
-    "evidenceOnlyNearACandidates": 41,
+    "evidenceOnlyNearACandidates": 40,
     "floweringGapJobs": 45,
     "fruitingGapJobs": 65,
     "reviewHoldJobs": 26,
     "speciesSelectionJobs": 9,
     "categoryOrBroadJobs": 8,
-    "AUTO_JOB_COUNT": 89,
+    "AUTO_JOB_COUNT": 88,
     "OWNER_REVIEW_JOB_COUNT": 17,
     "NONE_JOB_COUNT": 0
   },

@@ -1,0 +1,76 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-09T19:25:09.306Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 0,
+  "cache": {
+    "hits": 2,
+    "misses": 0,
+    "writes": 0,
+    "urls": [],
+    "uniqueUrls": []
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "olive",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "low"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-olea-europaea",
+          "url": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-olea-europaea",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=OLEU",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\production-p1-v1\\artifacts\\real\\candidate-packets\\olive.candidate-packet-v1.json",
+      "fingerprint": "ef9c42d533df15383b66324103d68b5241530e5f50b543c5cdd75d240b3a60ef"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}

@@ -1,0 +1,80 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-09T19:25:09.392Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 0,
+  "cache": {
+    "hits": 2,
+    "misses": 0,
+    "writes": 0,
+    "urls": [],
+    "uniqueUrls": []
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "lemon",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "frost_injury_statement",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "very_high"
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "very_low"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "simulated": {
+          "readinessShort": "A",
+          "gate": "PASS",
+          "reasons": [
+            "COMPLETE_FOR_CLASS_A"
+          ]
+        },
+        "fieldsAppliedInSimulation": 2,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-x-limon",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+          "status": 200,
+          "fromCache": true
+        },
+        {
+          "sourceId": "usda-plants-citrus-limon",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CILI5",
+          "status": 200,
+          "fromCache": true
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\production-p1-v1\\artifacts\\idempotence\\candidate-packets\\lemon.candidate-packet-v1.json",
+      "fingerprint": "1b572ce67f003600a575bab27b5e0957d3fd4464660ba4aca8573b816ff27437"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}

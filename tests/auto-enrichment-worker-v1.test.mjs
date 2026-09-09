@@ -125,7 +125,11 @@ test('2. HOLD job cannot enter', () => {
 test('3. fourth plant cannot enter maxJobs=3 batch', () => {
   const queue = loadCurrentQueue(ROOT);
   const sel = selectEligibleJobs(queue, { maxJobs: 3 });
-  assert.equal(sel.selected.length, 3);
+  // Lemon is Class A / removed from queue after production frost apply — remaining
+  // WORKER_PILOT_PLANT_SPECS eligibles are olive + avocado (≤ maxJobs).
+  assert.ok(sel.selected.length <= 3);
+  assert.ok(sel.selected.length >= 1);
+  assert.ok(!sel.selected.some((j) => j.canonicalSlug === 'lemon'));
   assert.ok(
     sel.skipped.some(
       (s) =>
@@ -151,14 +155,14 @@ test('4. apricot and pomegranate excluded', () => {
   }
 });
 
-test('5. lockBatch freezes lemon/olive/avocado membership', () => {
+test('5. lockBatch freezes olive/avocado membership (lemon Class A already complete)', () => {
   const lock = lockPilot();
   assert.equal(lock.batchLocked, true);
-  assert.deepEqual([...lock.lockedSlugs].sort(), ['avocado', 'lemon', 'olive']);
+  assert.deepEqual([...lock.lockedSlugs].sort(), ['avocado', 'olive']);
   assert.equal(lock.batchFingerprint, computeBatchFingerprint(lock.lockedJobs));
   const mem = assertBatchMembershipImmutable(lock, lock.lockedSlugs);
   assert.equal(mem.ok, true);
-  const drift = assertBatchMembershipImmutable(lock, ['lemon', 'olive', 'apricot']);
+  const drift = assertBatchMembershipImmutable(lock, ['olive', 'apricot']);
   assert.equal(drift.ok, false);
 });
 
@@ -558,8 +562,8 @@ test('18. processJob real path blocked without dryValidation', async () => {
 
 test('19. unit tests must not overwrite durable clean-replay candidate packets', async () => {
   const durableDir = path.join(ROOT, 'data/catalog/enrichment-retrieval/candidate-packets');
-  const lemonPath = path.join(durableDir, 'lemon.candidate-packet-v1.json');
-  const before = fs.existsSync(lemonPath) ? fs.readFileSync(lemonPath, 'utf8') : null;
+  const olivePath = path.join(durableDir, 'olive.candidate-packet-v1.json');
+  const before = fs.existsSync(olivePath) ? fs.readFileSync(olivePath, 'utf8') : null;
   const lock = lockPilot();
   const dirs = tempArtifactAndCache();
   await processBatch({
@@ -569,9 +573,13 @@ test('19. unit tests must not overwrite durable clean-replay candidate packets',
     ...dirs,
     fetchImpl: mockFetch()
   });
-  // Artifacts land only under temp artifactRoot
-  assert.ok(fs.existsSync(path.join(dirs.artifactRoot, 'candidate-packets', 'lemon.candidate-packet-v1.json')));
-  const after = fs.existsSync(lemonPath) ? fs.readFileSync(lemonPath, 'utf8') : null;
+  // Artifacts land only under temp artifactRoot for locked membership
+  for (const slug of lock.lockedSlugs) {
+    assert.ok(
+      fs.existsSync(path.join(dirs.artifactRoot, 'candidate-packets', `${slug}.candidate-packet-v1.json`))
+    );
+  }
+  const after = fs.existsSync(olivePath) ? fs.readFileSync(olivePath, 'utf8') : null;
   assert.equal(after, before);
 });
 

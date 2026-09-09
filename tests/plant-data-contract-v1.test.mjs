@@ -441,8 +441,8 @@ test('read-only current catalog classification (seed + bootstrap)', () => {
   assert.equal(report.total, catalog.length);
   assert.ok(report.total >= 100 && report.total <= 120, `unexpected total=${report.total}`);
   // Seed plants dominate B; SAFE + unlocked-six bootstrap migrate structurally.
-  // Real enrichment: pomegranate + mango are Class A (SOURCE_SUPPORTED frost+cold).
-  assert.equal(report.counts.A, 2, 'exactly two Class A expected (pomegranate + mango)');
+  // Real enrichment: pomegranate + mango + lemon are Class A (SOURCE_SUPPORTED frost+cold).
+  assert.equal(report.counts.A, 3, 'exactly three Class A expected (pomegranate + mango + lemon)');
   assert.ok(report.counts.B >= 90, `expected many B, got ${report.counts.B}`);
   assert.ok(
     report.counts.D >= 10 && report.counts.D <= 20,

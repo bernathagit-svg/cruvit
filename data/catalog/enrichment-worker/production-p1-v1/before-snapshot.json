@@ -1,0 +1,274 @@
+{
+  "plants": {
+    "lemon": {
+      "coldTolerance": {
+        "value": "very_low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-citrus-x-limon"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "9-11",
+            "displayValue": "USDA 9-11",
+            "hardinessZoneMin": 9,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-limon"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "aec9a5b21b44ee03d9c027a74ff6d5f638cd19187d3025642e04eb3abb67b6bf",
+          "appliedAt": "2026-09-08T17:51:22.577Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "123afd14144376ee5eab9e86790c6b05627e2d3446657100052826fcd68feef7",
+      "flowering": "Flowers best with strong sun, warmth, and protection from frost and wind.",
+      "fruiting": "Reliable fruiting needs warmth, deep watering, and low frost risk.",
+      "needsReview": null
+    },
+    "olive": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-olea-europaea"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 7a",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "7-10",
+            "displayValue": "USDA 7-10",
+            "hardinessZoneMin": 7,
+            "hardinessZoneMax": 10,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "low",
+              "retainedSourceIds": [
+                "ncsu-olea-europaea"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "287247659de5e6c2a642bd8c036dbfdeb1cd5ae50a2ab8e8bd4d1f2c4c32c0c5",
+          "appliedAt": "2026-09-08T17:51:22.610Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "medium",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "ab7e047da4a515f02acff58f96482b0d21879e44a9400dab92ef62281e657f47",
+      "flowering": "Flowers best with full sun, good airflow, and a clear seasonal rhythm.",
+      "fruiting": "Reliable fruiting prefers dry warm seasons, drainage, and mild winter cueing without severe freeze.",
+      "needsReview": null
+    },
+    "avocado": {
+      "coldTolerance": {
+        "value": "very_low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-persea-americana"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "9-12",
+            "displayValue": "USDA 9-12",
+            "hardinessZoneMin": 9,
+            "hardinessZoneMax": 12,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "ncsu-persea-americana"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "d27eafe773b3e294551e01f3bd9b24ea9aa0e6820d6b441959b96cc16353890d",
+          "appliedAt": "2026-09-08T17:51:22.636Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "293f6a53f80f061b8e0dba86b89fd9aa510b0deabb27e9a930a2a8ef45074f6e",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    }
+  },
+  "catalog": {
+    "total": 108,
+    "counts": {
+      "A": 2,
+      "B": 93,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "queue": {
+    "totalJobs": 106,
+    "auto": 89,
+    "hold": 17,
+    "selected": {
+      "lemon": {
+        "jobId": "enrich-v1:lemon",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      },
+      "olive": {
+        "jobId": "enrich-v1:olive",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      },
+      "avocado": {
+        "jobId": "enrich-v1:avocado",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      }
+    }
+  },
+  "triad": {
+    "json": "8a7298fd420f529e601bebc5cd787443b0298c543cb0417c469f37a212e7d63a",
+    "js": "69650de9f32872bd2f9aadd47ab278c145d9d122a6c7c53ab279e72fbaf00de1",
+    "browser": "ebda9b75a93ebef3ba4ff628fa6b4a396e39bd3582a3b6548fc47725a24d2393"
+  }
+}

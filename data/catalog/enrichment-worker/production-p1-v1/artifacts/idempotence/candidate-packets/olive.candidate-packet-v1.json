@@ -1,0 +1,278 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:olive",
+    "canonicalSlug": "olive",
+    "scientificName": "Olea europaea",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "olive",
+    "scientificName": "Olea europaea",
+    "whySafe": "P1 AUTO PARTIAL; SAFE bootstrap payload; species-level Olea europaea; frost/cold evidence-only; NCSU Tier A page."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-olea-europaea",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+      "title": "Olea europaea (Olive)",
+      "retrievedAt": "2026-09-09T19:25:08.421Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "2ca757dee7a66ac013f324bf5fe20717269018542b50810e2206e332964d6cf5",
+      "canonicalPlantIdentity": {
+        "slug": "olive",
+        "scientificName": "Olea europaea"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 7,
+        "hardinessZoneMax": 10,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "7-10",
+        "displayValue": "USDA 7-10",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 7a",
+        "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 7a",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-olea-europaea",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=OLEU",
+      "title": "Olea europaea - USDA PLANTS",
+      "retrievedAt": "2026-09-09T19:25:08.721Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "olive",
+        "scientificName": "Olea europaea"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "olive",
+      "scientificName": "Olea europaea",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "medium",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "olive",
+      "scientificName": "Olea europaea",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "low",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "rawValue": "7-10",
+        "displayValue": "USDA 7-10",
+        "hardinessZoneMin": 7,
+        "hardinessZoneMax": 10,
+        "hardinessZoneSystem": "USDA",
+        "damageMode": null,
+        "minimumWinterTemperatureF": null,
+        "units": "usda_zone",
+        "claimFingerprint": "59bf5291ba12e5bd37a33b7136493cf9301d9a8a45c7450468e8e190cfcb6899"
+      },
+      "normalizedTraitCandidate": {
+        "field": "coldTolerance",
+        "value": "low"
+      },
+      "proposedValue": "low",
+      "proposedNormalizedValue": "low",
+      "sourceIds": [
+        "ncsu-olea-europaea"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/olea-europaea/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Hardiness Zone: 7a",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-olea-europaea",
+          "excerpt": "Hardiness Zone: 7a"
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "hardiness-zone-to-cold-traits-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+      "transformReason": "zone_band_mapped_to_cold_tolerance",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "low",
+          "retainedSourceIds": [
+            "ncsu-olea-europaea"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+      },
+      "contentHash": "2ca757dee7a66ac013f324bf5fe20717269018542b50810e2206e332964d6cf5",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "low",
+        "retainedSourceIds": [
+          "ncsu-olea-europaea"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"olive\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"low\"],\"sourceIds\":[\"ncsu-olea-europaea\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"low\"}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-09T19:25:09.414Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 1,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "ef9c42d533df15383b66324103d68b5241530e5f50b543c5cdd75d240b3a60ef"
+}

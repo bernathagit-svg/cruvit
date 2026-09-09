@@ -1,0 +1,352 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": null,
+  "plant": {
+    "slug": "lemon",
+    "scientificName": "Citrus × limon",
+    "whySafe": "P1 AUTO PARTIAL; SAFE bootstrap payload; species-level Citrus × limon; frost/cold evidence-only; NCSU Tier A page."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-citrus-x-limon",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "title": "Citrus x limon (Lemon)",
+      "retrievedAt": "2026-09-09T19:25:06.846Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+      "canonicalPlantIdentity": {
+        "slug": "lemon",
+        "scientificName": "Citrus × limon"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 9,
+        "hardinessZoneMax": 11,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "9-11",
+        "displayValue": "USDA 9-11",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+        "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "ncsu-citrus-x-limon",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "title": "Citrus x limon (Lemon)",
+      "retrievedAt": "2026-09-09T19:25:06.846Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+      "canonicalPlantIdentity": {
+        "slug": "lemon",
+        "scientificName": "Citrus × limon"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "frost_injury_statement",
+        "damageMode": "frost_tender",
+        "minimumWinterTemperatureF": null,
+        "temperatureUnit": null,
+        "rawValue": "frost_tender",
+        "displayValue": "frost_tender",
+        "supportingExcerpt": "Plant is frost tender.",
+        "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Plant is frost tender.",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-citrus-limon",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=CILI5",
+      "title": "Citrus limon - USDA PLANTS",
+      "retrievedAt": "2026-09-09T19:25:08.228Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "lemon",
+        "scientificName": "Citrus × limon"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "lemon",
+      "scientificName": "Citrus × limon",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "very_high",
+      "sourceClaim": {
+        "claimType": "frost_injury_statement",
+        "rawValue": "frost_tender",
+        "displayValue": "frost_tender",
+        "hardinessZoneMin": null,
+        "hardinessZoneMax": null,
+        "hardinessZoneSystem": null,
+        "damageMode": "frost_tender",
+        "minimumWinterTemperatureF": null,
+        "units": null,
+        "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+      },
+      "normalizedTraitCandidate": {
+        "field": "frostSensitivity",
+        "value": "very_high"
+      },
+      "proposedValue": "very_high",
+      "proposedNormalizedValue": "very_high",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Plant is frost tender.",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-citrus-x-limon",
+          "excerpt": "Plant is frost tender."
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "frost-injury-to-frost-sensitivity-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+      "transformReason": "frost_injury_mapped_to_frost_sensitivity",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "very_high",
+          "retainedSourceIds": [
+            "ncsu-citrus-x-limon"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+      },
+      "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "lemon",
+      "scientificName": "Citrus × limon",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "very_low",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "rawValue": "9-11",
+        "displayValue": "USDA 9-11",
+        "hardinessZoneMin": 9,
+        "hardinessZoneMax": 11,
+        "hardinessZoneSystem": "USDA",
+        "damageMode": null,
+        "minimumWinterTemperatureF": null,
+        "units": "usda_zone",
+        "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+      },
+      "normalizedTraitCandidate": {
+        "field": "coldTolerance",
+        "value": "very_low"
+      },
+      "proposedValue": "very_low",
+      "proposedNormalizedValue": "very_low",
+      "sourceIds": [
+        "ncsu-citrus-x-limon"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-limon/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-citrus-x-limon",
+          "excerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b"
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "hardiness-zone-to-cold-traits-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+      "transformReason": "zone_band_mapped_to_cold_tolerance",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "very_low",
+          "retainedSourceIds": [
+            "ncsu-citrus-x-limon"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+      },
+      "contentHash": "3b321c14a0b0f185bbebd5db2a0b68848bca3f4fe9eafb0603006f8fe9908cfa",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "very_high",
+        "retainedSourceIds": [
+          "ncsu-citrus-x-limon"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "very_low",
+        "retainedSourceIds": [
+          "ncsu-citrus-x-limon"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lemon\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-limon\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-09T19:25:09.391Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ]
+    },
+    "simulated": {
+      "readinessShort": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ]
+    },
+    "fieldsAppliedInSimulation": 2,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "1b572ce67f003600a575bab27b5e0957d3fd4464660ba4aca8573b816ff27437"
+}
