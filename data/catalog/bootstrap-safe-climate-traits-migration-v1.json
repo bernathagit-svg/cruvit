@@ -1265,7 +1265,7 @@
         ],
         "traitEvidenceClasses": {
           "frostSensitivity": "HEURISTIC_ASSERTION",
-          "coldTolerance": "HEURISTIC_ASSERTION",
+          "coldTolerance": "SOURCE_SUPPORTED",
           "heatTolerance": "HEURISTIC_ASSERTION",
           "humidityTolerance": "HEURISTIC_ASSERTION",
           "drainageNeeds": "HEURISTIC_ASSERTION",
@@ -1278,7 +1278,7 @@
         },
         "fieldOrigins": {
           "frostSensitivity": "LEGACY_ASSERTED_METADATA",
-          "coldTolerance": "LEGACY_ASSERTED_METADATA",
+          "coldTolerance": "ASSERTED_SOURCE",
           "heatTolerance": "LEGACY_ASSERTED_METADATA",
           "humidityTolerance": "LEGACY_ASSERTED_METADATA",
           "drainageNeeds": "LEGACY_ASSERTED_METADATA",
@@ -1298,7 +1298,72 @@
               "type": "group",
               "id": "temperate-chill-fruit-tree"
             }
-          ]
+          ],
+          "enrichmentApply": {
+            "writerRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "gateRef": "catalog-enrichment-apply-gate-v1@1.0.0",
+            "appliedAt": "2026-09-10T04:12:06.905Z",
+            "fields": [
+              "coldTolerance"
+            ],
+            "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4"
+          }
+        },
+        "enrichmentProvenance": {
+          "coldTolerance": {
+            "sourceIds": [
+              "ncsu-generic-prunus-armeniaca"
+            ],
+            "sourceUrl": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+            "sourceType": "university_extension",
+            "supportingExcerpt": "Hardiness Zone: 5a, 5b, 6a, 6b, 7a, 7b",
+            "sourceClaim": {
+              "claimType": "usda_hardiness_zone_band",
+              "rawValue": "5-7",
+              "displayValue": "USDA 5-7",
+              "hardinessZoneMin": 5,
+              "hardinessZoneMax": 7,
+              "hardinessZoneSystem": "USDA",
+              "damageMode": null,
+              "minimumWinterTemperatureF": null,
+              "units": "usda_zone",
+              "claimFingerprint": "f8adddb1b5c3a4fc50dda10c0132eb67f2ce396aae8c42028e59c4a3b8fdd17e"
+            },
+            "sourcePolicyResult": {
+              "mayBeSourceSupported": true,
+              "evidenceClass": "SOURCE_SUPPORTED",
+              "reasons": [
+                "tier_a_preferred_source_independent_ok",
+                "source_supported_gate_passed",
+                "policy=catalog-source-policy-v1@1.0.0",
+                "fieldProvenanceHonesty=1.0.0"
+              ]
+            },
+            "contradictionClass": "CONSISTENT",
+            "contradictionResult": {
+              "contradictionClass": "CONSISTENT",
+              "queueAction": "AUTO_CONTINUE",
+              "hold": false,
+              "normalizedResult": {
+                "value": "medium",
+                "retainedSourceIds": [
+                  "ncsu-generic-prunus-armeniaca"
+                ]
+              },
+              "reasons": [
+                "single_authoritative_claim"
+              ],
+              "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"apricot\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"medium\"],\"sourceIds\":[\"ncsu-generic-prunus-armeniaca\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"medium\"}"
+            },
+            "transformId": "hardiness-zone-to-cold-traits-v1",
+            "transformVersion": "1.0.0",
+            "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+            "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+            "contentHash": "17fadbf6b3b7009aec9507e4ad43aad8d99bf12f17ad3bfc210ae5f24a04f7c9",
+            "appliedAt": "2026-09-10T04:12:06.905Z",
+            "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+            "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+          }
         }
       }
     },

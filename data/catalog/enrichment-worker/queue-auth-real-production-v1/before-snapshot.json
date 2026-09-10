@@ -1,0 +1,226 @@
+{
+  "plants": {
+    "apricot": {
+      "coldTolerance": {
+        "value": "medium",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "39e02c7fe585dbe486d31f20aa54c073ad0be1e39371f8214c1c5a411bec1449",
+      "flowering": "Needs full sun plus a real cool-season / winter dormancy signal for reliable bloom.",
+      "fruiting": "Reliable fruiting needs winter chill or clear cool-season conditions; always-hot tropical climates are not a confident match.",
+      "needsReview": null
+    },
+    "avocado": {
+      "coldTolerance": {
+        "value": "very_low",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-persea-americana"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "9-12",
+            "displayValue": "USDA 9-12",
+            "hardinessZoneMin": 9,
+            "hardinessZoneMax": 12,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "ncsu-persea-americana"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "d27eafe773b3e294551e01f3bd9b24ea9aa0e6820d6b441959b96cc16353890d",
+          "appliedAt": "2026-09-08T17:51:22.636Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "293f6a53f80f061b8e0dba86b89fd9aa510b0deabb27e9a930a2a8ef45074f6e",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    },
+    "guava": {
+      "coldTolerance": {
+        "value": "low",
+        "evidence": "HEURISTIC_ASSERTION",
+        "origin": "LEGACY_ASSERTED_METADATA",
+        "provenance": null
+      },
+      "frostSensitivity": {
+        "value": "high",
+        "evidence": "SOURCE_SUPPORTED",
+        "origin": "ASSERTED_SOURCE",
+        "provenance": {
+          "sourceIds": [
+            "uf-ifas-gs-guava"
+          ],
+          "sourceUrl": "https://gardeningsolutions.ifas.ufl.edu/plants/trees-and-shrubs/trees/guava.html",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Mature trees can survive short periods of freezing weather, but damage may occur if the freeze is prolonged or temperatures reach 25.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_sensitive",
+            "displayValue": "frost_sensitive",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_sensitive",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "21e38ab7edecbc3ea3e0fe9721a164093c181a7b3351668b2ac343c5f5278a30"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "high",
+              "retainedSourceIds": [
+                "uf-ifas-gs-guava"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"guava\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"high\"],\"sourceIds\":[\"uf-ifas-gs-guava\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "9b2a5efad61b0ad2b074704f3eccd683844bd27734bdfd871aea493196747a09",
+          "appliedAt": "2026-09-09T19:00:26.387Z",
+          "applyWriterRef": "catalog-enrichment-apply-writer-v1@1.0.0",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      "readiness": "B",
+      "productGate": "PARTIAL",
+      "plantHash": "574a3ee7b9242e31ef4622cfda22caa28962a6e5a2b1d5e797999762afd9932f",
+      "flowering": "Warmth, sun, and low frost risk are essential for strong growth.",
+      "fruiting": "Reliable fruiting needs a long warm season, low frost risk, and good drainage.",
+      "needsReview": null
+    }
+  },
+  "catalog": {
+    "total": 108,
+    "counts": {
+      "A": 3,
+      "B": 92,
+      "C": 0,
+      "D": 13
+    }
+  },
+  "queue": {
+    "totalJobs": 105,
+    "auto": 88,
+    "hold": 17,
+    "selected": {
+      "apricot": {
+        "jobId": "enrich-v1:apricot",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      },
+      "avocado": {
+        "jobId": "enrich-v1:avocado",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      },
+      "guava": {
+        "jobId": "enrich-v1:guava",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "priority": "P1"
+      }
+    }
+  },
+  "triad": {
+    "json": "181c7b3b084554a087f30f0f0b902964a7b5b7ebccf76083f634c7c2950ebc91",
+    "js": "1bbd550d53609a6b81692d99ba3bb50ef244b53926e5b34efce7f58d177ffd35",
+    "browser": "e76aee65a27791211bf760a4cecd6322affb865ff09cb595b33a45705e35adf2"
+  },
+  "queueFiles": {
+    "queue": "94e4324451fed2371c5665d5915ca760d77bb0729885d930ddd4133bd52e709e",
+    "summary": "9617992276ee88d5dae7067e188bbbdcdc10011cfcf8e9b2393b2716204d4ae4"
+  }
+}

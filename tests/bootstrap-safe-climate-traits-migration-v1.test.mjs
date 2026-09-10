@@ -213,6 +213,7 @@ test('D/E. explicit medium preserved; absent fields stay absent', () => {
     'lemon.frostSensitivity',
     'olive.coldTolerance',
     'avocado.coldTolerance',
+    'apricot.coldTolerance',
     'guava.frostSensitivity',
     'mango.frostSensitivity',
     'mango.coldTolerance',
@@ -416,6 +417,7 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate + wo
     'lemon.frostSensitivity',
     'olive.coldTolerance',
     'avocado.coldTolerance',
+    'apricot.coldTolerance',
     'guava.frostSensitivity',
     'mango.frostSensitivity',
     'mango.coldTolerance',
@@ -441,6 +443,7 @@ test('provenance: SOURCE_SUPPORTED only via enrichment overlay (pomegranate + wo
   assert.ok(payload.plants.lemon.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(payload.plants.olive.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.avocado.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
+  assert.ok(payload.plants.apricot.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);
   assert.ok(payload.plants.guava.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(payload.plants.mango.climateTraits.enrichmentProvenance?.frostSensitivity?.transformRef);
   assert.ok(payload.plants.mango.climateTraits.enrichmentProvenance?.coldTolerance?.transformRef);

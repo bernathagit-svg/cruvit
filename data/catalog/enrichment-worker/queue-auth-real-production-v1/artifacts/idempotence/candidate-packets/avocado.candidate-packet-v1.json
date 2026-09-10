@@ -1,0 +1,278 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:avocado",
+    "canonicalSlug": "avocado",
+    "scientificName": "Persea americana",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "avocado",
+    "scientificName": "Persea americana",
+    "whySafe": "P1 AUTO PARTIAL; SAFE bootstrap payload; species-level Persea americana; frost/cold evidence-only; NCSU Tier A page."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-persea-americana",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+      "title": "Persea americana (Avocado)",
+      "retrievedAt": "2026-09-10T04:12:03.975Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "9171b8e5200ee341ec9a7298298fb8b3d3bfa190689fbea486528692ded93731",
+      "canonicalPlantIdentity": {
+        "slug": "avocado",
+        "scientificName": "Persea americana"
+      },
+      "identityMatch": {
+        "ok": true,
+        "reason": "binomial_in_page"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "hardinessZoneMin": 9,
+        "hardinessZoneMax": 12,
+        "hardinessZoneSystem": "USDA",
+        "rawValue": "9-12",
+        "displayValue": "USDA 9-12",
+        "units": "usda_zone",
+        "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+        "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+      },
+      "targetField": null,
+      "shortSupportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+      "normalizedTraitCandidate": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ],
+        "hold": false
+      }
+    },
+    {
+      "sourceId": "usda-plants-persea-americana",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=PEAM3",
+      "title": "Persea americana - USDA PLANTS",
+      "retrievedAt": "2026-09-10T04:12:05.309Z",
+      "fromCache": true,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "avocado",
+        "scientificName": "Persea americana"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "avocado",
+      "scientificName": "Persea americana",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "high",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "avocado",
+      "scientificName": "Persea americana",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "very_low",
+      "sourceClaim": {
+        "claimType": "usda_hardiness_zone_band",
+        "rawValue": "9-12",
+        "displayValue": "USDA 9-12",
+        "hardinessZoneMin": 9,
+        "hardinessZoneMax": 12,
+        "hardinessZoneSystem": "USDA",
+        "damageMode": null,
+        "minimumWinterTemperatureF": null,
+        "units": "usda_zone",
+        "claimFingerprint": "d703222f81ac5c98c85cac82b27d233eaeef445bc3b56da76e15d0f06d118f7a"
+      },
+      "normalizedTraitCandidate": {
+        "field": "coldTolerance",
+        "value": "very_low"
+      },
+      "proposedValue": "very_low",
+      "proposedNormalizedValue": "very_low",
+      "sourceIds": [
+        "ncsu-persea-americana"
+      ],
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b",
+      "excerpts": [
+        {
+          "sourceId": "ncsu-persea-americana",
+          "excerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b, 12a, 12b"
+        }
+      ],
+      "sourcePolicyResult": {
+        "mayBeSourceSupported": true,
+        "evidenceClass": "SOURCE_SUPPORTED",
+        "reasons": [
+          "tier_a_preferred_source_independent_ok",
+          "source_supported_gate_passed",
+          "policy=catalog-source-policy-v1@1.0.0",
+          "fieldProvenanceHonesty=1.0.0"
+        ]
+      },
+      "transformId": "hardiness-zone-to-cold-traits-v1",
+      "transformVersion": "1.0.0",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+      "transformReason": "zone_band_mapped_to_cold_tolerance",
+      "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "contradictionResult": {
+        "contradictionClass": "CONSISTENT",
+        "queueAction": "AUTO_CONTINUE",
+        "hold": false,
+        "normalizedResult": {
+          "value": "very_low",
+          "retainedSourceIds": [
+            "ncsu-persea-americana"
+          ]
+        },
+        "reasons": [
+          "single_authoritative_claim"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+      },
+      "contentHash": "9171b8e5200ee341ec9a7298298fb8b3d3bfa190689fbea486528692ded93731",
+      "confidence": "medium",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "READY_TO_APPLY",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "CONSISTENT",
+      "queueAction": "AUTO_CONTINUE",
+      "hold": false,
+      "normalizedResult": {
+        "value": "very_low",
+        "retainedSourceIds": [
+          "ncsu-persea-americana"
+        ]
+      },
+      "reasons": [
+        "single_authoritative_claim"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"avocado\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-persea-americana\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-10T04:12:07.826Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 1,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "c5ef241f0608138a37e292560b6f777b1d5e05df4343be0276825f76fa0d9be4"
+}

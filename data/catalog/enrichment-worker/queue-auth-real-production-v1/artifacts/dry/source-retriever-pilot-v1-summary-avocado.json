@@ -1,0 +1,82 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-10T04:12:05.325Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 2,
+  "cache": {
+    "hits": 0,
+    "misses": 0,
+    "writes": 2,
+    "urls": [
+      "https://plants.ces.ncsu.edu/plants/persea-americana/",
+      "https://plants.usda.gov/home/plantProfile?symbol=PEAM3"
+    ],
+    "uniqueUrls": [
+      "https://plants.ces.ncsu.edu/plants/persea-americana/",
+      "https://plants.usda.gov/home/plantProfile?symbol=PEAM3"
+    ]
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "avocado",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "READY_TO_APPLY",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "sourceClaimType": "usda_hardiness_zone_band",
+          "contradiction": "CONSISTENT",
+          "proposedValue": "very_low"
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 1,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-persea-americana",
+          "url": "https://plants.ces.ncsu.edu/plants/persea-americana/",
+          "status": 200,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-persea-americana",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=PEAM3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\queue-auth-real-production-v1\\artifacts\\dry\\candidate-packets\\avocado.candidate-packet-v1.json",
+      "fingerprint": "c5ef241f0608138a37e292560b6f777b1d5e05df4343be0276825f76fa0d9be4"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}
