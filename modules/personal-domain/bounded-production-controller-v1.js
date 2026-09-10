@@ -194,7 +194,11 @@ export function createRun({
   artifactRoot = null,
   cacheDir = null,
   fetchImpl = null,
-  reportSubdir = 'bounded-production-controller-v1'
+  reportSubdir = 'bounded-production-controller-v1',
+  applyRetryFairness = true,
+  persistRetryFairness = null,
+  retryStatePath = null,
+  now = null
 } = {}) {
   if (!repoRoot) throw new Error('createRun requires repoRoot');
   if (maxJobsPerBatch > WORKER_MAX_JOBS) {
@@ -263,7 +267,11 @@ export function createRun({
       artifactRoot,
       cacheDir,
       fetchImpl,
-      reportSubdir
+      reportSubdir,
+      applyRetryFairness,
+      persistRetryFairness,
+      retryStatePath,
+      now
     }
   };
 }
@@ -410,7 +418,10 @@ export function peekNextSelection(run) {
     repoRoot,
     safeSlugs,
     excludeSlugs,
-    realExecutionAllowed: run.REAL_EXECUTION_ALLOWED ? true : false
+    realExecutionAllowed: run.REAL_EXECUTION_ALLOWED ? true : false,
+    applyRetryFairness: run.options.applyRetryFairness !== false,
+    retryStatePath: run.options.retryStatePath || null,
+    now: run.options.now || new Date()
   });
   const locked = lockBatch(selection);
   return {
@@ -532,6 +543,13 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
   const fetch = fetchImpl || run.options.fetchImpl || globalThis.fetch;
   const workerBatchCap = Math.min(WORKER_MAX_EXTERNAL_REQUESTS_TOTAL, remainingBudget);
 
+  const fairnessOpts = {
+    applyRetryFairness: run.options.applyRetryFairness !== false,
+    persistRetryFairness: run.options.persistRetryFairness,
+    retryStatePath: run.options.retryStatePath || null,
+    now: run.options.now || null
+  };
+
   const dry = await processBatch({
     repoRoot,
     dryRun: true,
@@ -543,7 +561,8 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
     maxJobs: run.caps.maxJobsPerBatch,
     maxExternalRequestsTotal: workerBatchCap,
     maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
-    fetchImpl: fetch
+    fetchImpl: fetch,
+    ...fairnessOpts
   });
 
   const hashesAfterDry = hashCanonicalSurfaces(repoRoot);
@@ -611,7 +630,8 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
           maxJobs: run.caps.maxJobsPerBatch,
           maxExternalRequestsTotal: realCap,
           maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
-          fetchImpl: fetch
+          fetchImpl: fetch,
+          ...fairnessOpts
         });
         batchExternal += real.externalRequests || 0;
         batchCache += real.cacheHits || 0;
@@ -652,7 +672,12 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
               maxJobs: run.caps.maxJobsPerBatch,
               maxExternalRequestsTotal: idempCap,
               maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
-              fetchImpl: fetch
+              fetchImpl: fetch,
+              // Idempotence must not double-count cooldown / rewrite fairness from second pass.
+              applyRetryFairness: fairnessOpts.applyRetryFairness,
+              persistRetryFairness: false,
+              retryStatePath: fairnessOpts.retryStatePath,
+              now: fairnessOpts.now
             });
             batchExternal += second.externalRequests || 0;
             batchCache += second.cacheHits || 0;

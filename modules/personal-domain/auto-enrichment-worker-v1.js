@@ -53,6 +53,14 @@ import {
   applyBootstrapSafeClimateTraitsMigration,
   applyBootstrapUnlockedSixClimateTraitsMigration
 } from './bootstrap-safe-climate-traits-migration-v1.js';
+import {
+  loadRetryState,
+  saveRetryState,
+  listCooldownSlugs,
+  recordBatchRetryOutcomes,
+  emptyOpportunityVersions,
+  PRODUCTION_RETRY_FAIRNESS_REF
+} from './production-retry-fairness-policy-v1.js';
 
 export const AUTO_ENRICHMENT_WORKER_ID = 'auto-enrichment-worker-v1';
 export const AUTO_ENRICHMENT_WORKER_VERSION = '1.2.0';
@@ -711,6 +719,15 @@ export function isJobEligibleForWorker(job, options = {}) {
   // Optional explicit exclude list only (no default species-name hacks).
   if (options.excludeSlugs?.includes(job.canonicalSlug)) reasons.push('excluded_slug');
 
+  // Production retry/fairness: active cooldown is temporary execution ineligibility.
+  // Does NOT change queue priority or override HOLD — only blocks selection/retrieval.
+  if (options.applyRetryFairness !== false) {
+    const cooled = options.retryCooldownSlugs;
+    if (Array.isArray(cooled) && cooled.includes(job.canonicalSlug)) {
+      reasons.push('retry_fairness_cooldown');
+    }
+  }
+
   // Retrieval specs must NOT gate selection (default requireWorkerSpec=false).
   if (options.requireWorkerSpec === true) {
     const spec = (options.plantSpecs || WORKER_PILOT_PLANT_SPECS).find(
@@ -748,6 +765,35 @@ export function selectEligibleJobs(queueDoc, options = {}) {
     options.safeSlugs ||
     (options.repoRoot ? loadSafeWriterSlugSet(options.repoRoot) : null);
 
+  let retryCooldownSlugs = options.retryCooldownSlugs || [];
+  let retryFairnessDetail = null;
+  if (options.applyRetryFairness !== false && options.repoRoot) {
+    const loaded = loadRetryState(options.repoRoot, { statePath: options.retryStatePath || null });
+    const plantsBySlug =
+      options.plantsBySlug ||
+      (options.skipPlantHashForFairness ? null : loadCatalogPlants(options.repoRoot));
+    const plantHashBySlug = {};
+    if (plantsBySlug) {
+      for (const job of jobs) {
+        const slug = job.canonicalSlug;
+        const plant = plantsBySlug[slug];
+        if (plant) plantHashBySlug[slug] = plantContentHash(plant);
+      }
+    }
+    const listed = listCooldownSlugs(loaded.doc, jobs, {
+      now: options.now || new Date(),
+      plantHashBySlug,
+      versionBundle: emptyOpportunityVersions()
+    });
+    retryCooldownSlugs = [...new Set([...(retryCooldownSlugs || []), ...listed.cooledSlugs])];
+    retryFairnessDetail = {
+      policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+      cooledSlugs: listed.cooledSlugs,
+      details: listed.details,
+      statePath: loaded.path
+    };
+  }
+
   // Authoritative queue order only — no pilot preferredOrder.
   for (const job of jobs) {
     const el = isJobEligibleForWorker(job, {
@@ -756,7 +802,9 @@ export function selectEligibleJobs(queueDoc, options = {}) {
       safeSlugs,
       repoRoot: options.repoRoot,
       requireWorkerSpec: options.requireWorkerSpec === true,
-      requireSafeWriter: options.requireSafeWriter
+      requireSafeWriter: options.requireSafeWriter,
+      applyRetryFairness: options.applyRetryFairness,
+      retryCooldownSlugs
     });
     if (!el.ok) {
       skipped.push({ jobId: job.jobId, slug: job.canonicalSlug, reasons: el.reasons });
@@ -791,7 +839,9 @@ export function selectEligibleJobs(queueDoc, options = {}) {
     plantSpecs: resolvedSpecs,
     realExecutionAllowed: resolved.realExecutionAllowed,
     jobCeiling: resolved.ceiling,
-    selectionAuthority: 'QUEUE_ORDER_SAFE_P1_AUTO'
+    selectionAuthority: 'QUEUE_ORDER_SAFE_P1_AUTO',
+    retryFairness: retryFairnessDetail,
+    QUEUE_PRIORITY_PRESERVED_WITH_FAIRNESS: 'YES'
   };
 }
 
@@ -1536,12 +1586,17 @@ export async function processBatch({
   realExecutionAllowed = true,
   maxExternalRequestsTotal = null,
   maxExternalRequestsPerPlant = null,
-  reusePacketsBySlug = null
+  reusePacketsBySlug = null,
+  applyRetryFairness = true,
+  persistRetryFairness = null,
+  retryStatePath = null,
+  now = null
 }) {
   const plantsBySlug = loadCatalogPlants(repoRoot);
   const queueDoc = loadCurrentQueue(repoRoot);
   const safeSlugs = loadSafeWriterSlugSet(repoRoot);
   const retrievalPlantSpecs = plantSpecs || knownWorkerRetrievalSpecs();
+  const clock = now || new Date();
 
   const resolved = resolveWorkerMaxJobs({
     dryRun,
@@ -1578,7 +1633,11 @@ export async function processBatch({
       allowDryScaleCeiling,
       realExecutionAllowed,
       repoRoot,
-      safeSlugs
+      safeSlugs,
+      applyRetryFairness,
+      retryStatePath,
+      now: clock,
+      plantsBySlug
     });
     lock = lockBatch(selection, { plantSpecs: retrievalPlantSpecs });
   }
@@ -1843,6 +1902,42 @@ export async function processBatch({
   batch.finishedAt = new Date().toISOString();
   batch.ownerReviewRequiredCount = batch.audits.filter((a) => a.ownerDecisionRequired).length;
   batch.requestBudget = requestBudget;
+
+  // Persist retry/fairness scheduling state (not botanical / queue truth).
+  // Default: persist on real writes; dry callers must opt in (cross-run dry validation).
+  const shouldPersistFairness =
+    persistRetryFairness === true ||
+    (persistRetryFairness !== false && dryRun === false && realExecutionAllowed !== false);
+  if (shouldPersistFairness && applyRetryFairness !== false && (batch.audits || []).length) {
+    const loaded = loadRetryState(repoRoot, { statePath: retryStatePath });
+    const jobsBySlug = Object.fromEntries(
+      (lock.lockedJobs || []).map((j) => [j.slug, { ...j, canonicalSlug: j.slug }])
+    );
+    const plantHashBySlug = {};
+    for (const j of lock.lockedJobs || []) {
+      const plant = plantsBySlug[j.slug];
+      if (plant) plantHashBySlug[j.slug] = plantContentHash(plant);
+    }
+    const recorded = recordBatchRetryOutcomes(loaded.doc, batch.audits, {
+      now: clock,
+      jobsBySlug,
+      plantHashBySlug,
+      versionBundle: emptyOpportunityVersions()
+    });
+    const saved = saveRetryState(repoRoot, loaded.doc, { statePath: retryStatePath });
+    batch.retryFairness = {
+      policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+      persisted: true,
+      statePath: saved.path,
+      recorded: recorded.map((r) => ({ slug: r.slug, outcome: r.outcome }))
+    };
+  } else {
+    batch.retryFairness = {
+      policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+      persisted: false
+    };
+  }
+
   return batch;
 }
 

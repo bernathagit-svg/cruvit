@@ -55,4 +55,16 @@ test('classify: code/tests commit; cache/packets/console excluded', () => {
     ).commit,
     true
   );
+  assert.equal(
+    classifyProductionArtifactPath(
+      'data/catalog/enrichment-control/production-retry-fairness-state-v1.json'
+    ).commit,
+    true
+  );
+  assert.equal(
+    classifyProductionArtifactPath(
+      'modules/personal-domain/production-retry-fairness-policy-v1.js'
+    ).commit,
+    true
+  );
 });

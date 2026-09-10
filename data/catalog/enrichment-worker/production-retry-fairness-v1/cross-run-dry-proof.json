@@ -1,0 +1,93 @@
+{
+  "policyRef": "production-retry-fairness-policy-v1@1.0.0",
+  "RETRY_STATE_STORAGE_MODEL": {
+    "path": "data/catalog/enrichment-control/production-retry-fairness-state-v1.json",
+    "kind": "PRODUCTION_SCHEDULING_STATE",
+    "botanicalFacts": false,
+    "queueJobTruth": false,
+    "justification": "Keep cross-run cooldown / attempt fingerprints in a dedicated enrichment-control document so scheduling state cannot be confused with plant climateTraits provenance or authoritative enrichment-queue gap/priority truth."
+  },
+  "COOLDOWN_TABLE_V1": [
+    {
+      "consecutiveNoProgressCount": 1,
+      "cooldownMs": 86400000,
+      "label": "24h"
+    },
+    {
+      "consecutiveNoProgressCount": 2,
+      "cooldownMs": 259200000,
+      "label": "72h"
+    },
+    {
+      "consecutiveNoProgressCount": 3,
+      "cooldownMs": 604800000,
+      "label": "7d",
+      "appliesToCountAtLeast": 3
+    }
+  ],
+  "EARLY_RETRY_TRIGGER_SET": [
+    "gapCodes_change",
+    "plantContentHash_change",
+    "retrieverRef_change",
+    "sourcePolicyRef_change",
+    "transformClaimsRef_change",
+    "workerRef_change",
+    "opportunityFingerprint_change"
+  ],
+  "QUEUE_PRIORITY_PRESERVED_WITH_FAIRNESS": "YES",
+  "FAIRNESS_CAN_OVERRIDE_HOLD": "NO",
+  "OWNER_REVIEW_REQUIRED_FOR_ROUTINE_COOLDOWN": "NO",
+  "COOLDOWN_JOB_EXTERNAL_REQUESTS": 0,
+  "PLANT_WRITE_COUNT": 0,
+  "LOGICAL_QUEUE_JOB_CHANGE_COUNT": 0,
+  "LIVE_RETRY_CONTROL_UNCHANGED": "YES",
+  "isolatedRetryStatePath": "data/catalog/enrichment-worker/production-retry-fairness-v1/isolated-retry-state-dry.json",
+  "RUN_A": {
+    "selectedSlugs": [
+      "apricot",
+      "avocado",
+      "guava"
+    ],
+    "knownOutcomes": {
+      "apricot": "ALREADY_EQUIVALENT",
+      "avocado": "ALREADY_EQUIVALENT",
+      "guava": "PARTIAL_NO_APPLY"
+    },
+    "note": "Authoritative SAFE P1 AUTO top-3; NO_PROGRESS recorded into isolated scheduling state"
+  },
+  "RUN_B": {
+    "selectedSlugs": [
+      "lychee",
+      "mandarin",
+      "olive"
+    ],
+    "excludeSlugsApplied": [],
+    "CONTROLLER_LOCAL_PROCESSED_SET": [],
+    "note": "Independent run; advancement caused by durable fairness cooldown only"
+  },
+  "RUN_C": {
+    "duringCooldownSelected": [
+      "lychee",
+      "mandarin",
+      "olive"
+    ],
+    "afterCooldownSelected": [
+      "apricot",
+      "avocado",
+      "guava"
+    ],
+    "earlyRetryReenabled": "YES"
+  },
+  "CROSS_RUN_SELECTION_ADVANCED": "YES",
+  "NO_PROGRESS_FINGERPRINT_STABLE_ACROSS_METADATA_ONLY_CHANGES": "YES",
+  "RECURRING_TOP_JOB_STARVATION_RISK_AFTER_POLICY": "NO",
+  "RETRY_FAIRNESS_LOGIC_VALIDATED": "YES",
+  "RECURRING_STATE_PERSISTENCE_IN_SCHEDULER_PROVEN": "NO",
+  "SAFE_TO_CREATE_RECURRING_SCHEDULE": "NO",
+  "SAFE_TO_SCHEDULE_RECURRING_BOUNDED_PRODUCTION": "NO",
+  "SAFE_TO_SCHEDULE_NOTE": "Fairness algorithm validated with isolated retry state. Live scheduler persistence of production-retry-fairness-state-v1.json across independent scheduled executions is not yet proven.",
+  "BATCH_3_INGESTED": "NO",
+  "DEPLOYED": "NO",
+  "REAL_PRODUCTION_RUN": "NO",
+  "RECURRING_SCHEDULE_CREATED": "NO"
+}
