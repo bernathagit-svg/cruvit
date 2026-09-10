@@ -1,0 +1,36 @@
+{
+  "ORIGINAL_PROPOSED_COUNT": 87,
+  "COMPACT_FINAL_COUNT": 15,
+  "FILES_EXCLUDED_AS_DUPLICATE": 76,
+  "FILES_EXCLUDED_AS_TRANSIENT": 0,
+  "FILES_ADDED_BEYOND_ORIGINAL_87": 4,
+  "ARITHMETIC": "87 − 76 excluded duplicates + 4 compact-policy additions = 15",
+  "TRANSIENT_ALREADY_OUTSIDE_ORIGINAL_87": [
+    "raw cache under bounded-production-controller-real-v1/cache/",
+    "raw cache under semantic-noop-hardening/cache/",
+    "console-output.txt (both runs)",
+    "regression-output.txt (both runs)",
+    "stale checkpoint-file-list.json"
+  ],
+  "FULL_IDEMPOTENCE_ARTIFACT_DUPLICATION_REQUIRED": "NO",
+  "RECURRING_TOP_JOB_STARVATION_RISK": "YES",
+  "SAFE_TO_SCHEDULE_RECURRING_BOUNDED_PRODUCTION": "NO",
+  "NEXT_REQUIRED_CAPABILITY": "Production Retry / Fairness Policy",
+  "COMPACT_REAL_CONTROLLER_V1_COMMIT_FILE_LIST": [
+    "modules/personal-domain/production-artifact-retention-v1.js",
+    "modules/personal-domain/enrichment-gap-scanner-v1.js",
+    "modules/personal-domain/auto-enrichment-worker-v1.js",
+    "modules/personal-domain/bounded-production-controller-v1.js",
+    "scripts/_run-bounded-production-controller-real-v1.mjs",
+    "scripts/_run-bounded-controller-semantic-noop-replay-v1.mjs",
+    "tests/production-artifact-retention-v1.test.mjs",
+    "tests/enrichment-gap-scanner-v1.test.mjs",
+    "tests/auto-enrichment-worker-v1.test.mjs",
+    "tests/bounded-production-controller-v1.test.mjs",
+    "data/catalog/enrichment-worker/bounded-production-controller-real-v1/controller-run-config.json",
+    "data/catalog/enrichment-worker/bounded-production-controller-real-v1/first-real-run-compact-proof.json",
+    "data/catalog/enrichment-worker/bounded-production-controller-real-v1/bounded-production-controller-real-v1-final.json",
+    "data/catalog/enrichment-worker/bounded-production-controller-real-v1/semantic-noop-hardening/semantic-noop-hardening-proof.json",
+    "data/catalog/enrichment-worker/bounded-production-controller-real-v1/semantic-noop-hardening/compact-commit-file-list.json"
+  ]
+}

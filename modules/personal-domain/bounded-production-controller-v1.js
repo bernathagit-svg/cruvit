@@ -25,7 +25,8 @@ import {
   selectEligibleJobs,
   lockBatch,
   processBatch,
-  writeWorkerReports
+  writeWorkerReports,
+  createDryValidationToken
 } from './auto-enrichment-worker-v1.js';
 import { classifyPlantDataReadiness } from './plant-data-contract-v1.js';
 import {
@@ -56,6 +57,19 @@ export const CONTROLLER_PROGRESSION_MECHANISM = Object.freeze({
     'After each dry batch, selected slugs are added to a run-local excludeSlugs set. ' +
     'Next batch still reads the CURRENT authoritative queue, then applies selectEligibleJobs ' +
     'with those exclusions. Does NOT mutate the real queue or invent simulated queue docs.'
+});
+
+/**
+ * Real multi-batch progression: every batch re-reads the authoritative queue from disk.
+ * Dry processed-exclusion set is NEVER used as real queue authority.
+ */
+export const CONTROLLER_REAL_PROGRESSION_MECHANISM = Object.freeze({
+  code: 'FRESH_QUEUE_READ',
+  name: 'FRESH_AUTHORITATIVE_QUEUE_READ',
+  authoritative: true,
+  description:
+    'Before each real batch, loadCurrentQueue(repoRoot) and selectEligibleJobs with no ' +
+    'processed-job exclusion. Queue refresh after prior real applies is the sole progression signal.'
 });
 
 export const CONTROLLER_STOP_REASON = Object.freeze({
@@ -186,9 +200,13 @@ export function createRun({
   if (maxJobsPerBatch > WORKER_MAX_JOBS) {
     throw new Error(`maxJobsPerBatch cannot exceed worker WORKER_MAX_JOBS=${WORKER_MAX_JOBS}`);
   }
-  if (realExecutionAllowed === true && dryControlMode !== false) {
-    // Explicit guard for this checkpoint: dry validation must keep real off.
+  const dryMode = dryControlMode !== false;
+  const realMode = realExecutionAllowed === true;
+  if (dryMode && realMode) {
     throw new Error('createRun: dryControlMode=true requires realExecutionAllowed=false');
+  }
+  if (!dryMode && !realMode) {
+    throw new Error('createRun: set dryControlMode=true or realExecutionAllowed=true');
   }
 
   const queue = loadCurrentQueue(repoRoot);
@@ -208,11 +226,15 @@ export function createRun({
       workerMaxExternalRequestsPerBatch: WORKER_MAX_EXTERNAL_REQUESTS_TOTAL,
       workerMaxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT
     }),
-    DRY_CONTROL_MODE: dryControlMode !== false,
-    REAL_EXECUTION_ALLOWED: realExecutionAllowed === true,
-    progression: CONTROLLER_PROGRESSION_MECHANISM,
+    DRY_CONTROL_MODE: dryMode,
+    REAL_EXECUTION_ALLOWED: realMode,
+    progression: dryMode
+      ? CONTROLLER_PROGRESSION_MECHANISM
+      : CONTROLLER_REAL_PROGRESSION_MECHANISM,
     CONTROLLER_SELECTS_SPECIES: 'NO',
     SPECS_GATE_SELECTION: 'NO',
+    DRY_PROCESSED_SET_CAN_OVERRIDE_REAL_QUEUE: 'NO',
+    REAL_MODE_NEXT_BATCH_REQUIRES_FRESH_QUEUE_READ: 'YES',
     starting: {
       catalog: catalogCounts(repoRoot),
       queue: queueSummary(queue),
@@ -232,6 +254,8 @@ export function createRun({
       processedSlugs: [],
       processedJobIds: [],
       seenBatchFingerprints: [],
+      plantsMutated: [],
+      fieldsChanged: {},
       batchRecords: []
     },
     options: {
@@ -299,13 +323,15 @@ export function evaluateBatchResult(run, batchRecord) {
     };
   }
 
-  // Peek next selection with exclusion set — NON-AUTHORITATIVE progression only.
+  // Peek next selection — dry uses exclusion set; real uses fresh queue only.
   const peek = peekNextSelection(run);
   if (!peek.selectedSlugs.length) {
     return {
       continue: false,
       stopReason: CONTROLLER_STOP_REASON.NO_ELIGIBLE_WORK,
-      note: 'No remaining execution-eligible jobs after processed-job exclusion'
+      note: run.DRY_CONTROL_MODE
+        ? 'No remaining execution-eligible jobs after processed-job exclusion'
+        : 'No remaining execution-eligible jobs on fresh authoritative queue'
     };
   }
 
@@ -313,7 +339,10 @@ export function evaluateBatchResult(run, batchRecord) {
     return {
       continue: false,
       stopReason: CONTROLLER_STOP_REASON.NO_PROGRESS,
-      note: 'Next batch fingerprint already seen — no-progress loop prevented'
+      note: 'Next batch fingerprint already seen — no-progress loop prevented',
+      nextSelectedSlugs: peek.selectedSlugs,
+      nextBatchFingerprint: peek.batchFingerprint,
+      BATCH_QUEUE_WAS_FRESHLY_READ: 'YES'
     };
   }
 
@@ -321,16 +350,35 @@ export function evaluateBatchResult(run, batchRecord) {
   const priorKeys = state.batchRecords.map((b) =>
     (b.selectedSlugs || []).slice().sort().join(',')
   );
-  if (priorKeys.includes(nextKey)) {
+  if (run.DRY_CONTROL_MODE && priorKeys.includes(nextKey)) {
     return {
       continue: false,
       stopReason: CONTROLLER_STOP_REASON.NO_PROGRESS,
-      note: 'Next selected slug set already processed — no-progress loop prevented'
+      note: 'Next selected slug set already processed — no-progress loop prevented',
+      nextSelectedSlugs: peek.selectedSlugs,
+      nextBatchFingerprint: peek.batchFingerprint,
+      BATCH_QUEUE_WAS_FRESHLY_READ: 'YES'
     };
   }
 
-  // Remaining request budget: if less than 1, cannot start; if less than worker total cap,
-  // still allow worker to run under its own budget (worker enforces per-batch).
+  // Real mode: same slug set as last batch with zero mutations / identical fingerprint ⇒ no progress
+  if (!run.DRY_CONTROL_MODE && state.batchRecords.length) {
+    const last = state.batchRecords[state.batchRecords.length - 1];
+    const lastKey = (last.selectedSlugs || []).slice().sort().join(',');
+    const lastMutated = (last.plantsChanged || []).length > 0;
+    if (lastKey === nextKey && !lastMutated) {
+      return {
+        continue: false,
+        stopReason: CONTROLLER_STOP_REASON.NO_PROGRESS,
+        note: 'Same slug set as prior real batch with no mutations — no-progress',
+        nextSelectedSlugs: peek.selectedSlugs,
+        nextBatchFingerprint: peek.batchFingerprint,
+        BATCH_QUEUE_WAS_FRESHLY_READ: 'YES'
+      };
+    }
+  }
+
+  // Remaining request budget: if less than 1, cannot start.
   const remaining = caps.maxTotalExternalRequests - state.totalExternalRequests;
   if (remaining < 1) {
     return {
@@ -345,7 +393,8 @@ export function evaluateBatchResult(run, batchRecord) {
     stopReason: null,
     nextSelectedSlugs: peek.selectedSlugs,
     nextBatchFingerprint: peek.batchFingerprint,
-    remainingRequestBudget: remaining
+    remainingRequestBudget: remaining,
+    BATCH_QUEUE_WAS_FRESHLY_READ: 'YES'
   };
 }
 
@@ -353,13 +402,15 @@ export function peekNextSelection(run) {
   const { repoRoot } = run.options;
   const queue = loadCurrentQueue(repoRoot);
   const safeSlugs = loadSafeWriterSlugSet(repoRoot);
+  // Real mode: never apply dry processed-job exclusion as queue authority.
+  const excludeSlugs = run.DRY_CONTROL_MODE ? [...run.state.processedSlugs] : [];
   const selection = selectEligibleJobs(queue, {
     maxJobs: run.caps.maxJobsPerBatch,
     dryRun: true,
     repoRoot,
     safeSlugs,
-    excludeSlugs: [...run.state.processedSlugs],
-    realExecutionAllowed: false
+    excludeSlugs,
+    realExecutionAllowed: run.REAL_EXECUTION_ALLOWED ? true : false
   });
   const locked = lockBatch(selection);
   return {
@@ -369,13 +420,16 @@ export function peekNextSelection(run) {
     selectedJobIds: [...(locked.lockedJobIds || [])],
     batchFingerprint: locked.batchFingerprint,
     selectionAuthority: locked.selectionAuthority,
+    BATCH_QUEUE_WAS_FRESHLY_READ: 'YES',
+    excludeSlugsApplied: excludeSlugs,
     locked
   };
 }
 
 /**
- * Execute the next dry batch via the existing worker.
- * REAL writes are refused in dry-control mode.
+ * Execute the next batch via the existing worker.
+ * Dry-control: dry processBatch only + exclusion progression.
+ * Real mode: fresh queue → lock → dry → real (same fingerprint) → optional idempotence.
  */
 export async function executeNextBatch(run, { fetchImpl = null } = {}) {
   if (run.state.status !== 'RUNNING') {
@@ -383,17 +437,6 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
       ok: false,
       skipped: true,
       reason: run.state.stopReason || 'RUN_NOT_RUNNING'
-    };
-  }
-
-  if (run.REAL_EXECUTION_ALLOWED === true) {
-    run.state.status = 'STOPPED';
-    run.state.stopReason = CONTROLLER_STOP_REASON.REAL_EXECUTION_BLOCKED;
-    return {
-      ok: false,
-      skipped: true,
-      reason: CONTROLLER_STOP_REASON.REAL_EXECUTION_BLOCKED,
-      note: 'This controller checkpoint is dry-control only'
     };
   }
 
@@ -422,6 +465,9 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
     return { ok: false, skipped: true, reason: CONTROLLER_STOP_REASON.REQUEST_CAP_EXCEEDED };
   }
 
+  // Real batches need budget for dry + real (and ideally idempotence). Require at least 1.
+  // Projected floor: 1 request; worker enforces per-batch caps within remainingBudget.
+
   const peek = peekNextSelection(run);
   if (!peek.selectedSlugs.length) {
     run.state.status = 'STOPPED';
@@ -429,22 +475,49 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
     return { ok: false, skipped: true, reason: CONTROLLER_STOP_REASON.NO_ELIGIBLE_WORK };
   }
 
-  if (
-    run.state.seenBatchFingerprints.includes(peek.batchFingerprint) ||
-    run.state.batchRecords.some(
-      (b) =>
-        (b.selectedSlugs || []).slice().sort().join(',') ===
-        peek.selectedSlugs.slice().sort().join(',')
-    )
-  ) {
+  const nextKey = peek.selectedSlugs.slice().sort().join(',');
+  if (run.state.seenBatchFingerprints.includes(peek.batchFingerprint)) {
     run.state.status = 'STOPPED';
     run.state.stopReason = CONTROLLER_STOP_REASON.NO_PROGRESS;
     return {
       ok: false,
       skipped: true,
       reason: CONTROLLER_STOP_REASON.NO_PROGRESS,
-      selectedSlugs: peek.selectedSlugs
+      selectedSlugs: peek.selectedSlugs,
+      BATCH_QUEUE_WAS_FRESHLY_READ: 'YES'
     };
+  }
+
+  if (run.DRY_CONTROL_MODE) {
+    const priorKeys = run.state.batchRecords.map((b) =>
+      (b.selectedSlugs || []).slice().sort().join(',')
+    );
+    if (priorKeys.includes(nextKey)) {
+      run.state.status = 'STOPPED';
+      run.state.stopReason = CONTROLLER_STOP_REASON.NO_PROGRESS;
+      return {
+        ok: false,
+        skipped: true,
+        reason: CONTROLLER_STOP_REASON.NO_PROGRESS,
+        selectedSlugs: peek.selectedSlugs
+      };
+    }
+  } else if (run.state.batchRecords.length) {
+    const last = run.state.batchRecords[run.state.batchRecords.length - 1];
+    const lastKey = (last.selectedSlugs || []).slice().sort().join(',');
+    const lastMutated = (last.plantsChanged || []).length > 0;
+    if (lastKey === nextKey && !lastMutated) {
+      run.state.status = 'STOPPED';
+      run.state.stopReason = CONTROLLER_STOP_REASON.NO_PROGRESS;
+      return {
+        ok: false,
+        skipped: true,
+        reason: CONTROLLER_STOP_REASON.NO_PROGRESS,
+        selectedSlugs: peek.selectedSlugs,
+        BATCH_QUEUE_WAS_FRESHLY_READ: 'YES',
+        note: 'Same slug set as prior real batch with no mutations'
+      };
+    }
   }
 
   run.state.batchesAttempted += 1;
@@ -455,47 +528,175 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
     : null;
   if (batchArtifactRoot) fs.mkdirSync(batchArtifactRoot, { recursive: true });
 
-  const workerBatchCap = Math.min(
-    WORKER_MAX_EXTERNAL_REQUESTS_TOTAL,
-    remainingBudget
-  );
+  const hashesBeforeBatch = hashCanonicalSurfaces(repoRoot);
+  const fetch = fetchImpl || run.options.fetchImpl || globalThis.fetch;
+  const workerBatchCap = Math.min(WORKER_MAX_EXTERNAL_REQUESTS_TOTAL, remainingBudget);
 
-  const worker = await processBatch({
+  const dry = await processBatch({
     repoRoot,
     dryRun: true,
     lockedBatch: peek.locked,
     parentCommit: run.parentCommit,
-    artifactRoot: batchArtifactRoot,
+    artifactRoot: batchArtifactRoot ? path.join(batchArtifactRoot, 'dry') : null,
     cacheDir,
     realExecutionAllowed: false,
     maxJobs: run.caps.maxJobsPerBatch,
     maxExternalRequestsTotal: workerBatchCap,
     maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
-    fetchImpl: fetchImpl || run.options.fetchImpl || globalThis.fetch
+    fetchImpl: fetch
   });
 
-  let reports = null;
+  const hashesAfterDry = hashCanonicalSurfaces(repoRoot);
+  const dryWrote =
+    hashesAfterDry.json !== hashesBeforeBatch.json ||
+    hashesAfterDry.js !== hashesBeforeBatch.js ||
+    hashesAfterDry.browser !== hashesBeforeBatch.browser ||
+    hashesAfterDry.queue !== hashesBeforeBatch.queue;
+  const REAL_WRITE_COUNT_BEFORE_DRY_FINISH = dryWrote ? 1 : 0;
+
+  let dryReports = null;
   if (reportSubdir) {
-    reports = writeWorkerReports(
+    const drySub =
+      run.REAL_EXECUTION_ALLOWED
+        ? path.join(reportSubdir, `batch-${batchIndex}`, 'dry')
+        : path.join(reportSubdir, `batch-${batchIndex}`);
+    dryReports = writeWorkerReports(
       repoRoot,
-      worker,
-      `controller-dry-batch-${batchIndex}`,
-      path.join(reportSubdir, `batch-${batchIndex}`)
+      dry,
+      run.REAL_EXECUTION_ALLOWED
+        ? `controller-real-dry-batch-${batchIndex}`
+        : `controller-dry-batch-${batchIndex}`,
+      drySub
     );
   }
 
-  const workerSummary = summarizeWorkerBatch(worker);
-  const hardStop =
-    worker.batchStopReason && CONTROLLER_HARD_STOPS.includes(worker.batchStopReason)
-      ? worker.batchStopReason
-      : worker.batchStopReason || null;
+  let batchExternal = dry.externalRequests || 0;
+  let batchCache = dry.cacheHits || 0;
+  let hardStop =
+    dry.batchStopReason && CONTROLLER_HARD_STOPS.includes(dry.batchStopReason)
+      ? dry.batchStopReason
+      : dry.batchStopReason || null;
+
+  let real = null;
+  let idempotence = null;
+  let realReports = null;
+  let plantsChanged = [];
+  let fieldsChanged = {};
+
+  if (
+    run.REAL_EXECUTION_ALLOWED &&
+    !hardStop &&
+    dry.status === 'BATCH_COMPLETE' &&
+    REAL_WRITE_COUNT_BEFORE_DRY_FINISH === 0
+  ) {
+    const dryToken = createDryValidationToken(dry);
+    if (!dryToken.dryBatchValidated) {
+      hardStop = CONTROLLER_STOP_REASON.BATCH_INCOMPLETE;
+    } else {
+      const remainingAfterDry =
+        run.caps.maxTotalExternalRequests - (run.state.totalExternalRequests + batchExternal);
+      if (remainingAfterDry < 0) {
+        hardStop = CONTROLLER_STOP_REASON.REQUEST_CAP_EXCEEDED;
+      } else {
+        const realCap = Math.min(WORKER_MAX_EXTERNAL_REQUESTS_TOTAL, Math.max(0, remainingAfterDry));
+        real = await processBatch({
+          repoRoot,
+          dryRun: false,
+          lockedBatch: peek.locked,
+          dryValidation: dryToken,
+          parentCommit: run.parentCommit,
+          artifactRoot: batchArtifactRoot ? path.join(batchArtifactRoot, 'real') : null,
+          cacheDir,
+          realExecutionAllowed: true,
+          maxJobs: run.caps.maxJobsPerBatch,
+          maxExternalRequestsTotal: realCap,
+          maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
+          fetchImpl: fetch
+        });
+        batchExternal += real.externalRequests || 0;
+        batchCache += real.cacheHits || 0;
+        plantsChanged = [...(real.plantsChanged || [])];
+        fieldsChanged = { ...(real.fieldsChanged || {}) };
+        if (real.batchStopReason && CONTROLLER_HARD_STOPS.includes(real.batchStopReason)) {
+          hardStop = real.batchStopReason;
+        } else if (real.batchStopReason) {
+          hardStop = real.batchStopReason;
+        }
+        if (reportSubdir) {
+          realReports = writeWorkerReports(
+            repoRoot,
+            real,
+            `controller-real-batch-${batchIndex}`,
+            path.join(reportSubdir, `batch-${batchIndex}`, 'real')
+          );
+        }
+
+        // Idempotence verification (same lock) when real completed cleanly.
+        if (!hardStop && real.status === 'BATCH_COMPLETE') {
+          const remainingAfterReal =
+            run.caps.maxTotalExternalRequests - (run.state.totalExternalRequests + batchExternal);
+          if (remainingAfterReal >= 0) {
+            const idempCap = Math.min(
+              WORKER_MAX_EXTERNAL_REQUESTS_TOTAL,
+              Math.max(0, remainingAfterReal)
+            );
+            const second = await processBatch({
+              repoRoot,
+              dryRun: false,
+              lockedBatch: peek.locked,
+              dryValidation: dryToken,
+              parentCommit: run.parentCommit,
+              artifactRoot: batchArtifactRoot ? path.join(batchArtifactRoot, 'idempotence') : null,
+              cacheDir,
+              realExecutionAllowed: true,
+              maxJobs: run.caps.maxJobsPerBatch,
+              maxExternalRequestsTotal: idempCap,
+              maxExternalRequestsPerPlant: WORKER_MAX_EXTERNAL_REQUESTS_PER_PLANT,
+              fetchImpl: fetch
+            });
+            batchExternal += second.externalRequests || 0;
+            batchCache += second.cacheHits || 0;
+            const secondMutations = (second.audits || []).filter(
+              (a) => a.status === 'APPLIED' && (a.appliedFields || []).length
+            );
+            idempotence = {
+              status: second.status,
+              SECOND_WORKER_RUN_WOULD_MUTATE: secondMutations.length === 0 ? 'NO' : 'YES',
+              appliedCount: secondMutations.length,
+              externalRequests: second.externalRequests || 0,
+              cacheHits: second.cacheHits || 0
+            };
+            if (secondMutations.length > 0) {
+              hardStop = WORKER_STOP_REASON.NON_IDEMPOTENT_SECOND_APPLY;
+            }
+          }
+        }
+      }
+    }
+  } else if (run.REAL_EXECUTION_ALLOWED && dry.status !== 'BATCH_COMPLETE' && !hardStop) {
+    hardStop = CONTROLLER_STOP_REASON.BATCH_INCOMPLETE;
+  } else if (run.REAL_EXECUTION_ALLOWED && REAL_WRITE_COUNT_BEFORE_DRY_FINISH !== 0) {
+    hardStop = WORKER_STOP_REASON.WRITE_FAILURE;
+  }
+
+  const primaryWorker = real || dry;
+  const workerSummary = {
+    ...summarizeWorkerBatch(primaryWorker),
+    dryStatus: dry.status,
+    realStatus: real?.status || null,
+    externalRequests: batchExternal,
+    cacheHits: batchCache,
+    ownerReviewRequiredCount:
+      (dry.ownerReviewRequiredCount || 0) + (real?.ownerReviewRequiredCount || 0)
+  };
 
   const batchRecord = {
     batchIndex,
     MANUALLY_SELECTED: 'NO',
     selectionAuthority: peek.selectionAuthority,
-    progressionMechanism: CONTROLLER_PROGRESSION_MECHANISM.code,
-    progressionNonAuthoritative: true,
+    progressionMechanism: run.progression.code,
+    progressionNonAuthoritative: run.progression.authoritative === false,
+    BATCH_QUEUE_WAS_FRESHLY_READ: 'YES',
     queueFingerprint: peek.queueFingerprint,
     queueSummary: peek.queueSummary,
     selectedSlugs: peek.selectedSlugs,
@@ -506,23 +707,72 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
       return { slug, queueRank: idx >= 0 ? idx + 1 : null };
     }),
     batchFingerprint: peek.batchFingerprint,
-    excludeSlugsBefore: [...run.state.processedSlugs],
+    excludeSlugsBefore: run.DRY_CONTROL_MODE ? [...run.state.processedSlugs] : [],
+    REAL_WRITE_COUNT_BEFORE_DRY_FINISH,
+    dry: {
+      status: dry.status,
+      batchStopReason: dry.batchStopReason,
+      externalRequests: dry.externalRequests || 0,
+      cacheHits: dry.cacheHits || 0,
+      audits: (dry.audits || []).map((a) => ({
+        slug: a.slug,
+        status: a.status,
+        hardStop: a.hardStop,
+        appliedFields: a.appliedFields,
+        fieldPackets: a.fieldPackets,
+        applyGate: a.applyGate
+      }))
+    },
+    real: real
+      ? {
+          status: real.status,
+          batchStopReason: real.batchStopReason,
+          plantsChanged,
+          fieldsChanged,
+          externalRequests: real.externalRequests || 0,
+          cacheHits: real.cacheHits || 0,
+          audits: (real.audits || []).map((a) => ({
+            slug: a.slug,
+            status: a.status,
+            hardStop: a.hardStop,
+            appliedFields: a.appliedFields,
+            afterReadiness: a.afterReadiness,
+            queueAfter: a.queueAfter
+          }))
+        }
+      : null,
+    plantsChanged,
+    fieldsChanged,
+    idempotence,
     workerSummary,
     hardStop,
-    reports,
+    dryReports,
+    realReports,
     controllerDecision: null
   };
 
-  // Update run accounting before evaluate (batch consumed).
-  run.state.totalExternalRequests += workerSummary.externalRequests;
-  run.state.totalCacheHits += workerSummary.cacheHits;
+  run.state.totalExternalRequests += batchExternal;
+  run.state.totalCacheHits += batchCache;
   run.state.ownerReviewCount += workerSummary.ownerReviewRequiredCount;
   run.state.totalJobsProcessed += peek.selectedSlugs.length;
   run.state.seenBatchFingerprints.push(peek.batchFingerprint);
   run.state.processedSlugs.push(...peek.selectedSlugs);
   run.state.processedJobIds.push(...peek.selectedJobIds);
+  for (const slug of plantsChanged) {
+    if (!run.state.plantsMutated.includes(slug)) run.state.plantsMutated.push(slug);
+  }
+  for (const [slug, fields] of Object.entries(fieldsChanged)) {
+    run.state.fieldsChanged[slug] = [
+      ...new Set([...(run.state.fieldsChanged[slug] || []), ...fields])
+    ];
+  }
 
-  if (worker.status === 'BATCH_COMPLETE' && !hardStop) {
+  const batchOk =
+    !hardStop &&
+    (run.REAL_EXECUTION_ALLOWED
+      ? real?.status === 'BATCH_COMPLETE'
+      : dry.status === 'BATCH_COMPLETE');
+  if (batchOk) {
     run.state.batchesCompleted += 1;
   }
 
@@ -533,10 +783,10 @@ export async function executeNextBatch(run, { fetchImpl = null } = {}) {
   if (!decision.continue) {
     run.state.status = 'STOPPED';
     run.state.stopReason = decision.stopReason;
-    run.state.hardStopDetail = decision.hardStopDetail || null;
+    run.state.hardStopDetail = decision.hardStopDetail || hardStop || null;
   }
 
-  return { ok: true, batchRecord, decision, worker };
+  return { ok: true, batchRecord, decision, dry, real, idempotence };
 }
 
 /**
@@ -614,11 +864,16 @@ export function buildRunSummary(run) {
     finishedAt: run.finishedAt || new Date().toISOString(),
     DRY_CONTROL_MODE: run.DRY_CONTROL_MODE,
     REAL_EXECUTION_ALLOWED: run.REAL_EXECUTION_ALLOWED,
-    REAL_EXECUTION_PERFORMED: 'NO',
+    REAL_EXECUTION_PERFORMED: run.REAL_EXECUTION_ALLOWED &&
+      run.state.batchRecords.some((b) => b.real?.status)
+      ? 'YES'
+      : 'NO',
     CONTROLLER_SELECTS_SPECIES: 'NO',
     SPECS_GATE_SELECTION: 'NO',
     MANUALLY_SELECTED_ANY_BATCH: 'NO',
-    progression: CONTROLLER_PROGRESSION_MECHANISM,
+    DRY_PROCESSED_SET_CAN_OVERRIDE_REAL_QUEUE: 'NO',
+    REAL_MODE_NEXT_BATCH_REQUIRES_FRESH_QUEUE_READ: 'YES',
+    progression: run.progression,
     caps: run.caps,
     starting: run.starting,
     ending: {
@@ -633,25 +888,46 @@ export function buildRunSummary(run) {
     totalJobsProcessed: run.state.totalJobsProcessed,
     uniqueJobsProcessed: uniqueJobs.length,
     uniqueJobSlugs: uniqueJobs,
+    plantsMutated: [...run.state.plantsMutated],
+    fieldsChanged: run.state.fieldsChanged,
     batches: run.state.batchRecords.map((b) => ({
       batchIndex: b.batchIndex,
       selectedSlugs: b.selectedSlugs,
       selectionRanks: b.selectionRanks,
       batchFingerprint: b.batchFingerprint,
       queueFingerprint: b.queueFingerprint,
+      BATCH_QUEUE_WAS_FRESHLY_READ: b.BATCH_QUEUE_WAS_FRESHLY_READ || 'YES',
       MANUALLY_SELECTED: b.MANUALLY_SELECTED,
+      REAL_WRITE_COUNT_BEFORE_DRY_FINISH: b.REAL_WRITE_COUNT_BEFORE_DRY_FINISH ?? null,
       externalRequests: b.workerSummary?.externalRequests ?? 0,
       cacheHits: b.workerSummary?.cacheHits ?? 0,
       applyAllowedFields: b.workerSummary?.applyAllowedFields ?? 0,
       needsMoreFields: b.workerSummary?.needsMoreFields ?? 0,
       holdOrConflict: b.workerSummary?.holdOrConflict ?? 0,
-      status: b.workerSummary?.status ?? null,
+      dryStatus: b.dry?.status ?? null,
+      realStatus: b.real?.status ?? null,
+      plantsChanged: b.plantsChanged || [],
+      fieldsChanged: b.fieldsChanged || {},
+      idempotence: b.idempotence || null,
       hardStop: b.hardStop,
       controllerDecision: b.controllerDecision
     })),
     BATCH_1_SELECTED_SLUGS: run.state.batchRecords[0]?.selectedSlugs || [],
     BATCH_2_SELECTED_SLUGS: run.state.batchRecords[1]?.selectedSlugs || [],
     BATCH_3_SELECTED_SLUGS: run.state.batchRecords[2]?.selectedSlugs || [],
+    BATCH_1_QUEUE_WAS_FRESHLY_READ: run.state.batchRecords[0]
+      ? run.state.batchRecords[0].BATCH_QUEUE_WAS_FRESHLY_READ || 'YES'
+      : null,
+    BATCH_2_QUEUE_WAS_FRESHLY_READ: run.state.batchRecords[1]
+      ? run.state.batchRecords[1].BATCH_QUEUE_WAS_FRESHLY_READ || 'YES'
+      : run.state.batchRecords[0]?.controllerDecision?.BATCH_QUEUE_WAS_FRESHLY_READ === 'YES'
+        ? 'YES'
+        : null,
+    BATCH_3_QUEUE_WAS_FRESHLY_READ: run.state.batchRecords[2]
+      ? run.state.batchRecords[2].BATCH_QUEUE_WAS_FRESHLY_READ || 'YES'
+      : run.state.batchRecords[1]?.controllerDecision?.BATCH_QUEUE_WAS_FRESHLY_READ === 'YES'
+        ? 'YES'
+        : null,
     totalExternalRequests: run.state.totalExternalRequests,
     totalCacheHits: run.state.totalCacheHits,
     requestsPerJob:
@@ -665,18 +941,20 @@ export function buildRunSummary(run) {
     NO_PROGRESS_STOP: run.state.stopReason === CONTROLLER_STOP_REASON.NO_PROGRESS ? 'YES' : 'NO',
     PLANT_WRITE_COUNT: plantWriteCount,
     QUEUE_WRITE_COUNT: queueWriteCount,
-    ZERO_WRITE_PROOF: {
-      plantWriteCount,
-      queueWriteCount,
-      hashesBefore,
-      hashesAfter,
-      catalogUnchanged:
-        JSON.stringify(run.starting.catalog) ===
-        JSON.stringify(catalogCounts(run.options.repoRoot)),
-      queueUnchanged:
-        JSON.stringify(run.starting.queue) ===
-        JSON.stringify(queueSummary(loadCurrentQueue(run.options.repoRoot)))
-    }
+    ZERO_WRITE_PROOF: run.DRY_CONTROL_MODE
+      ? {
+          plantWriteCount,
+          queueWriteCount,
+          hashesBefore,
+          hashesAfter,
+          catalogUnchanged:
+            JSON.stringify(run.starting.catalog) ===
+            JSON.stringify(catalogCounts(run.options.repoRoot)),
+          queueUnchanged:
+            JSON.stringify(run.starting.queue) ===
+            JSON.stringify(queueSummary(loadCurrentQueue(run.options.repoRoot)))
+        }
+      : null
   };
 
   run.summary = summary;

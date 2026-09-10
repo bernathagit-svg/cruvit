@@ -1,0 +1,150 @@
+{
+  "controllerRef": "bounded-production-controller-v1@1.0.0",
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "parentCommit": "8a55e685f86da18118bd6262de5ed13005cd4754",
+  "DRY_CONTROL_MODE": false,
+  "REAL_EXECUTION_ALLOWED": true,
+  "REAL_EXECUTION_AUTHORIZED_FOR_ONE_RUN": true,
+  "progression": {
+    "code": "FRESH_QUEUE_READ",
+    "name": "FRESH_AUTHORITATIVE_QUEUE_READ",
+    "authoritative": true,
+    "description": "Before each real batch, loadCurrentQueue(repoRoot) and selectEligibleJobs with no processed-job exclusion. Queue refresh after prior real applies is the sole progression signal."
+  },
+  "DRY_PROCESSED_SET_CAN_OVERRIDE_REAL_QUEUE": "NO",
+  "REAL_MODE_NEXT_BATCH_REQUIRES_FRESH_QUEUE_READ": "YES",
+  "CONTROLLER_SELECTS_SPECIES": "NO",
+  "caps": {
+    "maxBatches": 3,
+    "maxJobsPerBatch": 3,
+    "maxTotalJobs": 9,
+    "maxTotalExternalRequests": 18,
+    "workerMaxExternalRequestsPerBatch": 6,
+    "workerMaxExternalRequestsPerPlant": 2
+  },
+  "starting": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+    "hashes": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    }
+  },
+  "preRunEligibleTop": [
+    {
+      "queueRank": 13,
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 14,
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 28,
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 33,
+      "jobId": "enrich-v1:lychee",
+      "slug": "lychee",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 34,
+      "jobId": "enrich-v1:mandarin",
+      "slug": "mandarin",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 36,
+      "jobId": "enrich-v1:olive",
+      "slug": "olive",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 37,
+      "jobId": "enrich-v1:orange",
+      "slug": "orange",
+      "gapCodes": [
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    },
+    {
+      "queueRank": 44,
+      "jobId": "enrich-v1:raspberry",
+      "slug": "raspberry",
+      "gapCodes": [
+        "MISSING_FROST_EVIDENCE",
+        "MISSING_COLD_EVIDENCE",
+        "EVIDENCE_NOT_SOURCE_SUPPORTED"
+      ],
+      "enrichmentExecution": "AUTO",
+      "productGate": "PARTIAL",
+      "readiness": "B"
+    }
+  ]
+}

@@ -637,19 +637,27 @@ export function buildBatch3DryEnrichmentQueue(packets, meta = {}) {
 }
 
 /**
- * Idempotence helper: logical fingerprint independent of generatedAt.
+ * Semantic / logical fingerprint of a queue document.
+ * Ignores volatile metadata (generatedAt, parentCommit, run timestamps).
+ * Includes all fields that affect selection, ranking, or execution eligibility.
  */
 export function queueLogicalFingerprint(queueDoc) {
   const jobs = (queueDoc?.jobs || []).map((j) => ({
     jobId: j.jobId,
     canonicalSlug: j.canonicalSlug,
+    scientificName: j.scientificName || null,
     currentReadinessClass: j.currentReadinessClass,
     productGate: j.productGate || j.currentGate,
     enrichmentExecution: j.enrichmentExecution,
-    gapCodes: j.gapCodes,
+    gapCodes: [...(j.gapCodes || [])],
     priority: j.priority,
     suggestedStage: j.suggestedStage,
-    allowedAutoAction: j.allowedAutoAction
+    allowedAutoAction: j.allowedAutoAction,
+    identityStatus: j.identityStatus || null,
+    reviewStatus: j.reviewStatus || null,
+    sourceRetrievalRequired: j.sourceRetrievalRequired === true,
+    needsReview: j.needsReview === true,
+    productRole: j.productRole || null
   }));
   return JSON.stringify({
     queueContractVersion: queueDoc?.queueContractVersion,
@@ -662,8 +670,42 @@ export function queueLogicalFingerprint(queueDoc) {
       byEnrichmentExecution: queueDoc?.summary?.byEnrichmentExecution,
       byPriority: queueDoc?.summary?.byPriority,
       AUTO_JOB_COUNT: queueDoc?.summary?.AUTO_JOB_COUNT,
-      OWNER_REVIEW_JOB_COUNT: queueDoc?.summary?.OWNER_REVIEW_JOB_COUNT
+      OWNER_REVIEW_JOB_COUNT: queueDoc?.summary?.OWNER_REVIEW_JOB_COUNT,
+      gapFrequency: queueDoc?.summary?.gapFrequency || null
     },
+    // Array order is authoritative queue rank.
     jobs
   });
+}
+
+/** True when two queue docs are equal for scheduling/selection (volatile metadata ignored). */
+export function queuesSemanticallyEqual(a, b) {
+  return queueLogicalFingerprint(a) === queueLogicalFingerprint(b);
+}
+
+/** Logical fingerprint for the companion summary document (ignores generatedAt/parentCommit). */
+export function enrichmentSummaryLogicalFingerprint(summaryDoc) {
+  return JSON.stringify({
+    summaryId: summaryDoc?.summaryId,
+    queueContractVersion: summaryDoc?.queueContractVersion,
+    scannerVersion: summaryDoc?.scannerVersion,
+    catalogSnapshot: summaryDoc?.catalogSnapshot,
+    summary: summaryDoc?.summary
+      ? {
+          totalJobs: summaryDoc.summary.totalJobs,
+          byReadiness: summaryDoc.summary.byReadiness,
+          byProductGate: summaryDoc.summary.byProductGate || summaryDoc.summary.byGate,
+          byEnrichmentExecution: summaryDoc.summary.byEnrichmentExecution,
+          byPriority: summaryDoc.summary.byPriority,
+          AUTO_JOB_COUNT: summaryDoc.summary.AUTO_JOB_COUNT,
+          OWNER_REVIEW_JOB_COUNT: summaryDoc.summary.OWNER_REVIEW_JOB_COUNT,
+          gapFrequency: summaryDoc.summary.gapFrequency || null
+        }
+      : null,
+    note: summaryDoc?.note || null
+  });
+}
+
+export function enrichmentSummariesSemanticallyEqual(a, b) {
+  return enrichmentSummaryLogicalFingerprint(a) === enrichmentSummaryLogicalFingerprint(b);
 }

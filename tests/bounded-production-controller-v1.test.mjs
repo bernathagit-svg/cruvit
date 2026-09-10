@@ -266,7 +266,7 @@ test('10. normal NEEDS_MORE does not trigger Owner Review', async () => {
   assert.ok(summary.needsMoreFields >= 0);
 });
 
-test('11. real execution disabled in validation mode', () => {
+test('11. real execution disabled in dry-control mode; real mode requires dryControlMode=false', () => {
   assert.throws(
     () =>
       createRun({
@@ -276,14 +276,26 @@ test('11. real execution disabled in validation mode', () => {
       }),
     /realExecutionAllowed=false/
   );
-  const run = createRun({
+  const dryRun = createRun({
     repoRoot: ROOT,
     dryControlMode: true,
     realExecutionAllowed: false,
     ...tempDirs()
   });
-  assert.equal(run.REAL_EXECUTION_ALLOWED, false);
-  assert.equal(run.DRY_CONTROL_MODE, true);
+  assert.equal(dryRun.REAL_EXECUTION_ALLOWED, false);
+  assert.equal(dryRun.DRY_CONTROL_MODE, true);
+  const realRun = createRun({
+    repoRoot: ROOT,
+    dryControlMode: false,
+    realExecutionAllowed: true,
+    reportSubdir: null,
+    ...tempDirs()
+  });
+  assert.equal(realRun.REAL_EXECUTION_ALLOWED, true);
+  assert.equal(realRun.DRY_CONTROL_MODE, false);
+  assert.equal(realRun.progression.code, 'FRESH_QUEUE_READ');
+  assert.equal(realRun.DRY_PROCESSED_SET_CAN_OVERRIDE_REAL_QUEUE, 'NO');
+  assert.equal(realRun.REAL_MODE_NEXT_BATCH_REQUIRES_FRESH_QUEUE_READ, 'YES');
 });
 
 test('12–13. plant data unchanged; real queue unchanged after controller dry', async () => {
@@ -339,4 +351,69 @@ test('15. existing one-batch worker behavior unchanged (queue top-3 still locks)
   });
   assert.equal(batch.status, 'BATCH_COMPLETE');
   assert.deepEqual(surfaceHashes(), before);
+});
+
+test('16. no-progress stops after identical fingerprint; fresh queue peek recorded', async () => {
+  const run = createRun({
+    repoRoot: ROOT,
+    dryControlMode: false,
+    realExecutionAllowed: true,
+    maxBatches: 3,
+    maxTotalExternalRequests: 18,
+    reportSubdir: null,
+    ...tempDirs()
+  });
+  assert.equal(run.caps.maxBatches, CONTROLLER_MAX_BATCHES);
+  assert.equal(run.caps.maxJobsPerBatch, CONTROLLER_MAX_JOBS_PER_BATCH);
+  assert.equal(run.caps.maxTotalJobs, CONTROLLER_MAX_TOTAL_JOBS);
+  assert.equal(run.caps.maxTotalExternalRequests, CONTROLLER_MAX_TOTAL_EXTERNAL_REQUESTS_PER_RUN);
+
+  const peek1 = peekNextSelection(run);
+  assert.equal(peek1.BATCH_QUEUE_WAS_FRESHLY_READ, 'YES');
+  assert.equal(peek1.excludeSlugsApplied.length, 0);
+  assert.ok(peek1.selectedSlugs.length >= 1);
+
+  // Simulate completed real batch with zero mutations + same fingerprint seen
+  run.state.batchesCompleted = 1;
+  run.state.batchesAttempted = 1;
+  run.state.totalJobsProcessed = peek1.selectedSlugs.length;
+  run.state.seenBatchFingerprints.push(peek1.batchFingerprint);
+  run.state.processedSlugs.push(...peek1.selectedSlugs);
+  run.state.batchRecords.push({
+    batchIndex: 1,
+    selectedSlugs: peek1.selectedSlugs,
+    batchFingerprint: peek1.batchFingerprint,
+    plantsChanged: [],
+    fieldsChanged: {},
+    MANUALLY_SELECTED: 'NO',
+    BATCH_QUEUE_WAS_FRESHLY_READ: 'YES',
+    workerSummary: { status: 'BATCH_COMPLETE', batchStopReason: null },
+    hardStop: null
+  });
+
+  const decision = evaluateBatchResult(run, run.state.batchRecords[0]);
+  assert.equal(decision.continue, false);
+  assert.equal(decision.stopReason, CONTROLLER_STOP_REASON.NO_PROGRESS);
+  assert.equal(decision.BATCH_QUEUE_WAS_FRESHLY_READ, 'YES');
+  assert.deepEqual(decision.nextSelectedSlugs, peek1.selectedSlugs);
+
+  const peek2 = peekNextSelection(run);
+  assert.equal(peek2.BATCH_QUEUE_WAS_FRESHLY_READ, 'YES');
+  assert.equal(peek2.batchFingerprint, peek1.batchFingerprint);
+});
+
+test('17. real-mode selection never applies dry processed-exclusion as queue authority', () => {
+  const run = createRun({
+    repoRoot: ROOT,
+    dryControlMode: false,
+    realExecutionAllowed: true,
+    reportSubdir: null,
+    ...tempDirs()
+  });
+  run.state.processedSlugs.push('apricot', 'avocado', 'guava');
+  const peek = peekNextSelection(run);
+  assert.equal(peek.BATCH_QUEUE_WAS_FRESHLY_READ, 'YES');
+  assert.deepEqual(peek.excludeSlugsApplied, []);
+  // Queue authority may still surface the same top jobs — that is correct.
+  assert.ok(peek.selectedSlugs.length >= 1);
 });

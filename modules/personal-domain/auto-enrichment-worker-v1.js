@@ -24,7 +24,8 @@ import crypto from 'node:crypto';
 import {
   ENRICHMENT_EXECUTION,
   ENRICHMENT_GAP_CODE,
-  buildCurrentCatalogEnrichmentQueue
+  buildCurrentCatalogEnrichmentQueue,
+  queuesSemanticallyEqual
 } from './enrichment-gap-scanner-v1.js';
 import {
   runSourceRetrieverPilot,
@@ -501,6 +502,11 @@ export function loadCurrentQueue(repoRoot) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
 }
 
+/**
+ * Rebuild durable enrichment queue from current plants.
+ * Semantic no-op: when job truth is unchanged, do NOT rewrite queue/summary files
+ * (generatedAt / parentCommit alone are insufficient to persist).
+ */
 export function refreshEnrichmentQueue(repoRoot, plantsBySlug, parentCommit) {
   const plants = Object.values(plantsBySlug);
   const generatedAt = new Date().toISOString();
@@ -522,9 +528,43 @@ export function refreshEnrichmentQueue(repoRoot, plantsBySlug, parentCommit) {
     summary: queue.summary,
     note: queue.note
   };
+
+  let existingQueue = null;
+  if (fs.existsSync(queuePath)) {
+    existingQueue = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  }
+
+  // Meaningful queue truth unchanged → do not touch durable queue or summary files.
+  // generatedAt / parentCommit alone are not sufficient reason to persist.
+  if (existingQueue && queuesSemanticallyEqual(existingQueue, queue)) {
+    const existingSummary = fs.existsSync(summaryPath)
+      ? JSON.parse(fs.readFileSync(summaryPath, 'utf8'))
+      : null;
+    return {
+      queue: existingQueue,
+      queuePath,
+      summaryPath,
+      summary: existingSummary,
+      persisted: false,
+      semanticNoOp: true,
+      queueRefreshEvaluated: true,
+      SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED: 'YES',
+      note: 'semantic_noop_persist_skipped'
+    };
+  }
+
   fs.writeFileSync(queuePath, JSON.stringify(queue, null, 2));
   fs.writeFileSync(summaryPath, JSON.stringify(summaryDoc, null, 2));
-  return { queue, queuePath, summaryPath };
+  return {
+    queue,
+    queuePath,
+    summaryPath,
+    summary: summaryDoc,
+    persisted: true,
+    semanticNoOp: false,
+    queueRefreshEvaluated: true,
+    SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED: 'NO'
+  };
 }
 
 export function loadSafeWriterSlugSet(repoRoot) {
@@ -1441,6 +1481,13 @@ export async function processJob({
   }
 
   const refreshed = refreshEnrichmentQueue(repoRoot, plantsAfter, parentCommit);
+  audit.queueRefresh = {
+    evaluated: true,
+    persisted: refreshed.persisted === true,
+    semanticNoOp: refreshed.semanticNoOp === true,
+    SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED:
+      refreshed.SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED || null
+  };
   const writtenThisJob = write.catalogMutated ? [plant.slug] : [];
   const qCheck = validateQueueIntegrity(refreshed.queue, writeSelectedSlugs, plantsAfter, {
     queueBefore: queueDoc,

@@ -21,6 +21,7 @@ import {
   buildCurrentCatalogEnrichmentQueue,
   buildBatch3DryEnrichmentQueue,
   queueLogicalFingerprint,
+  queuesSemanticallyEqual,
   stableEnrichmentJobId
 } from '../modules/personal-domain/enrichment-gap-scanner-v1.js';
 import {
@@ -296,6 +297,92 @@ test('8. duplicate scan → stable job IDs / no duplicates', () => {
   const q1 = buildCurrentCatalogEnrichmentQueue(plants, { generatedAt: 't1' });
   const q2 = buildCurrentCatalogEnrichmentQueue(plants, { generatedAt: 't2' });
   assert.equal(queueLogicalFingerprint(q1), queueLogicalFingerprint(q2));
+});
+
+test('semantic queue equality A–F: volatile vs meaningful deltas', () => {
+  const plants = [evidenceOnlyBPlant()];
+  const base = buildCurrentCatalogEnrichmentQueue(plants, {
+    generatedAt: '2026-01-01T00:00:00.000Z',
+    parentCommit: 'aaa'
+  });
+
+  // A. generatedAt-only difference = semantic no-op
+  const genOnly = {
+    ...base,
+    generatedAt: '2026-12-31T23:59:59.000Z'
+  };
+  assert.equal(queuesSemanticallyEqual(base, genOnly), true);
+
+  // B. parentCommit-only difference with identical job truth = semantic no-op
+  const parentOnly = {
+    ...base,
+    parentCommit: 'bbb-different-parent'
+  };
+  assert.equal(queuesSemanticallyEqual(base, parentOnly), true);
+
+  // C. gap change = real change
+  const gapChange = {
+    ...base,
+    jobs: base.jobs.map((j, i) =>
+      i === 0 ? { ...j, gapCodes: [...j.gapCodes, ENRICHMENT_GAP_CODE.MISSING_FROST_EVIDENCE] } : j
+    )
+  };
+  assert.equal(queuesSemanticallyEqual(base, gapChange), false);
+
+  // D. job removal = real change
+  const removed = { ...base, jobs: [], summary: { ...base.summary, totalJobs: 0 } };
+  assert.equal(queuesSemanticallyEqual(base, removed), false);
+
+  // E. HOLD/AUTO change = real change
+  const holdChange = {
+    ...base,
+    jobs: base.jobs.map((j, i) =>
+      i === 0
+        ? {
+            ...j,
+            enrichmentExecution: ENRICHMENT_EXECUTION.HOLD_FOR_REVIEW,
+            allowedAutoAction: ALLOWED_AUTO_ACTION.HOLD
+          }
+        : j
+    )
+  };
+  assert.equal(queuesSemanticallyEqual(base, holdChange), false);
+
+  // F. priority/rank change = real change
+  const prioChange = {
+    ...base,
+    jobs: base.jobs.map((j, i) => (i === 0 ? { ...j, priority: 'P0' } : j))
+  };
+  assert.equal(queuesSemanticallyEqual(base, prioChange), false);
+
+  // Rank/order change with same jobs = real change (authoritative order)
+  const b2 = completeClassAPlant({
+    slug: 'demo-second-b',
+    name: 'Demo Second',
+    scientific: 'Demo secundus',
+    climateTraits: {
+      traitEvidenceClasses: {
+        frostSensitivity: 'HEURISTIC_ASSERTION',
+        coldTolerance: 'HEURISTIC_ASSERTION',
+        heatTolerance: 'HEURISTIC_ASSERTION',
+        humidityTolerance: 'HEURISTIC_ASSERTION',
+        sunNeeds: 'HEURISTIC_ASSERTION',
+        waterNeeds: 'HEURISTIC_ASSERTION',
+        drainageNeeds: 'HEURISTIC_ASSERTION',
+        floweringRequirements: 'HEURISTIC_ASSERTION',
+        fruitingRequirements: 'HEURISTIC_ASSERTION'
+      }
+    }
+  });
+  const multi = buildCurrentCatalogEnrichmentQueue([evidenceOnlyBPlant(), b2], {
+    generatedAt: 't'
+  });
+  assert.ok(multi.jobs.length >= 2);
+  const reordered = {
+    ...multi,
+    jobs: [...multi.jobs].reverse()
+  };
+  assert.equal(queuesSemanticallyEqual(multi, reordered), false);
 });
 
 test('9. Batch 3 dry packet → queue mapping', () => {

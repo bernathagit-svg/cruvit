@@ -33,7 +33,8 @@ import {
   loadCatalogPlants,
   loadSafeWriterSlugSet,
   resolveWorkerRetrievalSpec,
-  countSpeciesNameSelectionExclusions
+  countSpeciesNameSelectionExclusions,
+  refreshEnrichmentQueue
 } from '../modules/personal-domain/auto-enrichment-worker-v1.js';
 import { ENRICHMENT_EXECUTION } from '../modules/personal-domain/enrichment-gap-scanner-v1.js';
 import {
@@ -1026,4 +1027,69 @@ test('31. dry-only validation invokes no writer (catalog hashes unchanged)', asy
     hashFile(path.join(ROOT, 'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json')),
     qBefore
   );
+});
+test('32. semantic no-op refresh does not rewrite queue or summary files', () => {
+  const queuePath = path.join(
+    ROOT,
+    'data/catalog/enrichment-queue/current-catalog-enrichment-queue-v1.json'
+  );
+  const summaryPath = path.join(
+    ROOT,
+    'data/catalog/enrichment-queue/current-catalog-enrichment-summary-v1.json'
+  );
+  const beforeQ = fs.readFileSync(queuePath);
+  const beforeS = fs.readFileSync(summaryPath);
+  const plants = loadCatalogPlants(ROOT);
+  const result = refreshEnrichmentQueue(ROOT, plants, 'should-not-appear-on-disk');
+  assert.equal(result.semanticNoOp, true);
+  assert.equal(result.persisted, false);
+  assert.equal(result.SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED, 'YES');
+  assert.equal(result.queueRefreshEvaluated, true);
+  assert.ok(beforeQ.equals(fs.readFileSync(queuePath)));
+  assert.ok(beforeS.equals(fs.readFileSync(summaryPath)));
+  const onDisk = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  assert.notEqual(onDisk.parentCommit, 'should-not-appear-on-disk');
+});
+
+test('33. real logical queue change does persist', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cruvit-queue-persist-'));
+  const qDir = path.join(tmp, 'data/catalog/enrichment-queue');
+  fs.mkdirSync(qDir, { recursive: true });
+  const queuePath = path.join(qDir, 'current-catalog-enrichment-queue-v1.json');
+  const summaryPath = path.join(qDir, 'current-catalog-enrichment-summary-v1.json');
+  const stub = {
+    queueId: 'current-catalog-enrichment-queue-v1',
+    queueContractVersion: '1.1.0',
+    scannerVersion: '1.1.0',
+    generatedAt: 'old',
+    parentCommit: 'old',
+    catalogSnapshot: { total: 0, counts: { A: 0, B: 0, C: 0, D: 0 }, gates: {} },
+    summary: { totalJobs: 0, AUTO_JOB_COUNT: 0, OWNER_REVIEW_JOB_COUNT: 0 },
+    jobs: []
+  };
+  fs.writeFileSync(queuePath, JSON.stringify(stub, null, 2));
+  fs.writeFileSync(
+    summaryPath,
+    JSON.stringify(
+      {
+        summaryId: 'current-catalog-enrichment-summary-v1',
+        generatedAt: 'old',
+        parentCommit: 'old',
+        summary: stub.summary
+      },
+      null,
+      2
+    )
+  );
+  const plants = loadCatalogPlants(ROOT);
+  const beforeHash = hashFile(queuePath);
+  const result = refreshEnrichmentQueue(tmp, plants, 'new-parent');
+  assert.equal(result.persisted, true);
+  assert.equal(result.semanticNoOp, false);
+  assert.equal(result.SEMANTIC_NOOP_QUEUE_PERSISTENCE_PREVENTED, 'NO');
+  assert.notEqual(hashFile(queuePath), beforeHash);
+  const written = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+  assert.ok(written.jobs.length > 0);
+  assert.equal(written.parentCommit, 'new-parent');
+  fs.rmSync(tmp, { recursive: true, force: true });
 });

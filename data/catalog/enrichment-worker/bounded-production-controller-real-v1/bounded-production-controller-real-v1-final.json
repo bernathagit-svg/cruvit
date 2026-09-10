@@ -1,0 +1,395 @@
+{
+  "phase": "bounded_production_controller_v1_run_summary",
+  "controllerRef": "bounded-production-controller-v1@1.0.0",
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "parentCommit": "8a55e685f86da18118bd6262de5ed13005cd4754",
+  "startedAt": "2026-09-10T05:17:15.579Z",
+  "finishedAt": "2026-09-10T05:17:20.047Z",
+  "DRY_CONTROL_MODE": false,
+  "REAL_EXECUTION_ALLOWED": true,
+  "REAL_EXECUTION_PERFORMED": "YES",
+  "CONTROLLER_SELECTS_SPECIES": "NO",
+  "SPECS_GATE_SELECTION": "NO",
+  "MANUALLY_SELECTED_ANY_BATCH": "NO",
+  "DRY_PROCESSED_SET_CAN_OVERRIDE_REAL_QUEUE": "NO",
+  "REAL_MODE_NEXT_BATCH_REQUIRES_FRESH_QUEUE_READ": "YES",
+  "progression": {
+    "code": "FRESH_QUEUE_READ",
+    "name": "FRESH_AUTHORITATIVE_QUEUE_READ",
+    "authoritative": true,
+    "description": "Before each real batch, loadCurrentQueue(repoRoot) and selectEligibleJobs with no processed-job exclusion. Queue refresh after prior real applies is the sole progression signal."
+  },
+  "caps": {
+    "maxBatches": 3,
+    "maxJobsPerBatch": 3,
+    "maxTotalJobs": 9,
+    "maxTotalExternalRequests": 18,
+    "workerMaxExternalRequestsPerBatch": 6,
+    "workerMaxExternalRequestsPerPlant": 2
+  },
+  "starting": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+    "hashes": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    }
+  },
+  "ending": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "hashes": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "1eb4973cd5a1993518e856b2a621c06648fee0dcfd2217f861887a3b88009bd0",
+      "summary": "c74d206c1381ab486ae59f4e64b4df601d76d50d50f777271526ca789a89c118"
+    }
+  },
+  "stopReason": "NO_PROGRESS",
+  "hardStopDetail": null,
+  "batchesAttempted": 1,
+  "batchesCompleted": 1,
+  "totalJobsProcessed": 3,
+  "uniqueJobsProcessed": 3,
+  "uniqueJobSlugs": [
+    "apricot",
+    "avocado",
+    "guava"
+  ],
+  "plantsMutated": [],
+  "fieldsChanged": {},
+  "batches": [
+    {
+      "batchIndex": 1,
+      "selectedSlugs": [
+        "apricot",
+        "avocado",
+        "guava"
+      ],
+      "selectionRanks": [
+        {
+          "slug": "apricot",
+          "queueRank": 13
+        },
+        {
+          "slug": "avocado",
+          "queueRank": 14
+        },
+        {
+          "slug": "guava",
+          "queueRank": 28
+        }
+      ],
+      "batchFingerprint": "29bf40640dd31c58fdcd6dc5856c2ff84477d4f0bed18676ffd4dd16bc66a396",
+      "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+      "BATCH_QUEUE_WAS_FRESHLY_READ": "YES",
+      "MANUALLY_SELECTED": "NO",
+      "REAL_WRITE_COUNT_BEFORE_DRY_FINISH": 0,
+      "externalRequests": 7,
+      "cacheHits": 8,
+      "applyAllowedFields": 2,
+      "needsMoreFields": 4,
+      "holdOrConflict": 0,
+      "dryStatus": "BATCH_COMPLETE",
+      "realStatus": "BATCH_COMPLETE",
+      "plantsChanged": [],
+      "fieldsChanged": {},
+      "idempotence": {
+        "status": "BATCH_COMPLETE",
+        "SECOND_WORKER_RUN_WOULD_MUTATE": "NO",
+        "appliedCount": 0,
+        "externalRequests": 1,
+        "cacheHits": 4
+      },
+      "hardStop": null,
+      "controllerDecision": {
+        "continue": false,
+        "stopReason": "NO_PROGRESS",
+        "note": "Next batch fingerprint already seen — no-progress loop prevented"
+      }
+    }
+  ],
+  "BATCH_1_SELECTED_SLUGS": [
+    "apricot",
+    "avocado",
+    "guava"
+  ],
+  "BATCH_2_SELECTED_SLUGS": [],
+  "BATCH_3_SELECTED_SLUGS": [],
+  "BATCH_1_QUEUE_WAS_FRESHLY_READ": "YES",
+  "BATCH_2_QUEUE_WAS_FRESHLY_READ": null,
+  "BATCH_3_QUEUE_WAS_FRESHLY_READ": null,
+  "totalExternalRequests": 7,
+  "totalCacheHits": 8,
+  "requestsPerJob": 2.333,
+  "applyAllowedFields": 2,
+  "needsMoreFields": 4,
+  "conflicts": 0,
+  "OWNER_REVIEW_COUNT": 0,
+  "NO_PROGRESS_STOP": "YES",
+  "PLANT_WRITE_COUNT": 0,
+  "QUEUE_WRITE_COUNT": 1,
+  "ZERO_WRITE_PROOF": null,
+  "preRun": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "triad": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8"
+    },
+    "queueFiles": {
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    },
+    "eligiblePoolCount": 8,
+    "eligibleTop": [
+      {
+        "queueRank": 13,
+        "jobId": "enrich-v1:apricot",
+        "slug": "apricot",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 14,
+        "jobId": "enrich-v1:avocado",
+        "slug": "avocado",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 28,
+        "jobId": "enrich-v1:guava",
+        "slug": "guava",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 33,
+        "jobId": "enrich-v1:lychee",
+        "slug": "lychee",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 34,
+        "jobId": "enrich-v1:mandarin",
+        "slug": "mandarin",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 36,
+        "jobId": "enrich-v1:olive",
+        "slug": "olive",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 37,
+        "jobId": "enrich-v1:orange",
+        "slug": "orange",
+        "gapCodes": [
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      },
+      {
+        "queueRank": 44,
+        "jobId": "enrich-v1:raspberry",
+        "slug": "raspberry",
+        "gapCodes": [
+          "MISSING_FROST_EVIDENCE",
+          "MISSING_COLD_EVIDENCE",
+          "EVIDENCE_NOT_SOURCE_SUPPORTED"
+        ],
+        "enrichmentExecution": "AUTO",
+        "productGate": "PARTIAL",
+        "readiness": "B"
+      }
+    ],
+    "peekSelected": [
+      "apricot",
+      "avocado",
+      "guava"
+    ],
+    "peekFingerprint": "29bf40640dd31c58fdcd6dc5856c2ff84477d4f0bed18676ffd4dd16bc66a396",
+    "requestBudgetRemaining": 18
+  },
+  "postRun": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "triad": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8"
+    },
+    "queueFiles": {
+      "queue": "1eb4973cd5a1993518e856b2a621c06648fee0dcfd2217f861887a3b88009bd0",
+      "summary": "c74d206c1381ab486ae59f4e64b4df601d76d50d50f777271526ca789a89c118"
+    }
+  },
+  "CHANGED_PLANT_SLUGS": [],
+  "FIELD_WRITE_DETAILS": [],
+  "NON_SELECTED_PLANT_FACT_CHANGE_COUNT": 0,
+  "NON_SELECTED_CHANGED": [],
+  "NON_SELECTED_QUEUE_JOB_CHANGE_COUNT": 0,
+  "NON_SELECTED_QUEUE_CHANGES": [],
+  "SOURCE_SUPPORTED_FIELD_WRITES": 0,
+  "COLD_SS_WRITES": 0,
+  "FROST_SS_WRITES": 0,
+  "B_TO_A": 0,
+  "B_TO_B_IMPROVEMENTS": 0,
+  "readinessMovements": [
+    {
+      "slug": "apricot",
+      "before": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      },
+      "after": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      }
+    },
+    {
+      "slug": "avocado",
+      "before": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      },
+      "after": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      }
+    },
+    {
+      "slug": "guava",
+      "before": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      },
+      "after": {
+        "readiness": "B",
+        "productGate": "PARTIAL"
+      }
+    }
+  ],
+  "FINAL_CONTROLLER_STATE_STABLE": "YES",
+  "AUTONOMOUS_BOUNDED_PRODUCTION_PROVEN": "YES",
+  "SAFE_TO_SCHEDULE_RECURRING_BOUNDED_PRODUCTION": "YES",
+  "BATCH_3_INGESTED": "NO",
+  "DEPLOYED": "NO",
+  "metrics": {
+    "batchesAttempted": 1,
+    "batchesCompleted": 1,
+    "jobsSelected": 3,
+    "uniquePlantsSelected": 3,
+    "plantsMutated": 0,
+    "sourceSupportedFieldWrites": 0,
+    "coldSsWrites": 0,
+    "frostSsWrites": 0,
+    "bToA": 0,
+    "bToBImprovements": 0,
+    "needsMoreOutcomes": 4,
+    "hardStops": 0,
+    "externalRequests": 7,
+    "cacheHits": 8,
+    "requestsPerSelectedJob": 2.333,
+    "requestsPerAppliedField": null,
+    "ownerReviewCount": 0
+  },
+  "reports": {
+    "runSummary": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\bounded-production-controller-real-v1\\bounded-production-controller-v1-run-summary.json",
+    "outDir": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\bounded-production-controller-real-v1"
+  }
+}
