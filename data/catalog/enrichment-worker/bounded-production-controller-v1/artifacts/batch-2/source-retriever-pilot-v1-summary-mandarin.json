@@ -1,0 +1,80 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "generatedAt": "2026-09-10T04:46:01.353Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "plantCount": 1,
+  "externalRequestCount": 2,
+  "cache": {
+    "hits": 0,
+    "misses": 0,
+    "writes": 1,
+    "urls": [
+      "https://plants.usda.gov/home/plantProfile?symbol=CIRE3"
+    ],
+    "uniqueUrls": [
+      "https://plants.usda.gov/home/plantProfile?symbol=CIRE3"
+    ]
+  },
+  "catalogMutated": false,
+  "queueMutated": false,
+  "appliedEnrichment": false,
+  "results": [
+    {
+      "slug": "mandarin",
+      "applyStatuses": [
+        {
+          "field": "frostSensitivity",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        },
+        {
+          "field": "coldTolerance",
+          "applyStatus": "NEEDS_MORE_EVIDENCE",
+          "evidenceClass": "UNKNOWN",
+          "transformId": null,
+          "transformVersion": null,
+          "sourceClaimType": null,
+          "contradiction": "INSUFFICIENT_EVIDENCE",
+          "proposedValue": null
+        }
+      ],
+      "simulation": {
+        "current": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "simulated": {
+          "readinessShort": "B",
+          "gate": "PARTIAL",
+          "reasons": []
+        },
+        "fieldsAppliedInSimulation": 0,
+        "originalUnchanged": true,
+        "note": "Simulation only — authorized transform fields only; no catalog write."
+      },
+      "sourcesFetched": [
+        {
+          "sourceId": "ncsu-citrus-reticulata",
+          "url": "https://plants.ces.ncsu.edu/plants/citrus-reticulata/",
+          "status": 404,
+          "fromCache": false
+        },
+        {
+          "sourceId": "usda-plants-citrus-reticulata",
+          "url": "https://plants.usda.gov/home/plantProfile?symbol=CIRE3",
+          "status": 200,
+          "fromCache": false
+        }
+      ],
+      "packetPath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-worker\\bounded-production-controller-v1\\artifacts\\batch-2\\candidate-packets\\mandarin.candidate-packet-v1.json",
+      "fingerprint": "701f26ce0e6767ae07a272f37e853ac699b6b8eeed086adfa07cf4309cebaf4b"
+    }
+  ],
+  "note": "Pilot retrieval only. Candidate packets are not runtime authority. No catalog writes."
+}

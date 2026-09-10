@@ -1,0 +1,241 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "jobId": "enrich-v1:orange",
+  "slug": "orange",
+  "scientificName": "Citrus sinensis",
+  "dryRun": true,
+  "beforePlantHash": "06f87b7685271070d600cd0c224b12472fd01797b563ad256ee4d54973570759",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "DRY_RUN_APPLY_ALLOWED",
+  "hardStop": null,
+  "externalRequests": 2,
+  "cacheHits": 0,
+  "appliedFields": [
+    "frostSensitivity",
+    "coldTolerance"
+  ],
+  "ownerDecisionRequired": false,
+  "retrievalConfigSource": "custom",
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-citrus-x-sinensis",
+      "url": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+      "status": 200,
+      "fromCache": false
+    },
+    {
+      "sourceId": "usda-plants-citrus-sinensis",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=CISI3",
+      "status": 200,
+      "fromCache": false
+    }
+  ],
+  "packetFingerprint": "46013bebf486771d4b2b8201c9d5b416e0394371c339e82eadea32521425fae3",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "READY_TO_APPLY",
+      "value": "very_high",
+      "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "READY_TO_APPLY",
+      "value": "very_low",
+      "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0"
+    }
+  ],
+  "applyGate": {
+    "setDecision": "APPLY_ALLOWED",
+    "setReasons": [
+      "all_apply_gates_passed"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "APPLY_ALLOWED",
+        "reasons": [
+          "same_value_evidence_provenance_upgrade",
+          "all_apply_gates_passed"
+        ],
+        "contradictionClass": "CONSISTENT"
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "APPLY_ALLOWED",
+        "reasons": [
+          "heuristic_current_compatible_ss_upgrade",
+          "all_apply_gates_passed"
+        ],
+        "contradictionClass": "CONSISTENT"
+      }
+    ]
+  },
+  "mutationPlan": {
+    "planFingerprint": "6f3492bc18dfb2dde3b7b74bd5c64b141a2540b96676d09920ebee9f529b5ca0",
+    "jsonDiff": [
+      {
+        "path": "climateTraits.frostSensitivity",
+        "before": {
+          "value": "very_high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "fieldOrigin": "ASSERTED_SOURCE"
+        },
+        "after": {
+          "value": "very_high",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "fieldOrigin": "ASSERTED_SOURCE"
+        },
+        "provenancePath": "climateTraits.enrichmentProvenance.frostSensitivity",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-citrus-x-sinensis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Plant is frost tender.",
+          "sourceClaim": {
+            "claimType": "frost_injury_statement",
+            "rawValue": "frost_tender",
+            "displayValue": "frost_tender",
+            "hardinessZoneMin": null,
+            "hardinessZoneMax": null,
+            "hardinessZoneSystem": null,
+            "damageMode": "frost_tender",
+            "minimumWinterTemperatureF": null,
+            "units": null,
+            "claimFingerprint": "9cdd4e4dc83c9619aa198b8da75526dde231e5aeac61293bb83cfd460c98b486"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_high",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_high\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_high\"}"
+          },
+          "transformId": "frost-injury-to-frost-sensitivity-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "frost-injury-to-frost-sensitivity-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "fed60d963796abee60ec1f9620762dfd8803cc587df3208e250dbada17d225b3",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      },
+      {
+        "path": "climateTraits.coldTolerance",
+        "before": {
+          "value": "low",
+          "evidenceClass": "HEURISTIC_ASSERTION",
+          "fieldOrigin": "LEGACY_ASSERTED_METADATA"
+        },
+        "after": {
+          "value": "very_low",
+          "evidenceClass": "SOURCE_SUPPORTED",
+          "fieldOrigin": "ASSERTED_SOURCE"
+        },
+        "provenancePath": "climateTraits.enrichmentProvenance.coldTolerance",
+        "provenance": {
+          "sourceIds": [
+            "ncsu-citrus-x-sinensis"
+          ],
+          "sourceUrl": "https://plants.ces.ncsu.edu/plants/citrus-x-sinensis/",
+          "sourceType": "university_extension",
+          "supportingExcerpt": "Hardiness Zone: 9a, 9b, 10a, 10b, 11a, 11b",
+          "sourceClaim": {
+            "claimType": "usda_hardiness_zone_band",
+            "rawValue": "9-11",
+            "displayValue": "USDA 9-11",
+            "hardinessZoneMin": 9,
+            "hardinessZoneMax": 11,
+            "hardinessZoneSystem": "USDA",
+            "damageMode": null,
+            "minimumWinterTemperatureF": null,
+            "units": "usda_zone",
+            "claimFingerprint": "2cc55ef2cbe377d55cb36c48ef3121eaa74807c85bff000f7739b742a68eec23"
+          },
+          "sourcePolicyResult": {
+            "mayBeSourceSupported": true,
+            "evidenceClass": "SOURCE_SUPPORTED",
+            "reasons": [
+              "tier_a_preferred_source_independent_ok",
+              "source_supported_gate_passed",
+              "policy=catalog-source-policy-v1@1.0.0",
+              "fieldProvenanceHonesty=1.0.0"
+            ]
+          },
+          "contradictionClass": "CONSISTENT",
+          "contradictionResult": {
+            "contradictionClass": "CONSISTENT",
+            "queueAction": "AUTO_CONTINUE",
+            "hold": false,
+            "normalizedResult": {
+              "value": "very_low",
+              "retainedSourceIds": [
+                "ncsu-citrus-x-sinensis"
+              ]
+            },
+            "reasons": [
+              "single_authoritative_claim"
+            ],
+            "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"orange\",\"field\":\"coldTolerance\",\"contradictionClass\":\"CONSISTENT\",\"values\":[\"very_low\"],\"sourceIds\":[\"ncsu-citrus-x-sinensis\"],\"queueAction\":\"AUTO_CONTINUE\",\"normalized\":\"very_low\"}"
+          },
+          "transformId": "hardiness-zone-to-cold-traits-v1",
+          "transformVersion": "1.0.0",
+          "transformRef": "hardiness-zone-to-cold-traits-v1@1.0.0",
+          "evidenceLineage": "DERIVED_FROM_SOURCE_CLAIM_VIA_APPROVED_TRANSFORM",
+          "contentHash": "fed60d963796abee60ec1f9620762dfd8803cc587df3208e250dbada17d225b3",
+          "applyGateRef": "catalog-enrichment-apply-gate-v1@1.0.0"
+        }
+      }
+    ],
+    "guards": {
+      "floweringRequirementsUnchanged": true,
+      "fruitingRequirementsUnchanged": true,
+      "needsReviewUnchanged": true,
+      "slugUnchanged": true,
+      "scientificUnchanged": true,
+      "aliasesUnchanged": true
+    }
+  },
+  "readinessSimulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "A",
+      "gate": "PASS",
+      "reasons": [
+        "COMPLETE_FOR_CLASS_A"
+      ]
+    },
+    "blockersCleared": [],
+    "blockersAdded": [
+      "COMPLETE_FOR_CLASS_A"
+    ],
+    "note": "Simulation only — no catalog write."
+  }
+}

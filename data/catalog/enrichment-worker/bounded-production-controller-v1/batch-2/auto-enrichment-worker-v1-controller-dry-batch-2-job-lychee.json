@@ -1,0 +1,71 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "jobId": "enrich-v1:lychee",
+  "slug": "lychee",
+  "scientificName": "Litchi chinensis",
+  "dryRun": true,
+  "beforePlantHash": "4fd555e14ad0653caf3035890a2fd053a9d5f3f4f1f3cd464220e582402d10ff",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "PARTIAL_NO_APPLY",
+  "hardStop": null,
+  "externalRequests": 2,
+  "cacheHits": 0,
+  "appliedFields": [],
+  "ownerDecisionRequired": false,
+  "retrievalConfigSource": "custom",
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-litchi-chinensis",
+      "url": "https://plants.ces.ncsu.edu/plants/litchi-chinensis/",
+      "status": 404,
+      "fromCache": false
+    },
+    {
+      "sourceId": "usda-plants-litchi-chinensis",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=LICH",
+      "status": 200,
+      "fromCache": false
+    }
+  ],
+  "packetFingerprint": "7a3f921360a8267997047be6cf359d5dafcf8152984de07ad33a13b877afa9d8",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    }
+  ],
+  "applyGate": {
+    "setDecision": "NEEDS_MORE_EVIDENCE",
+    "setReasons": [
+      "apply_status_not_ready"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      }
+    ]
+  },
+  "note": "insufficient_evidence_or_incomplete_ready_set"
+}

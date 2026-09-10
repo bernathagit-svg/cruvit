@@ -1,0 +1,226 @@
+{
+  "pilotRef": "source-retriever-pilot-v1@1.1.0",
+  "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+  "contradictionGateRef": "catalog-contradiction-gate-v1@1.0.0",
+  "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+  "transforms": {
+    "cold": "hardiness-zone-to-cold-traits-v1@1.0.0",
+    "frost": "frost-injury-to-frost-sensitivity-v1@1.0.0"
+  },
+  "queueJob": {
+    "jobId": "enrich-v1:lychee",
+    "canonicalSlug": "lychee",
+    "scientificName": "Litchi chinensis",
+    "currentReadinessClass": "B",
+    "productGate": "PARTIAL",
+    "enrichmentExecution": "AUTO",
+    "priority": "P1",
+    "gapCodes": [
+      "MISSING_FROST_EVIDENCE",
+      "MISSING_COLD_EVIDENCE",
+      "EVIDENCE_NOT_SOURCE_SUPPORTED"
+    ],
+    "futureClaimTypes": [
+      "cold",
+      "frost"
+    ]
+  },
+  "plant": {
+    "slug": "lychee",
+    "scientificName": "Litchi chinensis",
+    "whySafe": "P1 AUTO PARTIAL; SAFE bootstrap; untouched frost+cold gaps; NCSU Tier A."
+  },
+  "evidenceRecords": [
+    {
+      "sourceId": "ncsu-litchi-chinensis",
+      "sourceType": "university_extension",
+      "authorityTier": "A",
+      "institution": "North Carolina State University Extension Gardener",
+      "sourceUrl": "https://plants.ces.ncsu.edu/plants/litchi-chinensis/",
+      "title": "Litchi chinensis (Lychee)",
+      "retrievedAt": "2026-09-10T04:46:00.333Z",
+      "fromCache": false,
+      "httpStatus": 404,
+      "contentHash": "16e82c4d7e3f3b3a88b9a4bdc42476d75857e85b95c18bcdb9981cf918d8ade3",
+      "canonicalPlantIdentity": {
+        "slug": "lychee",
+        "scientificName": "Litchi chinensis"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    },
+    {
+      "sourceId": "usda-plants-litchi-chinensis",
+      "sourceType": "government",
+      "authorityTier": "A",
+      "institution": "USDA PLANTS Database",
+      "sourceUrl": "https://plants.usda.gov/home/plantProfile?symbol=LICH",
+      "title": "Litchi chinensis - USDA PLANTS",
+      "retrievedAt": "2026-09-10T04:46:00.648Z",
+      "fromCache": false,
+      "httpStatus": 200,
+      "contentHash": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "canonicalPlantIdentity": {
+        "slug": "lychee",
+        "scientificName": "Litchi chinensis"
+      },
+      "identityMatch": {
+        "ok": false,
+        "reason": "identity_not_found",
+        "code": "INSUFFICIENT_EVIDENCE"
+      },
+      "sourcePolicyRef": "catalog-source-policy-v1@1.0.0",
+      "hardinessClaimsRef": "hardiness-evidence-claims-v1@1.1.0",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "targetField": null,
+      "shortSupportingExcerpt": null,
+      "sourcePolicyEligibility": {
+        "mayBeSourceSupported": false,
+        "evidenceClass": "UNKNOWN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      }
+    }
+  ],
+  "fieldPackets": [
+    {
+      "canonicalSlug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "targetField": "frostSensitivity",
+      "targetGapCode": "MISSING_FROST_EVIDENCE",
+      "currentPlantValue": "high",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Frost requires direct injury evidence + approved frost-injury transform; zone alone is insufficient.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    },
+    {
+      "canonicalSlug": "lychee",
+      "scientificName": "Litchi chinensis",
+      "targetField": "coldTolerance",
+      "targetGapCode": "MISSING_COLD_EVIDENCE",
+      "currentPlantValue": "low",
+      "sourceClaim": null,
+      "normalizedTraitCandidate": null,
+      "proposedValue": null,
+      "proposedNormalizedValue": null,
+      "sourceIds": [],
+      "sourceUrl": null,
+      "sourceType": null,
+      "authorityTier": null,
+      "supportingExcerpt": null,
+      "excerpts": [],
+      "sourcePolicyResult": null,
+      "transformId": null,
+      "transformVersion": null,
+      "transformRef": null,
+      "transformReason": null,
+      "evidenceLineage": null,
+      "evidenceClass": "UNKNOWN",
+      "contradictionResult": {
+        "contradictionClass": "INSUFFICIENT_EVIDENCE",
+        "queueAction": "AUTO_RETRIEVE_MORE",
+        "hold": false,
+        "normalizedResult": null,
+        "reasons": [
+          "no_authoritative_claims"
+        ],
+        "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+      },
+      "contentHash": null,
+      "confidence": "low",
+      "expectedReadinessImpact": "Authorized coldTolerance alone cannot reach Class A without SOURCE_SUPPORTED frostSensitivity.",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "runtimeAuthority": false,
+      "writesProductFact": false
+    }
+  ],
+  "contradictionByField": {
+    "frostSensitivity": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"frostSensitivity\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    },
+    "coldTolerance": {
+      "contradictionClass": "INSUFFICIENT_EVIDENCE",
+      "queueAction": "AUTO_RETRIEVE_MORE",
+      "hold": false,
+      "normalizedResult": null,
+      "reasons": [
+        "no_authoritative_claims"
+      ],
+      "auditFingerprint": "{\"gateRef\":\"catalog-contradiction-gate-v1@1.0.0\",\"sourcePolicyRef\":\"catalog-source-policy-v1@1.0.0\",\"slug\":\"lychee\",\"field\":\"coldTolerance\",\"contradictionClass\":\"INSUFFICIENT_EVIDENCE\",\"values\":[],\"sourceIds\":[],\"queueAction\":\"AUTO_RETRIEVE_MORE\",\"normalized\":null}"
+    }
+  },
+  "mutatedCatalog": false,
+  "generatedAt": "2026-09-10T04:46:00.649Z",
+  "parentCommit": "5ecd6101b4d3fcaf47708550aca67b65535b3ec4",
+  "simulation": {
+    "current": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "simulated": {
+      "readinessShort": "B",
+      "gate": "PARTIAL",
+      "reasons": []
+    },
+    "fieldsAppliedInSimulation": 0,
+    "originalUnchanged": true,
+    "note": "Simulation only — authorized transform fields only; no catalog write."
+  },
+  "fingerprint": "7a3f921360a8267997047be6cf359d5dafcf8152984de07ad33a13b877afa9d8"
+}

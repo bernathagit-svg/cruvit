@@ -1,0 +1,254 @@
+{
+  "phase": "bounded_production_controller_v1_run_summary",
+  "controllerRef": "bounded-production-controller-v1@1.0.0",
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "parentCommit": "c5c041e5bbda8034aabccd330d1568ccdcc287be",
+  "startedAt": "2026-09-10T04:45:56.372Z",
+  "finishedAt": "2026-09-10T04:46:03.520Z",
+  "DRY_CONTROL_MODE": true,
+  "REAL_EXECUTION_ALLOWED": false,
+  "REAL_EXECUTION_PERFORMED": "NO",
+  "CONTROLLER_SELECTS_SPECIES": "NO",
+  "SPECS_GATE_SELECTION": "NO",
+  "MANUALLY_SELECTED_ANY_BATCH": "NO",
+  "progression": {
+    "code": "C",
+    "name": "PROCESSED_JOB_EXCLUSION_SET",
+    "authoritative": false,
+    "description": "After each dry batch, selected slugs are added to a run-local excludeSlugs set. Next batch still reads the CURRENT authoritative queue, then applies selectEligibleJobs with those exclusions. Does NOT mutate the real queue or invent simulated queue docs."
+  },
+  "caps": {
+    "maxBatches": 3,
+    "maxJobsPerBatch": 3,
+    "maxTotalJobs": 9,
+    "maxTotalExternalRequests": 18,
+    "workerMaxExternalRequestsPerBatch": 6,
+    "workerMaxExternalRequestsPerPlant": 2
+  },
+  "starting": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+    "hashes": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    }
+  },
+  "ending": {
+    "catalog": {
+      "total": 108,
+      "counts": {
+        "A": 3,
+        "B": 92,
+        "C": 0,
+        "D": 13
+      }
+    },
+    "queue": {
+      "totalJobs": 105,
+      "auto": 88,
+      "hold": 17
+    },
+    "hashes": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    }
+  },
+  "stopReason": "MAX_BATCHES_REACHED",
+  "hardStopDetail": null,
+  "batchesAttempted": 3,
+  "batchesCompleted": 3,
+  "totalJobsProcessed": 8,
+  "uniqueJobsProcessed": 8,
+  "uniqueJobSlugs": [
+    "apricot",
+    "avocado",
+    "guava",
+    "lychee",
+    "mandarin",
+    "olive",
+    "orange",
+    "raspberry"
+  ],
+  "batches": [
+    {
+      "batchIndex": 1,
+      "selectedSlugs": [
+        "apricot",
+        "avocado",
+        "guava"
+      ],
+      "selectionRanks": [
+        {
+          "slug": "apricot",
+          "queueRank": 13
+        },
+        {
+          "slug": "avocado",
+          "queueRank": 14
+        },
+        {
+          "slug": "guava",
+          "queueRank": 28
+        }
+      ],
+      "batchFingerprint": "29bf40640dd31c58fdcd6dc5856c2ff84477d4f0bed18676ffd4dd16bc66a396",
+      "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+      "MANUALLY_SELECTED": "NO",
+      "externalRequests": 5,
+      "cacheHits": 0,
+      "applyAllowedFields": 2,
+      "needsMoreFields": 4,
+      "holdOrConflict": 0,
+      "status": "BATCH_COMPLETE",
+      "hardStop": null,
+      "controllerDecision": {
+        "continue": true,
+        "stopReason": null,
+        "nextSelectedSlugs": [
+          "lychee",
+          "mandarin",
+          "olive"
+        ],
+        "nextBatchFingerprint": "7ee2d00d17ea5c0d4bf550ed742d5bebc166a26bb07baefc18cb9cc2681e6d72",
+        "remainingRequestBudget": 13
+      }
+    },
+    {
+      "batchIndex": 2,
+      "selectedSlugs": [
+        "lychee",
+        "mandarin",
+        "olive"
+      ],
+      "selectionRanks": [
+        {
+          "slug": "lychee",
+          "queueRank": 33
+        },
+        {
+          "slug": "mandarin",
+          "queueRank": 34
+        },
+        {
+          "slug": "olive",
+          "queueRank": 36
+        }
+      ],
+      "batchFingerprint": "7ee2d00d17ea5c0d4bf550ed742d5bebc166a26bb07baefc18cb9cc2681e6d72",
+      "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+      "MANUALLY_SELECTED": "NO",
+      "externalRequests": 6,
+      "cacheHits": 0,
+      "applyAllowedFields": 1,
+      "needsMoreFields": 5,
+      "holdOrConflict": 0,
+      "status": "BATCH_COMPLETE",
+      "hardStop": null,
+      "controllerDecision": {
+        "continue": true,
+        "stopReason": null,
+        "nextSelectedSlugs": [
+          "orange",
+          "raspberry"
+        ],
+        "nextBatchFingerprint": "38f78c98a0dc27be65c04e24cb1593b0990046985343d8b26f05b9c327c00395",
+        "remainingRequestBudget": 7
+      }
+    },
+    {
+      "batchIndex": 3,
+      "selectedSlugs": [
+        "orange",
+        "raspberry"
+      ],
+      "selectionRanks": [
+        {
+          "slug": "orange",
+          "queueRank": 37
+        },
+        {
+          "slug": "raspberry",
+          "queueRank": 44
+        }
+      ],
+      "batchFingerprint": "38f78c98a0dc27be65c04e24cb1593b0990046985343d8b26f05b9c327c00395",
+      "queueFingerprint": "31b1a8e041e2cb9698b606707854d63ae87fe6fc716a9a7ad05f3a56ce9ffe8e",
+      "MANUALLY_SELECTED": "NO",
+      "externalRequests": 4,
+      "cacheHits": 0,
+      "applyAllowedFields": 3,
+      "needsMoreFields": 1,
+      "holdOrConflict": 0,
+      "status": "BATCH_COMPLETE",
+      "hardStop": null,
+      "controllerDecision": {
+        "continue": false,
+        "stopReason": "MAX_BATCHES_REACHED",
+        "note": "MAX_BATCHES reached after successful batch"
+      }
+    }
+  ],
+  "BATCH_1_SELECTED_SLUGS": [
+    "apricot",
+    "avocado",
+    "guava"
+  ],
+  "BATCH_2_SELECTED_SLUGS": [
+    "lychee",
+    "mandarin",
+    "olive"
+  ],
+  "BATCH_3_SELECTED_SLUGS": [
+    "orange",
+    "raspberry"
+  ],
+  "totalExternalRequests": 15,
+  "totalCacheHits": 0,
+  "requestsPerJob": 1.875,
+  "applyAllowedFields": 6,
+  "needsMoreFields": 10,
+  "conflicts": 0,
+  "OWNER_REVIEW_COUNT": 0,
+  "NO_PROGRESS_STOP": "NO",
+  "PLANT_WRITE_COUNT": 0,
+  "QUEUE_WRITE_COUNT": 0,
+  "ZERO_WRITE_PROOF": {
+    "plantWriteCount": 0,
+    "queueWriteCount": 0,
+    "hashesBefore": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    },
+    "hashesAfter": {
+      "json": "1c4f86480fbd7a22cee87d1dda10f08864cbbfeec32299900950862f2b9bdab5",
+      "js": "90e7763e7fcc90472558550001fe895b1f9481559a79a22ab891998c4d2ee463",
+      "browser": "32ba2ba5e7acaee3ea01834bd11928bd32be9579ea77bafc74da17a8dd0d19d8",
+      "queue": "b6433bb15bf807a2625e8d31dc615c5cab02047a5dc0de49b4cf29bc7ff800fe",
+      "summary": "834325bda8b90399e2d5d638b3de7b7d9f43e54839452069223246a7062a63fe"
+    },
+    "catalogUnchanged": true,
+    "queueUnchanged": true
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "workerRef": "auto-enrichment-worker-v1@1.2.0",
+  "jobId": "enrich-v1:guava",
+  "slug": "guava",
+  "scientificName": "Psidium guajava",
+  "dryRun": true,
+  "beforePlantHash": "574a3ee7b9242e31ef4622cfda22caa28962a6e5a2b1d5e797999762afd9932f",
+  "beforeReadiness": {
+    "readinessShort": "B",
+    "gate": "PARTIAL"
+  },
+  "status": "PARTIAL_NO_APPLY",
+  "hardStop": null,
+  "externalRequests": 2,
+  "cacheHits": 0,
+  "appliedFields": [],
+  "ownerDecisionRequired": false,
+  "retrievalConfigSource": "custom",
+  "sourcesFetched": [
+    {
+      "sourceId": "ncsu-psidium-guajava",
+      "url": "https://plants.ces.ncsu.edu/plants/psidium-guajava/",
+      "status": 404,
+      "fromCache": false
+    },
+    {
+      "sourceId": "usda-plants-psidium-guajava",
+      "url": "https://plants.usda.gov/home/plantProfile?symbol=PSGU",
+      "status": 200,
+      "fromCache": false
+    }
+  ],
+  "packetFingerprint": "482a4b986685b6bcaf1913560a540246f45130010917a56c41664cd5d6729e74",
+  "fieldPackets": [
+    {
+      "field": "frostSensitivity",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    },
+    {
+      "field": "coldTolerance",
+      "applyStatus": "NEEDS_MORE_EVIDENCE",
+      "value": null,
+      "transformRef": null
+    }
+  ],
+  "applyGate": {
+    "setDecision": "NEEDS_MORE_EVIDENCE",
+    "setReasons": [
+      "apply_status_not_ready"
+    ],
+    "fieldResults": [
+      {
+        "field": "frostSensitivity",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      },
+      {
+        "field": "coldTolerance",
+        "decision": "NEEDS_MORE_EVIDENCE",
+        "reasons": [
+          "apply_status_not_ready"
+        ]
+      }
+    ]
+  },
+  "note": "insufficient_evidence_or_incomplete_ready_set"
+}
