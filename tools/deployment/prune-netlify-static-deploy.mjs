@@ -238,7 +238,16 @@ function collectExtraMatches(root) {
         continue;
       }
       // Env/cache/temp basenames are removable even under otherwise-preserved trees.
+      // Exception: CRUVIT climate coverage lives at data/coordinate-climate/v2/coverage
+      // and must not be deleted by the root `coverage/` basename rule.
       if (matchExtraBasename(ent.name)) {
+        if (
+          rel === 'data/coordinate-climate/v2/coverage' ||
+          rel.startsWith('data/coordinate-climate/v2/coverage/')
+        ) {
+          if (ent.isDirectory() && !ent.isSymbolicLink()) stack.push(abs);
+          continue;
+        }
         if (NEVER_PRUNE_EXACT.includes(rel)) {
           throw new Error(`unexpected_delete_candidate:${rel}`);
         }

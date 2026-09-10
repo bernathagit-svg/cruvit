@@ -116,6 +116,43 @@
   padding-inline-start:1.1em;
 }
 #smart-rec-root .sr-hero-answer-preview .sr-ha-block li{margin:2px 0;}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes{
+  margin:0 0 10px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(0,0,0,.18);
+  border:1px solid rgba(255,255,255,.1);
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes h3{
+  margin:0 0 6px;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  opacity:.8;
+  font-weight:700;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px 10px;
+  margin:0;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes-grid div{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-size:.86rem;
+  line-height:1.35;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes-grid dt{
+  margin:0;
+  opacity:.78;
+  font-weight:600;
+}
+#smart-rec-root .sr-hero-answer-preview .sr-ha-outcomes-grid dd{
+  margin:0;
+  font-weight:700;
+}
 #smart-rec-root .sr-hero-answer-preview .sr-ha-optional{
   margin:0 0 8px;
   padding-top:8px;
@@ -636,6 +673,10 @@
           <h2 class="sr-ha-title" id="srHaTitle">CRUVIT plant suitability answer</h2>
           <span class="sr-ha-status" id="srHaStatus">Select a plant</span>
           <p class="sr-ha-lead" id="srHaLead">Select a catalog plant to check climate suitability.</p>
+          <div class="sr-ha-outcomes" id="srHaOutcomesBlock" hidden>
+            <h3 id="srHaOutcomesLabel">Suitability outcomes</h3>
+            <dl class="sr-ha-outcomes-grid" id="srHaOutcomesGrid"></dl>
+          </div>
           <div class="sr-ha-grid">
             <div class="sr-ha-block">
               <h3 id="srHaUnderstandsLabel">What CRUVIT understands</h3>
@@ -3697,6 +3738,18 @@ async function saveGardenLocation(loc){
     onAppLocationChanged();
     data.events.unshift(['Today','Garden location updated',`${data.gardenLocation.label} · ${data.climate}`]);
     service.save(data);
+    /* Product Proof: when signed in with an owned garden, persist confirmed coords without a second button. */
+    try{
+      const src=String(data.gardenLocation?.source||'').trim();
+      if(src&&src!=='default'){
+        const pd=window.cruvitPersonalDomainV0;
+        if(pd&&typeof pd.getSession==='function'&&pd.getSession()?.user&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId()&&typeof pd.saveCurrentAppLocationToActiveGarden==='function'){
+          await pd.saveCurrentAppLocationToActiveGarden();
+        }
+      }
+    }catch(persistErr){
+      console.warn('Owned-garden location persist skipped:',persistErr&&persistErr.message?persistErr.message:persistErr);
+    }
     return result;
   }catch(err){
     data.weatherFetchError=err?.message||'Weather fetch failed';
@@ -7719,6 +7772,24 @@ function applySrHeroAnswerPreviewCopy(){
   if(list){
     const items=Array.isArray(c.understands)?c.understands:[];
     list.innerHTML=items.map(function(t){return '<li>'+String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</li>';}).join('');
+  }
+  const outcomesBlock=document.getElementById('srHaOutcomesBlock');
+  const outcomesGrid=document.getElementById('srHaOutcomesGrid');
+  const outcomeRows=Array.isArray(c.outcomeRows)?c.outcomeRows:[];
+  if(outcomesBlock&&outcomesGrid){
+    set('srHaOutcomesLabel',c.outcomesLabel||'Suitability outcomes');
+    if(c.outcomesHidden===true||!outcomeRows.length){
+      outcomesBlock.hidden=true;
+      outcomesGrid.innerHTML='';
+    }else{
+      outcomesBlock.hidden=false;
+      outcomesGrid.innerHTML=outcomeRows.map(function(row){
+        const label=String(row.label||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const display=String(row.display||'UNKNOWN').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        const status=String(row.status||'unknown').replace(/"/g,'&quot;');
+        return '<div data-sr-outcome="'+status+'"><dt>'+label+'</dt><dd>'+display+'</dd></div>';
+      }).join('');
+    }
   }
   const optional=document.getElementById('srHaOptionalBlock');
   if(optional) optional.hidden=true;

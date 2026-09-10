@@ -19,8 +19,10 @@ import { lookupCoordinateClimateProfile } from './coordinate-climate-lookup-v2.j
 import {
   loadGlobalManifest,
   lookupCoordinateClimateGlobal,
+  lookupCoordinateClimateGlobalAsync,
   resolveGlobalCoverageRoot
 } from './coordinate-climate-global-lookup-v2.js';
+import { isClimateRemoteTransportAvailable } from './coordinate-climate-global-object-storage-v1.js';
 import { buildStructuralClimateServerFields } from './structural-climate-persistence-contract.js';
 import { isPersistedClimateAuthorityStale } from './pre-scale-suitability-systemic-hardening-v1-contract.js';
 
@@ -40,6 +42,13 @@ export function isAuthoritativeGlobalCorpusAvailable(globalRoot) {
   } catch {
     return false;
   }
+}
+
+/** Remote object storage can serve the same global-tile identity when local tiles are absent. */
+export function isGlobalClimateAuthorityReachable(globalRoot, env = process.env) {
+  return (
+    isAuthoritativeGlobalCorpusAvailable(globalRoot) || isClimateRemoteTransportAvailable(env)
+  );
 }
 
 /** Frozen resolution contract labels (never claim 30 m climate). */
@@ -189,7 +198,8 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
 
   if (preferGlobal && isAuthoritativeGlobalCorpusAvailable(options.globalRoot)) {
     const globalLookup = lookupCoordinateClimateGlobal(latitude, longitude, {
-      globalRoot: options.globalRoot
+      globalRoot: options.globalRoot,
+      disableLocalTiles: options.disableLocalTiles === true
     });
     if (globalLookup.ok) {
       lookup = globalLookup;
@@ -242,6 +252,141 @@ export function resolveGardenStructuralClimateFromCoordinateV2(lat, lon, options
     matchedEntry: lookup.matchedEntry || null,
     lookupSource,
     tileKey: lookup.tileKey || null,
+    objectKey: lookup.objectKey || null,
+    globalBakeId: lookup.globalBakeId || null
+  };
+}
+
+/**
+ * Async garden hydrate — same semantics as sync, plus remote global-tile transport when
+ * local tiles are missing (R2 / object-mirror). Sparse fallback unchanged.
+ */
+export async function resolveGardenStructuralClimateFromCoordinateV2Async(lat, lon, options = {}) {
+  const cost = assertCoordinateClimateRuntimeCostPolicy();
+  _runtimeCounters.localLookups += 1;
+
+  const latitude = Number(lat);
+  const longitude = Number(lon);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    _runtimeCounters.unavailable += 1;
+    const profile = buildClimateAuthorityUnavailable({
+      lat,
+      lon,
+      reason: 'invalid-coordinates'
+    });
+    const structural = coordinateClimateProfileToStructuralPersistence(profile);
+    return {
+      ok: false,
+      code: CLIMATE_AUTHORITY_UNAVAILABLE,
+      structuralClimate: structural,
+      serverFields: buildStructuralClimateServerFields(structural),
+      profile,
+      cost: getCoordinateClimateRuntimeCounters(),
+      prepEnqueued: null,
+      resolutionContract: RESOLUTION_CONTRACT_V2
+    };
+  }
+
+  const existing = options.existingStructural;
+  if (
+    existing &&
+    typeof existing === 'object' &&
+    existing.status === 'known' &&
+    String(existing.provenance?.provider || '').includes('coordinate-climate-authority-v2')
+  ) {
+    const pLat = Number(existing.provenance?.lat);
+    const pLon = Number(existing.provenance?.lon);
+    const coordsMatch =
+      Number.isFinite(pLat) &&
+      Number.isFinite(pLon) &&
+      Math.abs(pLat - latitude) < 0.00015 &&
+      Math.abs(pLon - longitude) < 0.00015;
+    const stale = isPersistedClimateAuthorityStale(existing, {
+      currentAuthorityVersion: COORDINATE_CLIMATE_AUTHORITY_V2_VERSION,
+      currentBakeVersion: options.currentBakeVersion ?? null
+    });
+    if (coordsMatch && !stale.stale) {
+      return {
+        ok: true,
+        code: 'REUSE_PERSISTED_V2',
+        structuralClimate: existing,
+        serverFields: buildStructuralClimateServerFields(existing),
+        profile: existing.coordinateClimateV2 || null,
+        cost: getCoordinateClimateRuntimeCounters(),
+        prepEnqueued: null,
+        resolutionContract: RESOLUTION_CONTRACT_V2,
+        staleCheck: stale
+      };
+    }
+  }
+
+  const preferGlobal = options.preferGlobal !== false && options.disableGlobal !== true;
+  let lookup = null;
+  let lookupSource = null;
+
+  if (preferGlobal && isGlobalClimateAuthorityReachable(options.globalRoot, options.env)) {
+    const globalLookup = await lookupCoordinateClimateGlobalAsync(latitude, longitude, {
+      globalRoot: options.globalRoot,
+      disableLocalTiles: options.disableLocalTiles === true,
+      allowRemote: options.allowRemote !== false,
+      env: options.env,
+      remoteTimeoutMs: options.remoteTimeoutMs,
+      globalBakeId: options.globalBakeId
+    });
+    if (globalLookup.ok) {
+      lookup = globalLookup;
+      const pathHint = String(globalLookup.profile?.provenance?.lookupPath || '');
+      lookupSource =
+        pathHint === 'global-tile-o1-remote' ? 'global-tile-o1-remote' : 'global-tile-o1';
+    }
+  }
+
+  if (!lookup) {
+    lookup = lookupCoordinateClimateProfile(latitude, longitude, {
+      dataRoot: options.dataRoot
+    });
+    if (lookup.ok) lookupSource = 'local-index';
+  }
+
+  if (!lookup.ok) {
+    _runtimeCounters.unavailable += 1;
+    const prep =
+      options.enqueuePrep === false
+        ? null
+        : enqueueBackgroundClimatePrepNeed({
+            lat: latitude,
+            lon: longitude,
+            label: options.label,
+            reason: lookup.profile?.reason || lookup.code
+          });
+    const structural = coordinateClimateProfileToStructuralPersistence(lookup.profile);
+    return {
+      ok: false,
+      code: CLIMATE_AUTHORITY_UNAVAILABLE,
+      structuralClimate: structural,
+      serverFields: buildStructuralClimateServerFields(structural),
+      profile: lookup.profile,
+      cost: getCoordinateClimateRuntimeCounters(),
+      prepEnqueued: prep,
+      resolutionContract: RESOLUTION_CONTRACT_V2,
+      lookupSource: null
+    };
+  }
+
+  const structural = coordinateClimateProfileToStructuralPersistence(lookup.profile);
+  return {
+    ok: true,
+    code: 'OK',
+    structuralClimate: structural,
+    serverFields: buildStructuralClimateServerFields(structural),
+    profile: lookup.profile,
+    cost: getCoordinateClimateRuntimeCounters(),
+    prepEnqueued: null,
+    resolutionContract: RESOLUTION_CONTRACT_V2,
+    matchedEntry: lookup.matchedEntry || null,
+    lookupSource,
+    tileKey: lookup.tileKey || null,
+    objectKey: lookup.objectKey || null,
     globalBakeId: lookup.globalBakeId || null
   };
 }

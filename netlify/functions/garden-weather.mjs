@@ -1,5 +1,5 @@
 import {
-  resolveGardenStructuralClimateFromCoordinateV2,
+  resolveGardenStructuralClimateFromCoordinateV2Async,
   assertNoExternalStructuralAcquisitionOnUserRuntime,
   getCoordinateClimateRuntimeCounters
 } from '../../modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
@@ -556,7 +556,7 @@ export default async function handler(request) {
         return json(400, { error: 'Missing coordinates for structural climate' });
       }
       // Production: CRUVIT local Coordinate Climate V2 only — never Open-Meteo/CHELSA/terrain fetch.
-      const resolved = resolveGardenStructuralClimateFromCoordinateV2(lat, lon, {
+      const resolved = await resolveGardenStructuralClimateFromCoordinateV2Async(lat, lon, {
         label: cleanText(body.label),
         existingStructural: body.existingStructural || null,
         enqueuePrep: body.enqueuePrep !== false
@@ -568,6 +568,9 @@ export default async function handler(request) {
         serverFields: resolved.serverFields,
         prepEnqueued: resolved.prepEnqueued,
         resolutionContract: resolved.resolutionContract,
+        lookupSource: resolved.lookupSource || null,
+        tileKey: resolved.tileKey || null,
+        objectKey: resolved.objectKey || null,
         cost: resolved.cost || getCoordinateClimateRuntimeCounters(),
         policy: assertNoExternalStructuralAcquisitionOnUserRuntime(),
         // Explicit: acquisitionMs null — no external structural provider call
@@ -601,7 +604,7 @@ export default async function handler(request) {
 
     // Structural climate authority: Coordinate Climate V2 local lookup only.
     // Forecast remains separate. Never call Open-Meteo archive / CHELSA / terrain here.
-    const resolved = resolveGardenStructuralClimateFromCoordinateV2(lat, lon, {
+    const resolved = await resolveGardenStructuralClimateFromCoordinateV2Async(lat, lon, {
       label: location.label,
       existingStructural: body.existingStructural || null,
       enqueuePrep: body.enqueuePrep !== false
@@ -617,12 +620,18 @@ export default async function handler(request) {
       location,
       weather,
       structuralClimate,
-      structuralAcquisitionMs,
-      code: resolved.code,
-      ok: resolved.ok,
+      serverFields: resolved.serverFields,
       prepEnqueued: resolved.prepEnqueued,
-      cost: resolved.cost,
-      policy: assertNoExternalStructuralAcquisitionOnUserRuntime()
+      resolutionContract: resolved.resolutionContract,
+      lookupSource: resolved.lookupSource || null,
+      tileKey: resolved.tileKey || null,
+      objectKey: resolved.objectKey || null,
+      cost: resolved.cost || getCoordinateClimateRuntimeCounters(),
+      policy: assertNoExternalStructuralAcquisitionOnUserRuntime(),
+      acquisitionMs: structuralAcquisitionMs,
+      error: resolved.ok ? null : resolved.code,
+      code: resolved.code,
+      ok: resolved.ok
     });
   } catch (error) {
     return json(500, { error: error?.message || 'Weather service failed' });

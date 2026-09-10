@@ -297,6 +297,88 @@ test('TRUSTED REAL CASE — NYC global climate + coconut blocked authority → H
   assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
 });
 
+test('PRODUCT PROOF — Mojstrana global-tile climate + pineapple → Hero shows four outcomes incl UNKNOWN', () => {
+  clearGlobalRuntimeCaches();
+  resetCoordinateClimateRuntimeCounters();
+  const Mojstrana = { lat: 46.42383, lon: 13.8752, label: 'Mojstrana, Slovenia' };
+  const resolved = resolveGardenStructuralClimateFromCoordinateV2(Mojstrana.lat, Mojstrana.lon, {
+    dataRoot: DATA,
+    enqueuePrep: false,
+    label: Mojstrana.label
+  });
+  assert.equal(resolved.ok, true);
+  assert.equal(resolved.lookupSource, 'global-tile-o1');
+  assert.equal(getCoordinateClimateRuntimeCounters().chelsaExternalCalls, 0);
+
+  const structural =
+    resolved.structuralClimate ||
+    coordinateClimateProfileToStructuralPersistence(resolved.profile);
+  assert.equal(structural.status, 'known');
+  assert.equal(structural.freezingRisk, 'high');
+  const climateProfile = appClimateFromStructural(structural, Mojstrana.label);
+
+  const plant = findCatalogPlantBySlugOrName(loadSeedPlants(), 'pineapple');
+  assert.ok(plant);
+  assert.match(String(plant.scientific || ''), /Ananas comosus/i);
+  assert.equal(plant.climateTraits?.frostSensitivity, 'high');
+
+  const suitability = {
+    recommendationLevel: 'blocked',
+    suitabilityScore: 0,
+    survivalFit: 0,
+    thriveFit: 0,
+    floweringFit: 0,
+    fruitingFit: 0,
+    warnings: ['Frost risk is too high for this plant.'],
+    explanationText: 'Frost risk is too high for this plant.'
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta: {
+      frostSensitivity: plant.climateTraits.frostSensitivity,
+      heatTolerance: plant.climateTraits.heatTolerance,
+      coldTolerance: plant.climateTraits.coldTolerance,
+      groupIds: plant.climateTraits.groupIds || [],
+      needsReview: plant.climateTraits.needsReview === true,
+      floweringRequirements: plant.climateTraits.floweringRequirements || '',
+      fruitingRequirements: plant.climateTraits.fruitingRequirements || ''
+    },
+    climateProfile,
+    suitability,
+    plant
+  });
+  assert.equal(outcomes.overall, 'blocked');
+  assert.equal(outcomes.survival, 'unreliable');
+  assert.equal(outcomes.flowering, 'unknown');
+  assert.equal(outcomes.fruiting, 'unknown');
+
+  const hero = buildSrHeroAnswerViewModel({
+    trusted: true,
+    climateKnown: true,
+    plant,
+    suitability: Object.assign({}, suitability, { specificPlantOutcomes: outcomes }),
+    climateProfile,
+    locationLabel: Mojstrana.label,
+    outcomes
+  });
+  assert.equal(hero.truthState, 'E_BLOCKED');
+  assert.equal(hero.outcomesHidden, false);
+  assert.equal(hero.outcomeRows.length, 4);
+  const flower = hero.outcomeRows.find((r) => r.key === 'flowering');
+  const fruit = hero.outcomeRows.find((r) => r.key === 'fruiting');
+  assert.ok(flower);
+  assert.ok(fruit);
+  assert.match(String(flower.display), /unknown/i);
+  assert.match(String(fruit.display), /unknown/i);
+  assert.match(hero.lead, /Frost risk/i);
+});
+
+test('app.html auto-persists confirmed location to owned garden when signed in', () => {
+  const app = fs.readFileSync(APP, 'utf8');
+  assert.match(app, /saveCurrentAppLocationToActiveGarden/);
+  assert.match(app, /Owned-garden location persist skipped/);
+  assert.match(app, /srHaOutcomesBlock/);
+});
+
 test('regression source guards — scoring / Product Authority / Garden Memory untouched', () => {
   const app = fs.readFileSync(APP, 'utf8');
   const heroMod = fs.readFileSync(

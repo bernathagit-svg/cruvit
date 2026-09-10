@@ -4,6 +4,7 @@
   "immutablePathPattern": "climate/global-v1/{globalBakeId}/tiles/{tileFileName}",
   "cacheControl": "public, max-age=31536000, immutable",
   "uploadStatus": "NOT_CONNECTED",
+  "runtimeFetchStatus": "IMPLEMENTED_AWAITING_CREDENTIALS",
   "requiredEnvironment": [
     "R2_ACCOUNT_ID",
     "R2_ACCESS_KEY_ID",
@@ -12,5 +13,5 @@
   ],
   "optionalEnvironment": ["R2_ENDPOINT", "R2_PREFIX"],
   "blockerWhenMissing": "GLOBAL_STORAGE_CONNECTION_REQUIRED",
-  "notes": "Do not commit secrets. Upload script: scripts/coordinate-climate-v2-upload-r2.mjs"
+  "notes": "Do not commit secrets. Upload canary: scripts/coordinate-climate-v2-upload-r2-canary.mjs. Full plan: scripts/coordinate-climate-v2-upload-r2.mjs. Runtime module: modules/personal-domain/coordinate-climate-global-object-storage-v1.js. NOT_CONNECTED means owner R2 credentials/bucket are not configured yet; fetch code may still be present."
 }

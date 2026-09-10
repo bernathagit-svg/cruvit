@@ -97,6 +97,70 @@ function levelLabel(level, he) {
   return (he ? mapHe : mapEn)[level] || level;
 }
 
+/** Surface Specific Plant four-outcome truth honestly (including UNKNOWN). */
+function outcomeDisplayLabel(status, he, prefLabel) {
+  if (prefLabel != null && String(prefLabel).trim()) return String(prefLabel).trim();
+  const s = String(status || 'unknown').trim().toLowerCase();
+  const mapEn = {
+    reliable: 'Reliable',
+    supported: 'Supported',
+    constrained: 'Constrained',
+    poor: 'Poor',
+    unreliable: 'Unreliable',
+    unlikely: 'Unlikely',
+    unknown: 'UNKNOWN'
+  };
+  const mapHe = {
+    reliable: 'אמין',
+    supported: 'נתמך',
+    constrained: 'מוגבל',
+    poor: 'חלש',
+    unreliable: 'לא אמין',
+    unlikely: 'לא סביר',
+    unknown: 'לא ידוע'
+  };
+  return (he ? mapHe : mapEn)[s] || mapEn.unknown;
+}
+
+function buildOutcomeRows(outcomes, he) {
+  const o = outcomes && typeof outcomes === 'object' ? outcomes : null;
+  if (!o) return [];
+  const survival = o.survival ?? o.SURVIVAL;
+  const growth = o.growth ?? o.GROWTH;
+  const flowering = o.flowering ?? o.FLOWERING;
+  const fruiting = o.fruiting ?? o.FRUITING;
+  if (survival == null && growth == null && flowering == null && fruiting == null) return [];
+  const labels = he
+    ? { survival: 'הישרדות', growth: 'צמיחה', flowering: 'פריחה', fruiting: 'הפרות' }
+    : { survival: 'Survival', growth: 'Growth', flowering: 'Flowering', fruiting: 'Fruiting' };
+  return [
+    {
+      key: 'survival',
+      label: labels.survival,
+      status: String(survival || 'unknown'),
+      display: outcomeDisplayLabel(survival, he, o.survivalLabel)
+    },
+    {
+      key: 'growth',
+      label: labels.growth,
+      status: String(growth || 'unknown'),
+      display: outcomeDisplayLabel(growth, he, o.growthLabel)
+    },
+    {
+      key: 'flowering',
+      label: labels.flowering,
+      status: String(flowering || 'unknown'),
+      display: outcomeDisplayLabel(flowering, he, o.floweringLabel)
+    },
+    {
+      key: 'fruiting',
+      label: labels.fruiting,
+      status: String(fruiting || 'unknown'),
+      display: outcomeDisplayLabel(fruiting, he, o.fruitingLabel)
+    }
+  ];
+}
+
 /**
  * @param {{
  *   langHe?: boolean,
@@ -121,6 +185,14 @@ export function buildSrHeroAnswerViewModel(input = {}) {
   const locationLabel = String(
     input.locationLabel || climateProfile?.locationLabel || ''
   ).trim();
+  const outcomes =
+    (input.outcomes && typeof input.outcomes === 'object' && input.outcomes) ||
+    (suitability?.specificPlantOutcomes &&
+    typeof suitability.specificPlantOutcomes === 'object'
+      ? suitability.specificPlantOutcomes
+      : null);
+  const outcomeRows = buildOutcomeRows(outcomes, he);
+  const outcomesLabel = he ? 'תוצאות התאמה' : 'Suitability outcomes';
 
   const base = {
     version: SR_HERO_ANSWER_VIEW_VERSION,
@@ -145,7 +217,10 @@ export function buildSrHeroAnswerViewModel(input = {}) {
     recommendationLevel: null,
     truthState: null,
     understandsLabel: he ? 'מה CRUVIT הבינה' : 'What CRUVIT understands',
-    confidenceLabel: he ? 'ודאות' : 'Confidence'
+    confidenceLabel: he ? 'ודאות' : 'Confidence',
+    outcomesLabel,
+    outcomeRows: [],
+    outcomesHidden: true
   };
 
   if (!trusted) {
@@ -224,18 +299,27 @@ export function buildSrHeroAnswerViewModel(input = {}) {
     .filter(Boolean)
     .join(' · ');
 
+  const outcomeUnderstandLines = outcomeRows.map((row) => `${row.label}: ${row.display}`);
   const understands = [
     `${c.understandsPlant}: ${plantName}${scientific ? ` (${scientific})` : ''}`,
     `${c.understandsLevel}: ${levelLabel(level, he)}`,
     climateBits
       ? `${c.understandsClimate}: ${climateBits}`
       : `${c.understandsClimate}: ${he ? 'זמין' : 'available'}`,
-    explanation ? `${c.understandsReason}: ${explanation}` : null
+    explanation ? `${c.understandsReason}: ${explanation}` : null,
+    ...outcomeUnderstandLines
   ].filter(Boolean);
+
+  const liveOutcomes = {
+    outcomesLabel,
+    outcomeRows,
+    outcomesHidden: outcomeRows.length === 0
+  };
 
   if (level === 'blocked') {
     return {
       ...base,
+      ...liveOutcomes,
       truthState: 'E_BLOCKED',
       plantName,
       recommendationLevel: 'blocked',
@@ -255,6 +339,7 @@ export function buildSrHeroAnswerViewModel(input = {}) {
   if (level === 'borderline' || level === 'fair' || level === 'unknown') {
     return {
       ...base,
+      ...liveOutcomes,
       truthState: 'F_BORDERLINE',
       plantName,
       recommendationLevel: level,
@@ -273,6 +358,7 @@ export function buildSrHeroAnswerViewModel(input = {}) {
 
   return {
     ...base,
+    ...liveOutcomes,
     truthState: 'A_SUITABILITY',
     plantName,
     recommendationLevel: level,

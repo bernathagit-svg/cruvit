@@ -1,0 +1,182 @@
+{
+  "policyId": "real-user-product-proof-v1",
+  "parentCommit": "392c1ba128b7e76b53ecca92c6cf28365049d3a0",
+  "generatedAt": "2026-09-10T18:14:26.944Z",
+  "SUPABASE_REQUIRED_FOR_PRODUCT_PROOF": "YES",
+  "REAL_ACCOUNT_READY": "YES",
+  "OWNED_GARDEN_PERSISTENCE_READY": "YES",
+  "TRUSTED_LOCATION_TO_CLIMATE_PROVEN": "YES",
+  "PINEAPPLE_CANONICAL_RESOLUTION_PROVEN": "YES",
+  "HERO_IS_SYSTEM_GENERATED_FROM_REAL_SUITABILITY": "YES",
+  "COORDINATES_USED": {
+    "lat": 46.42383,
+    "lon": 13.8752,
+    "label": "Mojstrana, Municipality of Kranjska Gora, Slovenia",
+    "identity": "global-tile-o1 (chelsa30s-t64:363:70) — not city-named sparse pilot",
+    "untrustedFallbackUsed": "NO"
+  },
+  "PRIMARY": {
+    "location": {
+      "label": "Mojstrana, Municipality of Kranjska Gora, Slovenia",
+      "lat": 46.42383,
+      "lon": 13.8752,
+      "source": "open-meteo-geocode-search"
+    },
+    "climate": {
+      "ok": true,
+      "code": "OK",
+      "lookupSource": "global-tile-o1",
+      "tileKey": "chelsa30s-t64:363:70",
+      "globalBakeId": "bake-2026-09-01-global-v1-vpd-scale",
+      "fallbackUsed": "NO",
+      "structural": {
+        "status": "known",
+        "freezingRisk": "high",
+        "structuralColdRisk": "high",
+        "moistureRegime": "humid",
+        "thermalRegime": "frost-prone",
+        "humiditySignal": "borderline",
+        "elevationM": null,
+        "provider": "coordinate-climate-authority-v2",
+        "lat": 46.42383,
+        "lon": 13.8752,
+        "reason": null
+      },
+      "chelsaExternalCalls": 0
+    },
+    "plant": {
+      "slug": "pineapple",
+      "name": "Pineapple",
+      "scientific": "Ananas comosus",
+      "climateTraits": {
+        "coldTolerance": "low",
+        "frostSensitivity": "high",
+        "heatTolerance": "high",
+        "floweringRequirements": null,
+        "fruitingRequirements": null,
+        "needsReview": true
+      },
+      "readinessShort": "B",
+      "readinessClass": null
+    },
+    "gate": {
+      "ok": true,
+      "reason": "ready",
+      "message": ""
+    },
+    "suitability": {
+      "suitabilityScore": 0,
+      "recommendationLevel": "blocked",
+      "survivalFit": 0,
+      "thriveFit": 0,
+      "floweringFit": 0,
+      "fruitingFit": 0,
+      "warnings": [
+        "Frost risk is too high for this plant."
+      ],
+      "explanationText": "Frost risk is too high for this plant.",
+      "engineRuleSource": "app.html smartRecEvaluateSuitability frost outdoor gate (mirrored)"
+    },
+    "coldAssess": {
+      "survivalHint": "unreliable",
+      "confidence": "medium",
+      "reason": "High frostSensitivity conflicts with non-low freezingRisk.",
+      "survivalFit": 25,
+      "thriveFit": 25,
+      "authority": "frostSensitivity-high"
+    },
+    "outcomes": {
+      "SURVIVAL": "unreliable",
+      "GROWTH": "poor",
+      "FLOWERING": "unknown",
+      "FRUITING": "unknown",
+      "OVERALL": "blocked",
+      "MAIN_LIMITER": "Frost risk is too high for this plant.",
+      "limitingFactors": [
+        "Frost risk is too high for this plant.",
+        "Survival severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).",
+        "Growth severity preserved from plant trait + climate; confidence provisional (trait evidence not SOURCE_SUPPORTED).",
+        "Flowering UNKNOWN: floweringRequirements missing or not evidenced.",
+        "Fruiting UNKNOWN: fruiting/reproductive traits missing or not evidenced."
+      ],
+      "confidenceNotes": null
+    },
+    "hero": {
+      "truthState": "E_BLOCKED",
+      "recommendationLevel": "blocked",
+      "status": "Blocked / not suitable",
+      "lead": "Frost risk is too high for this plant.",
+      "tradeoff": "Frost risk is too high for this plant.",
+      "confidence": "The engine blocks a recommendation for this location/context.",
+      "plantName": "Pineapple",
+      "understands": [
+        "Plant: Pineapple (Ananas comosus)",
+        "Suitability: Blocked / not suitable",
+        "Climate: temperate · humid · freeze risk: high",
+        "Main reason: Frost risk is too high for this plant.",
+        "Survival: Unreliable",
+        "Growth: Poor",
+        "Flowering: UNKNOWN",
+        "Fruiting: UNKNOWN"
+      ],
+      "outcomesLabel": "Suitability outcomes",
+      "outcomeRows": [
+        {
+          "key": "survival",
+          "label": "Survival",
+          "status": "unreliable",
+          "display": "Unreliable"
+        },
+        {
+          "key": "growth",
+          "label": "Growth",
+          "status": "poor",
+          "display": "Poor"
+        },
+        {
+          "key": "flowering",
+          "label": "Flowering",
+          "status": "unknown",
+          "display": "UNKNOWN"
+        },
+        {
+          "key": "fruiting",
+          "label": "Fruiting",
+          "status": "unknown",
+          "display": "UNKNOWN"
+        }
+      ],
+      "outcomesHidden": false
+    }
+  },
+  "CONTRAST_SILVER_BIRCH_MOJSTRANA": {
+    "recommendationLevel": "good",
+    "heroTruthState": "A_SUITABILITY",
+    "outcomesOverall": "borderline",
+    "outcomes": {
+      "SURVIVAL": "constrained",
+      "GROWTH": "constrained",
+      "FLOWERING": "unknown",
+      "FRUITING": "unknown",
+      "OVERALL": "borderline",
+      "MAIN_LIMITER": "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
+      "limitingFactors": [
+        "Survival confidence bounded: material cold/survival traits are not SOURCE_SUPPORTED — provisional only.",
+        "Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only."
+      ],
+      "confidenceNotes": null
+    },
+    "differentFromPineappleMojstrana": "YES"
+  },
+  "CONTRAST_PINEAPPLE_YEHIAM": {
+    "recommendationLevel": "good",
+    "heroTruthState": "A_SUITABILITY",
+    "note": "Yehiam freezingRisk is low — pineapple may not frost-block; still needsReview for reproductive UNKNOWN"
+  },
+  "GENERIC_COORDINATE_NOTE": "Mojstrana and arbitrary land coords share global-tile-o1; no city-specific suitability logic.",
+  "CURRENT_HERO_USEFUL_ENOUGH_FOR_PRODUCT_PROOF": "YES",
+  "CATALOG_AUTOMATION_RESUMED": "NO",
+  "BATCH_3_INGESTED": "NO",
+  "DEPLOYED": "NO",
+  "VERDICT": "REAL_USER_PRODUCT_PROOF_V1_VALIDATED"
+}
