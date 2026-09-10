@@ -591,6 +591,54 @@ test('Pineapple × Ljubljana — multidimensional outdoor frost case (no invente
   assert.equal(vm.fruitingLabel, 'UNKNOWN');
 });
 
+test('group-template reproductive prose without plant-asserted fields must not authorize Unlikely/Unreliable', () => {
+  const plant = findCatalogPlantBySlugOrName(loadSeedPlants(), 'pineapple');
+  assert.ok(plant);
+  // Simulate pre-fix climateMetaFromCatalogTraits bug: group injects synthetic prose.
+  const meta = {
+    frostSensitivity: 'high',
+    heatTolerance: 'high',
+    coldTolerance: 'low',
+    humidityTolerance: 'medium',
+    groupIds: ['tropical-frost-sensitive-fruit'],
+    needsReview: true,
+    floweringRequirements: '',
+    fruitingRequirements: '',
+    survivalVsThriveNotes: plant.climateTraits?.survivalVsThriveNotes || ''
+  };
+  const climate = {
+    locationLabel: 'Mojstrana',
+    broadClimate: 'temperate',
+    freezingRisk: 'high',
+    isFrostFreeGrowingClimate: false,
+    thermalRegime: 'frost-prone',
+    moistureRegime: 'humid',
+    humiditySignal: 'borderline',
+    coldestMonthMeanMinC: -8.75,
+    structuralClimateStatus: 'known'
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta,
+    climateProfile: climate,
+    suitability: {
+      recommendationLevel: 'blocked',
+      survivalFit: 0,
+      thriveFit: 0,
+      floweringFit: 0,
+      fruitingFit: 0,
+      warnings: ['Frost risk is too high for this plant.'],
+      explanationText: 'Frost risk is too high for this plant.'
+    },
+    plant,
+    protectedGrowing: false
+  });
+  assert.equal(outcomes.survival, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  assert.equal(outcomes.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.fruiting, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.equal(outcomes.reproductiveEvidence?.flowering, 'missing:floweringRequirements');
+  assert.equal(outcomes.reproductiveEvidence?.fruiting, 'missing:fruitingRequirements');
+});
+
 test('partial metadata plant stays UNKNOWN on reproductive dimensions', () => {
   const plant = { slug: 'partial-demo', name: 'Partial Demo', tags: ['tropical'] };
   const meta = {

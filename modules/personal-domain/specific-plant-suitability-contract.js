@@ -700,7 +700,18 @@ export function evaluateFloweringFromCatalogEvidence({
     coldRaw == null || coldRaw === '' ? null : Number(coldRaw);
   const minTempC = parseMinTempCFromRequirements(text);
 
-  // Explicit negative evidence (may apply even without positive requirement text).
+  // Direct floweringRequirements required before any confident flowering outcome.
+  // Survival/growth failure must not invent Unlikely flowering when reproductive prose is absent
+  // (including synthetic group-template defaults that were stripped upstream).
+  if (!hasPositive) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+      unknownGap: 'floweringRequirements',
+      evidence: 'missing:floweringRequirements'
+    };
+  }
+
+  // Explicit negatives — only when plant-asserted floweringRequirements exist to compare.
   if (!sheltered && chillDeficit) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
@@ -759,14 +770,6 @@ export function evaluateFloweringFromCatalogEvidence({
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       limiting: `Coldest-month mean lows (~${coldest}°C) are below sourced flowering minimum (~${minTempC}°C).`,
       evidence: `negative:min-temp:${minTempC}C`
-    };
-  }
-
-  if (!hasPositive) {
-    return {
-      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
-      unknownGap: 'floweringRequirements',
-      evidence: 'missing:floweringRequirements'
     };
   }
 
@@ -921,6 +924,18 @@ export function evaluateFruitingFromCatalogEvidence({
     };
   };
 
+  // Direct fruitingRequirements required before Unreliable fruiting outcomes.
+  // Tags/groupIds alone are failure-context hints, not plant-asserted reproductive evidence.
+  if (!fruitPositive) {
+    return {
+      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
+      unknownGap: 'fruitingRequirements',
+      evidence: 'missing:fruitingRequirements',
+      reproductiveClimateSuitability: 'unknown',
+      biologicalFruitSetEligibility: 'UNKNOWN'
+    };
+  }
+
   if (!sheltered && chillDeficit && (fruitPositive || fruitFailCtx || plantNeedsWinterChill(meta))) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
@@ -970,16 +985,6 @@ export function evaluateFruitingFromCatalogEvidence({
       status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
       limiting: `Coldest-month mean lows (~${coldest}°C) are below sourced fruiting thermal needs (~${minTempC}°C).`,
       evidence: `negative:min-temp:${minTempC}C`
-    };
-  }
-
-  if (!fruitPositive) {
-    return {
-      status: SPECIFIC_OUTCOME_STATUS.UNKNOWN,
-      unknownGap: 'fruitingRequirements',
-      evidence: 'missing:fruitingRequirements',
-      reproductiveClimateSuitability: 'unknown',
-      biologicalFruitSetEligibility: 'UNKNOWN'
     };
   }
 

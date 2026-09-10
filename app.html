@@ -1860,6 +1860,15 @@ function climateMetaFromCatalogTraits(traits,scientific){
   );
   // Canonical traits last so asserted plant values win over group templates.
   let merged=smartRecMergeClimateMeta(...groupMeta,traits);
+  // Group templates must not invent plant-level flowering/fruiting requirement prose.
+  // Missing plant reproductive fields stay empty → Specific Plant outcomes remain UNKNOWN
+  // (do not treat synthetic group defaults as direct reproductive evidence).
+  if(!String(traits.floweringRequirements||'').trim()){
+    merged.floweringRequirements='';
+  }
+  if(!String(traits.fruitingRequirements||'').trim()){
+    merged.fruitingRequirements='';
+  }
   const sci=String(scientific||'');
   if(merged.needsReview||traits.needsReview===true||/\bspp\.?\b/i.test(sci)||/various/i.test(sci)){
     merged=smartRecMergeClimateMeta(merged,{needsReview:true});
