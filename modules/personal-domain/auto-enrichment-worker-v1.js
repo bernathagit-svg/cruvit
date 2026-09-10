@@ -56,10 +56,14 @@ import {
 import {
   loadRetryState,
   saveRetryState,
+  tryLoadRetryState,
   listCooldownSlugs,
   recordBatchRetryOutcomes,
   emptyOpportunityVersions,
-  PRODUCTION_RETRY_FAIRNESS_REF
+  PRODUCTION_RETRY_FAIRNESS_REF,
+  CONTROL_STATE_CORRUPTION,
+  CONTROL_STATE_STALE_WRITE,
+  RetryStatePersistenceError
 } from './production-retry-fairness-policy-v1.js';
 
 export const AUTO_ENRICHMENT_WORKER_ID = 'auto-enrichment-worker-v1';
@@ -402,7 +406,9 @@ export const WORKER_STOP_REASON = Object.freeze({
   PROVENANCE_MISSING: 'PROVENANCE_MISSING',
   NON_IDEMPOTENT_SECOND_APPLY: 'NON_IDEMPOTENT_SECOND_APPLY',
   REQUEST_CAP_EXCEEDED: 'REQUEST_CAP_EXCEEDED',
-  UNRELATED_PLANT_MUTATION: 'UNRELATED_PLANT_MUTATION'
+  UNRELATED_PLANT_MUTATION: 'UNRELATED_PLANT_MUTATION',
+  CONTROL_STATE_CORRUPTION: 'CONTROL_STATE_CORRUPTION',
+  CONTROL_STATE_STALE_WRITE: 'CONTROL_STATE_STALE_WRITE'
 });
 
 /** Selection-only reasons (not batch hard-stops). */
@@ -768,7 +774,30 @@ export function selectEligibleJobs(queueDoc, options = {}) {
   let retryCooldownSlugs = options.retryCooldownSlugs || [];
   let retryFairnessDetail = null;
   if (options.applyRetryFairness !== false && options.repoRoot) {
-    const loaded = loadRetryState(options.repoRoot, { statePath: options.retryStatePath || null });
+    const loaded = tryLoadRetryState(options.repoRoot, {
+      statePath: options.retryStatePath || null
+    });
+    if (!loaded.ok) {
+      return {
+        maxJobs: 0,
+        selected: [],
+        skipped: [],
+        plantSpecs: [],
+        realExecutionAllowed: false,
+        error: loaded.error?.code || CONTROL_STATE_CORRUPTION,
+        batchStopReason:
+          loaded.error?.code === CONTROL_STATE_STALE_WRITE
+            ? WORKER_STOP_REASON.CONTROL_STATE_STALE_WRITE
+            : WORKER_STOP_REASON.CONTROL_STATE_CORRUPTION,
+        OWNER_REVIEW_REQUIRED: loaded.error?.OWNER_REVIEW_REQUIRED || 'YES',
+        retryFairness: {
+          policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+          loadFailed: true,
+          code: loaded.error?.code || CONTROL_STATE_CORRUPTION
+        },
+        QUEUE_PRIORITY_PRESERVED_WITH_FAIRNESS: 'YES'
+      };
+    }
     const plantsBySlug =
       options.plantsBySlug ||
       (options.skipPlantHashForFairness ? null : loadCatalogPlants(options.repoRoot));
@@ -790,7 +819,9 @@ export function selectEligibleJobs(queueDoc, options = {}) {
       policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
       cooledSlugs: listed.cooledSlugs,
       details: listed.details,
-      statePath: loaded.path
+      statePath: loaded.path,
+      loadedFromDisk: loaded.existed === true ? 'YES' : 'NO',
+      contentHash: loaded.contentHash
     };
   }
 
@@ -863,6 +894,7 @@ export function lockBatch(selection, options = {}) {
       scientificName: j.scientificName,
       priority: j.priority,
       enrichmentExecution: j.enrichmentExecution,
+      productGate: j.productGate || j.currentGate || null,
       gapCodes: Object.freeze([...(j.gapCodes || [])])
     })
   );
@@ -1639,6 +1671,26 @@ export async function processBatch({
       now: clock,
       plantsBySlug
     });
+    if (selection.batchStopReason) {
+      return {
+        workerRef: AUTO_ENRICHMENT_WORKER_REF,
+        dryRun,
+        status: 'BATCH_STOPPED',
+        batchStopReason: selection.batchStopReason,
+        error: selection.error,
+        batchLocked: false,
+        audits: [],
+        selectedJobs: [],
+        lockedSlugs: [],
+        externalRequests: 0,
+        plantsChanged: [],
+        fieldsChanged: {},
+        OWNER_REVIEW_REQUIRED: selection.OWNER_REVIEW_REQUIRED || 'YES',
+        REAL_EXECUTION_ALLOWED: dryRun ? false : true,
+        recoveryPolicy: 'none',
+        retryFairness: selection.retryFairness || null
+      };
+    }
     lock = lockBatch(selection, { plantSpecs: retrievalPlantSpecs });
   }
 
@@ -1909,9 +1961,45 @@ export async function processBatch({
     persistRetryFairness === true ||
     (persistRetryFairness !== false && dryRun === false && realExecutionAllowed !== false);
   if (shouldPersistFairness && applyRetryFairness !== false && (batch.audits || []).length) {
-    const loaded = loadRetryState(repoRoot, { statePath: retryStatePath });
+    let loaded;
+    try {
+      loaded = loadRetryState(repoRoot, { statePath: retryStatePath });
+    } catch (err) {
+      const code =
+        err instanceof RetryStatePersistenceError
+          ? err.code
+          : CONTROL_STATE_CORRUPTION;
+      batch.status = 'BATCH_STOPPED';
+      batch.batchStopReason =
+        code === CONTROL_STATE_STALE_WRITE
+          ? WORKER_STOP_REASON.CONTROL_STATE_STALE_WRITE
+          : WORKER_STOP_REASON.CONTROL_STATE_CORRUPTION;
+      batch.error = err?.message || String(err);
+      batch.OWNER_REVIEW_REQUIRED = 'YES';
+      batch.retryFairness = {
+        policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+        persisted: false,
+        loadFailed: true,
+        code
+      };
+      return batch;
+    }
     const jobsBySlug = Object.fromEntries(
-      (lock.lockedJobs || []).map((j) => [j.slug, { ...j, canonicalSlug: j.slug }])
+      (lock.lockedJobs || []).map((j) => {
+        const live = loadQueueJob(queueDoc, j.slug) || {};
+        return [
+          j.slug,
+          {
+            ...live,
+            ...j,
+            canonicalSlug: j.slug,
+            productGate: j.productGate || live.productGate || live.currentGate || null,
+            gapCodes: j.gapCodes?.length ? j.gapCodes : live.gapCodes,
+            enrichmentExecution: j.enrichmentExecution || live.enrichmentExecution,
+            priority: j.priority || live.priority
+          }
+        ];
+      })
     );
     const plantHashBySlug = {};
     for (const j of lock.lockedJobs || []) {
@@ -1924,13 +2012,40 @@ export async function processBatch({
       plantHashBySlug,
       versionBundle: emptyOpportunityVersions()
     });
-    const saved = saveRetryState(repoRoot, loaded.doc, { statePath: retryStatePath });
-    batch.retryFairness = {
-      policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
-      persisted: true,
-      statePath: saved.path,
-      recorded: recorded.map((r) => ({ slug: r.slug, outcome: r.outcome }))
-    };
+    try {
+      const saved = saveRetryState(repoRoot, loaded.doc, {
+        statePath: retryStatePath,
+        expectedContentHash: loaded.existed ? loaded.contentHash : null,
+        now: clock
+      });
+      batch.retryFairness = {
+        policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+        persisted: true,
+        statePath: saved.path,
+        contentHash: saved.contentHash,
+        atomic: saved.atomic === true,
+        recorded: recorded.map((r) => ({ slug: r.slug, outcome: r.outcome }))
+      };
+    } catch (err) {
+      const code =
+        err instanceof RetryStatePersistenceError
+          ? err.code
+          : CONTROL_STATE_CORRUPTION;
+      batch.status = 'BATCH_STOPPED';
+      batch.batchStopReason =
+        code === CONTROL_STATE_STALE_WRITE
+          ? WORKER_STOP_REASON.CONTROL_STATE_STALE_WRITE
+          : WORKER_STOP_REASON.CONTROL_STATE_CORRUPTION;
+      batch.error = err?.message || String(err);
+      batch.OWNER_REVIEW_REQUIRED = code === CONTROL_STATE_CORRUPTION ? 'YES' : 'NO';
+      batch.retryFairness = {
+        policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
+        persisted: false,
+        saveFailed: true,
+        code
+      };
+      return batch;
+    }
   } else {
     batch.retryFairness = {
       policyRef: PRODUCTION_RETRY_FAIRNESS_REF,

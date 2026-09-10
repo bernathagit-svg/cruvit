@@ -1,0 +1,42 @@
+{
+  "stateId": "production-retry-fairness-state-v1",
+  "schemaVersion": 1,
+  "policyRef": "production-retry-fairness-policy-v1@1.0.0",
+  "generatedAt": "2026-09-10T14:00:00.000Z",
+  "note": "Production scheduling eligibility only. Not plant truth. Not enrichment-queue authority.",
+  "jobs": {
+    "enrich-v1:apricot": {
+      "jobId": "enrich-v1:apricot",
+      "canonicalSlug": "apricot",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "7263fc13c980cf0057561d25efc34aecc064026406b8f0cc03362582d26e5ace",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    },
+    "enrich-v1:avocado": {
+      "jobId": "enrich-v1:avocado",
+      "canonicalSlug": "avocado",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "ec3776e9782084b23034e971e5a9c20a3e6a4642f0e47380a25c76922d041de6",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    },
+    "enrich-v1:guava": {
+      "jobId": "enrich-v1:guava",
+      "canonicalSlug": "guava",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "5fe76835c91ac91421aafb0665f7aa5a347b8029e33c8bee2b4a1661b9fe432d",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    }
+  }
+}

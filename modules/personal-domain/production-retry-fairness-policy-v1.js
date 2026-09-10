@@ -67,7 +67,29 @@ export const FAIRNESS_CAN_OVERRIDE_HOLD = 'NO';
 export const OWNER_REVIEW_REQUIRED_FOR_ROUTINE_COOLDOWN = 'NO';
 export const QUEUE_PRIORITY_PRESERVED_WITH_FAIRNESS = 'YES';
 
+/** Durable control-document schema version (integer). */
+export const RETRY_STATE_SCHEMA_VERSION = 1;
+export const RETRY_STATE_STATE_ID = 'production-retry-fairness-state-v1';
+
+/**
+ * Fail-safe control stop — Owner Review required. Do not silently reset.
+ */
+export const CONTROL_STATE_CORRUPTION = 'CONTROL_STATE_CORRUPTION';
+export const CONTROL_STATE_STALE_WRITE = 'CONTROL_STATE_STALE_WRITE';
+export const OWNER_REVIEW_REQUIRED_FOR_CONTROL_STATE_CORRUPTION = 'YES';
+
 const MS_DAY = 24 * 60 * 60 * 1000;
+const ALLOWED_OUTCOMES = new Set(Object.values(ATTEMPT_OUTCOME));
+
+export class RetryStatePersistenceError extends Error {
+  constructor(code, message, detail = null) {
+    super(message || code);
+    this.name = 'RetryStatePersistenceError';
+    this.code = code;
+    this.detail = detail;
+    this.OWNER_REVIEW_REQUIRED = code === CONTROL_STATE_CORRUPTION ? 'YES' : 'NO';
+  }
+}
 
 export function cooldownMsForNoProgressCount(count) {
   const n = Number(count) || 0;
@@ -79,7 +101,8 @@ export function cooldownMsForNoProgressCount(count) {
 
 export function defaultRetryStateDoc(nowIso = new Date().toISOString()) {
   return {
-    stateId: 'production-retry-fairness-state-v1',
+    stateId: RETRY_STATE_STATE_ID,
+    schemaVersion: RETRY_STATE_SCHEMA_VERSION,
     policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
     generatedAt: nowIso,
     note:
@@ -93,25 +116,298 @@ export function resolveRetryStatePath(repoRoot, statePath = null) {
   return path.join(repoRoot, RETRY_STATE_STORAGE_MODEL.path);
 }
 
-export function loadRetryState(repoRoot, { statePath = null } = {}) {
-  const p = resolveRetryStatePath(repoRoot, statePath);
-  if (!fs.existsSync(p)) return { path: p, doc: defaultRetryStateDoc(), existed: false };
-  const doc = JSON.parse(fs.readFileSync(p, 'utf8'));
-  if (!doc.jobs || typeof doc.jobs !== 'object') doc.jobs = {};
-  return { path: p, doc, existed: true };
+export function hashRetryStateBytes(text) {
+  return crypto.createHash('sha256').update(String(text || ''), 'utf8').digest('hex');
 }
 
-export function saveRetryState(repoRoot, doc, { statePath = null } = {}) {
+export function hashRetryStateDoc(doc) {
+  return hashRetryStateBytes(JSON.stringify(doc));
+}
+
+/**
+ * Validate durable retry-state document. Throws RetryStatePersistenceError on corruption.
+ */
+export function validateRetryStateDoc(doc) {
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc)) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'retry state root must be an object',
+      { kind: 'root_type' }
+    );
+  }
+  if (doc.stateId !== RETRY_STATE_STATE_ID) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      `unexpected stateId=${doc.stateId}`,
+      { kind: 'stateId' }
+    );
+  }
+  const schemaVersion = doc.schemaVersion;
+  if (schemaVersion !== RETRY_STATE_SCHEMA_VERSION) {
+    // Accept legacy docs that omit schemaVersion only when otherwise clean empty/valid jobs
+    // were written before schemaVersion existed — migrate in-memory, do not invent empty on disk.
+    if (schemaVersion === undefined || schemaVersion === null) {
+      // fall through after structural checks; caller may stamp schemaVersion on save
+    } else {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        `unsupported schemaVersion=${schemaVersion}`,
+        { kind: 'schemaVersion', schemaVersion }
+      );
+    }
+  }
+  if (typeof doc.policyRef !== 'string' || !doc.policyRef.startsWith(PRODUCTION_RETRY_FAIRNESS_ID)) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      `unexpected policyRef=${doc.policyRef}`,
+      { kind: 'policyRef' }
+    );
+  }
+  if (!doc.jobs || typeof doc.jobs !== 'object' || Array.isArray(doc.jobs)) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'jobs must be an object map',
+      { kind: 'jobs_type' }
+    );
+  }
+  for (const [key, entry] of Object.entries(doc.jobs)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        `job entry ${key} invalid`,
+        { kind: 'job_entry', key }
+      );
+    }
+    if (entry.lastOutcome != null && !ALLOWED_OUTCOMES.has(entry.lastOutcome)) {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        `job ${key} lastOutcome invalid`,
+        { kind: 'lastOutcome', key, lastOutcome: entry.lastOutcome }
+      );
+    }
+    if (
+      entry.consecutiveNoProgressCount != null &&
+      (!Number.isFinite(entry.consecutiveNoProgressCount) || entry.consecutiveNoProgressCount < 0)
+    ) {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        `job ${key} consecutiveNoProgressCount invalid`,
+        { kind: 'consecutiveNoProgressCount', key }
+      );
+    }
+    // Reject botanical / evidence leakage fields
+    for (const banned of [
+      'climateTraits',
+      'rawHtml',
+      'evidenceBody',
+      'candidatePacket',
+      'secret',
+      'manualExclude'
+    ]) {
+      if (Object.prototype.hasOwnProperty.call(entry, banned)) {
+        throw new RetryStatePersistenceError(
+          CONTROL_STATE_CORRUPTION,
+          `job ${key} contains forbidden field ${banned}`,
+          { kind: 'forbidden_field', key, banned }
+        );
+      }
+    }
+  }
+  return true;
+}
+
+/**
+ * Load durable retry state.
+ * Missing file → empty default (existed:false), does not invent a write.
+ * Corrupt / wrong schema → CONTROL_STATE_CORRUPTION (fail closed).
+ */
+export function loadRetryState(repoRoot, { statePath = null, allowMissing = true } = {}) {
+  const p = resolveRetryStatePath(repoRoot, statePath);
+  if (!fs.existsSync(p)) {
+    if (!allowMissing) {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        'retry state file missing',
+        { kind: 'missing', path: p }
+      );
+    }
+    const doc = defaultRetryStateDoc();
+    return {
+      path: p,
+      doc,
+      existed: false,
+      contentHash: hashRetryStateDoc(doc),
+      rawText: null,
+      ok: true
+    };
+  }
+  let rawText;
+  try {
+    rawText = fs.readFileSync(p, 'utf8');
+  } catch (err) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'retry state unreadable',
+      { kind: 'read_error', path: p, message: String(err?.message || err) }
+    );
+  }
+  if (!rawText || !String(rawText).trim()) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'retry state truncated/empty',
+      { kind: 'truncated', path: p }
+    );
+  }
+  let doc;
+  try {
+    doc = JSON.parse(rawText);
+  } catch (err) {
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'retry state JSON corrupt',
+      { kind: 'json_parse', path: p, message: String(err?.message || err) }
+    );
+  }
+  try {
+    validateRetryStateDoc(doc);
+  } catch (err) {
+    if (err instanceof RetryStatePersistenceError) throw err;
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'retry state validation failed',
+      { kind: 'validate', path: p, message: String(err?.message || err) }
+    );
+  }
+  if (doc.schemaVersion == null) {
+    doc = { ...doc, schemaVersion: RETRY_STATE_SCHEMA_VERSION };
+  }
+  return {
+    path: p,
+    doc,
+    existed: true,
+    contentHash: hashRetryStateBytes(rawText),
+    rawText,
+    ok: true
+  };
+}
+
+/**
+ * Atomic durable write: temp → fsync → rename/replace.
+ * Optional expectedContentHash prevents stale overwrite of concurrent updates.
+ */
+export function saveRetryState(
+  repoRoot,
+  doc,
+  { statePath = null, expectedContentHash = null, now = null } = {}
+) {
   const p = resolveRetryStatePath(repoRoot, statePath);
   fs.mkdirSync(path.dirname(p), { recursive: true });
+
+  if (fs.existsSync(p) && expectedContentHash != null) {
+    const current = fs.readFileSync(p, 'utf8');
+    const currentHash = hashRetryStateBytes(current);
+    if (currentHash !== expectedContentHash) {
+      throw new RetryStatePersistenceError(
+        CONTROL_STATE_STALE_WRITE,
+        'stale retry-state write rejected',
+        { kind: 'stale_write', path: p, expectedContentHash, currentHash }
+      );
+    }
+  }
+
+  const nowIso =
+    now instanceof Date
+      ? now.toISOString()
+      : now
+        ? String(now)
+        : new Date().toISOString();
   const out = {
     ...doc,
-    stateId: 'production-retry-fairness-state-v1',
+    stateId: RETRY_STATE_STATE_ID,
+    schemaVersion: RETRY_STATE_SCHEMA_VERSION,
     policyRef: PRODUCTION_RETRY_FAIRNESS_REF,
-    generatedAt: new Date().toISOString()
+    generatedAt: nowIso,
+    jobs: doc.jobs && typeof doc.jobs === 'object' ? doc.jobs : {}
   };
-  fs.writeFileSync(p, JSON.stringify(out, null, 2));
-  return { path: p, doc: out };
+  validateRetryStateDoc(out);
+
+  const text = `${JSON.stringify(out, null, 2)}\n`;
+  const tmp = `${p}.${process.pid}.${Date.now()}.tmp`;
+  const bak = `${p}.bak`;
+  try {
+    const fd = fs.openSync(tmp, 'w');
+    try {
+      fs.writeFileSync(fd, text, 'utf8');
+      try {
+        fs.fsyncSync(fd);
+      } catch {
+        // fsync may be unsupported on some Windows volumes — best effort
+      }
+    } finally {
+      fs.closeSync(fd);
+    }
+    try {
+      fs.renameSync(tmp, p);
+    } catch {
+      // Windows cannot always rename over an existing file — swap via .bak
+      try {
+        if (fs.existsSync(bak)) fs.unlinkSync(bak);
+      } catch {
+        /* ignore */
+      }
+      if (fs.existsSync(p)) fs.renameSync(p, bak);
+      fs.renameSync(tmp, p);
+      try {
+        if (fs.existsSync(bak)) fs.unlinkSync(bak);
+      } catch {
+        /* ignore */
+      }
+    }
+  } catch (err) {
+    try {
+      if (fs.existsSync(tmp)) fs.unlinkSync(tmp);
+    } catch {
+      /* ignore */
+    }
+    if (err instanceof RetryStatePersistenceError) throw err;
+    throw new RetryStatePersistenceError(
+      CONTROL_STATE_CORRUPTION,
+      'atomic retry-state write failed',
+      { kind: 'atomic_write', path: p, message: String(err?.message || err) }
+    );
+  }
+
+  // Re-read to confirm durable presence
+  const rawText = fs.readFileSync(p, 'utf8');
+  return {
+    path: p,
+    doc: out,
+    contentHash: hashRetryStateBytes(rawText),
+    atomic: true,
+    ok: true
+  };
+}
+
+/**
+ * Safe helper for callers that must fail closed without try/catch sprawl.
+ */
+export function tryLoadRetryState(repoRoot, options = {}) {
+  try {
+    return loadRetryState(repoRoot, options);
+  } catch (err) {
+    if (err instanceof RetryStatePersistenceError) {
+      return { ok: false, error: err, path: resolveRetryStatePath(repoRoot, options.statePath) };
+    }
+    return {
+      ok: false,
+      error: new RetryStatePersistenceError(
+        CONTROL_STATE_CORRUPTION,
+        'unexpected load failure',
+        { message: String(err?.message || err) }
+      ),
+      path: resolveRetryStatePath(repoRoot, options.statePath)
+    };
+  }
 }
 
 /**
@@ -398,7 +694,7 @@ export function recordBatchRetryOutcomes(
       canonicalSlug: slug,
       gapCodes: job?.gapCodes || [],
       plantContentHash: plantHashBySlug?.[slug] || a.beforePlantHash || null,
-      productGate: job?.productGate || null,
+      productGate: job?.productGate || job?.currentGate || null,
       enrichmentExecution: job?.enrichmentExecution || null,
       priority: job?.priority || null,
       ...(versionBundle || {})

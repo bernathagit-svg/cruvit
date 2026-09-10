@@ -1,0 +1,87 @@
+{
+  "EXECUTION_B_ID": "retry-persist-exec-b-2026-09-10T14:05:00.000Z",
+  "pid": 22000,
+  "EXECUTION_A_PID_FROM_RESULT": 31452,
+  "PIDS_DIFFERENT": true,
+  "EXECUTION_B_LOADED_STATE_FROM_DISK": "YES",
+  "loadedContentHash": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964",
+  "expectedHashFromA": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964",
+  "hashMatchesExecutionAPersist": true,
+  "controllerLocalProcessedSet": [],
+  "excludeSlugsApplied": [],
+  "EXECUTION_B_SELECTED_SLUGS": [
+    "lychee",
+    "mandarin",
+    "olive"
+  ],
+  "batchLockedSlugs": [
+    "lychee",
+    "mandarin",
+    "olive"
+  ],
+  "cooledJobReports": [
+    {
+      "jobId": "enrich-v1:apricot",
+      "slug": "apricot",
+      "cooldownActive": "YES",
+      "retryStateSource": "persisted_disk_state",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "consecutiveNoProgressCount": 1
+    },
+    {
+      "jobId": "enrich-v1:avocado",
+      "slug": "avocado",
+      "cooldownActive": "YES",
+      "retryStateSource": "persisted_disk_state",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "consecutiveNoProgressCount": 1
+    },
+    {
+      "jobId": "enrich-v1:guava",
+      "slug": "guava",
+      "cooldownActive": "YES",
+      "retryStateSource": "persisted_disk_state",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "consecutiveNoProgressCount": 1
+    }
+  ],
+  "COOLED_JOB_EXTERNAL_REQUESTS": 0,
+  "cooledRetrievalUrls": [],
+  "totalFetchUrls": 6,
+  "CROSS_PROCESS_SELECTION_ADVANCED": "YES",
+  "QUEUE_PRIORITY_PRESERVED_ACROSS_EXECUTIONS": "YES",
+  "PLANT_WRITE_COUNT": 0,
+  "LOGICAL_QUEUE_JOB_CHANGE_COUNT": 0,
+  "selectionAuthority": "QUEUE_ORDER_SAFE_P1_AUTO",
+  "retryFairness": {
+    "policyRef": "production-retry-fairness-policy-v1@1.0.0",
+    "cooledSlugs": [
+      "apricot",
+      "avocado",
+      "guava"
+    ],
+    "details": [
+      {
+        "jobId": "enrich-v1:apricot",
+        "slug": "apricot",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      },
+      {
+        "jobId": "enrich-v1:avocado",
+        "slug": "avocado",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      },
+      {
+        "jobId": "enrich-v1:guava",
+        "slug": "guava",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      }
+    ],
+    "statePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-control\\production-retry-fairness-state-v1.json",
+    "loadedFromDisk": "YES",
+    "contentHash": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964"
+  }
+}

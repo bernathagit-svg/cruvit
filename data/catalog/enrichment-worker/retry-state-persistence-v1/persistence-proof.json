@@ -1,0 +1,182 @@
+{
+  "policyRef": "production-retry-fairness-policy-v1@1.0.0",
+  "RETRY_STATE_STORAGE_MODEL": {
+    "path": "data/catalog/enrichment-control/production-retry-fairness-state-v1.json",
+    "kind": "PRODUCTION_SCHEDULING_STATE",
+    "botanicalFacts": false,
+    "queueJobTruth": false,
+    "justification": "Keep cross-run cooldown / attempt fingerprints in a dedicated enrichment-control document so scheduling state cannot be confused with plant climateTraits provenance or authoritative enrichment-queue gap/priority truth."
+  },
+  "RETRY_STATE_SCHEMA_VERSION": 1,
+  "RETRY_STATE_DURABLE_ACROSS_PROCESS_RESTART": "YES",
+  "ATOMIC_STATE_WRITES": {
+    "tempFile": true,
+    "fsyncBestEffort": true,
+    "atomicRenameReplace": true,
+    "schemaValidationBeforePersist": true,
+    "expectedContentHashStaleGuard": true
+  },
+  "EXECUTION_A": {
+    "id": "retry-persist-exec-a-2026-09-10T14:00:00.000Z",
+    "pid": 31452,
+    "childStatus": 0,
+    "selectedSlugs": [
+      "apricot",
+      "avocado",
+      "guava"
+    ],
+    "outcomes": [
+      {
+        "slug": "apricot",
+        "status": "PARTIAL_NO_APPLY",
+        "hardStop": null,
+        "appliedFields": []
+      },
+      {
+        "slug": "avocado",
+        "status": "PARTIAL_NO_APPLY",
+        "hardStop": null,
+        "appliedFields": []
+      },
+      {
+        "slug": "guava",
+        "status": "PARTIAL_NO_APPLY",
+        "hardStop": null,
+        "appliedFields": []
+      }
+    ],
+    "stateHashBefore": "9c8c997497f35e0e68e7e1b1e36638318061484233fdb762958b90b631c9141e",
+    "stateHashAfter": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964",
+    "retryEntries": {
+      "apricot": {
+        "jobId": "enrich-v1:apricot",
+        "canonicalSlug": "apricot",
+        "consecutiveNoProgressCount": 1,
+        "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+        "lastAttemptFingerprint": "7263fc13c980cf0057561d25efc34aecc064026406b8f0cc03362582d26e5ace",
+        "lastOutcome": "NO_PROGRESS",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "lastProgressAt": null,
+        "evidenceVersion": null
+      },
+      "avocado": {
+        "jobId": "enrich-v1:avocado",
+        "canonicalSlug": "avocado",
+        "consecutiveNoProgressCount": 1,
+        "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+        "lastAttemptFingerprint": "ec3776e9782084b23034e971e5a9c20a3e6a4642f0e47380a25c76922d041de6",
+        "lastOutcome": "NO_PROGRESS",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "lastProgressAt": null,
+        "evidenceVersion": null
+      },
+      "guava": {
+        "jobId": "enrich-v1:guava",
+        "canonicalSlug": "guava",
+        "consecutiveNoProgressCount": 1,
+        "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+        "lastAttemptFingerprint": "5fe76835c91ac91421aafb0665f7aa5a347b8029e33c8bee2b4a1661b9fe432d",
+        "lastOutcome": "NO_PROGRESS",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "lastProgressAt": null,
+        "evidenceVersion": null
+      }
+    },
+    "nextEligibleAt": {
+      "apricot": "2026-09-11T14:00:00.000Z",
+      "avocado": "2026-09-11T14:00:00.000Z",
+      "guava": "2026-09-11T14:00:00.000Z"
+    }
+  },
+  "PROCESS_BOUNDARY": {
+    "executionAPid": 31452,
+    "executionBPid": 22000,
+    "pidsDifferent": true,
+    "sharedInMemoryController": "NO",
+    "sharedProcessedSet": "NO",
+    "EXECUTION_B_LOADED_STATE_FROM_DISK": "YES"
+  },
+  "EXECUTION_B": {
+    "id": "retry-persist-exec-b-2026-09-10T14:05:00.000Z",
+    "selectedSlugs": [
+      "lychee",
+      "mandarin",
+      "olive"
+    ],
+    "cooledJobReports": [
+      {
+        "jobId": "enrich-v1:apricot",
+        "slug": "apricot",
+        "cooldownActive": "YES",
+        "retryStateSource": "persisted_disk_state",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      },
+      {
+        "jobId": "enrich-v1:avocado",
+        "slug": "avocado",
+        "cooldownActive": "YES",
+        "retryStateSource": "persisted_disk_state",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      },
+      {
+        "jobId": "enrich-v1:guava",
+        "slug": "guava",
+        "cooldownActive": "YES",
+        "retryStateSource": "persisted_disk_state",
+        "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+        "consecutiveNoProgressCount": 1
+      }
+    ],
+    "COOLED_JOB_EXTERNAL_REQUESTS": 0,
+    "CROSS_PROCESS_SELECTION_ADVANCED": "YES",
+    "hashMatchesExecutionAPersist": true
+  },
+  "QUEUE_PRIORITY_PRESERVED_ACROSS_EXECUTIONS": "YES",
+  "COOLDOWN_EXPIRY": {
+    "beforeNextEligibleAtActive": true,
+    "atOrAfterNextEligibleAtActive": false,
+    "COOLDOWN_TABLE_V1": [
+      {
+        "consecutiveNoProgressCount": 1,
+        "cooldownMs": 86400000,
+        "label": "24h"
+      },
+      {
+        "consecutiveNoProgressCount": 2,
+        "cooldownMs": 259200000,
+        "label": "72h"
+      },
+      {
+        "consecutiveNoProgressCount": 3,
+        "cooldownMs": 604800000,
+        "label": "7d",
+        "appliesToCountAtLeast": 3
+      }
+    ],
+    "COOLDOWN_EXPIRY_PROVEN": "YES"
+  },
+  "EARLY_RETRY": {
+    "EARLY_RETRY_FROM_MEANINGFUL_CHANGE": "YES",
+    "METADATA_ONLY_CHANGE_BYPASSES_COOLDOWN": "NO"
+  },
+  "FAILURE_SAFETY": {
+    "missingFileCreatesEmptyDefault": true,
+    "corruptJsonFailsClosed": true,
+    "wrongSchemaFailsClosed": true,
+    "truncatedFailsClosed": true,
+    "staleWriteRejected": true,
+    "OWNER_REVIEW_REQUIRED_FOR_CONTROL_STATE_CORRUPTION": "YES"
+  },
+  "CANONICAL_PLANT_WRITE_COUNT": 0,
+  "LOGICAL_QUEUE_JOB_CHANGE_COUNT": 0,
+  "liveStateRestoredToCleanEmptyAfterProof": "YES",
+  "liveSnapshotPath": "data/catalog/enrichment-worker/retry-state-persistence-v1/live-retry-state-after-execution-a-snapshot.json",
+  "RECURRING_STATE_PERSISTENCE_PROVEN": "YES",
+  "SAFE_TO_CREATE_RECURRING_BOUNDED_PRODUCTION_SCHEDULE": "YES",
+  "RECURRING_SCHEDULE_CREATED": "NO",
+  "BATCH_3_INGESTED": "NO",
+  "DEPLOYED": "NO",
+  "VERDICT": "RETRY_STATE_PERSISTENCE_V1_VALIDATED"
+}

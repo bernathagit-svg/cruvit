@@ -1,0 +1,103 @@
+{
+  "EXECUTION_A_ID": "retry-persist-exec-a-2026-09-10T14:00:00.000Z",
+  "pid": 31452,
+  "processBoundary": "EXECUTION_A_ONLY",
+  "selectedSlugs": [
+    "apricot",
+    "avocado",
+    "guava"
+  ],
+  "outcomes": [
+    {
+      "slug": "apricot",
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "appliedFields": []
+    },
+    {
+      "slug": "avocado",
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "appliedFields": []
+    },
+    {
+      "slug": "guava",
+      "status": "PARTIAL_NO_APPLY",
+      "hardStop": null,
+      "appliedFields": []
+    }
+  ],
+  "batchStatus": "BATCH_COMPLETE",
+  "batchStopReason": null,
+  "retryFairness": {
+    "policyRef": "production-retry-fairness-policy-v1@1.0.0",
+    "persisted": true,
+    "statePath": "C:\\Users\\berna\\Projects\\cruvit\\data\\catalog\\enrichment-control\\production-retry-fairness-state-v1.json",
+    "contentHash": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964",
+    "atomic": true,
+    "recorded": [
+      {
+        "slug": "apricot",
+        "outcome": "NO_PROGRESS"
+      },
+      {
+        "slug": "avocado",
+        "outcome": "NO_PROGRESS"
+      },
+      {
+        "slug": "guava",
+        "outcome": "NO_PROGRESS"
+      }
+    ]
+  },
+  "stateFile": "data/catalog/enrichment-control/production-retry-fairness-state-v1.json",
+  "stateHashBefore": "9c8c997497f35e0e68e7e1b1e36638318061484233fdb762958b90b631c9141e",
+  "stateHashAfter": "5f8c0f200d6c747c5551ceb9e69f1a69542e730ab3b102baa4cee122c8ccd964",
+  "stateChanged": true,
+  "schemaVersion": 1,
+  "retryEntries": {
+    "apricot": {
+      "jobId": "enrich-v1:apricot",
+      "canonicalSlug": "apricot",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "7263fc13c980cf0057561d25efc34aecc064026406b8f0cc03362582d26e5ace",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    },
+    "avocado": {
+      "jobId": "enrich-v1:avocado",
+      "canonicalSlug": "avocado",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "ec3776e9782084b23034e971e5a9c20a3e6a4642f0e47380a25c76922d041de6",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    },
+    "guava": {
+      "jobId": "enrich-v1:guava",
+      "canonicalSlug": "guava",
+      "consecutiveNoProgressCount": 1,
+      "lastAttemptAt": "2026-09-10T14:00:00.000Z",
+      "lastAttemptFingerprint": "5fe76835c91ac91421aafb0665f7aa5a347b8029e33c8bee2b4a1661b9fe432d",
+      "lastOutcome": "NO_PROGRESS",
+      "nextEligibleAt": "2026-09-11T14:00:00.000Z",
+      "lastProgressAt": null,
+      "evidenceVersion": null
+    }
+  },
+  "nextEligibleAt": {
+    "apricot": "2026-09-11T14:00:00.000Z",
+    "avocado": "2026-09-11T14:00:00.000Z",
+    "guava": "2026-09-11T14:00:00.000Z"
+  },
+  "PLANT_WRITE_COUNT": 0,
+  "LOGICAL_QUEUE_JOB_CHANGE_COUNT": 0,
+  "queueOrderFingerprintBefore": "fa4dfb489377564dad948a6718f2f89f26b356d8247a9e9764c01ec6906724cb",
+  "persistedAtomic": true,
+  "RETRY_STATE_SCHEMA_VERSION": 1
+}

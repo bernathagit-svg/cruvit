@@ -141,6 +141,7 @@ export function classifyProductionArtifactPath(relPath) {
     /compact-commit-file-list\.json$/i.test(p) ||
     /production-artifact-retention/i.test(p) ||
     /production-retry-fairness/i.test(p) ||
+    /retry-state-persistence/i.test(p) ||
     /enrichment-control\/production-retry-fairness-state-v1\.json$/i.test(p)
   ) {
     return { class: 'B', commit: true, reason: 'minimal_run_proof' };
