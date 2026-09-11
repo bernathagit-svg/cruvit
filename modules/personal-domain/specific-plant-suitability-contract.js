@@ -118,20 +118,20 @@ export function mayRunSpecificPlantSuitabilityCheck(state = {}) {
   const activeGardenId = String(state.activeGardenId || '').trim();
   const hasTrustedLocation = state.hasTrustedLocation === true;
   if (gardenCount <= 0) {
-    return { ok: false, reason: 'no-garden', message: 'Create or open an owned Garden Profile first.' };
+    return { ok: false, reason: 'no-garden', message: 'Create your garden first.' };
   }
   if (gardenCount > 1 && !activeGardenId) {
     return {
       ok: false,
       reason: 'select-garden',
-      message: 'Select which Garden to check before evaluating a plant.'
+      message: 'Choose which garden to check.'
     };
   }
   if (!hasTrustedLocation) {
     return {
       ok: false,
       reason: 'no-location',
-      message: 'Confirm a trusted location on this Garden before checking plant suitability.'
+      message: 'Set your garden location before checking a plant.'
     };
   }
   return { ok: true, reason: 'ready', message: '' };

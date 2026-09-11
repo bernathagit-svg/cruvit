@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
-<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20250829">
+<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911">
 <style id="licensed-catalog-media-runtime-styles">
 .plant-img{position:relative}
 .plant-media-attr{
@@ -572,58 +572,78 @@
 
 <div class="pd-v0-modal" id="pdV0Modal" aria-hidden="true">
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
-    <p class="pd-v0-kicker">Personal domain V0</p>
-    <h2 id="pdV0Title">Garden Profile account</h2>
-    <p class="pd-v0-lead">Sign in to create server-owned Garden Profiles. Location, plants, and tasks can be saved to a Garden only after explicit confirmation. Legacy My Garden events are not migrated in this checkpoint.</p>
-    <div id="pdV0SignedOut">
-      <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
-      <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
-      <div class="pd-v0-actions">
-        <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.signIn()">Sign in</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signUp()">Create account</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
-      </div>
-    </div>
-    <div id="pdV0SignedIn" hidden>
-      <p class="pd-v0-lead">Signed in as <strong id="pdV0UserEmail"></strong></p>
-      <input class="pd-v0-field" id="pdV0GardenName" type="text" placeholder="Garden profile name">
-      <div class="pd-v0-actions">
-        <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.createGardenProfile()">Create Garden Profile</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename active/first</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signOut()">Sign out</button>
-        <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
-      </div>
-      <div class="pd-v0-panel">
-        <strong>Your server Garden Profiles</strong>
-        <p class="pd-v0-hint">With multiple gardens, open one explicitly before Smart Rec uses its server location.</p>
-        <ul class="pd-v0-list" id="pdV0GardenList"></ul>
+    <p class="pd-v0-kicker" id="pdV0Kicker">My Garden</p>
+    <h2 id="pdV0Title">Welcome to Cruvit</h2>
+    <p class="pd-v0-lead" id="pdV0Lead">Sign in to save your garden, location, and plants.</p>
+    <div id="pdV0FeedbackBanner" class="pd-v0-feedback-banner" hidden aria-live="assertive"></div>
+    <div id="pdV0OnboardingHost" data-state="A_SIGN_IN">
+      <div id="pdV0SignedOut">
+        <input class="pd-v0-field" id="pdV0Email" type="email" autocomplete="username" placeholder="Email">
+        <input class="pd-v0-field" id="pdV0Password" type="password" autocomplete="current-password" placeholder="Password">
         <div class="pd-v0-actions">
-          <button type="button" class="pd-v0-btn light" id="pdV0SaveAppLocationBtn">Save confirmed app location to active Garden</button>
-          <button type="button" class="pd-v0-btn light" id="pdV0ClearGardenLocationBtn">Clear active Garden location</button>
+          <button type="button" class="pd-v0-btn main" onclick="window.cruvitPersonalDomainV0?.signIn()">Sign in</button>
+          <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signUp()">Create account</button>
+          <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
         </div>
-        <div id="pdV0LegacyImport" class="pd-v0-legacy" hidden>
-          <p class="pd-v0-hint">This browser has a trusted local location, and the active Garden has none on the server.</p>
-          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyLocationBtn">Use this location for this Garden</button>
+      </div>
+      <div id="pdV0SignedIn" hidden>
+        <p class="pd-v0-lead">Signed in as <strong id="pdV0UserEmail"></strong></p>
+        <div id="pdV0CreateGardenPanel" hidden>
+          <input class="pd-v0-field" id="pdV0GardenName" type="text" placeholder="Garden name (optional)">
+          <div class="pd-v0-actions">
+            <button type="button" class="pd-v0-btn main" id="pdV0CreateGardenBtn">Create my garden</button>
+          </div>
         </div>
-        <div id="pdV0LegacyPlantImport" class="pd-v0-legacy" hidden>
-          <p class="pd-v0-hint">This browser has local My Garden plants. They are not uploaded until you confirm.</p>
-          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyPlantsBtn">Add existing local plants to this Garden</button>
+        <div id="pdV0LocationStep" hidden>
+          <div class="pd-v0-actions">
+            <button type="button" class="pd-v0-btn main" id="pdV0SetLocationBtn">Set garden location</button>
+          </div>
+          <p class="pd-v0-ok-line" id="pdV0LocationSavedLabel" hidden></p>
         </div>
-        <div id="pdV0LegacyTaskImport" class="pd-v0-legacy" hidden>
-          <p class="pd-v0-hint">This browser has local My Garden tasks. They are not uploaded until you confirm.</p>
-          <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyTasksBtn">Add existing local tasks to this Garden</button>
+        <div id="pdV0PlantStep" hidden>
+          <div class="pd-v0-actions">
+            <button type="button" class="pd-v0-btn main" id="pdV0AddFirstPlantBtn">Add your first plant</button>
+          </div>
+          <p class="pd-v0-hint" id="pdV0AnswerHint" hidden>Your first Cruvit grow answer appears below.</p>
         </div>
-        <div class="pd-v0-panel pd-v0-suitability" id="pdV0SpecificSuitability">
-          <strong>Can this plant grow in my Garden?</strong>
-          <p class="pd-v0-hint">Checks one catalog plant against the active Garden’s confirmed location. Browse preference filters do not apply.</p>
-          <input class="pd-v0-field" id="pdV0PlantSearch" type="search" autocomplete="off" placeholder="Search catalog plant…" aria-label="Search catalog plant">
+        <div class="pd-v0-panel pd-v0-suitability" id="pdV0SpecificSuitability" hidden>
+          <strong>Can I grow this here?</strong>
+          <p class="pd-v0-hint">Search a plant. Cruvit checks it against your garden location.</p>
+          <input class="pd-v0-field" id="pdV0PlantSearch" type="search" autocomplete="off" placeholder="Search plant…" aria-label="Search plant">
           <ul class="pd-v0-list pd-v0-plant-hits" id="pdV0PlantHits" hidden></ul>
           <p class="pd-v0-hint" id="pdV0PlantSelected" hidden></p>
           <div class="pd-v0-actions">
-            <button type="button" class="pd-v0-btn main" id="pdV0CheckSuitabilityBtn" disabled>Check suitability</button>
+            <button type="button" class="pd-v0-btn main" id="pdV0CheckSuitabilityBtn" disabled>Can I grow this here?</button>
           </div>
           <div class="pd-v0-suit-result" id="pdV0SuitResult" hidden aria-live="polite"></div>
         </div>
+        <div id="pdV0GardenSwitcher" class="pd-v0-panel" hidden>
+          <strong>Your gardens</strong>
+          <ul class="pd-v0-list" id="pdV0GardenList"></ul>
+        </div>
+        <details class="pd-v0-advanced" id="pdV0AdvancedDetails">
+          <summary>More options</summary>
+          <div class="pd-v0-actions">
+            <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.createGardenProfile()">Add another garden</button>
+            <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename garden</button>
+            <button type="button" class="pd-v0-btn light" id="pdV0SaveAppLocationBtn">Retry save location</button>
+            <button type="button" class="pd-v0-btn light" id="pdV0ClearGardenLocationBtn">Clear garden location</button>
+            <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.signOut()">Sign out</button>
+            <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.close()">Close</button>
+          </div>
+          <div id="pdV0LegacyImport" class="pd-v0-legacy" hidden>
+            <p class="pd-v0-hint">This browser has a location ready to use for this garden.</p>
+            <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyLocationBtn">Use this location for my garden</button>
+          </div>
+          <div id="pdV0LegacyPlantImport" class="pd-v0-legacy" hidden>
+            <p class="pd-v0-hint">This browser has local plants that are not in your garden yet.</p>
+            <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyPlantsBtn">Add local plants to my garden</button>
+          </div>
+          <div id="pdV0LegacyTaskImport" class="pd-v0-legacy" hidden>
+            <p class="pd-v0-hint">This browser has local tasks that are not in your garden yet.</p>
+            <button type="button" class="pd-v0-btn main" id="pdV0ImportLegacyTasksBtn">Add local tasks to my garden</button>
+          </div>
+        </details>
       </div>
     </div>
     <p class="pd-v0-status" id="pdV0Status" aria-live="polite"></p>
@@ -3731,7 +3751,8 @@ async function saveLocationFromModal(){
   }
 }
 
-async function saveGardenLocation(loc){
+async function saveGardenLocation(loc,options){
+  const opts=options&&typeof options==='object'?options:{};
   const current=ensureGardenLocation();
   const next=Object.assign({},current,loc,{updatedAt:new Date().toISOString()});
   data.gardenLocation=next;
@@ -3747,17 +3768,28 @@ async function saveGardenLocation(loc){
     onAppLocationChanged();
     data.events.unshift(['Today','Garden location updated',`${data.gardenLocation.label} · ${data.climate}`]);
     service.save(data);
-    /* Product Proof: when signed in with an owned garden, persist confirmed coords without a second button. */
-    try{
-      const src=String(data.gardenLocation?.source||'').trim();
-      if(src&&src!=='default'){
-        const pd=window.cruvitPersonalDomainV0;
-        if(pd&&typeof pd.getSession==='function'&&pd.getSession()?.user&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId()&&typeof pd.saveCurrentAppLocationToActiveGarden==='function'){
-          await pd.saveCurrentAppLocationToActiveGarden();
+    /* First Value: confirming location persists automatically to the owned garden. */
+    if(!opts.skipServerPersist){
+      try{
+        const src=String(data.gardenLocation?.source||'').trim();
+        if(src&&src!=='default'){
+          const pd=window.cruvitPersonalDomainV0;
+          if(pd&&typeof pd.onAppLocationConfirmedFromUi==='function'){
+            await pd.onAppLocationConfirmedFromUi();
+          }else if(pd&&typeof pd.getSession==='function'&&pd.getSession()?.user&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId()&&typeof pd.saveCurrentAppLocationToActiveGarden==='function'){
+            await pd.saveCurrentAppLocationToActiveGarden();
+          }
         }
+      }catch(persistErr){
+        const msg=persistErr&&persistErr.message?persistErr.message:String(persistErr||'Could not save garden location');
+        console.warn('Owned-garden location persist failed:',msg);
+        try{
+          if(typeof setLocationStatus==='function') setLocationStatus(msg);
+        }catch(_){}
+        try{
+          window.cruvitPersonalDomainV0?.open?.();
+        }catch(_){}
       }
-    }catch(persistErr){
-      console.warn('Owned-garden location persist skipped:',persistErr&&persistErr.message?persistErr.message:persistErr);
     }
     return result;
   }catch(err){
@@ -3818,6 +3850,8 @@ function buildAppLocationRecordFromGarden(loc){
     timezone:String(gl.timezone||'').trim(),
     provider:String(gl.provider||'').trim(),
     broadClimateLabel:String(gl.climate||data.climate||'').trim(),
+    climate:String(gl.climate||data.climate||'').trim(),
+    structuralClimate:gl.structuralClimate&&typeof gl.structuralClimate==='object'?gl.structuralClimate:null,
     derivedClimateProfile:null,
     weatherSnapshot:data.weather&&typeof data.weather==='object'?Object.assign({},data.weather):null,
     confirmationStatus:source==='default'?'default':'confirmed',
@@ -3883,7 +3917,7 @@ async function setAppLocation(partial,options){
   }else if(!locationChanged&&current.structuralClimate){
     payload.structuralClimate=current.structuralClimate;
   }
-  return saveGardenLocation(payload);
+  return saveGardenLocation(payload,options);
 }
 
 async function clearAppLocation(){
@@ -3985,6 +4019,27 @@ function clearLocalGardenLocationSnapshotBeforeAuthHydrate(){
  * (snapshot remains available for sign-out restore).
  */
 function suspendAuthenticatedLocationHydrationInMemory(){
+  // Prefer restoring the pre-auth trusted location so the user can one-step save it
+  // to a garden that has no server location yet. Do not wipe Mojstrana → Western Galilee.
+  const snap=readPreAuthLocationSnapshot();
+  if(snap?.gardenLocation&&typeof snap.gardenLocation==='object'
+    &&String(snap.gardenLocation.source||'').trim()!=='default'){
+    data.gardenLocation=Object.assign({},snap.gardenLocation);
+    data.location=snap.location!=null?snap.location:data.gardenLocation.label;
+    data.climate=snap.climate!=null?snap.climate:data.gardenLocation.climate;
+    if(snap.weather&&typeof snap.weather==='object') data.weather=Object.assign({},snap.weather);
+    else data.weather={};
+    if(snap.weatherFetchError) data.weatherFetchError=snap.weatherFetchError;
+    else delete data.weatherFetchError;
+    onAppLocationChanged();
+    return;
+  }
+  if(data.gardenLocation&&typeof data.gardenLocation==='object'
+    &&String(data.gardenLocation.source||'').trim()!=='default'){
+    // Keep current trusted local candidate; it is not server-authoritative yet.
+    onAppLocationChanged();
+    return;
+  }
   const derived=deriveLabelParts(DEFAULT_GARDEN_LOCATION.label);
   data.gardenLocation={
     label:DEFAULT_GARDEN_LOCATION.label,

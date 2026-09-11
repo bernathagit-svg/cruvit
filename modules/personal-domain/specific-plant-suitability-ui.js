@@ -67,6 +67,57 @@ function setSelectedPlant(plant) {
   }
   if (btn) btn.disabled = !selectedPlant;
   notifySrHeroAnswerRefresh();
+  if (selectedPlant) {
+    void persistSelectedPlantAndAnswer();
+  }
+}
+
+async function persistSelectedPlantAndAnswer() {
+  if (!selectedPlant) return;
+  const domain = pd();
+  try {
+    if (typeof domain?.upsertPlantOnActiveGarden === 'function' && domain.getSession?.()?.user) {
+      await domain.upsertPlantOnActiveGarden({
+        id: `catalog:${selectedPlant.slug || selectedPlant.name}`,
+        profileSlug: selectedPlant.slug || null,
+        name: selectedPlant.name || selectedPlant.slug,
+        scientific: selectedPlant.scientific,
+        status: 'Healthy',
+        mark: '✓',
+        source: 'My Garden'
+      });
+      if (typeof domain.hydrateActiveGardenPlants === 'function') {
+        await domain.hydrateActiveGardenPlants();
+      }
+      domain.renderFirstValueOnboarding?.();
+    }
+  } catch (err) {
+    renderResult(null, err?.message || 'Could not save plant to your garden.');
+    return;
+  }
+  if (typeof window.setSrHeroSelectedPlant === 'function') {
+    window.setSrHeroSelectedPlant(selectedPlant.slug || selectedPlant);
+  }
+  runCheck();
+  notifySrHeroAnswerRefresh();
+}
+
+export function focusFirstPlantEntry() {
+  const search = document.getElementById('pdV0PlantSearch');
+  const suit = document.getElementById('pdV0SpecificSuitability');
+  if (suit) suit.hidden = false;
+  if (search) {
+    search.focus();
+    try {
+      search.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+export function runSpecificPlantCheckIfReady() {
+  if (selectedPlant) runCheck();
 }
 
 function renderHits(plants) {
@@ -222,5 +273,7 @@ window.cruvitSpecificPlantSuitabilityUi = {
   wire: wireSpecificPlantSuitabilityUi,
   onActiveGardenChanged,
   runCheck,
+  focusFirstPlantEntry,
+  runSpecificPlantCheckIfReady,
   getSelectedPlant: () => selectedPlant
 };

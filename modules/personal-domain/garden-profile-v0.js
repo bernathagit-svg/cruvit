@@ -29,10 +29,13 @@ import {
 } from './garden-profile-tasks-contract.js';
 import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
-  wireSpecificPlantSuitabilityUi
+  wireSpecificPlantSuitabilityUi,
+  focusFirstPlantEntry as focusSpecificPlantEntry,
+  runSpecificPlantCheckIfReady
 } from './specific-plant-suitability-ui.js';
 import { buildSrHeroAnswerViewModel } from './smart-rec-hero-answer-view-v1.js';
 import { deriveSpecificPlantOutcomes } from './specific-plant-suitability-contract.js';
+import { deriveFirstValueOnboardingState } from './first-value-onboarding-v1-contract.js';
 import {
   SMART_REC_CLIMATE_META_AUTHORITY_VERSION,
   plantHasCanonicalClimateTraits,
@@ -98,6 +101,8 @@ let serverPlantsAuthoritative = false;
 let serverTasksAuthoritative = false;
 /** @type {Map<string, string>} client plant id → server plant uuid for active garden */
 let plantClientToServerId = new Map();
+/** @type {number} */
+let activeGardenPlantCount = 0;
 
 function setStatus(text, kind) {
   const el = document.getElementById('pdV0Status');
@@ -105,6 +110,20 @@ function setStatus(text, kind) {
   el.textContent = text || '';
   el.classList.remove('error', 'ok');
   if (kind) el.classList.add(kind);
+  if (text) {
+    try {
+      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    } catch {
+      /* ignore */
+    }
+  }
+  const banner = document.getElementById('pdV0FeedbackBanner');
+  if (banner) {
+    banner.hidden = !text;
+    banner.textContent = text || '';
+    banner.classList.remove('error', 'ok');
+    if (kind) banner.classList.add(kind);
+  }
 }
 
 function setSignedOutUi() {
@@ -201,6 +220,7 @@ function suspendHydrationForGardenWithoutServerLocation() {
 function suspendAuthenticatedPlantsInMemory() {
   serverPlantsAuthoritative = false;
   plantClientToServerId = new Map();
+  activeGardenPlantCount = 0;
   if (typeof window.suspendAuthenticatedPlantsHydrationInMemory === 'function') {
     window.suspendAuthenticatedPlantsHydrationInMemory();
   }
@@ -282,9 +302,8 @@ function escapeHtml(value) {
 }
 
 function formatLocationSummary(row) {
-  if (!isCompleteServerLocation(row)) return 'No confirmed server location';
-  const bits = [row.location_label, row.location_climate].filter(Boolean);
-  return bits.join(' · ');
+  if (!isCompleteServerLocation(row)) return 'Location not set yet';
+  return String(row.location_label || 'Location saved');
 }
 
 function hasLegacyTrustedLocalLocation() {
@@ -306,30 +325,109 @@ function hasLegacyLocalPlants() {
   }
 }
 
+function getActiveGardenRow() {
+  const id = getActiveGardenId();
+  if (!id) return ownedGardensCache.length === 1 ? ownedGardensCache[0] : null;
+  return ownedGardensCache.find((r) => String(r.id) === String(id)) || null;
+}
+
+function renderFirstValueOnboarding() {
+  const host = document.getElementById('pdV0OnboardingHost');
+  const signedIn = !!currentSession?.user;
+  const step = deriveFirstValueOnboardingState({
+    signedIn,
+    gardens: ownedGardensCache,
+    activeGardenId: getActiveGardenId(),
+    activeGarden: getActiveGardenRow(),
+    plantCount: activeGardenPlantCount
+  });
+
+  const titleEl = document.getElementById('pdV0Title');
+  const leadEl = document.getElementById('pdV0Lead');
+  const kickerEl = document.getElementById('pdV0Kicker');
+  if (kickerEl) kickerEl.textContent = 'My Garden';
+  if (titleEl) titleEl.textContent = step.title;
+  if (leadEl) leadEl.textContent = step.lead;
+
+  const createPanel = document.getElementById('pdV0CreateGardenPanel');
+  const locationPanel = document.getElementById('pdV0LocationStep');
+  const plantPanel = document.getElementById('pdV0PlantStep');
+  const answerHint = document.getElementById('pdV0AnswerHint');
+  const switcher = document.getElementById('pdV0GardenSwitcher');
+  const advanced = document.getElementById('pdV0AdvancedDetails');
+
+  if (createPanel) {
+    createPanel.hidden = step.primaryAction !== 'create-garden';
+  }
+  if (locationPanel) {
+    locationPanel.hidden = step.primaryAction !== 'set-location';
+    const locLabel = document.getElementById('pdV0LocationSavedLabel');
+    if (locLabel) locLabel.hidden = true;
+  }
+  if (plantPanel) {
+    plantPanel.hidden = !(
+      step.primaryAction === 'add-plant' ||
+      step.primaryAction === 'check-plant' ||
+      step.state === 'E_FIRST_ANSWER'
+    );
+  }
+  if (answerHint) {
+    answerHint.hidden = step.state !== 'E_FIRST_ANSWER';
+  }
+  if (switcher) {
+    switcher.hidden = !step.showGardenSwitcher;
+  }
+  if (advanced) {
+    // Keep advanced collapsed; only useful with multiple gardens or recovery.
+    advanced.hidden = !signedIn;
+  }
+
+  if (host) {
+    host.dataset.state = step.state;
+    host.dataset.primaryAction = step.primaryAction;
+  }
+
+  // Suitability block visibility tracks plant step.
+  const suit = document.getElementById('pdV0SpecificSuitability');
+  if (suit) {
+    suit.hidden = !(
+      step.primaryAction === 'add-plant' ||
+      step.primaryAction === 'check-plant' ||
+      step.state === 'E_FIRST_ANSWER'
+    );
+  }
+
+  return step;
+}
+
 function renderGardenProfileList(rows) {
   const list = document.getElementById('pdV0GardenList');
   const importPanel = document.getElementById('pdV0LegacyImport');
   const plantImportPanel = document.getElementById('pdV0LegacyPlantImport');
   const taskImportPanel = document.getElementById('pdV0LegacyTaskImport');
-  if (!list) return;
+  if (!list) {
+    renderFirstValueOnboarding();
+    return;
+  }
   const activeId = getActiveGardenId();
   if (!rows?.length) {
-    list.innerHTML = '<li class="pd-v0-chip">No server Garden Profiles yet.</li>';
+    list.innerHTML = '<li class="pd-v0-chip">No gardens yet.</li>';
     if (importPanel) importPanel.hidden = true;
     if (plantImportPanel) plantImportPanel.hidden = true;
+    if (taskImportPanel) taskImportPanel.hidden = true;
+    renderFirstValueOnboarding();
     return;
   }
   list.innerHTML = rows
     .map((row) => {
-      const name = escapeHtml(row.name || 'Garden');
+      const name = escapeHtml(row.name || 'My Garden');
       const id = escapeHtml(row.id || '');
       const loc = escapeHtml(formatLocationSummary(row));
       const isActive = activeId && String(row.id) === String(activeId);
-      const openLabel = isActive ? 'Active' : 'Open Garden';
+      const openLabel = isActive ? 'Using this garden' : 'Use this garden';
       const openDisabled = isActive ? 'disabled' : '';
       return `<li>
-        <strong>${name}</strong>${isActive ? ' <span class="pd-v0-chip">active</span>' : ''}<br>
-        <span class="pd-v0-chip">${id}</span><br>
+        <strong>${name}</strong>${isActive ? ' <span class="pd-v0-chip">current</span>' : ''}<br>
         <small>${loc}</small><br>
         <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-open-garden="${id}" ${openDisabled}>${openLabel}</button>
       </li>`;
@@ -351,13 +449,13 @@ function renderGardenProfileList(rows) {
   }
   if (plantImportPanel) {
     const active = rows.find((r) => activeId && String(r.id) === String(activeId));
-    // Show when an active garden exists and browser still has legacy local plants to import.
     plantImportPanel.hidden = !(active && hasLegacyLocalPlants());
   }
   if (taskImportPanel) {
     const active = rows.find((r) => activeId && String(r.id) === String(activeId));
     taskImportPanel.hidden = !(active && hasLegacyLocalTasks());
   }
+  renderFirstValueOnboarding();
 }
 
 function hasLegacyLocalTasks() {
@@ -427,10 +525,12 @@ async function hydrateActiveGardenPlants(gardenRow) {
     const cid = String(r.client_instance_id || '').trim();
     if (cid && r.id) plantClientToServerId.set(cid, r.id);
   });
+  activeGardenPlantCount = plants.length;
   if (typeof window.applyAuthenticatedGardenPlants === 'function') {
     window.applyAuthenticatedGardenPlants(plants, { authoritative: true });
   }
   serverPlantsAuthoritative = true;
+  renderFirstValueOnboarding();
   return true;
 }
 
@@ -536,7 +636,7 @@ async function hydrateActiveGardenLocation(gardenRow) {
   if (typeof window.captureLocalGardenLocationSnapshotBeforeAuthHydrate === 'function') {
     window.captureLocalGardenLocationSnapshotBeforeAuthHydrate();
   }
-  await window.setAppLocation(partial);
+  await window.setAppLocation(partial, { skipServerPersist: true });
   if (seq !== hydrateSeq) return false;
   if (
     !shouldAcceptLocationHydration(
@@ -613,8 +713,8 @@ async function selectActiveGarden(gardenId) {
   const okTasks = await hydrateActiveGardenTasks(row);
   setStatus(
     okLoc || okPlants || okTasks
-      ? `Opened garden "${row.name}" and hydrated server garden data.`
-      : `Opened garden "${row.name}". No confirmed server location yet.`,
+      ? `Using “${row.name}”.`
+      : `Using “${row.name}”. Next: set your garden location.`,
     'ok'
   );
   try {
@@ -696,23 +796,25 @@ async function signOut() {
 
 async function createGardenProfile() {
   if (!supabase || !currentSession?.user) {
-    setStatus('Sign in to create a Garden Profile.', 'error');
+    setStatus('Sign in to create your garden.', 'error');
     return;
   }
   const name = String(document.getElementById('pdV0GardenName')?.value || '').trim() || 'My Garden';
-  setStatus('Creating Garden Profile…');
+  setStatus('Creating your garden…');
   const { data, error } = await supabase
     .from('garden_profiles')
     .insert({ user_id: currentSession.user.id, name })
     .select(GARDEN_SELECT)
     .single();
   if (error) {
-    setStatus(error.message || 'Create failed.', 'error');
+    setStatus(error.message || 'Could not create garden.', 'error');
     return;
   }
   if (data?.id) setStoredActiveGardenId(data.id);
-  setStatus(`Created Garden Profile "${data.name}".`, 'ok');
+  setStatus(`Created “${data.name}”. Next: set your garden location.`, 'ok');
   await refreshOwnedGardenProfiles();
+  renderFirstValueOnboarding();
+  return data;
 }
 
 async function renameFirstOwnedGardenProfile() {
@@ -748,11 +850,11 @@ async function renameFirstOwnedGardenProfile() {
 
 function requireActiveOwnedGardenId() {
   if (!supabase || !currentSession?.user) {
-    throw new Error('Sign in to manage Garden plants.');
+    throw new Error('Sign in to manage garden plants.');
   }
   const gardenId = getActiveGardenId();
   if (!gardenId) {
-    throw new Error('Select an owned Garden Profile before managing plants.');
+    throw new Error('Create or choose your garden before managing plants.');
   }
   return gardenId;
 }
@@ -963,11 +1065,14 @@ async function importLegacyLocalTasksToActiveGarden(explicitUserConfirm) {
 
 async function saveConfirmedLocationToActiveGarden(locationInput) {
   if (!supabase || !currentSession?.user) {
-    throw new Error('Sign in to save Garden location.');
+    throw new Error('Sign in to save your garden location.');
   }
   const gardenId = getActiveGardenId();
   if (!gardenId) {
-    throw new Error('Select an owned Garden Profile before saving location.');
+    if (ownedGardensCache.length > 1) {
+      throw new Error('Choose which garden to use, then set the location again.');
+    }
+    throw new Error('Create your garden before saving a location.');
   }
   const payload = buildServerLocationPayload(locationInput);
   const requestUserId = currentSession.user.id;
@@ -975,30 +1080,90 @@ async function saveConfirmedLocationToActiveGarden(locationInput) {
     .from('garden_profiles')
     .update(payload)
     .eq('id', gardenId)
+    .eq('user_id', requestUserId)
     .select(GARDEN_SELECT)
     .single();
-  if (error) throw error;
-  if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) return null;
+  if (error) {
+    throw new Error(error.message || 'Could not save garden location.');
+  }
+  if (!data || data.location_lat == null || data.location_lon == null) {
+    throw new Error('Location did not save to your garden. Please try again.');
+  }
+  if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) {
+    throw new Error('Signed-out during save. Sign in and try again.');
+  }
   await refreshOwnedGardenProfiles();
   return data;
 }
 
+/**
+ * Map confirmed app location → server write input.
+ * Never invents coordinates; requires trusted confirmed app location.
+ */
+function readConfirmedAppLocationForServerWrite() {
+  if (typeof window.getAppLocation !== 'function' || typeof window.hasTrustedAppLocation !== 'function') {
+    throw new Error('Location tools are unavailable right now.');
+  }
+  if (!window.hasTrustedAppLocation()) {
+    throw new Error('Set your garden location first, then try again.');
+  }
+  const loc = window.getAppLocation();
+  const sourceRaw = String(loc.source || '').trim();
+  if (!sourceRaw || sourceRaw === 'default') {
+    throw new Error('Confirm a real garden location before saving.');
+  }
+  const climate = String(
+    loc.climate ||
+      loc.broadClimateLabel ||
+      loc.derivedClimateProfile?.climateLabel ||
+      ''
+  ).trim();
+  if (!climate) {
+    throw new Error('Garden climate is missing. Set the location again.');
+  }
+  const lat = Number(loc.lat ?? loc.coordinates?.lat);
+  const lon = Number(loc.lon ?? loc.coordinates?.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    throw new Error('Garden coordinates are missing. Set the location again.');
+  }
+  const structural =
+    (loc.structuralClimate && typeof loc.structuralClimate === 'object'
+      ? loc.structuralClimate
+      : null) ||
+    (loc.derivedClimateProfile?.structuralClimate &&
+    typeof loc.derivedClimateProfile.structuralClimate === 'object'
+      ? loc.derivedClimateProfile.structuralClimate
+      : null);
+  return {
+    label: String(loc.label || '').trim(),
+    climate,
+    lat,
+    lon,
+    country: loc.country,
+    region: loc.region,
+    timezone: loc.timezone,
+    source: sourceRaw === 'geolocation' ? 'geolocation' : 'manual',
+    structuralClimate: structural
+  };
+}
+
 async function clearLocationOnActiveGarden() {
   if (!supabase || !currentSession?.user) {
-    throw new Error('Sign in to clear Garden location.');
+    throw new Error('Sign in to clear garden location.');
   }
   const gardenId = getActiveGardenId();
   if (!gardenId) {
-    throw new Error('Select an owned Garden Profile first.');
+    throw new Error('Choose a garden first.');
   }
   const requestUserId = currentSession.user.id;
   const { data, error } = await supabase
     .from('garden_profiles')
     .update(nullServerLocationPayload())
     .eq('id', gardenId)
+    .eq('user_id', requestUserId)
     .select(GARDEN_SELECT)
     .single();
-  if (error) throw error;
+  if (error) throw new Error(error.message || 'Could not clear location.');
   if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) return null;
   clearAuthenticatedHydratedLocation();
   await refreshOwnedGardenProfiles();
@@ -1010,69 +1175,111 @@ async function clearLocationOnActiveGarden() {
  */
 async function importLegacyTrustedLocationToActiveGarden(explicitConfirm) {
   if (!mayWriteLegacyLocalLocationToServer(explicitConfirm)) {
-    throw new Error('Legacy local location import requires explicit user confirmation.');
+    throw new Error('Confirm that you want to use this browser location for your garden.');
   }
-  if (typeof window.getAppLocation !== 'function' || typeof window.hasTrustedAppLocation !== 'function') {
-    throw new Error('App location APIs unavailable.');
-  }
-  if (!window.hasTrustedAppLocation()) {
-    throw new Error('No trusted local location available to import.');
-  }
-  const loc = window.getAppLocation();
-  const source = String(loc.source || '').trim();
-  if (source === 'default') {
-    throw new Error('Default location cannot be imported as server-owned Garden location.');
-  }
-  const saved = await saveConfirmedLocationToActiveGarden({
-    label: loc.label,
-    climate: loc.broadClimateLabel || loc.derivedClimateProfile?.climateLabel,
-    lat: loc.lat,
-    lon: loc.lon,
-    country: loc.country,
-    region: loc.region,
-    timezone: loc.timezone,
-    source: source === 'geolocation' ? 'geolocation' : 'manual',
-    structuralClimate: loc.structuralClimate || null
-  });
-  setStatus('Imported local location into this Garden (explicit confirm).', 'ok');
+  captureLocalSnapshotIfNeeded();
+  const input = readConfirmedAppLocationForServerWrite();
+  const saved = await saveConfirmedLocationToActiveGarden(input);
+  setStatus(`Garden location saved · ${saved.location_label}`, 'ok');
+  showLocationSavedFeedback(saved);
   return saved;
 }
 
 async function saveCurrentAppLocationToActiveGarden() {
-  if (typeof window.getAppLocation !== 'function' || typeof window.hasTrustedAppLocation !== 'function') {
-    throw new Error('App location APIs unavailable.');
-  }
-  if (!window.hasTrustedAppLocation()) {
-    throw new Error('Confirm a trusted garden location in the location settings first.');
-  }
   captureLocalSnapshotIfNeeded();
-  const loc = window.getAppLocation();
-  const source = String(loc.source || '').trim();
-  if (source === 'default') {
-    throw new Error('Default location cannot become server-owned Garden location.');
-  }
-  const saved = await saveConfirmedLocationToActiveGarden({
-    label: loc.label,
-    climate: loc.broadClimateLabel || loc.derivedClimateProfile?.climateLabel,
-    lat: loc.lat,
-    lon: loc.lon,
-    country: loc.country,
-    region: loc.region,
-    timezone: loc.timezone,
-    source: source === 'geolocation' ? 'geolocation' : 'manual',
-    structuralClimate: loc.structuralClimate || null
-  });
-  setStatus('Saved confirmed location to this Garden Profile.', 'ok');
+  const input = readConfirmedAppLocationForServerWrite();
+  const saved = await saveConfirmedLocationToActiveGarden(input);
+  setStatus(`Garden location saved · ${saved.location_label}`, 'ok');
+  showLocationSavedFeedback(saved);
   return saved;
+}
+
+function showLocationSavedFeedback(saved) {
+  const panel = document.getElementById('pdV0LocationStep');
+  const locLabel = document.getElementById('pdV0LocationSavedLabel');
+  if (panel) panel.hidden = false;
+  if (locLabel) {
+    locLabel.hidden = false;
+    const climateReady =
+      saved?.location_structural_climate_status === 'known' ? ' · Climate profile ready' : '';
+    locLabel.textContent = `Garden location saved · ${saved?.location_label || ''}${climateReady}`;
+  }
+  renderFirstValueOnboarding();
+}
+
+/**
+ * Called after the user confirms app location. Persists automatically when signed in.
+ * Surfaces failures — never silent.
+ */
+async function onAppLocationConfirmedFromUi() {
+  if (!currentSession?.user) return null;
+  if (!getActiveGardenId()) {
+    if (ownedGardensCache.length === 0) return null;
+    if (ownedGardensCache.length > 1) {
+      setStatus('Choose which garden to use, then set the location again.', 'error');
+      openPersonalDomainModal();
+      return null;
+    }
+  }
+  try {
+    const saved = await saveCurrentAppLocationToActiveGarden();
+    openPersonalDomainModal();
+    return saved;
+  } catch (err) {
+    const msg = err?.message || 'Could not save garden location.';
+    setStatus(msg, 'error');
+    openPersonalDomainModal();
+    throw err;
+  }
 }
 
 function openPersonalDomainModal() {
   document.getElementById('pdV0Modal')?.classList.add('open');
-  restoreSession().catch((err) => setStatus(err.message || 'Could not initialize auth.', 'error'));
+  document.getElementById('pdV0Modal')?.setAttribute('aria-hidden', 'false');
+  restoreSession()
+    .then(() => renderFirstValueOnboarding())
+    .catch((err) => setStatus(err.message || 'Could not initialize account.', 'error'));
 }
 
 function closePersonalDomainModal() {
   document.getElementById('pdV0Modal')?.classList.remove('open');
+  document.getElementById('pdV0Modal')?.setAttribute('aria-hidden', 'true');
+}
+
+function startSetGardenLocationFlow() {
+  openPersonalDomainModal();
+  const tryPersistExisting = async () => {
+    if (typeof window.hasTrustedAppLocation === 'function' && window.hasTrustedAppLocation() === true) {
+      setStatus('Saving garden location…');
+      await saveCurrentAppLocationToActiveGarden();
+      return true;
+    }
+    return false;
+  };
+  tryPersistExisting()
+    .then((saved) => {
+      if (saved) return;
+      try {
+        if (typeof window.openLocationModal === 'function') {
+          window.openLocationModal();
+          return;
+        }
+      } catch {
+        /* fall through */
+      }
+      try {
+        if (typeof window.openAppLocationPopover === 'function') {
+          window.openAppLocationPopover();
+          return;
+        }
+      } catch {
+        /* fall through */
+      }
+      setStatus('Use the location control to set where your garden is.', 'error');
+    })
+    .catch((err) => {
+      setStatus(err?.message || 'Could not save garden location.', 'error');
+    });
 }
 
 function wirePersonalDomainUi() {
@@ -1081,28 +1288,43 @@ function wirePersonalDomainUi() {
   });
   document.getElementById('pdV0ImportLegacyLocationBtn')?.addEventListener('click', () => {
     importLegacyTrustedLocationToActiveGarden(true).catch((err) => {
-      setStatus(err.message || 'Import failed.', 'error');
+      setStatus(err.message || 'Could not use this location.', 'error');
     });
   });
   document.getElementById('pdV0ImportLegacyPlantsBtn')?.addEventListener('click', () => {
     importLegacyLocalPlantsToActiveGarden(true).catch((err) => {
-      setStatus(err.message || 'Plant import failed.', 'error');
+      setStatus(err.message || 'Could not add plants.', 'error');
     });
   });
   document.getElementById('pdV0ImportLegacyTasksBtn')?.addEventListener('click', () => {
     importLegacyLocalTasksToActiveGarden(true).catch((err) => {
-      setStatus(err.message || 'Task import failed.', 'error');
+      setStatus(err.message || 'Could not add tasks.', 'error');
     });
   });
-  document.getElementById('pdV0SaveAppLocationBtn')?.addEventListener('click', () => {
-    saveCurrentAppLocationToActiveGarden().catch((err) => {
-      setStatus(err.message || 'Save location failed.', 'error');
-    });
+  document.getElementById('pdV0SetLocationBtn')?.addEventListener('click', () => {
+    startSetGardenLocationFlow();
+  });
+  document.getElementById('pdV0CreateGardenBtn')?.addEventListener('click', () => {
+    createGardenProfile().catch((err) => setStatus(err.message || 'Could not create garden.', 'error'));
+  });
+  document.getElementById('pdV0AddFirstPlantBtn')?.addEventListener('click', () => {
+    focusSpecificPlantEntry?.();
+    const search = document.getElementById('pdV0PlantSearch');
+    if (search) {
+      search.focus();
+      search.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   });
   document.getElementById('pdV0ClearGardenLocationBtn')?.addEventListener('click', () => {
     clearLocationOnActiveGarden()
-      .then(() => setStatus('Cleared server location on this Garden.', 'ok'))
+      .then(() => setStatus('Cleared garden location.', 'ok'))
       .catch((err) => setStatus(err.message || 'Clear failed.', 'error'));
+  });
+  // Recovery path only (advanced): still available, not primary CTA.
+  document.getElementById('pdV0SaveAppLocationBtn')?.addEventListener('click', () => {
+    saveCurrentAppLocationToActiveGarden().catch((err) => {
+      setStatus(err.message || 'Could not save garden location.', 'error');
+    });
   });
   wireSpecificPlantSuitabilityUi();
 }
@@ -1155,6 +1377,10 @@ window.cruvitPersonalDomainV0 = {
     return hydrateActiveGardenTasks(garden);
   },
   isServerTasksAuthoritative,
+  onAppLocationConfirmedFromUi,
+  startSetGardenLocationFlow,
+  renderFirstValueOnboarding,
+  getActiveGardenPlantCount: () => activeGardenPlantCount,
   getSupabaseClient: () => supabase,
   getSession: () => currentSession,
   getOwnedGardensCache: () => ownedGardensCache.slice()
