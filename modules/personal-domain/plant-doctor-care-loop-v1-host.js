@@ -231,13 +231,10 @@ function installPlantDoctorCareLoopHost() {
     parseDoctorContextFromSearch,
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
-    openWithOwnedPlant(plantIndex) {
-      const data =
-        (typeof window.getCruvitGardenData === 'function'
-          ? window.getCruvitGardenData()
-          : window.data) || null;
-      const plant = data?.plants?.[plantIndex];
-      if (!plant) return false;
+    openWithOwnedPlantRecord(plant) {
+      if (!plant || typeof plant !== 'object') return false;
+      const clientId = String(plant.id || plant.clientId || plant.client_instance_id || '').trim();
+      if (!clientId && !String(plant.name || '').trim()) return false;
       const pd = window.cruvitPersonalDomainV0;
       const gardenProfileId =
         (typeof pd?.getActiveGardenId === 'function' && pd.getActiveGardenId()) || null;
@@ -245,13 +242,22 @@ function installPlantDoctorCareLoopHost() {
         unmatched: false,
         fromGarden: true,
         gardenProfileId,
-        gardenPlantClientId: plant.id || null,
-        gardenPlantServerId: plant.serverId || null,
-        plantDisplayName: plant.name || null,
+        gardenPlantClientId: clientId || null,
+        gardenPlantServerId: plant.serverId || plant.server_id || null,
+        plantDisplayName: plant.name || plant.plantDisplayName || null,
         scientific: plant.scientific || null,
-        profileSlug: plant.profileSlug || plant.slug || null
+        profileSlug: plant.profileSlug || plant.slug || plant.profile_slug || null
       });
       return true;
+    },
+    openWithOwnedPlant(plantIndex) {
+      const data =
+        (typeof window.getCruvitGardenData === 'function'
+          ? window.getCruvitGardenData()
+          : window.data) || null;
+      const plant = data?.plants?.[plantIndex];
+      if (!plant) return false;
+      return window.cruvitPlantDoctorCareLoop.openWithOwnedPlantRecord(plant);
     },
     openUnmatched(opts = {}) {
       const pd = window.cruvitPersonalDomainV0;

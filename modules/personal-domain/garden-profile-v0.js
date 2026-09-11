@@ -468,6 +468,43 @@ function wireGardenOpenButtons(root) {
   });
 }
 
+function openPlantDoctorForOwnedSummary(plant) {
+  if (!plant) return false;
+  const loop = window.cruvitPlantDoctorCareLoop;
+  if (loop && typeof loop.openWithOwnedPlantRecord === 'function') {
+    const opened = loop.openWithOwnedPlantRecord(plant);
+    if (opened) {
+      try {
+        closePersonalDomainModal();
+      } catch {
+        /* optional */
+      }
+      return true;
+    }
+  }
+  // Fallback: match hydrated My Garden plant by client id, then existing care-loop open.
+  try {
+    const data =
+      typeof window.getCruvitGardenData === 'function' ? window.getCruvitGardenData() : null;
+    const plants = Array.isArray(data?.plants) ? data.plants : [];
+    const idx = plants.findIndex(
+      (p) => String(p?.id || '').trim() === String(plant.id || '').trim()
+    );
+    if (idx >= 0 && typeof window.checkPlantHealth === 'function') {
+      window.checkPlantHealth(idx);
+      try {
+        closePersonalDomainModal();
+      } catch {
+        /* optional */
+      }
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
 function renderMyPlantsList() {
   const list = document.getElementById('pdV0MyPlantsList');
   const empty = document.getElementById('pdV0MyPlantsEmpty');
@@ -480,12 +517,16 @@ function renderMyPlantsList() {
   }
   if (empty) empty.hidden = true;
   list.innerHTML = plants
-    .map((p) => {
+    .map((p, i) => {
       const name = escapeHtml(p.name || 'Plant');
       const sci = p.scientific ? ` · ${escapeHtml(p.scientific)}` : '';
       const slug = escapeHtml(p.profileSlug || p.name || '');
-      return `<li>
-        <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-check-plant="${slug}">${name}${sci}</button>
+      return `<li class="pd-v0-plant-row">
+        <div class="pd-v0-plant-meta">
+          <span class="pd-v0-plant-label">${name}${sci}</span>
+          <button type="button" class="pd-v0-plant-suit-link" data-pd-check-plant="${slug}">Check suitability</button>
+        </div>
+        <button type="button" class="pd-v0-btn light pd-v0-btn-sm pd-v0-doctor-btn" data-pd-doctor-plant="${i}">Check plant health</button>
       </li>`;
     })
     .join('');
@@ -507,6 +548,14 @@ function renderMyPlantsList() {
       } catch {
         /* optional */
       }
+    });
+  });
+  list.querySelectorAll('[data-pd-doctor-plant]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.getAttribute('data-pd-doctor-plant'));
+      const plant = plants[idx];
+      if (!plant) return;
+      openPlantDoctorForOwnedSummary(plant);
     });
   });
 }
@@ -631,6 +680,8 @@ async function hydrateActiveGardenPlants(gardenRow) {
   });
   activeGardenPlantCount = plants.length;
   activeGardenPlantSummaries = plants.map((p) => ({
+    id: p.id || null,
+    serverId: p.serverId || null,
     name: String(p.name || '').trim() || 'Plant',
     scientific: p.scientific || p.meta?.scientific || null,
     profileSlug: p.profileSlug || p.profile_slug || null
