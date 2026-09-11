@@ -26,6 +26,15 @@ body.notranslate *{translate:no}
 .err{display:none;margin:16px auto 0;background:rgba(255,255,255,.88);border:1px solid rgba(220,60,50,.25);color:#c43128;border-radius:14px;padding:12px 16px;max-width:640px}.err.show{display:block}.privacy{margin-top:18px;color:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:12px 18px;max-width:760px;text-align:center;background:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
 .loading{display:none;color:white;text-align:center;padding:70px 10px}.loading.show{display:block}.leaf{font-size:54px;animation:pulse 1.4s infinite ease-in-out}.load-title{font-family:'Cormorant Garamond',serif;font-size:34px;margin:12px}.load-sub{font-size:17px;opacity:.86}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 .result{display:none;width:min(880px,94vw)}.result.show{display:block}.back{border:0;background:transparent;color:white;font-weight:700;margin-bottom:14px;cursor:pointer;font-size:16px}.diag-card,.list-card{background:rgba(248,249,242,.82);border:1px solid rgba(255,255,255,.55);border-radius:26px;padding:22px;margin-bottom:16px;backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.15)}.top{display:flex;gap:18px;align-items:flex-start}.thumb{width:110px;height:110px;border-radius:18px;object-fit:cover}.rtitle{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#123b26;line-height:1.15;margin-bottom:9px}.badge{display:inline-block;border-radius:999px;padding:6px 12px;font-weight:800;font-size:13px;margin-bottom:8px}.low{background:#e3f5e7;color:#267b45}.medium{background:#fff1d8;color:#b46300}.high{background:#fde1dc;color:#b8372e}.section-title{font-weight:900;color:#2a7044;font-size:15px;letter-spacing:.05em;margin:18px 0 8px;text-transform:uppercase}.para{font-size:16px;line-height:1.65;color:#244d37}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.tab{padding:16px;border-radius:18px;border:1px solid rgba(31,107,58,.16);background:rgba(255,255,255,.55);cursor:pointer;font-weight:800;color:#346947}.tab.active{background:rgba(255,255,255,.86);border-color:#2f7d49}.panel{display:none}.panel.active{display:block}.item{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.45);border:1px solid rgba(31,107,58,.12);border-radius:18px;padding:15px;margin-bottom:10px}.item-emoji{font-size:29px}.item h4{font-size:17px;margin-bottom:4px}.item p,.item li{font-size:15px;color:#4d725d;line-height:1.45}.newbtn{width:100%;height:54px;border-radius:18px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.55);font-weight:800;color:white;cursor:pointer;font-size:17px}
+.ctx-banner{width:min(760px,92vw);margin:0 auto 16px;padding:14px 18px;border-radius:18px;background:rgba(248,249,242,.88);border:1px solid rgba(31,107,58,.22);color:#123b26;text-align:left;box-shadow:0 10px 28px rgba(0,0,0,.10)}
+.ctx-banner b{display:block;font-size:15px;margin-bottom:4px}.ctx-banner span{font-size:13px;color:#526f5e;line-height:1.4}
+.care-actions{margin:18px 0 8px;padding:18px;border-radius:22px;background:rgba(248,249,242,.9);border:1px solid rgba(31,107,58,.2);text-align:left}
+.care-actions h3{font-size:16px;font-weight:900;color:#123b26;margin-bottom:6px}
+.care-actions p{font-size:14px;color:#526f5e;margin-bottom:12px;line-height:1.45}
+.care-actions .care-btn{width:100%;height:52px;border-radius:16px;border:0;margin-bottom:10px;font-weight:800;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.care-actions .care-btn.primary{background:#216b3c;color:#fff}
+.care-actions .care-btn.secondary{background:rgba(255,255,255,.85);color:#1d5f35;border:1.5px solid rgba(31,107,58,.22)}
+.care-actions .care-note{font-size:12px;color:#789b83;margin-top:4px}
 .api-modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(10,28,16,.72);backdrop-filter:blur(6px);align-items:center;justify-content:center}
 .api-box{background:#f7f8ef;border-radius:28px;padding:36px 32px;max-width:440px;width:92vw;box-shadow:0 28px 70px rgba(0,0,0,.28);text-align:center}
 .api-box h3{font-size:22px;font-weight:900;color:#123b26;margin-bottom:10px}
@@ -46,6 +55,7 @@ html[dir="rtl"] body,html[dir="rtl"] .main{text-align:right}html[dir="rtl"] .top
   <select id="lang" class="lang"></select>
 </header>
 <main class="main">
+  <div id="ctxBanner" class="ctx-banner" style="display:none" aria-live="polite"></div>
   <section id="uploadScreen">
     <div id="uploadCard" class="card">
       <img id="doctorIcon" class="icon" src="doctor-icon.png" alt="Plant Doctor">
@@ -78,7 +88,7 @@ html[dir="rtl"] body,html[dir="rtl"] .main{text-align:right}html[dir="rtl"] .top
 <script>
 const LANGS={en:'GB EN English',he:'IL HE עברית',nl:'NL NL Nederlands',fr:'FR FR Français',de:'DE DE Deutsch',es:'ES ES Español',it:'IT IT Italiano',pt:'PT PT Português',ru:'RU RU Русский',ar:'SA AR العربية',tr:'TR TR Türkçe',pl:'PL PL Polski',zh:'CN ZH 中文',ja:'JP JA 日本語',ko:'KR KO 한국어'};
 const L={
- en:{appName:'Plant Doctor',uploadTitle:'Upload a photo of your plant',uploadSub:'Take a clear photo of the affected leaves, stem, or roots',gallery:'Gallery',camera:'Camera',change:'Change photo',details:'Add details (optional)',notesPh:'e.g. Yellow spots appeared 3 days ago, leaves are drooping...',diagnose:'Diagnose my plant',privacy:'We analyze your plant and help you get the right treatment. Private and secure.',loadingTitle:'Analyzing your plant...',loadingSub:'This may take 20–40 seconds',back:'← New diagnosis',newDiag:'Diagnose another plant',diagnosis:'Diagnosis',products:'Products',biological:'Biological',home:'Home remedy',severity_low:'Low severity',severity_medium:'Medium severity',severity_high:'High severity',uploadFirst:'Please upload a plant photo first.',aiMissing:'The AI diagnosis function was not found on Netlify. If you deployed by drag-and-drop, deploy through Netlify CLI or Git so netlify/functions/claude.js is published.',aiError:'AI diagnosis error'},
+ en:{appName:'Plant Doctor',uploadTitle:'Upload a photo of your plant',uploadSub:'Take a clear photo of the affected leaves, stem, or roots',gallery:'Gallery',camera:'Camera',change:'Change photo',details:'Add details (optional)',notesPh:'e.g. Yellow spots appeared 3 days ago, leaves are drooping...',diagnose:'Diagnose my plant',privacy:'We analyze your plant and help you get the right treatment. Private and secure.',loadingTitle:'Analyzing your plant...',loadingSub:'This may take 20–40 seconds',back:'← New diagnosis',newDiag:'Diagnose another plant',diagnosis:'Diagnosis',products:'Products',biological:'Biological',home:'Home remedy',severity_low:'Low severity',severity_medium:'Medium severity',severity_high:'High severity',uploadFirst:'Please upload a plant photo first.',aiMissing:'The AI diagnosis function was not found on Netlify. If you deployed by drag-and-drop, deploy through Netlify CLI or Git so netlify/functions/claude.js is published.',aiError:'AI diagnosis error',careTitle:'Add to My Garden',careSub:'Save this diagnosis back to your garden. Nothing is changed until you choose an action.',careApplyTask:'Update plant + add care task',careApplyOnly:'Update plant status only',careTaskOnly:'Add care task only',careUnmatched:'General diagnosis — no owned plant will be changed.',careOwned:'Diagnosing owned plant',careSent:'Sent to My Garden',careNeedHost:'Open Plant Doctor from My Garden to save results.'},
  he:{appName:'רופא צמחים',uploadTitle:'העלי תמונה של הצמח שלך',uploadSub:'צלמי בבירור את העלים, הגבעול או השורשים הפגועים',gallery:'גלריה',camera:'מצלמה',change:'החלף תמונה',details:'הוסיפי פרטים (אופציונלי)',notesPh:'למשל: כתמים צהובים הופיעו לפני 3 ימים...',diagnose:'אבחן את הצמח שלי',privacy:'אנחנו מנתחים את הצמח שלך ועוזרים לך לקבל את הטיפול הנכון. פרטי ומאובטח.',loadingTitle:'מאבחן את הצמח שלך...',loadingSub:'זה עשוי לקחת 20–40 שניות',back:'← אבחון חדש',newDiag:'אבחן צמח נוסף',diagnosis:'אבחון',products:'מוצרים',biological:'ביולוגי',home:'טיפול ביתי',severity_low:'חומרה נמוכה',severity_medium:'חומרה בינונית',severity_high:'חומרה גבוהה',uploadFirst:'נא להעלות קודם תמונת צמח.',aiMissing:'פונקציית האבחון של Netlify לא נמצאה. אם העלית בגרירה ידנית, צריך לפרוס דרך Netlify CLI או Git כדי שפונקציות יעלו.',aiError:'שגיאת אבחון AI'},
  nl:{appName:'Plantendokter',uploadTitle:'Upload een foto van je plant',uploadSub:'Maak een duidelijke foto van de aangetaste bladeren, stengel of wortels',gallery:'Galerij',camera:'Camera',change:'Foto wijzigen',details:'Voeg details toe (optioneel)',notesPh:'Bijv. gele vlekken verschenen 3 dagen geleden...',diagnose:'Diagnoseer mijn plant',privacy:'We analyseren je plant en helpen je de juiste behandeling te vinden. Privé en veilig.',loadingTitle:'Je plant wordt geanalyseerd...',loadingSub:'Dit kan 20–40 seconden duren',back:'← Nieuwe diagnose',newDiag:'Diagnoseer een andere plant',diagnosis:'Diagnose',products:'Producten',biological:'Biologisch',home:'Huismiddel',severity_low:'Lage ernst',severity_medium:'Gemiddelde ernst',severity_high:'Hoge ernst',uploadFirst:'Upload eerst een plantfoto.',aiMissing:'De Netlify AI-functie is niet gevonden. Deploy via Netlify CLI of Git zodat netlify/functions/claude.js wordt gepubliceerd.',aiError:'AI-diagnosefout'},
  fr:{appName:'Docteur des plantes',uploadTitle:'Ajoutez une photo de votre plante',uploadSub:'Prenez une photo claire des feuilles, tiges ou racines touchées',gallery:'Galerie',camera:'Caméra',change:'Changer la photo',details:'Ajouter des détails (facultatif)',notesPh:'Ex. des taches jaunes sont apparues il y a 3 jours...',diagnose:'Diagnostiquer ma plante',privacy:'Nous analysons votre plante et vous aidons à trouver le bon traitement.',loadingTitle:'Analyse de votre plante...',loadingSub:'Cela peut prendre 20–40 secondes',back:'← Nouveau diagnostic',newDiag:'Diagnostiquer une autre plante',diagnosis:'Diagnostic',products:'Produits',biological:'Biologique',home:'Remède maison',severity_low:'Faible gravité',severity_medium:'Gravité moyenne',severity_high:'Gravité élevée',uploadFirst:'Veuillez d’abord ajouter une photo.',aiMissing:'La fonction IA Netlify est introuvable. Déployez via Netlify CLI ou Git.',aiError:'Erreur de diagnostic IA'},
@@ -87,9 +97,57 @@ const L={
 };
 ['it','pt','ru','ar','tr','pl','zh','ja','ko'].forEach(c=>L[c]=L.en);
 let lang=localStorage.getItem('pd_lang')||'en', dataUrl='', b64='', resultData=null;
+let ownedPlantContext={unmatched:true};
+const PD_RESULT_TYPE='cruvit:plant-doctor-result';
+const PD_SOURCE='plant_doctor';
 const $=id=>document.getElementById(id);
 function t(k){return (L[lang]&&L[lang][k])||L.en[k]||k}
-function setLang(v){lang=v;localStorage.setItem('pd_lang',lang);document.documentElement.lang=lang;document.documentElement.dir=(lang==='he'||lang==='ar')?'rtl':'ltr';document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.dataset.ph));$('lang').value=lang;if(resultData) renderResult(resultData)}
+function parseOwnedPlantContext(){
+  const q=new URLSearchParams(location.search||'');
+  const gardenPlantClientId=(q.get('plantClientId')||'').trim()||null;
+  const unmatched=q.get('unmatched')==='1'||q.get('unmatched')==='true'||!gardenPlantClientId;
+  ownedPlantContext={
+    unmatched,
+    gardenProfileId:(q.get('gardenId')||'').trim()||null,
+    gardenPlantClientId,
+    gardenPlantServerId:(q.get('plantServerId')||'').trim()||null,
+    plantDisplayName:(q.get('plantName')||'').trim()||null,
+    scientific:(q.get('scientific')||'').trim()||null,
+    profileSlug:(q.get('slug')||'').trim()||null
+  };
+  renderCtxBanner();
+}
+function renderCtxBanner(){
+  const el=$('ctxBanner');
+  if(!el)return;
+  if(ownedPlantContext.unmatched){
+    el.style.display='block';
+    el.innerHTML='<b>'+t('careUnmatched')+'</b><span>General Plant Doctor path. Results will not change an owned plant unless you open Doctor from that plant.</span>';
+    return;
+  }
+  const name=ownedPlantContext.plantDisplayName||'Owned plant';
+  const sci=ownedPlantContext.scientific?(' · '+ownedPlantContext.scientific):'';
+  const slug=ownedPlantContext.profileSlug?(' · '+ownedPlantContext.profileSlug):'';
+  el.style.display='block';
+  el.innerHTML='<b>'+t('careOwned')+': '+name+'</b><span>'+name+sci+slug+'</span>';
+}
+window.addEventListener('message',function(e){
+  const msg=e&&e.data;
+  if(!msg||typeof msg!=='object')return;
+  if(msg.type!=='cruvit:plant-doctor-context')return;
+  ownedPlantContext={
+    unmatched:msg.unmatched===true||!msg.gardenPlantClientId,
+    gardenProfileId:msg.gardenProfileId||null,
+    gardenPlantClientId:msg.gardenPlantClientId||null,
+    gardenPlantServerId:msg.gardenPlantServerId||null,
+    plantDisplayName:msg.plantDisplayName||null,
+    scientific:msg.scientific||null,
+    profileSlug:msg.profileSlug||null
+  };
+  renderCtxBanner();
+  if(resultData) renderResult(resultData);
+});
+function setLang(v){lang=v;localStorage.setItem('pd_lang',lang);document.documentElement.lang=lang;document.documentElement.dir=(lang==='he'||lang==='ar')?'rtl':'ltr';document.querySelectorAll('[data-i]').forEach(el=>el.textContent=t(el.dataset.i));document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=t(el.dataset.ph));$('lang').value=lang;renderCtxBanner();if(resultData) renderResult(resultData)}
 function initLang(){Object.entries(LANGS).forEach(([k,v])=>{let o=document.createElement('option');o.value=k;o.textContent=v;$('lang').appendChild(o)});$('lang').addEventListener('change',e=>setLang(e.target.value));setLang(lang)}
 function choose(input){input.click()}
 function handleFile(f){if(!f)return;const r=new FileReader();r.onload=()=>{dataUrl=r.result;b64=String(dataUrl).split(',')[1];$('uploadCard').style.display='none';$('preview').classList.add('show');$('previewImg').src=dataUrl;$('details').classList.add('show');$('diagnose').disabled=false;$('err').classList.remove('show')};r.readAsDataURL(f)}
@@ -108,17 +166,78 @@ function hideApiKeyModal(){$('apiModal').style.display='none';}
 function saveApiKey(){const k=$('apiKeyInput').value.trim();if(!k){alert('Please enter an API key.');return;}setApiKey(k);hideApiKeyModal();}
 function targetName(){return {en:'English',he:'Hebrew',nl:'Dutch',fr:'French',de:'German',es:'Spanish',it:'Italian',pt:'Portuguese',ru:'Russian',ar:'Arabic',tr:'Turkish',pl:'Polish',zh:'Chinese',ja:'Japanese',ko:'Korean'}[lang]||'English'}
 function parseJson(txt){let s=String(txt||'').replace(/```json|```/g,'').trim();try{return JSON.parse(s)}catch{}let a=s.indexOf('{'),b=s.lastIndexOf('}');if(a>=0&&b>a)return JSON.parse(s.slice(a,b+1));throw new Error('Invalid JSON from AI')}
-async function diagnose(){if(!b64){showErr(t('uploadFirst'));return}$('uploadScreen').style.display='none';$('loading').classList.add('show');$('result').classList.remove('show');const notes=$('notes').value.trim();const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high.`;
-try{const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]}]);resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show')}catch(e){$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(e.message)}}
+function ownedPlantPromptHint(){
+  if(ownedPlantContext.unmatched||!ownedPlantContext.plantDisplayName)return '';
+  const bits=['Owned garden plant context (diagnose THIS plant): '+ownedPlantContext.plantDisplayName];
+  if(ownedPlantContext.scientific) bits.push('Scientific name: '+ownedPlantContext.scientific);
+  if(ownedPlantContext.profileSlug) bits.push('Catalog slug: '+ownedPlantContext.profileSlug);
+  bits.push('Set plant_name to the owned plant when the photo matches; if uncertain, keep severity honest and say so in diagnosis.');
+  return bits.join(' ')+'\n';
+}
+async function diagnose(){if(!b64){showErr(t('uploadFirst'));return}$('uploadScreen').style.display='none';$('loading').classList.add('show');$('result').classList.remove('show');const notes=$('notes').value.trim();const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible...`;
+try{const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]}]);resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show')}catch(e){resultData=null;$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(e.message)}}
 function showErr(m){$('err').textContent=m;$('err').classList.add('show')}
 function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}function sevText(s){return t('severity_'+(s||'low'))}
 function renderItems(arr){if(!arr||!arr.length)return '<div class="item"><p>—</p></div>';return arr.map(x=>typeof x==='string'?`<div class="item"><div class="item-emoji">🌿</div><p>${x}</p></div>`:`<div class="item"><div class="item-emoji">${x.emoji||'🌿'}</div><div><h4>${x.name||''}</h4><p>${x.desc||''}</p></div></div>`).join('')}
-function renderResult(d){$('resultHtml').innerHTML=`<div class="diag-card"><div class="top"><img class="thumb" src="${dataUrl}"><div><h2 class="rtitle">${d.problem_name||''}</h2><span class="badge ${sevClass(d.severity)}">${sevText(d.severity)}</span><div class="para">🌱 ${d.plant_name||''}</div></div></div><div class="section-title">🔍 ${t('diagnosis')}</div><p class="para">${d.diagnosis||''}</p></div><div class="tabs"><button class="tab active" onclick="tab('p1',this)">🛒 ${t('products')}</button><button class="tab" onclick="tab('p2',this)">🧬 ${t('biological')}</button><button class="tab" onclick="tab('p3',this)">🏠 ${t('home')}</button></div><div class="list-card panel active" id="p1">${renderItems(d.products)}</div><div class="list-card panel" id="p2">${renderItems(d.biological)}</div><div class="list-card panel" id="p3">${renderItems(d.home_remedy)}</div>`}
+function buildBridgePayload(action){
+  const d=resultData;
+  if(!d||typeof d!=='object')throw new Error('No diagnosis to send');
+  const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  return {
+    type:PD_RESULT_TYPE,
+    source:PD_SOURCE,
+    version:'1.0.0',
+    timestamp:new Date().toISOString(),
+    action:action,
+    unmatched:unmatched,
+    gardenProfileId:ownedPlantContext.gardenProfileId||null,
+    gardenPlantClientId:unmatched?null:(ownedPlantContext.gardenPlantClientId||null),
+    gardenPlantServerId:unmatched?null:(ownedPlantContext.gardenPlantServerId||null),
+    plantDisplayName:ownedPlantContext.plantDisplayName||d.plant_name||null,
+    scientific:ownedPlantContext.scientific||null,
+    profileSlug:ownedPlantContext.profileSlug||null,
+    diagnosis:{
+      plant_name:d.plant_name||null,
+      problem_name:d.problem_name||null,
+      severity:(d.severity==='low'||d.severity==='medium'||d.severity==='high')?d.severity:null,
+      diagnosis:d.diagnosis||null,
+      products:Array.isArray(d.products)?d.products:[],
+      biological:Array.isArray(d.biological)?d.biological:[],
+      home_remedy:Array.isArray(d.home_remedy)?d.home_remedy:[],
+      confidence:null
+    }
+  };
+}
+function sendCareResult(action){
+  try{
+    if(!resultData){showErr(t('careNeedHost'));return;}
+    const payload=buildBridgePayload(action);
+    if(window.parent&&window.parent!==window){
+      window.parent.postMessage(payload,'*');
+      const note=$('careSentNote');
+      if(note) note.textContent=t('careSent');
+    }else{
+      showErr(t('careNeedHost'));
+    }
+  }catch(e){showErr(e.message||'Could not send diagnosis');}
+}
+window.sendCareResult=sendCareResult;
+function careActionsHtml(d){
+  const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  const firstRemedy=(Array.isArray(d.home_remedy)?d.home_remedy:[]).map(x=>typeof x==='string'?x:(x&&x.name)||'').map(s=>String(s||'').trim()).find(Boolean)||'Inspect plant';
+  if(unmatched){
+    return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careUnmatched')}</p><p><b>${d.problem_name||'Diagnosis'}</b><br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">Add care task</button><div class="care-note" id="careSentNote"></div></div>`;
+  }
+  return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careSub')}</p><p><b>${d.problem_name||'Diagnosis'}</b> · ${sevText(d.severity)}<br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn primary" onclick="sendCareResult('apply_and_task')">${t('careApplyTask')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('apply_state')">${t('careApplyOnly')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">${t('careTaskOnly')}</button><div class="care-note" id="careSentNote"></div></div>`;
+}
+function renderResult(d){$('resultHtml').innerHTML=`<div class="diag-card"><div class="top"><img class="thumb" src="${dataUrl}"><div><h2 class="rtitle">${d.problem_name||''}</h2><span class="badge ${sevClass(d.severity)}">${sevText(d.severity)}</span><div class="para">🌱 ${d.plant_name||''}</div></div></div><div class="section-title">🔍 ${t('diagnosis')}</div><p class="para">${d.diagnosis||''}</p></div>${careActionsHtml(d)}<div class="tabs"><button class="tab active" onclick="tab('p1',this)">🛒 ${t('products')}</button><button class="tab" onclick="tab('p2',this)">🧬 ${t('biological')}</button><button class="tab" onclick="tab('p3',this)">🏠 ${t('home')}</button></div><div class="list-card panel active" id="p1">${renderItems(d.products)}</div><div class="list-card panel" id="p2">${renderItems(d.biological)}</div><div class="list-card panel" id="p3">${renderItems(d.home_remedy)}</div>`}
 window.tab=(id,btn)=>{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active')}
-$('galleryBtn').onclick=()=>$('fileInput').click();$('cameraBtn').onclick=()=>$('camInput').click();$('changeBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>handleFile(e.target.files[0]);$('camInput').onchange=e=>handleFile(e.target.files[0]);$('diagnose').onclick=diagnose;$('backBtn').onclick=reset;$('newBtn').onclick=reset;initLang();
+$('galleryBtn').onclick=()=>$('fileInput').click();$('cameraBtn').onclick=()=>$('camInput').click();$('changeBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>handleFile(e.target.files[0]);$('camInput').onchange=e=>handleFile(e.target.files[0]);$('diagnose').onclick=diagnose;$('backBtn').onclick=reset;$('newBtn').onclick=reset;parseOwnedPlantContext();initLang();
 window.addEventListener('unhandledrejection',function(e){
   var msg=(e&&e.reason&&e.reason.message)||'Diagnosis failed.';
-  try{$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(msg);}catch(_){}
+  try{resultData=null}catch(_){}
+  try{$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(msg)}catch(_){}
 });
 </script>
-</body></html>
+</body>
+</html>

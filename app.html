@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20250645">
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
-<link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
+<link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
 <link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911c">
 <style id="licensed-catalog-media-runtime-styles">
@@ -4260,6 +4260,7 @@ function hasPreAuthPlantsSnapshot(){
 }
 
 try{
+  window.getCruvitGardenData=function(){return data};
   window.captureLocalGardenPlantsSnapshotBeforeAuthHydrate=captureLocalGardenPlantsSnapshotBeforeAuthHydrate;
   window.releaseAuthenticatedPlantsHydration=releaseAuthenticatedPlantsHydration;
   window.suspendAuthenticatedPlantsHydrationInMemory=suspendAuthenticatedPlantsHydrationInMemory;
@@ -5136,7 +5137,7 @@ function render(){syncHealthScore();
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   applyGardenUserLabels();
-  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const mediaAttr=plantMediaAttributionHtml(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="swapToInstantPlantImage(this)">`:''}${mediaAttr}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
+  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const mediaAttr=plantMediaAttributionHtml(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="checkPlantHealth(${realIndex})"><span class="menu-ico">🩺</span>Check plant health</button><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="swapToInstantPlantImage(this)">`:''}${mediaAttr}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
   plantCardHydrationGeneration++;
   const plantCardHydrationPass=plantCardHydrationGeneration;
   schedulePlantCardHydrationPass(plantCardHydrationPass);
@@ -7605,6 +7606,9 @@ function closeGardenDesign(){
 }
 
 /* ── Plant Doctor (isolated iframe module) ── */
+let plantDoctorOpenedFromGarden=false;
+let plantDoctorSessionContext=null;
+
 function setPlantDoctorShellOpen(open){
   const root=document.getElementById('plant-doctor-root');
   const app=document.getElementById('appRoot');
@@ -7612,18 +7616,47 @@ function setPlantDoctorShellOpen(open){
   if(app) app.classList.toggle('pd-open',!!open);
 }
 
-function openPlantDoctor(){
+function buildPlantDoctorContextPayload(context){
+  const ctx=context&&typeof context==='object'?context:{};
+  const unmatched=ctx.unmatched===true||!ctx.gardenPlantClientId;
+  return {
+    type:'cruvit:plant-doctor-context',
+    source:'plant_doctor',
+    unmatched,
+    gardenProfileId:ctx.gardenProfileId||null,
+    gardenPlantClientId:unmatched?null:(ctx.gardenPlantClientId||null),
+    gardenPlantServerId:unmatched?null:(ctx.gardenPlantServerId||null),
+    plantDisplayName:ctx.plantDisplayName||null,
+    scientific:ctx.scientific||null,
+    profileSlug:ctx.profileSlug||null
+  };
+}
+
+function openPlantDoctor(context){
   const root=document.getElementById('plant-doctor-root');
   if(!root) return;
+  const ctx=context&&typeof context==='object'?context:{unmatched:true};
+  plantDoctorSessionContext=ctx;
+  plantDoctorOpenedFromGarden=ctx.fromGarden===true||!!ctx.gardenPlantClientId;
+  const loop=window.cruvitPlantDoctorCareLoop;
+  const src=(loop&&typeof loop.buildDoctorIframeSrc==='function')
+    ?loop.buildDoctorIframeSrc(ctx)
+    :('modules/plant-doctor/index.html?v=20260911d'+(ctx.unmatched||!ctx.gardenPlantClientId?'&unmatched=1':''));
   let frame=root.querySelector('iframe.pd-frame');
   if(!frame){
     frame=document.createElement('iframe');
     frame.className='pd-frame';
     frame.title='Plant Doctor';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen');
-    frame.src='modules/plant-doctor/index.html?v=20250701';
     root.appendChild(frame);
   }
+  // Always reload with current owned-plant context (or unmatched).
+  frame.src=src;
+  frame.onload=function(){
+    try{
+      frame.contentWindow.postMessage(buildPlantDoctorContextPayload(ctx),'*');
+    }catch(e){console.warn('Plant Doctor context postMessage failed',e)}
+  };
   dismissEntryScreen();
   setPlantDoctorShellOpen(true);
   scrollToPageTop('auto');
@@ -7631,8 +7664,44 @@ function openPlantDoctor(){
 
 function closePlantDoctor(){
   setPlantDoctorShellOpen(false);
-  showEntryScreen();
+  if(plantDoctorOpenedFromGarden) dismissEntryScreen();
+  else showEntryScreen();
+  plantDoctorOpenedFromGarden=false;
+  plantDoctorSessionContext=null;
   scrollToPageTop('auto');
+}
+
+function closePlantDoctorToGarden(){
+  plantDoctorOpenedFromGarden=true;
+  setPlantDoctorShellOpen(false);
+  dismissEntryScreen();
+  try{if(typeof setTab==='function') setTab('plants')}catch(_){}
+  try{render()}catch(_){}
+  plantDoctorSessionContext=null;
+  scrollToPageTop('auto');
+}
+
+function checkPlantHealth(i){
+  openMenu=null;
+  const loop=window.cruvitPlantDoctorCareLoop;
+  if(loop&&typeof loop.openWithOwnedPlant==='function'){
+    loop.openWithOwnedPlant(i);
+    return;
+  }
+  const plant=data.plants[i];
+  if(!plant)return;
+  const pd=window.cruvitPersonalDomainV0;
+  const gardenProfileId=(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null;
+  openPlantDoctor({
+    unmatched:false,
+    fromGarden:true,
+    gardenProfileId,
+    gardenPlantClientId:plant.id||null,
+    gardenPlantServerId:plant.serverId||null,
+    plantDisplayName:plant.name||null,
+    scientific:plant.scientific||null,
+    profileSlug:plant.profileSlug||plant.slug||null
+  });
 }
 
 function setPlantIdentifierShellOpen(open){
@@ -8006,7 +8075,9 @@ function handleEntryAction(action){
     return;
   }
   if(action==='diagnose'){
-    openPlantDoctor();
+    const pd=window.cruvitPersonalDomainV0;
+    const gardenProfileId=(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null;
+    openPlantDoctor({unmatched:true,fromGarden:false,gardenProfileId});
     return;
   }
   if(action==='shop'){
@@ -8253,5 +8324,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
 <script type="module" src="modules/personal-domain/garden-profile-v0.js"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js"></script>
 </body>
 </html>
