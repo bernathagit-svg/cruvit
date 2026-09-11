@@ -77,7 +77,7 @@ export function deriveFirstValueOnboardingState(input = {}) {
         : 'Set your garden location so Cruvit can check what grows there.',
       primaryLabel: 'Set garden location',
       primaryAction: 'set-location',
-      showGardenSwitcher: gardens.length > 1,
+      showGardenSwitcher: false,
       gardenName: activeGarden?.name || 'My Garden',
       gardenId: activeGarden?.id || null
     };
@@ -90,7 +90,7 @@ export function deriveFirstValueOnboardingState(input = {}) {
       lead: `Location saved for ${activeGarden.location_label}. Pick a plant to check if it can grow there.`,
       primaryLabel: 'Add your first plant',
       primaryAction: 'add-plant',
-      showGardenSwitcher: gardens.length > 1,
+      showGardenSwitcher: false,
       gardenName: activeGarden?.name || 'My Garden',
       locationLabel: activeGarden.location_label,
       gardenId: activeGarden?.id || null
@@ -103,7 +103,7 @@ export function deriveFirstValueOnboardingState(input = {}) {
     lead: 'Your garden, location, and plant are ready. Here is Cruvit’s answer.',
     primaryLabel: 'Check another plant',
     primaryAction: 'check-plant',
-    showGardenSwitcher: gardens.length > 1,
+    showGardenSwitcher: false,
     gardenName: activeGarden?.name || 'My Garden',
     locationLabel: activeGarden.location_label,
     gardenId: activeGarden?.id || null,

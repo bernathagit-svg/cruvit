@@ -90,3 +90,28 @@ test('garden + location + plant surfaces first answer step', () => {
   assert.equal(step.state, FIRST_VALUE_ONBOARDING_STATES.E_FIRST_ANSWER);
   assert.equal(step.primaryAction, 'check-plant');
 });
+
+test('active complete garden keeps empty legacy gardens out of primary switcher', () => {
+  const step = deriveFirstValueOnboardingState({
+    signedIn: true,
+    gardens: [
+      {
+        id: 'fab7eec4-86b7-4b8a-838d-8aa4bba61657',
+        name: 'Mojstrana Test Garden',
+        location_label: 'Mojstrana, Municipality of Kranjska Gora, Slovenia',
+        location_lat: 46.4238,
+        location_lon: 13.8752,
+        location_climate: 'temperate',
+        location_source: 'manual',
+        location_confirmed_at: '2026-09-11T00:00:00.000Z'
+      },
+      { id: 'legacy-a', name: 'My Garden' },
+      { id: 'legacy-b', name: 'My Garden' }
+    ],
+    activeGardenId: 'fab7eec4-86b7-4b8a-838d-8aa4bba61657',
+    plantCount: 3
+  });
+  assert.equal(step.state, FIRST_VALUE_ONBOARDING_STATES.E_FIRST_ANSWER);
+  assert.equal(step.showGardenSwitcher, false);
+  assert.equal(step.plantCount, 3);
+});

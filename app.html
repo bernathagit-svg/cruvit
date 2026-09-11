@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
-<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911b">
+<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911c">
 <style id="licensed-catalog-media-runtime-styles">
 .plant-img{position:relative}
 .plant-media-attr{
@@ -573,6 +573,7 @@
 <div class="pd-v0-modal" id="pdV0Modal" aria-hidden="true">
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
     <button type="button" class="pd-v0-close" id="pdV0CloseBtn" aria-label="Close">×</button>
+    <div class="pd-v0-box-scroll" id="pdV0BoxScroll">
     <p class="pd-v0-kicker" id="pdV0Kicker">My Garden</p>
     <h2 id="pdV0Title">Welcome to Cruvit</h2>
     <p class="pd-v0-lead" id="pdV0Lead">Sign in to save your garden, location, and plants.</p>
@@ -601,6 +602,11 @@
           </div>
         </div>
         <p class="pd-v0-ok-line" id="pdV0LocationSavedLabel" hidden></p>
+        <div id="pdV0MyPlantsPanel" class="pd-v0-panel" hidden>
+          <strong>My plants</strong>
+          <ul class="pd-v0-list" id="pdV0MyPlantsList"></ul>
+          <p class="pd-v0-hint" id="pdV0MyPlantsEmpty" hidden>No plants in this garden yet.</p>
+        </div>
         <div id="pdV0PlantStep" hidden>
           <div class="pd-v0-actions">
             <button type="button" class="pd-v0-btn main" id="pdV0AddFirstPlantBtn">Add your first plant</button>
@@ -618,12 +624,20 @@
           </div>
           <div class="pd-v0-suit-result" id="pdV0SuitResult" hidden aria-live="polite"></div>
         </div>
+        <div id="pdV0ActiveGardenCard" class="pd-v0-panel" hidden>
+          <strong id="pdV0ActiveGardenName">Current garden</strong>
+          <p class="pd-v0-hint" id="pdV0ActiveGardenLoc"></p>
+        </div>
         <div id="pdV0GardenSwitcher" class="pd-v0-panel" hidden>
-          <strong>Your gardens</strong>
+          <strong>Choose a garden</strong>
           <ul class="pd-v0-list" id="pdV0GardenList"></ul>
         </div>
         <details class="pd-v0-advanced" id="pdV0AdvancedDetails">
           <summary>More options</summary>
+          <div id="pdV0ManageGardens" class="pd-v0-panel" hidden>
+            <strong>Manage gardens</strong>
+            <ul class="pd-v0-list" id="pdV0ManageGardenList"></ul>
+          </div>
           <div class="pd-v0-actions">
             <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.createGardenProfile()">Add another garden</button>
             <button type="button" class="pd-v0-btn light" onclick="window.cruvitPersonalDomainV0?.renameFirstOwnedGardenProfile()">Rename garden</button>
@@ -648,6 +662,7 @@
       </div>
     </div>
     <p class="pd-v0-status" id="pdV0Status" aria-live="polite"></p>
+    </div>
   </div>
 </div>
 
@@ -3797,11 +3812,13 @@ async function saveGardenLocation(loc,options){
     }
     return result;
   }catch(err){
+    // Location is already applied above. Weather failure must not abort garden/plant hydrate.
     data.weatherFetchError=err?.message||'Weather fetch failed';
     service.save(data);
     setLocationStatus(err.message||'Saved location, but weather could not be loaded.');
     onAppLocationChanged();
-    throw err;
+    console.warn('Garden weather refresh failed (location kept):', err?.message||err);
+    return { location: data.gardenLocation, weather: null, weatherError: data.weatherFetchError };
   }
 }
 

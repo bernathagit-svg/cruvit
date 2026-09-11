@@ -103,6 +103,8 @@ let serverTasksAuthoritative = false;
 let plantClientToServerId = new Map();
 /** @type {number} */
 let activeGardenPlantCount = 0;
+/** @type {Array<{name:string, scientific?:string|null, profileSlug?:string|null}>} */
+let activeGardenPlantSummaries = [];
 
 function setStatus(text, kind) {
   const el = document.getElementById('pdV0Status');
@@ -221,6 +223,7 @@ function suspendAuthenticatedPlantsInMemory() {
   serverPlantsAuthoritative = false;
   plantClientToServerId = new Map();
   activeGardenPlantCount = 0;
+  activeGardenPlantSummaries = [];
   if (typeof window.suspendAuthenticatedPlantsHydrationInMemory === 'function') {
     window.suspendAuthenticatedPlantsHydrationInMemory();
   }
@@ -357,6 +360,9 @@ function renderFirstValueOnboarding() {
   const plantPanel = document.getElementById('pdV0PlantStep');
   const answerHint = document.getElementById('pdV0AnswerHint');
   const switcher = document.getElementById('pdV0GardenSwitcher');
+  const activeCard = document.getElementById('pdV0ActiveGardenCard');
+  const manageGardens = document.getElementById('pdV0ManageGardens');
+  const myPlantsPanel = document.getElementById('pdV0MyPlantsPanel');
   const advanced = document.getElementById('pdV0AdvancedDetails');
   const addFirstBtn = document.getElementById('pdV0AddFirstPlantBtn');
   const setLocationBtn = document.getElementById('pdV0SetLocationBtn');
@@ -371,13 +377,13 @@ function renderFirstValueOnboarding() {
     step.primaryAction === 'check-plant' ||
     step.state === 'E_FIRST_ANSWER' ||
     (serverHasLocation && serverPlantCount > 0);
+  const showMyPlants = signedIn && !!activeGarden && (serverPlantCount > 0 || step.state === 'E_FIRST_ANSWER');
 
   if (createPanel) createPanel.hidden = !showCreate;
   if (locationPanel) locationPanel.hidden = !showSetLocation;
   if (setLocationBtn) setLocationBtn.hidden = !showSetLocation;
   if (addFirstBtn) addFirstBtn.hidden = !showAddFirstPlant;
   if (plantPanel) {
-    // Keep plant step container only when first-plant CTA is the primary action.
     plantPanel.hidden = !showAddFirstPlant;
   }
   if (locLabel) {
@@ -391,8 +397,33 @@ function renderFirstValueOnboarding() {
   if (answerHint) {
     answerHint.hidden = !(step.state === 'E_FIRST_ANSWER' || (serverHasLocation && serverPlantCount > 0));
   }
+  if (activeCard) {
+    const showActiveCard = signedIn && !!activeGarden && step.primaryAction !== 'choose-garden';
+    activeCard.hidden = !showActiveCard;
+    if (showActiveCard) {
+      const nameEl = document.getElementById('pdV0ActiveGardenName');
+      const locEl = document.getElementById('pdV0ActiveGardenLoc');
+      if (nameEl) nameEl.textContent = `${activeGarden.name || 'My Garden'} · current`;
+      if (locEl) {
+        locEl.textContent = serverHasLocation
+          ? String(activeGarden.location_label || '')
+          : 'Location not set yet';
+      }
+    }
+  }
   if (switcher) {
+    // Primary list only when the user must choose (no active garden yet).
     switcher.hidden = !step.showGardenSwitcher;
+  }
+  if (manageGardens) {
+    const others = ownedGardensCache.filter(
+      (g) => activeGarden && String(g.id) !== String(activeGarden.id)
+    );
+    manageGardens.hidden = !(signedIn && others.length > 0 && !step.showGardenSwitcher);
+  }
+  if (myPlantsPanel) {
+    myPlantsPanel.hidden = !showMyPlants;
+    if (showMyPlants) renderMyPlantsList();
   }
   if (advanced) {
     advanced.hidden = !signedIn;
@@ -413,8 +444,76 @@ function renderFirstValueOnboarding() {
   return step;
 }
 
+function gardenListItemHtml(row, options = {}) {
+  const name = escapeHtml(row.name || 'My Garden');
+  const id = escapeHtml(row.id || '');
+  const loc = escapeHtml(formatLocationSummary(row));
+  const isActive = !!options.isActive;
+  const openLabel = isActive ? 'Using this garden' : 'Use this garden';
+  const openDisabled = isActive ? 'disabled' : '';
+  return `<li>
+        <strong>${name}</strong>${isActive ? ' <span class="pd-v0-chip">current</span>' : ''}<br>
+        <small>${loc}</small><br>
+        <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-open-garden="${id}" ${openDisabled}>${openLabel}</button>
+      </li>`;
+}
+
+function wireGardenOpenButtons(root) {
+  if (!root) return;
+  root.querySelectorAll('[data-pd-open-garden]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-pd-open-garden');
+      selectActiveGarden(id).catch((err) => setStatus(err.message || 'Could not open garden.', 'error'));
+    });
+  });
+}
+
+function renderMyPlantsList() {
+  const list = document.getElementById('pdV0MyPlantsList');
+  const empty = document.getElementById('pdV0MyPlantsEmpty');
+  if (!list) return;
+  const plants = Array.isArray(activeGardenPlantSummaries) ? activeGardenPlantSummaries : [];
+  if (!plants.length) {
+    list.innerHTML = '';
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+  list.innerHTML = plants
+    .map((p) => {
+      const name = escapeHtml(p.name || 'Plant');
+      const sci = p.scientific ? ` · ${escapeHtml(p.scientific)}` : '';
+      const slug = escapeHtml(p.profileSlug || p.name || '');
+      return `<li>
+        <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-check-plant="${slug}">${name}${sci}</button>
+      </li>`;
+    })
+    .join('');
+  list.querySelectorAll('[data-pd-check-plant]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const needle = btn.getAttribute('data-pd-check-plant') || btn.textContent || '';
+      const search = document.getElementById('pdV0PlantSearch');
+      if (search) {
+        search.value = String(needle).split('·')[0].trim();
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      try {
+        focusSpecificPlantEntry();
+      } catch {
+        /* optional */
+      }
+      try {
+        runSpecificPlantCheckIfReady();
+      } catch {
+        /* optional */
+      }
+    });
+  });
+}
+
 function renderGardenProfileList(rows) {
   const list = document.getElementById('pdV0GardenList');
+  const manageList = document.getElementById('pdV0ManageGardenList');
   const importPanel = document.getElementById('pdV0LegacyImport');
   const plantImportPanel = document.getElementById('pdV0LegacyPlantImport');
   const taskImportPanel = document.getElementById('pdV0LegacyTaskImport');
@@ -425,47 +524,39 @@ function renderGardenProfileList(rows) {
   const activeId = getActiveGardenId();
   if (!rows?.length) {
     list.innerHTML = '<li class="pd-v0-chip">No gardens yet.</li>';
+    if (manageList) manageList.innerHTML = '';
     if (importPanel) importPanel.hidden = true;
     if (plantImportPanel) plantImportPanel.hidden = true;
     if (taskImportPanel) taskImportPanel.hidden = true;
     renderFirstValueOnboarding();
     return;
   }
-  list.innerHTML = rows
-    .map((row) => {
-      const name = escapeHtml(row.name || 'My Garden');
-      const id = escapeHtml(row.id || '');
-      const loc = escapeHtml(formatLocationSummary(row));
-      const isActive = activeId && String(row.id) === String(activeId);
-      const openLabel = isActive ? 'Using this garden' : 'Use this garden';
-      const openDisabled = isActive ? 'disabled' : '';
-      return `<li>
-        <strong>${name}</strong>${isActive ? ' <span class="pd-v0-chip">current</span>' : ''}<br>
-        <small>${loc}</small><br>
-        <button type="button" class="pd-v0-btn light pd-v0-btn-sm" data-pd-open-garden="${id}" ${openDisabled}>${openLabel}</button>
-      </li>`;
-    })
-    .join('');
 
-  list.querySelectorAll('[data-pd-open-garden]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-pd-open-garden');
-      selectActiveGarden(id).catch((err) => setStatus(err.message || 'Could not open garden.', 'error'));
-    });
-  });
+  const active = rows.find((r) => activeId && String(r.id) === String(activeId)) || null;
+  const others = active ? rows.filter((r) => String(r.id) !== String(active.id)) : rows;
+
+  // Primary chooser: only when no active garden (must pick one).
+  if (!active) {
+    list.innerHTML = rows.map((row) => gardenListItemHtml(row, { isActive: false })).join('');
+    wireGardenOpenButtons(list);
+    if (manageList) manageList.innerHTML = '';
+  } else {
+    list.innerHTML = '';
+    if (manageList) {
+      manageList.innerHTML = others.map((row) => gardenListItemHtml(row, { isActive: false })).join('');
+      wireGardenOpenButtons(manageList);
+    }
+  }
 
   if (importPanel) {
-    const active = rows.find((r) => activeId && String(r.id) === String(activeId));
     const showImport =
       !!active && !isCompleteServerLocation(active) && hasLegacyTrustedLocalLocation();
     importPanel.hidden = !showImport;
   }
   if (plantImportPanel) {
-    const active = rows.find((r) => activeId && String(r.id) === String(activeId));
     plantImportPanel.hidden = !(active && hasLegacyLocalPlants());
   }
   if (taskImportPanel) {
-    const active = rows.find((r) => activeId && String(r.id) === String(activeId));
     taskImportPanel.hidden = !(active && hasLegacyLocalTasks());
   }
   renderFirstValueOnboarding();
@@ -539,6 +630,11 @@ async function hydrateActiveGardenPlants(gardenRow) {
     if (cid && r.id) plantClientToServerId.set(cid, r.id);
   });
   activeGardenPlantCount = plants.length;
+  activeGardenPlantSummaries = plants.map((p) => ({
+    name: String(p.name || '').trim() || 'Plant',
+    scientific: p.scientific || p.meta?.scientific || null,
+    profileSlug: p.profileSlug || p.profile_slug || null
+  }));
   if (typeof window.applyAuthenticatedGardenPlants === 'function') {
     window.applyAuthenticatedGardenPlants(plants, { authoritative: true });
   }
@@ -701,9 +797,24 @@ async function refreshOwnedGardenProfiles() {
   if (resolvedActive) {
     const garden = rows.find((r) => String(r.id) === String(resolvedActive));
     if (garden) {
-      await hydrateActiveGardenLocation(garden);
-      await hydrateActiveGardenPlants(garden);
-      await hydrateActiveGardenTasks(garden);
+      // Isolate hydrate steps: weather/network noise must not block plants.
+      try {
+        await hydrateActiveGardenLocation(garden);
+      } catch (err) {
+        console.warn('Garden location hydrate failed:', err?.message || err);
+        setStatus(err?.message || 'Location hydrate had a network issue.', 'error');
+      }
+      try {
+        await hydrateActiveGardenPlants(garden);
+      } catch (err) {
+        console.warn('Garden plants hydrate failed:', err?.message || err);
+        setStatus(err?.message || 'Could not load garden plants.', 'error');
+      }
+      try {
+        await hydrateActiveGardenTasks(garden);
+      } catch (err) {
+        console.warn('Garden tasks hydrate failed:', err?.message || err);
+      }
     }
   } else if (rows.length !== 1) {
     // No active garden (0 gardens, or many with no explicit selection):
@@ -721,9 +832,26 @@ async function selectActiveGarden(gardenId) {
   if (!row) throw new Error('Garden not found in your owned profiles.');
   setStoredActiveGardenId(id);
   renderGardenProfileList(ownedGardensCache);
-  const okLoc = await hydrateActiveGardenLocation(row);
-  const okPlants = await hydrateActiveGardenPlants(row);
-  const okTasks = await hydrateActiveGardenTasks(row);
+  let okLoc = false;
+  let okPlants = false;
+  let okTasks = false;
+  try {
+    okLoc = await hydrateActiveGardenLocation(row);
+  } catch (err) {
+    console.warn('Garden location hydrate failed:', err?.message || err);
+    setStatus(err?.message || 'Location hydrate had a network issue.', 'error');
+  }
+  try {
+    okPlants = await hydrateActiveGardenPlants(row);
+  } catch (err) {
+    console.warn('Garden plants hydrate failed:', err?.message || err);
+    setStatus(err?.message || 'Could not load garden plants.', 'error');
+  }
+  try {
+    okTasks = await hydrateActiveGardenTasks(row);
+  } catch (err) {
+    console.warn('Garden tasks hydrate failed:', err?.message || err);
+  }
   setStatus(
     okLoc || okPlants || okTasks
       ? `Using “${row.name}”.`
@@ -1411,6 +1539,7 @@ window.cruvitPersonalDomainV0 = {
   startSetGardenLocationFlow,
   renderFirstValueOnboarding,
   getActiveGardenPlantCount: () => activeGardenPlantCount,
+  getActiveGardenPlantSummaries: () => activeGardenPlantSummaries.slice(),
   getSupabaseClient: () => supabase,
   getSession: () => currentSession,
   getOwnedGardensCache: () => ownedGardensCache.slice()
