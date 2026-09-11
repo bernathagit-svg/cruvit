@@ -104,7 +104,7 @@ export function buildServerTaskPayload(task, options = {}) {
   if (!clientInstanceId) throw new Error('client_instance_id is required');
   if (!title) throw new Error('task title is required');
 
-  return {
+  const payload = {
     client_instance_id: clientInstanceId,
     garden_plant_id: gardenPlantId ? String(gardenPlantId) : null,
     icon,
@@ -116,6 +116,24 @@ export function buildServerTaskPayload(task, options = {}) {
     plant_name: plantName,
     done
   };
+
+  // Garden OS Spine V1: optional provenance (NULL-compatible for legacy rows).
+  const src =
+    options.sourceModule ??
+    options.source_module ??
+    task?.sourceModule ??
+    task?.source_module ??
+    null;
+  const typ =
+    options.taskType ?? options.task_type ?? task?.taskType ?? task?.task_type ?? null;
+  if (src != null && String(src).trim()) {
+    payload.source_module = String(src).trim().toLowerCase();
+  }
+  if (typ != null && String(typ).trim()) {
+    payload.task_type = String(typ).trim().toLowerCase();
+  }
+
+  return payload;
 }
 
 export function serverTaskToAppTask(row) {
@@ -140,6 +158,12 @@ export function serverTaskToAppTask(row) {
   task.id = clientId;
   if (row.id) task.serverId = row.id;
   if (row.garden_plant_id) task.gardenPlantId = row.garden_plant_id;
+  if (row.source_module != null && String(row.source_module).trim()) {
+    task.sourceModule = String(row.source_module).trim().toLowerCase();
+  }
+  if (row.task_type != null && String(row.task_type).trim()) {
+    task.taskType = String(row.task_type).trim().toLowerCase();
+  }
   return task;
 }
 
