@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   PLANT_DOCTOR_ACTIONS,
+  PLANT_DOCTOR_CONFIDENCE,
   PLANT_DOCTOR_IDENTITY,
   PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
   PLANT_DOCTOR_RESULT_MESSAGE_TYPE,
@@ -15,6 +16,7 @@ import {
   buildIdentityBlockedUserMessage,
   mapDiagnosisToPlantStatePatch,
   parseDoctorContextFromSearch,
+  resolveDiagnosticWritebackGate,
   resolveOwnedPlantIdentityGate,
   taskClientIdAlreadyPresent,
   tryParseDoctorDiagnosisJson
@@ -22,6 +24,9 @@ import {
 import {
   FIXTURE_MALFORMED_RESPONSE,
   FIXTURE_MATCH_DIAGNOSIS,
+  FIXTURE_MATCH_HIGH,
+  FIXTURE_MATCH_LOW,
+  FIXTURE_MATCH_MEDIUM,
   FIXTURE_MISMATCH,
   FIXTURE_PROVIDER_CALLS,
   FIXTURE_UNCERTAIN
@@ -87,7 +92,7 @@ test('C: severity maps onto mark/status without inventing certainty', () => {
   assert.equal(patch.mark, '!');
   assert.match(patch.status, /Possible fungal leaf spot/);
   assert.equal(patch.uncertain, true);
-  assert.match(patch.status, /Needs check/);
+  assert.match(patch.status, /^(Needs check|Likely):/);
 });
 
 test('C2: high severity attention status when not uncertain wording', () => {
@@ -210,8 +215,51 @@ test('identity gate: unmatched is not applicable (general Doctor)', () => {
 test('identity blocked user message for MISMATCH matches product copy', () => {
   assert.equal(
     buildIdentityBlockedUserMessage('Mango', PLANT_DOCTOR_IDENTITY.MISMATCH),
-    'This photo may not be your Mango. Please upload a photo of the selected plant or choose a different plant.'
+    'This photo may not be your selected plant. Please upload a photo of the correct plant or choose another plant.'
   );
+});
+
+test('diagnostic confidence gate: HIGH allows; LOW and MEDIUM+needsEvidence block', () => {
+  const high = resolveDiagnosticWritebackGate({
+    gardenPlantClientId: 'p_mango',
+    plantDisplayName: 'Mango',
+    diagnosis: FIXTURE_MATCH_HIGH
+  });
+  assert.equal(high.confidence, PLANT_DOCTOR_CONFIDENCE.HIGH);
+  assert.equal(high.mayMutateOwnedPlant, true);
+  assert.equal(high.mayCreateCareTask, true);
+
+  const med = resolveDiagnosticWritebackGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: FIXTURE_MATCH_MEDIUM
+  });
+  assert.equal(med.confidence, PLANT_DOCTOR_CONFIDENCE.MEDIUM);
+  assert.equal(med.mayMutateOwnedPlant, false);
+  assert.equal(med.blockedReason, 'confidence_medium_needs_evidence');
+
+  const low = resolveDiagnosticWritebackGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: FIXTURE_MATCH_LOW
+  });
+  assert.equal(low.confidence, PLANT_DOCTOR_CONFIDENCE.LOW);
+  assert.equal(low.mayMutateOwnedPlant, false);
+  assert.equal(low.blockedReason, 'confidence_low');
+});
+
+test('UNKNOWN severity is preserved; missing confidence does not invent HIGH', () => {
+  const msg = buildDoctorResultBridgeMessage({
+    gardenPlantClientId: 'p1',
+    diagnosis: {
+      ...sampleDiagnosis,
+      identity_assessment: 'match',
+      severity: 'unknown',
+      diagnostic_confidence: 'low'
+    }
+  });
+  assert.equal(msg.diagnosis.severity, 'unknown');
+  assert.equal(msg.diagnosis.diagnostic_confidence, 'low');
+  assert.equal(msg.diagnosis.confidence, null);
+  assert.equal(msg.writeback.mayMutateOwnedPlant, false);
 });
 
 test('malformed fixture does not parse; MATCH fixture does', () => {

@@ -186,6 +186,20 @@ function ownedPlantPromptHint(){
   bits.push('Set plant_name to the photographed species; if it matches the owned plant, use the owned plant name.');
   return bits.join(' ')+'\n';
 }
+function diagnosticSafetyPromptRules(){
+  return [
+    'Be diagnostically cautious. Do not claim certainty unsupported by the image.',
+    'Separate observed symptoms (visible only) from inferred likely diagnosis.',
+    'Include differential_diagnoses when multiple causes are plausible (e.g. sooty mold vs surface contamination vs fungal disease vs honeydew).',
+    'diagnostic_confidence must be high|medium|low. Prefer low or medium over high. Never invent high.',
+    'severity must be low|medium|high|unknown. Use unknown when unclear.',
+    'needs_more_evidence true when treatment could change with better evidence; list requested_evidence.',
+    'safe_immediate_actions: only low-risk non-destructive actions (inspect, clean, prune when appropriate, isolate, watering/cultural changes, monitor).',
+    'Do NOT recommend specific regulated pesticide/fungicide products or chemical actives as primary treatment. Leave products and biological empty arrays for now.',
+    'recommended_next_action: one clear next step.',
+    'Identity assessment and full diagnosis must be in THIS same response (exactly one provider call).'
+  ].join(' ');
+}
 async function loadImageMimeApi(){
   if(window.cruvitPlantDoctorImageMime&&typeof window.cruvitPlantDoctorImageMime.resolvePlantDoctorImagePayload==='function'){
     return window.cruvitPlantDoctorImageMime;
@@ -216,7 +230,7 @@ async function diagnose(){
     return;
   }
   const notes=$('notes').value.trim();
-  const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","identity_assessment":"match|mismatch|uncertain","identity_reason":"short reason about photo vs expected owned plant when applicable","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible.... When owned-plant context is present, identity_assessment is REQUIRED in this same response (no second call). For general/unmatched diagnosis without owned plant context, set identity_assessment to uncertain.`;
+  const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","identity_assessment":"match|mismatch|uncertain","identity_reason":"short reason","observed_symptoms":["visible symptom"],"likely_diagnosis":"inferred cause or null","differential_diagnoses":["plausible alternative"],"diagnostic_confidence":"high|medium|low","severity":"low|medium|high|unknown","diagnosis":"2-3 sentences separating observed vs inferred","recommended_next_action":"one next step","needs_more_evidence":true,"requested_evidence":["underside of leaf"],"safe_immediate_actions":["inspect","clean"],"products":[],"biological":[],"home_remedy":["low-risk cultural step"],"problem_name":"same as likely_diagnosis when set"}\nRules: ${diagnosticSafetyPromptRules()} When owned-plant context is present, identity_assessment is REQUIRED. For general/unmatched diagnosis without owned plant context, set identity_assessment to uncertain.`;
   try{
     const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:imagePayload.mediaType,data:imagePayload.data}},{type:'text',text:prompt}]}]);
     resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show');
@@ -226,7 +240,30 @@ async function diagnose(){
   }
 }
 function showErr(m){$('err').textContent=m;$('err').classList.add('show')}
-function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}function sevText(s){return t('severity_'+(s||'low'))}
+function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}
+function sevText(s){
+  const v=String(s||'').toLowerCase();
+  if(v==='unknown') return 'Unknown severity';
+  return t('severity_'+(v||'low'));
+}
+function confText(c){
+  const v=String(c||'').toLowerCase();
+  if(v==='high') return 'High';
+  if(v==='medium') return 'Medium';
+  if(v==='low') return 'Low';
+  return 'Unknown';
+}
+function normalizeConfidenceFromResult(d){
+  const raw=String((d&&(d.diagnostic_confidence||d.diagnosticConfidence))||'').trim().toLowerCase();
+  if(raw==='high'||raw==='medium'||raw==='low') return raw;
+  const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  return unmatched?null:'low';
+}
+function listHtml(arr){
+  const items=(arr||[]).map(x=>typeof x==='string'?x:(x&&(x.name||x.label||x.desc))||'').map(s=>String(s||'').trim()).filter(Boolean);
+  if(!items.length) return '<p class="para">—</p>';
+  return '<ul style="margin:6px 0 0 18px;padding:0">'+items.map(i=>'<li>'+i+'</li>').join('')+'</ul>';
+}
 function renderItems(arr){if(!arr||!arr.length)return '<div class="item"><p>—</p></div>';return arr.map(x=>typeof x==='string'?`<div class="item"><div class="item-emoji">🌿</div><p>${x}</p></div>`:`<div class="item"><div class="item-emoji">${x.emoji||'🌿'}</div><div><h4>${x.name||''}</h4><p>${x.desc||''}</p></div></div>`).join('')}
 function normalizeIdentityFromResult(d){
   const raw=String((d&& (d.identity_assessment||d.identityAssessment))||'').trim().toLowerCase();
@@ -242,15 +279,29 @@ function buildBridgePayload(action){
   const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
   const identityAssessment=normalizeIdentityFromResult(d);
   const identityReason=String(d.identity_reason||d.identityReason||'').trim()||null;
+  const conf=normalizeConfidenceFromResult(d);
+  const needsMore=d.needs_more_evidence===true||d.needsMoreEvidence===true||conf==='low';
   if(!unmatched&&identityAssessment&&identityAssessment!=='match'){
     throw new Error(identityAssessment==='mismatch'
-      ?('This photo may not be your '+(ownedPlantContext.plantDisplayName||'selected plant')+'. Please upload a photo of the selected plant or choose a different plant.')
+      ?('This photo may not be your selected plant. Please upload a photo of the correct plant or choose another plant.')
       :('We could not confirm this photo is your '+(ownedPlantContext.plantDisplayName||'selected plant')+'. Garden status was not changed.'));
   }
+  if(!unmatched&&(conf==='low'||(conf==='medium'&&needsMore))){
+    throw new Error(conf==='low'
+      ?('Confidence is low. No definitive diagnosis was applied. Please provide additional evidence before updating this plant.')
+      :('This is a likely cause, but more evidence could change treatment. Please add the requested evidence before updating garden status or creating a care task.'));
+  }
+  const observed=Array.isArray(d.observed_symptoms)?d.observed_symptoms:(Array.isArray(d.observedSymptoms)?d.observedSymptoms:[]);
+  const diffs=Array.isArray(d.differential_diagnoses)?d.differential_diagnoses:(Array.isArray(d.differentialDiagnoses)?d.differentialDiagnoses:[]);
+  const evidence=Array.isArray(d.requested_evidence)?d.requested_evidence:(Array.isArray(d.requestedEvidence)?d.requestedEvidence:[]);
+  const safe=Array.isArray(d.safe_immediate_actions)?d.safe_immediate_actions:(Array.isArray(d.safeImmediateActions)?d.safeImmediateActions:(Array.isArray(d.home_remedy)?d.home_remedy:[]));
+  const likely=d.likely_diagnosis||d.likelyDiagnosis||d.problem_name||null;
+  const sevRaw=String(d.severity||'').toLowerCase();
+  const severity=(sevRaw==='low'||sevRaw==='medium'||sevRaw==='high'||sevRaw==='unknown')?sevRaw:null;
   return {
     type:PD_RESULT_TYPE,
     source:PD_SOURCE,
-    version:'1.1.0',
+    version:'1.2.0',
     timestamp:new Date().toISOString(),
     action:action,
     unmatched:unmatched,
@@ -263,12 +314,21 @@ function buildBridgePayload(action){
     identity:unmatched?null:{assessment:identityAssessment||'uncertain',reason:identityReason},
     diagnosis:{
       plant_name:d.plant_name||null,
-      problem_name:d.problem_name||null,
-      severity:(d.severity==='low'||d.severity==='medium'||d.severity==='high')?d.severity:null,
+      problem_name:likely,
+      likely_diagnosis:likely,
+      observed_symptoms:observed,
+      differential_diagnoses:diffs,
+      diagnostic_confidence:conf,
+      severity:severity,
       diagnosis:d.diagnosis||null,
-      products:Array.isArray(d.products)?d.products:[],
-      biological:Array.isArray(d.biological)?d.biological:[],
-      home_remedy:Array.isArray(d.home_remedy)?d.home_remedy:[],
+      recommended_next_action:d.recommended_next_action||d.recommendedNextAction||null,
+      needs_more_evidence:!!needsMore,
+      requested_evidence:evidence,
+      safe_immediate_actions:safe,
+      products:[],
+      products_gated:true,
+      biological:[],
+      home_remedy:safe,
       confidence:null,
       identity_assessment:unmatched?null:(identityAssessment||'uncertain'),
       identity_reason:identityReason
@@ -293,20 +353,52 @@ function careActionsHtml(d){
   const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
   const identity=normalizeIdentityFromResult(d);
   const identityReason=String(d.identity_reason||d.identityReason||'').trim();
-  const firstRemedy=(Array.isArray(d.home_remedy)?d.home_remedy:[]).map(x=>typeof x==='string'?x:(x&&x.name)||'').map(s=>String(s||'').trim()).find(Boolean)||'Inspect plant';
+  const conf=normalizeConfidenceFromResult(d);
+  const needsMore=d.needs_more_evidence===true||d.needsMoreEvidence===true||conf==='low';
+  const evidence=Array.isArray(d.requested_evidence)?d.requested_evidence:(Array.isArray(d.requestedEvidence)?d.requestedEvidence:[]);
+  const safe=Array.isArray(d.safe_immediate_actions)?d.safe_immediate_actions:(Array.isArray(d.safeImmediateActions)?d.safeImmediateActions:(Array.isArray(d.home_remedy)?d.home_remedy:[]));
+  const firstSafe=(safe.map(x=>typeof x==='string'?x:(x&&x.name)||'').map(s=>String(s||'').trim()).find(Boolean))||(d.recommended_next_action||d.recommendedNextAction)||'Inspect plant';
   if(unmatched){
-    return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careUnmatched')}</p><p><b>${d.problem_name||'Diagnosis'}</b><br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">Add care task</button><div class="care-note" id="careSentNote"></div></div>`;
+    return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careUnmatched')}</p><p><b>${d.likely_diagnosis||d.problem_name||'Diagnosis'}</b><br>Next step: ${firstSafe}</p><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">Add care task</button><div class="care-note" id="careSentNote"></div></div>`;
   }
   if(identity==='mismatch'||identity==='uncertain'){
-    const name=ownedPlantContext.plantDisplayName||'selected plant';
     const title=identity==='mismatch'
-      ?('This photo may not be your '+name+'. Please upload a photo of the selected plant or choose a different plant.')
-      :('We could not confirm this photo is your '+name+'. Garden status and care tasks were not changed. Please confirm or retry with a clearer photo of the selected plant.');
-    return `<div class="care-actions"><h3>Identity check</h3><p><b>${title}</b></p>${identityReason?`<p>${identityReason}</p>`:''}<p>Diagnosis is shown above for reference only. It will not update ${name} until identity matches.</p><div class="care-note" id="careSentNote"></div></div>`;
+      ?('This photo may not be your selected plant. Please upload a photo of the correct plant or choose another plant.')
+      :('We could not confirm this photo is your '+(ownedPlantContext.plantDisplayName||'selected plant')+'. Garden status and care tasks were not changed. Please confirm or retry with a clearer photo.');
+    return `<div class="care-actions"><h3>Identity check</h3><p><b>${title}</b></p>${identityReason?`<p>${identityReason}</p>`:''}<p>Diagnosis is shown above for reference only. It will not update the garden until identity matches.</p><div class="care-note" id="careSentNote"></div></div>`;
   }
-  return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careSub')}</p><p><b>${d.problem_name||'Diagnosis'}</b> · ${sevText(d.severity)}<br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn primary" onclick="sendCareResult('apply_and_task')">${t('careApplyTask')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('apply_state')">${t('careApplyOnly')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">${t('careTaskOnly')}</button><div class="care-note" id="careSentNote"></div></div>`;
+  if(conf==='low'){
+    return `<div class="care-actions"><h3>More evidence needed</h3><p><b>Confidence is low. No definitive diagnosis will be applied.</b></p><p>Please provide additional evidence before updating this plant.</p>${listHtml(evidence)}<div class="care-note" id="careSentNote"></div></div>`;
+  }
+  if(conf==='medium'&&needsMore){
+    return `<div class="care-actions"><h3>Likely cause — evidence requested</h3><p>More evidence could change treatment. Please add the requested evidence before updating garden status or creating a care task.</p>${listHtml(evidence)}<div class="care-note" id="careSentNote"></div></div>`;
+  }
+  const likelyLabel=conf==='medium'?('Likely: '+(d.likely_diagnosis||d.problem_name||'cause')):(d.likely_diagnosis||d.problem_name||'Diagnosis');
+  return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careSub')}</p><p><b>${likelyLabel}</b> · Confidence ${confText(conf)} · ${sevText(d.severity)}<br>Next step: ${firstSafe}</p><button type="button" class="care-btn primary" onclick="sendCareResult('apply_and_task')">${t('careApplyTask')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('apply_state')">${t('careApplyOnly')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">${t('careTaskOnly')}</button><div class="care-note" id="careSentNote"></div></div>`;
 }
-function renderResult(d){$('resultHtml').innerHTML=`<div class="diag-card"><div class="top"><img class="thumb" src="${dataUrl}"><div><h2 class="rtitle">${d.problem_name||''}</h2><span class="badge ${sevClass(d.severity)}">${sevText(d.severity)}</span><div class="para">🌱 ${d.plant_name||''}</div></div></div><div class="section-title">🔍 ${t('diagnosis')}</div><p class="para">${d.diagnosis||''}</p></div>${careActionsHtml(d)}<div class="tabs"><button class="tab active" onclick="tab('p1',this)">🛒 ${t('products')}</button><button class="tab" onclick="tab('p2',this)">🧬 ${t('biological')}</button><button class="tab" onclick="tab('p3',this)">🏠 ${t('home')}</button></div><div class="list-card panel active" id="p1">${renderItems(d.products)}</div><div class="list-card panel" id="p2">${renderItems(d.biological)}</div><div class="list-card panel" id="p3">${renderItems(d.home_remedy)}</div>`}
+function diagnosticSectionsHtml(d){
+  const observed=d.observed_symptoms||d.observedSymptoms||[];
+  const likely=d.likely_diagnosis||d.likelyDiagnosis||d.problem_name||'';
+  const diffs=d.differential_diagnoses||d.differentialDiagnoses||[];
+  const conf=normalizeConfidenceFromResult(d);
+  const next=d.recommended_next_action||d.recommendedNextAction||'';
+  const evidence=d.requested_evidence||d.requestedEvidence||[];
+  const safe=d.safe_immediate_actions||d.safeImmediateActions||d.home_remedy||[];
+  const title=conf==='medium'?('Likely: '+likely):likely;
+  return `<div class="diag-card"><div class="top"><img class="thumb" src="${dataUrl}"><div><h2 class="rtitle">${title||'Plant check'}</h2><span class="badge ${sevClass(d.severity)}">${sevText(d.severity)}</span><div class="para">🌱 ${d.plant_name||''}</div><div class="para">Confidence: ${confText(conf)}</div></div></div>
+<div class="section-title">👁 Observed</div><p class="para">What CRUVIT can see</p>${listHtml(observed)}
+<div class="section-title">🔍 Likely cause</div><p class="para">${likely||'—'}</p><p class="para">${d.diagnosis||''}</p>
+${diffs&&diffs.length?`<div class="section-title">Alternatives to consider</div>${listHtml(diffs)}`:''}
+<div class="section-title">Confidence</div><p class="para">${confText(conf)}</p>
+<div class="section-title">Next step</div><p class="para">${next||'—'}</p>
+${evidence&&evidence.length?`<div class="section-title">Requested evidence</div>${listHtml(evidence)}`:''}
+<div class="section-title">Safe immediate actions</div>${listHtml(safe)}
+</div>`;
+}
+function renderResult(d){
+  const safe=d.safe_immediate_actions||d.safeImmediateActions||d.home_remedy||[];
+  $('resultHtml').innerHTML=`${diagnosticSectionsHtml(d)}${careActionsHtml(d)}<div class="tabs"><button class="tab active" onclick="tab('p1',this)">Safe actions</button><button class="tab" onclick="tab('p2',this)">Products</button><button class="tab" onclick="tab('p3',this)">🧬 ${t('biological')}</button></div><div class="list-card panel active" id="p1">${renderItems(safe)}</div><div class="list-card panel" id="p2"><div class="item"><p>Specific chemical product recommendations are not shown until a localized regulatory/safety layer is available. Prefer the safe actions above.</p></div></div><div class="list-card panel" id="p3"><div class="item"><p>Specific biological product recommendations are gated for the same reason. Prefer cultural and monitoring steps for now.</p></div></div>`;
+}
 window.tab=(id,btn)=>{document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));$(id).classList.add('active');btn.classList.add('active')}
 $('galleryBtn').onclick=()=>$('fileInput').click();$('cameraBtn').onclick=()=>$('camInput').click();$('changeBtn').onclick=()=>$('fileInput').click();$('fileInput').onchange=e=>handleFile(e.target.files[0]);$('camInput').onchange=e=>handleFile(e.target.files[0]);$('diagnose').onclick=diagnose;$('backBtn').onclick=reset;$('newBtn').onclick=reset;parseOwnedPlantContext();initLang();
 window.addEventListener('unhandledrejection',function(e){

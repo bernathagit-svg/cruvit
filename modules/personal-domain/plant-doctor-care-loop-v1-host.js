@@ -15,7 +15,9 @@ import {
   buildDoctorResultBridgeMessage,
   buildIdentityBlockedUserMessage,
   mapDiagnosisToPlantStatePatch,
+  normalizeDoctorDiagnosticPayload,
   parseDoctorContextFromSearch,
+  resolveDiagnosticWritebackGate,
   resolveOwnedPlantIdentityGate,
   taskClientIdAlreadyPresent
 } from './plant-doctor-care-loop-v1-contract.js';
@@ -23,7 +25,7 @@ import {
 function buildDoctorIframeSrc(context = {}) {
   const base = 'modules/plant-doctor/index.html';
   const q = new URLSearchParams();
-  q.set('v', '20260911i');
+  q.set('v', '20260911j');
   if (context.unmatched) q.set('unmatched', '1');
   if (context.gardenProfileId) q.set('gardenId', String(context.gardenProfileId));
   if (context.gardenPlantClientId) q.set('plantClientId', String(context.gardenPlantClientId));
@@ -42,7 +44,7 @@ function findOwnedPlant(data, clientId) {
 
 /**
  * Apply a validated bridge message. Returns { ok, plantUpdated, taskCreated, taskDeduped, moodHooked, reason }.
- * Identity Safety: owned-plant mutations require MATCH from the same diagnosis payload (no second AI call).
+ * Diagnostic Safety: owned-plant mutations require MATCH + sufficient confidence (same diagnosis payload; no second AI call).
  */
 export function applyDoctorCareLoopResult(msg, host) {
   if (!msg || msg.type !== PLANT_DOCTOR_RESULT_MESSAGE_TYPE) {
@@ -51,8 +53,7 @@ export function applyDoctorCareLoopResult(msg, host) {
   if (msg.source !== PLANT_DOCTOR_SOURCE) {
     return { ok: false, reason: 'ignored_source' };
   }
-  const diagnosis = msg.diagnosis;
-  if (!diagnosis || typeof diagnosis !== 'object') {
+  if (!msg.diagnosis || typeof msg.diagnosis !== 'object') {
     return { ok: false, reason: 'missing_diagnosis' };
   }
 
@@ -60,21 +61,31 @@ export function applyDoctorCareLoopResult(msg, host) {
   if (!data) return { ok: false, reason: 'no_data' };
 
   const unmatched = msg.unmatched === true || !msg.gardenPlantClientId;
-  const identityGate = resolveOwnedPlantIdentityGate({
+  const diagnosis = normalizeDoctorDiagnosticPayload(msg.diagnosis, { unmatched });
+  const writebackGate = resolveDiagnosticWritebackGate({
     unmatched,
     gardenPlantClientId: msg.gardenPlantClientId,
+    plantDisplayName: msg.plantDisplayName,
     identity: msg.identity,
     diagnosis
   });
-  const identityBlocked =
-    identityGate.applicable && !identityGate.mayMutateOwnedPlant;
+  const identityGate = writebackGate.identityGate;
 
-  if (identityBlocked) {
-    const userMessage = buildIdentityBlockedUserMessage(
-      msg.plantDisplayName || findOwnedPlant(data, msg.gardenPlantClientId)?.name,
-      identityGate.assessment,
-      identityGate.reason
-    );
+  const writebackBlocked =
+    writebackGate.applicable &&
+    (!writebackGate.mayMutateOwnedPlant || !writebackGate.mayCreateCareTask) &&
+    !unmatched &&
+    (msg.action === PLANT_DOCTOR_ACTIONS.APPLY_STATE ||
+      msg.action === PLANT_DOCTOR_ACTIONS.CREATE_TASK ||
+      msg.action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK ||
+      !msg.action);
+
+  // Owned path: block any mutation/task/mood when gate denies.
+  if (
+    writebackGate.applicable &&
+    !writebackGate.mayMutateOwnedPlant &&
+    !writebackGate.mayCreateCareTask
+  ) {
     return {
       ok: true,
       plantUpdated: false,
@@ -82,21 +93,25 @@ export function applyDoctorCareLoopResult(msg, host) {
       taskDeduped: false,
       moodHooked: false,
       unmatched: false,
-      identityBlocked: true,
+      identityBlocked: !!writebackGate.blockedReason?.startsWith('identity_'),
+      confidenceBlocked: !!writebackGate.blockedReason?.startsWith('confidence_'),
       identityAssessment: identityGate.assessment,
-      userMessage,
-      reason: `identity_${identityGate.assessment}`,
+      diagnosticConfidence: writebackGate.confidence,
+      userMessage: writebackGate.userMessage,
+      reason: writebackGate.blockedReason,
       providerCallsUsed: 0
     };
   }
 
   const action = msg.action || PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK;
   const wantState =
-    action === PLANT_DOCTOR_ACTIONS.APPLY_STATE ||
-    action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK;
+    (action === PLANT_DOCTOR_ACTIONS.APPLY_STATE ||
+      action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK) &&
+    (unmatched ? false : writebackGate.mayMutateOwnedPlant);
   const wantTask =
-    action === PLANT_DOCTOR_ACTIONS.CREATE_TASK ||
-    action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK;
+    (action === PLANT_DOCTOR_ACTIONS.CREATE_TASK ||
+      action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK) &&
+    (unmatched ? true : writebackGate.mayCreateCareTask);
 
   let plantUpdated = false;
   let taskCreated = false;
@@ -125,16 +140,16 @@ export function applyDoctorCareLoopResult(msg, host) {
   }
 
   // Session/local mood hook only — not a durable History store.
-  // Owned-plant mood only when identity MATCH (or unmatched general path).
   let moodHooked = false;
-  if (unmatched || identityGate.mayHookOwnedMood) {
+  if (unmatched || writebackGate.mayHookOwnedMood) {
     const moodEntry = {
       source: PLANT_DOCTOR_SOURCE,
       timestamp: msg.timestamp || new Date().toISOString(),
       gardenPlantClientId: unmatched ? null : msg.gardenPlantClientId || null,
       plantDisplayName: msg.plantDisplayName || plant?.name || diagnosis.plant_name || null,
-      problem_name: diagnosis.problem_name || null,
+      problem_name: diagnosis.problem_name || diagnosis.likely_diagnosis || null,
       severity: diagnosis.severity || null,
+      diagnostic_confidence: diagnosis.diagnostic_confidence || null,
       diagnosis: diagnosis.diagnosis || null,
       identity_assessment: identityGate.applicable ? identityGate.assessment : null,
       unmatched
@@ -167,7 +182,6 @@ export function applyDoctorCareLoopResult(msg, host) {
       if (typeof host.finalizePlantHealthStateChange === 'function') {
         host.finalizePlantHealthStateChange(plant);
       } else {
-        // Legacy fallback must never regenerate seasonal care plans for Doctor writeback.
         try {
           host.saveData?.(data);
         } catch (_) {
@@ -212,8 +226,10 @@ export function applyDoctorCareLoopResult(msg, host) {
     moodHooked,
     unmatched,
     identityBlocked: false,
+    confidenceBlocked: false,
     identityAssessment: identityGate.applicable ? identityGate.assessment : null,
-    reason: null,
+    diagnosticConfidence: writebackGate.confidence,
+    reason: writebackBlocked ? writebackGate.blockedReason : null,
     providerCallsUsed: 0
   };
 }
@@ -247,13 +263,16 @@ function installPlantDoctorCareLoopHost() {
       };
       const result = applyDoctorCareLoopResult(msg, host);
       if (!result.ok) return;
-      if (result.identityBlocked) {
+      if (result.identityBlocked || result.confidenceBlocked) {
         try {
-          window.alert?.(result.userMessage || 'Plant identity could not be confirmed. Garden was not changed.');
+          window.alert?.(
+            result.userMessage ||
+              'Plant diagnosis could not be applied safely. Garden was not changed.'
+          );
         } catch (_) {
           /* ignore */
         }
-        // Stay in Plant Doctor so the user can upload the correct photo.
+        // Stay in Plant Doctor so the user can upload clearer evidence.
         return;
       }
       const parts = [];
@@ -294,8 +313,10 @@ function installPlantDoctorCareLoopHost() {
     buildDoctorCareTaskClientId,
     buildDoctorCareTaskRow,
     mapDiagnosisToPlantStatePatch,
+    normalizeDoctorDiagnosticPayload,
     parseDoctorContextFromSearch,
     resolveOwnedPlantIdentityGate,
+    resolveDiagnosticWritebackGate,
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
     openWithOwnedPlantRecord(plant) {

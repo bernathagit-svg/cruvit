@@ -1,9 +1,10 @@
 /**
  * Plant Doctor → My Garden Care Loop V1 — pure contract helpers.
- * No DOM / network. Maps Doctor diagnosis JSON onto existing plant/task fields only.
+ * Diagnostic Safety V1: identity + confidence + structured fields in ONE provider call.
+ * No DOM / network. No invented certainty. No chemical product authority.
  */
 
-export const PLANT_DOCTOR_CARE_LOOP_VERSION = '1.1.0';
+export const PLANT_DOCTOR_CARE_LOOP_VERSION = '1.2.0';
 export const PLANT_DOCTOR_RESULT_MESSAGE_TYPE = 'cruvit:plant-doctor-result';
 export const PLANT_DOCTOR_CONTEXT_MESSAGE_TYPE = 'cruvit:plant-doctor-context';
 export const PLANT_DOCTOR_SOURCE = 'plant_doctor';
@@ -23,12 +24,38 @@ export const PLANT_DOCTOR_IDENTITY = Object.freeze({
   UNCERTAIN: 'uncertain'
 });
 
-const SEVERITIES = new Set(['low', 'medium', 'high']);
+export const PLANT_DOCTOR_CONFIDENCE = Object.freeze({
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low'
+});
+
+const SEVERITIES = new Set(['low', 'medium', 'high', 'unknown']);
 const IDENTITY_VALUES = new Set(Object.values(PLANT_DOCTOR_IDENTITY));
+const CONFIDENCE_VALUES = new Set(Object.values(PLANT_DOCTOR_CONFIDENCE));
+
+function asStringList(value, limit = 8) {
+  if (!Array.isArray(value)) {
+    if (typeof value === 'string' && value.trim()) return [value.trim().slice(0, 200)];
+    return [];
+  }
+  return value
+    .map((x) => {
+      if (typeof x === 'string') return x.trim();
+      if (x && typeof x === 'object') {
+        return String(x.name || x.label || x.desc || x.text || '').trim();
+      }
+      return '';
+    })
+    .filter(Boolean)
+    .map((s) => s.slice(0, 200))
+    .slice(0, limit);
+}
 
 export function normalizeDoctorSeverity(value) {
   const s = String(value || '').trim().toLowerCase();
-  return SEVERITIES.has(s) ? s : null;
+  if (SEVERITIES.has(s)) return s;
+  return null;
 }
 
 /**
@@ -47,6 +74,18 @@ export function normalizeIdentityAssessment(value) {
   if (s === 'unsure' || s === 'unknown' || s === 'unclear') {
     return PLANT_DOCTOR_IDENTITY.UNCERTAIN;
   }
+  return null;
+}
+
+/**
+ * Normalize diagnostic confidence. Missing/invalid → null (never invent HIGH).
+ */
+export function normalizeDiagnosticConfidence(value) {
+  const s = String(value || '')
+    .trim()
+    .toLowerCase();
+  if (CONFIDENCE_VALUES.has(s)) return s;
+  if (s === 'med') return PLANT_DOCTOR_CONFIDENCE.MEDIUM;
   return null;
 }
 
@@ -99,11 +138,109 @@ export function resolveOwnedPlantIdentityGate(input = {}) {
   };
 }
 
-export function buildIdentityBlockedUserMessage(plantDisplayName, assessment, reason) {
-  const name = String(plantDisplayName || 'selected plant').trim() || 'selected plant';
-  if (assessment === PLANT_DOCTOR_IDENTITY.MISMATCH) {
-    return `This photo may not be your ${name}. Please upload a photo of the selected plant or choose a different plant.`;
+/**
+ * Combined identity + diagnostic-confidence writeback gate (owned plant).
+ * LOW confidence always blocks persistent mutation/task.
+ * MEDIUM + needsMoreEvidence blocks persistent treatment/state writeback.
+ * HIGH (or MEDIUM without needing more evidence) may proceed after explicit user action.
+ */
+export function resolveDiagnosticWritebackGate(input = {}) {
+  const unmatched = input.unmatched === true || !input.gardenPlantClientId;
+  const identityGate = resolveOwnedPlantIdentityGate(input);
+  const diagnosis =
+    input.diagnosis && typeof input.diagnosis === 'object' ? input.diagnosis : {};
+  let confidence = normalizeDiagnosticConfidence(
+    diagnosis.diagnostic_confidence ||
+      diagnosis.diagnosticConfidence ||
+      // legacy numeric/string "confidence" must never invent HIGH — only accept enum-like
+      (typeof diagnosis.confidence === 'string' ? diagnosis.confidence : null)
+  );
+  const needsMoreEvidence =
+    diagnosis.needs_more_evidence === true || diagnosis.needsMoreEvidence === true;
+
+  if (unmatched) {
+    return {
+      applicable: false,
+      identityGate,
+      confidence: confidence || null,
+      needsMoreEvidence,
+      mayMutateOwnedPlant: false,
+      mayCreateCareTask: true,
+      mayHookOwnedMood: true,
+      blockedReason: null,
+      userMessage: null
+    };
   }
+
+  // Owned + missing confidence → treat as LOW (never invent HIGH/MEDIUM).
+  if (!confidence) confidence = PLANT_DOCTOR_CONFIDENCE.LOW;
+
+  if (!identityGate.mayMutateOwnedPlant) {
+    return {
+      applicable: true,
+      identityGate,
+      confidence,
+      needsMoreEvidence,
+      mayMutateOwnedPlant: false,
+      mayCreateCareTask: false,
+      mayHookOwnedMood: false,
+      blockedReason: `identity_${identityGate.assessment}`,
+      userMessage: buildIdentityBlockedUserMessage(
+        input.plantDisplayName,
+        identityGate.assessment,
+        identityGate.reason
+      )
+    };
+  }
+
+  if (confidence === PLANT_DOCTOR_CONFIDENCE.LOW) {
+    return {
+      applicable: true,
+      identityGate,
+      confidence,
+      needsMoreEvidence: true,
+      mayMutateOwnedPlant: false,
+      mayCreateCareTask: false,
+      mayHookOwnedMood: false,
+      blockedReason: 'confidence_low',
+      userMessage:
+        'Confidence is low. No definitive diagnosis was applied. Please provide additional evidence (clearer photo or details) before updating this plant.'
+    };
+  }
+
+  if (confidence === PLANT_DOCTOR_CONFIDENCE.MEDIUM && needsMoreEvidence) {
+    return {
+      applicable: true,
+      identityGate,
+      confidence,
+      needsMoreEvidence: true,
+      mayMutateOwnedPlant: false,
+      mayCreateCareTask: false,
+      mayHookOwnedMood: false,
+      blockedReason: 'confidence_medium_needs_evidence',
+      userMessage:
+        'This is a likely cause, but more evidence could change treatment. Please add the requested evidence before updating garden status or creating a care task.'
+    };
+  }
+
+  return {
+    applicable: true,
+    identityGate,
+    confidence,
+    needsMoreEvidence: false,
+    mayMutateOwnedPlant: true,
+    mayCreateCareTask: true,
+    mayHookOwnedMood: true,
+    blockedReason: null,
+    userMessage: null
+  };
+}
+
+export function buildIdentityBlockedUserMessage(plantDisplayName, assessment, reason) {
+  if (assessment === PLANT_DOCTOR_IDENTITY.MISMATCH) {
+    return 'This photo may not be your selected plant. Please upload a photo of the correct plant or choose another plant.';
+  }
+  const name = String(plantDisplayName || 'selected plant').trim() || 'selected plant';
   const base = `We could not confirm this photo is your ${name}. Garden status and care tasks were not changed. Please confirm or retry with a clearer photo of the selected plant.`;
   return reason ? `${base} (${reason})` : base;
 }
@@ -135,6 +272,87 @@ export function tryParseDoctorDiagnosisJson(text) {
 }
 
 /**
+ * Normalize one Doctor diagnosis payload into the Diagnostic Safety V1 shape.
+ * Chemical/product recommendations are gated empty (no regulatory layer yet).
+ */
+export function normalizeDoctorDiagnosticPayload(raw = {}, options = {}) {
+  const unmatched = options.unmatched === true;
+  const observed_symptoms = asStringList(
+    raw.observed_symptoms || raw.observedSymptoms
+  );
+  const differential_diagnoses = asStringList(
+    raw.differential_diagnoses || raw.differentialDiagnoses
+  );
+  const requested_evidence = asStringList(
+    raw.requested_evidence || raw.requestedEvidence
+  );
+  const safe_immediate_actions = asStringList(
+    raw.safe_immediate_actions || raw.safeImmediateActions || raw.home_remedy
+  );
+  const likely_diagnosis =
+    String(raw.likely_diagnosis || raw.likelyDiagnosis || raw.problem_name || '').trim() ||
+    null;
+  const recommended_next_action =
+    String(
+      raw.recommended_next_action ||
+        raw.recommendedNextAction ||
+        safe_immediate_actions[0] ||
+        ''
+    ).trim() || null;
+  const needs_more_evidence =
+    raw.needs_more_evidence === true ||
+    raw.needsMoreEvidence === true ||
+    normalizeDiagnosticConfidence(
+      raw.diagnostic_confidence || raw.diagnosticConfidence
+    ) === PLANT_DOCTOR_CONFIDENCE.LOW;
+
+  let identity_assessment = normalizeIdentityAssessment(
+    raw.identity_assessment || raw.identityAssessment
+  );
+  if (!unmatched && !identity_assessment) {
+    identity_assessment = PLANT_DOCTOR_IDENTITY.UNCERTAIN;
+  }
+  if (unmatched) identity_assessment = identity_assessment || null;
+
+  let diagnostic_confidence = normalizeDiagnosticConfidence(
+    raw.diagnostic_confidence || raw.diagnosticConfidence
+  );
+  // Never invent HIGH. Missing owned confidence → LOW.
+  if (!unmatched && !diagnostic_confidence) {
+    diagnostic_confidence = PLANT_DOCTOR_CONFIDENCE.LOW;
+  }
+
+  const severity = normalizeDoctorSeverity(raw.severity);
+
+  return {
+    plant_name: raw.plant_name || raw.plantName || null,
+    problem_name: likely_diagnosis,
+    likely_diagnosis,
+    observed_symptoms,
+    differential_diagnoses,
+    diagnostic_confidence,
+    severity,
+    recommended_next_action,
+    needs_more_evidence: !!needs_more_evidence,
+    requested_evidence,
+    safe_immediate_actions,
+    diagnosis: raw.diagnosis || null,
+    // Treatment safety V1: do not surface specific chemical products as primary advice.
+    products: [],
+    products_gated: true,
+    biological: [],
+    home_remedy: safe_immediate_actions.length
+      ? safe_immediate_actions
+      : asStringList(raw.home_remedy),
+    // Never invent numeric confidence.
+    confidence: null,
+    identity_assessment,
+    identity_reason:
+      String(raw.identity_reason || raw.identityReason || '').trim() || null
+  };
+}
+
+/**
  * Stable task client_instance_id for dedupe across repeated UI events.
  * Uses owned plant client id + problem name when available.
  */
@@ -158,25 +376,40 @@ export function buildDoctorCareTaskClientId(input = {}) {
 /**
  * Map diagnosis severity onto existing garden plant mark/status fields only.
  * Does not invent confidence. Does not store full diagnosis text on the plant row.
+ * Wording strength tracks diagnosticConfidence when present.
  */
 export function mapDiagnosisToPlantStatePatch(diagnosis = {}, options = {}) {
   const severity = normalizeDoctorSeverity(diagnosis.severity);
-  const problem = String(diagnosis.problem_name || '').trim();
+  const conf =
+    normalizeDiagnosticConfidence(
+      diagnosis.diagnostic_confidence || diagnosis.diagnosticConfidence
+    ) || null;
+  const problem = String(
+    diagnosis.likely_diagnosis || diagnosis.likelyDiagnosis || diagnosis.problem_name || ''
+  ).trim();
   const displayName = String(options.plantDisplayName || diagnosis.plant_name || 'Plant').trim();
   const uncertain =
+    conf === PLANT_DOCTOR_CONFIDENCE.LOW ||
+    conf === PLANT_DOCTOR_CONFIDENCE.MEDIUM ||
     !severity ||
+    severity === 'unknown' ||
     !problem ||
-    /unknown|uncertain|unclear|possible|maybe|suspect/i.test(
+    /unknown|uncertain|unclear|possible|maybe|suspect|likely/i.test(
       `${problem} ${diagnosis.diagnosis || ''}`
     );
 
   let mark = options.currentMark === '!' ? '!' : '✓';
   if (severity === 'medium' || severity === 'high') mark = '!';
-  else if (severity === 'low' && uncertain) mark = '!';
+  else if ((severity === 'low' || severity === 'unknown') && uncertain) mark = '!';
 
   let status = String(options.currentStatus || 'Healthy').trim() || 'Healthy';
   if (problem) {
-    const prefix = uncertain ? 'Needs check' : 'Needs attention';
+    let prefix = 'Needs attention';
+    if (conf === PLANT_DOCTOR_CONFIDENCE.MEDIUM || /likely|possible/i.test(problem)) {
+      prefix = 'Likely';
+    } else if (uncertain) {
+      prefix = 'Needs check';
+    }
     status = `${prefix}: ${problem}`.slice(0, 120);
   } else if (uncertain) {
     status = 'Needs check: diagnosis uncertain';
@@ -188,26 +421,29 @@ export function mapDiagnosisToPlantStatePatch(diagnosis = {}, options = {}) {
     severity,
     uncertain,
     displayName,
-    problemName: problem || null
+    problemName: problem || null,
+    diagnosticConfidence: conf
   };
 }
 
 /**
  * Build one recommended care task row (My Garden array shape) from diagnosis.
- * Preferred action text: first home_remedy step, else inspect problem.
+ * Prefers safeImmediateActions / recommendedNextAction (non-chemical).
  */
 export function buildDoctorCareTaskRow(diagnosis = {}, options = {}) {
   const patch = mapDiagnosisToPlantStatePatch(diagnosis, options);
-  const remedies = Array.isArray(diagnosis.home_remedy) ? diagnosis.home_remedy : [];
-  const firstRemedy = remedies
-    .map((x) => (typeof x === 'string' ? x : x?.name || x?.desc || ''))
-    .map((s) => String(s || '').trim())
-    .find(Boolean);
-  const title = firstRemedy
-    ? String(firstRemedy).slice(0, 120)
+  const safe = asStringList(
+    diagnosis.safe_immediate_actions || diagnosis.safeImmediateActions || diagnosis.home_remedy
+  );
+  const next = String(
+    diagnosis.recommended_next_action || diagnosis.recommendedNextAction || ''
+  ).trim();
+  const title = (safe[0] || next
+    ? String(safe[0] || next)
     : patch.problemName
-      ? `Inspect: ${patch.problemName}`.slice(0, 120)
-      : 'Inspect plant after diagnosis';
+      ? `Inspect: ${patch.problemName}`
+      : 'Inspect plant after diagnosis'
+  ).slice(0, 120);
   const priority =
     patch.severity === 'high' ? 'High' : patch.severity === 'medium' ? 'Medium' : 'Low';
   const clientId = buildDoctorCareTaskClientId({
@@ -240,17 +476,33 @@ export function buildDoctorCareTaskRow(diagnosis = {}, options = {}) {
  * Structured host bridge payload from Doctor iframe → app host.
  */
 export function buildDoctorResultBridgeMessage(input = {}) {
-  const diagnosis = input.diagnosis && typeof input.diagnosis === 'object' ? input.diagnosis : null;
-  if (!diagnosis) throw new Error('diagnosis is required');
+  const diagnosisIn = input.diagnosis && typeof input.diagnosis === 'object' ? input.diagnosis : null;
+  if (!diagnosisIn) throw new Error('diagnosis is required');
   const unmatched = input.unmatched === true || !input.gardenPlantClientId;
   const allowed = new Set(Object.values(PLANT_DOCTOR_ACTIONS));
   const action = allowed.has(input.action)
     ? input.action
     : PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK;
 
+  const diagnosis = normalizeDoctorDiagnosticPayload(diagnosisIn, { unmatched });
+  if (input.identity && typeof input.identity === 'object') {
+    const fromId = normalizeIdentityAssessment(input.identity.assessment);
+    if (fromId) diagnosis.identity_assessment = fromId;
+    if (input.identity.reason) {
+      diagnosis.identity_reason = String(input.identity.reason).trim() || diagnosis.identity_reason;
+    }
+  }
+
   const identityGate = resolveOwnedPlantIdentityGate({
     unmatched,
     gardenPlantClientId: input.gardenPlantClientId,
+    identity: input.identity,
+    diagnosis
+  });
+  const writebackGate = resolveDiagnosticWritebackGate({
+    unmatched,
+    gardenPlantClientId: input.gardenPlantClientId,
+    plantDisplayName: input.plantDisplayName,
     identity: input.identity,
     diagnosis
   });
@@ -278,16 +530,13 @@ export function buildDoctorResultBridgeMessage(input = {}) {
           reason: identityGate.reason
         }
       : null,
+    writeback: {
+      mayMutateOwnedPlant: writebackGate.mayMutateOwnedPlant,
+      mayCreateCareTask: writebackGate.mayCreateCareTask,
+      blockedReason: writebackGate.blockedReason
+    },
     diagnosis: {
-      plant_name: diagnosis.plant_name || null,
-      problem_name: diagnosis.problem_name || null,
-      severity: normalizeDoctorSeverity(diagnosis.severity),
-      diagnosis: diagnosis.diagnosis || null,
-      products: Array.isArray(diagnosis.products) ? diagnosis.products : [],
-      biological: Array.isArray(diagnosis.biological) ? diagnosis.biological : [],
-      home_remedy: Array.isArray(diagnosis.home_remedy) ? diagnosis.home_remedy : [],
-      // Doctor schema has severity only — do not invent confidence.
-      confidence: null,
+      ...diagnosis,
       identity_assessment: identityGate.applicable ? identityGate.assessment : null,
       identity_reason: identityGate.applicable ? identityGate.reason : null
     }
