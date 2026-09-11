@@ -12,6 +12,9 @@ export const PLANT_DOCTOR_SOURCE = 'plant_doctor';
 /** Real production diagnosis = identity + diagnosis in ONE provider call. */
 export const PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS = 1;
 
+/** Doctor writeback may create at most this many new garden_tasks. */
+export const PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK = 1;
+
 export const PLANT_DOCTOR_ACTIONS = Object.freeze({
   APPLY_STATE: 'apply_state',
   CREATE_TASK: 'create_task',
@@ -568,4 +571,67 @@ export function taskClientIdAlreadyPresent(tasks, clientInstanceId) {
     if (Array.isArray(t)) return String(t[8] || t.id || '').trim() === id;
     return String(t.id || t.client_instance_id || '').trim() === id;
   });
+}
+
+function taskClientId(task) {
+  if (!task) return '';
+  if (Array.isArray(task)) return String(task[8] || task.id || '').trim();
+  return String(task.id || task.client_instance_id || '').trim();
+}
+
+/**
+ * Defensive invariant: Doctor writeback must never create more than maxNewTasks
+ * new garden_tasks (0 for status-only, 1 for explicit Doctor care task).
+ * Does not touch add-plant / seasonal plan paths.
+ */
+export function enforceDoctorTaskSafetyGuardrail(input = {}) {
+  const before = Array.isArray(input.tasksBefore) ? input.tasksBefore.slice() : [];
+  const after = Array.isArray(input.tasksAfter) ? input.tasksAfter : [];
+  const maxNew = Math.max(
+    0,
+    Math.min(
+      PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK,
+      Number.isFinite(Number(input.maxNewTasks)) ? Number(input.maxNewTasks) : 0
+    )
+  );
+  const delta = after.length - before.length;
+  if (delta <= maxNew) {
+    return {
+      ok: true,
+      newTaskCount: Math.max(0, delta),
+      restoredTasks: after,
+      abortedExtra: 0,
+      reason: null
+    };
+  }
+
+  const beforeIds = new Set(before.map(taskClientId).filter(Boolean));
+  const beforeRefs = new Set(before);
+  const extras = after.filter((t) => !beforeRefs.has(t));
+  const restored = before.slice();
+  let kept = 0;
+  if (maxNew > 0) {
+    const preferredId = String(input.preferredClientId || '').trim();
+    let pick =
+      (preferredId &&
+        extras.find((t) => taskClientId(t) === preferredId)) ||
+      extras.find((t) => {
+        const id = taskClientId(t);
+        return id.startsWith('pd_care_') && !beforeIds.has(id);
+      }) ||
+      extras[0] ||
+      null;
+    if (pick) {
+      restored.unshift(pick);
+      kept = 1;
+    }
+  }
+
+  return {
+    ok: false,
+    newTaskCount: kept,
+    restoredTasks: restored,
+    abortedExtra: Math.max(0, delta - kept),
+    reason: 'doctor_task_safety_guardrail_blocked_multi_create'
+  };
 }

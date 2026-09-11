@@ -282,3 +282,129 @@ test('normalize strips chemical products and preserves differentials', () => {
   assert.equal(n.diagnostic_confidence, 'high');
   assert.equal(n.severity, 'medium');
 });
+
+test('1: Doctor status-only → 0 new tasks', () => {
+  const data = {
+    plants: [{ id: 'p_mango', name: 'Mango', mark: '✓', status: 'Healthy', serverId: 'srv_m' }],
+    tasks: [['🌿', 'Existing', 'Today', 'Low', '2026-09-11', false, '', false, 'existing']],
+    events: [],
+    plantDoctorResults: []
+  };
+  const { host, counts } = makeHost(data);
+  const msg = buildDoctorResultBridgeMessage({
+    action: PLANT_DOCTOR_ACTIONS.APPLY_STATE,
+    gardenPlantClientId: 'p_mango',
+    gardenPlantServerId: 'srv_m',
+    plantDisplayName: 'Mango',
+    diagnosis: FIXTURE_MATCH_HIGH
+  });
+  const r = applyDoctorCareLoopResult(msg, host);
+  assert.equal(r.plantUpdated, true);
+  assert.equal(r.taskCreated, false);
+  assert.equal(r.newTaskCount, 0);
+  assert.equal(data.tasks.length, 1);
+  assert.equal(counts().plantListFinalized, 0);
+  assert.equal(counts().taskFinalized, 0);
+});
+
+test('2: Doctor + care task → exactly 1 new task', () => {
+  const data = {
+    plants: [{ id: 'p_mango', name: 'Mango', mark: '✓', status: 'Healthy', serverId: 'srv_m' }],
+    tasks: [],
+    events: [],
+    plantDoctorResults: []
+  };
+  const { host, counts } = makeHost(data);
+  const msg = buildDoctorResultBridgeMessage({
+    action: PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK,
+    gardenPlantClientId: 'p_mango',
+    gardenPlantServerId: 'srv_m',
+    plantDisplayName: 'Mango',
+    diagnosis: FIXTURE_MATCH_HIGH
+  });
+  const r = applyDoctorCareLoopResult(msg, host);
+  assert.equal(r.taskCreated, true);
+  assert.equal(r.newTaskCount, 1);
+  assert.equal(data.tasks.length, 1);
+  assert.match(String(data.tasks[0][8] || ''), /^pd_care_/);
+  assert.equal(counts().plantListFinalized, 0);
+});
+
+test('3: simulated accidental multi-task Doctor mutation → blocked', () => {
+  const data = {
+    plants: [{ id: 'p_mango', name: 'Mango', mark: '✓', status: 'Healthy', serverId: 'srv_m' }],
+    tasks: [['🌿', 'Existing', 'Today', 'Low', '2026-09-11', false, '', false, 'existing']],
+    events: [],
+    plantDoctorResults: []
+  };
+  const { host, counts } = makeHost(data);
+  // Simulate buggy health finalize that regenerates a seasonal plan.
+  host.finalizePlantHealthStateChange = (plant) => {
+    counts().healthPlant; // no-op touch
+    for (let i = 0; i < 50; i++) {
+      data.tasks.push([
+        '💧',
+        `Water Extra${i}`,
+        '6-month plan',
+        'Low',
+        '2026-10-01',
+        true,
+        'Mango',
+        false,
+        `bad_${i}`
+      ]);
+    }
+    host._exploded = true;
+  };
+  // makeHost counts() doesn't track custom explode — wrap properly:
+  let exploded = false;
+  host.finalizePlantHealthStateChange = () => {
+    exploded = true;
+    for (let i = 0; i < 50; i++) {
+      data.tasks.push([
+        '💧',
+        `Water Extra${i}`,
+        '6-month plan',
+        'Low',
+        '2026-10-01',
+        true,
+        'Mango',
+        false,
+        `bad_${i}`
+      ]);
+    }
+  };
+
+  const msg = buildDoctorResultBridgeMessage({
+    action: PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK,
+    gardenPlantClientId: 'p_mango',
+    gardenPlantServerId: 'srv_m',
+    plantDisplayName: 'Mango',
+    diagnosis: FIXTURE_MATCH_HIGH
+  });
+  const r = applyDoctorCareLoopResult(msg, host);
+  assert.equal(exploded, true);
+  assert.equal(r.taskSafetyBlocked, true);
+  assert.equal(r.newTaskCount, 1, 'at most one Doctor task kept');
+  assert.equal(data.tasks.length, 2, 'existing + one pd_care only');
+  assert.equal(data.tasks.filter((t) => String(t[1] || '').startsWith('Water Extra')).length, 0);
+  assert.match(String(data.tasks[0][8] || data.tasks[1][8] || ''), /^pd_care_|existing/);
+  assert.ok(data.tasks.some((t) => String(t[8] || '').startsWith('pd_care_')));
+  assert.equal(counts().plantListFinalized, 0);
+});
+
+test('4: normal add-plant seasonal plan remains unchanged', () => {
+  const data = {
+    plants: [{ id: 'p_new', name: 'New Plant', mark: '✓', status: 'Healthy' }],
+    tasks: []
+  };
+  const { host, counts } = makeHost(data);
+  host.finalizePlantListChange();
+  assert.equal(counts().plantListFinalized, 1);
+  assert.ok(data.tasks.length >= 40);
+});
+
+test('5: automated paid AI calls remain 0 for guardrail suite', () => {
+  assert.equal(isPaidAiAutomatedTestAllowed({}), false);
+  assert.equal(FIXTURE_PROVIDER_CALLS, 0);
+});

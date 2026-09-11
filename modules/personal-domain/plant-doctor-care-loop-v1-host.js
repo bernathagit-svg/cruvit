@@ -7,6 +7,7 @@ import {
   PLANT_DOCTOR_ACTIONS,
   PLANT_DOCTOR_CARE_LOOP_VERSION,
   PLANT_DOCTOR_IDENTITY,
+  PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK,
   PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
   PLANT_DOCTOR_RESULT_MESSAGE_TYPE,
   PLANT_DOCTOR_SOURCE,
@@ -14,6 +15,7 @@ import {
   buildDoctorCareTaskRow,
   buildDoctorResultBridgeMessage,
   buildIdentityBlockedUserMessage,
+  enforceDoctorTaskSafetyGuardrail,
   mapDiagnosisToPlantStatePatch,
   normalizeDoctorDiagnosticPayload,
   parseDoctorContextFromSearch,
@@ -25,7 +27,7 @@ import {
 function buildDoctorIframeSrc(context = {}) {
   const base = 'modules/plant-doctor/index.html';
   const q = new URLSearchParams();
-  q.set('v', '20260911j');
+  q.set('v', '20260911k');
   if (context.unmatched) q.set('unmatched', '1');
   if (context.gardenProfileId) q.set('gardenId', String(context.gardenProfileId));
   if (context.gardenPlantClientId) q.set('plantClientId', String(context.gardenPlantClientId));
@@ -116,7 +118,11 @@ export function applyDoctorCareLoopResult(msg, host) {
   let plantUpdated = false;
   let taskCreated = false;
   let taskDeduped = false;
+  let taskSafetyBlocked = false;
+  let preferredTaskClientId = null;
   const plant = unmatched ? null : findOwnedPlant(data, msg.gardenPlantClientId);
+  const tasksBefore = Array.isArray(data.tasks) ? data.tasks.slice() : [];
+  const maxNewTasks = wantTask ? PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK : 0;
 
   if (wantState && plant) {
     const patch = mapDiagnosisToPlantStatePatch(diagnosis, {
@@ -167,8 +173,8 @@ export function applyDoctorCareLoopResult(msg, host) {
       plantDisplayName: plant?.name || msg.plantDisplayName || null,
       unmatched
     });
-    const clientId = String(taskRow[8] || taskRow.id || '');
-    if (taskClientIdAlreadyPresent(data.tasks, clientId)) {
+    preferredTaskClientId = String(taskRow[8] || taskRow.id || '');
+    if (taskClientIdAlreadyPresent(data.tasks, preferredTaskClientId)) {
       taskDeduped = true;
     } else {
       if (!Array.isArray(data.tasks)) data.tasks = [];
@@ -177,6 +183,7 @@ export function applyDoctorCareLoopResult(msg, host) {
     }
   }
 
+  // Health finalize only — never finalizePlantListChange (seasonal plan).
   if (plantUpdated) {
     try {
       if (typeof host.finalizePlantHealthStateChange === 'function') {
@@ -204,7 +211,40 @@ export function applyDoctorCareLoopResult(msg, host) {
     }
   }
 
-  if (taskCreated || taskDeduped) {
+  // Defensive invariant: Doctor path must never create >1 new task.
+  const guard = enforceDoctorTaskSafetyGuardrail({
+    tasksBefore,
+    tasksAfter: Array.isArray(data.tasks) ? data.tasks : [],
+    maxNewTasks,
+    preferredClientId: preferredTaskClientId
+  });
+  if (!guard.ok) {
+    taskSafetyBlocked = true;
+    data.tasks = guard.restoredTasks;
+    taskCreated = guard.newTaskCount === 1;
+    taskDeduped = false;
+    try {
+      console.error(
+        '[PlantDoctor] TASK_SAFETY_GUARDRAIL: blocked multi-task Doctor mutation',
+        {
+          abortedExtra: guard.abortedExtra,
+          maxNewTasks,
+          reason: guard.reason
+        }
+      );
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  if ((taskCreated || taskDeduped) && !taskSafetyBlocked) {
+    try {
+      host.finalizeTaskListChange();
+    } catch (e) {
+      console.warn('Care loop task finalize failed', e);
+    }
+  } else if (taskCreated && taskSafetyBlocked) {
+    // Kept exactly one Doctor task after rollback — sync that single task only.
     try {
       host.finalizeTaskListChange();
     } catch (e) {
@@ -227,10 +267,19 @@ export function applyDoctorCareLoopResult(msg, host) {
     unmatched,
     identityBlocked: false,
     confidenceBlocked: false,
+    taskSafetyBlocked,
     identityAssessment: identityGate.applicable ? identityGate.assessment : null,
     diagnosticConfidence: writebackGate.confidence,
-    reason: writebackBlocked ? writebackGate.blockedReason : null,
-    providerCallsUsed: 0
+    reason: taskSafetyBlocked
+      ? guard.reason
+      : writebackBlocked
+        ? writebackGate.blockedReason
+        : null,
+    providerCallsUsed: 0,
+    newTaskCount: Math.max(
+      0,
+      (Array.isArray(data.tasks) ? data.tasks.length : 0) - tasksBefore.length
+    )
   };
 }
 
@@ -317,6 +366,8 @@ function installPlantDoctorCareLoopHost() {
     parseDoctorContextFromSearch,
     resolveOwnedPlantIdentityGate,
     resolveDiagnosticWritebackGate,
+    enforceDoctorTaskSafetyGuardrail,
+    PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK,
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
     openWithOwnedPlantRecord(plant) {

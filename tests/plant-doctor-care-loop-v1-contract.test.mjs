@@ -7,6 +7,7 @@ import {
   PLANT_DOCTOR_ACTIONS,
   PLANT_DOCTOR_CONFIDENCE,
   PLANT_DOCTOR_IDENTITY,
+  PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK,
   PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
   PLANT_DOCTOR_RESULT_MESSAGE_TYPE,
   PLANT_DOCTOR_SOURCE,
@@ -14,6 +15,7 @@ import {
   buildDoctorCareTaskRow,
   buildDoctorResultBridgeMessage,
   buildIdentityBlockedUserMessage,
+  enforceDoctorTaskSafetyGuardrail,
   mapDiagnosisToPlantStatePatch,
   parseDoctorContextFromSearch,
   resolveDiagnosticWritebackGate,
@@ -268,4 +270,34 @@ test('malformed fixture does not parse; MATCH fixture does', () => {
     tryParseDoctorDiagnosisJson(JSON.stringify(FIXTURE_MATCH_DIAGNOSIS)).identity_assessment,
     'match'
   );
+});
+
+test('task safety guardrail: max one new Doctor task; extras aborted', () => {
+  assert.equal(PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK, 1);
+  const before = [['🌿', 'Existing', 'Today', 'Low', '2026-09-11', false, '', false, 'existing']];
+  const after = before.concat(
+    Array.from({ length: 10 }, (_, i) => [
+      '💧',
+      `Water ${i}`,
+      'plan',
+      'Low',
+      '2026-10-01',
+      true,
+      'Mango',
+      false,
+      `boom_${i}`
+    ])
+  );
+  after.unshift(['🔎', 'Inspect', 'Today', 'Medium', '2026-09-11', false, 'Mango', false, 'pd_care_p_mango_sooty']);
+  const g = enforceDoctorTaskSafetyGuardrail({
+    tasksBefore: before,
+    tasksAfter: after,
+    maxNewTasks: 1,
+    preferredClientId: 'pd_care_p_mango_sooty'
+  });
+  assert.equal(g.ok, false);
+  assert.equal(g.newTaskCount, 1);
+  assert.equal(g.restoredTasks.length, 2);
+  assert.equal(g.restoredTasks[0][8], 'pd_care_p_mango_sooty');
+  assert.ok(g.abortedExtra >= 10);
 });
