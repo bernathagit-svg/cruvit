@@ -52,8 +52,9 @@ export function normalizeIdentityAssessment(value) {
 
 /**
  * Owned-plant identity gate from a single Doctor diagnosis payload.
- * Unmatched path → not applicable.
- * Owned + missing assessment → UNCERTAIN (block persistent mutation).
+ * Unmatched path → not applicable (general Doctor; no owned-plant mutation).
+ * Owned + missing/invalid assessment → UNCERTAIN (never invent MATCH).
+ * Only MATCH may mutate owned plant / create owned care task / hook owned mood.
  */
 export function resolveOwnedPlantIdentityGate(input = {}) {
   const unmatched = input.unmatched === true || !input.gardenPlantClientId;
@@ -77,18 +78,8 @@ export function resolveOwnedPlantIdentityGate(input = {}) {
     fromDiag?.identityAssessment ||
     null;
   let assessment = normalizeIdentityAssessment(raw);
-  // Missing identity fields: allow writeback (legacy Doctor responses before Identity Safety Gate).
-  // Explicit mismatch / uncertain still block owned-plant mutation.
-  if (!assessment) {
-    return {
-      applicable: true,
-      assessment: null,
-      reason: null,
-      mayMutateOwnedPlant: true,
-      mayCreateOwnedCareTask: true,
-      mayHookOwnedMood: true
-    };
-  }
+  // Do not silently convert missing identity to MATCH.
+  if (!assessment) assessment = PLANT_DOCTOR_IDENTITY.UNCERTAIN;
   const reason =
     String(
       fromMsg?.reason ||
@@ -111,13 +102,36 @@ export function resolveOwnedPlantIdentityGate(input = {}) {
 export function buildIdentityBlockedUserMessage(plantDisplayName, assessment, reason) {
   const name = String(plantDisplayName || 'selected plant').trim() || 'selected plant';
   if (assessment === PLANT_DOCTOR_IDENTITY.MISMATCH) {
-    return `This photo may not be your ${name}. Please upload a photo of the selected plant or choose a different plant.${
-      reason ? ` (${reason})` : ''
-    }`;
+    return `This photo may not be your ${name}. Please upload a photo of the selected plant or choose a different plant.`;
   }
-  return `We could not confirm this photo is your ${name}. Garden status and care tasks were not changed. Upload a clearer photo of the selected plant, or choose a different plant.${
-    reason ? ` (${reason})` : ''
-  }`;
+  const base = `We could not confirm this photo is your ${name}. Garden status and care tasks were not changed. Please confirm or retry with a clearer photo of the selected plant.`;
+  return reason ? `${base} (${reason})` : base;
+}
+
+/**
+ * Parse Doctor provider JSON text without network.
+ * Returns null for malformed / non-object payloads (fixtures / unit tests).
+ */
+export function tryParseDoctorDiagnosisJson(text) {
+  let s = String(text || '')
+    .replace(/```json|```/gi, '')
+    .trim();
+  if (!s) return null;
+  try {
+    const parsed = JSON.parse(s);
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+  } catch (_) {
+    /* fall through */
+  }
+  const a = s.indexOf('{');
+  const b = s.lastIndexOf('}');
+  if (a < 0 || b <= a) return null;
+  try {
+    const parsed = JSON.parse(s.slice(a, b + 1));
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+  } catch (_) {
+    return null;
+  }
 }
 
 /**

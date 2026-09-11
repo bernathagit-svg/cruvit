@@ -181,7 +181,9 @@ function ownedPlantPromptHint(){
   const bits=['Owned garden plant context (diagnose THIS plant): '+ownedPlantContext.plantDisplayName];
   if(ownedPlantContext.scientific) bits.push('Scientific name: '+ownedPlantContext.scientific);
   if(ownedPlantContext.profileSlug) bits.push('Catalog slug: '+ownedPlantContext.profileSlug);
-  bits.push('Set plant_name to the owned plant when the photo matches; if uncertain, keep severity honest and say so in diagnosis.');
+  bits.push('In the SAME JSON response, set identity_assessment to match|mismatch|uncertain comparing the PHOTO to this owned plant.');
+  bits.push('identity_reason must be a short human-readable explanation. Do not invent high certainty. If unsure, use uncertain.');
+  bits.push('Set plant_name to the photographed species; if it matches the owned plant, use the owned plant name.');
   return bits.join(' ')+'\n';
 }
 async function loadImageMimeApi(){
@@ -214,7 +216,7 @@ async function diagnose(){
     return;
   }
   const notes=$('notes').value.trim();
-  const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible...`;
+  const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","identity_assessment":"match|mismatch|uncertain","identity_reason":"short reason about photo vs expected owned plant when applicable","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible.... When owned-plant context is present, identity_assessment is REQUIRED in this same response (no second call). For general/unmatched diagnosis without owned plant context, set identity_assessment to uncertain.`;
   try{
     const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:imagePayload.mediaType,data:imagePayload.data}},{type:'text',text:prompt}]}]);
     resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show');
@@ -226,14 +228,29 @@ async function diagnose(){
 function showErr(m){$('err').textContent=m;$('err').classList.add('show')}
 function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}function sevText(s){return t('severity_'+(s||'low'))}
 function renderItems(arr){if(!arr||!arr.length)return '<div class="item"><p>—</p></div>';return arr.map(x=>typeof x==='string'?`<div class="item"><div class="item-emoji">🌿</div><p>${x}</p></div>`:`<div class="item"><div class="item-emoji">${x.emoji||'🌿'}</div><div><h4>${x.name||''}</h4><p>${x.desc||''}</p></div></div>`).join('')}
+function normalizeIdentityFromResult(d){
+  const raw=String((d&& (d.identity_assessment||d.identityAssessment))||'').trim().toLowerCase();
+  if(raw==='match'||raw==='matched'||raw==='same'||raw==='consistent') return 'match';
+  if(raw==='mismatch'||raw==='mismatched'||raw==='different'||raw==='inconsistent') return 'mismatch';
+  if(raw==='uncertain'||raw==='unsure'||raw==='unknown'||raw==='unclear') return 'uncertain';
+  const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  return unmatched?null:'uncertain';
+}
 function buildBridgePayload(action){
   const d=resultData;
   if(!d||typeof d!=='object')throw new Error('No diagnosis to send');
   const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  const identityAssessment=normalizeIdentityFromResult(d);
+  const identityReason=String(d.identity_reason||d.identityReason||'').trim()||null;
+  if(!unmatched&&identityAssessment&&identityAssessment!=='match'){
+    throw new Error(identityAssessment==='mismatch'
+      ?('This photo may not be your '+(ownedPlantContext.plantDisplayName||'selected plant')+'. Please upload a photo of the selected plant or choose a different plant.')
+      :('We could not confirm this photo is your '+(ownedPlantContext.plantDisplayName||'selected plant')+'. Garden status was not changed.'));
+  }
   return {
     type:PD_RESULT_TYPE,
     source:PD_SOURCE,
-    version:'1.0.0',
+    version:'1.1.0',
     timestamp:new Date().toISOString(),
     action:action,
     unmatched:unmatched,
@@ -243,6 +260,7 @@ function buildBridgePayload(action){
     plantDisplayName:ownedPlantContext.plantDisplayName||d.plant_name||null,
     scientific:ownedPlantContext.scientific||null,
     profileSlug:ownedPlantContext.profileSlug||null,
+    identity:unmatched?null:{assessment:identityAssessment||'uncertain',reason:identityReason},
     diagnosis:{
       plant_name:d.plant_name||null,
       problem_name:d.problem_name||null,
@@ -251,7 +269,9 @@ function buildBridgePayload(action){
       products:Array.isArray(d.products)?d.products:[],
       biological:Array.isArray(d.biological)?d.biological:[],
       home_remedy:Array.isArray(d.home_remedy)?d.home_remedy:[],
-      confidence:null
+      confidence:null,
+      identity_assessment:unmatched?null:(identityAssessment||'uncertain'),
+      identity_reason:identityReason
     }
   };
 }
@@ -271,9 +291,18 @@ function sendCareResult(action){
 window.sendCareResult=sendCareResult;
 function careActionsHtml(d){
   const unmatched=ownedPlantContext.unmatched===true||!ownedPlantContext.gardenPlantClientId;
+  const identity=normalizeIdentityFromResult(d);
+  const identityReason=String(d.identity_reason||d.identityReason||'').trim();
   const firstRemedy=(Array.isArray(d.home_remedy)?d.home_remedy:[]).map(x=>typeof x==='string'?x:(x&&x.name)||'').map(s=>String(s||'').trim()).find(Boolean)||'Inspect plant';
   if(unmatched){
     return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careUnmatched')}</p><p><b>${d.problem_name||'Diagnosis'}</b><br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">Add care task</button><div class="care-note" id="careSentNote"></div></div>`;
+  }
+  if(identity==='mismatch'||identity==='uncertain'){
+    const name=ownedPlantContext.plantDisplayName||'selected plant';
+    const title=identity==='mismatch'
+      ?('This photo may not be your '+name+'. Please upload a photo of the selected plant or choose a different plant.')
+      :('We could not confirm this photo is your '+name+'. Garden status and care tasks were not changed. Please confirm or retry with a clearer photo of the selected plant.');
+    return `<div class="care-actions"><h3>Identity check</h3><p><b>${title}</b></p>${identityReason?`<p>${identityReason}</p>`:''}<p>Diagnosis is shown above for reference only. It will not update ${name} until identity matches.</p><div class="care-note" id="careSentNote"></div></div>`;
   }
   return `<div class="care-actions"><h3>${t('careTitle')}</h3><p>${t('careSub')}</p><p><b>${d.problem_name||'Diagnosis'}</b> · ${sevText(d.severity)}<br>Recommended: ${firstRemedy}</p><button type="button" class="care-btn primary" onclick="sendCareResult('apply_and_task')">${t('careApplyTask')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('apply_state')">${t('careApplyOnly')}</button><button type="button" class="care-btn secondary" onclick="sendCareResult('create_task')">${t('careTaskOnly')}</button><div class="care-note" id="careSentNote"></div></div>`;
 }

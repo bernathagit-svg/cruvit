@@ -5,15 +5,27 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   PLANT_DOCTOR_ACTIONS,
+  PLANT_DOCTOR_IDENTITY,
+  PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
   PLANT_DOCTOR_RESULT_MESSAGE_TYPE,
   PLANT_DOCTOR_SOURCE,
   buildDoctorCareTaskClientId,
   buildDoctorCareTaskRow,
   buildDoctorResultBridgeMessage,
+  buildIdentityBlockedUserMessage,
   mapDiagnosisToPlantStatePatch,
   parseDoctorContextFromSearch,
-  taskClientIdAlreadyPresent
+  resolveOwnedPlantIdentityGate,
+  taskClientIdAlreadyPresent,
+  tryParseDoctorDiagnosisJson
 } from '../modules/personal-domain/plant-doctor-care-loop-v1-contract.js';
+import {
+  FIXTURE_MALFORMED_RESPONSE,
+  FIXTURE_MATCH_DIAGNOSIS,
+  FIXTURE_MISMATCH,
+  FIXTURE_PROVIDER_CALLS,
+  FIXTURE_UNCERTAIN
+} from './fixtures/plant-doctor/doctor-response-fixtures-v1.mjs';
 
 const sampleDiagnosis = {
   plant_name: 'Musa acuminata',
@@ -142,7 +154,70 @@ test('H: bridge requires diagnosis (AI failure must not fabricate)', () => {
 test('confidence is never invented on bridge', () => {
   const msg = buildDoctorResultBridgeMessage({
     gardenPlantClientId: 'p1',
-    diagnosis: { ...sampleDiagnosis, confidence: 0.99 }
+    diagnosis: { ...sampleDiagnosis, confidence: 0.99, identity_assessment: 'match' }
   });
   assert.equal(msg.diagnosis.confidence, null);
+});
+
+test('identity gate: provider budget is exactly one; fixtures use zero paid calls', () => {
+  assert.equal(PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS, 1);
+  assert.equal(FIXTURE_PROVIDER_CALLS, 0);
+});
+
+test('identity gate: MATCH allows owned mutation', () => {
+  const g = resolveOwnedPlantIdentityGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: FIXTURE_MATCH_DIAGNOSIS
+  });
+  assert.equal(g.applicable, true);
+  assert.equal(g.assessment, PLANT_DOCTOR_IDENTITY.MATCH);
+  assert.equal(g.mayMutateOwnedPlant, true);
+  assert.equal(g.mayCreateOwnedCareTask, true);
+});
+
+test('identity gate: MISMATCH / UNCERTAIN / missing block owned mutation', () => {
+  const mismatch = resolveOwnedPlantIdentityGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: FIXTURE_MISMATCH
+  });
+  assert.equal(mismatch.assessment, PLANT_DOCTOR_IDENTITY.MISMATCH);
+  assert.equal(mismatch.mayMutateOwnedPlant, false);
+
+  const uncertain = resolveOwnedPlantIdentityGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: FIXTURE_UNCERTAIN
+  });
+  assert.equal(uncertain.assessment, PLANT_DOCTOR_IDENTITY.UNCERTAIN);
+  assert.equal(uncertain.mayMutateOwnedPlant, false);
+
+  const missing = resolveOwnedPlantIdentityGate({
+    gardenPlantClientId: 'p_mango',
+    diagnosis: { problem_name: 'X', severity: 'low' }
+  });
+  assert.equal(missing.assessment, PLANT_DOCTOR_IDENTITY.UNCERTAIN);
+  assert.equal(missing.mayMutateOwnedPlant, false);
+});
+
+test('identity gate: unmatched is not applicable (general Doctor)', () => {
+  const g = resolveOwnedPlantIdentityGate({
+    unmatched: true,
+    diagnosis: FIXTURE_MATCH_DIAGNOSIS
+  });
+  assert.equal(g.applicable, false);
+  assert.equal(g.mayMutateOwnedPlant, false);
+});
+
+test('identity blocked user message for MISMATCH matches product copy', () => {
+  assert.equal(
+    buildIdentityBlockedUserMessage('Mango', PLANT_DOCTOR_IDENTITY.MISMATCH),
+    'This photo may not be your Mango. Please upload a photo of the selected plant or choose a different plant.'
+  );
+});
+
+test('malformed fixture does not parse; MATCH fixture does', () => {
+  assert.equal(tryParseDoctorDiagnosisJson(FIXTURE_MALFORMED_RESPONSE.rawText), null);
+  assert.equal(
+    tryParseDoctorDiagnosisJson(JSON.stringify(FIXTURE_MATCH_DIAGNOSIS)).identity_assessment,
+    'match'
+  );
 });
