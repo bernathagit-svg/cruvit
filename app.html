@@ -2686,6 +2686,34 @@ function finalizePlantListChange(){
   try{finalizeTaskListChange()}catch(e){console.warn('Server task sync after plant change failed',e)}
 }
 
+/**
+ * Health/status-only plant writeback (Plant Doctor, manual status edit).
+ * Does NOT regenerate seasonal care plans or bulk-create garden_tasks.
+ * Task sync is the caller's responsibility when an explicit task changed.
+ */
+function finalizePlantHealthStateChange(plant){
+  try{syncHealthScore()}catch(_){}
+  try{service.save(data)}catch(_){}
+  try{refreshOpenTaskPanels()}catch(_){}
+  try{render()}catch(_){}
+  try{
+    const pd=window.cruvitPersonalDomainV0;
+    if(!(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()))return;
+    if(plant&&typeof pd.upsertPlantOnActiveGarden==='function'){
+      pd.upsertPlantOnActiveGarden(plant).catch((err)=>{
+        console.warn('Server plant health upsert failed',err&&err.message?err.message:err);
+      });
+      return;
+    }
+    if(typeof pd.syncActiveGardenPlantsFromLocal==='function'){
+      pd.syncActiveGardenPlantsFromLocal(data.plants).catch((err)=>{
+        console.warn('Server plant health sync failed',err&&err.message?err.message:err);
+      });
+    }
+  }catch(e){console.warn('Server plant health writeback failed',e)}
+}
+window.finalizePlantHealthStateChange=finalizePlantHealthStateChange;
+
 function finalizeTaskListChange(){
   try{
     if(Array.isArray(data.tasks)) data.tasks=data.tasks.map(normalizeTaskRow);
@@ -7239,7 +7267,7 @@ function addPlantFromRecommendations(){openPlantChooser('Smart Recommendations')
 function addPlantFromDesign(){openPlantChooser('Garden Design')}
 function togglePlantMenu(ev,i){ev.stopPropagation();openMenu=openMenu==='plant-'+i?null:'plant-'+i;render()}
 function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p.name);if(!name||name===p.name)return;const oldName=p.name;p.name=name;renameTasksForPlant(oldName,name);data.events.unshift(['Today','Plant renamed',name]);openMenu=null;finalizePlantListChange()}
-function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantListChange()}
+function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantHealthStateChange(p)}
 function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; if(!auto)removeTasksForPlant(p.name); data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); openMenu=null; finalizePlantListChange()}
 function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');openMenu=null;finalizePlantListChange()}
 function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);openMenu=null;finalizePlantListChange()}}
@@ -7641,7 +7669,7 @@ function openPlantDoctor(context){
   const loop=window.cruvitPlantDoctorCareLoop;
   const src=(loop&&typeof loop.buildDoctorIframeSrc==='function')
     ?loop.buildDoctorIframeSrc(ctx)
-    :('modules/plant-doctor/index.html?v=20260911f'+(ctx.unmatched||!ctx.gardenPlantClientId?'&unmatched=1':''));
+    :('modules/plant-doctor/index.html?v=20260911g'+(ctx.unmatched||!ctx.gardenPlantClientId?'&unmatched=1':''));
   let frame=root.querySelector('iframe.pd-frame');
   if(!frame){
     frame=document.createElement('iframe');
@@ -8323,6 +8351,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
 <script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260911e"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260911e"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260911h"></script>
 </body>
 </html>

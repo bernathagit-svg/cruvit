@@ -6,20 +6,24 @@
 import {
   PLANT_DOCTOR_ACTIONS,
   PLANT_DOCTOR_CARE_LOOP_VERSION,
+  PLANT_DOCTOR_IDENTITY,
+  PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
   PLANT_DOCTOR_RESULT_MESSAGE_TYPE,
   PLANT_DOCTOR_SOURCE,
   buildDoctorCareTaskClientId,
   buildDoctorCareTaskRow,
   buildDoctorResultBridgeMessage,
+  buildIdentityBlockedUserMessage,
   mapDiagnosisToPlantStatePatch,
   parseDoctorContextFromSearch,
+  resolveOwnedPlantIdentityGate,
   taskClientIdAlreadyPresent
 } from './plant-doctor-care-loop-v1-contract.js';
 
 function buildDoctorIframeSrc(context = {}) {
   const base = 'modules/plant-doctor/index.html';
   const q = new URLSearchParams();
-  q.set('v', '20260911f');
+  q.set('v', '20260911g');
   if (context.unmatched) q.set('unmatched', '1');
   if (context.gardenProfileId) q.set('gardenId', String(context.gardenProfileId));
   if (context.gardenPlantClientId) q.set('plantClientId', String(context.gardenPlantClientId));
@@ -38,6 +42,7 @@ function findOwnedPlant(data, clientId) {
 
 /**
  * Apply a validated bridge message. Returns { ok, plantUpdated, taskCreated, taskDeduped, moodHooked, reason }.
+ * Identity Safety: owned-plant mutations require MATCH from the same diagnosis payload (no second AI call).
  */
 export function applyDoctorCareLoopResult(msg, host) {
   if (!msg || msg.type !== PLANT_DOCTOR_RESULT_MESSAGE_TYPE) {
@@ -55,6 +60,36 @@ export function applyDoctorCareLoopResult(msg, host) {
   if (!data) return { ok: false, reason: 'no_data' };
 
   const unmatched = msg.unmatched === true || !msg.gardenPlantClientId;
+  const identityGate = resolveOwnedPlantIdentityGate({
+    unmatched,
+    gardenPlantClientId: msg.gardenPlantClientId,
+    identity: msg.identity,
+    diagnosis
+  });
+  const identityBlocked =
+    identityGate.applicable && !identityGate.mayMutateOwnedPlant;
+
+  if (identityBlocked) {
+    const userMessage = buildIdentityBlockedUserMessage(
+      msg.plantDisplayName || findOwnedPlant(data, msg.gardenPlantClientId)?.name,
+      identityGate.assessment,
+      identityGate.reason
+    );
+    return {
+      ok: true,
+      plantUpdated: false,
+      taskCreated: false,
+      taskDeduped: false,
+      moodHooked: false,
+      unmatched: false,
+      identityBlocked: true,
+      identityAssessment: identityGate.assessment,
+      userMessage,
+      reason: `identity_${identityGate.assessment}`,
+      providerCallsUsed: 0
+    };
+  }
+
   const action = msg.action || PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK;
   const wantState =
     action === PLANT_DOCTOR_ACTIONS.APPLY_STATE ||
@@ -90,26 +125,27 @@ export function applyDoctorCareLoopResult(msg, host) {
   }
 
   // Session/local mood hook only — not a durable History store.
-  const moodEntry = {
-    source: PLANT_DOCTOR_SOURCE,
-    timestamp: msg.timestamp || new Date().toISOString(),
-    gardenPlantClientId: msg.gardenPlantClientId || null,
-    plantDisplayName: msg.plantDisplayName || plant?.name || diagnosis.plant_name || null,
-    problem_name: diagnosis.problem_name || null,
-    severity: diagnosis.severity || null,
-    diagnosis: diagnosis.diagnosis || null,
-    unmatched
-  };
-  if (!Array.isArray(data.plantDoctorResults)) data.plantDoctorResults = [];
-  data.plantDoctorResults.unshift(moodEntry);
-  data.plantDoctorResults = data.plantDoctorResults.slice(0, 12);
+  // Owned-plant mood only when identity MATCH (or unmatched general path).
+  let moodHooked = false;
+  if (unmatched || identityGate.mayHookOwnedMood) {
+    const moodEntry = {
+      source: PLANT_DOCTOR_SOURCE,
+      timestamp: msg.timestamp || new Date().toISOString(),
+      gardenPlantClientId: unmatched ? null : msg.gardenPlantClientId || null,
+      plantDisplayName: msg.plantDisplayName || plant?.name || diagnosis.plant_name || null,
+      problem_name: diagnosis.problem_name || null,
+      severity: diagnosis.severity || null,
+      diagnosis: diagnosis.diagnosis || null,
+      identity_assessment: identityGate.applicable ? identityGate.assessment : null,
+      unmatched
+    };
+    if (!Array.isArray(data.plantDoctorResults)) data.plantDoctorResults = [];
+    data.plantDoctorResults.unshift(moodEntry);
+    data.plantDoctorResults = data.plantDoctorResults.slice(0, 12);
+    moodHooked = true;
+  }
 
   if (wantTask) {
-    if (unmatched) {
-      // Unmatched path: no owned-plant mutation; still allow an explicit care task
-      // without garden_plant_id when the user asked for apply_and_task from unmatched UI.
-      // Bound: do not attach to unrelated plants.
-    }
     const taskRow = buildDoctorCareTaskRow(diagnosis, {
       gardenPlantClientId: plant?.id || msg.gardenPlantClientId || null,
       gardenPlantServerId: plant?.serverId || msg.gardenPlantServerId || null,
@@ -128,9 +164,23 @@ export function applyDoctorCareLoopResult(msg, host) {
 
   if (plantUpdated) {
     try {
-      host.finalizePlantListChange();
+      if (typeof host.finalizePlantHealthStateChange === 'function') {
+        host.finalizePlantHealthStateChange(plant);
+      } else {
+        // Legacy fallback must never regenerate seasonal care plans for Doctor writeback.
+        try {
+          host.saveData?.(data);
+        } catch (_) {
+          /* ignore */
+        }
+        try {
+          host.render?.();
+        } catch (_) {
+          /* ignore */
+        }
+      }
     } catch (e) {
-      console.warn('Care loop plant finalize failed', e);
+      console.warn('Care loop plant health finalize failed', e);
     }
   } else {
     try {
@@ -159,9 +209,12 @@ export function applyDoctorCareLoopResult(msg, host) {
     plantUpdated,
     taskCreated,
     taskDeduped,
-    moodHooked: true,
+    moodHooked,
     unmatched,
-    reason: null
+    identityBlocked: false,
+    identityAssessment: identityGate.applicable ? identityGate.assessment : null,
+    reason: null,
+    providerCallsUsed: 0
   };
 }
 
@@ -187,11 +240,22 @@ function installPlantDoctorCareLoopHost() {
           }
         },
         finalizePlantListChange: () => window.finalizePlantListChange?.(),
+        finalizePlantHealthStateChange: (plant) =>
+          window.finalizePlantHealthStateChange?.(plant),
         finalizeTaskListChange: () => window.finalizeTaskListChange?.(),
         render: () => window.render?.()
       };
       const result = applyDoctorCareLoopResult(msg, host);
       if (!result.ok) return;
+      if (result.identityBlocked) {
+        try {
+          window.alert?.(result.userMessage || 'Plant identity could not be confirmed. Garden was not changed.');
+        } catch (_) {
+          /* ignore */
+        }
+        // Stay in Plant Doctor so the user can upload the correct photo.
+        return;
+      }
       const parts = [];
       if (result.plantUpdated) parts.push('plant status updated');
       if (result.taskCreated) parts.push('care task added');
@@ -223,12 +287,15 @@ function installPlantDoctorCareLoopHost() {
   window.cruvitPlantDoctorCareLoop = {
     version: PLANT_DOCTOR_CARE_LOOP_VERSION,
     ACTIONS: PLANT_DOCTOR_ACTIONS,
+    IDENTITY: PLANT_DOCTOR_IDENTITY,
+    PROVIDER_CALLS_PER_DIAGNOSIS: PLANT_DOCTOR_PROVIDER_CALLS_PER_DIAGNOSIS,
     buildDoctorIframeSrc,
     buildDoctorResultBridgeMessage,
     buildDoctorCareTaskClientId,
     buildDoctorCareTaskRow,
     mapDiagnosisToPlantStatePatch,
     parseDoctorContextFromSearch,
+    resolveOwnedPlantIdentityGate,
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
     openWithOwnedPlantRecord(plant) {
