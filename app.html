@@ -7641,7 +7641,7 @@ function openPlantDoctor(context){
   const loop=window.cruvitPlantDoctorCareLoop;
   const src=(loop&&typeof loop.buildDoctorIframeSrc==='function')
     ?loop.buildDoctorIframeSrc(ctx)
-    :('modules/plant-doctor/index.html?v=20260911d'+(ctx.unmatched||!ctx.gardenPlantClientId?'&unmatched=1':''));
+    :('modules/plant-doctor/index.html?v=20260911f'+(ctx.unmatched||!ctx.gardenPlantClientId?'&unmatched=1':''));
   let frame=root.querySelector('iframe.pd-frame');
   if(!frame){
     frame=document.createElement('iframe');

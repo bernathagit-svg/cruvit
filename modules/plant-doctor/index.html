@@ -158,7 +158,17 @@ async function callAI(messages,max_tokens=1700){
   const r=await fetch('/.netlify/functions/pd-claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens,messages})});
   if(!r.ok&&r.status===404)throw new Error(t('aiMissing'));
   const text=await r.text();let d;try{d=JSON.parse(text)}catch{throw new Error('Non-JSON response from AI')};
-  if(!r.ok||d.error)throw new Error((d.error&&d.error.message)||(t('aiError')+' ('+r.status+')'));
+  if(!r.ok||d.error){
+    const raw=(d.error&&d.error.message)||(t('aiError')+' ('+r.status+')');
+    const mimeApi=window.cruvitPlantDoctorImageMime;
+    if(mimeApi&&mimeApi.isProviderImageMediaTypeError(raw)){
+      try{console.warn('Plant Doctor image media_type provider error',raw)}catch(_){}
+      const err=new Error(mimeApi.PLANT_DOCTOR_IMAGE_USER_ERROR);
+      err.code='PROVIDER_IMAGE_MIME';
+      throw err;
+    }
+    throw new Error(raw);
+  }
   return d.content?.[0]?.text||'';
 }
 function showApiKeyModal(){$('apiModal').style.display='flex';}
@@ -174,8 +184,45 @@ function ownedPlantPromptHint(){
   bits.push('Set plant_name to the owned plant when the photo matches; if uncertain, keep severity honest and say so in diagnosis.');
   return bits.join(' ')+'\n';
 }
-async function diagnose(){if(!b64){showErr(t('uploadFirst'));return}$('uploadScreen').style.display='none';$('loading').classList.add('show');$('result').classList.remove('show');const notes=$('notes').value.trim();const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible...`;
-try{const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},{type:'text',text:prompt}]}]);resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show')}catch(e){resultData=null;$('loading').classList.remove('show');$('uploadScreen').style.display='block';showErr(e.message)}}
+async function loadImageMimeApi(){
+  if(window.cruvitPlantDoctorImageMime&&typeof window.cruvitPlantDoctorImageMime.resolvePlantDoctorImagePayload==='function'){
+    return window.cruvitPlantDoctorImageMime;
+  }
+  const mod=await import('./plant-doctor-image-mime-v1.js?v=20260911f');
+  window.cruvitPlantDoctorImageMime=mod;
+  return mod;
+}
+function friendlyImageError(err){
+  const api=window.cruvitPlantDoctorImageMime;
+  if(api&&typeof api.toPlantDoctorImageUserError==='function') return api.toPlantDoctorImageUserError(err);
+  return 'We couldn’t read this image. Please try another photo.';
+}
+async function diagnose(){
+  if(!b64){showErr(t('uploadFirst'));return}
+  $('uploadScreen').style.display='none';$('loading').classList.add('show');$('result').classList.remove('show');
+  let imagePayload;
+  try{
+    const mimeApi=await loadImageMimeApi();
+    imagePayload=mimeApi.resolvePlantDoctorImagePayload({dataUrl,base64:b64});
+    if(imagePayload.correctedFrom){
+      try{console.warn('Plant Doctor image MIME corrected',imagePayload.correctedFrom,'→',imagePayload.mediaType)}catch(_){}
+    }
+  }catch(e){
+    resultData=null;$('loading').classList.remove('show');$('uploadScreen').style.display='block';
+    try{console.warn('Plant Doctor image MIME rejected',e&&e.code,e&&e.message)}catch(_){}
+    showErr(friendlyImageError(e));
+    return;
+  }
+  const notes=$('notes').value.trim();
+  const prompt=`You are an expert plant pathologist. Analyze this plant photo. ${ownedPlantPromptHint()}${notes?'User notes: '+notes:''}\nReturn ONLY valid JSON, no markdown. Write every user-visible string value in ${targetName()}.\nSchema: {"plant_name":"species or Unknown plant","problem_name":"disease/pest/issue name","severity":"low|medium|high","diagnosis":"2-3 sentences explaining what you see","products":[{"emoji":"🧴","name":"product name","desc":"why it helps"}],"biological":[{"emoji":"🐛","name":"agent name","desc":"how it works"}],"home_remedy":["step 1","step 2","step 3"]}\nRules: products 2-3 items. biological can be empty. home_remedy 3-5 steps. severity must be low, medium, or high. Do not invent high confidence. If uncertain, say so in diagnosis and prefer problem_name wording like Possible...`;
+  try{
+    const raw=await callAI([{role:'user',content:[{type:'image',source:{type:'base64',media_type:imagePayload.mediaType,data:imagePayload.data}},{type:'text',text:prompt}]}]);
+    resultData=parseJson(raw);renderResult(resultData);$('loading').classList.remove('show');$('result').classList.add('show');
+  }catch(e){
+    resultData=null;$('loading').classList.remove('show');$('uploadScreen').style.display='block';
+    showErr(friendlyImageError(e));
+  }
+}
 function showErr(m){$('err').textContent=m;$('err').classList.add('show')}
 function sevClass(s){return s==='high'?'high':s==='medium'?'medium':'low'}function sevText(s){return t('severity_'+(s||'low'))}
 function renderItems(arr){if(!arr||!arr.length)return '<div class="item"><p>—</p></div>';return arr.map(x=>typeof x==='string'?`<div class="item"><div class="item-emoji">🌿</div><p>${x}</p></div>`:`<div class="item"><div class="item-emoji">${x.emoji||'🌿'}</div><div><h4>${x.name||''}</h4><p>${x.desc||''}</p></div></div>`).join('')}

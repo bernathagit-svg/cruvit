@@ -19,7 +19,7 @@ import {
 function buildDoctorIframeSrc(context = {}) {
   const base = 'modules/plant-doctor/index.html';
   const q = new URLSearchParams();
-  q.set('v', '20260911d');
+  q.set('v', '20260911f');
   if (context.unmatched) q.set('unmatched', '1');
   if (context.gardenProfileId) q.set('gardenId', String(context.gardenProfileId));
   if (context.gardenPlantClientId) q.set('plantClientId', String(context.gardenPlantClientId));
