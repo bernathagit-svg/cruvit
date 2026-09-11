@@ -461,7 +461,7 @@ test('view model surfaces four outcomes with prominent overall', () => {
 test('UI + wiring expose four-outcome block; Yehiam alias supported', () => {
   const app = fs.readFileSync(APP, 'utf8');
   const ui = fs.readFileSync(UI_MOD, 'utf8');
-  assert.match(ui, /Overall:/);
+  assert.match(ui, /Why this answer\?/);
   assert.match(ui, /Survival/);
   assert.match(ui, /Growth/);
   assert.match(ui, /Flowering/);

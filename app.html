@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20250701">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
-<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911">
+<link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911b">
 <style id="licensed-catalog-media-runtime-styles">
 .plant-img{position:relative}
 .plant-media-attr{
@@ -572,6 +572,7 @@
 
 <div class="pd-v0-modal" id="pdV0Modal" aria-hidden="true">
   <div class="pd-v0-box" role="dialog" aria-labelledby="pdV0Title" aria-modal="true">
+    <button type="button" class="pd-v0-close" id="pdV0CloseBtn" aria-label="Close">×</button>
     <p class="pd-v0-kicker" id="pdV0Kicker">My Garden</p>
     <h2 id="pdV0Title">Welcome to Cruvit</h2>
     <p class="pd-v0-lead" id="pdV0Lead">Sign in to save your garden, location, and plants.</p>
@@ -598,8 +599,8 @@
           <div class="pd-v0-actions">
             <button type="button" class="pd-v0-btn main" id="pdV0SetLocationBtn">Set garden location</button>
           </div>
-          <p class="pd-v0-ok-line" id="pdV0LocationSavedLabel" hidden></p>
         </div>
+        <p class="pd-v0-ok-line" id="pdV0LocationSavedLabel" hidden></p>
         <div id="pdV0PlantStep" hidden>
           <div class="pd-v0-actions">
             <button type="button" class="pd-v0-btn main" id="pdV0AddFirstPlantBtn">Add your first plant</button>
@@ -697,24 +698,28 @@
             <h3 id="srHaOutcomesLabel">Suitability outcomes</h3>
             <dl class="sr-ha-outcomes-grid" id="srHaOutcomesGrid"></dl>
           </div>
-          <div class="sr-ha-grid">
-            <div class="sr-ha-block">
-              <h3 id="srHaUnderstandsLabel">What CRUVIT understands</h3>
-              <ul id="srHaUnderstandsList">
-                <li id="srHaGoal">Garden location and plant selection drive this answer</li>
-                <li id="srHaSite">Uses existing Specific Plant suitability — not a ranked list</li>
-                <li id="srHaConstraint" hidden></li>
-              </ul>
-            </div>
-            <div class="sr-ha-block">
-              <h3 id="srHaConfidenceLabel">Confidence</h3>
-              <p id="srHaConfidence">Honest limits from the existing suitability engine.</p>
-            </div>
-          </div>
           <div class="sr-ha-block" style="margin-bottom:10px;">
-            <h3 id="srHaTradeoffLabel">What matters</h3>
+            <h3 id="srHaTradeoffLabel">Main reason</h3>
             <p id="srHaTradeoff">Confirm location and select a plant for a real suitability decision.</p>
           </div>
+          <details class="sr-ha-why" id="srHaWhyDetails">
+            <summary id="srHaWhySummary">Why this answer?</summary>
+            <div class="sr-ha-grid">
+              <div class="sr-ha-block">
+                <h3 id="srHaUnderstandsLabel">What CRUVIT understands</h3>
+                <ul id="srHaUnderstandsList">
+                  <li id="srHaGoal">Garden location and plant selection drive this answer</li>
+                  <li id="srHaSite">Uses existing Specific Plant suitability — not a ranked list</li>
+                  <li id="srHaConstraint" hidden></li>
+                </ul>
+              </div>
+              <div class="sr-ha-block">
+                <h3 id="srHaConfidenceLabel">Confidence</h3>
+                <p id="srHaConfidence">Honest limits from the existing suitability engine.</p>
+              </div>
+            </div>
+            <p class="sr-ha-fine" id="srHaFine">Technical suitability details for review.</p>
+          </details>
           <div class="sr-ha-optional" id="srHaOptionalBlock" hidden>
             <h3 id="srHaQuestionsLabel">Optional precision questions</h3>
             <p class="sr-ha-note" id="srHaQuestionsNote">Optional — not required for the current suitability decision.</p>
@@ -731,7 +736,6 @@
             </div>
             <p class="sr-ha-fb-status" id="srHaFbStatus" aria-live="polite"></p>
           </div>
-          <p class="sr-ha-fine" id="srHaFine">Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority. Feedback is not saved.</p>
         </div>
       </section>
       <section class="sr-chat-pane" aria-label="Garden advisor chat">
@@ -7820,7 +7824,7 @@ function applySrHeroAnswerPreviewCopy(){
   set('srHaUnderstandsLabel',c.understandsLabel);
   set('srHaConfidenceLabel',c.confidenceLabel);
   set('srHaConfidence',c.confidence);
-  set('srHaTradeoffLabel',c.tradeoffLabel);
+  set('srHaTradeoffLabel',c.tradeoffLabel||'Main reason');
   set('srHaTradeoff',c.tradeoff);
   set('srHaQuestionsLabel',c.questionsLabel||'');
   set('srHaQuestionsNote',c.questionsNote||'');
@@ -7832,6 +7836,8 @@ function applySrHeroAnswerPreviewCopy(){
   set('srHaFbPartly',c.partly);
   set('srHaFbNotYet',c.notYet);
   set('srHaFine',c.fine);
+  const whySummary=document.getElementById('srHaWhySummary');
+  if(whySummary) whySummary.textContent='Why this answer?';
   const list=document.getElementById('srHaUnderstandsList');
   if(list){
     const items=Array.isArray(c.understands)?c.understands:[];

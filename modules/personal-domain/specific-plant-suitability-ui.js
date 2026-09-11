@@ -157,36 +157,43 @@ function renderResult(vm, gateMessage) {
     clearResult();
     return;
   }
-  const factors = (vm.limitingFactors || vm.warnings || [])
-    .map((w) => `<li>${escapeHtml(w)}</li>`)
-    .join('');
-  const sci = vm.scientific
-    ? `<div><span class="pd-v0-chip">Scientific</span> ${escapeHtml(vm.scientific)}</div>`
-    : '';
-  const review = vm.needsReview
-    ? `<p class="pd-v0-hint">Catalog marks this plant as needing review — result stays conservative.</p>`
-    : '';
+  const technicalRe =
+    /SOURCE_SUPPORTED|provisional|group-level|group-template|Product Authority|Garden Memory|Specific Plant|ranked list|missing:|trait evidence not|UNKNOWN evidence|normals-monthly|evaluatorVersion|hardeningVersion/i;
+  const rawFactors = (vm.limitingFactors || vm.warnings || [])
+    .map((w) => String(w || '').trim())
+    .filter(Boolean);
+  const mainFactors = rawFactors.filter((w) => !technicalRe.test(w));
+  const whyFactors = rawFactors.filter((w) => technicalRe.test(w));
+  const unknownEv = Array.isArray(vm.outcomes?.unknownEvidence)
+    ? vm.outcomes.unknownEvidence.map((x) => String(x || '').trim()).filter(Boolean)
+    : [];
+  const mainReason = mainFactors[0] || vm.explanationText || '';
+  const whyItems = [
+    ...whyFactors,
+    ...unknownEv.map((u) => `Evidence gap: ${u}`),
+    vm.needsReview ? 'Catalog marks this plant as needing review — result stays conservative.' : ''
+  ].filter(Boolean);
+  const sci = vm.scientific ? ` (${escapeHtml(vm.scientific)})` : '';
   el.hidden = false;
   el.innerHTML = `
-    <p class="pd-v0-suit-overall">Overall: ${escapeHtml(vm.levelLabel)}</p>
-    <div><strong>${escapeHtml(vm.plantName)}</strong></div>
-    ${sci}
-    <div><span class="pd-v0-chip">Garden</span> ${escapeHtml(vm.gardenName || 'Active Garden')}</div>
-    <div><span class="pd-v0-chip">Location</span> ${escapeHtml(vm.locationLabel || '—')}</div>
-    <div><span class="pd-v0-chip">Climate</span> ${escapeHtml(vm.climateLabel || '—')}</div>
+    <p class="pd-v0-suit-overall">${escapeHtml(vm.levelLabel)}</p>
+    <div><strong>${escapeHtml(vm.plantName)}</strong>${sci}</div>
+    <div class="pd-v0-hint">${escapeHtml(vm.locationLabel || 'Your garden')}</div>
+    ${mainReason ? `<p><strong>Main reason:</strong> ${escapeHtml(mainReason)}</p>` : ''}
     <dl class="pd-v0-suit-outcomes">
       <div><dt>Survival</dt><dd>${escapeHtml(vm.survivalLabel || 'UNKNOWN')}</dd></div>
       <div><dt>Growth</dt><dd>${escapeHtml(vm.growthLabel || 'UNKNOWN')}</dd></div>
       <div><dt>Flowering</dt><dd>${escapeHtml(vm.floweringLabel || 'UNKNOWN')}</dd></div>
       <div><dt>Fruiting</dt><dd>${escapeHtml(vm.fruitingLabel || 'UNKNOWN')}</dd></div>
     </dl>
-    ${review}
-    ${factors ? `<p class="pd-v0-hint">Main limiting factors</p><ul>${factors}</ul>` : ''}
-    ${
-      (vm.outcomes?.unknownEvidence || []).length
-        ? `<p class="pd-v0-hint">UNKNOWN evidence: ${escapeHtml((vm.outcomes.unknownEvidence || []).join(', '))}</p>`
-        : ''
-    }
+    <details class="pd-v0-why">
+      <summary>Why this answer?</summary>
+      ${
+        whyItems.length
+          ? `<ul>${whyItems.map((w) => `<li>${escapeHtml(w)}</li>`).join('')}</ul>`
+          : `<p class="pd-v0-hint">Based on your garden climate and this plant’s catalog traits.</p>`
+      }
+    </details>
   `;
 }
 

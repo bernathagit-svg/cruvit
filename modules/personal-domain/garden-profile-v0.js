@@ -334,12 +334,15 @@ function getActiveGardenRow() {
 function renderFirstValueOnboarding() {
   const host = document.getElementById('pdV0OnboardingHost');
   const signedIn = !!currentSession?.user;
+  const activeGarden = getActiveGardenRow();
+  const serverHasLocation = isCompleteServerLocation(activeGarden);
+  const serverPlantCount = Number(activeGardenPlantCount) || 0;
   const step = deriveFirstValueOnboardingState({
     signedIn,
     gardens: ownedGardensCache,
     activeGardenId: getActiveGardenId(),
-    activeGarden: getActiveGardenRow(),
-    plantCount: activeGardenPlantCount
+    activeGarden,
+    plantCount: serverPlantCount
   });
 
   const titleEl = document.getElementById('pdV0Title');
@@ -355,46 +358,56 @@ function renderFirstValueOnboarding() {
   const answerHint = document.getElementById('pdV0AnswerHint');
   const switcher = document.getElementById('pdV0GardenSwitcher');
   const advanced = document.getElementById('pdV0AdvancedDetails');
+  const addFirstBtn = document.getElementById('pdV0AddFirstPlantBtn');
+  const setLocationBtn = document.getElementById('pdV0SetLocationBtn');
+  const locLabel = document.getElementById('pdV0LocationSavedLabel');
 
-  if (createPanel) {
-    createPanel.hidden = step.primaryAction !== 'create-garden';
-  }
-  if (locationPanel) {
-    locationPanel.hidden = step.primaryAction !== 'set-location';
-    const locLabel = document.getElementById('pdV0LocationSavedLabel');
-    if (locLabel) locLabel.hidden = true;
-  }
+  // Primary CTAs must follow server garden/location/plant truth after hydrate.
+  const showCreate = step.primaryAction === 'create-garden';
+  const showSetLocation = step.primaryAction === 'set-location' && !serverHasLocation;
+  const showAddFirstPlant = step.primaryAction === 'add-plant' && serverPlantCount <= 0;
+  const showPlantTools =
+    showAddFirstPlant ||
+    step.primaryAction === 'check-plant' ||
+    step.state === 'E_FIRST_ANSWER' ||
+    (serverHasLocation && serverPlantCount > 0);
+
+  if (createPanel) createPanel.hidden = !showCreate;
+  if (locationPanel) locationPanel.hidden = !showSetLocation;
+  if (setLocationBtn) setLocationBtn.hidden = !showSetLocation;
+  if (addFirstBtn) addFirstBtn.hidden = !showAddFirstPlant;
   if (plantPanel) {
-    plantPanel.hidden = !(
-      step.primaryAction === 'add-plant' ||
-      step.primaryAction === 'check-plant' ||
-      step.state === 'E_FIRST_ANSWER'
-    );
+    // Keep plant step container only when first-plant CTA is the primary action.
+    plantPanel.hidden = !showAddFirstPlant;
+  }
+  if (locLabel) {
+    if (serverHasLocation && !showSetLocation) {
+      locLabel.hidden = false;
+      locLabel.textContent = `Location: ${activeGarden.location_label}`;
+    } else {
+      locLabel.hidden = true;
+    }
   }
   if (answerHint) {
-    answerHint.hidden = step.state !== 'E_FIRST_ANSWER';
+    answerHint.hidden = !(step.state === 'E_FIRST_ANSWER' || (serverHasLocation && serverPlantCount > 0));
   }
   if (switcher) {
     switcher.hidden = !step.showGardenSwitcher;
   }
   if (advanced) {
-    // Keep advanced collapsed; only useful with multiple gardens or recovery.
     advanced.hidden = !signedIn;
   }
 
   if (host) {
     host.dataset.state = step.state;
     host.dataset.primaryAction = step.primaryAction;
+    host.dataset.serverHasLocation = serverHasLocation ? '1' : '0';
+    host.dataset.serverPlantCount = String(serverPlantCount);
   }
 
-  // Suitability block visibility tracks plant step.
   const suit = document.getElementById('pdV0SpecificSuitability');
   if (suit) {
-    suit.hidden = !(
-      step.primaryAction === 'add-plant' ||
-      step.primaryAction === 'check-plant' ||
-      step.state === 'E_FIRST_ANSWER'
-    );
+    suit.hidden = !showPlantTools;
   }
 
   return step;
@@ -1195,14 +1208,12 @@ async function saveCurrentAppLocationToActiveGarden() {
 }
 
 function showLocationSavedFeedback(saved) {
-  const panel = document.getElementById('pdV0LocationStep');
   const locLabel = document.getElementById('pdV0LocationSavedLabel');
-  if (panel) panel.hidden = false;
-  if (locLabel) {
+  if (locLabel && saved?.location_label) {
     locLabel.hidden = false;
     const climateReady =
       saved?.location_structural_climate_status === 'known' ? ' · Climate profile ready' : '';
-    locLabel.textContent = `Garden location saved · ${saved?.location_label || ''}${climateReady}`;
+    locLabel.textContent = `Garden location saved · ${saved.location_label}${climateReady}`;
   }
   renderFirstValueOnboarding();
 }
@@ -1233,17 +1244,33 @@ async function onAppLocationConfirmedFromUi() {
   }
 }
 
+let pdV0EscapeBound = false;
+
+function onPdV0EscapeKey(event) {
+  if (event.key !== 'Escape') return;
+  const modal = document.getElementById('pdV0Modal');
+  if (!modal || !modal.classList.contains('open')) return;
+  event.preventDefault();
+  closePersonalDomainModal();
+}
+
 function openPersonalDomainModal() {
-  document.getElementById('pdV0Modal')?.classList.add('open');
-  document.getElementById('pdV0Modal')?.setAttribute('aria-hidden', 'false');
+  const modal = document.getElementById('pdV0Modal');
+  modal?.classList.add('open');
+  modal?.setAttribute('aria-hidden', 'false');
+  if (!pdV0EscapeBound) {
+    document.addEventListener('keydown', onPdV0EscapeKey);
+    pdV0EscapeBound = true;
+  }
   restoreSession()
     .then(() => renderFirstValueOnboarding())
     .catch((err) => setStatus(err.message || 'Could not initialize account.', 'error'));
 }
 
 function closePersonalDomainModal() {
-  document.getElementById('pdV0Modal')?.classList.remove('open');
-  document.getElementById('pdV0Modal')?.setAttribute('aria-hidden', 'true');
+  const modal = document.getElementById('pdV0Modal');
+  modal?.classList.remove('open');
+  modal?.setAttribute('aria-hidden', 'true');
 }
 
 function startSetGardenLocationFlow() {
@@ -1285,6 +1312,9 @@ function startSetGardenLocationFlow() {
 function wirePersonalDomainUi() {
   document.getElementById('pdV0Modal')?.addEventListener('click', (event) => {
     if (event.target?.id === 'pdV0Modal') closePersonalDomainModal();
+  });
+  document.getElementById('pdV0CloseBtn')?.addEventListener('click', () => {
+    closePersonalDomainModal();
   });
   document.getElementById('pdV0ImportLegacyLocationBtn')?.addEventListener('click', () => {
     importLegacyTrustedLocationToActiveGarden(true).catch((err) => {

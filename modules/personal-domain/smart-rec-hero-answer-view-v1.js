@@ -28,13 +28,12 @@ function copyBundle(he) {
   if (he) {
     return {
       kickerLive: 'החלטת התאמה · צמח נבחר',
-      title: 'תשובת CRUVIT להתאמת הצמח',
+      title: 'אפשר לגדל את זה כאן?',
       selectPlant: 'בחרו צמח מהקטלוג כדי לבדוק התאמה לאקלים שלכם.',
       confirmLocation: 'אשרו את מיקום הגינה לפני בדיקת התאמה.',
       climateUnavailable:
-        'מידע האקלים המבני עדיין לא זמין למיקום זה. לא ניתן לקבוע התאמה כרגע.',
-      fineLive:
-        'מבוסס על התאמת צמח ספציפי מול אקלים מאושר. לא דירוג רשימה, לא זיכרון גינה, לא Product Authority.',
+        'מידע האקלים עדיין לא זמין למיקום זה. לא ניתן לקבוע התאמה כרגע.',
+      fineLive: 'פרטים טכניים לבדיקה.',
       confidenceKnown: 'מבוסס על פרופיל האקלים הזמין ועל מנוע ההתאמה הקיים.',
       confidenceBorderline: 'ודאות חלקית — המנוע מסמן זהירות או צורך בסקירה.',
       confidenceBlocked: 'המנוע חוסם המלצה למיקום/הקשר הזה.',
@@ -42,8 +41,8 @@ function copyBundle(he) {
       understandsLevel: 'רמת התאמה',
       understandsClimate: 'אקלים',
       understandsReason: 'סיבה עיקרית',
-      tradeoffLabel: 'מה חשוב לדעת',
-      noExtraWarn: 'אין אזהרות נוספות מהמנוע לתוצאה זו.',
+      tradeoffLabel: 'סיבה עיקרית',
+      noExtraWarn: 'אין הערות נוספות לתוצאה זו.',
       thanks: 'תודה — המשוב נשאר במסך הזה בלבד ולא נשמר.',
       feedbackLabel: 'האם התשובה הייתה שימושית?',
       yes: 'כן',
@@ -53,13 +52,12 @@ function copyBundle(he) {
   }
   return {
     kickerLive: 'Suitability · selected plant',
-    title: 'CRUVIT plant suitability answer',
+    title: 'Can I grow this here?',
     selectPlant: 'Select a catalog plant to check climate suitability.',
     confirmLocation: 'Confirm your garden location before suitability can be determined.',
     climateUnavailable:
-      'Structural climate is not available for this location yet. No suitability decision can be made.',
-    fineLive:
-      'Based on Specific Plant suitability against confirmed-location climate. Not a ranked list, Garden Memory, or Product Authority.',
+      'Climate data is not available for this location yet. No suitability decision can be made.',
+    fineLive: 'Technical suitability details for review.',
     confidenceKnown: 'Based on the available climate profile and the existing suitability engine.',
     confidenceBorderline: 'Partial confidence — the engine signals caution or review.',
     confidenceBlocked: 'The engine blocks a recommendation for this location/context.',
@@ -67,8 +65,8 @@ function copyBundle(he) {
     understandsLevel: 'Suitability',
     understandsClimate: 'Climate',
     understandsReason: 'Main reason',
-    tradeoffLabel: 'What matters',
-    noExtraWarn: 'No additional engine warnings for this result.',
+    tradeoffLabel: 'Main reason',
+    noExtraWarn: 'No additional notes for this result.',
     thanks: 'Thanks — this feedback stays on this screen only and is not saved.',
     feedbackLabel: 'Was this answer useful?',
     yes: 'Yes',
@@ -159,6 +157,22 @@ function buildOutcomeRows(outcomes, he) {
       display: outcomeDisplayLabel(fruiting, he, o.fruitingLabel)
     }
   ];
+}
+
+const HERO_TECHNICAL_RE =
+  /SOURCE_SUPPORTED|provisional|group-level|group-template|Product Authority|Garden Memory|Specific Plant|ranked list|missing:|trait evidence not|UNKNOWN evidence|normals-monthly|evaluatorVersion|hardeningVersion|Survival severity preserved|Growth severity preserved|Garden sun\/drainage/i;
+
+function isTechnicalHeroLine(text) {
+  return HERO_TECHNICAL_RE.test(String(text || ''));
+}
+
+function pickHumanMainReason(explanation, warnings, fallback) {
+  const candidates = [
+    String(explanation || '').trim(),
+    ...(Array.isArray(warnings) ? warnings.map((w) => String(w || '').trim()) : [])
+  ].filter(Boolean);
+  const human = candidates.find((line) => !isTechnicalHeroLine(line));
+  return human || fallback;
 }
 
 /**
@@ -286,7 +300,11 @@ export function buildSrHeroAnswerViewModel(input = {}) {
   const warnings = Array.isArray(suitability?.warnings)
     ? suitability.warnings.map((w) => String(w || '').trim()).filter(Boolean)
     : [];
-  const explanation = String(suitability?.explanationText || warnings[0] || '').trim();
+  const limitingFromOutcomes = Array.isArray(outcomes?.limitingFactors)
+    ? outcomes.limitingFactors.map((w) => String(w || '').trim()).filter(Boolean)
+    : [];
+  const allNotes = [...warnings, ...limitingFromOutcomes];
+  const explanation = String(suitability?.explanationText || allNotes[0] || '').trim();
   const plantName = String(plant.name || plant.slug || 'Plant').trim();
   const scientific = String(plant.scientific || '').trim();
   const climateBits = [
@@ -307,9 +325,11 @@ export function buildSrHeroAnswerViewModel(input = {}) {
       ? `${c.understandsClimate}: ${climateBits}`
       : `${c.understandsClimate}: ${he ? 'זמין' : 'available'}`,
     explanation ? `${c.understandsReason}: ${explanation}` : null,
-    ...outcomeUnderstandLines
+    ...outcomeUnderstandLines,
+    ...allNotes.filter((line) => isTechnicalHeroLine(line))
   ].filter(Boolean);
 
+  const mainReason = pickHumanMainReason(explanation, allNotes, c.noExtraWarn);
   const liveOutcomes = {
     outcomesLabel,
     outcomeRows,
@@ -325,14 +345,14 @@ export function buildSrHeroAnswerViewModel(input = {}) {
       recommendationLevel: 'blocked',
       status: levelLabel('blocked', he),
       lead:
-        explanation ||
+        mainReason ||
         (he
           ? `${plantName} אינו מתאים כאן לפי מנוע ההתאמה.`
           : `${plantName} is not suitable here according to the suitability engine.`),
       understands,
       confidence: c.confidenceBlocked,
       tradeoffLabel: c.tradeoffLabel,
-      tradeoff: warnings[0] || explanation || c.noExtraWarn
+      tradeoff: mainReason
     };
   }
 
@@ -345,14 +365,14 @@ export function buildSrHeroAnswerViewModel(input = {}) {
       recommendationLevel: level,
       status: levelLabel(level, he),
       lead:
-        explanation ||
+        mainReason ||
         (he
           ? `${plantName}: התאמה זהירה — לא המלצה בטוחה.`
           : `${plantName}: cautious suitability — not a confident recommendation.`),
       understands,
       confidence: c.confidenceBorderline,
       tradeoffLabel: c.tradeoffLabel,
-      tradeoff: warnings[0] || explanation || c.noExtraWarn
+      tradeoff: mainReason
     };
   }
 
@@ -364,13 +384,13 @@ export function buildSrHeroAnswerViewModel(input = {}) {
     recommendationLevel: level,
     status: levelLabel(level, he),
     lead:
-      explanation ||
+      mainReason ||
       (he
         ? `${plantName}: ${levelLabel(level, he)} לפי האקלים הזמין.`
         : `${plantName}: ${levelLabel(level, he)} for the available climate.`),
     understands,
     confidence: c.confidenceKnown,
     tradeoffLabel: c.tradeoffLabel,
-    tradeoff: warnings[0] || c.noExtraWarn
+    tradeoff: mainReason || c.noExtraWarn
   };
 }

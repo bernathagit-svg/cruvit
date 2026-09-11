@@ -14,6 +14,7 @@
 }
 
 .pd-v0-box {
+  position: relative;
   width: min(420px, 100%);
   max-height: min(90vh, 720px);
   overflow: auto;
@@ -22,6 +23,30 @@
   background: #f8fbf7;
   box-shadow: 0 18px 48px rgba(20, 40, 28, 0.18);
   padding: 18px 18px 16px;
+}
+
+.pd-v0-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(31, 90, 56, 0.1);
+  color: #1f5a38;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.pd-v0-close:hover,
+.pd-v0-close:focus-visible {
+  background: rgba(31, 90, 56, 0.18);
+  outline: 2px solid #1f5a38;
+  outline-offset: 2px;
 }
 
 .pd-v0-kicker {
@@ -119,11 +144,28 @@
   color: #1f5a38;
 }
 
-.pd-v0-ok-line {
-  margin: 10px 0 0;
-  font-size: 0.9rem;
+.pd-v0-why,
+.sr-ha-why {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(28, 61, 42, 0.1);
+  font-size: 0.84rem;
+  color: #425647;
+}
+
+.pd-v0-why summary,
+.sr-ha-why summary {
+  cursor: pointer;
   font-weight: 700;
   color: #1f5a38;
+}
+
+.pd-v0-why ul,
+.sr-ha-why ul {
+  margin: 8px 0 0;
+  padding-left: 1.1em;
 }
 
 .pd-v0-advanced {

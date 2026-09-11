@@ -179,7 +179,7 @@ test('A — trusted + climate + plant + suitability maps level honestly', () => 
   assert.match(vm.lead, /Solid climate fit|Good match/i);
   assert.ok(vm.understands.some((u) => /Tomato/i.test(u)));
   assert.ok(vm.understands.some((u) => /Good match|Suitability/i.test(u)));
-  assert.match(vm.tradeoff, /cultivar|chill|No additional/i);
+  assert.match(vm.tradeoff, /Solid climate fit/i);
   assert.doesNotMatch(vm.fine, /never contains suitability|No plant recommendation, suitability score/i);
 });
 
@@ -199,7 +199,7 @@ test('app.html wires Hero to evaluateSpecificPlantSuitability + refresh hooks', 
   assert.match(app, /cruvitBuildSrHeroAnswerViewModel/);
   assert.match(app, /cruvitDeriveSpecificPlantOutcomes|window\.cruvitDeriveSpecificPlantOutcomes/);
   assert.doesNotMatch(app, /Local preview only\. Not live Garden Memory\. Feedback is not saved\. No plant recommendation, suitability score/);
-  assert.match(app, /Not a ranked list, Garden Memory, or Product Authority/);
+  assert.match(app, /Why this answer\?/);
   assert.doesNotMatch(app, /Goal: coverage \/ privacy need \(local preview context\)/);
 });
 
@@ -374,9 +374,10 @@ test('PRODUCT PROOF — Mojstrana global-tile climate + pineapple → Hero shows
 
 test('app.html auto-persists confirmed location to owned garden when signed in', () => {
   const app = fs.readFileSync(APP, 'utf8');
-  assert.match(app, /saveCurrentAppLocationToActiveGarden/);
-  assert.match(app, /Owned-garden location persist skipped/);
+  assert.match(app, /saveCurrentAppLocationToActiveGarden|onAppLocationConfirmedFromUi/);
+  assert.match(app, /Owned-garden location persist failed/);
   assert.match(app, /srHaOutcomesBlock/);
+  assert.match(app, /srHaWhyDetails/);
 });
 
 test('regression source guards — scoring / Product Authority / Garden Memory untouched', () => {
@@ -387,7 +388,7 @@ test('regression source guards — scoring / Product Authority / Garden Memory u
   );
   assert.match(app, /suitabilityScore=blocked\?0:Math\.max/);
   assert.match(app, /recommendationLevel=blocked\?'blocked':\(suitabilityScore>=85/);
-  assert.match(heroMod, /Not a ranked list, Garden Memory, or Product Authority/);
+  assert.match(heroMod, /Can I grow this here\?/);
   assert.doesNotMatch(heroMod, /activate Product Authority|live Garden Memory|Product Proof/i);
   assert.doesNotMatch(heroMod, /chelsa|CHELSA/);
 });
