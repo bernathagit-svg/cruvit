@@ -7684,8 +7684,7 @@ function closePlantDoctorToGarden(){
 function checkPlantHealth(i){
   openMenu=null;
   const loop=window.cruvitPlantDoctorCareLoop;
-  if(loop&&typeof loop.openWithOwnedPlant==='function'){
-    loop.openWithOwnedPlant(i);
+  if(loop&&typeof loop.openWithOwnedPlant==='function'&&loop.openWithOwnedPlant(i)){
     return;
   }
   const plant=data.plants[i];

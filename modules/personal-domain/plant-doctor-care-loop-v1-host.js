@@ -232,7 +232,10 @@ function installPlantDoctorCareLoopHost() {
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
     openWithOwnedPlant(plantIndex) {
-      const data = window.data;
+      const data =
+        (typeof window.getCruvitGardenData === 'function'
+          ? window.getCruvitGardenData()
+          : window.data) || null;
       const plant = data?.plants?.[plantIndex];
       if (!plant) return false;
       const pd = window.cruvitPersonalDomainV0;
