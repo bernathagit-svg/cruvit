@@ -1,0 +1,99 @@
+/* Functional Garden Dashboard V1 — minimal, reuses existing app tone */
+.garden-os-dashboard-host {
+  margin: 12px 0 4px;
+}
+.gdash-panel {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(20, 59, 40, 0.12);
+  border-radius: 14px;
+  padding: 14px 16px 8px;
+}
+.gdash-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gdash-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.gdash-head small,
+.gdash-empty,
+.gdash-warn {
+  color: rgba(20, 59, 40, 0.65);
+  font-size: 0.85rem;
+}
+.gdash-warn {
+  color: #8a4b00;
+  margin: 0 0 8px;
+}
+.gdash-section {
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(20, 59, 40, 0.08);
+}
+.gdash-section:last-child {
+  border-bottom: 0;
+}
+.gdash-h {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+}
+.gdash-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.92rem;
+}
+.gdash-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.gdash-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0;
+  border-top: 1px solid rgba(20, 59, 40, 0.06);
+  font-size: 0.9rem;
+}
+.gdash-list li:first-child {
+  border-top: 0;
+}
+.gdash-list small,
+.gdash-cta {
+  color: rgba(20, 59, 40, 0.62);
+  font-size: 0.8rem;
+}
+.gdash-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(20, 59, 40, 0.08);
+}
+.gdash-needs_attention {
+  background: rgba(180, 70, 40, 0.12);
+  color: #7a2e18;
+}
+.gdash-monitoring {
+  background: rgba(160, 120, 20, 0.14);
+  color: #6a5200;
+}
+.gdash-healthy {
+  background: rgba(40, 120, 70, 0.12);
+  color: #1e5a38;
+}
+.gdash-learn-positive {
+  color: #1e5a38;
+}
+.gdash-learn-negative {
+  color: #7a2e18;
+}
+.gdash-learn-unknown {
+  color: rgba(20, 59, 40, 0.75);
+}

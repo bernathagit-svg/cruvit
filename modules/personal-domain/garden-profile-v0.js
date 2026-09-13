@@ -97,7 +97,10 @@ const PLANT_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,name,status,mark,source,profile_slug,scientific,archived,prefs,added_at,created_at,updated_at';
 
 const TASK_SELECT =
-  'id,garden_profile_id,user_id,client_instance_id,garden_plant_id,icon,title,when_label,priority,due_on,auto_generated,plant_name,done,created_at,updated_at';
+  'id,garden_profile_id,user_id,client_instance_id,garden_plant_id,icon,title,when_label,priority,due_on,auto_generated,plant_name,done,source_module,task_type,created_at,updated_at';
+
+const EVENT_SELECT =
+  'id,garden_profile_id,garden_plant_id,garden_task_id,event_type,source_module,payload,occurred_at,correlation_id,caused_by_event_id';
 
 /** @type {import('@supabase/supabase-js').SupabaseClient | null} */
 let supabase = null;
@@ -720,6 +723,28 @@ async function listTasksForGarden(gardenProfileId) {
   return Array.isArray(data) ? data : [];
 }
 
+/**
+ * Bounded Garden Memory read for Dashboard V1.
+ * SELECT only — never inserts. Newest first. Default limit 40.
+ */
+async function listGardenEventsForGarden(gardenProfileId, options = {}) {
+  if (!supabase || !currentSession?.user) return [];
+  const gardenId = String(gardenProfileId || '').trim();
+  if (!gardenId) return [];
+  const limit = Math.min(
+    100,
+    Math.max(1, Number.isFinite(options.limit) ? options.limit : 40)
+  );
+  const { data, error } = await supabase
+    .from('garden_events')
+    .select(EVENT_SELECT)
+    .eq('garden_profile_id', gardenId)
+    .order('occurred_at', { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return Array.isArray(data) ? data : [];
+}
+
 function resolveGardenPlantIdForTask(task) {
   if (task?.gardenPlantId || task?.garden_plant_id) {
     return String(task.gardenPlantId || task.garden_plant_id).trim() || null;
@@ -879,6 +904,11 @@ async function refreshOwnedGardenProfiles() {
       } catch (err) {
         console.warn('Garden tasks hydrate failed:', err?.message || err);
       }
+      try {
+        if (typeof window.cruvitGardenDashboardV1?.refresh === 'function') {
+          window.cruvitGardenDashboardV1.refresh();
+        }
+      } catch (_) {}
     }
   } else if (rows.length !== 1) {
     // No active garden (0 gardens, or many with no explicit selection):
@@ -927,6 +957,11 @@ async function selectActiveGarden(gardenId) {
   } catch {
     /* suitability UI optional */
   }
+  try {
+    if (typeof window.cruvitGardenDashboardV1?.refresh === 'function') {
+      window.cruvitGardenDashboardV1.refresh();
+    }
+  } catch (_) {}
   return row;
 }
 
@@ -1697,6 +1732,8 @@ window.cruvitPersonalDomainV0 = {
   writeGardenMemoryEvent: (input) => recordGardenMemoryEvent(input),
   importLegacyLocalTasksToActiveGarden,
   listTasksForActiveGarden: async () => listTasksForGarden(getActiveGardenId()),
+  listGardenEventsForActiveGarden: async (options) =>
+    listGardenEventsForGarden(getActiveGardenId(), options),
   hydrateActiveGardenTasks: async () => {
     const id = getActiveGardenId();
     const garden = ownedGardensCache.find((r) => String(r.id) === String(id));

@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
+<link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913d">
 <link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911e">
 <style id="licensed-catalog-media-runtime-styles">
 .plant-img{position:relative}
@@ -455,6 +456,8 @@
       <small id="gardenSnapshotScan">Last scan: Today, 08:24</small>
     </figcaption>
   </figure>
+
+  <div id="gardenOsDashboardHost" class="garden-os-dashboard-host" hidden></div>
 
   <input id="gardenPhotoInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/*" capture="environment" tabindex="-1" aria-hidden="true" class="visually-hidden" onchange="handleGardenPhotoSelected(this)">
 
@@ -8597,7 +8600,8 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913c"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913c"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913d"></script>
+<script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913d"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913d"></script>
 </body>
 </html>
