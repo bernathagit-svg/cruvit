@@ -1,0 +1,70 @@
+/* Garden Areas V1 — minimal functional styles */
+.garden-areas-host {
+  margin: 10px 0 4px;
+}
+.gareas-panel {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(20, 59, 40, 0.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.gareas-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.gareas-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.gareas-note,
+.gareas-head small {
+  color: rgba(20, 59, 40, 0.65);
+  font-size: 0.85rem;
+}
+.gareas-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+.gareas-list li {
+  padding: 8px 0;
+  border-top: 1px solid rgba(20, 59, 40, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gareas-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.gareas-actions button {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 59, 40, 0.18);
+  background: #fff;
+  cursor: pointer;
+}
+.gareas-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.gareas-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+.gareas-form input,
+.gareas-form select {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 59, 40, 0.2);
+}

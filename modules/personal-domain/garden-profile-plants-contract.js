@@ -76,7 +76,9 @@ export function serverPlantToAppPlant(row) {
     archived: row.archived === true,
     prefs: normalizePlantPrefs(row.prefs),
     addedAt: row.added_at || undefined,
-    updatedAt: row.updated_at || undefined
+    updatedAt: row.updated_at || undefined,
+    // Optional Area link (NULL = unassigned / pre-Areas legacy)
+    gardenAreaId: row.garden_area_id || row.gardenAreaId || null
   };
 }
 

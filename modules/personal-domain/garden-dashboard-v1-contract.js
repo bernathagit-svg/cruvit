@@ -469,7 +469,10 @@ export function buildGardenDashboardReadModel(input = {}) {
         mark: p.mark || '',
         healthBucket: p.healthBucket,
         id: p.id || null,
-        serverId: p.serverId || null
+        serverId: p.serverId || null,
+        // Optional Area label — absent when no Areas / unassigned
+        areaLabel: p.areaLabel || p.gardenAreaName || null,
+        gardenAreaId: p.gardenAreaId || p.garden_area_id || null
       })),
       attentionCount,
       monitoringCount,

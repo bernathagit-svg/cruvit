@@ -39,6 +39,13 @@ import {
   buildClosedLoopOutcomeMemoryBundle,
   decideCareOutcomeFollowUp
 } from './garden-care-outcome-v1-contract.js';
+import {
+  buildAreaWritePayload,
+  normalizeAreaContext,
+  assertPlantAreaSameGarden,
+  assertAreaOwnedByGarden,
+  validateAreaName
+} from './garden-areas-v1-contract.js';
 import './garden-closed-loop-care-v1-browser.js';
 import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
@@ -95,6 +102,12 @@ const GARDEN_SELECT =
 
 const PLANT_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,name,status,mark,source,profile_slug,scientific,archived,prefs,added_at,created_at,updated_at';
+
+/** Includes optional garden_area_id after Areas migration. */
+const PLANT_SELECT_WITH_AREA = `${PLANT_SELECT},garden_area_id`;
+
+const AREA_SELECT =
+  'id,garden_profile_id,user_id,client_instance_id,name,context,created_at,updated_at';
 
 const TASK_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,garden_plant_id,icon,title,when_label,priority,due_on,auto_generated,plant_name,done,source_module,task_type,created_at,updated_at';
@@ -642,17 +655,163 @@ function hasLegacyLocalTasks() {
   return false;
 }
 
+function isMissingColumnOrRelationError(error) {
+  const msg = String(error?.message || error?.code || '').toLowerCase();
+  return (
+    error?.code === '42P01' ||
+    error?.code === '42703' ||
+    msg.includes('does not exist') ||
+    msg.includes('schema cache') ||
+    msg.includes('garden_area_id') ||
+    msg.includes('garden_areas')
+  );
+}
+
 async function listPlantsForGarden(gardenProfileId) {
   if (!supabase || !currentSession?.user) return [];
   const gardenId = String(gardenProfileId || '').trim();
   if (!gardenId) return [];
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from('garden_plants')
-    .select(PLANT_SELECT)
+    .select(PLANT_SELECT_WITH_AREA)
     .eq('garden_profile_id', gardenId)
     .order('added_at', { ascending: true });
+  if (error && isMissingColumnOrRelationError(error)) {
+    ({ data, error } = await supabase
+      .from('garden_plants')
+      .select(PLANT_SELECT)
+      .eq('garden_profile_id', gardenId)
+      .order('added_at', { ascending: true }));
+  }
   if (error) throw error;
   return Array.isArray(data) ? data : [];
+}
+
+async function listAreasForGarden(gardenProfileId) {
+  if (!supabase || !currentSession?.user) return [];
+  const gardenId = String(gardenProfileId || '').trim();
+  if (!gardenId) return [];
+  const { data, error } = await supabase
+    .from('garden_areas')
+    .select(AREA_SELECT)
+    .eq('garden_profile_id', gardenId)
+    .order('created_at', { ascending: true });
+  if (error) {
+    if (isMissingColumnOrRelationError(error)) return [];
+    throw error;
+  }
+  return Array.isArray(data) ? data : [];
+}
+
+async function upsertAreaOnActiveGarden(input = {}) {
+  const gardenId = requireActiveOwnedGardenId();
+  const payload = buildAreaWritePayload(input);
+  const row = {
+    ...payload,
+    garden_profile_id: gardenId,
+    user_id: currentSession.user.id
+  };
+  const { data, error } = await supabase
+    .from('garden_areas')
+    .upsert(row, { onConflict: 'garden_profile_id,client_instance_id' })
+    .select(AREA_SELECT)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function updateAreaOnActiveGarden(areaId, patch = {}) {
+  const gardenId = requireActiveOwnedGardenId();
+  const id = String(areaId || '').trim();
+  if (!id) throw new Error('area_id_required');
+  const update = { updated_at: new Date().toISOString() };
+  if (patch.name != null) update.name = validateAreaName(patch.name);
+  if (patch.context != null || patch.sunExposure != null || patch.plantingMode != null) {
+    const existing = await supabase
+      .from('garden_areas')
+      .select(AREA_SELECT)
+      .eq('id', id)
+      .eq('garden_profile_id', gardenId)
+      .maybeSingle();
+    if (existing.error) throw existing.error;
+    if (!existing.data) throw new Error('area_not_found');
+    assertAreaOwnedByGarden(existing.data, gardenId);
+    update.context = normalizeAreaContext({
+      ...(existing.data.context || {}),
+      ...(patch.context || {}),
+      ...patch
+    });
+  }
+  const { data, error } = await supabase
+    .from('garden_areas')
+    .update(update)
+    .eq('id', id)
+    .eq('garden_profile_id', gardenId)
+    .select(AREA_SELECT)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function deleteAreaOnActiveGarden(areaId) {
+  const gardenId = requireActiveOwnedGardenId();
+  const id = String(areaId || '').trim();
+  if (!id) throw new Error('area_id_required');
+  // Plants detach via FK ON DELETE SET NULL — do not delete plants.
+  const { error } = await supabase
+    .from('garden_areas')
+    .delete()
+    .eq('id', id)
+    .eq('garden_profile_id', gardenId);
+  if (error) throw error;
+  return true;
+}
+
+/**
+ * Assign / unassign plant → Area (same garden). areaId null clears link.
+ * No Garden Memory event in V1 (state persistence is primary).
+ */
+async function assignPlantToAreaOnActiveGarden(input = {}) {
+  const gardenId = requireActiveOwnedGardenId();
+  const areaId =
+    input.areaId === null || input.areaId === ''
+      ? null
+      : String(input.areaId || input.garden_area_id || '').trim() || null;
+
+  if (areaId) {
+    const { data: area, error: areaErr } = await supabase
+      .from('garden_areas')
+      .select('id,garden_profile_id')
+      .eq('id', areaId)
+      .maybeSingle();
+    if (areaErr) throw areaErr;
+    if (!area) throw new Error('area_not_found');
+    assertAreaOwnedByGarden(area, gardenId);
+    assertPlantAreaSameGarden({
+      plantGardenProfileId: gardenId,
+      areaGardenProfileId: area.garden_profile_id
+    });
+  }
+
+  let plantId = String(input.plantId || input.garden_plant_id || '').trim();
+  if (!plantId && input.plantName) {
+    const name = String(input.plantName).trim().toLowerCase();
+    const rows = await listPlantsForGarden(gardenId);
+    const match = rows.find((r) => String(r.name || '').trim().toLowerCase() === name);
+    if (!match) throw new Error('plant_not_found');
+    plantId = match.id;
+  }
+  if (!plantId) throw new Error('plant_id_required');
+
+  const { data, error } = await supabase
+    .from('garden_plants')
+    .update({ garden_area_id: areaId })
+    .eq('id', plantId)
+    .eq('garden_profile_id', gardenId)
+    .select(PLANT_SELECT_WITH_AREA)
+    .single();
+  if (error) throw error;
+  return data;
 }
 
 async function hydrateActiveGardenPlants(gardenRow) {
@@ -1711,6 +1870,13 @@ window.cruvitPersonalDomainV0 = {
   syncActiveGardenPlantsFromLocal,
   importLegacyLocalPlantsToActiveGarden,
   listPlantsForActiveGarden: async () => listPlantsForGarden(getActiveGardenId()),
+  listAreasForActiveGarden: async () => listAreasForGarden(getActiveGardenId()),
+  upsertAreaOnActiveGarden,
+  updateAreaOnActiveGarden,
+  updateAreaContextOnActiveGarden: async (areaId, contextPatch) =>
+    updateAreaOnActiveGarden(areaId, { context: contextPatch, ...contextPatch }),
+  deleteAreaOnActiveGarden,
+  assignPlantToAreaOnActiveGarden,
   hydrateActiveGardenPlants: async () => {
     const id = getActiveGardenId();
     const garden = ownedGardensCache.find((r) => String(r.id) === String(id));

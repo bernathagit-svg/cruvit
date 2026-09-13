@@ -96,7 +96,11 @@ export function renderGardenDashboardHtml(model) {
     ? `<ul class="gdash-list">${attentionPlants
         .map(
           (p) =>
-            `<li><b>${escapeHtml(p.name)}</b> <span class="gdash-badge gdash-${escapeHtml(
+            `<li><b>${escapeHtml(p.name)}</b>${
+              p.areaLabel
+                ? ` <small class="gdash-area">${escapeHtml(p.areaLabel)}</small>`
+                : ''
+            } <span class="gdash-badge gdash-${escapeHtml(
               p.healthBucket || 'unknown'
             )}">${escapeHtml(healthLabel(p.healthBucket))}</span><small>${escapeHtml(
               p.status || ''
@@ -109,7 +113,11 @@ export function renderGardenDashboardHtml(model) {
     .slice(0, 12)
     .map(
       (p) =>
-        `<li><b>${escapeHtml(p.name)}</b> <span class="gdash-badge gdash-${escapeHtml(
+        `<li><b>${escapeHtml(p.name)}</b>${
+          p.areaLabel
+            ? ` <small class="gdash-area">${escapeHtml(p.areaLabel)}</small>`
+            : ''
+        } <span class="gdash-badge gdash-${escapeHtml(
           p.healthBucket || 'unknown'
         )}">${escapeHtml(healthLabel(p.healthBucket))}</span><small>${escapeHtml(
           p.status || ''
@@ -261,6 +269,24 @@ export async function loadGardenDashboardReadModel(options = {}) {
       return row;
     })
     .filter(Boolean);
+
+  // Optional Area labels — soft fail; zero Areas must not break dashboard
+  let areasById = new Map();
+  try {
+    const areaRows =
+      typeof pd.listAreasForActiveGarden === 'function' ? await pd.listAreasForActiveGarden() : [];
+    for (const a of areaRows || []) {
+      if (a?.id) areasById.set(String(a.id), a);
+    }
+  } catch (_) {
+    areasById = new Map();
+  }
+  for (const p of plants) {
+    const aid = p.gardenAreaId || p.garden_area_id;
+    if (aid && areasById.has(String(aid))) {
+      p.areaLabel = areasById.get(String(aid)).name || null;
+    }
+  }
 
   const tasks = (taskRows || [])
     .map((row) => {
