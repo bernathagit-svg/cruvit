@@ -2950,9 +2950,10 @@ function getUserOwnedPlantPhotoUrl(plant){
   const api=licensedCatalogMediaApi();
   if(api&&typeof api.getUserOwnedPlantPhotoUrl==='function') return api.getUserOwnedPlantPhotoUrl(plant);
   if(!plant||typeof plant!=='object') return '';
-  // Durable Garden Media V1 cover (signed URL, refreshed; storage_path is authority on server)
+  // Explicit Garden Media cover only for identity override (not local photoUrl/scan)
+  const coverId=String(plant.coverMediaId||plant.cover_media_id||'').trim();
   const coverSigned=String(plant.coverSignedUrl||'').trim();
-  if(coverSigned&&(isHttpPlantImageUrl(coverSigned))&&!isBannedPlantImageHost(coverSigned)) return coverSigned;
+  if(coverId&&coverSigned&&(isHttpPlantImageUrl(coverSigned))&&!isBannedPlantImageHost(coverSigned)) return coverSigned;
   const m=plant.meta&&typeof plant.meta==='object'?plant.meta:{};
   const scan=String(plant.scanPhotoUrl||'').trim();
   const candidates=[plant.photoUrl,m.photoUrl,plant.userPhotoUrl,m.userPhotoUrl];
@@ -2964,12 +2965,23 @@ function getUserOwnedPlantPhotoUrl(plant){
   if(scan&&(isHttpPlantImageUrl(scan)||isDataPlantImageUrl(scan))&&!isBannedPlantImageHost(scan)) return scan;
   return '';
 }
+function getExplicitPersonalCoverUrl(plant){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.getExplicitPersonalCoverUrl==='function') return api.getExplicitPersonalCoverUrl(plant);
+  if(!plant||typeof plant!=='object') return '';
+  const coverId=String(plant.coverMediaId||plant.cover_media_id||'').trim();
+  const coverSigned=String(plant.coverSignedUrl||'').trim();
+  if(!coverId) return '';
+  if(coverSigned&&isHttpPlantImageUrl(coverSigned)&&!isBannedPlantImageHost(coverSigned)) return coverSigned;
+  return '';
+}
 function resolvePlantDisplayMedia(plant){
   const api=licensedCatalogMediaApi();
   if(api&&typeof api.resolvePlantDisplayMedia==='function') return api.resolvePlantDisplayMedia(plant);
-  const userUrl=getUserOwnedPlantPhotoUrl(plant);
-  if(userUrl){
-    return {kind:'user',url:userUrl,attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,imageStatus:null,placeholder:false};
+  // Priority: explicit personal cover → catalog IMAGE_READY → placeholder
+  const coverUrl=getExplicitPersonalCoverUrl(plant);
+  if(coverUrl){
+    return {kind:'user_cover',url:coverUrl,attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,imageStatus:null,placeholder:false,authority:'garden_media.cover_media_id'};
   }
   const media=getCatalogMediaRecord(plant);
   const approved=isApprovedCatalogMediaRecord(media,plant);
@@ -2978,14 +2990,14 @@ function resolvePlantDisplayMedia(plant){
       kind:'catalog',url:approved.url,attributionRequired:media.attributionRequired===true,
       attribution:media.attribution||null,author:media.author||null,license:media.license||null,
       licenseUrl:media.licenseUrl||null,sourcePageUrl:media.sourcePageUrl||null,
-      sourceProvider:media.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media
+      sourceProvider:media.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media,authority:'catalog_plants.media'
     };
   }
   const status=media?.imageStatus||'IMAGE_PENDING';
   return {
     kind:'placeholder',url:'',attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,
     imageStatus:status==='IMAGE_OWNER_REVIEW'?'IMAGE_OWNER_REVIEW':'IMAGE_PENDING',
-    pendingReason:media?.pendingReason||approved.reason||'no-approved-catalog-media',placeholder:true
+    pendingReason:media?.pendingReason||approved.reason||'no-approved-catalog-media',placeholder:true,authority:'placeholder'
   };
 }
 function formatCatalogAttributionLabel(displayMedia){
@@ -3020,10 +3032,18 @@ function plantMediaAttributionHtml(p){
   }
   return `<span class="plant-media-attr" title="${escapeAttr(display.attribution||label)}">${escapeHtml(label)}</span>`;
 }
-/** User photo or approved catalog IMAGE_READY only — never arbitrary imageUrl / search. */
+/** Catalog IMAGE_READY or explicit cover — else honest placeholder. Never search. */
 function plantImage(p){
   const display=resolvePlantDisplayMedia(p);
-  return display.placeholder?'':(display.url||'');
+  if(display.placeholder||!display.url) return '';
+  return display.url||'';
+}
+function displayPlantImage(p){
+  const api=licensedCatalogMediaApi();
+  if(api&&typeof api.resolveOwnedPlantDisplayUrl==='function') return api.resolveOwnedPlantDisplayUrl(p);
+  const url=plantImage(p);
+  if(url) return url;
+  return catalogMediaPlaceholderDataUrl(p&&(p.name||p.scientific)||'Plant');
 }
 function cleanImageSearchQuery(value){
   return String(value||'')
@@ -3063,9 +3083,6 @@ function plantImageProxyUrl(p){
 function plantImageFallbacks(p){
   // Broken approved hotlink → local SVG placeholder only (no replacement search).
   return [catalogMediaPlaceholderDataUrl(p&&(p.name||p.scientific)||'Plant')];
-}
-function displayPlantImage(p){
-  return plantImage(p)||'';
 }
 function swapToInstantPlantImage(imgEl){
   // Safe broken-URL fallback only — never launch media search or substitute another species.
@@ -3179,8 +3196,8 @@ function applyProfileToPlant(plant,profile){
   // Never adopt unlicensed live/search imageUrl as catalog truth.
   const display=resolvePlantDisplayMedia(Object.assign({},profile,plant,{catalogMedia:plant.catalogMedia,media:plant.media}));
   if(display.kind==='catalog') plant.imageUrl=display.url;
-  else if(display.kind==='user'){ /* user photo fields already on plant */ }
-  else if(plant.imageUrl&&!getUserOwnedPlantPhotoUrl(plant)){
+  else if(display.kind==='user_cover'){ /* cover signed URL already on plant */ }
+  else if(plant.imageUrl&&!getExplicitPersonalCoverUrl(plant)){
     const approvedOnly=isApprovedCatalogMediaRecord(getCatalogMediaRecord(plant),plant);
     if(!approvedOnly.ok) delete plant.imageUrl;
   }
@@ -5285,7 +5302,7 @@ function render(){syncHealthScore();
   const taskRail=document.getElementById('taskCountRail'); if(taskRail)taskRail.textContent=weekCount;
   const attRail=document.getElementById('attentionCountRail'); if(attRail)attRail.textContent=attentionPlants;
   applyGardenUserLabels();
-  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const mediaAttr=plantMediaAttributionHtml(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="checkPlantHealth(${realIndex})"><span class="menu-ico">🩺</span>Check plant health</button><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="replacePlantPhoto(${realIndex})"><span class="menu-ico">🖼️</span>Replace photo</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="swapToInstantPlantImage(this)">`:''}${mediaAttr}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
+  document.getElementById('plants').innerHTML=visiblePlants.map((p,i)=>{const realIndex=data.plants.indexOf(p);const meta=plantMeta(p);const img=displayPlantImage(p);const mediaAttr=plantMediaAttributionHtml(p);const imgStyle=img?` style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.05)),url('${escapeAttr(img)}')"`:'';return `<div class="plant ${p.mark==='!'?'warn':''}"><button class="plant-manage" onclick="togglePlantMenu(event,${realIndex})">⋯</button><div class="action-menu ${openMenu==='plant-'+realIndex?'open':''}"><button onclick="checkPlantHealth(${realIndex})"><span class="menu-ico">🩺</span>Check plant health</button><button onclick="renamePlant(${realIndex})"><span class="menu-ico">✎</span>Rename</button><button onclick="editPlantStatus(${realIndex})"><span class="menu-ico">🏷️</span>Edit status</button><button onclick="editCarePreferences(${realIndex})"><span class="menu-ico">🔔</span>Care preferences</button><button onclick="archivePlant(${realIndex})"><span class="menu-ico">📦</span>Move to archive</button><button onclick="deletePlant(${realIndex})"><span class="menu-ico">🗑️</span>Delete plant</button></div><div class="plant-img ${img?'has-photo':''}"${imgStyle}>${img?`<img src="${escapeAttr(img)}" alt="${escapeAttr(p.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="swapToInstantPlantImage(this)">`:''}${mediaAttr}<div class="plant-status">${p.mark}</div></div><div class="plant-body"><b>${escapeHtml(p.name)}</b><span><i class="plant-status-dot"></i>${escapeHtml(p.status||meta.status||'Healthy')}</span><div class="plant-actions"><button class="plant-action" onclick="showPlantPanel(${realIndex},'info')">🌿 Info</button><button class="plant-action ${p.mark==='!'?'warn':''}" onclick="showPlantPanel(${realIndex},'alerts')">🔔 Alerts</button><button class="plant-action" onclick="showPlantPanel(${realIndex},'guide')">📖 Guide</button></div>${renderPlantCartBlock(realIndex,p)}</div></div>`}).join('');
   plantCardHydrationGeneration++;
   const plantCardHydrationPass=plantCardHydrationGeneration;
   schedulePlantCardHydrationPass(plantCardHydrationPass);
@@ -7568,13 +7585,10 @@ function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p
 function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantHealthStateChange(p)}
 function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; if(!auto)removeTasksForPlant(p.name); data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); openMenu=null; finalizePlantListChange()}
 function replacePlantPhoto(i){
+  // Product model: catalog image is default identity. User photo upload is NOT required.
+  // Garden Media remains available for future observational flows — not promoted here.
   openMenu=null;
-  const gm=window.cruvitGardenMediaV1;
-  if(gm&&typeof gm.openAddPhotoPicker==='function'){
-    gm.openAddPhotoPicker(i);
-    return;
-  }
-  alert('Plant photos are loading. Please try again in a moment.');
+  alert('Your plant uses the CRUVIT catalog image when available. Personal garden photos are optional for later care notes — not required for a plant to look complete.');
 }
 function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){const plant=data.plants[i];plant.archived=true;data.events.unshift(['Today','Plant archived',plant.name]);openMenu=null;finalizePlantListChange();try{const pd=window.cruvitPersonalDomainV0;if(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()&&typeof pd.upsertPlantOnActiveGarden==='function'){pd.upsertPlantOnActiveGarden(plant).then((row)=>{if(!row||typeof pd.emitPlantArchivedMemory!=='function')return;return pd.emitPlantArchivedMemory(row).catch((err)=>{console.warn('[GardenMemory] plant_archived write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server plant archive upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory plant_archived hook failed',e)}}}
 function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);openMenu=null;finalizePlantListChange()}}
@@ -7584,9 +7598,7 @@ function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);c
   if(type==='alerts')body.innerHTML=`<div class="guide-block"><b>${alerts[0].includes('No active')?'✓ No urgent alerts':'Current alerts'}</b><span>${alerts.map(a=>'• '+a).join('<br>')}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="createPlantAlertTaskFromPanel(${i})">Create care task</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">View in calendar</button></div>`;
   if(type==='guide'){
     const img=displayPlantImage(p);
-    const gm=window.cruvitGardenMediaV1;
-    const mediaHtml=(gm&&typeof gm.renderPlantMediaSectionHtml==='function')?gm.renderPlantMediaSectionHtml(p,i):'';
-    body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}${mediaHtml}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;
+    body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;
   }
   document.getElementById('plantDetailModal').classList.add('open');
 }
@@ -8657,7 +8669,7 @@ scrollToPageTop('auto');
 window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
-<script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js"></script>
+<script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>

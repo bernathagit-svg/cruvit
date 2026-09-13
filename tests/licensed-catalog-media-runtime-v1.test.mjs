@@ -120,17 +120,28 @@ test('unknown / NC / incomplete license media never renders as catalog', () => {
   assert.equal(resolvePlantDisplayMedia(noStatus).kind, 'placeholder');
 });
 
-test('user photo wins over catalog media', () => {
+test('explicit personal cover overrides catalog; local photoUrl does not', () => {
   const plants = loadSeedPlants();
   const cacao = plants.find((p) => p.slug === 'cacao');
-  const withUser = {
+  const withLocalOnly = {
     ...cacao,
     photoUrl: 'https://example.com/user-garden-photo.jpg'
   };
-  assert.equal(getUserOwnedPlantPhotoUrl(withUser), withUser.photoUrl);
-  const display = resolvePlantDisplayMedia(withUser);
-  assert.equal(display.kind, 'user');
-  assert.equal(display.url, withUser.photoUrl);
+  assert.equal(getUserOwnedPlantPhotoUrl(withLocalOnly), withLocalOnly.photoUrl);
+  // Local observational photo must NOT become plant identity display
+  const displayLocal = resolvePlantDisplayMedia(withLocalOnly);
+  assert.equal(displayLocal.kind, 'catalog', 'catalog remains default identity');
+  assert.equal(displayLocal.url, cacao.media.primaryUrl || cacao.media.url);
+
+  const withCover = {
+    ...cacao,
+    coverMediaId: '33333333-3333-4333-8333-333333333333',
+    coverSignedUrl: 'https://signed.example/cover.jpg',
+    photoUrl: 'https://example.com/ignored-local.jpg'
+  };
+  const displayCover = resolvePlantDisplayMedia(withCover);
+  assert.equal(displayCover.kind, 'user_cover');
+  assert.equal(displayCover.url, withCover.coverSignedUrl);
 });
 
 test('broken approved URL does not invent replacement search — placeholder helper only', () => {

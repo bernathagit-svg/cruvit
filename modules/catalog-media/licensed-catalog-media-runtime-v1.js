@@ -1,10 +1,17 @@
 /**
  * Licensed Catalog Media — runtime consume helpers (no network search).
  * Catalog IMAGE_READY records only; IMAGE_PENDING → placeholder.
- * Does not mutate private user photos.
+ *
+ * Owned-plant display priority (product-locked):
+ *   1. Explicit personal cover (coverMediaId + coverSignedUrl) — optional override
+ *   2. Approved catalog IMAGE_READY for canonical plant identity
+ *   3. Neutral botanical placeholder
+ *
+ * Observational local photos (photoUrl / scanPhotoUrl) are NOT plant identity.
+ * User garden media never becomes catalog media.
  */
 
-export const RUNTIME_MEDIA_CONTRACT_VERSION = '1.0.0';
+export const RUNTIME_MEDIA_CONTRACT_VERSION = '1.1.0-owned-display';
 
 export const IMAGE_READY = 'IMAGE_READY';
 export const IMAGE_PENDING = 'IMAGE_PENDING';
@@ -46,6 +53,44 @@ export function getCatalogMediaRecord(plantOrCatalog) {
 }
 
 /**
+ * Broad / genus-level identities must not render falsely specific cultivar portraits.
+ */
+export function isBroadPlantIdentity(plant) {
+  if (!plant || typeof plant !== 'object') return false;
+  const sci = String(plant.scientific || plant.meta?.scientific || '')
+    .toLowerCase()
+    .trim();
+  const scope = String(
+    plant.identityScope || plant.meta?.identityScope || plant.identity?.scope || ''
+  ).toLowerCase();
+  if (scope === 'genus' || scope === 'broad' || scope === 'broad_provisional') return true;
+  if (/\bspp\.?\b/.test(sci)) return true;
+  if (/\bssp\.?\b/.test(sci) && /musa/.test(sci)) return true;
+  return false;
+}
+
+/**
+ * Reject cultivar-specific catalog media for broad plant identities.
+ */
+export function catalogMediaCompatibleWithPlantIdentity(plant, media) {
+  if (!media || typeof media !== 'object') return false;
+  if (!isBroadPlantIdentity(plant)) return true;
+  if (media.cultivarSpecific === true) return false;
+  const method = String(media.identityMatchMethod || '').toLowerCase();
+  const scope = String(media.identityScope || '').toLowerCase();
+  if (scope === 'cultivar' || method.includes('cultivar')) return false;
+  const blob = `${media.searchQuery || ''} ${media.attribution || ''} ${media.sourceAssetId || ''} ${media.primaryUrl || media.url || ''}`
+    .toLowerCase();
+  // Common falsely-specific banana cultivars when plant is Musa spp.
+  if (/musa\s+spp/.test(String(plant.scientific || '').toLowerCase())) {
+    if (/\bcavendish\b|\blady\s*finger\b|\bplantain\b|\bmusa\s+acuminata\b|\bmusa\s+balbisiana\b/.test(blob)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
  * Validate stored catalog media for commercial catalog render.
  * No live license reinterpretation — trust stored pipeline fields only when complete.
  */
@@ -79,6 +124,9 @@ export function isApprovedCatalogMediaRecord(media, plant = null) {
       return { ok: false, reason: 'attribution-required-missing' };
     }
   }
+  if (plant && !catalogMediaCompatibleWithPlantIdentity(plant, media)) {
+    return { ok: false, reason: 'identity-scope-incompatible' };
+  }
   // Optional identity check against plant scientific when both present
   if (plant) {
     const sci = String(plant.scientific || plant.meta?.scientific || '')
@@ -86,12 +134,11 @@ export function isApprovedCatalogMediaRecord(media, plant = null) {
       .trim();
     const blob = `${media.sourceAssetId || ''} ${media.searchQuery || ''} ${media.attribution || ''} ${url}`
       .toLowerCase();
-    if (sci) {
+    if (sci && !isBroadPlantIdentity(plant)) {
       const parts = sci.split(/\s+/).filter(Boolean);
       if (parts.length >= 2) {
         const binomial = `${parts[0]} ${parts[1]}`;
         if (!blob.includes(binomial) && !blob.includes(parts[0])) {
-          // Soft: URL may not include name; require identityConfidence if present
           const conf = String(media.identityConfidence || '').toLowerCase();
           if (conf && conf !== 'high' && conf !== 'medium') {
             return { ok: false, reason: 'identity-confidence-insufficient' };
@@ -104,24 +151,36 @@ export function isApprovedCatalogMediaRecord(media, plant = null) {
 }
 
 /**
- * User-owned Garden photo (not catalog).
+ * Explicit personal cover only (Garden Media V1 cover_media_id → signed URL).
+ * Does NOT treat local photoUrl / scanPhotoUrl as plant identity.
+ */
+export function getExplicitPersonalCoverUrl(plant) {
+  if (!plant || typeof plant !== 'object') return '';
+  const coverId = String(plant.coverMediaId || plant.cover_media_id || '').trim();
+  const coverSigned = String(plant.coverSignedUrl || '').trim();
+  if (!coverId) return '';
+  if (coverSigned && isHttpUrl(coverSigned) && !isBannedPlaceholderHost(coverSigned)) {
+    return coverSigned;
+  }
+  return '';
+}
+
+/**
+ * Observational user photos (Doctor/progress/local) — not default plant identity.
+ * Kept for non-display callers; display resolver ignores these unless cover.
  */
 export function getUserOwnedPlantPhotoUrl(plant) {
   if (!plant || typeof plant !== 'object') return '';
+  const cover = getExplicitPersonalCoverUrl(plant);
+  if (cover) return cover;
   const m = plant.meta && typeof plant.meta === 'object' ? plant.meta : {};
   const scan = String(plant.scanPhotoUrl || '').trim();
-  const candidates = [
-    plant.photoUrl,
-    m.photoUrl,
-    plant.userPhotoUrl,
-    m.userPhotoUrl
-  ];
+  const candidates = [plant.photoUrl, m.photoUrl, plant.userPhotoUrl, m.userPhotoUrl];
   for (const raw of candidates) {
     const u = String(raw || '').trim();
     if (!u || u === scan) continue;
     if ((isHttpUrl(u) || isDataImage(u)) && !isBannedPlaceholderHost(u)) return u;
   }
-  // Explicit scan/capture photo counts as user-owned when present
   if (scan && (isHttpUrl(scan) || isDataImage(scan)) && !isBannedPlaceholderHost(scan)) {
     return scan;
   }
@@ -129,22 +188,23 @@ export function getUserOwnedPlantPhotoUrl(plant) {
 }
 
 /**
- * Resolve display image for a plant card / result.
- * Priority: user photo → approved catalog IMAGE_READY → empty (placeholder).
- * Never searches the web.
+ * Resolve display image for owned plant card / guide.
+ * Priority: explicit personal cover → approved catalog → placeholder.
+ * Never searches the web. Never promotes user media to catalog.
  */
 export function resolvePlantDisplayMedia(plant) {
-  const userUrl = getUserOwnedPlantPhotoUrl(plant);
-  if (userUrl) {
+  const coverUrl = getExplicitPersonalCoverUrl(plant);
+  if (coverUrl) {
     return {
-      kind: 'user',
-      url: userUrl,
+      kind: 'user_cover',
+      url: coverUrl,
       attributionRequired: false,
       attribution: null,
       license: null,
       sourcePageUrl: null,
       imageStatus: null,
-      placeholder: false
+      placeholder: false,
+      authority: 'garden_media.cover_media_id'
     };
   }
 
@@ -163,7 +223,8 @@ export function resolvePlantDisplayMedia(plant) {
       sourceProvider: media.sourceProvider || null,
       imageStatus: READY,
       placeholder: false,
-      media
+      media,
+      authority: 'catalog_plants.media'
     };
   }
 
@@ -177,8 +238,14 @@ export function resolvePlantDisplayMedia(plant) {
     sourcePageUrl: null,
     imageStatus: status === OWNER_REVIEW ? OWNER_REVIEW : PENDING,
     pendingReason: media?.pendingReason || approved.reason || 'no-approved-catalog-media',
-    placeholder: true
+    placeholder: true,
+    authority: 'placeholder'
   };
+}
+
+/** Alias — owned-plant display resolver (same contract). */
+export function resolveOwnedPlantDisplayImage(plant) {
+  return resolvePlantDisplayMedia(plant);
 }
 
 /**
@@ -207,10 +274,19 @@ export function assertCatalogMediaSafeToRender(media) {
 /** Deterministic SVG placeholder data URL (no network). */
 export function catalogMediaPlaceholderDataUrl(name = 'Plant') {
   const safe = String(name || 'Plant')
-    .replace(/[<>&]/g, '')
+    .replace(/[<>&']/g, '')
     .slice(0, 38);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520"><defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#eaf4df"/><stop offset="1" stop-color="#fff2cd"/></linearGradient></defs><rect width="900" height="520" fill="url(#g)"/><text x="450" y="245" text-anchor="middle" font-size="86">🌿</text><text x="450" y="340" text-anchor="middle" font-family="Arial" font-size="34" font-weight="700" fill="#0d3d27">${safe}</text></svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+/** Display URL for UI: catalog/cover URL or honest placeholder (never broken empty). */
+export function resolveOwnedPlantDisplayUrl(plant) {
+  const display = resolvePlantDisplayMedia(plant);
+  if (display.placeholder || !display.url) {
+    return catalogMediaPlaceholderDataUrl(plant?.name || plant?.scientific || 'Plant');
+  }
+  return display.url;
 }
 
 export function measureCatalogMediaLookupLatency(plants, iterations = 200) {
@@ -233,16 +309,26 @@ export function measureCatalogMediaLookupLatency(plants, iterations = 200) {
   };
 }
 
+export function mayPromoteUserMediaToCatalogImage() {
+  return false;
+}
+
 const api = {
   RUNTIME_MEDIA_CONTRACT_VERSION,
   getCatalogMediaRecord,
   isApprovedCatalogMediaRecord,
   getUserOwnedPlantPhotoUrl,
+  getExplicitPersonalCoverUrl,
   resolvePlantDisplayMedia,
+  resolveOwnedPlantDisplayImage,
+  resolveOwnedPlantDisplayUrl,
   formatCatalogAttributionLabel,
   assertCatalogMediaSafeToRender,
   catalogMediaPlaceholderDataUrl,
   measureCatalogMediaLookupLatency,
+  isBroadPlantIdentity,
+  catalogMediaCompatibleWithPlantIdentity,
+  mayPromoteUserMediaToCatalogImage,
   IMAGE_READY: READY,
   IMAGE_PENDING: PENDING,
   IMAGE_OWNER_REVIEW: OWNER_REVIEW

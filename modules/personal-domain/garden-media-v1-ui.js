@@ -101,32 +101,34 @@ export async function hydratePlantCoverUrls(plants = []) {
 }
 
 export function renderPlantMediaSectionHtml(plant, plantIndex) {
+  // Product correction: do not promote user photo upload as normal plant identity UX.
+  // Garden Media infrastructure remains for future observational flows.
+  void plant;
+  void plantIndex;
+  return '';
+}
+
+/** @deprecated Observational media UI — not primary plant identity. Kept for future Doctor/progress. */
+export function renderPlantMediaSectionHtmlObservational(plant, plantIndex) {
   const coverUrl = String(plant?.coverSignedUrl || '').trim();
   const coverId = plant?.coverMediaId || '';
   const hasServer = !!(plant?.serverId && pd()?.isServerPlantsAuthoritative?.());
 
   if (!hasServer) {
-    return `<div class="gmedia-panel" data-gmedia-plant="${escapeAttr(String(plantIndex))}">
-      <div class="gmedia-head"><b>Plant photos</b></div>
-      <p class="gmedia-note">Sign in and sync this garden to add durable plant photos.</p>
-    </div>`;
+    return '';
   }
 
   const coverBlock = coverUrl
     ? `<div class="gmedia-cover" style="background-image:url('${escapeAttr(coverUrl)}')"></div>`
-    : `<div class="gmedia-cover gmedia-cover-empty">No plant photo yet</div>`;
+    : '';
+
+  if (!coverUrl && !coverId) return '';
 
   return `<div class="gmedia-panel" data-gmedia-plant="${escapeAttr(String(plantIndex))}" data-cover-id="${escapeAttr(coverId)}">
-    <div class="gmedia-head"><b>Plant photos</b>
-      <span class="gmedia-lede">Private to your garden · JPEG / PNG / WebP · max 8 MB</span>
+    <div class="gmedia-head"><b>Personal garden photos</b>
+      <span class="gmedia-lede">Optional observational photos · not required for plant identity</span>
     </div>
     ${coverBlock}
-    <div class="gmedia-actions">
-      <button type="button" class="btn main" data-gmedia-add="${escapeAttr(String(plantIndex))}">Add photo</button>
-      <button type="button" class="btn light" data-gmedia-history="${escapeAttr(String(plantIndex))}">Photo history</button>
-    </div>
-    <div class="gmedia-history" id="gmediaHistory-${escapeAttr(String(plantIndex))}" hidden></div>
-    <p class="gmedia-status" id="gmediaStatus-${escapeAttr(String(plantIndex))}" hidden></p>
   </div>`;
 }
 
