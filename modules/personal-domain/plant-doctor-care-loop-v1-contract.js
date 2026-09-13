@@ -468,6 +468,10 @@ export function buildDoctorCareTaskRow(diagnosis = {}, options = {}) {
     clientId
   ];
   row.id = clientId;
+  row.source_module = 'plant_doctor';
+  row.task_type = 'doctor';
+  row.sourceModule = 'plant_doctor';
+  row.taskType = 'doctor';
   if (options.gardenPlantServerId) {
     row.gardenPlantId = String(options.gardenPlantServerId);
     row.garden_plant_id = String(options.gardenPlantServerId);

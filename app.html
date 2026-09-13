@@ -2698,19 +2698,21 @@ function finalizePlantHealthStateChange(plant){
   try{render()}catch(_){}
   try{
     const pd=window.cruvitPersonalDomainV0;
-    if(!(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()))return;
+    if(!(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()))return Promise.resolve(null);
     if(plant&&typeof pd.upsertPlantOnActiveGarden==='function'){
-      pd.upsertPlantOnActiveGarden(plant).catch((err)=>{
+      return pd.upsertPlantOnActiveGarden(plant).catch((err)=>{
         console.warn('Server plant health upsert failed',err&&err.message?err.message:err);
+        return null;
       });
-      return;
     }
     if(typeof pd.syncActiveGardenPlantsFromLocal==='function'){
-      pd.syncActiveGardenPlantsFromLocal(data.plants).catch((err)=>{
+      return pd.syncActiveGardenPlantsFromLocal(data.plants).catch((err)=>{
         console.warn('Server plant health sync failed',err&&err.message?err.message:err);
+        return null;
       });
     }
   }catch(e){console.warn('Server plant health writeback failed',e)}
+  return Promise.resolve(null);
 }
 window.finalizePlantHealthStateChange=finalizePlantHealthStateChange;
 
@@ -5227,7 +5229,7 @@ function toggleTaskMenu(ev,i){
 function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}}
 function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
-function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange()}
+function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange();try{const pd=window.cruvitPersonalDomainV0;const task=data.tasks[i];if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&task){pd.upsertTaskOnActiveGarden(task).then((row)=>{if(!row||typeof pd.emitTaskCompletedMemory!=='function')return;return pd.emitTaskCompletedMemory(row,{title:task[1]}).catch((err)=>{console.warn('[GardenMemory] task_completed write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server task complete upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory task_completed hook failed',e)}}
 function completeTaskByRef(btn){
   const title=btn?.dataset?.taskTitle||'';
   const iso=btn?.dataset?.taskIso||'';
@@ -7149,7 +7151,17 @@ function safeUiAfterPlantAdd(){
       &&typeof pd.upsertPlantOnActiveGarden==='function'){
       const plant=(data.plants||[])[(data.plants||[]).length-1];
       if(plant){
-        pd.upsertPlantOnActiveGarden(plant).catch((err)=>{
+        pd.upsertPlantOnActiveGarden(plant).then((row)=>{
+          if(!row||typeof pd.emitPlantAddedMemory!=='function')return;
+          return pd.emitPlantAddedMemory(row,{
+            originSource:plant.source||'My Garden',
+            profileSlug:plant.profileSlug||null,
+            scientific:plant.scientific||null,
+            name:plant.name||null
+          }).catch((err)=>{
+            console.warn('[GardenMemory] plant_added write failed',err&&err.message?err.message:err);
+          });
+        }).catch((err)=>{
           console.warn('Server plant upsert failed',err&&err.message?err.message:err);
         });
       }
@@ -7270,7 +7282,7 @@ function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p
 function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantHealthStateChange(p)}
 function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; if(!auto)removeTasksForPlant(p.name); data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); openMenu=null; finalizePlantListChange()}
 function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');openMenu=null;finalizePlantListChange()}
-function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){data.plants[i].archived=true;data.events.unshift(['Today','Plant archived',data.plants[i].name]);openMenu=null;finalizePlantListChange()}}
+function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){const plant=data.plants[i];plant.archived=true;data.events.unshift(['Today','Plant archived',plant.name]);openMenu=null;finalizePlantListChange();try{const pd=window.cruvitPersonalDomainV0;if(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()&&typeof pd.upsertPlantOnActiveGarden==='function'){pd.upsertPlantOnActiveGarden(plant).then((row)=>{if(!row||typeof pd.emitPlantArchivedMemory!=='function')return;return pd.emitPlantArchivedMemory(row).catch((err)=>{console.warn('[GardenMemory] plant_archived write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server plant archive upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory plant_archived hook failed',e)}}}
 function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);openMenu=null;finalizePlantListChange()}}
 function closePlantPanel(){document.getElementById('plantDetailModal').classList.remove('open');window.moodStatPanelType=null}
 function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);const alerts=plantAlerts(p);const title=document.getElementById('plantPanelTitle');const sub=document.getElementById('plantPanelSubtitle');const body=document.getElementById('plantPanelBody');title.textContent=p.name;sub.textContent=type==='info'?'Quick care icons':type==='alerts'?'Alerts and tasks':'Detailed plant guide';
@@ -8350,7 +8362,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260911e"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260911k"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913a"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913a"></script>
 </body>
 </html>

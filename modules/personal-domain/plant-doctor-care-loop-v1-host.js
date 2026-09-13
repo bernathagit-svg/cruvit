@@ -1,7 +1,7 @@
 /**
  * Plant Doctor → My Garden Care Loop V1 — host wiring (browser).
  * Applies structured Doctor results onto existing plant mark/status + garden_tasks.
- * Does not invent History persistence or redesign Doctor / My Garden.
+ * Garden Memory Writers V1: durable garden_events after successful owned mutations.
  */
 import {
   PLANT_DOCTOR_ACTIONS,
@@ -23,11 +23,16 @@ import {
   resolveOwnedPlantIdentityGate,
   taskClientIdAlreadyPresent
 } from './plant-doctor-care-loop-v1-contract.js';
+import {
+  buildDoctorDiagnosisMemoryInput,
+  buildDoctorHealthChangedMemoryInput,
+  buildDoctorTaskCreatedMemoryInput
+} from './garden-memory-writer-v1.js';
 
 function buildDoctorIframeSrc(context = {}) {
   const base = 'modules/plant-doctor/index.html';
   const q = new URLSearchParams();
-  q.set('v', '20260911k');
+  q.set('v', '20260913a');
   if (context.unmatched) q.set('unmatched', '1');
   if (context.gardenProfileId) q.set('gardenId', String(context.gardenProfileId));
   if (context.gardenPlantClientId) q.set('plantClientId', String(context.gardenPlantClientId));
@@ -45,8 +50,135 @@ function findOwnedPlant(data, clientId) {
 }
 
 /**
- * Apply a validated bridge message. Returns { ok, plantUpdated, taskCreated, taskDeduped, moodHooked, reason }.
- * Diagnostic Safety: owned-plant mutations require MATCH + sufficient confidence (same diagnosis payload; no second AI call).
+ * Persist Doctor episode memory AFTER primary local mutation succeeded.
+ * Does not re-run AI. Failures log only — never reverse plant/task writes.
+ */
+export async function persistDoctorGardenMemoryEpisode(msg, result, host = {}) {
+  if (!result?.ok || result.identityBlocked || result.confidenceBlocked) {
+    return { ok: false, reason: 'blocked_or_failed' };
+  }
+  if (result.unmatched) {
+    return { ok: false, reason: 'unmatched_skip' };
+  }
+  if (!result.plantUpdated && !result.taskCreated) {
+    return { ok: false, reason: 'no_owned_mutation' };
+  }
+  const pd = host.personalDomain || (typeof window !== 'undefined' ? window.cruvitPersonalDomainV0 : null);
+  if (!pd || typeof pd.recordGardenMemoryEvent !== 'function') {
+    return { ok: false, reason: 'memory_writer_unavailable' };
+  }
+  const gardenProfileId = String(
+    msg.gardenProfileId ||
+      (typeof pd.getActiveGardenId === 'function' && pd.getActiveGardenId()) ||
+      ''
+  ).trim();
+  if (!gardenProfileId) return { ok: false, reason: 'no_garden' };
+
+  const data = typeof host.getData === 'function' ? host.getData() : null;
+  const plant = findOwnedPlant(data, msg.gardenPlantClientId);
+  if (!plant) return { ok: false, reason: 'owned_plant_missing' };
+
+  const previousHealth = result.previousHealth || null;
+  const nextHealth = result.plantUpdated
+    ? { mark: plant.mark, status: plant.status }
+    : previousHealth;
+
+  let plantRow = null;
+  if (result.plantUpdated && typeof pd.upsertPlantOnActiveGarden === 'function') {
+    try {
+      plantRow = await pd.upsertPlantOnActiveGarden(plant);
+    } catch (err) {
+      console.warn('[GardenMemory] doctor plant upsert failed', err);
+    }
+  } else if (plant.serverId) {
+    plantRow = {
+      id: plant.serverId,
+      garden_profile_id: gardenProfileId,
+      client_instance_id: plant.id
+    };
+  }
+
+  const gardenPlantId = String(
+    plantRow?.id || plant.serverId || msg.gardenPlantServerId || ''
+  ).trim();
+  if (!gardenPlantId) {
+    return { ok: false, reason: 'no_server_plant_id' };
+  }
+
+  const diagnosis = msg.diagnosis || {};
+  const episodeBase = {
+    gardenProfileId,
+    gardenPlantId,
+    gardenPlantClientId: msg.gardenPlantClientId,
+    problemName: diagnosis.problem_name || diagnosis.likely_diagnosis || diagnosis.diagnosis,
+    severity: diagnosis.severity,
+    confidence: diagnosis.diagnostic_confidence || result.diagnosticConfidence,
+    timestamp: msg.timestamp,
+    diagnosis,
+    identityAssessment: result.identityAssessment,
+    diagnosticConfidence: result.diagnosticConfidence,
+    profileSlug: plant.profileSlug || msg.profileSlug,
+    scientific: plant.scientific || msg.scientific,
+    plantDisplayName: plant.name || msg.plantDisplayName,
+    previousHealth,
+    occurredAt: msg.timestamp || new Date().toISOString()
+  };
+
+  let diagnosisEventId = null;
+  try {
+    const diagInput = buildDoctorDiagnosisMemoryInput(episodeBase);
+    const written = await pd.recordGardenMemoryEvent(diagInput);
+    diagnosisEventId = written?.eventId || null;
+  } catch (err) {
+    console.warn('[GardenMemory] doctor_diagnosis write failed', err);
+    return { ok: false, reason: 'diagnosis_write_failed', error: err };
+  }
+
+  if (result.plantUpdated && diagnosisEventId) {
+    try {
+      const healthInput = buildDoctorHealthChangedMemoryInput({
+        ...episodeBase,
+        causedByEventId: diagnosisEventId,
+        previousHealth,
+        nextHealth,
+        uncertainty: diagnosis.needs_more_evidence ? 'needs_more_evidence' : undefined
+      });
+      await pd.recordGardenMemoryEvent(healthInput);
+    } catch (err) {
+      console.warn('[GardenMemory] plant_health_changed write failed', err);
+    }
+  }
+
+  if (result.taskCreated && diagnosisEventId) {
+    const taskClientId = String(result.preferredTaskClientId || '').trim();
+    const task =
+      (data?.tasks || []).find((t) => String(t?.[8] || t?.id || '').trim() === taskClientId) ||
+      null;
+    if (task && typeof pd.upsertTaskOnActiveGarden === 'function') {
+      try {
+        const taskRow = await pd.upsertTaskOnActiveGarden(task);
+        const gardenTaskId = String(taskRow?.id || '').trim();
+        if (gardenTaskId) {
+          const taskInput = buildDoctorTaskCreatedMemoryInput({
+            ...episodeBase,
+            causedByEventId: diagnosisEventId,
+            gardenTaskId,
+            taskClientId,
+            title: task[1] || taskRow.title
+          });
+          await pd.recordGardenMemoryEvent(taskInput);
+        }
+      } catch (err) {
+        console.warn('[GardenMemory] task_created write failed', err);
+      }
+    }
+  }
+
+  return { ok: true, diagnosisEventId };
+}
+
+/**
+ * Apply a validated bridge message. Returns { ok, plantUpdated, taskCreated, ... }.
  */
 export function applyDoctorCareLoopResult(msg, host) {
   if (!msg || msg.type !== PLANT_DOCTOR_RESULT_MESSAGE_TYPE) {
@@ -82,7 +214,6 @@ export function applyDoctorCareLoopResult(msg, host) {
       msg.action === PLANT_DOCTOR_ACTIONS.APPLY_AND_TASK ||
       !msg.action);
 
-  // Owned path: block any mutation/task/mood when gate denies.
   if (
     writebackGate.applicable &&
     !writebackGate.mayMutateOwnedPlant &&
@@ -121,6 +252,9 @@ export function applyDoctorCareLoopResult(msg, host) {
   let taskSafetyBlocked = false;
   let preferredTaskClientId = null;
   const plant = unmatched ? null : findOwnedPlant(data, msg.gardenPlantClientId);
+  const previousHealth = plant
+    ? { mark: plant.mark || null, status: plant.status || null }
+    : null;
   const tasksBefore = Array.isArray(data.tasks) ? data.tasks.slice() : [];
   const maxNewTasks = wantTask ? PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK : 0;
 
@@ -145,7 +279,6 @@ export function applyDoctorCareLoopResult(msg, host) {
     }
   }
 
-  // Session/local mood hook only — not a durable History store.
   let moodHooked = false;
   if (unmatched || writebackGate.mayHookOwnedMood) {
     const moodEntry = {
@@ -183,7 +316,6 @@ export function applyDoctorCareLoopResult(msg, host) {
     }
   }
 
-  // Health finalize only — never finalizePlantListChange (seasonal plan).
   if (plantUpdated) {
     try {
       if (typeof host.finalizePlantHealthStateChange === 'function') {
@@ -211,7 +343,6 @@ export function applyDoctorCareLoopResult(msg, host) {
     }
   }
 
-  // Defensive invariant: Doctor path must never create >1 new task.
   const guard = enforceDoctorTaskSafetyGuardrail({
     tasksBefore,
     tasksAfter: Array.isArray(data.tasks) ? data.tasks : [],
@@ -244,7 +375,6 @@ export function applyDoctorCareLoopResult(msg, host) {
       console.warn('Care loop task finalize failed', e);
     }
   } else if (taskCreated && taskSafetyBlocked) {
-    // Kept exactly one Doctor task after rollback — sync that single task only.
     try {
       host.finalizeTaskListChange();
     } catch (e) {
@@ -268,6 +398,8 @@ export function applyDoctorCareLoopResult(msg, host) {
     identityBlocked: false,
     confidenceBlocked: false,
     taskSafetyBlocked,
+    preferredTaskClientId,
+    previousHealth,
     identityAssessment: identityGate.applicable ? identityGate.assessment : null,
     diagnosticConfidence: writebackGate.confidence,
     reason: taskSafetyBlocked
@@ -308,7 +440,8 @@ function installPlantDoctorCareLoopHost() {
         finalizePlantHealthStateChange: (plant) =>
           window.finalizePlantHealthStateChange?.(plant),
         finalizeTaskListChange: () => window.finalizeTaskListChange?.(),
-        render: () => window.render?.()
+        render: () => window.render?.(),
+        personalDomain: window.cruvitPersonalDomainV0
       };
       const result = applyDoctorCareLoopResult(msg, host);
       if (!result.ok) return;
@@ -321,14 +454,20 @@ function installPlantDoctorCareLoopHost() {
         } catch (_) {
           /* ignore */
         }
-        // Stay in Plant Doctor so the user can upload clearer evidence.
         return;
+      }
+      if (!result.unmatched && (result.plantUpdated || result.taskCreated)) {
+        void persistDoctorGardenMemoryEpisode(msg, result, host).catch((err) => {
+          console.warn('[GardenMemory] Doctor episode write failed', err);
+        });
       }
       const parts = [];
       if (result.plantUpdated) parts.push('plant status updated');
       if (result.taskCreated) parts.push('care task added');
       else if (result.taskDeduped) parts.push('care task already present');
-      if (result.unmatched && !result.plantUpdated) parts.push('general diagnosis (no owned plant changed)');
+      if (result.unmatched && !result.plantUpdated) {
+        parts.push('general diagnosis (no owned plant changed)');
+      }
       try {
         window.closePlantDoctorToGarden?.();
       } catch (_) {
@@ -370,6 +509,7 @@ function installPlantDoctorCareLoopHost() {
     PLANT_DOCTOR_MAX_NEW_TASKS_PER_WRITEBACK,
     taskClientIdAlreadyPresent,
     applyDoctorCareLoopResult,
+    persistDoctorGardenMemoryEpisode,
     openWithOwnedPlantRecord(plant) {
       if (!plant || typeof plant !== 'object') return false;
       const clientId = String(plant.id || plant.clientId || plant.client_instance_id || '').trim();

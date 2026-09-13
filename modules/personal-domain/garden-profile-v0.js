@@ -28,6 +28,12 @@ import {
   shouldAcceptTaskHydration
 } from './garden-profile-tasks-contract.js';
 import {
+  buildPlantAddedMemoryInput,
+  buildPlantArchivedMemoryInput,
+  buildTaskCompletedMemoryInput,
+  writeGardenMemoryEvent
+} from './garden-memory-writer-v1.js';
+import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
   wireSpecificPlantSuitabilityUi,
   focusFirstPlantEntry as focusSpecificPlantEntry,
@@ -1066,7 +1072,51 @@ async function upsertPlantOnActiveGarden(plant) {
     .single();
   if (error) throw error;
   serverPlantsAuthoritative = true;
+  const cid = String(data?.client_instance_id || '').trim();
+  if (cid && data?.id) plantClientToServerId.set(cid, data.id);
   return data;
+}
+
+/**
+ * Garden Memory Writers V1 — insert/resolve one garden_events row after a mutation.
+ * Failures must not be thrown into plant/task mutation paths by callers (they catch).
+ */
+async function recordGardenMemoryEvent(input = {}) {
+  if (!supabase || !currentSession?.user) {
+    throw new Error('Sign in required for Garden Memory.');
+  }
+  const gardenId = String(input.gardenProfileId || input.garden_profile_id || getActiveGardenId() || '').trim();
+  if (!gardenId) throw new Error('garden_profile_id is required');
+  return writeGardenMemoryEvent(supabase, {
+    ...input,
+    gardenProfileId: gardenId,
+    causedByEventGardenProfileId:
+      input.causedByEventGardenProfileId || input.caused_by_event_garden_profile_id || gardenId
+  });
+}
+
+async function emitPlantAddedMemory(serverPlantRow, meta = {}) {
+  const input = buildPlantAddedMemoryInput(serverPlantRow, {
+    ...meta,
+    gardenProfileId: serverPlantRow.garden_profile_id || getActiveGardenId()
+  });
+  return recordGardenMemoryEvent(input);
+}
+
+async function emitPlantArchivedMemory(serverPlantRow, meta = {}) {
+  const input = buildPlantArchivedMemoryInput(serverPlantRow, {
+    ...meta,
+    gardenProfileId: serverPlantRow.garden_profile_id || getActiveGardenId()
+  });
+  return recordGardenMemoryEvent(input);
+}
+
+async function emitTaskCompletedMemory(serverTaskRow, meta = {}) {
+  const input = buildTaskCompletedMemoryInput(serverTaskRow, {
+    ...meta,
+    gardenProfileId: serverTaskRow.garden_profile_id || getActiveGardenId()
+  });
+  return recordGardenMemoryEvent(input);
 }
 
 async function deletePlantOnActiveGarden(clientInstanceId) {
@@ -1577,6 +1627,11 @@ window.cruvitPersonalDomainV0 = {
   upsertTaskOnActiveGarden,
   deleteTaskOnActiveGarden,
   syncActiveGardenTasksFromLocal,
+  recordGardenMemoryEvent,
+  emitPlantAddedMemory,
+  emitPlantArchivedMemory,
+  emitTaskCompletedMemory,
+  writeGardenMemoryEvent: (input) => recordGardenMemoryEvent(input),
   importLegacyLocalTasksToActiveGarden,
   listTasksForActiveGarden: async () => listTasksForGarden(getActiveGardenId()),
   hydrateActiveGardenTasks: async () => {
