@@ -10,6 +10,9 @@
 -- 4) USER media is NOT catalog media. Do not merge with catalog_plants.media.
 -- 5) New observation = new row (history). Cover pointers are separate.
 -- 6) Postgres FK cascade does NOT delete Supabase Storage objects — app cleanup required.
+-- 7) Preferred create flow: insert pending row → upload object → mark validated.
+--    Do NOT upload-first (avoids Storage orphans without DB authority).
+-- 8) cleanup_pending = bounded cleanup/error state (not overloaded 'deleted').
 --
 -- Locked storage path shape (enforced below):
 --   {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
@@ -34,7 +37,7 @@ create table if not exists public.garden_media (
   purpose text not null,
   identity_source text not null default 'none',
   identity_confidence text not null default 'none',
-  validation_state text not null default 'validated',
+  validation_state text not null default 'pending',
   content_sha256 text null,
   captured_at timestamptz null,
   metadata jsonb not null default '{}'::jsonb,
@@ -78,7 +81,7 @@ create table if not exists public.garden_media (
     identity_confidence in ('none', 'low', 'medium', 'high')
   ),
   constraint garden_media_validation_state_chk check (
-    validation_state in ('pending', 'validated', 'rejected', 'deleted')
+    validation_state in ('pending', 'validated', 'rejected', 'deleted', 'cleanup_pending')
   ),
   constraint garden_media_metadata_object_chk check (jsonb_typeof(metadata) = 'object'),
   constraint garden_media_sha_chk check (
@@ -95,6 +98,9 @@ comment on column public.garden_media.storage_path is
 
 comment on column public.garden_media.identity_source is
   'How plant association was established. NOT botanical identification proof.';
+
+comment on column public.garden_media.validation_state is
+  'pending=row before/during upload; validated=object durable; rejected; deleted=intentional soft tombstone; cleanup_pending=bounded cleanup/error (upload or storage-delete failure). Do not use deleted for upload failure.';
 
 create index if not exists garden_media_user_id_idx
   on public.garden_media (user_id);

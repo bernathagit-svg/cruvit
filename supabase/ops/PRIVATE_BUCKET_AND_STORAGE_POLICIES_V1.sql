@@ -13,8 +13,11 @@
 --   file_size_limit: 8388608
 --   allowed MIME: image/jpeg, image/png, image/webp
 --
--- Locked object path (first segment = auth.uid):
+-- Locked object path (first segment = auth.uid; second = owned garden):
 --   {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
+--
+-- V1 Storage ops: SELECT / INSERT / DELETE only.
+-- NO UPDATE policy (immutable objects; new observation = new object/row).
 
 -- ---------------------------------------------------------------------------
 -- 1) Private bucket
@@ -34,8 +37,10 @@ on conflict (id) do update set
   allowed_mime_types = array['image/jpeg', 'image/png', 'image/webp']::text[];
 
 -- ---------------------------------------------------------------------------
--- 2) storage.objects policies — bucket-scoped, authenticated owner path only
---    First path segment must equal auth.uid()::text
+-- 2) storage.objects policies — bucket-scoped, owner + owned-garden path
+--    (storage.foldername(name))[1] = auth.uid()
+--    (storage.foldername(name))[2] = garden_profiles.id owned by auth.uid()
+--    No UPDATE policy in V1.
 --    No broad "authenticated can access all buckets" policies.
 -- ---------------------------------------------------------------------------
 
@@ -48,6 +53,13 @@ create policy user_garden_media_select_own
   using (
     bucket_id = 'user-garden-media'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and (storage.foldername(name))[2] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    and exists (
+      select 1
+      from public.garden_profiles g
+      where g.id = ((storage.foldername(name))[2])::uuid
+        and g.user_id = (select auth.uid())
+    )
   );
 
 -- INSERT
@@ -59,23 +71,17 @@ create policy user_garden_media_insert_own
   with check (
     bucket_id = 'user-garden-media'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and (storage.foldername(name))[2] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    and exists (
+      select 1
+      from public.garden_profiles g
+      where g.id = ((storage.foldername(name))[2])::uuid
+        and g.user_id = (select auth.uid())
+    )
   );
 
--- UPDATE — included for same-object replace/metadata under owner path only.
--- Prefer delete+insert for V1 uploads; UPDATE is owner-scoped and bucket-limited.
+-- UPDATE — intentionally NOT created in V1 (immutable media objects).
 drop policy if exists user_garden_media_update_own on storage.objects;
-create policy user_garden_media_update_own
-  on storage.objects
-  for update
-  to authenticated
-  using (
-    bucket_id = 'user-garden-media'
-    and (storage.foldername(name))[1] = (select auth.uid()::text)
-  )
-  with check (
-    bucket_id = 'user-garden-media'
-    and (storage.foldername(name))[1] = (select auth.uid()::text)
-  );
 
 -- DELETE
 drop policy if exists user_garden_media_delete_own on storage.objects;
@@ -86,9 +92,19 @@ create policy user_garden_media_delete_own
   using (
     bucket_id = 'user-garden-media'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and (storage.foldername(name))[2] ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    and exists (
+      select 1
+      from public.garden_profiles g
+      where g.id = ((storage.foldername(name))[2])::uuid
+        and g.user_id = (select auth.uid())
+    )
   );
 
 -- Explicit: no policies for anon on this bucket.
 -- Explicit: no public bucket read.
+-- Explicit: no UPDATE policy (drop above is defensive if a prior draft existed).
 -- MIME + size also enforced by bucket allowed_mime_types + file_size_limit above.
 -- App must still validate before upload; client checks are not sufficient alone.
+-- Preferred create flow: insert garden_media pending → upload → mark validated
+--   (never upload-first orphans).

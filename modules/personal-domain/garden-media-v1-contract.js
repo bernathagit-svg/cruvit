@@ -10,7 +10,7 @@
 import { USER_PRIVATE_MEDIA_STORAGE_BUCKET } from '../catalog-media/garden-design-asset-contract-v1.js';
 import { PLANT_DOCTOR_SUPPORTED_IMAGE_MIMES } from '../plant-doctor/plant-doctor-image-mime-v1.js';
 
-export const GARDEN_MEDIA_V1_VERSION = '1.0.0-storage-gate';
+export const GARDEN_MEDIA_V1_VERSION = '1.0.0-storage-harden';
 export const GARDEN_MEDIA_SCHEMA = 'garden_media_v1';
 
 /** Planned private Supabase Storage bucket — must NOT be public. */
@@ -25,6 +25,7 @@ export const GARDEN_MEDIA_MAX_BYTES = 8 * 1024 * 1024; // 8388608
  * Locked V1 object path (deterministic, owner-scoped):
  *   {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
  * First segment MUST equal authenticated owner (auth.uid).
+ * Second segment MUST be a garden_profiles.id owned by that user.
  */
 export const GARDEN_MEDIA_STORAGE_PATH_PATTERN =
   '{user_id}/{garden_profile_id}/{garden_media_id}/{filename}';
@@ -35,6 +36,23 @@ export const GARDEN_MEDIA_BUCKET_CONFIG = Object.freeze({
   public: false,
   file_size_limit: 8388608,
   allowed_mime_types: Object.freeze(['image/jpeg', 'image/png', 'image/webp'])
+});
+
+/**
+ * Mirrors PRIVATE_BUCKET_AND_STORAGE_POLICIES_V1.sql (contract, not applied).
+ * V1: SELECT/INSERT/DELETE only — no UPDATE (immutable objects; new observation = new object).
+ */
+export const GARDEN_MEDIA_STORAGE_OBJECT_POLICIES_V1 = Object.freeze({
+  bucketId: 'user-garden-media',
+  public: false,
+  anonymousAccess: false,
+  allowUpdate: false,
+  operations: Object.freeze(['select', 'insert', 'delete']),
+  pathChecks: Object.freeze({
+    firstSegmentEqualsAuthUid: true,
+    secondSegmentMustBeOwnedGardenUuid: true,
+    forbidArbitraryGardenIdsUnderUserFolder: true
+  })
 });
 
 export const GARDEN_MEDIA_AUTHORITY = Object.freeze({
@@ -81,7 +99,8 @@ export const MEDIA_VALIDATION_STATES = Object.freeze([
   'pending',
   'validated',
   'rejected',
-  'deleted'
+  'deleted',
+  'cleanup_pending'
 ]);
 
 const SAFE_FILENAME_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$/;
@@ -195,9 +214,25 @@ export const GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT = Object.freeze({
     ]),
     onStorageDeleteFailure: Object.freeze({
       keepGardenMediaRow: true,
-      setValidationState: 'deleted',
+      setValidationState: 'cleanup_pending',
       recordCleanupErrorInMetadata: true,
-      allowSilentOrphan: false
+      allowSilentOrphan: false,
+      doNotUseDeletedForCleanupFailure: true
+    })
+  }),
+  createMediaAsset: Object.freeze({
+    forbiddenNormalFlow: 'upload_object_then_insert_garden_media_row',
+    preferredSequence: Object.freeze([
+      'client_generate_garden_media_id',
+      'insert_garden_media_pending_with_final_storage_path',
+      'upload_storage_object',
+      'update_validation_state_validated'
+    ]),
+    onUploadFailure: Object.freeze({
+      preferred: 'delete_pending_garden_media_row',
+      alternateBoundedState: 'cleanup_pending',
+      doNotUseDeletedForUploadFailure: true,
+      allowSilentStorageOrphan: false
     })
   }),
   deleteGarden: Object.freeze({
@@ -235,7 +270,7 @@ export const GARDEN_MEDIA_DELETION_POLICY = Object.freeze({
     'storage_objects_must_be_deleted_explicitly_then_db_cascade_media_rows; FK_alone_does_not_delete_storage',
   plantDeleteOrArchive: 'set_null_garden_plant_id_keep_media_and_object',
   areaDelete: 'set_null_garden_area_id_keep_media_and_object',
-  mediaDelete: 'delete_storage_object_then_db_row_or_mark_deleted_if_storage_fails',
+  mediaDelete: 'delete_storage_object_then_db_row_or_mark_cleanup_pending_if_storage_fails',
   orphanStorageForbidden: true,
   postgresFkDeletesStorage: false
 });
@@ -316,9 +351,12 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
     : identitySource === 'none'
       ? 'none'
       : 'medium';
+  // V1 create default = pending (DB row before Storage upload). Display rows use validated.
   const validationState = inSet(MEDIA_VALIDATION_STATES, src.validationState || src.validation_state)
     ? String(src.validationState || src.validation_state).trim()
-    : 'validated';
+    : strict
+      ? 'pending'
+      : 'validated';
 
   const gardenPlantId =
     src.gardenPlantId === null || src.garden_plant_id === null
@@ -414,6 +452,85 @@ export function assertMediaOwnedByUser(mediaRow, userId) {
   return true;
 }
 
+/**
+ * Storage RLS mirror (pure): owner folder + owned garden second segment.
+ * ownedGardenIds = gardens belonging to auth user (from garden_profiles).
+ */
+export function assertOwnedGardenStoragePathAccess(input = {}) {
+  const authUserId = String(input.authUserId || input.userId || '').trim();
+  const ownedGardenIds = new Set(
+    (input.ownedGardenIds || input.owned_garden_ids || []).map((x) => String(x).trim()).filter(Boolean)
+  );
+  const parsed = assertGardenMediaStoragePath({
+    storagePath: input.storagePath || input.storage_path || input.name,
+    userId: authUserId,
+    gardenProfileId: undefined,
+    mediaId: undefined
+  });
+  if (parsed.userId !== authUserId) throw new Error('cross_user_storage_path_denied');
+  if (!UUID_RE.test(parsed.gardenProfileId)) throw new Error('storage_path_garden_not_uuid');
+  if (!ownedGardenIds.has(parsed.gardenProfileId)) {
+    throw new Error('storage_path_garden_not_owned');
+  }
+  return { ...parsed, ownedGardenVerified: true };
+}
+
+/**
+ * Preferred V1 create lifecycle — DB authority first, then Storage upload.
+ * Forbidden normal flow: upload object → insert garden_media.
+ */
+export function planCreateMediaAsset(input = {}) {
+  const userId = String(input.userId || input.user_id || '').trim();
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const mediaId = String(input.mediaId || input.id || '').trim();
+  if (!UUID_RE.test(userId) || !UUID_RE.test(gardenProfileId) || !UUID_RE.test(mediaId)) {
+    throw new Error('create_media_requires_uuids');
+  }
+  const storagePath =
+    String(input.storagePath || input.storage_path || '').trim() ||
+    buildGardenMediaStoragePath({
+      userId,
+      gardenProfileId,
+      mediaId,
+      filename: input.filename || input.fileName,
+      mimeType: input.mimeType || input.mime_type
+    });
+  assertGardenMediaStoragePath({ storagePath, userId, gardenProfileId, mediaId });
+
+  return {
+    bucket: GARDEN_MEDIA_STORAGE_BUCKET,
+    forbiddenNormalFlow: 'upload_object_then_insert_garden_media_row',
+    storageObjectUpdateAllowed: false,
+    steps: [
+      { op: 'client.generate_uuid', as: 'garden_media.id', id: mediaId },
+      {
+        op: 'db.insert',
+        table: 'garden_media',
+        id: mediaId,
+        storage_path: storagePath,
+        validation_state: 'pending'
+      },
+      { op: 'storage.upload', path: storagePath, onlyIf: 'pending_row_ok' },
+      {
+        op: 'db.update',
+        table: 'garden_media',
+        id: mediaId,
+        set: { validation_state: 'validated' },
+        onlyIf: 'storage_upload_ok'
+      }
+    ],
+    onUploadFailure: {
+      preferred: [
+        { op: 'storage.remove_if_exists', path: storagePath },
+        { op: 'db.delete', table: 'garden_media', id: mediaId }
+      ],
+      alternateBoundedState: 'cleanup_pending',
+      doNotUseValidationState: 'deleted',
+      allowSilentStorageOrphan: false
+    }
+  };
+}
+
 /** Pure policy: sequence for deleting one media asset (no I/O). */
 export function planDeleteMediaAsset(input = {}) {
   const storagePath = String(input.storagePath || input.storage_path || '').trim();
@@ -421,6 +538,7 @@ export function planDeleteMediaAsset(input = {}) {
   if (!storagePath || !mediaId) throw new Error('media_delete_requires_path_and_id');
   return {
     bucket: GARDEN_MEDIA_STORAGE_BUCKET,
+    storageObjectUpdateAllowed: false,
     steps: [
       { op: 'storage.remove', path: storagePath },
       { op: 'db.delete', table: 'garden_media', id: mediaId, onlyIf: 'storage_remove_ok' }
@@ -429,7 +547,7 @@ export function planDeleteMediaAsset(input = {}) {
       op: 'db.update',
       table: 'garden_media',
       id: mediaId,
-      set: { validation_state: 'deleted', metadata_cleanup_error: true }
+      set: { validation_state: 'cleanup_pending', metadata_cleanup_error: true }
     },
     postgresFkDeletesStorage: false
   };
@@ -481,6 +599,7 @@ export function buildGardenMediaReadModel(row = {}) {
     storageCleanupContract: GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT,
     pathPattern: GARDEN_MEDIA_STORAGE_PATH_PATTERN,
     bucketConfig: GARDEN_MEDIA_BUCKET_CONFIG,
+    storageObjectPolicies: GARDEN_MEDIA_STORAGE_OBJECT_POLICIES_V1,
     delivery: {
       privateByDefault: true,
       publicBucketForbidden: true,
