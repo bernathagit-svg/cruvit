@@ -5,13 +5,12 @@
  * Acquire once → validate → store (object storage) → link → reuse.
  * Do NOT store raw image bytes/base64 in Postgres.
  *
- * Reuses planned private bucket name from garden-design-asset-contract-v1.js.
- * Reuses Plant Doctor MIME allow-list (jpeg/png/webp).
+ * CRITICAL: Postgres FK cascade does NOT delete Supabase Storage objects.
  */
 import { USER_PRIVATE_MEDIA_STORAGE_BUCKET } from '../catalog-media/garden-design-asset-contract-v1.js';
 import { PLANT_DOCTOR_SUPPORTED_IMAGE_MIMES } from '../plant-doctor/plant-doctor-image-mime-v1.js';
 
-export const GARDEN_MEDIA_V1_VERSION = '1.0.0-owner-review';
+export const GARDEN_MEDIA_V1_VERSION = '1.0.0-storage-gate';
 export const GARDEN_MEDIA_SCHEMA = 'garden_media_v1';
 
 /** Planned private Supabase Storage bucket — must NOT be public. */
@@ -20,7 +19,23 @@ export const GARDEN_MEDIA_STORAGE_BUCKET = USER_PRIVATE_MEDIA_STORAGE_BUCKET; //
 export const GARDEN_MEDIA_SUPPORTED_MIMES = PLANT_DOCTOR_SUPPORTED_IMAGE_MIMES;
 
 /** Soft cap for V1 uploads (bytes). */
-export const GARDEN_MEDIA_MAX_BYTES = 8 * 1024 * 1024;
+export const GARDEN_MEDIA_MAX_BYTES = 8 * 1024 * 1024; // 8388608
+
+/**
+ * Locked V1 object path (deterministic, owner-scoped):
+ *   {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
+ * First segment MUST equal authenticated owner (auth.uid).
+ */
+export const GARDEN_MEDIA_STORAGE_PATH_PATTERN =
+  '{user_id}/{garden_profile_id}/{garden_media_id}/{filename}';
+
+export const GARDEN_MEDIA_BUCKET_CONFIG = Object.freeze({
+  id: 'user-garden-media',
+  name: 'user-garden-media',
+  public: false,
+  file_size_limit: 8388608,
+  allowed_mime_types: Object.freeze(['image/jpeg', 'image/png', 'image/webp'])
+});
 
 export const GARDEN_MEDIA_AUTHORITY = Object.freeze({
   USER_GARDEN_MEDIA: 'garden_media',
@@ -51,7 +66,6 @@ export const MEDIA_PURPOSES = Object.freeze([
   'progress_photo'
 ]);
 
-/** How plant association was established — not botanical ID proof. */
 export const MEDIA_IDENTITY_SOURCES = Object.freeze([
   'user_assigned',
   'inherited_from_known_plant_context',
@@ -61,12 +75,7 @@ export const MEDIA_IDENTITY_SOURCES = Object.freeze([
   'none'
 ]);
 
-export const MEDIA_IDENTITY_CONFIDENCE = Object.freeze([
-  'none',
-  'low',
-  'medium',
-  'high'
-]);
+export const MEDIA_IDENTITY_CONFIDENCE = Object.freeze(['none', 'low', 'medium', 'high']);
 
 export const MEDIA_VALIDATION_STATES = Object.freeze([
   'pending',
@@ -74,6 +83,10 @@ export const MEDIA_VALIDATION_STATES = Object.freeze([
   'rejected',
   'deleted'
 ]);
+
+const SAFE_FILENAME_RE = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$/;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function inSet(list, value) {
   return list.includes(String(value || '').trim());
@@ -83,9 +96,6 @@ function asPlainObject(v) {
   return v !== null && typeof v === 'object' && !Array.isArray(v) ? v : null;
 }
 
-/**
- * Hard catalog boundary — user Garden media never becomes catalog portrait automatically.
- */
 export function mayPromoteUserMediaToCatalogImage() {
   return false;
 }
@@ -101,15 +111,142 @@ export function assertNotCatalogAuthority(mediaRow) {
   return true;
 }
 
+export function sanitizeGardenMediaFilename(name, mimeType) {
+  const raw = String(name || 'image').trim();
+  const base = raw.replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^\.+/, '') || 'image';
+  let out = base.slice(0, 120);
+  const mime = String(mimeType || '').toLowerCase();
+  const ext =
+    mime === 'image/png' ? '.png' : mime === 'image/webp' ? '.webp' : mime === 'image/jpeg' ? '.jpg' : '';
+  if (ext && !out.toLowerCase().endsWith(ext) && !/\.(jpe?g|png|webp)$/i.test(out)) {
+    out = `${out}${ext}`;
+  }
+  if (!SAFE_FILENAME_RE.test(out)) throw new Error('unsafe_media_filename');
+  return out;
+}
+
 /**
- * Normalize durable media metadata for write (no bytes).
+ * Build locked storage object path. mediaId must be known before upload
+ * (client-generated UUID recommended, then INSERT with same id).
  */
+export function buildGardenMediaStoragePath(input = {}) {
+  const userId = String(input.userId || input.user_id || '').trim();
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const mediaId = String(input.mediaId || input.garden_media_id || input.id || '').trim();
+  const filename = sanitizeGardenMediaFilename(
+    input.filename || input.fileName || 'image',
+    input.mimeType || input.mime_type
+  );
+  if (!UUID_RE.test(userId)) throw new Error('user_id_required_uuid');
+  if (!UUID_RE.test(gardenProfileId)) throw new Error('garden_profile_id_required_uuid');
+  if (!UUID_RE.test(mediaId)) throw new Error('garden_media_id_required_uuid');
+  return `${userId}/${gardenProfileId}/${mediaId}/${filename}`;
+}
+
+/** Validate path binds to owner + garden + media id (no cross-user prefix). */
+export function assertGardenMediaStoragePath(input = {}) {
+  const path = String(input.storagePath || input.storage_path || '').trim();
+  const userId = String(input.userId || input.user_id || '').trim();
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const mediaId = String(input.mediaId || input.garden_media_id || input.id || '').trim();
+  if (!path || path.includes('..') || path.startsWith('/') || path.includes('\\')) {
+    throw new Error('invalid_storage_path');
+  }
+  const parts = path.split('/');
+  if (parts.length !== 4) throw new Error('storage_path_must_be_owner_garden_media_filename');
+  const [pUser, pGarden, pMedia, filename] = parts;
+  if (userId && pUser !== userId) throw new Error('storage_path_owner_mismatch');
+  if (gardenProfileId && pGarden !== gardenProfileId) throw new Error('storage_path_garden_mismatch');
+  if (mediaId && pMedia !== mediaId) throw new Error('storage_path_media_id_mismatch');
+  if (!SAFE_FILENAME_RE.test(filename)) throw new Error('unsafe_media_filename');
+  return {
+    userId: pUser,
+    gardenProfileId: pGarden,
+    mediaId: pMedia,
+    filename,
+    storagePath: path,
+    firstSegmentIsOwner: true
+  };
+}
+
+/**
+ * Prefix for listing/deleting all objects for one Garden (Storage cleanup).
+ * Does NOT delete automatically — app/ops must call Storage API.
+ */
+export function buildGardenMediaStoragePrefix(userId, gardenProfileId) {
+  const u = String(userId || '').trim();
+  const g = String(gardenProfileId || '').trim();
+  if (!UUID_RE.test(u) || !UUID_RE.test(g)) throw new Error('garden_storage_prefix_ids_required');
+  return `${u}/${g}/`;
+}
+
+/**
+ * STORAGE CLEANUP CONTRACT V1
+ * Postgres FK cascade NEVER deletes Supabase Storage objects.
+ */
+export const GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT = Object.freeze({
+  version: '1.0.0',
+  postgresFkCascadeDeletesStorageObjects: false,
+  orphanStorageObjectsForbidden: true,
+  deleteIndividualMediaAsset: Object.freeze({
+    preferredSequence: Object.freeze([
+      'delete_storage_object',
+      'if_success_delete_garden_media_row'
+    ]),
+    onStorageDeleteFailure: Object.freeze({
+      keepGardenMediaRow: true,
+      setValidationState: 'deleted',
+      recordCleanupErrorInMetadata: true,
+      allowSilentOrphan: false
+    })
+  }),
+  deleteGarden: Object.freeze({
+    // Storage first (or concurrent job), then DB cascade of garden_media rows
+    preferredSequence: Object.freeze([
+      'list_storage_objects_under_user_id_garden_profile_id_prefix',
+      'delete_all_listed_storage_objects',
+      'delete_garden_profile_row_db_cascades_garden_media_rows'
+    ]),
+    note: 'DB ON DELETE CASCADE on garden_media does NOT remove Storage objects.'
+  }),
+  deletePlant: Object.freeze({
+    gardenMediaRowRemains: true,
+    gardenPlantId: 'SET NULL',
+    storageObjectRemains: true
+  }),
+  deleteArea: Object.freeze({
+    gardenMediaRowRemains: true,
+    gardenAreaId: 'SET NULL',
+    storageObjectRemains: true
+  }),
+  coverMediaFk: Object.freeze({
+    nullable: true,
+    onDelete: 'SET NULL',
+    circularCascadeSafe: true,
+    // plant delete → cover_media_id N/A (plant gone); media.garden_plant_id SET NULL
+    // media delete → plants.cover_media_id SET NULL
+    sameGardenRequired: true
+  })
+});
+
+/** @deprecated Prefer GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT — kept for read-model stability. */
+export const GARDEN_MEDIA_DELETION_POLICY = Object.freeze({
+  gardenDelete:
+    'storage_objects_must_be_deleted_explicitly_then_db_cascade_media_rows; FK_alone_does_not_delete_storage',
+  plantDeleteOrArchive: 'set_null_garden_plant_id_keep_media_and_object',
+  areaDelete: 'set_null_garden_area_id_keep_media_and_object',
+  mediaDelete: 'delete_storage_object_then_db_row_or_mark_deleted_if_storage_fails',
+  orphanStorageForbidden: true,
+  postgresFkDeletesStorage: false
+});
+
 export function normalizeGardenMediaRecord(input = {}, options = {}) {
   const src = asPlainObject(input) || {};
   const strict = options.strictWrite === true;
 
   const gardenProfileId = String(src.gardenProfileId || src.garden_profile_id || '').trim();
   const userId = String(src.userId || src.user_id || '').trim();
+  const mediaId = String(src.id || src.mediaId || src.garden_media_id || '').trim() || null;
   if (strict && !gardenProfileId) throw new Error('garden_profile_id_required');
   if (strict && !userId) throw new Error('user_id_required');
 
@@ -128,7 +265,6 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
     throw new Error('media_too_large');
   }
 
-  // Reject accidental base64 / data-URL persistence into metadata
   const forbiddenBlob =
     src.bytes != null ||
     src.base64 != null ||
@@ -138,11 +274,27 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
   if (forbiddenBlob) throw new Error('raw_image_bytes_forbidden_in_media_record');
 
   const storageBucket = String(src.storageBucket || src.storage_bucket || GARDEN_MEDIA_STORAGE_BUCKET).trim();
-  const storagePath = String(src.storagePath || src.storage_path || '').trim();
+  let storagePath = String(src.storagePath || src.storage_path || '').trim();
+  if (strict && !storagePath && mediaId && userId && gardenProfileId) {
+    storagePath = buildGardenMediaStoragePath({
+      userId,
+      gardenProfileId,
+      mediaId,
+      filename: src.filename || src.fileName,
+      mimeType
+    });
+  }
   if (strict && !storagePath) throw new Error('storage_path_required');
-  if (storageBucket !== GARDEN_MEDIA_STORAGE_BUCKET) {
-    // V1: only the private user-garden-media bucket
-    if (strict) throw new Error('invalid_storage_bucket');
+  if (storagePath) {
+    assertGardenMediaStoragePath({
+      storagePath,
+      userId: userId || undefined,
+      gardenProfileId: gardenProfileId || undefined,
+      mediaId: mediaId || undefined
+    });
+  }
+  if (storageBucket !== GARDEN_MEDIA_STORAGE_BUCKET && strict) {
+    throw new Error('invalid_storage_bucket');
   }
 
   const sourceModule = inSet(MEDIA_SOURCE_MODULES, src.sourceModule || src.source_module)
@@ -188,7 +340,6 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
   const shaOk = !contentSha256 || /^[a-f0-9]{64}$/.test(contentSha256);
 
   const metadata = asPlainObject(src.metadata) || {};
-  // Strip any nested byte payloads if present
   delete metadata.base64;
   delete metadata.bytes;
   delete metadata.dataUrl;
@@ -196,6 +347,7 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
   return {
     schema: GARDEN_MEDIA_SCHEMA,
     contractVersion: GARDEN_MEDIA_V1_VERSION,
+    id: mediaId,
     userId: userId || null,
     gardenProfileId: gardenProfileId || null,
     gardenPlantId,
@@ -215,7 +367,6 @@ export function normalizeGardenMediaRecord(input = {}, options = {}) {
     capturedAt: src.capturedAt || src.captured_at || null,
     clientInstanceId: String(src.clientInstanceId || src.client_instance_id || '').trim() || null,
     metadata,
-    // Explicit non-authorities
     isCatalogImage: false,
     isDesignAsset: false,
     botanicalIdentificationProof: false,
@@ -227,9 +378,6 @@ export function buildGardenMediaWritePayload(input = {}) {
   return normalizeGardenMediaRecord(input, { strictWrite: true });
 }
 
-/**
- * Same-garden link guards (app-level; DB triggers mirror these).
- */
 export function assertMediaPlantSameGarden(input = {}) {
   const mediaGarden = String(input.mediaGardenProfileId || input.media_garden_profile_id || '').trim();
   const plantGarden = String(input.plantGardenProfileId || input.plant_garden_profile_id || '').trim();
@@ -246,6 +394,19 @@ export function assertMediaAreaSameGarden(input = {}) {
   return true;
 }
 
+export function assertCoverMediaSameGarden(input = {}) {
+  const plantGarden = String(input.plantGardenProfileId || input.plant_garden_profile_id || '').trim();
+  const mediaGarden = String(input.mediaGardenProfileId || input.media_garden_profile_id || '').trim();
+  const plantId = String(input.plantId || input.garden_plant_id || '').trim();
+  const mediaPlantId = String(input.mediaPlantId || input.media_garden_plant_id || '').trim();
+  if (!plantGarden || !mediaGarden) throw new Error('garden_ids_required');
+  if (plantGarden !== mediaGarden) throw new Error('cross_garden_cover_media_link_forbidden');
+  if (mediaPlantId && plantId && mediaPlantId !== plantId) {
+    throw new Error('cover_media_plant_mismatch');
+  }
+  return true;
+}
+
 export function assertMediaOwnedByUser(mediaRow, userId) {
   const owner = String(mediaRow?.user_id || mediaRow?.userId || '').trim();
   const uid = String(userId || '').trim();
@@ -253,9 +414,45 @@ export function assertMediaOwnedByUser(mediaRow, userId) {
   return true;
 }
 
-/**
- * History rule: new observation = new asset. Never overwrite prior asset id.
- */
+/** Pure policy: sequence for deleting one media asset (no I/O). */
+export function planDeleteMediaAsset(input = {}) {
+  const storagePath = String(input.storagePath || input.storage_path || '').trim();
+  const mediaId = String(input.mediaId || input.id || '').trim();
+  if (!storagePath || !mediaId) throw new Error('media_delete_requires_path_and_id');
+  return {
+    bucket: GARDEN_MEDIA_STORAGE_BUCKET,
+    steps: [
+      { op: 'storage.remove', path: storagePath },
+      { op: 'db.delete', table: 'garden_media', id: mediaId, onlyIf: 'storage_remove_ok' }
+    ],
+    onStorageFailure: {
+      op: 'db.update',
+      table: 'garden_media',
+      id: mediaId,
+      set: { validation_state: 'deleted', metadata_cleanup_error: true }
+    },
+    postgresFkDeletesStorage: false
+  };
+}
+
+/** Pure policy: Garden delete must clean Storage before/with DB delete. */
+export function planDeleteGardenMediaStorage(input = {}) {
+  const userId = String(input.userId || input.user_id || '').trim();
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const prefix = buildGardenMediaStoragePrefix(userId, gardenProfileId);
+  return {
+    bucket: GARDEN_MEDIA_STORAGE_BUCKET,
+    prefix,
+    steps: [
+      { op: 'storage.list', prefix },
+      { op: 'storage.remove_all_listed' },
+      { op: 'db.delete', table: 'garden_profiles', id: gardenProfileId }
+    ],
+    note: 'garden_media rows cascade from garden_profiles; Storage objects do NOT.',
+    postgresFkDeletesStorage: false
+  };
+}
+
 export function appendMediaHistory(existingIds = [], newMediaId) {
   const id = String(newMediaId || '').trim();
   if (!id) throw new Error('media_id_required');
@@ -264,53 +461,35 @@ export function appendMediaHistory(existingIds = [], newMediaId) {
   return [...prev, id];
 }
 
-/**
- * Optional soft dedupe hint — identical checksum may reuse storage object,
- * but does NOT block a new observational link/history entry when purpose differs.
- */
 export function shouldReuseStorageObjectForChecksum(input = {}) {
   const existing = input.existingMediaRow;
   const sha = String(input.contentSha256 || '').trim().toLowerCase();
   if (!existing || !sha) return false;
   const existingSha = String(existing.content_sha256 || existing.contentSha256 || '').trim().toLowerCase();
   if (!existingSha || existingSha !== sha) return false;
-  // Same garden + same bytes → may reuse storage_path; caller still inserts link/history as needed
   return true;
 }
 
-/**
- * Deletion semantics (pure policy description for callers/tests).
- */
-export const GARDEN_MEDIA_DELETION_POLICY = Object.freeze({
-  gardenDelete: 'cascade_delete_media_rows_and_storage_objects',
-  plantDeleteOrArchive: 'set_null_garden_plant_id_keep_media_for_garden_history',
-  areaDelete: 'set_null_garden_area_id_keep_media',
-  mediaDelete: 'delete_db_row_and_storage_object_or_mark_deleted_if_storage_fails',
-  orphanStorageForbidden: true
-});
-
-/**
- * Stable read model for future Doctor / Identifier / Design / Smart Rec (no personalization).
- */
 export function buildGardenMediaReadModel(row = {}) {
   const n = normalizeGardenMediaRecord(row, { strictWrite: false });
   return {
     version: GARDEN_MEDIA_V1_VERSION,
-    mediaId: row.id || row.mediaId || null,
+    mediaId: row.id || row.mediaId || n.id || null,
     ...n,
     authority: GARDEN_MEDIA_AUTHORITY,
     deletionPolicy: GARDEN_MEDIA_DELETION_POLICY,
+    storageCleanupContract: GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT,
+    pathPattern: GARDEN_MEDIA_STORAGE_PATH_PATTERN,
+    bucketConfig: GARDEN_MEDIA_BUCKET_CONFIG,
     delivery: {
       privateByDefault: true,
       publicBucketForbidden: true,
-      signedUrlRequired: true
+      signedUrlRequired: true,
+      anonymousPublicAccess: false
     }
   };
 }
 
-/**
- * Future module contract stubs (no integration executed).
- */
 export function buildFutureModuleMediaContracts() {
   return {
     plantDoctor: {
@@ -335,7 +514,6 @@ export function buildFutureModuleMediaContracts() {
   };
 }
 
-/** HEIC/HEIF: unsupported in V1 unless stack can normalize (currently cannot safely). */
 export function isHeicMime(mime) {
   const m = String(mime || '').toLowerCase();
   return m === 'image/heic' || m === 'image/heif' || m === 'image/heic-sequence';

@@ -3,12 +3,16 @@
 -- OWNER REVIEW REQUIRED before apply — do not apply silently.
 --
 -- CRITICAL:
--- 1) This migration does NOT create Storage buckets or public policies.
--- 2) Private bucket `user-garden-media` must be configured separately by Owner
---    (private, authenticated owner-only, no public listing).
+-- 1) This migration does NOT create Storage buckets or storage.objects policies.
+-- 2) Private bucket `user-garden-media` + Storage RLS are in a SEPARATE Owner-applied
+--    script: supabase/ops/PRIVATE_BUCKET_AND_STORAGE_POLICIES_V1.sql
 -- 3) Never store raw image bytes/base64 in Postgres — only storage_path refs.
 -- 4) USER media is NOT catalog media. Do not merge with catalog_plants.media.
 -- 5) New observation = new row (history). Cover pointers are separate.
+-- 6) Postgres FK cascade does NOT delete Supabase Storage objects — app cleanup required.
+--
+-- Locked storage path shape (enforced below):
+--   {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
 
 -- ---------------------------------------------------------------------------
 -- garden_media
@@ -39,6 +43,11 @@ create table if not exists public.garden_media (
   constraint garden_media_storage_bucket_chk check (storage_bucket = 'user-garden-media'),
   constraint garden_media_storage_path_not_blank check (char_length(trim(storage_path)) > 0),
   constraint garden_media_storage_path_not_data_url check (storage_path !~* '^data:'),
+  constraint garden_media_storage_path_no_traversal check (
+    storage_path !~ '\.\.'
+    and storage_path !~ '^/'
+    and storage_path !~ '\\'
+  ),
   constraint garden_media_mime_chk check (mime_type in ('image/jpeg', 'image/png', 'image/webp')),
   constraint garden_media_byte_size_chk check (byte_size > 0 and byte_size <= 8388608),
   constraint garden_media_source_module_chk check (
@@ -79,10 +88,10 @@ create table if not exists public.garden_media (
 );
 
 comment on table public.garden_media is
-  'Owned user/Garden media metadata. Private object storage refs only. Not catalog images. Not climate authority.';
+  'Owned user/Garden media metadata. Private object storage refs only. Not catalog images. Not climate authority. FK cascade does not delete Storage objects.';
 
 comment on column public.garden_media.storage_path is
-  'Object path inside private bucket user-garden-media. Never a data URL or base64 payload.';
+  'Locked path: {user_id}/{garden_profile_id}/{garden_media_id}/{filename} inside private bucket user-garden-media. Never a data URL or base64 payload.';
 
 comment on column public.garden_media.identity_source is
   'How plant association was established. NOT botanical identification proof.';
@@ -109,6 +118,7 @@ create index if not exists garden_media_sha_idx
   where content_sha256 is not null;
 
 -- Optional plant cover pointer (history remains in garden_media rows)
+-- Circular FK safety: cover_media_id ON DELETE SET NULL; garden_media.garden_plant_id ON DELETE SET NULL
 alter table public.garden_plants
   add column if not exists cover_media_id uuid null references public.garden_media (id) on delete set null;
 
@@ -117,9 +127,9 @@ create index if not exists garden_plants_cover_media_id_idx
   where cover_media_id is not null;
 
 comment on column public.garden_plants.cover_media_id is
-  'Optional current display media. Historical photos remain as garden_media rows. ON DELETE SET NULL.';
+  'Optional current display media (same Garden). Historical photos remain as garden_media rows. ON DELETE SET NULL — no circular cascade delete.';
 
--- Ownership + same-garden plant/area enforcement
+-- Ownership + same-garden plant/area + locked storage path enforcement
 create or replace function public.enforce_garden_media_ownership()
 returns trigger
 language plpgsql
@@ -129,6 +139,9 @@ declare
   owner_id uuid;
   plant_garden_id uuid;
   area_garden_id uuid;
+  expected_prefix text;
+  path_parts text[];
+  filename text;
 begin
   select g.user_id into owner_id
   from public.garden_profiles g
@@ -140,6 +153,31 @@ begin
 
   new.user_id := owner_id;
   new.updated_at := now();
+
+  -- Locked path: {user_id}/{garden_profile_id}/{garden_media_id}/{filename}
+  path_parts := string_to_array(new.storage_path, '/');
+  if coalesce(array_length(path_parts, 1), 0) <> 4 then
+    raise exception 'garden_media_storage_path_shape_invalid';
+  end if;
+  if path_parts[1] is distinct from new.user_id::text then
+    raise exception 'garden_media_storage_path_owner_mismatch';
+  end if;
+  if path_parts[2] is distinct from new.garden_profile_id::text then
+    raise exception 'garden_media_storage_path_garden_mismatch';
+  end if;
+  if path_parts[3] is distinct from new.id::text then
+    raise exception 'garden_media_storage_path_media_id_mismatch';
+  end if;
+  filename := path_parts[4];
+  if filename is null
+     or filename !~ '^[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$'
+  then
+    raise exception 'garden_media_storage_path_filename_invalid';
+  end if;
+  expected_prefix := new.user_id::text || '/' || new.garden_profile_id::text || '/' || new.id::text || '/';
+  if left(new.storage_path, char_length(expected_prefix)) is distinct from expected_prefix then
+    raise exception 'garden_media_storage_path_prefix_invalid';
+  end if;
 
   if new.garden_plant_id is not null then
     select p.garden_profile_id into plant_garden_id
@@ -285,10 +323,7 @@ create policy garden_media_delete_own
 revoke all on table public.garden_media from anon;
 grant select, insert, update, delete on table public.garden_media to authenticated;
 
--- NOTE (Owner storage config — NOT applied by this SQL):
--- Create private bucket: user-garden-media
--- - public: false
--- - file size limit: 8MB
--- - allowed MIME: image/jpeg, image/png, image/webp
--- Storage RLS: only auth.uid() may read/write objects under {user_id}/{... paths
--- Prefer signed URLs for delivery; never anonymous public listing of Garden photos.
+-- STORAGE: NOT in this migration.
+-- See: supabase/ops/PRIVATE_BUCKET_AND_STORAGE_POLICIES_V1.sql
+-- Bucket create + storage.objects policies are Owner-applied separately.
+-- Postgres FK cascade does NOT delete Storage objects.

@@ -1,6 +1,6 @@
 /**
  * Garden Media / Images / Identity V1 — zero paid AI contract tests.
- * Storage/schema not applied: RLS/cross-garden simulated via pure asserts.
+ * Storage/schema not applied: RLS/cross-garden/cleanup simulated via pure asserts.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,16 +9,26 @@ import {
   GARDEN_MEDIA_AUTHORITY,
   GARDEN_MEDIA_STORAGE_BUCKET,
   GARDEN_MEDIA_SUPPORTED_MIMES,
+  GARDEN_MEDIA_MAX_BYTES,
   GARDEN_MEDIA_DELETION_POLICY,
+  GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT,
+  GARDEN_MEDIA_BUCKET_CONFIG,
+  GARDEN_MEDIA_STORAGE_PATH_PATTERN,
   normalizeGardenMediaRecord,
   buildGardenMediaWritePayload,
+  buildGardenMediaStoragePath,
+  assertGardenMediaStoragePath,
+  buildGardenMediaStoragePrefix,
   assertMediaPlantSameGarden,
   assertMediaAreaSameGarden,
+  assertCoverMediaSameGarden,
   assertMediaOwnedByUser,
   appendMediaHistory,
   shouldReuseStorageObjectForChecksum,
   mayPromoteUserMediaToCatalogImage,
   mayPromoteUserMediaToDesignAsset,
+  planDeleteMediaAsset,
+  planDeleteGardenMediaStorage,
   buildGardenMediaReadModel,
   buildFutureModuleMediaContracts,
   rejectUnsupportedMime,
@@ -27,6 +37,18 @@ import {
 import { USER_PRIVATE_MEDIA_STORAGE_BUCKET } from '../modules/catalog-media/garden-design-asset-contract-v1.js';
 import { isPaidAiAutomatedTestAllowed } from '../modules/runtime-guards/paid-ai-tests-gate-v1.js';
 import { FIXTURE_PROVIDER_CALLS } from './fixtures/plant-doctor/doctor-response-fixtures-v1.mjs';
+
+const U1 = '11111111-1111-4111-8111-111111111111';
+const U2 = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const G1 = '22222222-2222-4222-8222-222222222222';
+const G2 = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+const M1 = '33333333-3333-4333-8333-333333333333';
+const M2 = '44444444-4444-4444-8444-444444444444';
+const P1 = '55555555-5555-4555-8555-555555555555';
+
+function pathFor(userId, gardenId, mediaId, filename = 'photo.jpg') {
+  return `${userId}/${gardenId}/${mediaId}/${filename}`;
+}
 
 let paidAiCalls = 0;
 let mediaMutationsOnRender = 0;
@@ -39,12 +61,61 @@ test('Q: paid AI automated tests OFF / count = 0', () => {
   assert.equal(GARDEN_MEDIA_AUTHORITY.USER_MEDIA_MAY_AUTO_BECOME_CATALOG, false);
 });
 
+test('path: locked owner/garden/media/filename shape', () => {
+  const p = buildGardenMediaStoragePath({
+    userId: U1,
+    gardenProfileId: G1,
+    mediaId: M1,
+    filename: 'leaf.png',
+    mimeType: 'image/png'
+  });
+  assert.equal(p, pathFor(U1, G1, M1, 'leaf.png'));
+  assert.equal(GARDEN_MEDIA_STORAGE_PATH_PATTERN, '{user_id}/{garden_profile_id}/{garden_media_id}/{filename}');
+  const parsed = assertGardenMediaStoragePath({
+    storagePath: p,
+    userId: U1,
+    gardenProfileId: G1,
+    mediaId: M1
+  });
+  assert.equal(parsed.firstSegmentIsOwner, true);
+  assert.throws(
+    () =>
+      assertGardenMediaStoragePath({
+        storagePath: pathFor(U2, G1, M1),
+        userId: U1,
+        gardenProfileId: G1,
+        mediaId: M1
+      }),
+    /storage_path_owner_mismatch/
+  );
+  assert.throws(
+    () => assertGardenMediaStoragePath({ storagePath: `${U1}/${G1}/only.jpg` }),
+    /storage_path_must_be_owner_garden_media_filename/
+  );
+});
+
+test('path isolation: cross-user prefix denied', () => {
+  assert.throws(
+    () =>
+      buildGardenMediaWritePayload({
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
+        storagePath: pathFor(U2, G1, M1),
+        mimeType: 'image/jpeg',
+        byteSize: 100
+      }),
+    /storage_path_owner_mismatch/
+  );
+});
+
 test('A/B payload: durable media metadata row shape (no bytes)', () => {
   const row = buildGardenMediaWritePayload({
-    userId: 'u1',
-    gardenProfileId: 'g1',
-    gardenPlantId: 'p1',
-    storagePath: 'u1/g1/2026/photo1.jpg',
+    id: M1,
+    userId: U1,
+    gardenProfileId: G1,
+    gardenPlantId: P1,
+    storagePath: pathFor(U1, G1, M1, 'photo1.jpg'),
     mimeType: 'image/jpeg',
     byteSize: 12000,
     width: 800,
@@ -64,23 +135,37 @@ test('A/B payload: durable media metadata row shape (no bytes)', () => {
   assert.ok(!('bytes' in row));
 });
 
+test('bucket config contract: private 8MB jpeg/png/webp', () => {
+  assert.equal(GARDEN_MEDIA_BUCKET_CONFIG.id, 'user-garden-media');
+  assert.equal(GARDEN_MEDIA_BUCKET_CONFIG.public, false);
+  assert.equal(GARDEN_MEDIA_BUCKET_CONFIG.file_size_limit, 8388608);
+  assert.equal(GARDEN_MEDIA_MAX_BYTES, 8388608);
+  assert.deepEqual([...GARDEN_MEDIA_BUCKET_CONFIG.allowed_mime_types], [
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ]);
+});
+
 test('D/E: garden + optional plant link fields present', () => {
   const withPlant = normalizeGardenMediaRecord({
-    userId: 'u1',
-    gardenProfileId: 'g1',
-    gardenPlantId: 'p1',
-    storagePath: 'u1/g1/a.jpg',
+    id: M1,
+    userId: U1,
+    gardenProfileId: G1,
+    gardenPlantId: P1,
+    storagePath: pathFor(U1, G1, M1, 'a.png'),
     mimeType: 'image/png',
     byteSize: 100
   });
-  assert.equal(withPlant.gardenProfileId, 'g1');
-  assert.equal(withPlant.gardenPlantId, 'p1');
+  assert.equal(withPlant.gardenProfileId, G1);
+  assert.equal(withPlant.gardenPlantId, P1);
 
   const gardenOnly = normalizeGardenMediaRecord({
-    userId: 'u1',
-    gardenProfileId: 'g1',
+    id: M2,
+    userId: U1,
+    gardenProfileId: G1,
     gardenPlantId: null,
-    storagePath: 'u1/g1/b.jpg',
+    storagePath: pathFor(U1, G1, M2, 'b.png'),
     mimeType: 'image/png',
     byteSize: 100
   });
@@ -88,20 +173,35 @@ test('D/E: garden + optional plant link fields present', () => {
 });
 
 test('F: plant with no image remains valid conceptually', () => {
-  const plant = { id: 'p1', name: 'Mango', cover_media_id: null };
+  const plant = { id: P1, name: 'Mango', cover_media_id: null };
   assert.equal(plant.cover_media_id, null);
 });
 
 test('G: second image creates history, does not overwrite first', () => {
-  const hist = appendMediaHistory(['media_1'], 'media_2');
-  assert.deepEqual(hist, ['media_1', 'media_2']);
-  assert.equal(hist[0], 'media_1');
+  const hist = appendMediaHistory([M1], M2);
+  assert.deepEqual(hist, [M1, M2]);
+  assert.equal(hist[0], M1);
 });
 
-test('H: cross-user access rejected', () => {
+test('H: cross-user access / read denied', () => {
   assert.throws(
-    () => assertMediaOwnedByUser({ user_id: 'u_other' }, 'u_mine'),
+    () => assertMediaOwnedByUser({ user_id: U2 }, U1),
     /cross_user_media_access_forbidden/
+  );
+});
+
+test('H2: cross-user insert path denied', () => {
+  assert.throws(
+    () =>
+      buildGardenMediaWritePayload({
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
+        storagePath: pathFor(U2, G1, M1),
+        mimeType: 'image/jpeg',
+        byteSize: 50
+      }),
+    /storage_path_owner_mismatch/
   );
 });
 
@@ -109,8 +209,8 @@ test('I: cross-Garden plant/media link rejected', () => {
   assert.throws(
     () =>
       assertMediaPlantSameGarden({
-        mediaGardenProfileId: 'g1',
-        plantGardenProfileId: 'g2'
+        mediaGardenProfileId: G1,
+        plantGardenProfileId: G2
       }),
     /cross_garden_media_plant_link_forbidden/
   );
@@ -120,20 +220,53 @@ test('J: cross-Garden Area/media link rejected', () => {
   assert.throws(
     () =>
       assertMediaAreaSameGarden({
-        mediaGardenProfileId: 'g1',
-        areaGardenProfileId: 'g2'
+        mediaGardenProfileId: G1,
+        areaGardenProfileId: G2
       }),
     /cross_garden_media_area_link_forbidden/
   );
 });
 
-test('K/L: malformed / unsupported MIME rejected', () => {
+test('cover_media same-Garden + plant mismatch', () => {
+  assert.throws(
+    () =>
+      assertCoverMediaSameGarden({
+        plantGardenProfileId: G1,
+        mediaGardenProfileId: G2,
+        plantId: P1,
+        mediaPlantId: P1
+      }),
+    /cross_garden_cover_media_link_forbidden/
+  );
+  assert.throws(
+    () =>
+      assertCoverMediaSameGarden({
+        plantGardenProfileId: G1,
+        mediaGardenProfileId: G1,
+        plantId: P1,
+        mediaPlantId: M2
+      }),
+    /cover_media_plant_mismatch/
+  );
+  assert.equal(
+    assertCoverMediaSameGarden({
+      plantGardenProfileId: G1,
+      mediaGardenProfileId: G1,
+      plantId: P1,
+      mediaPlantId: P1
+    }),
+    true
+  );
+});
+
+test('K/L: malformed / unsupported MIME + size contract', () => {
   assert.throws(
     () =>
       buildGardenMediaWritePayload({
-        userId: 'u1',
-        gardenProfileId: 'g1',
-        storagePath: 'u1/g1/x.bin',
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
+        storagePath: pathFor(U1, G1, M1, 'x.bin'),
         mimeType: 'application/pdf',
         byteSize: 100
       }),
@@ -143,14 +276,27 @@ test('K/L: malformed / unsupported MIME rejected', () => {
   assert.equal(isHeicMime('image/heic'), true);
   assert.throws(() => rejectUnsupportedMime('image/heic'), /heic_unsupported_in_v1/);
   assert.deepEqual([...GARDEN_MEDIA_SUPPORTED_MIMES], ['image/jpeg', 'image/png', 'image/webp']);
-});
-
-test('M: extension/MIME / data-URL persistence blocked', () => {
   assert.throws(
     () =>
       buildGardenMediaWritePayload({
-        userId: 'u1',
-        gardenProfileId: 'g1',
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
+        storagePath: pathFor(U1, G1, M1),
+        mimeType: 'image/jpeg',
+        byteSize: GARDEN_MEDIA_MAX_BYTES + 1
+      }),
+    /media_too_large/
+  );
+});
+
+test('M: data-URL / base64 persistence blocked', () => {
+  assert.throws(
+    () =>
+      buildGardenMediaWritePayload({
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
         storagePath: 'data:image/jpeg;base64,AAAA',
         mimeType: 'image/jpeg',
         byteSize: 10
@@ -160,9 +306,10 @@ test('M: extension/MIME / data-URL persistence blocked', () => {
   assert.throws(
     () =>
       buildGardenMediaWritePayload({
-        userId: 'u1',
-        gardenProfileId: 'g1',
-        storagePath: 'u1/g1/ok.jpg',
+        id: M1,
+        userId: U1,
+        gardenProfileId: G1,
+        storagePath: pathFor(U1, G1, M1),
         mimeType: 'image/jpeg',
         byteSize: 10,
         base64: 'AAAA'
@@ -173,9 +320,10 @@ test('M: extension/MIME / data-URL persistence blocked', () => {
 
 test('N: no raw base64 stored in Postgres record shape', () => {
   const row = buildGardenMediaWritePayload({
-    userId: 'u1',
-    gardenProfileId: 'g1',
-    storagePath: 'u1/g1/ok.jpg',
+    id: M1,
+    userId: U1,
+    gardenProfileId: G1,
+    storagePath: pathFor(U1, G1, M1, 'ok.jpg'),
     mimeType: 'image/jpeg',
     byteSize: 10,
     metadata: { note: 'ok', base64: 'SHOULD_STRIP' }
@@ -188,24 +336,26 @@ test('O: user photo never becomes catalog image automatically', () => {
   assert.equal(mayPromoteUserMediaToCatalogImage(), false);
   assert.equal(mayPromoteUserMediaToDesignAsset(), false);
   const rm = buildGardenMediaReadModel({
-    id: 'm1',
-    user_id: 'u1',
-    garden_profile_id: 'g1',
-    storage_path: 'u1/g1/x.jpg',
+    id: M1,
+    user_id: U1,
+    garden_profile_id: G1,
+    storage_path: pathFor(U1, G1, M1, 'x.jpg'),
     mime_type: 'image/jpeg',
     byte_size: 10
   });
   assert.equal(rm.isCatalogImage, false);
   assert.equal(rm.authority.USER_MEDIA_MAY_AUTO_BECOME_CATALOG, false);
+  assert.equal(rm.delivery.anonymousPublicAccess, false);
+  assert.equal(rm.delivery.signedUrlRequired, true);
 });
 
 test('P: render/hydrate creates zero media mutations', () => {
   const before = mediaMutationsOnRender;
   buildGardenMediaReadModel({
-    id: 'm1',
-    user_id: 'u1',
-    garden_profile_id: 'g1',
-    storage_path: 'u1/g1/x.jpg',
+    id: M1,
+    user_id: U1,
+    garden_profile_id: G1,
+    storage_path: pathFor(U1, G1, M1, 'x.webp'),
     mime_type: 'image/webp',
     byte_size: 20
   });
@@ -221,8 +371,40 @@ test('checksum reuse hint does not erase history', () => {
     }),
     true
   );
-  const hist = appendMediaHistory(['m_old'], 'm_new_same_bytes');
+  const hist = appendMediaHistory([M1], M2);
   assert.equal(hist.length, 2);
+});
+
+test('cleanup: media delete prefers storage then row; failure → deleted state', () => {
+  const plan = planDeleteMediaAsset({
+    mediaId: M1,
+    storagePath: pathFor(U1, G1, M1)
+  });
+  assert.equal(plan.postgresFkDeletesStorage, false);
+  assert.equal(plan.steps[0].op, 'storage.remove');
+  assert.equal(plan.steps[1].op, 'db.delete');
+  assert.equal(plan.onStorageFailure.set.validation_state, 'deleted');
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.postgresFkCascadeDeletesStorageObjects, false);
+  assert.deepEqual(
+    [...GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.deleteIndividualMediaAsset.preferredSequence],
+    ['delete_storage_object', 'if_success_delete_garden_media_row']
+  );
+});
+
+test('cleanup: Garden delete does NOT assume FK deletes Storage', () => {
+  const plan = planDeleteGardenMediaStorage({ userId: U1, gardenProfileId: G1 });
+  assert.equal(plan.postgresFkDeletesStorage, false);
+  assert.equal(plan.prefix, buildGardenMediaStoragePrefix(U1, G1));
+  assert.equal(plan.steps[0].op, 'storage.list');
+  assert.equal(plan.steps[2].op, 'db.delete');
+  assert.match(plan.note, /do NOT/i);
+  assert.equal(GARDEN_MEDIA_DELETION_POLICY.postgresFkDeletesStorage, false);
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.deletePlant.gardenPlantId, 'SET NULL');
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.deletePlant.storageObjectRemains, true);
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.deleteArea.gardenAreaId, 'SET NULL');
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.deleteArea.storageObjectRemains, true);
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.coverMediaFk.onDelete, 'SET NULL');
+  assert.equal(GARDEN_MEDIA_STORAGE_CLEANUP_CONTRACT.coverMediaFk.circularCascadeSafe, true);
 });
 
 test('deletion policy + future module contracts', () => {
@@ -232,21 +414,22 @@ test('deletion policy + future module contracts', () => {
   const fut = buildFutureModuleMediaContracts();
   assert.equal(fut.smartRecommendations.personalizationStarted, false);
   assert.equal(fut.plantDoctor.mayReuseStoredMediaId, true);
-  assert.equal(GARDEN_MEDIA_V1_VERSION.includes('owner-review'), true);
+  assert.equal(GARDEN_MEDIA_V1_VERSION.includes('storage-gate'), true);
 });
 
 test('C: image survives reload (metadata identity stable)', () => {
   const persisted = buildGardenMediaWritePayload({
-    userId: 'u1',
-    gardenProfileId: 'g1',
-    gardenPlantId: 'p1',
-    storagePath: 'u1/g1/persist.jpg',
+    id: M1,
+    userId: U1,
+    gardenProfileId: G1,
+    gardenPlantId: P1,
+    storagePath: pathFor(U1, G1, M1, 'persist.jpg'),
     mimeType: 'image/jpeg',
     byteSize: 50,
     purpose: 'progress_photo'
   });
-  const reloaded = buildGardenMediaReadModel({ id: 'm_persist', ...persisted });
-  assert.equal(reloaded.storagePath, 'u1/g1/persist.jpg');
-  assert.equal(reloaded.gardenPlantId, 'p1');
+  const reloaded = buildGardenMediaReadModel({ id: M1, ...persisted });
+  assert.equal(reloaded.storagePath, pathFor(U1, G1, M1, 'persist.jpg'));
+  assert.equal(reloaded.gardenPlantId, P1);
   assert.equal(reloaded.purpose, 'progress_photo');
 });
