@@ -7,6 +7,8 @@ import assert from 'node:assert/strict';
 import {
   GARDEN_TODAY_FOCUS_MAX,
   selectGardenFocusTaskIndexes,
+  selectGardenFocusActions,
+  expandFocusActionMemberIndexes,
   findDuplicateRoutineIndexes,
   findRoutineSuppressedByUrgentIndexes,
   nextRoutineCareSuggestion,
@@ -14,7 +16,9 @@ import {
   classifyTaskRole,
   TASK_ROLE,
   isRoutineCareTask,
-  semanticActionKey
+  semanticActionKey,
+  wateringCompatibilityClass,
+  gardenRoutineGroupKey
 } from '../modules/personal-domain/garden-task-budget-v1-contract.js';
 import {
   CARE_OUTCOME_FALLBACK_DAYS,
@@ -141,8 +145,126 @@ test('2: Today Focus never shows more than 3 actions', () => {
       task('💧', `Water P${i}`, 'Today', 'High', TODAY, true, `P${i}`, false, `w_${i}`)
     );
   }
-  const focus = selectGardenFocusTaskIndexes(tasks, { todayIso: TODAY, max: 3 });
-  assert.equal(focus.length, 3);
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3 });
+  assert.ok(actions.length <= 3);
+  // Same-window waters consolidate — user sees far fewer than 20 cards.
+  assert.equal(actions.length, 1);
+  assert.equal(actions[0].kind, 'group');
+  assert.equal(actions[0].plantNames.length, 20);
+});
+
+test('A: 30 same-window watering tasks → not 30 visible user actions', () => {
+  const tasks = [];
+  const plantsByKey = new Map();
+  for (let i = 0; i < 30; i++) {
+    const name = `Plant${i}`;
+    plantsByKey.set(name.toLowerCase(), { name, water: 'moderate' });
+    tasks.push(task('💧', `Water ${name}`, 'Today', 'Low', TODAY, true, name, false, `w_${i}`));
+  }
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3, plantsByKey });
+  assert.ok(actions.length < 30, `visible actions ${actions.length} must be << 30`);
+  assert.equal(actions.length, 1);
+  assert.equal(actions[0].kind, 'group');
+  assert.equal(actions[0].memberIndexes.length, 30);
+  assert.equal(actions[0].outcomeEligible, false);
+  assert.equal(actions[0].inferOutcomeFromCompletion, false);
+  assert.match(actions[0].title, /Water 30 plants/i);
+});
+
+test('B: mixed watering requirements → only compatible plants grouped', () => {
+  const plantsByKey = new Map([
+    ['tomato', { name: 'Tomato', water: 'high' }],
+    ['basil', { name: 'Basil', water: 'high' }],
+    ['cactus', { name: 'Cactus', water: 'low' }],
+    ['aloe', { name: 'Aloe', water: 'low' }],
+    ['rose', { name: 'Rose', water: 'moderate' }]
+  ]);
+  const tasks = [
+    task('💧', 'Water Tomato', 'Today', 'Low', TODAY, true, 'Tomato', false, 't1'),
+    task('💧', 'Water Basil', 'Today', 'Low', TODAY, true, 'Basil', false, 't2'),
+    task('🪴', 'Check soil moisture for Cactus', 'Today', 'Low', TODAY, true, 'Cactus', false, 't3'),
+    task('🪴', 'Check soil moisture for Aloe', 'Today', 'Low', TODAY, true, 'Aloe', false, 't4'),
+    task('💧', 'Water Rose', 'Today', 'Low', TODAY, true, 'Rose', false, 't5')
+  ];
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3, plantsByKey });
+  assert.ok(actions.length <= 3);
+  const groups = actions.filter((a) => a.kind === 'group');
+  assert.ok(groups.length >= 1);
+  // High-water Water* must not merge with moisture_check / low class.
+  for (const g of groups) {
+    if (g.actionFamily === 'water' && g.waterClass === 'high') {
+      assert.deepEqual(g.plantNames.sort(), ['Basil', 'Tomato'].sort());
+    }
+    if (g.actionFamily === 'moisture_check') {
+      assert.deepEqual(g.plantNames.sort(), ['Aloe', 'Cactus'].sort());
+    }
+  }
+  assert.notEqual(
+    wateringCompatibilityClass(tasks[0], plantsByKey.get('tomato')),
+    wateringCompatibilityClass(tasks[2], plantsByKey.get('cactus'))
+  );
+});
+
+test('C+E: urgent Mango health remains separate and outranks routine group', () => {
+  const tasks = [
+    task('💧', 'Water Tomato', 'Today', 'Low', TODAY, true, 'Tomato', false, 'w1'),
+    task('💧', 'Water Basil', 'Today', 'Low', TODAY, true, 'Basil', false, 'w2'),
+    task('💧', 'Water Mint', 'Today', 'Low', TODAY, true, 'Mint', false, 'w3'),
+    task('🩺', 'Inspect: sooty mold on Mango', 'Today', 'High', TODAY, false, 'Mango', false, 'pd_care_mango_x', {
+      sourceModule: 'plant_doctor',
+      taskType: 'doctor'
+    }),
+    task('💧', 'Water Mango', 'Today', 'Low', TODAY, true, 'Mango', false, 'w_mango')
+  ];
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3 });
+  assert.ok(actions.length <= 3);
+  assert.equal(actions[0].kind, 'single');
+  assert.equal(actions[0].taskIndex, 3);
+  assert.equal(classifyTaskRole(tasks[3]), TASK_ROLE.URGENT_HEALTH);
+  // Mango routine suppressed while urgent open — not hidden urgent work.
+  const memberPlants = actions.flatMap((a) => a.plantNames || []);
+  assert.ok(memberPlants.includes('Mango'));
+  assert.ok(!actions.some((a) => a.kind === 'group' && a.plantNames.includes('Mango')));
+});
+
+test('D: Today Focus still <=3 with consolidation', () => {
+  const tasks = [];
+  for (let i = 0; i < 15; i++) {
+    tasks.push(task('💧', `Water A${i}`, 'Today', 'Low', TODAY, true, `A${i}`, false, `a${i}`));
+  }
+  for (let i = 0; i < 10; i++) {
+    tasks.push(task('🌿', `Fertilize B${i}`, 'Today', 'Medium', TODAY, true, `B${i}`, false, `b${i}`));
+  }
+  tasks.push(
+    task('🩺', 'Inspect: pest on Oak', 'Today', 'High', TODAY, false, 'Oak', false, 'pd_care_oak', {
+      sourceModule: 'plant_doctor',
+      taskType: 'doctor'
+    })
+  );
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3 });
+  assert.ok(actions.length <= 3);
+  assert.equal(actions[0].taskIndex, tasks.length - 1);
+});
+
+test('F: grouped completion semantics stay distinct from outcome', () => {
+  const tasks = [
+    task('💧', 'Water Tomato', 'Today', 'Low', TODAY, true, 'Tomato', false, 'w1'),
+    task('💧', 'Water Basil', 'Today', 'Low', TODAY, true, 'Basil', false, 'w2')
+  ];
+  const actions = selectGardenFocusActions(tasks, { todayIso: TODAY, max: 3 });
+  assert.equal(actions[0].kind, 'group');
+  assert.equal(actions[0].outcomeEligible, false);
+  assert.equal(actions[0].inferOutcomeFromCompletion, false);
+  assert.equal(GARDEN_COMPLETION_VS_OUTCOME.INFER_SUCCESS_FROM_COMPLETION, false);
+  const expanded = expandFocusActionMemberIndexes(actions);
+  assert.deepEqual(expanded, [0, 1]);
+  assert.equal(isOutcomeEligibleCareTask(tasks[0]), false);
+});
+
+test('G: paid AI calls remain 0 after consolidation path', () => {
+  assert.equal(paidAiCalls, 0);
+  assert.equal(isPaidAiAutomatedTestAllowed({}), false);
+  assert.equal(FIXTURE_PROVIDER_CALLS, 0);
 });
 
 test('3: Garden with zero useful actions shows zero focus items', () => {

@@ -2639,20 +2639,46 @@ function companionTasksThisWeek(){
 function visibleCareTaskCount(){
   return companionOpenTaskEntries().length;
 }
-function focusedTaskIndexes(){
+function focusPlantsByKeyMap(){
+  const m=new Map();
   const budget=window.cruvitGardenTaskBudgetV1;
-  if(budget&&typeof budget.selectGardenFocusTaskIndexes==='function'){
-    // Primary Today Focus is always ≤3 Garden-wide. Expanded week list may show more near-term actionable tasks.
-    const focusMax=showAllTasks?12:3;
-    return budget.selectGardenFocusTaskIndexes(data.tasks||[],{
+  const keyFn=budget&&typeof budget.normalizePlantKey==='function'
+    ?budget.normalizePlantKey
+    :(n)=>String(n||'').trim().toLowerCase();
+  (typeof activeGardenPlants==='function'?activeGardenPlants():(data.plants||[])).forEach(p=>{
+    if(!p||!p.name)return;
+    m.set(keyFn(p.name),p);
+  });
+  return m;
+}
+function focusedGardenActions(){
+  const budget=window.cruvitGardenTaskBudgetV1;
+  const focusMax=showAllTasks?12:3;
+  if(budget&&typeof budget.selectGardenFocusActions==='function'){
+    return budget.selectGardenFocusActions(data.tasks||[],{
       todayIso:todayIso(),
       max:focusMax,
-      horizonDays:7
+      horizonDays:7,
+      plantsByKey:focusPlantsByKeyMap()
     });
   }
-  const open=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
-  const limit=showAllTasks?Math.min(open.length,12):Math.min(open.length,3);
-  return open.slice(0,limit).map(x=>x.i);
+  return focusedTaskIndexes().map(i=>({
+    kind:'single',
+    taskIndex:i,
+    memberIndexes:[i],
+    title:String(data.tasks[i]?.[1]||''),
+    plantNames:[String(data.tasks[i]?.[6]||'')].filter(Boolean),
+    outcomeEligible:false
+  }));
+}
+function focusedTaskIndexes(){
+  const actions=focusedGardenActions();
+  const budget=window.cruvitGardenTaskBudgetV1;
+  if(budget&&typeof budget.expandFocusActionMemberIndexes==='function'){
+    // Representative indexes for legacy callers; Focus UI uses focusedGardenActions().
+    return actions.map(a=>a.taskIndex).filter(i=>Number.isInteger(i));
+  }
+  return actions.map(a=>a.taskIndex).filter(i=>Number.isInteger(i));
 }
 function refreshOpenTaskPanels(){
   if(window.moodStatPanelType&&document.getElementById('plantDetailModal')?.classList.contains('open')){
@@ -5189,11 +5215,12 @@ function render(){syncHealthScore();
   maybeEnrichVisiblePlants(visiblePlants);
   const attentionPlants=visiblePlants.filter(isPlantAttention).length;
   const healthyPlants=Math.max(0,visiblePlants.length-attentionPlants);
-  const focusIndexes=focusedTaskIndexes();
+  const focusActions=focusedGardenActions();
+  const focusIndexes=focusActions.map(a=>a.taskIndex).filter(i=>Number.isInteger(i));
   if(!window.GardenModes){
-    const focusEntry=focusEntryEarly;
-    const focusTitle=companionTaskTitle(focusEntry)||'Enjoy your garden today';
-    const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=focusTitle.replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
+    const focusEntry=focusActions[0];
+    const focusTitle=(focusEntry&&focusEntry.title)||companionTaskTitle(focusEntryEarly)||'Enjoy your garden today';
+    const focusEl=document.getElementById('moodFocusText'); if(focusEl)focusEl.textContent=String(focusTitle).replace(/^(Water|Check|Fertilize|Prune|Review)\s+/,'$1 ');
   }
   renderWeatherNote();
   applyGardenPhotoVisual();
@@ -5222,16 +5249,22 @@ function render(){syncHealthScore();
   
   const actionableTasks=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
   const openTotal=actionableTasks.length;
-  const hiddenCount=Math.max(0,openTotal-focusIndexes.length);
+  const hiddenCount=Math.max(0,openTotal-focusActions.reduce((n,a)=>(a.memberIndexes||[a.taskIndex]).length+n,0));
   const planCount=plannedCareTaskEntries().filter(x=>{const iso=taskIsoValue(x.t);return iso&&iso>datePlusDaysIso(7);}).length;
   const tasksTitle=document.getElementById('tasksTitle');
   if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
   const tasksSubtitle=document.getElementById('tasksSubtitle');
   if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Your full care calendar is in History.':'Everything looks good. Enjoy your garden today.';
   const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
-  const taskHtml=focusIndexes.map(i=>{
+  const taskHtml=focusActions.map((action,actionIdx)=>{
+    if(action.kind==='group'){
+      const plants=escapeHtml((action.plantNames||[]).join(', '));
+      return `<div class="task garden-group-action"><div class="taskIcon">${action.icon||'💧'}</div><div class="task-copy"><b>${escapeHtml(action.title||'')}</b><span>${plants||'Grouped routine care'}</span></div><div class="task-side"><button class="priority" onclick="completeGardenFocusAction(${actionIdx})">Done</button></div></div>`;
+    }
+    const i=action.taskIndex;
     const t=data.tasks[i];
-    const isOutcomeFu=!!(t&&(t.outcomeFollowUp||String(t[8]||t.id||'').startsWith('outcome_fu_')));
+    if(!t)return '';
+    const isOutcomeFu=!!(t.outcomeFollowUp||String(t[8]||t.id||'').startsWith('outcome_fu_'));
     if(isOutcomeFu&&!taskDone(t)){
       return `<div class="task outcome-followup"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${escapeHtml(t[1])}</b><span>${escapeHtml(t[2])}</span><div class="outcome-choices" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"><button type="button" class="priority" onclick="reportCareOutcome(${i},'better')">Better</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'slightly_better')">Slightly better</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'no_change')">No change</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'worse')">Worse</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'unsure')">Unsure</button></div></div></div>`;
     }
@@ -5284,6 +5317,41 @@ function toggleTaskMenu(ev,i){
 function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}}
 function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
+function completeGardenFocusAction(actionIdx){
+  const actions=focusedGardenActions();
+  const action=actions[actionIdx];
+  if(!action)return;
+  const members=(action.memberIndexes||[]).slice();
+  // Grouped routine completion marks each underlying task done. Never schedules outcome follow-up for the group.
+  members.forEach(i=>{
+    if(!data.tasks[i]||taskDone(data.tasks[i]))return;
+    data.tasks[i]=setTaskDone(data.tasks[i],true);
+    data.events.unshift(['Today','Task completed',data.tasks[i][1]]);
+    awardCredits(taskCredit(data.tasks[i]),'Task completed');
+    try{
+      const pd=window.cruvitPersonalDomainV0;
+      const task=data.tasks[i];
+      if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&task){
+        pd.upsertTaskOnActiveGarden(task).then((row)=>{
+          if(!row||typeof pd.emitTaskCompletedMemory!=='function')return;
+          return pd.emitTaskCompletedMemory(row,{title:task[1]}).catch((err)=>{
+            console.warn('[GardenMemory] task_completed write failed',err&&err.message?err.message:err);
+          });
+        }).catch((err)=>{console.warn('Server task complete upsert failed',err&&err.message?err.message:err);});
+      }
+    }catch(e){console.warn('Garden Memory task_completed hook failed',e);}
+  });
+  if(action.kind==='group'){
+    data.events.unshift(['Today','Grouped care completed',action.title||`${members.length} plants`]);
+  }else if(Number.isInteger(action.taskIndex)){
+    try{scheduleCareOutcomeFollowUpAfterCompletion(action.taskIndex);}catch(e){console.warn('Care outcome follow-up schedule failed',e);}
+  }
+  syncHealthScore();
+  service.save(data);
+  render();
+  refreshOpenTaskPanels();
+  finalizeTaskListChange();
+}
 function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();try{scheduleCareOutcomeFollowUpAfterCompletion(i);}catch(e){console.warn('Care outcome follow-up schedule failed',e);}service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange();try{const pd=window.cruvitPersonalDomainV0;const task=data.tasks[i];if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&task){pd.upsertTaskOnActiveGarden(task).then((row)=>{if(!row||typeof pd.emitTaskCompletedMemory!=='function')return;return pd.emitTaskCompletedMemory(row,{title:task[1]}).catch((err)=>{console.warn('[GardenMemory] task_completed write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server task complete upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory task_completed hook failed',e)}}
 function scheduleCareOutcomeFollowUpAfterCompletion(completedIndex){
   const completed=data.tasks[completedIndex];
@@ -5377,7 +5445,33 @@ function completeTaskByRef(btn){
   const i=(data.tasks||[]).findIndex(t=>!taskDone(t)&&String(t[1]||'')===title&&taskIsoValue(t)===iso);
   if(i>=0)completeTask(i);
 }
-function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.slice().forEach(i=>{if(data.tasks[i]&&!taskDone(data.tasks[i]))completeTask(i)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');service.save(data);render()}
+function completeAll(){
+  const actions=focusedGardenActions();
+  if(!actions.length)return;
+  const budget=window.cruvitGardenTaskBudgetV1;
+  const idxs=budget&&typeof budget.expandFocusActionMemberIndexes==='function'
+    ?budget.expandFocusActionMemberIndexes(actions)
+    :actions.flatMap(a=>a.memberIndexes||[a.taskIndex]);
+  idxs.forEach(i=>{
+    if(!data.tasks[i]||taskDone(data.tasks[i]))return;
+    data.tasks[i]=setTaskDone(data.tasks[i],true);
+    data.events.unshift(['Today','Task completed',data.tasks[i][1]]);
+    awardCredits(taskCredit(data.tasks[i]),'Task completed');
+    // Singles may be outcome-eligible; grouped routines are not.
+  });
+  actions.forEach(a=>{
+    if(a.kind==='single'&&Number.isInteger(a.taskIndex)){
+      try{scheduleCareOutcomeFollowUpAfterCompletion(a.taskIndex);}catch(_){}
+    }
+  });
+  data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);
+  awardCredits(actions.length>=3?10:5,'Today’s focus completed');
+  syncHealthScore();
+  service.save(data);
+  render();
+  refreshOpenTaskPanels();
+  finalizeTaskListChange();
+}
 function createPlantAlertTaskFromPanel(i){
   const p=data.plants[i];
   if(!p)return;
@@ -8503,7 +8597,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913b"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913b"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913c"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913c"></script>
 </body>
 </html>

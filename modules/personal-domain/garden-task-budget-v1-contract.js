@@ -3,9 +3,12 @@
  *
  * CARE SCHEDULE KNOWLEDGE ≠ MATERIALIZED TASKS.
  * Today Focus = max 3 Garden-wide Next Best Actions.
+ * Garden-level consolidation = derived read-model only (no new task schema).
  */
-export const GARDEN_TASK_BUDGET_VERSION = '1.0.0';
+export const GARDEN_TASK_BUDGET_VERSION = '1.1.0';
 export const GARDEN_TODAY_FOCUS_MAX = 3;
+/** Minimum member count before collapsing into a Garden-level action. */
+export const GARDEN_ROUTINE_GROUP_MIN = 2;
 /** Just-in-time horizon for routine materialization (days). Not a 6-month calendar. */
 export const GARDEN_ROUTINE_JIT_HORIZON_DAYS = 14;
 /** Companion surface hides routine tasks beyond this. */
@@ -95,6 +98,90 @@ export function rolePriorityScore(role) {
   return ROLE_PRIORITY[role] || 0;
 }
 
+export function routineActionFamily(task) {
+  if (!isRoutineCareTask(task)) return null;
+  const title = normalizeTaskTitle(task?.[1] || task?.title || '');
+  if (/check soil moisture|soil moisture/.test(title)) return 'moisture_check';
+  if (/water|irrigation/.test(title)) return 'water';
+  if (/fertiliz|feed/.test(title)) return 'fertilize';
+  if (/prun|trim/.test(title)) return 'prune';
+  if (/check .+ leaves|check leaves/.test(title)) return 'leaf_check';
+  return null;
+}
+
+/**
+ * Compatible watering/care class — used so drought plants are not grouped with moisture-lovers.
+ * Prefer plant.water meta when provided; else infer from task title.
+ */
+export function wateringCompatibilityClass(task, plantMeta = null) {
+  const water = String(
+    plantMeta?.water || plantMeta?.meta?.water || task?.plantWater || ''
+  ).toLowerCase();
+  const title = normalizeTaskTitle(task?.[1] || task?.title || '');
+  if (/low|dry|succulent|cactus|infrequent|drought|sparing/.test(water) || /soil moisture/.test(title)) {
+    return 'low';
+  }
+  if (/high|moist|constant|daily|often|wet/.test(water)) return 'high';
+  return 'moderate';
+}
+
+export function dueWindowBucket(iso, todayIso) {
+  const today = String(todayIso || new Date().toISOString().slice(0, 10));
+  const due = String(iso || '');
+  if (!due) return 'undated';
+  if (due < today) return 'overdue_or_today';
+  if (due === today) return 'overdue_or_today';
+  if (due <= addDaysIso(today, 2)) return 'near';
+  if (due <= addDaysIso(today, 7)) return 'week';
+  return 'later';
+}
+
+/**
+ * True only when a routine task may join a Garden-level group.
+ * Doctor / urgent / outcome / weather never group.
+ */
+export function isGardenRoutineGroupEligible(task, options = {}) {
+  if (!task || task[7] === true || task.done === true) return false;
+  if (isDoctorTask(task) || isOutcomeFollowUpTask(task) || isWeatherLinkedTask(task)) return false;
+  if (classifyTaskRole(task) !== TASK_ROLE.ROUTINE) return false;
+  const family = routineActionFamily(task);
+  if (!family) return false;
+  // Plant-specific attention / condition checks stay ungrouped.
+  const title = normalizeTaskTitle(task[1] || task.title || '');
+  if (/condition|attention|needs/.test(title)) return false;
+  const plantName = String(task[6] || task.plantName || '').trim();
+  if (!plantName) return false;
+  const plantKey = normalizePlantKey(plantName);
+  const plants = options.plantsByKey || options.plantsByName || null;
+  const plantMeta = plants ? plants.get?.(plantKey) || plants[plantKey] || plants[plantName] : null;
+  if (plantMeta?.mark === '!' || /need|pest|disease/i.test(String(plantMeta?.status || ''))) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Group key for operationally equivalent routine actions across plants.
+ * Includes action family + watering class + due window — not plant identity.
+ */
+export function gardenRoutineGroupKey(task, options = {}) {
+  if (!isGardenRoutineGroupEligible(task, options)) return null;
+  const family = routineActionFamily(task);
+  const plantName = String(task[6] || task.plantName || '').trim();
+  const plantKey = normalizePlantKey(plantName);
+  const plants = options.plantsByKey || options.plantsByName || null;
+  const plantMeta = plants ? plants.get?.(plantKey) || plants[plantKey] || plants[plantName] : null;
+  const waterClass =
+    family === 'water' || family === 'moisture_check'
+      ? wateringCompatibilityClass(task, plantMeta)
+      : 'n/a';
+  // moisture_check stays in low class; do not merge with ordinary "Water".
+  const today = String(options.todayIso || new Date().toISOString().slice(0, 10));
+  const window = dueWindowBucket(task[4] || task.iso, today);
+  if (window === 'later') return null;
+  return `${family}::${waterClass}::${window}`;
+}
+
 export function semanticActionKey(task) {
   const title = normalizeTaskTitle(task?.[1] || task?.title || '');
   const plant = normalizePlantKey(task?.[6] || task?.plantName || '');
@@ -107,6 +194,32 @@ export function semanticActionKey(task) {
   else if (isDoctorTask(task)) action = 'doctor_care';
   else if (isOutcomeFollowUpTask(task)) action = 'outcome_check';
   return `${plant || '_garden'}::${action}`;
+}
+
+const FAMILY_LABEL = Object.freeze({
+  water: 'Water',
+  moisture_check: 'Check soil moisture for',
+  fertilize: 'Fertilize',
+  prune: 'Prune',
+  leaf_check: 'Check leaves on'
+});
+
+export function buildGroupedRoutineActionTitle(family, plantNames = [], windowBucket = 'overdue_or_today') {
+  const n = plantNames.length;
+  const verb = FAMILY_LABEL[family] || 'Care for';
+  const when =
+    windowBucket === 'overdue_or_today'
+      ? 'today'
+      : windowBucket === 'near'
+        ? 'soon'
+        : 'this week';
+  if (family === 'moisture_check') {
+    return `Check soil moisture for ${n} plant${n === 1 ? '' : 's'} that need attention ${when}`;
+  }
+  if (family === 'leaf_check') {
+    return `Check leaves on ${n} plant${n === 1 ? '' : 's'} that need attention ${when}`;
+  }
+  return `${verb} ${n} plant${n === 1 ? '' : 's'} that need attention ${when}`;
 }
 
 /**
@@ -169,18 +282,34 @@ export function findRoutineSuppressedByUrgentIndexes(tasks = []) {
 
 /**
  * Rank open tasks for Garden Today Focus (max GARDEN_TODAY_FOCUS_MAX).
+ * Prefer selectGardenFocusActions for grouped read-model; this returns representative indexes.
  */
 export function selectGardenFocusTaskIndexes(tasks = [], options = {}) {
+  return selectGardenFocusActions(tasks, options)
+    .map((a) => (a.kind === 'group' ? a.memberIndexes[0] : a.taskIndex))
+    .filter((i) => Number.isInteger(i));
+}
+
+/**
+ * Derived Garden Focus actions (read-model).
+ * Groups operationally equivalent routine tasks across plants into one user action.
+ * Does NOT invent persisted garden_tasks rows.
+ */
+export function selectGardenFocusActions(tasks = [], options = {}) {
   const max = Number.isFinite(options.max) ? options.max : GARDEN_TODAY_FOCUS_MAX;
   const today = String(options.todayIso || new Date().toISOString().slice(0, 10));
   const horizonDays = Number.isFinite(options.horizonDays)
     ? options.horizonDays
     : GARDEN_COMPANION_HORIZON_DAYS;
   const horizonIso = addDaysIso(today, horizonDays);
+  const minGroup = Number.isFinite(options.minGroupSize)
+    ? options.minGroupSize
+    : GARDEN_ROUTINE_GROUP_MIN;
   const dup = new Set(findDuplicateRoutineIndexes(tasks, { todayIso: today }));
   const suppressed = new Set(findRoutineSuppressedByUrgentIndexes(tasks));
+  const groupOpts = { ...options, todayIso: today };
 
-  const scored = [];
+  const candidates = [];
   (tasks || []).forEach((t, i) => {
     if (!t || t[7] === true || t.done === true) return;
     if (dup.has(i) || suppressed.has(i)) return;
@@ -192,10 +321,112 @@ export function selectGardenFocusTaskIndexes(tasks = [], options = {}) {
     if (iso === today) score += 10;
     if (String(t[3] || '').toLowerCase() === 'high') score += 8;
     if (String(t[3] || '').toLowerCase() === 'medium') score += 3;
-    scored.push({ i, score, role, iso });
+    candidates.push({ i, t, score, role, iso });
   });
-  scored.sort((a, b) => b.score - a.score || String(a.iso).localeCompare(String(b.iso)));
-  return scored.slice(0, Math.max(0, max)).map((x) => x.i);
+
+  const groupBuckets = new Map();
+  const singles = [];
+  for (const c of candidates) {
+    const gKey = gardenRoutineGroupKey(c.t, groupOpts);
+    if (gKey) {
+      if (!groupBuckets.has(gKey)) groupBuckets.set(gKey, []);
+      groupBuckets.get(gKey).push(c);
+    } else {
+      singles.push({
+        kind: 'single',
+        taskIndex: c.i,
+        memberIndexes: [c.i],
+        score: c.score,
+        role: c.role,
+        iso: c.iso,
+        title: String(c.t[1] || ''),
+        plantNames: [String(c.t[6] || '').trim()].filter(Boolean),
+        groupable: false,
+        outcomeEligible: false
+      });
+    }
+  }
+
+  const actions = [...singles];
+  for (const [gKey, members] of groupBuckets.entries()) {
+    members.sort((a, b) => b.score - a.score || String(a.iso).localeCompare(String(b.iso)));
+    if (members.length < minGroup) {
+      for (const m of members) {
+        actions.push({
+          kind: 'single',
+          taskIndex: m.i,
+          memberIndexes: [m.i],
+          score: m.score,
+          role: m.role,
+          iso: m.iso,
+          title: String(m.t[1] || ''),
+          plantNames: [String(m.t[6] || '').trim()].filter(Boolean),
+          groupable: false,
+          outcomeEligible: false
+        });
+      }
+      continue;
+    }
+    const [family, waterClass, windowBucket] = gKey.split('::');
+    const plantNames = [];
+    const seenPlant = new Set();
+    const memberIndexes = [];
+    let score = 0;
+    let iso = members[0].iso;
+    for (const m of members) {
+      memberIndexes.push(m.i);
+      score = Math.max(score, m.score);
+      if (m.iso && (!iso || m.iso < iso)) iso = m.iso;
+      const name = String(m.t[6] || '').trim();
+      const pk = normalizePlantKey(name);
+      if (name && !seenPlant.has(pk)) {
+        seenPlant.add(pk);
+        plantNames.push(name);
+      }
+    }
+    // Slight boost for consolidated workload reduction, still below urgent.
+    score += Math.min(8, plantNames.length);
+    actions.push({
+      kind: 'group',
+      groupKey: gKey,
+      actionFamily: family,
+      waterClass,
+      windowBucket,
+      memberIndexes,
+      plantNames,
+      taskIndex: memberIndexes[0],
+      score,
+      role: TASK_ROLE.ROUTINE,
+      iso,
+      title: buildGroupedRoutineActionTitle(family, plantNames, windowBucket),
+      subtitle: plantNames.join(', '),
+      icon: family === 'water' || family === 'moisture_check' ? '💧' : '🌿',
+      groupable: true,
+      outcomeEligible: false,
+      // Completion applies to each underlying task; never implies treatment success.
+      completionMeans: 'user_performed_grouped_routine_actions',
+      inferOutcomeFromCompletion: false
+    });
+  }
+
+  actions.sort((a, b) => b.score - a.score || String(a.iso || '').localeCompare(String(b.iso || '')));
+  return actions.slice(0, Math.max(0, max));
+}
+
+/**
+ * Expand focus actions to underlying task indexes (for bulk complete / memory).
+ */
+export function expandFocusActionMemberIndexes(actions = []) {
+  const out = [];
+  const seen = new Set();
+  for (const a of actions || []) {
+    for (const i of a.memberIndexes || (Number.isInteger(a.taskIndex) ? [a.taskIndex] : [])) {
+      if (seen.has(i)) continue;
+      seen.add(i);
+      out.push(i);
+    }
+  }
+  return out;
 }
 
 export function addDaysIso(iso, days) {
