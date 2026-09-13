@@ -426,8 +426,35 @@
     const attention = gardenData.attentionPlants || 0;
     const urgent = gardenData.urgentTasks || 0;
     if (!gardenData.plants || !gardenData.plants.length) return false;
-    if (overdue > 0 || urgent > 0 || attention > 1) return false;
+    // Any plant needing attention means the Garden is not fully "Healthy / Balanced".
+    if (overdue > 0 || urgent > 0 || attention > 0) return false;
     return typeof score === 'number' ? score >= 80 : true;
+  }
+
+  function buildAttentionAwareHero(gardenData) {
+    const n = Number(gardenData.attentionPlants) || 0;
+    const plantWord = n === 1 ? 'plant' : 'plants';
+    const plantWordHe = n === 1 ? 'צמח' : 'צמחים';
+    return Object.assign({}, POSITIVE_HERO_FALLBACK, {
+      id: 'mostly-healthy',
+      title: {
+        he: n > 0 ? `ברובה בריאה — ${n} ${plantWordHe} צריכים תשומת לב` : 'מטופלת היטב',
+        en:
+          n > 0
+            ? `Mostly healthy — ${n} ${plantWord} need${n === 1 ? 's' : ''} attention`
+            : 'Well cared'
+      },
+      subtitle: {
+        he:
+          n > 0
+            ? 'יש צמחים שכדאי לעקוב אחריהם. שאר הגינה יכולה להישאר רגועה.'
+            : POSITIVE_HERO_FALLBACK.subtitle.he,
+        en:
+          n > 0
+            ? 'Some plants need monitoring. The rest of your garden can stay calm.'
+            : POSITIVE_HERO_FALLBACK.subtitle.en
+      }
+    });
   }
 
   function hasBloomingSeason(plants, season, gardenData) {
@@ -527,6 +554,16 @@
     const primaryMode = primaryId
       ? Object.assign({}, MODE_BY_ID[primaryId])
       : Object.assign({}, POSITIVE_HERO_FALLBACK);
+
+    // Never present fully Healthy/Balanced when owned plants need attention.
+    const attention = Number(gardenData.attentionPlants) || 0;
+    if (attention > 0 && (primaryMode.id === 'healthy' || !primaryId)) {
+      return {
+        primaryMode: buildAttentionAwareHero(gardenData),
+        secondaryModes: [],
+        warningModes
+      };
+    }
 
     return {
       primaryMode,

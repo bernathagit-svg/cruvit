@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20250711">
-<link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913d">
+<link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913e">
 <link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911e">
 <style id="licensed-catalog-media-runtime-styles">
 .plant-img{position:relative}
@@ -810,7 +810,7 @@
   </div>
   <select class="entry-lang app-lang-select" id="appLangSelect" aria-label="Language"></select>
 </div>
-<script src="garden-modes.js?v=20250631a"></script>
+<script src="garden-modes.js?v=20260913e"></script>
 <script src="scripts/plant-identifier-loader.js?v=20250655"></script>
 <script src="modules/personal-domain/bootstrap-safe-climate-traits-migration-data-v1.browser.js?v=20260908a"></script>
 <script src="modules/personal-domain/bootstrap-unlocked-six-climate-traits-migration-data-v1.browser.js?v=20260908b"></script>
@@ -3554,7 +3554,32 @@ function ensureGardenLocation(){
 
 function gardenLocationLabel(){
   const loc=ensureGardenLocation();
-  return `${loc.label.split(',')[0]} · ${loc.climate||'Local climate'}`;
+  const label=String(loc.label||'').trim();
+  const climate=String(loc.climate||'').trim();
+  if(!label)return 'Location not set';
+  const short=label.split(',')[0];
+  return climate?`${short} · ${climate}`:`${short}`;
+}
+
+function updateGardenLocationSetupCta(){
+  const btn=document.querySelector('.location-setup-btn');
+  if(!btn)return;
+  const loc=ensureGardenLocation();
+  const source=String(loc.source||'').trim().toLowerCase();
+  const label=String(loc.label||'').trim();
+  const trusted=typeof hasTrustedAppLocation==='function'&&hasTrustedAppLocation();
+  const serverLike=
+    !!label &&
+    source !== 'default' &&
+    Number.isFinite(Number(loc.lat)) &&
+    Number.isFinite(Number(loc.lon));
+  if(trusted||serverLike){
+    btn.textContent='📍 Change location';
+    btn.setAttribute('aria-label','Change garden location');
+  }else{
+    btn.textContent='📍 Set garden location';
+    btn.setAttribute('aria-label','Set garden location');
+  }
 }
 
 function weatherIsStale(){
@@ -4785,6 +4810,7 @@ function renderWeatherNote(){
   const weatherSub=document.querySelector('#moodWeatherNote .rail-note-sub');
   const locLabel=document.getElementById('gardenLocationLabel');
   if(locLabel) locLabel.textContent=gardenLocationLabel();
+  try{updateGardenLocationSetupCta();}catch(_){}
   if(!weatherTitle||!weatherSub) return;
   if(!loc.lat&&!loc.label){
     weatherTitle.textContent='📍 Set your garden location';
@@ -4793,7 +4819,7 @@ function renderWeatherNote(){
   }
   if(!w){
     weatherTitle.textContent='🌤️ Loading local weather…';
-    weatherSub.textContent='Tap to update garden location';
+    weatherSub.textContent=hasTrustedAppLocation()?'Tap to change garden location':'Tap to update garden location';
     return;
   }
   if((w.alerts||[]).includes('heat-wave')||(w.alerts||[]).includes('dry-heat')){
@@ -4807,7 +4833,7 @@ function renderWeatherNote(){
     weatherSub.textContent='Check drainage and skip extra watering';
   }else{
     weatherTitle.textContent=`🌤️ ${Math.round(w.tempC)}°C now · ${w.summary||'Fair'}`;
-    weatherSub.textContent=w.forecastHint||`Up to ${Math.round(w.maxC)}°C this week · tap to update location`;
+    weatherSub.textContent=w.forecastHint||`Up to ${Math.round(w.maxC)}°C this week · tap to ${hasTrustedAppLocation()?'change':'update'} location`;
   }
 }
 
@@ -4822,8 +4848,14 @@ function gardenMoodFromHealth(h){
   const urgent=h.urgentTasks||0;
   if(!h.totalPlants)return {key:'ready',icon:'🌱',title:'Ready to grow',headline:'Your garden is ready to begin ·',text:'Add your first plant and Cruvit will build a calm care rhythm for your garden.',micro:'Add your first plant and Cruvit will guide the next useful step.'};
   if(attention===0 && urgent===0)return {key:'flourishing',icon:'🌸',title:'Flourishing',headline:'Flourishing garden ·',text:'Everything looks calm today. Enjoy your garden — Cruvit will only remind you when care is useful.',micro:'Everything looks calm today. Enjoy your garden.'};
-  if(attention<=1 && urgent<=1)return {key:'thriving',icon:'🌿',title:'Thriving',headline:'Your garden is thriving ·',text:'Your garden is happy and flourishing. Keep it up — one small focus is enough today.',micro:'Your garden is happy and flourishing. Keep it up! 🌿'};
-  if(attention<=3 && urgent<=2)return {key:'gentle',icon:'🍃',title:'Gentle Care',headline:'Needs gentle care ·',text:'A few things need attention, but Cruvit will keep it simple and show only what matters first.',micro:'A few things need gentle care. Start with one useful step.'};
+  // Any plant needing attention is not "thriving / fully healthy".
+  if(attention>=1){
+    const n=attention;
+    const label=n===1?'1 plant needs attention':`${n} plants need attention`;
+    return {key:'gentle',icon:'🍃',title:'Needs attention',headline:`Mostly healthy — ${label} ·`,text:`${label}. Check those plants when you can; the rest of your garden can stay calm.`,micro:`Mostly healthy — ${label}.`};
+  }
+  if(urgent<=1)return {key:'thriving',icon:'🌿',title:'Thriving',headline:'Your garden is thriving ·',text:'Your garden is happy and flourishing. Keep it up — one small focus is enough today.',micro:'Your garden is happy and flourishing. Keep it up! 🌿'};
+  if(urgent<=2)return {key:'gentle',icon:'🍃',title:'Gentle Care',headline:'Needs gentle care ·',text:'A few things need attention, but Cruvit will keep it simple and show only what matters first.',micro:'A few things need gentle care. Start with one useful step.'};
   return {key:'love',icon:'🌾',title:'A Little Love',headline:'Needs a little love ·',text:'Several plants need care. Start with one helpful action and the rest can wait.',micro:'Start with one small action. The rest can wait.'};
 }
 function showHealthBreakdown(){
@@ -5255,9 +5287,17 @@ function render(){syncHealthScore();
   const hiddenCount=Math.max(0,openTotal-focusActions.reduce((n,a)=>(a.memberIndexes||[a.taskIndex]).length+n,0));
   const planCount=plannedCareTaskEntries().filter(x=>{const iso=taskIsoValue(x.t);return iso&&iso>datePlusDaysIso(7);}).length;
   const tasksTitle=document.getElementById('tasksTitle');
-  if(tasksTitle)tasksTitle.textContent=openTotal?'Today’s focus':'Your garden can rest today';
+  if(tasksTitle){
+    if(openTotal)tasksTitle.textContent='Today’s focus';
+    else if(attentionPlants>0)tasksTitle.textContent='No action needed today';
+    else tasksTitle.textContent='Your garden can rest today';
+  }
   const tasksSubtitle=document.getElementById('tasksSubtitle');
-  if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Your full care calendar is in History.':'Everything looks good. Enjoy your garden today.';
+  if(tasksSubtitle){
+    if(openTotal)tasksSubtitle.textContent='Only the most useful care is shown first. Your full care calendar is in History.';
+    else if(attentionPlants>0)tasksSubtitle.textContent='No care action is due right now, but some plants still need monitoring.';
+    else tasksSubtitle.textContent='Everything looks good. Enjoy your garden today.';
+  }
   const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
   const taskHtml=focusActions.map((action,actionIdx)=>{
     if(action.kind==='group'){
@@ -8600,8 +8640,8 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913d"></script>
-<script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913d"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913d"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913e"></script>
+<script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913e"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913e"></script>
 </body>
 </html>

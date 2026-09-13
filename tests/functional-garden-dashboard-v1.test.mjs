@@ -294,6 +294,31 @@ test('M+N: build creates zero mutations / no event generation side effects', () 
   assert.equal(DASHBOARD_FIELD_AUTHORITY.today_focus_actions, 'DERIVED_FROM_SERVER_STATE');
 });
 
-test('health unknown when status empty and mark unclear', () => {
-  assert.equal(classifyPlantHealthBucket({ name: 'X', status: '', mark: '' }), 'unknown');
+test('semantic: attention plant → mostly healthy state, not full healthy rest', () => {
+  const model = buildGardenDashboardReadModel({
+    garden: { id: 'g1', name: 'G', location_label: 'Mojstrana' },
+    plants: [
+      { name: 'Mango', mark: '!', status: 'Needs attention', id: 'p1' },
+      { name: 'Basil', mark: '✓', status: 'Healthy', id: 'p2' }
+    ],
+    tasks: [],
+    events: [
+      {
+        id: 'done1',
+        event_type: GARDEN_EVENT_TYPES.TASK_COMPLETED,
+        occurred_at: '2026-09-13T12:00:00.000Z',
+        payload: { title: 'Wipe leaves' }
+      }
+    ],
+    todayIso: TODAY
+  });
+  assert.match(model.summary.stateLabel, /Mostly healthy/i);
+  assert.ok(!/Balanced Garden/i.test(model.summary.stateLabel));
+  assert.equal(model.today.rest, true);
+  assert.equal(model.today.restKind, 'monitor');
+  assert.equal(model.today.restMessage, 'No action needed today');
+  assert.ok(model.recentActivity.items.some((i) => /completed/i.test(i.label)));
+  assert.equal(model.learning.empty, true);
+  assert.equal(model.mutationsOnBuild, false);
+  assert.ok(model.today.actions.length <= 3);
 });

@@ -353,6 +353,29 @@ export function buildGardenDashboardReadModel(input = {}) {
     if (key) plantsByKey.set(key, p);
   }
 
+  const sortedPlants = sortPlantsForHealthSummary(plantsRaw);
+  const attentionCount = sortedPlants.filter((p) => p.healthBucket === 'needs_attention').length;
+  const monitoringCount = sortedPlants.filter((p) => p.healthBucket === 'monitoring').length;
+  const healthyCount = sortedPlants.filter((p) => p.healthBucket === 'healthy').length;
+  const unknownCount = sortedPlants.filter((p) => p.healthBucket === 'unknown').length;
+  const attentionOrMonitor = attentionCount + monitoringCount;
+
+  let gardenStateLabel = 'Healthy garden';
+  if (plantsRaw.length === 0) gardenStateLabel = 'Ready to grow';
+  else if (attentionOrMonitor === 1) {
+    gardenStateLabel = 'Mostly healthy — 1 plant needs attention';
+  } else if (attentionOrMonitor > 1) {
+    gardenStateLabel = `Mostly healthy — ${attentionOrMonitor} plants need attention`;
+  }
+
+  const followUps = buildFollowUpQueue({
+    tasks: taskRows,
+    events,
+    todayIso,
+    plantByServerId
+  });
+  const hasFollowUpDue = followUps.some((x) => x.urgency === 'due' || x.urgency === 'high');
+
   const focusActions = selectGardenFocusActions(taskRows, {
     todayIso,
     max: GARDEN_TODAY_FOCUS_MAX,
@@ -360,11 +383,17 @@ export function buildGardenDashboardReadModel(input = {}) {
     plantsByKey
   });
 
-  const sortedPlants = sortPlantsForHealthSummary(plantsRaw);
-  const attentionCount = sortedPlants.filter((p) => p.healthBucket === 'needs_attention').length;
-  const monitoringCount = sortedPlants.filter((p) => p.healthBucket === 'monitoring').length;
-  const healthyCount = sortedPlants.filter((p) => p.healthBucket === 'healthy').length;
-  const unknownCount = sortedPlants.filter((p) => p.healthBucket === 'unknown').length;
+  let restMessage = 'Your garden can rest today.';
+  let restKind = 'rest';
+  if (focusActions.length === 0) {
+    if (hasFollowUpDue) {
+      restMessage = 'No routine care due — check follow-ups when you can.';
+      restKind = 'followups';
+    } else if (attentionOrMonitor > 0) {
+      restMessage = 'No action needed today';
+      restKind = 'monitor';
+    }
+  }
 
   const recentEvents = events
     .slice()
@@ -386,12 +415,6 @@ export function buildGardenDashboardReadModel(input = {}) {
   }
 
   const learning = buildLearningSignals(events, plantByServerId);
-  const followUps = buildFollowUpQueue({
-    tasks: taskRows,
-    events,
-    todayIso,
-    plantByServerId
-  });
 
   const locationLabel =
     (garden && (garden.location_label || garden.locationLabel)) ||
@@ -418,10 +441,12 @@ export function buildGardenDashboardReadModel(input = {}) {
     gardenId: garden ? garden.id || garden.garden_profile_id || null : null,
     summary: {
       name: (garden && garden.name) || input.gardenName || 'Your garden',
+      stateLabel: gardenStateLabel,
       locationLabel,
       climate,
       structuralClimateStatus: structuralStatus,
       plantCount: plantsRaw.length,
+      attentionCount: attentionOrMonitor,
       weatherSummary: weather
         ? {
             tempC: weather.tempC ?? weather.temp_c ?? null,
@@ -434,7 +459,8 @@ export function buildGardenDashboardReadModel(input = {}) {
       actions: focusActions,
       max: GARDEN_TODAY_FOCUS_MAX,
       rest: focusActions.length === 0,
-      restMessage: 'Your garden can rest today.'
+      restKind,
+      restMessage
     },
     plantHealth: {
       plants: sortedPlants.map((p) => ({

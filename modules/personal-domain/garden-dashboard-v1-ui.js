@@ -69,6 +69,7 @@ export function renderGardenDashboardHtml(model) {
 
   const summaryHtml = `<div class="gdash-summary">
     <b>${escapeHtml(s.name || 'Your garden')}</b>
+    <span class="gdash-state">${escapeHtml(s.stateLabel || '')}</span>
     <span>${escapeHtml(climateLine || 'Location not set yet')}${escapeHtml(weather)}</span>
     <span>${Number(s.plantCount) || 0} plant${(s.plantCount || 0) === 1 ? '' : 's'}</span>
   </div>`;
@@ -171,7 +172,10 @@ export function renderGardenDashboardHtml(model) {
   )}
   ${
     !model.plantHealth?.empty
-      ? renderSection('My plants', plantBody)
+      ? renderSection(
+          'My plants (full garden)',
+          `<p class="gdash-empty" style="margin:0 0 6px">All owned plants in this garden.</p>${plantBody}`
+        )
       : ''
   }
   ${renderSection(
