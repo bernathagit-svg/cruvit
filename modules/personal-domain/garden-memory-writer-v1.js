@@ -369,4 +369,112 @@ export function buildDoctorTaskCreatedMemoryInput(input = {}) {
   };
 }
 
+/**
+ * task_outcome_reported — user reported whether care helped (NOT completion).
+ * Never mutates global catalog. Never implies paid AI.
+ */
+export function buildTaskOutcomeReportedMemoryInput(input = {}) {
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const gardenTaskId = String(input.gardenTaskId || input.garden_task_id || '').trim();
+  const outcome = normalizeSpineToken(input.outcome);
+  if (!gardenProfileId || !gardenTaskId) {
+    throw new Error('task_outcome_requires_garden_and_task');
+  }
+  if (!outcome) throw new Error('outcome_required');
+  const sourceModule =
+    input.sourceModule || input.source_module || GARDEN_SOURCE_MODULES.MY_GARDEN;
+  const stableKey =
+    input.stableKey ||
+    input.stable_key ||
+    `outcome_${gardenTaskId}_${outcome}`;
+  const note = String(input.userNote ?? input.user_note ?? '').trim();
+  return {
+    reason: 'user_action',
+    explicitMutation: true,
+    gardenProfileId,
+    gardenPlantId: input.gardenPlantId || input.garden_plant_id || null,
+    gardenTaskId,
+    causedByEventId: input.causedByEventId || input.caused_by_event_id || null,
+    causedByEventGardenProfileId: gardenProfileId,
+    correlationId: input.correlationId || input.correlation_id || null,
+    eventType: GARDEN_EVENT_TYPES.TASK_OUTCOME_REPORTED,
+    sourceModule,
+    stableKey,
+    clientEventId:
+      input.clientEventId ||
+      buildGardenClientEventId({
+        sourceModule,
+        eventType: GARDEN_EVENT_TYPES.TASK_OUTCOME_REPORTED,
+        stableKey
+      }),
+    payload: {
+      outcome,
+      ...(note ? { user_note: note } : {}),
+      ...(input.daysSinceAction != null || input.days_since_action != null
+        ? { days_since_action: input.daysSinceAction ?? input.days_since_action }
+        : {}),
+      ...(input.beforeSeverity != null || input.before_severity != null
+        ? { before_severity: input.beforeSeverity ?? input.before_severity }
+        : {}),
+      ...(input.previousHealth
+        ? { previous_health: input.previousHealth }
+        : {}),
+      related_task_client_id: input.taskClientId || input.relatedTaskClientId || undefined,
+      auto_ai: false,
+      learning_scope: 'garden_plant_evidence_only'
+    },
+    occurredAt: input.occurredAt || new Date().toISOString()
+  };
+}
+
+/**
+ * followup_requested after outcome — never auto-runs Plant Doctor / paid AI.
+ */
+export function buildFollowupRequestedMemoryInput(input = {}) {
+  const gardenProfileId = String(input.gardenProfileId || input.garden_profile_id || '').trim();
+  const followupReason = normalizeSpineToken(
+    input.followupReason || input.followup_reason || input.reasonCode
+  );
+  if (!gardenProfileId || !followupReason) {
+    throw new Error('followup_requires_garden_and_reason');
+  }
+  const sourceModule =
+    input.sourceModule || input.source_module || GARDEN_SOURCE_MODULES.MY_GARDEN;
+  const gardenTaskId = input.gardenTaskId || input.garden_task_id || null;
+  const stableKey =
+    input.stableKey ||
+    input.stable_key ||
+    `followup_${gardenTaskId || 'garden'}_${followupReason}`;
+  return {
+    reason: 'user_action',
+    explicitMutation: true,
+    gardenProfileId,
+    gardenPlantId: input.gardenPlantId || input.garden_plant_id || null,
+    gardenTaskId,
+    causedByEventId: input.causedByEventId || input.caused_by_event_id || null,
+    causedByEventGardenProfileId: gardenProfileId,
+    correlationId: input.correlationId || input.correlation_id || null,
+    eventType: GARDEN_EVENT_TYPES.FOLLOWUP_REQUESTED,
+    sourceModule,
+    stableKey,
+    clientEventId:
+      input.clientEventId ||
+      buildGardenClientEventId({
+        sourceModule,
+        eventType: GARDEN_EVENT_TYPES.FOLLOWUP_REQUESTED,
+        stableKey
+      }),
+    payload: {
+      followup_reason: followupReason,
+      auto_ai: false,
+      priority: input.priority || undefined,
+      outcome: input.outcome || undefined,
+      ...(String(input.userNote || input.user_note || '').trim()
+        ? { user_note: String(input.userNote || input.user_note).trim() }
+        : {})
+    },
+    occurredAt: input.occurredAt || new Date().toISOString()
+  };
+}
+
 export { GARDEN_EVENT_TYPES, GARDEN_SOURCE_MODULES, GARDEN_TASK_TYPES, mayEmitGardenEvent, normalizeSpineToken };

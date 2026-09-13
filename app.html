@@ -1720,17 +1720,32 @@ function normalizeTaskRow(t){
     if(t.serverId) row.serverId=t.serverId;
     if(t.gardenPlantId) row.gardenPlantId=t.gardenPlantId;
     if(t.done===true) row[TASK_DONE_IDX]=true;
+    if(t.sourceModule||t.source_module) row.sourceModule=t.sourceModule||t.source_module;
+    if(t.taskType||t.task_type) row.taskType=t.taskType||t.task_type;
+    if(t.outcomeFollowUp) row.outcomeFollowUp=true;
+    if(t.relatedTaskClientId||t.related_task_client_id) row.relatedTaskClientId=t.relatedTaskClientId||t.related_task_client_id;
+    if(t.correlation_id||t.correlationId) row.correlation_id=t.correlation_id||t.correlationId;
+    if(t.caused_by_event_id||t.causedByEventId) row.caused_by_event_id=t.caused_by_event_id||t.causedByEventId;
+    if(t.completed_task_server_id) row.completed_task_server_id=t.completed_task_server_id;
   }else if(typeof t==='object'){
     row=[t.icon||t[0]||'🌿',t.title||t.name||t[1]||'Garden care',t.when||t.date||t[2]||'This week',t.priority||t[3]||'Low',t.iso||t[4]||'',t.auto??t[5]??false,t.plantName||t[6]||'',!!t.done,t.id||t.client_instance_id||t[8]||''];
     if(t.id) row.id=t.id;
     if(t.serverId) row.serverId=t.serverId;
     if(t.gardenPlantId||t.garden_plant_id) row.gardenPlantId=t.gardenPlantId||t.garden_plant_id;
+    if(t.sourceModule||t.source_module) row.sourceModule=t.sourceModule||t.source_module;
+    if(t.taskType||t.task_type) row.taskType=t.taskType||t.task_type;
+    if(t.outcomeFollowUp) row.outcomeFollowUp=true;
+    if(t.relatedTaskClientId||t.related_task_client_id) row.relatedTaskClientId=t.relatedTaskClientId||t.related_task_client_id;
+    if(t.correlation_id||t.correlationId) row.correlation_id=t.correlation_id||t.correlationId;
+    if(t.caused_by_event_id||t.causedByEventId) row.caused_by_event_id=t.caused_by_event_id||t.causedByEventId;
+    if(t.completed_task_server_id) row.completed_task_server_id=t.completed_task_server_id;
   }else{
     row=[String(t),'Garden care','This week','Low','',false,'',false,''];
   }
   while(row.length<=TASK_CLIENT_ID_IDX) row.push(undefined);
   row[TASK_DONE_IDX]=!!row[TASK_DONE_IDX];
   ensureMyGardenTaskClientId(row);
+  if(String(row[TASK_CLIENT_ID_IDX]||'').startsWith('outcome_fu_')) row.outcomeFollowUp=true;
   return row;
 }
 function taskDone(t){return !!normalizeTaskRow(t)[TASK_DONE_IDX]}
@@ -2537,7 +2552,20 @@ function taskUrgencyScore(t){
   return score;
 }
 function datePlusDaysIso(days){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
-const CARE_PLAN_HORIZON_DAYS=180;
+const CARE_PLAN_HORIZON_DAYS=14; // CLOSED_LOOP V1: JIT horizon only — not 6-month materialization
+function countLegacyFarFutureRoutineTasks(){
+  const cutoff=datePlusDaysIso(14);
+  let n=0;
+  (data.tasks||[]).forEach(t=>{
+    if(taskDone(t))return;
+    const iso=taskIsoValue(t);
+    if(!iso||iso<=cutoff)return;
+    const note=String(t[2]||'');
+    const title=String(t[1]||'');
+    if(/6-month plan/i.test(note)||(/Water |Fertilize |Prune |Check .+ leaves/.test(title)&&iso>cutoff))n++;
+  });
+  return n;
+}
 function isCoreCareTaskTitle(title){
   return /water|moisture|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat|protect|cover|drain|check|inspect/.test(String(title||'').toLowerCase());
 }
@@ -2559,12 +2587,18 @@ function isCompanionActionableTask(t){
   const when=String(t[2]||'').toLowerCase();
   const priority=String(t[3]||'').toLowerCase();
   const iso=taskIsoValue(t);
+  const isOutcomeFu=!!(t.outcomeFollowUp||String(t[8]||t.id||'').startsWith('outcome_fu_'));
+  if(isOutcomeFu){
+    // Surface only when the biological outcome window is due (or overdue).
+    if(iso && iso>todayIso())return false;
+    return true;
+  }
 
   // Cruvit should reduce pressure: generic review/checkup tasks stay in the background.
   if(title.includes('review ')||title.includes('review care')||title.includes('status checked'))return false;
-  if(title.includes('check ') && !/pest|disease|yellow|wilting|leaves|urgent|attention|moisture|soil|cold|heat|frost|protect|drain/.test(title))return false;
+  if(title.includes('check ') && !/pest|disease|yellow|wilting|leaves|urgent|attention|moisture|soil|cold|heat|frost|protect|drain|how is /.test(title))return false;
 
-  const careAction=/water|moisture|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat|protect|cover|drain|cold|heat|frost/.test(title);
+  const careAction=/water|moisture|fertiliz|feed|prun|pest|disease|yellow|wilting|leaves|harvest|repot|treat|protect|cover|drain|cold|heat|frost|how is /.test(title);
   if(!careAction)return false;
 
   // Future tasks should not feel like today's burden. Surface only due/near-term care.
@@ -2606,8 +2640,18 @@ function visibleCareTaskCount(){
   return companionOpenTaskEntries().length;
 }
 function focusedTaskIndexes(){
+  const budget=window.cruvitGardenTaskBudgetV1;
+  if(budget&&typeof budget.selectGardenFocusTaskIndexes==='function'){
+    // Primary Today Focus is always ≤3 Garden-wide. Expanded week list may show more near-term actionable tasks.
+    const focusMax=showAllTasks?12:3;
+    return budget.selectGardenFocusTaskIndexes(data.tasks||[],{
+      todayIso:todayIso(),
+      max:focusMax,
+      horizonDays:7
+    });
+  }
   const open=window.gardenModesTaskFilter?companionOpenTaskEntriesFiltered():companionOpenTaskEntries();
-  const limit=showAllTasks?Math.min(open.length,10):1;
+  const limit=showAllTasks?Math.min(open.length,12):Math.min(open.length,3);
   return open.slice(0,limit).map(x=>x.i);
 }
 function refreshOpenTaskPanels(){
@@ -3367,32 +3411,36 @@ function plantCarePlanReachDays(plantName){
   return Math.max(0,Math.round(ms/86400000));
 }
 function maintainSeasonalCarePlanForPlant(ref){
+  // CLOSED_LOOP_CARE_AND_TASKS_V1:
+  // CARE SCHEDULE KNOWLEDGE ≠ MATERIALIZED TASKS.
+  // Do NOT pre-create months of Water/Fertilize/Prune/Check leaves rows.
+  // Legacy far-future rows are left in place (not silently deleted) — see countLegacyFarFutureRoutineTasks().
+  return ensureJustInTimeRoutineCareForPlant(ref);
+}
+function ensureJustInTimeRoutineCareForPlant(ref){
   const plantName=ref.name||'Plant';
-  const horizon=CARE_PLAN_HORIZON_DAYS;
-  const beforeReach=plantCarePlanReachDays(plantName);
-  const waterEvery=plantWaterIntervalDays(ref);
-  let created=0;
-  for(let offset=8;offset<=horizon;offset+=waterEvery){
-    if(addAutoCareTask(ref,`Water ${plantName}`,offset,`6-month plan · every ${waterEvery} days`,'💧'))created++;
-  }
-  if(plantWantsFertilizer(ref)){
-    for(let offset=30;offset<=horizon;offset+=45){
-      if(addAutoCareTask(ref,`Fertilize ${plantName}`,offset,'6-month plan · feed cycle','🌿'))created++;
+  const budget=window.cruvitGardenTaskBudgetV1;
+  const openForPlant=(data.tasks||[]).filter(t=>!taskDone(t)&&taskMatchesPlant(t,plantName));
+  if(budget&&typeof budget.nextRoutineCareSuggestion==='function'){
+    const suggestion=budget.nextRoutineCareSuggestion(ref,openForPlant,{maxOffsetDays:CARE_PLAN_HORIZON_DAYS});
+    if(!suggestion)return 0;
+    if(taskTitleExists(suggestion.title,plantName))return 0;
+    if(addAutoCareTask(ref,suggestion.title,suggestion.offsetDays,suggestion.note,suggestion.icon)){
+      const row=data.tasks[data.tasks.length-1];
+      if(row){
+        row.sourceModule=suggestion.sourceModule||'my_garden';
+        row.taskType=suggestion.taskType||'care';
+      }
+      return 1;
     }
+    return 0;
   }
-  if(plantWantsPruning(ref)){
-    for(let offset=90;offset<=horizon;offset+=90){
-      if(addAutoCareTask(ref,`Prune ${plantName}`,offset,'6-month plan · trim window','✂️'))created++;
-    }
-  }
-  for(let offset=30;offset<=horizon;offset+=30){
-    if(addAutoCareTask(ref,`Check ${plantName} leaves`,offset,'6-month plan · monthly check','🔎'))created++;
-  }
-  const afterReach=plantCarePlanReachDays(plantName);
-  if(created && afterReach>beforeReach){
-    data.events.unshift(['Today','Care plan updated',`${plantName} · ${afterReach} days ahead`]);
-  }
-  return created;
+  // Fallback without module: at most one near-term water if none open.
+  if(openForPlant.some(t=>/water|moisture|fertiliz|prun|check .+ leaves/i.test(String(t[1]||''))))return 0;
+  if(openForPlant.some(t=>String(t[8]||'').startsWith('pd_care_')))return 0;
+  const w=inferWaterTask(ref);
+  if(taskTitleExists(w.title,plantName))return 0;
+  return addAutoCareTask(ref,w.title,Math.min(w.offset,CARE_PLAN_HORIZON_DAYS),w.note,'💧')?1:0;
 }
 function inferWaterTask(ref){
   const w=String(ref.water||'').toLowerCase();
@@ -5181,7 +5229,14 @@ function render(){syncHealthScore();
   const tasksSubtitle=document.getElementById('tasksSubtitle');
   if(tasksSubtitle)tasksSubtitle.textContent=openTotal?'Only the most useful care is shown first. Your full care calendar is in History.':'Everything looks good. Enjoy your garden today.';
   const completeBtn=document.getElementById('completeFocusBtn'); if(completeBtn)completeBtn.style.display=openTotal?'inline-block':'none';
-  const taskHtml=focusIndexes.map(i=>{const t=data.tasks[i];return `<div class="task ${taskDone(t)?'done':''}"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${t[1]}</b><span>${t[2]}</span></div><div class="task-side"><button class="priority" onclick="completeTask(${i})">${taskDone(t)?'Done':t[3]}</button><div class="card-actions"><button type="button" class="kebab" onclick="toggleTaskMenu(event,${i})" aria-label="Task options">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div></div>`}).join('');
+  const taskHtml=focusIndexes.map(i=>{
+    const t=data.tasks[i];
+    const isOutcomeFu=!!(t&&(t.outcomeFollowUp||String(t[8]||t.id||'').startsWith('outcome_fu_')));
+    if(isOutcomeFu&&!taskDone(t)){
+      return `<div class="task outcome-followup"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${escapeHtml(t[1])}</b><span>${escapeHtml(t[2])}</span><div class="outcome-choices" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"><button type="button" class="priority" onclick="reportCareOutcome(${i},'better')">Better</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'slightly_better')">Slightly better</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'no_change')">No change</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'worse')">Worse</button><button type="button" class="priority" onclick="reportCareOutcome(${i},'unsure')">Unsure</button></div></div></div>`;
+    }
+    return `<div class="task ${taskDone(t)?'done':''}"><div class="taskIcon">${t[0]}</div><div class="task-copy"><b>${t[1]}</b><span>${t[2]}</span></div><div class="task-side"><button class="priority" onclick="completeTask(${i})">${taskDone(t)?'Done':t[3]}</button><div class="card-actions"><button type="button" class="kebab" onclick="toggleTaskMenu(event,${i})" aria-label="Task options">⋯</button><div id="task-menu-${i}" class="action-menu ${openMenu==='task-'+i?'open':''}"><button onclick="completeTask(${i})">✓ Mark completed</button><button onclick="postponeTask(${i})">↷ Move to another day</button><button onclick="deleteTask(${i})">Delete</button></div></div></div></div>`;
+  }).join('');
   let footer='';
   if(openTotal===0 && !planCount){
     footer=`<div class="garden-rest-note">🌿 No urgent care is needed right now. Cruvit will only surface tasks when they are actually useful.</div>`;
@@ -5229,14 +5284,100 @@ function toggleTaskMenu(ev,i){
 function deleteTask(i){if(confirm('Delete this task?')){const task=data.tasks[i];data.tasks.splice(i,1);data.events.unshift(['Today','Task deleted',task[1]]);syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}}
 function postponeTask(i){const day=parseInt(prompt(`Move task to which day in ${monthNames[currentMonthIndex]}?`,String(selectedDay)),10);if(!day||day<1||day>new Date(calendarYear,currentMonthIndex+1,0).getDate())return;const iso=`${calendarYear}-${String(currentMonthIndex+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;data.tasks[i][2]=monthNames[currentMonthIndex]+' '+day+' · postponed';data.tasks[i][4]=iso;data.events.unshift([monthNames[currentMonthIndex]+' '+day,'Task postponed',data.tasks[i][1]]);selectedDay=day;syncHealthScore();service.save(data);openMenu=null;render();refreshOpenTaskPanels();finalizeTaskListChange()}
 function taskCredit(t){const text=((t&&t[1])||'').toLowerCase(); if(text.includes('water'))return 2; if(text.includes('prun'))return 5; if(text.includes('fertiliz'))return 5; return 3}
-function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange();try{const pd=window.cruvitPersonalDomainV0;const task=data.tasks[i];if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&task){pd.upsertTaskOnActiveGarden(task).then((row)=>{if(!row||typeof pd.emitTaskCompletedMemory!=='function')return;return pd.emitTaskCompletedMemory(row,{title:task[1]}).catch((err)=>{console.warn('[GardenMemory] task_completed write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server task complete upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory task_completed hook failed',e)}}
+function completeTask(i){if(taskDone(data.tasks[i]))return;data.tasks[i]=setTaskDone(data.tasks[i],true);data.events.unshift(['Today','Task completed',data.tasks[i][1]]);awardCredits(taskCredit(data.tasks[i]),'Task completed');syncHealthScore();try{scheduleCareOutcomeFollowUpAfterCompletion(i);}catch(e){console.warn('Care outcome follow-up schedule failed',e);}service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange();try{const pd=window.cruvitPersonalDomainV0;const task=data.tasks[i];if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&task){pd.upsertTaskOnActiveGarden(task).then((row)=>{if(!row||typeof pd.emitTaskCompletedMemory!=='function')return;return pd.emitTaskCompletedMemory(row,{title:task[1]}).catch((err)=>{console.warn('[GardenMemory] task_completed write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server task complete upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory task_completed hook failed',e)}}
+function scheduleCareOutcomeFollowUpAfterCompletion(completedIndex){
+  const completed=data.tasks[completedIndex];
+  if(!completed)return false;
+  const outcomeApi=window.cruvitGardenCareOutcomeV1;
+  if(!outcomeApi||typeof outcomeApi.isOutcomeEligibleCareTask!=='function')return false;
+  if(!outcomeApi.isOutcomeEligibleCareTask(completed))return false;
+  // Do NOT ask “Did it help?” immediately — schedule due window.
+  const days=outcomeApi.resolveOutcomeFollowUpDays(completed);
+  const dueIso=datePlusDaysIso(days);
+  const clientId=String(completed[8]||completed.id||'').trim();
+  if(!clientId)return false;
+  const fuId=outcomeApi.buildOutcomeFollowUpClientId(clientId);
+  if((data.tasks||[]).some(t=>String(t[8]||t.id||'')===fuId&&!taskDone(t)))return false;
+  const plantName=String(completed[6]||'').trim()||'Plant';
+  const row=outcomeApi.buildOutcomeFollowUpTaskRow({
+    plantName,
+    completedTaskClientId:clientId,
+    completedTask:completed,
+    days,
+    dueIso,
+    gardenPlantId:completed.gardenPlantId||null,
+    correlationId:completed.correlation_id||null,
+    causedByEventId:completed.caused_by_event_id||null,
+    completedTaskServerId:completed.serverId||null,
+    sourceModule:completed.sourceModule||'plant_doctor'
+  });
+  data.tasks.push(normalizeTaskRow(row));
+  data.events.unshift(['Today','Outcome check scheduled',`${plantName} · in ${days} day${days===1?'':'s'}`]);
+  try{
+    const pd=window.cruvitPersonalDomainV0;
+    const fu=data.tasks[data.tasks.length-1];
+    if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'&&fu){
+      pd.upsertTaskOnActiveGarden(fu).catch((err)=>{console.warn('Outcome follow-up upsert failed',err&&err.message?err.message:err);});
+    }
+  }catch(_){}
+  return true;
+}
+function reportCareOutcome(i,outcome){
+  const task=data.tasks[i];
+  if(!task||taskDone(task))return;
+  const outcomeApi=window.cruvitGardenCareOutcomeV1;
+  const pd=window.cruvitPersonalDomainV0;
+  let decision=null;
+  try{
+    decision=outcomeApi&&outcomeApi.decideCareOutcomeFollowUp
+      ?outcomeApi.decideCareOutcomeFollowUp(outcome)
+      :{outcome,followupRequested:false,message:'Recorded',autoAi:false};
+  }catch(e){
+    alert('Could not record that outcome.');
+    return;
+  }
+  // Mark follow-up task done locally (user reported outcome — not “treatment success”).
+  data.tasks[i]=setTaskDone(data.tasks[i],true);
+  data.events.unshift(['Today','Care outcome reported',`${task[1]} · ${decision.outcome}`]);
+  if(decision.followupRequested){
+    data.events.unshift(['Today','Follow-up requested',decision.followupReason||decision.outcome]);
+  }
+  service.save(data);
+  render();
+  refreshOpenTaskPanels();
+  finalizeTaskListChange();
+  try{
+    if(pd&&typeof pd.isServerTasksAuthoritative==='function'&&pd.isServerTasksAuthoritative()&&typeof pd.upsertTaskOnActiveGarden==='function'){
+      pd.upsertTaskOnActiveGarden(data.tasks[i]).then(async (row)=>{
+        if(!row||typeof pd.reportCareOutcomeMemory!=='function')return;
+        const relatedId=task.relatedTaskClientId||task.related_task_client_id||'';
+        // Prefer outcome on the ORIGINAL care task id when known; else this follow-up row.
+        let gardenTaskId=row.id;
+        if(task.completed_task_server_id) gardenTaskId=task.completed_task_server_id;
+        await pd.reportCareOutcomeMemory({
+          gardenTaskId,
+          gardenPlantId:task.gardenPlantId||row.garden_plant_id||null,
+          outcome:decision.outcome,
+          taskClientId:relatedId||row.client_instance_id,
+          correlationId:task.correlation_id||null,
+          causedByEventId:task.caused_by_event_id||null,
+          sourceModule:task.sourceModule||'my_garden',
+          userNote:''
+        });
+      }).catch((err)=>{console.warn('[GardenMemory] outcome report failed',err&&err.message?err.message:err);});
+    }
+  }catch(e){console.warn('Care outcome memory hook failed',e);}
+  if(decision.message){
+    try{console.info('[CareOutcome]',decision.message,'(autoAi=false)');}catch(_){}
+  }
+}
 function completeTaskByRef(btn){
   const title=btn?.dataset?.taskTitle||'';
   const iso=btn?.dataset?.taskIso||'';
   const i=(data.tasks||[]).findIndex(t=>!taskDone(t)&&String(t[1]||'')===title&&taskIsoValue(t)===iso);
   if(i>=0)completeTask(i);
 }
-function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.forEach(i=>{if(data.tasks[i])data.tasks[i]=setTaskDone(data.tasks[i],true)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');syncHealthScore();service.save(data);render();refreshOpenTaskPanels();finalizeTaskListChange()}
+function completeAll(){const idxs=focusedTaskIndexes(); if(!idxs.length)return; idxs.slice().forEach(i=>{if(data.tasks[i]&&!taskDone(data.tasks[i]))completeTask(i)});data.events.unshift(['Today','Today’s focus completed','Health score recalculated']);awardCredits(idxs.length>=3?10:5,'Today’s focus completed');service.save(data);render()}
 function createPlantAlertTaskFromPanel(i){
   const p=data.plants[i];
   if(!p)return;
@@ -8362,7 +8503,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913a"></script>
-<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913a"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913b"></script>
+<script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913b"></script>
 </body>
 </html>

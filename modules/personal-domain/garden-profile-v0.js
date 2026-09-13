@@ -31,8 +31,15 @@ import {
   buildPlantAddedMemoryInput,
   buildPlantArchivedMemoryInput,
   buildTaskCompletedMemoryInput,
+  buildTaskOutcomeReportedMemoryInput,
+  buildFollowupRequestedMemoryInput,
   writeGardenMemoryEvent
 } from './garden-memory-writer-v1.js';
+import {
+  buildClosedLoopOutcomeMemoryBundle,
+  decideCareOutcomeFollowUp
+} from './garden-care-outcome-v1-contract.js';
+import './garden-closed-loop-care-v1-browser.js';
 import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
   wireSpecificPlantSuitabilityUi,
@@ -1119,6 +1126,58 @@ async function emitTaskCompletedMemory(serverTaskRow, meta = {}) {
   return recordGardenMemoryEvent(input);
 }
 
+/**
+ * Closed-loop: user reported outcome for a care intervention (never completion).
+ * Does NOT call Plant Doctor / paid AI.
+ */
+async function emitTaskOutcomeReportedMemory(input = {}) {
+  const gardenProfileId = String(input.gardenProfileId || getActiveGardenId() || '').trim();
+  const memory = buildTaskOutcomeReportedMemoryInput({
+    ...input,
+    gardenProfileId
+  });
+  return recordGardenMemoryEvent(memory);
+}
+
+async function emitFollowupRequestedMemory(input = {}) {
+  const gardenProfileId = String(input.gardenProfileId || getActiveGardenId() || '').trim();
+  const memory = buildFollowupRequestedMemoryInput({
+    ...input,
+    gardenProfileId
+  });
+  return recordGardenMemoryEvent(memory);
+}
+
+/**
+ * Report care outcome → task_outcome_reported (+ optional followup_requested).
+ * Returns { decision, outcomeEvent, followupEvent }. Never auto-runs AI.
+ */
+async function reportCareOutcomeMemory(input = {}) {
+  const gardenProfileId = String(input.gardenProfileId || getActiveGardenId() || '').trim();
+  const bundle = buildClosedLoopOutcomeMemoryBundle({
+    ...input,
+    gardenProfileId
+  });
+  const outcomeWrite = await recordGardenMemoryEvent(bundle.outcomeMemory);
+  const outcomeEvent = outcomeWrite?.event || outcomeWrite;
+  let followupEvent = null;
+  if (bundle.followupMemory) {
+    const followupWrite = await recordGardenMemoryEvent({
+      ...bundle.followupMemory,
+      causedByEventId:
+        outcomeWrite?.eventId || outcomeEvent?.id || bundle.followupMemory.causedByEventId || null,
+      causedByEventGardenProfileId: gardenProfileId
+    });
+    followupEvent = followupWrite?.event || followupWrite;
+  }
+  return {
+    decision: bundle.decision,
+    outcomeEvent,
+    followupEvent,
+    autoAi: false
+  };
+}
+
 async function deletePlantOnActiveGarden(clientInstanceId) {
   const gardenId = requireActiveOwnedGardenId();
   const id = String(clientInstanceId || '').trim();
@@ -1631,6 +1690,10 @@ window.cruvitPersonalDomainV0 = {
   emitPlantAddedMemory,
   emitPlantArchivedMemory,
   emitTaskCompletedMemory,
+  emitTaskOutcomeReportedMemory,
+  emitFollowupRequestedMemory,
+  reportCareOutcomeMemory,
+  decideCareOutcomeFollowUp,
   writeGardenMemoryEvent: (input) => recordGardenMemoryEvent(input),
   importLegacyLocalTasksToActiveGarden,
   listTasksForActiveGarden: async () => listTasksForGarden(getActiveGardenId()),
