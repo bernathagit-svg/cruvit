@@ -69,7 +69,12 @@ export function renderGardenDashboardHtml(model) {
 
   const summaryHtml = `<div class="gdash-summary">
     <b>${escapeHtml(s.name || 'Your garden')}</b>
-    <span class="gdash-state">${escapeHtml(s.stateLabel || '')}</span>
+    ${
+      // Avoid repeating a second "garden is fine / rest" banner when Today already says rest
+      s.stateLabel && !(model.today?.rest && model.today?.restKind === 'rest')
+        ? `<span class="gdash-state">${escapeHtml(s.stateLabel)}</span>`
+        : ''
+    }
     <span>${escapeHtml(climateLine || 'Location not set yet')}${escapeHtml(weather)}</span>
     <span>${Number(s.plantCount) || 0} plant${(s.plantCount || 0) === 1 ? '' : 's'}</span>
   </div>`;
@@ -161,46 +166,57 @@ export function renderGardenDashboardHtml(model) {
   return `<div class="gdash-panel" id="${PANEL_ID}" data-gdash-version="${escapeHtml(
     model.version || GARDEN_DASHBOARD_V1_VERSION
   )}">
-  <div class="gdash-head"><h3>Garden overview</h3><small>Functional Garden OS · read-only</small></div>
-  ${errHtml}
-  ${renderSection('Garden summary', summaryHtml)}
-  ${renderSection(
-    'Today',
-    todayBody,
-    model.today?.rest ? model.today.restMessage : null
-  )}
-  ${renderSection(
-    'Needs attention',
-    attentionBody,
-    model.plantHealth?.empty
-      ? 'No plants in this garden yet.'
-      : attentionPlants.length
-        ? null
-        : 'No plants need attention right now.'
-  )}
-  ${
-    !model.plantHealth?.empty
-      ? renderSection(
-          'My plants (full garden)',
-          `<p class="gdash-empty" style="margin:0 0 6px">All owned plants in this garden.</p>${plantBody}`
-        )
-      : ''
-  }
-  ${renderSection(
-    'Follow-ups',
-    fuBody,
-    model.followUps?.empty ? 'No care follow-ups waiting right now.' : null
-  )}
-  ${renderSection(
-    'Recent activity',
-    activityBody,
-    model.recentActivity?.empty ? 'No garden history recorded yet.' : null
-  )}
-  ${renderSection(
-    'What CRUVIT learned',
-    learnBody,
-    model.learning?.empty ? model.learning.emptyMessage : null
-  )}
+  <div class="gdash-layout">
+    <div class="gdash-col gdash-col-main">
+      <div class="gdash-card">
+        <div class="gdash-head">
+          <h3>Garden overview</h3>
+          <p class="gdash-lede">A quick look at your garden today</p>
+        </div>
+        ${errHtml}
+        ${renderSection('Garden summary', summaryHtml)}
+        ${renderSection(
+          'Today',
+          todayBody,
+          model.today?.rest ? model.today.restMessage : null
+        )}
+        ${renderSection(
+          'Needs attention',
+          attentionBody,
+          model.plantHealth?.empty
+            ? 'No plants in this garden yet.'
+            : attentionPlants.length
+              ? null
+              : 'No plants need attention right now.'
+        )}
+        ${
+          !model.plantHealth?.empty
+            ? renderSection('My plants', plantBody)
+            : ''
+        }
+        ${renderSection(
+          'Follow-ups',
+          fuBody,
+          model.followUps?.empty ? 'No care follow-ups waiting right now.' : null
+        )}
+      </div>
+    </div>
+    <div class="gdash-col gdash-col-side">
+      <div id="gardenAreasSlot" class="gdash-areas-slot"></div>
+      <div class="gdash-card">
+        ${renderSection(
+          'Recent activity',
+          activityBody,
+          model.recentActivity?.empty ? 'No garden history recorded yet.' : null
+        )}
+        ${renderSection(
+          'What CRUVIT learned',
+          learnBody,
+          model.learning?.empty ? model.learning.emptyMessage : null
+        )}
+      </div>
+    </div>
+  </div>
 </div>`;
 }
 
@@ -326,12 +342,15 @@ export async function refreshGardenDashboardV1() {
   if (!host) return null;
   const token = ++lastRenderToken;
   const pd = window.cruvitPersonalDomainV0;
+  const shell = document.getElementById('gardenOsFunctionalShell');
   if (!pd?.getSession?.()?.user) {
     host.innerHTML = '';
     host.hidden = true;
+    if (shell) shell.hidden = true;
     return null;
   }
   host.hidden = false;
+  if (shell) shell.hidden = false;
   host.innerHTML = renderGardenDashboardHtml({ loading: true });
   try {
     const model = await loadGardenDashboardReadModel();
@@ -339,9 +358,14 @@ export async function refreshGardenDashboardV1() {
     if (!model) {
       host.innerHTML = '';
       host.hidden = true;
+      if (shell) shell.hidden = true;
       return null;
     }
     host.innerHTML = renderGardenDashboardHtml(model);
+    placeAreasHostInDashboardSlot();
+    if (typeof window.cruvitGardenAreasV1?.refresh === 'function') {
+      window.cruvitGardenAreasV1.refresh().catch(() => {});
+    }
     return model;
   } catch (e) {
     console.warn('[GardenDashboard] render failed', e?.message || e);
@@ -349,6 +373,15 @@ export async function refreshGardenDashboardV1() {
       host.innerHTML = `<div class="gdash-panel"><p class="gdash-warn">Garden overview is temporarily unavailable.</p></div>`;
     }
     return null;
+  }
+}
+
+function placeAreasHostInDashboardSlot() {
+  const slot = document.getElementById('gardenAreasSlot');
+  const areasHost = document.getElementById('gardenAreasV1Host');
+  if (!slot || !areasHost) return;
+  if (areasHost.parentElement !== slot) {
+    slot.appendChild(areasHost);
   }
 }
 

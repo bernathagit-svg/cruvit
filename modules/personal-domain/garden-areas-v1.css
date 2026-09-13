@@ -1,70 +1,113 @@
-/* Garden Areas V1 — minimal functional styles */
+/* Garden Areas V1 — functional product card (not admin form) */
 .garden-areas-host {
-  margin: 10px 0 4px;
+  margin: 0;
 }
 .gareas-panel {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.82);
   border: 1px solid rgba(20, 59, 40, 0.12);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 16px 18px;
 }
 .gareas-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  align-items: baseline;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .gareas-head h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+  color: rgba(20, 59, 40, 0.95);
 }
-.gareas-note,
-.gareas-head small {
+.gareas-lede {
+  margin: 6px 0 0;
+  color: rgba(20, 59, 40, 0.68);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+.gareas-empty {
+  margin: 0 0 14px;
+}
+.gareas-empty strong {
+  display: block;
+  font-size: 0.98rem;
+  color: rgba(20, 59, 40, 0.9);
+  margin-bottom: 4px;
+}
+.gareas-empty p,
+.gareas-note {
+  margin: 0;
   color: rgba(20, 59, 40, 0.65);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
 }
 .gareas-list {
   list-style: none;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   padding: 0;
 }
 .gareas-list li {
-  padding: 8px 0;
+  padding: 12px 0;
   border-top: 1px solid rgba(20, 59, 40, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+.gareas-list li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.gareas-list b {
+  font-size: 1rem;
+}
+.gareas-list small {
+  color: rgba(20, 59, 40, 0.62);
+  font-size: 0.88rem;
 }
 .gareas-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 .gareas-actions button {
   font: inherit;
-  font-size: 0.8rem;
-  padding: 4px 8px;
-  border-radius: 8px;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  border-radius: 10px;
   border: 1px solid rgba(20, 59, 40, 0.18);
   background: #fff;
   cursor: pointer;
 }
 .gareas-form {
   display: grid;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 12px;
+  margin-top: 4px;
+}
+.gareas-form-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: rgba(20, 59, 40, 0.9);
 }
 .gareas-form label {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 0.85rem;
+  gap: 6px;
+  font-size: 0.92rem;
+  color: rgba(20, 59, 40, 0.88);
 }
 .gareas-form input,
 .gareas-form select {
   font: inherit;
-  padding: 6px 8px;
-  border-radius: 8px;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid rgba(20, 59, 40, 0.2);
+  background: #fff;
+  min-height: 42px;
+}
+.gareas-form button[type='submit'] {
+  margin-top: 4px;
+  justify-self: start;
+  min-height: 42px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
 }

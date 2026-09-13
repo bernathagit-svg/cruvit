@@ -37,12 +37,15 @@ function optionList(values, selected) {
 export function renderGardenAreasHtml(state = {}) {
   if (state.pendingMigration) {
     return `<div class="gareas-panel" id="gardenAreasV1Panel">
-      <h3>Garden Areas</h3>
-      <p class="gareas-note">Areas / microclimate storage is ready for owner review. Apply migration <code>20260913190000_garden_areas_v1.sql</code> to enable.</p>
+      <div class="gareas-head">
+        <h3>Garden areas</h3>
+        <p class="gareas-lede">Tell CRUVIT about this part of your garden</p>
+      </div>
+      <p class="gareas-note">Garden areas are temporarily unavailable.</p>
     </div>`;
   }
   if (state.error) {
-    return `<div class="gareas-panel"><h3>Garden Areas</h3><p class="gareas-note">Areas temporarily unavailable.</p></div>`;
+    return `<div class="gareas-panel"><div class="gareas-head"><h3>Garden areas</h3></div><p class="gareas-note">Areas temporarily unavailable.</p></div>`;
   }
   if (!state.signedIn) {
     return '';
@@ -56,26 +59,33 @@ export function renderGardenAreasHtml(state = {}) {
           const rm = buildAreaReadModel(a, plants);
           return `<li>
             <b>${escapeHtml(a.name)}</b>
-            <small>${escapeHtml(rm.context.sunExposure)} · ${escapeHtml(
-            rm.context.plantingMode
+            <small>${escapeHtml(rm.context.sunExposure.replace(/_/g, ' '))} · ${escapeHtml(
+            rm.context.plantingMode.replace(/_/g, ' ')
           )} · ${rm.plantCount} plant${rm.plantCount === 1 ? '' : 's'}</small>
             <div class="gareas-actions">
-              <button type="button" data-area-edit="${escapeHtml(a.id)}">Edit</button>
+              <button type="button" data-area-edit="${escapeHtml(a.id)}">Edit sun</button>
               <button type="button" data-area-assign="${escapeHtml(a.id)}">Assign plant</button>
               <button type="button" data-area-delete="${escapeHtml(a.id)}">Delete</button>
             </div>
           </li>`;
         })
         .join('')}</ul>`
-    : `<p class="gareas-note">No areas yet. Create one to capture sun, irrigation, and planting site context.</p>`;
+    : `<div class="gareas-empty">
+        <strong>No garden areas yet</strong>
+        <p>Add an area to capture sun, irrigation and planting conditions.</p>
+      </div>`;
 
   return `<div class="gareas-panel" id="gardenAreasV1Panel" data-version="${escapeHtml(
     GARDEN_AREAS_V1_VERSION
   )}">
-    <div class="gareas-head"><h3>Garden Areas</h3><small>Site / microclimate context · not climate authority</small></div>
+    <div class="gareas-head">
+      <h3>Garden areas</h3>
+      <p class="gareas-lede">Tell CRUVIT about this part of your garden</p>
+    </div>
     ${list}
     <form id="gardenAreaCreateForm" class="gareas-form">
-      <label>Name <input name="name" required maxlength="80" placeholder="Patio pots" /></label>
+      <p class="gareas-form-title">${areas.length ? 'Add another area' : 'Create an area'}</p>
+      <label>Area name <input name="name" required maxlength="80" placeholder="Patio pots" /></label>
       <label>Sun
         <select name="sunExposure">${optionList(AREA_SUN_EXPOSURES, 'unknown')}</select>
       </label>
@@ -123,6 +133,12 @@ export async function refreshGardenAreasV1() {
     return null;
   }
   host.hidden = false;
+  const slot = document.getElementById('gardenAreasSlot');
+  if (slot && host.parentElement !== slot) {
+    slot.appendChild(host);
+  }
+  const shell = document.getElementById('gardenOsFunctionalShell');
+  if (shell) shell.hidden = false;
   const available = await areasTableAvailable(pd);
   if (!available) {
     host.innerHTML = renderGardenAreasHtml({ signedIn: true, pendingMigration: true });
@@ -209,7 +225,10 @@ function wireAreaForm(host, pd) {
   host.querySelectorAll('[data-area-edit]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const areaId = btn.getAttribute('data-area-edit');
-      const sun = prompt('Sun exposure (full_sun|part_sun|part_shade|full_shade|unknown):', 'unknown');
+      const sun = prompt(
+        'Sun for this area (full sun, part sun, part shade, full shade, or unknown):',
+        'unknown'
+      );
       if (sun == null) return;
       try {
         await pd.updateAreaContextOnActiveGarden?.(areaId, buildUserProvidedAreaContext({ sunExposure: sun }));

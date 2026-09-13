@@ -226,8 +226,20 @@ test('L: render/hydrate creates no Area/event mutations', () => {
   });
   assert.match(html, /North balcony/);
   assert.match(html, /data-version/);
+  assert.match(html, /Tell CRUVIT about this part of your garden/);
+  assert.doesNotMatch(html, /climate authority/i);
+  assert.doesNotMatch(html, /microclimate/i);
   assert.equal(areaEventMutations, beforeEvents);
   assert.equal(areaStateMutations, beforeState);
+
+  const empty = renderGardenAreasHtml({ signedIn: true, areas: [], plants: [] });
+  assert.match(empty, /No garden areas yet/);
+  assert.match(empty, /Add an area to capture sun, irrigation and planting conditions/);
+  assert.match(empty, /Area name/);
+
+  const pending = renderGardenAreasHtml({ signedIn: true, pendingMigration: true });
+  assert.match(pending, /temporarily unavailable/i);
+  assert.doesNotMatch(pending, /20260913190000/);
 });
 
 test('1: persisted user-confirmed Area context retains source + confirmation + confidence', () => {
