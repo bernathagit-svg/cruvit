@@ -2950,6 +2950,9 @@ function getUserOwnedPlantPhotoUrl(plant){
   const api=licensedCatalogMediaApi();
   if(api&&typeof api.getUserOwnedPlantPhotoUrl==='function') return api.getUserOwnedPlantPhotoUrl(plant);
   if(!plant||typeof plant!=='object') return '';
+  // Durable Garden Media V1 cover (signed URL, refreshed; storage_path is authority on server)
+  const coverSigned=String(plant.coverSignedUrl||'').trim();
+  if(coverSigned&&(isHttpPlantImageUrl(coverSigned))&&!isBannedPlantImageHost(coverSigned)) return coverSigned;
   const m=plant.meta&&typeof plant.meta==='object'?plant.meta:{};
   const scan=String(plant.scanPhotoUrl||'').trim();
   const candidates=[plant.photoUrl,m.photoUrl,plant.userPhotoUrl,m.userPhotoUrl];
@@ -7564,14 +7567,27 @@ function togglePlantMenu(ev,i){ev.stopPropagation();openMenu=openMenu==='plant-'
 function renamePlant(i){const p=data.plants[i];const name=prompt('Plant name:',p.name);if(!name||name===p.name)return;const oldName=p.name;p.name=name;renameTasksForPlant(oldName,name);data.events.unshift(['Today','Plant renamed',name]);openMenu=null;finalizePlantListChange()}
 function editPlantStatus(i){const p=data.plants[i];const status=prompt('Plant status:',p.status);if(status===null)return;p.status=status||'Healthy';p.mark=confirm('Does this plant need attention?')?'!':'✓';data.events.unshift(['Today','Plant status updated',`${p.name} · ${p.status}`]);openMenu=null;finalizePlantHealthStateChange(p)}
 function editCarePreferences(i){const p=data.plants[i]; if(!p.prefs)p.prefs={autoTasks:true,reminders:true,alerts:true}; const auto=confirm('Create automatic care tasks for '+p.name+'?'); const rem=confirm('Receive reminders for '+p.name+'?'); p.prefs.autoTasks=auto; p.prefs.reminders=rem; if(!auto)removeTasksForPlant(p.name); data.events.unshift(['Today','Plant care preferences updated',`${p.name} · tasks ${auto?'on':'off'} · reminders ${rem?'on':'off'}`]); openMenu=null; finalizePlantListChange()}
-function replacePlantPhoto(i){data.events.unshift(['Today','Plant photo updated',data.plants[i].name]);alert('Photo replacement is ready for the future upload flow. If this plant came from Cruvit knowledge, its botanical image remains on the card.');openMenu=null;finalizePlantListChange()}
+function replacePlantPhoto(i){
+  openMenu=null;
+  const gm=window.cruvitGardenMediaV1;
+  if(gm&&typeof gm.openAddPhotoPicker==='function'){
+    gm.openAddPhotoPicker(i);
+    return;
+  }
+  alert('Plant photos are loading. Please try again in a moment.');
+}
 function archivePlant(i){if(confirm('Move this plant to archive? Its history will stay in the garden timeline.')){const plant=data.plants[i];plant.archived=true;data.events.unshift(['Today','Plant archived',plant.name]);openMenu=null;finalizePlantListChange();try{const pd=window.cruvitPersonalDomainV0;if(pd&&typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative()&&typeof pd.upsertPlantOnActiveGarden==='function'){pd.upsertPlantOnActiveGarden(plant).then((row)=>{if(!row||typeof pd.emitPlantArchivedMemory!=='function')return;return pd.emitPlantArchivedMemory(row).catch((err)=>{console.warn('[GardenMemory] plant_archived write failed',err&&err.message?err.message:err);});}).catch((err)=>{console.warn('Server plant archive upsert failed',err&&err.message?err.message:err);});}}catch(e){console.warn('Garden Memory plant_archived hook failed',e)}}}
 function deletePlant(i){if(confirm('Delete this plant from My Garden?')){const name=data.plants[i].name;data.plants.splice(i,1);data.events.unshift(['Today','Plant deleted',name]);openMenu=null;finalizePlantListChange()}}
 function closePlantPanel(){document.getElementById('plantDetailModal').classList.remove('open');window.moodStatPanelType=null}
 function showPlantPanel(i,type){const p=data.plants[i];const meta=plantMeta(p);const alerts=plantAlerts(p);const title=document.getElementById('plantPanelTitle');const sub=document.getElementById('plantPanelSubtitle');const body=document.getElementById('plantPanelBody');title.textContent=p.name;sub.textContent=type==='info'?'Quick care icons':type==='alerts'?'Alerts and tasks':'Detailed plant guide';
   if(type==='info')body.innerHTML=`<div class="info-grid"><div class="info-tile"><span class="big">☀️</span><span><b>Light</b><span>${escapeHtml(meta.sun)}</span></span></div><div class="info-tile"><span class="big">💧</span><span><b>Water</b><span>${escapeHtml(meta.water)}</span></span></div><div class="info-tile"><span class="big">🌱</span><span><b>Growth</b><span>${escapeHtml(meta.growth)}</span></span></div><div class="info-tile"><span class="big">📏</span><span><b>Size</b><span>${escapeHtml(meta.size)}</span></span></div><div class="info-tile"><span class="big">🌡️</span><span><b>Climate</b><span>${escapeHtml(meta.climate)}</span></span></div><div class="info-tile"><span class="big">🗓️</span><span><b>Season</b><span>${escapeHtml(meta.season)}</span></span></div></div><div class="guide-block"><b>Botanical profile</b><span>${escapeHtml(meta.scientific||p.scientific||p.name)}${meta.soil?' · Soil: '+escapeHtml(meta.soil):''}</span></div>`;
   if(type==='alerts')body.innerHTML=`<div class="guide-block"><b>${alerts[0].includes('No active')?'✓ No urgent alerts':'Current alerts'}</b><span>${alerts.map(a=>'• '+a).join('<br>')}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="createPlantAlertTaskFromPanel(${i})">Create care task</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">View in calendar</button></div>`;
-  if(type==='guide'){const img=displayPlantImage(p);body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;}
+  if(type==='guide'){
+    const img=displayPlantImage(p);
+    const gm=window.cruvitGardenMediaV1;
+    const mediaHtml=(gm&&typeof gm.renderPlantMediaSectionHtml==='function')?gm.renderPlantMediaSectionHtml(p,i):'';
+    body.innerHTML=`${img?`<div class="plant-setup-hero" style="background-image:linear-gradient(180deg,rgba(0,0,0,0),rgba(20,59,40,.18)),url('${escapeAttr(img)}')"><div class="plant-setup-badge">${escapeHtml(p.name)}</div></div>`:''}${mediaHtml}<div class="guide-block"><b>${meta.scientific||p.name}</b><span>${meta.guide||'Cruvit will connect watering, pruning, fertilizing, disease checks and shopping suggestions to your garden calendar.'}</span></div><div class="guide-block"><b>Watering</b><span>${meta.water}. Adjust by season, heat and soil moisture.</span></div><div class="guide-block"><b>Light and placement</b><span>${meta.sun}. Climate fit: ${meta.climate}.</span></div><div class="guide-block"><b>Recommended products</b><span>${(meta.products||[]).join(' · ')}</span></div><div class="guide-block"><b>Care preferences</b><span>Automatic tasks: ${p.prefs?.autoTasks===false?'Off':'On'} · Reminders: ${p.prefs?.reminders===false?'Off':'On'}</span></div><div class="plant-modal-actions"><button class="btn main" onclick="addRecommendedForPlant(${i})">Add recommended products</button><button class="btn light" onclick="setTab('timeline');closePlantPanel()">Plant timeline</button></div>`;
+  }
   document.getElementById('plantDetailModal').classList.add('open');
 }
 function addRecommendedForPlant(i){const p=data.plants[i];const products=plantMeta(p).products||['Organic fertilizer'];products.forEach(x=>addToCartWithQty(x,1,p.name));data.events.unshift(['Today','Plant products added',`${p.name} · ${products.length} items`]);syncHealthScore();service.save(data);renderCart();closePlantPanel();toggleCart(true)}
@@ -8645,9 +8661,10 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913f"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260913g"></script>
 <script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913h"></script>
 <script type="module" src="modules/personal-domain/garden-areas-v1-ui.js?v=20260913b"></script>
+<script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>
 <script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913e"></script>
 </body>
 </html>

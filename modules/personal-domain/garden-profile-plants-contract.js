@@ -78,7 +78,10 @@ export function serverPlantToAppPlant(row) {
     addedAt: row.added_at || undefined,
     updatedAt: row.updated_at || undefined,
     // Optional Area link (NULL = unassigned / pre-Areas legacy)
-    gardenAreaId: row.garden_area_id || row.gardenAreaId || null
+    gardenAreaId: row.garden_area_id || row.gardenAreaId || null,
+    // Optional durable cover pointer (Garden Media V1)
+    coverMediaId: row.cover_media_id || row.coverMediaId || null,
+    coverSignedUrl: ''
   };
 }
 

@@ -106,6 +106,9 @@ const PLANT_SELECT =
 /** Includes optional garden_area_id after Areas migration. */
 const PLANT_SELECT_WITH_AREA = `${PLANT_SELECT},garden_area_id`;
 
+/** Areas + Garden Media cover pointer (production Media V1). */
+const PLANT_SELECT_WITH_AREA_AND_COVER = `${PLANT_SELECT_WITH_AREA},cover_media_id`;
+
 const AREA_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,name,context,created_at,updated_at';
 
@@ -673,9 +676,16 @@ async function listPlantsForGarden(gardenProfileId) {
   if (!gardenId) return [];
   let { data, error } = await supabase
     .from('garden_plants')
-    .select(PLANT_SELECT_WITH_AREA)
+    .select(PLANT_SELECT_WITH_AREA_AND_COVER)
     .eq('garden_profile_id', gardenId)
     .order('added_at', { ascending: true });
+  if (error && isMissingColumnOrRelationError(error)) {
+    ({ data, error } = await supabase
+      .from('garden_plants')
+      .select(PLANT_SELECT_WITH_AREA)
+      .eq('garden_profile_id', gardenId)
+      .order('added_at', { ascending: true }));
+  }
   if (error && isMissingColumnOrRelationError(error)) {
     ({ data, error } = await supabase
       .from('garden_plants')
