@@ -1,0 +1,299 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "apple-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "apple",
+    "commonNameEn": "Apple",
+    "acceptedScientificName": "Malus domestica",
+    "aliases": [
+      "apple",
+      "malus domestica",
+      "cultivated apple"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-malus-domestica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Malus domestica (Apple)",
+      "url": "https://plants.ces.ncsu.edu/plants/malus-domestica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Malus domestica",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Malus domestica — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "apple",
+        "malus domestica",
+        "cultivated apple"
+      ],
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Common / synonym names for Apple."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool to mild temperate; USDA zones 3a–8b",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Cool to mild temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "tree",
+        "chill"
+      ],
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, tree, chill"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Apple (Malus domestica). Cool to mild temperate; USDA zones 3a–8b.",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Cool to mild temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b; spring blossoms are frost-sensitive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy wood but spring bloom frost risk → frostSensitivity=medium."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a, 3b, 4a, 4b, 5a, 5b, 6a, 6b, 7a, 7b, 8a, 8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3a → coldTolerance=high."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Zones listed to 8b; no heat-mortality rating published on NCSU page.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Temperate orchard crop → medium heat (heuristic)."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained → waterNeeds=medium."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun listed."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage → drainageNeeds=high."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Temperate deciduous fruit tree flowering in spring after dormancy; chill hours not quantified on page.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Deciduous temperate fruit → needsWinterChill=true (no hour count)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White to pink flowers in spring on previous-season wood.",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Showy white to pink flowers appear in spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible pomes ripen mid-summer to autumn depending on cultivar.",
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Edible fruit (pome) ripens in summer to fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Most dessert apple cultivars need a compatible pollenizer; NCSU page does not state pollination type.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cultivar cross-pollination dependency → requires_pollinator=true."
+    },
+    {
+      "claimId": "reproductive-cultivar_dependency",
+      "field": "reproductive.cultivar_dependency",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-malus-domestica"
+      ],
+      "shortExcerpt": "Pollination and chill needs vary strongly by cultivar.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cultivar-dependent orchard crop."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

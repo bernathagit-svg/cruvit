@@ -1,0 +1,275 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "zinnia-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "zinnia",
+    "commonNameEn": "Zinnia",
+    "acceptedScientificName": "Zinnia elegans",
+    "aliases": [
+      "zinnia",
+      "zinnia elegans",
+      "common zinnia"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-zinnia-elegans",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Zinnia elegans (Zinnia)",
+      "url": "https://plants.ces.ncsu.edu/plants/zinnia-elegans/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Zinnia elegans",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Zinnia elegans — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "zinnia",
+        "zinnia elegans",
+        "common zinnia"
+      ],
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Common / synonym names for Zinnia."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Hot-summer annual ornamental",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Hot-summer annual ornamental"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "annual",
+        "cut-flower",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, annual, cut-flower, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; moderate drought tolerance."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Zinnia (Zinnia elegans). Hot-summer annual ornamental.",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Hot-summer annual ornamental"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "ornamental-flowering"
+      ],
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Structural groupIds: ornamental-flowering"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Warm-season annual; frost kills.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-sensitive."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Annual only.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Thrives in hot, sunny summers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "High heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; moderate drought tolerance.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low–medium water."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Warm-season annual; no chill.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Daisy-like flowers in many colors; excellent cut flowers.",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Showy flowers in many colors and forms.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Ornamental annual.",
+      "sourceIds": [
+        "ncsu-zinnia-elegans"
+      ],
+      "shortExcerpt": "Grown for ornamental flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

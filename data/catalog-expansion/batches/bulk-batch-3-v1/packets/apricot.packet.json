@@ -1,0 +1,286 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "apricot-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "apricot",
+    "commonNameEn": "Apricot",
+    "acceptedScientificName": "Prunus armeniaca",
+    "aliases": [
+      "apricot",
+      "prunus armeniaca"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-prunus-armeniaca",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Prunus armeniaca (Apricot)",
+      "url": "https://plants.ces.ncsu.edu/plants/prunus-armeniaca/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Prunus armeniaca",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Prunus armeniaca — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "apricot",
+        "prunus armeniaca"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Common / synonym names for Apricot."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Temperate to Mediterranean; USDA zones 5a–8b",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Temperate to Mediterranean; USDA zones 5a–8b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "tree",
+        "stone-fruit",
+        "early-bloom"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, tree, stone-fruit, early-bloom"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Apricot (Prunus armeniaca). Temperate to Mediterranean; USDA zones 5a–8b.",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Temperate to Mediterranean; USDA zones 5a–8b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a–8b; very early bloom highly frost-susceptible.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Early bloom → high frostSensitivity for crop."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 5 → medium cold tolerance of wood."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Warm-summer Mediterranean/temperate fruit; no heat rating on NCSU.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Deciduous stone fruit with winter dormancy; chill hours not quantified.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Needs winter chill (heuristic)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White to pale pink flowers in very early spring.",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "White to pale pink flowers appear in early spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible yellow-orange drupes in early to mid-summer.",
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Edible fruit ripens in early to mid-summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-armeniaca"
+      ],
+      "shortExcerpt": "Many apricot cultivars self-fertile; some benefit from pollenizers — not stated on NCSU.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional self-fertile."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

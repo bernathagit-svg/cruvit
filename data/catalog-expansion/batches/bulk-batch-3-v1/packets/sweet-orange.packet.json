@@ -1,0 +1,289 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "sweet-orange-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "sweet-orange",
+    "commonNameEn": "Sweet orange",
+    "acceptedScientificName": "Citrus × sinensis",
+    "aliases": [
+      "sweet orange",
+      "citrus sinensis",
+      "citrus × sinensis",
+      "orange"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-citrus-sinensis",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Citrus × sinensis (Sweet Orange)",
+      "url": "https://plants.ces.ncsu.edu/plants/citrus-sinensis/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Citrus × sinensis",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Citrus × sinensis — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "sweet orange",
+        "citrus sinensis",
+        "citrus × sinensis",
+        "orange"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Common / synonym names for Sweet orange."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Frost-free subtropical; USDA zones 9a–11",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Frost-free subtropical; USDA zones 9a–11"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "citrus",
+        "fruit",
+        "evergreen"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, citrus, fruit, evergreen"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Sweet orange (Citrus × sinensis). Frost-free subtropical; USDA zones 9a–11.",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Frost-free subtropical; USDA zones 9a–11"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "citrus-subtropical"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Structural groupIds: citrus-subtropical"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11; frost injures foliage and fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-tender."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zones 9+ only."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Warm subtropical crop; heat needed for sweetness; no mortality class published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heat-tolerant heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Evergreen subtropical citrus; no chill listed.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Fragrant white flowers in spring (main flush).",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Fragrant white flowers, primarily in spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Sweet edible oranges ripen in winter in many climates.",
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Edible sweet orange fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-citrus-sinensis"
+      ],
+      "shortExcerpt": "Sweet oranges typically self-fruitful; page silent.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Self-fertile heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

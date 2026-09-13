@@ -1,0 +1,288 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "peach-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "peach",
+    "commonNameEn": "Peach",
+    "acceptedScientificName": "Prunus persica",
+    "aliases": [
+      "peach",
+      "prunus persica",
+      "nectarine (same species)"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-prunus-persica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Prunus persica (Peach)",
+      "url": "https://plants.ces.ncsu.edu/plants/prunus-persica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Prunus persica",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Prunus persica — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "peach",
+        "prunus persica",
+        "nectarine (same species)"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Common / synonym names for Peach."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm temperate; USDA zones 5a–9a",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Warm temperate; USDA zones 5a–9a"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "tree",
+        "stone-fruit",
+        "chill"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, tree, stone-fruit, chill"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Peach (Prunus persica). Warm temperate; USDA zones 5a–9a.",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Warm temperate; USDA zones 5a–9a"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a–9a; early spring flowers easily damaged by frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Wood hardy; bloom frost-sensitive → medium."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 5a–9a.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 5 lower bound → medium–high; scored medium vs apple."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Zones to 9a; warm-summer fruit; no heat-mortality class published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage critical."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Deciduous stone fruit requiring winter dormancy; chill hours cultivar-specific and not numbered here.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Chill required; no hour count."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Pink flowers in early spring before or with leaf-out.",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Pink flowers bloom in early spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Fleshy drupes ripen in summer; edible stone fruit.",
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Edible fleshy fruit (drupe) ripens in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-persica"
+      ],
+      "shortExcerpt": "Most peach cultivars are self-fertile; NCSU page silent on pollination.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Typical peach self-fertility heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

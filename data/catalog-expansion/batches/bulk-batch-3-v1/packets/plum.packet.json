@@ -1,0 +1,300 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "plum-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "plum",
+    "commonNameEn": "Plum",
+    "acceptedScientificName": "Prunus domestica",
+    "aliases": [
+      "plum",
+      "prunus domestica",
+      "european plum"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-prunus-domestica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Prunus domestica (European Plum)",
+      "url": "https://plants.ces.ncsu.edu/plants/prunus-domestica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Prunus domestica",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Prunus domestica — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "plum",
+        "prunus domestica",
+        "european plum"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Common / synonym names for Plum."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Temperate; USDA zones 4a–9a",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Temperate; USDA zones 4a–9a"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "tree",
+        "stone-fruit",
+        "chill"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, tree, stone-fruit, chill"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Tree",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Plum (Prunus domestica). Temperate; USDA zones 4a–9a.",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Temperate; USDA zones 4a–9a"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit-tree"
+      ],
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit-tree"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9a; spring flowers frost-sensitive.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy wood; bloom frost risk."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9a.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 4a → high."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Zones to 9a; no heat-mortality rating.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Deciduous temperate stone fruit; chill hours not published on page.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Winter chill heuristic."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White flowers in spring.",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "White flowers bloom in spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible drupes; many European plums need cross-pollination.",
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Edible plum fruit ripens in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-requires_pollinator",
+      "field": "reproductive.requires_pollinator",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Many European plum cultivars are not fully self-fertile; compatible pollenizer often required.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cross-pollination heuristic."
+    },
+    {
+      "claimId": "reproductive-cultivar_dependency",
+      "field": "reproductive.cultivar_dependency",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-prunus-domestica"
+      ],
+      "shortExcerpt": "Self-fertility and chill vary by cultivar.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cultivar dependency."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "pomegranate-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "pomegranate",
+    "commonNameEn": "Pomegranate",
+    "acceptedScientificName": "Punica granatum",
+    "aliases": [
+      "pomegranate",
+      "punica granatum"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-punica-granatum",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Punica granatum (Pomegranate)",
+      "url": "https://plants.ces.ncsu.edu/plants/punica-granatum/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Punica granatum",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Punica granatum — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "pomegranate",
+        "punica granatum"
+      ],
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Common / synonym names for Pomegranate."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Hot-summer Mediterranean/subtropical; USDA 7a–10b",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Hot-summer Mediterranean/subtropical; USDA 7a–10b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "mediterranean",
+        "fruit",
+        "shrub",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Catalog tags: mediterranean, fruit, shrub, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; drought-tolerant when established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Pomegranate (Punica granatum). Hot-summer Mediterranean/subtropical; USDA 7a–10b.",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Hot-summer Mediterranean/subtropical; USDA 7a–10b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "mediterranean-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Structural groupIds: mediterranean-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b; damaged by hard freezes.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 7+ → frost-sensitive wood."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Limited cold hardiness."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Best fruit in hot, dry summers; zones to 10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Heat-loving fruit."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; drought-tolerant when established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low water once established."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Warm-climate deciduous shrub; no chill-hour figure published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No winter chill required (heuristic)."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Showy orange-red flowers in late spring to summer.",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Orange-red flowers bloom in late spring to summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible leathery berries with arils; best set in hot summers.",
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Edible fruit with juicy arils ripens in fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-punica-granatum"
+      ],
+      "shortExcerpt": "Most pomegranates self-fruitful; cross-pollination can improve yield — not stated on NCSU.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Provisional self-fertile."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

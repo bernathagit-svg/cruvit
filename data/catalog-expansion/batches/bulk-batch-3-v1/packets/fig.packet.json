@@ -1,0 +1,287 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "fig-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "fig",
+    "commonNameEn": "Fig",
+    "acceptedScientificName": "Ficus carica",
+    "aliases": [
+      "fig",
+      "ficus carica",
+      "common fig"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-ficus-carica",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Ficus carica (Common Fig)",
+      "url": "https://plants.ces.ncsu.edu/plants/ficus-carica/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Ficus carica",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Ficus carica — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "fig",
+        "ficus carica",
+        "common fig"
+      ],
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Common / synonym names for Fig."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Mediterranean to warm temperate; USDA zones 7a–10b",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Mediterranean to warm temperate; USDA zones 7a–10b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "mediterranean",
+        "fruit",
+        "shrub",
+        "drought-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Catalog tags: mediterranean, fruit, shrub, drought-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; drought-tolerant once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Fig (Ficus carica). Mediterranean to warm temperate; USDA zones 7a–10b.",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Mediterranean to warm temperate; USDA zones 7a–10b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "mediterranean-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Structural groupIds: mediterranean-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b; top-killed by hard freezes in colder zones.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 7+ woody; frost-sensitive → high."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Not hardy below ~7 → low cold tolerance."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Thrives in hot, dry Mediterranean-type summers; zones to 10b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Heat-loving Mediterranean fruit."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; drought-tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Drought-tolerant established → waterNeeds=low."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Mediterranean deciduous/semideciduous; no quantified chill requirement on NCSU.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Generally no winter chill requirement."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Flowers enclosed inside the syconium (not showy externally).",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Flowers are inside the fruit (syconium).",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible figs (syconia) ripen in summer to fall depending on crop type.",
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Edible fruit (syconium) ripens in summer and fall.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-ficus-carica"
+      ],
+      "shortExcerpt": "Common edible fig cultivars are typically parthenocarpic (no wasp needed); NCSU notes edible fruit.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Common fig self-setting heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

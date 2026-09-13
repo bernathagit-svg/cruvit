@@ -1,0 +1,273 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "spinach-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "spinach",
+    "commonNameEn": "Spinach",
+    "acceptedScientificName": "Spinacia oleracea",
+    "aliases": [
+      "spinach",
+      "spinacia oleracea"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-spinacia-oleracea",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Spinacia oleracea (Spinach)",
+      "url": "https://plants.ces.ncsu.edu/plants/spinacia-oleracea/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Spinacia oleracea",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Spinacia oleracea — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "spinach",
+        "spinacia oleracea"
+      ],
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Common / synonym names for Spinach."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool to cold-season leafy annual",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Cool to cold-season leafy annual"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vegetable",
+        "annual",
+        "leafy",
+        "cool-season"
+      ],
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Catalog tags: vegetable, annual, leafy, cool-season"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun to Partial Shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Spinach (Spinacia oleracea). Cool to cold-season leafy annual.",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Cool to cold-season leafy annual"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Cool-season annual; very frost-tolerant for a leafy crop.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-tolerant leaves."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Grows in cold weather; hardier than lettuce.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "High cold for annual green."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Bolts rapidly in heat and long days.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Even moisture."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Light: Full sun to Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Sun to part shade."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Cool-season annual leaf crop; no chill hours.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Dioecious flowering when bolted (male/female plants).",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Plants bolt to flower in warm weather.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for leaves; seed after bolting.",
+      "sourceIds": [
+        "ncsu-spinacia-oleracea"
+      ],
+      "shortExcerpt": "Edible leaves harvested before bolting.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

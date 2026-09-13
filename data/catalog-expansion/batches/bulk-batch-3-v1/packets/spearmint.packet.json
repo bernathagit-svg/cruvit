@@ -1,0 +1,275 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "spearmint-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "spearmint",
+    "commonNameEn": "Spearmint",
+    "acceptedScientificName": "Mentha spicata",
+    "aliases": [
+      "spearmint",
+      "mentha spicata",
+      "garden mint"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-mentha-spicata",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Mentha spicata (Spearmint)",
+      "url": "https://plants.ces.ncsu.edu/plants/mentha-spicata/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Mentha spicata",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Mentha spicata — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "spearmint",
+        "mentha spicata",
+        "garden mint"
+      ],
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Common / synonym names for Spearmint."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Temperate moist perennial herb; USDA 4a–9b",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Temperate moist perennial herb; USDA 4a–9b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "herb",
+        "perennial",
+        "culinary",
+        "invasive-spread"
+      ],
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Catalog tags: herb, perennial, culinary, invasive-spread"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "partial shade",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun to Partial Shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Moist; prefers consistently moist soils."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Spearmint (Mentha spicata). Temperate moist perennial herb; USDA 4a–9b.",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Temperate moist perennial herb; USDA 4a–9b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "herb-edible"
+      ],
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Structural groupIds: herb-edible"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9b; dies back and regrows.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Hardy perennial mint."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 4a–9b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 4 → high."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Grows in warm summers if moist; no heat-mortality class.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Soil Drainage: Moist; prefers consistently moist soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "High water."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "partial_shade",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Light: Full sun to Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Part shade OK; scored partial_shade as common garden placement."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Tolerates moist soils; not drought-adapted.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium drainage need."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Herbaceous perennial; winter dieback but no quantified chill for leaf crop.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No chill requirement."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Spikes of lilac flowers in summer.",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Lilac flower spikes in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for aromatic leaves; spreads by rhizomes.",
+      "sourceIds": [
+        "ncsu-mentha-spicata"
+      ],
+      "shortExcerpt": "Aromatic edible leaves; aggressive spreader.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "green-bean-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "green-bean",
+    "commonNameEn": "Green bean",
+    "acceptedScientificName": "Phaseolus vulgaris",
+    "aliases": [
+      "green bean",
+      "phaseolus vulgaris",
+      "common bean",
+      "snap bean"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-phaseolus-vulgaris",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Phaseolus vulgaris (Common Bean)",
+      "url": "https://plants.ces.ncsu.edu/plants/phaseolus-vulgaris/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Phaseolus vulgaris",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Phaseolus vulgaris — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "green bean",
+        "phaseolus vulgaris",
+        "common bean",
+        "snap bean"
+      ],
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Common / synonym names for Green bean."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm-season annual legume; frost intolerant",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Warm-season annual legume; frost intolerant"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vegetable",
+        "annual",
+        "legume"
+      ],
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Catalog tags: vegetable, annual, legume"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Green bean (Phaseolus vulgaris). Warm-season annual legume; frost intolerant.",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Warm-season annual legume; frost intolerant"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "subtropical-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Structural groupIds: subtropical-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Warm-season annual; frost kills plants.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-sensitive."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Plant after frost; cool soils delay germination.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Warm-season; extreme heat can reduce blossom set.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Medium heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Even moisture."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Warm-season annual; no chill.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Typical pea-family flowers; self-pollinating.",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Papilionaceous flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Harvest immature pods as snap beans; or dry seed.",
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Edible pods and/or dry seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-phaseolus-vulgaris"
+      ],
+      "shortExcerpt": "Common beans largely self-pollinating; page silent.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Self-fertile heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "grapefruit-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "grapefruit",
+    "commonNameEn": "Grapefruit",
+    "acceptedScientificName": "Citrus × paradisi",
+    "aliases": [
+      "grapefruit",
+      "citrus paradisi",
+      "citrus × paradisi"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-citrus-paradisi",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Citrus × paradisi (Grapefruit)",
+      "url": "https://plants.ces.ncsu.edu/plants/citrus-paradisi/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Citrus × paradisi",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Citrus × paradisi — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "grapefruit",
+        "citrus paradisi",
+        "citrus × paradisi"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Common / synonym names for Grapefruit."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Hot subtropical; USDA zones 9a–11",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Hot subtropical; USDA zones 9a–11"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "subtropical",
+        "citrus",
+        "fruit",
+        "evergreen",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Catalog tags: subtropical, citrus, fruit, evergreen, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Grapefruit (Citrus × paradisi). Hot subtropical; USDA zones 9a–11.",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Hot subtropical; USDA zones 9a–11"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "citrus-subtropical"
+      ],
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Structural groupIds: citrus-subtropical"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11; more cold-sensitive than some mandarins.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-tender citrus."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9a–11.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold tolerance."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Needs long hot summers for fruit quality; no formal heat class.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Heat-loving heuristic."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Moist well-drained."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Evergreen subtropical; no chill requirement listed.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Fragrant white flowers in spring.",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Fragrant white flowers in spring.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Large edible citrus fruit; best quality with heat.",
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Large edible yellow to pink grapefruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-citrus-paradisi"
+      ],
+      "shortExcerpt": "Grapefruit generally self-fruitful; NCSU silent.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Self-fertile heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

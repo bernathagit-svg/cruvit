@@ -1,0 +1,275 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "lesser-bougainvillea-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "lesser-bougainvillea",
+    "commonNameEn": "Lesser bougainvillea",
+    "acceptedScientificName": "Bougainvillea glabra",
+    "aliases": [
+      "lesser bougainvillea",
+      "bougainvillea glabra",
+      "paper flower"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-bougainvillea-glabra",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Bougainvillea glabra (Bougainvillea)",
+      "url": "https://plants.ces.ncsu.edu/plants/bougainvillea-glabra/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Bougainvillea glabra",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Bougainvillea glabra — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "lesser bougainvillea",
+        "bougainvillea glabra",
+        "paper flower"
+      ],
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Common / synonym names for Lesser bougainvillea."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Frost-free subtropical climber; USDA 9b–11",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Frost-free subtropical climber; USDA 9b–11"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "vine",
+        "drought-tolerant",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, vine, drought-tolerant, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; drought-tolerant once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Lesser bougainvillea (Bougainvillea glabra). Frost-free subtropical climber; USDA 9b–11.",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Frost-free subtropical climber; USDA 9b–11"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "ornamental-flowering"
+      ],
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Structural groupIds: ornamental-flowering"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9b–11; frost damages or kills.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-sensitive."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 9b–11.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Thrives in hot, sunny, dry conditions.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "High heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; drought-tolerant once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low water."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun for bracts."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Tropical/subtropical woody vine; no chill.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Inconspicuous true flowers with showy colorful bracts.",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Colorful papery bracts surround small true flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Ornamental; not grown for fruit.",
+      "sourceIds": [
+        "ncsu-bougainvillea-glabra"
+      ],
+      "shortExcerpt": "Grown for ornamental bracts.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

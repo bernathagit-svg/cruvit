@@ -1,0 +1,286 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "watermelon-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "watermelon",
+    "commonNameEn": "Watermelon",
+    "acceptedScientificName": "Citrullus lanatus",
+    "aliases": [
+      "watermelon",
+      "citrullus lanatus"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-citrullus-lanatus",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Citrullus lanatus (Watermelon)",
+      "url": "https://plants.ces.ncsu.edu/plants/citrullus-lanatus/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Citrullus lanatus",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Citrullus lanatus — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "watermelon",
+        "citrullus lanatus"
+      ],
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Common / synonym names for Watermelon."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Hot-summer melon; frost intolerant",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Hot-summer melon; frost intolerant"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vegetable",
+        "annual",
+        "cucurbit",
+        "melon",
+        "heat-tolerant"
+      ],
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Catalog tags: vegetable, annual, cucurbit, melon, heat-tolerant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist; deep roots once established."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Watermelon (Citrullus lanatus). Hot-summer melon; frost intolerant.",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Hot-summer melon; frost intolerant"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "subtropical-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Structural groupIds: subtropical-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Warm-season annual; frost kills vines.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-sensitive."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Needs warm soils; not cold-hardy.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Thrives in hot summer weather for sugar development.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Heat-loving melon."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist; deep roots once established.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium water with good drainage."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Warm-season annual; no chill.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Yellow monoecious flowers.",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Yellow flowers; male and female separate.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Large sweet pepoes; long warm season required.",
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Large edible fruit with sweet flesh.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-monoecious",
+      "field": "reproductive.monoecious",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-citrullus-lanatus"
+      ],
+      "shortExcerpt": "Watermelon monoecious; bees needed for fruit set.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Monoecious cucurbit."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

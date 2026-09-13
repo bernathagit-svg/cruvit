@@ -1,0 +1,274 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "common-jasmine-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "common-jasmine",
+    "commonNameEn": "Common jasmine",
+    "acceptedScientificName": "Jasminum officinale",
+    "aliases": [
+      "common jasmine",
+      "jasminum officinale",
+      "poet's jasmine"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-jasminum-officinale",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Jasminum officinale (Common Jasmine)",
+      "url": "https://plants.ces.ncsu.edu/plants/jasminum-officinale/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Jasminum officinale",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Jasminum officinale — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "common jasmine",
+        "jasminum officinale",
+        "poet's jasmine"
+      ],
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Common / synonym names for Common jasmine."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Mild temperate fragrant climber; USDA 7a–10a",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Mild temperate fragrant climber; USDA 7a–10a"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "vine",
+        "fragrant"
+      ],
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, vine, fragrant"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun to Partial Shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Ornamental landscape plant",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Common jasmine (Jasminum officinale). Mild temperate fragrant climber; USDA 7a–10a.",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Mild temperate fragrant climber; USDA 7a–10a"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "ornamental-flowering"
+      ],
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Structural groupIds: ornamental-flowering"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10a; may die back in colder winters.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Marginally hardy vine."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 7a–10a.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Warm-summer climber; no heat-mortality class.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium water."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Light: Full sun to Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun for best bloom."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Deciduous/semievergreen climber; no chill hours published.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Highly fragrant white flowers in summer.",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Fragrant white flowers in summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Ornamental climber; black berries not a food crop.",
+      "sourceIds": [
+        "ncsu-jasminum-officinale"
+      ],
+      "shortExcerpt": "Grown for fragrant ornamental flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

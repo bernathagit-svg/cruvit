@@ -1,0 +1,275 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "carrot-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "carrot",
+    "commonNameEn": "Carrot",
+    "acceptedScientificName": "Daucus carota subsp. sativus",
+    "aliases": [
+      "carrot",
+      "daucus carota",
+      "daucus carota subsp. sativus"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-daucus-carota",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Daucus carota subsp. sativus (Carrot)",
+      "url": "https://plants.ces.ncsu.edu/plants/daucus-carota/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Daucus carota subsp. sativus",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Daucus carota subsp. sativus — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "carrot",
+        "daucus carota",
+        "daucus carota subsp. sativus"
+      ],
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Common / synonym names for Carrot."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool-season root crop; light frost tolerant",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Cool-season root crop; light frost tolerant"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vegetable",
+        "biennial",
+        "root",
+        "cool-season"
+      ],
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Catalog tags: vegetable, biennial, root, cool-season"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Carrot (Daucus carota subsp. sativus). Cool-season root crop; light frost tolerant.",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Cool-season root crop; light frost tolerant"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Cool-season biennial grown as annual; roots tolerate light frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Light frost OK."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Cool-season crop; hard freezes can damage crowns.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Roots become bitter/woody in heat; cool soils preferred.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Low heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Even moisture for straight roots."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; deep loose soils.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "High drainage/loose soil."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Biennial flowering after winter if left in ground; grown as annual for roots.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Biennial chill for seed, not for root crop."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Umbel flowers in second year if overwintered.",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "White umbels in second year.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for edible taproots; seed in year two.",
+      "sourceIds": [
+        "ncsu-daucus-carota"
+      ],
+      "shortExcerpt": "Edible taproot harvested first season.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

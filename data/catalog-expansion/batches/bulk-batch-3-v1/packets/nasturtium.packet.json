@@ -1,0 +1,274 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "nasturtium-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "nasturtium",
+    "commonNameEn": "Nasturtium",
+    "acceptedScientificName": "Tropaeolum majus",
+    "aliases": [
+      "nasturtium",
+      "tropaeolum majus",
+      "indian cress"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-tropaeolum-majus",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Tropaeolum majus (Nasturtium)",
+      "url": "https://plants.ces.ncsu.edu/plants/tropaeolum-majus/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Tropaeolum majus",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Tropaeolum majus — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "nasturtium",
+        "tropaeolum majus",
+        "indian cress"
+      ],
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Common / synonym names for Nasturtium."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Warm-season tender annual",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Warm-season tender annual"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "ornamental",
+        "annual",
+        "edible-flower"
+      ],
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Catalog tags: ornamental, annual, edible-flower"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun to Partial Shade."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist; avoid excess fertility for more flowers."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Herbaceous / culinary",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Nasturtium (Tropaeolum majus). Warm-season tender annual.",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Warm-season tender annual"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "ornamental-flowering"
+      ],
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Structural groupIds: ornamental-flowering"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Tender annual; frost kills.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Frost-sensitive."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Warm-season annual.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low cold."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Prefers mild summers; extreme heat reduces bloom.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist; avoid excess fertility for more flowers.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium water."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Light: Full sun to Partial Shade.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun preferred."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Tender annual; no chill.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Showy edible flowers in many colors.",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Showy flowers; edible.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Edible leaves, flowers, and immature seed pods.",
+      "sourceIds": [
+        "ncsu-tropaeolum-majus"
+      ],
+      "shortExcerpt": "Edible leaves, flowers, and green seeds.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

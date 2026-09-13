@@ -1,0 +1,287 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "raspberry-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "raspberry",
+    "commonNameEn": "Raspberry",
+    "acceptedScientificName": "Rubus idaeus",
+    "aliases": [
+      "raspberry",
+      "rubus idaeus",
+      "red raspberry"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-rubus-idaeus",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Rubus idaeus (Red Raspberry)",
+      "url": "https://plants.ces.ncsu.edu/plants/rubus-idaeus/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Rubus idaeus",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Rubus idaeus — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "raspberry",
+        "rubus idaeus",
+        "red raspberry"
+      ],
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Common / synonym names for Raspberry."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool temperate; USDA zones 3a–8b",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Cool temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "temperate",
+        "fruit",
+        "cane-fruit",
+        "berry"
+      ],
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Catalog tags: temperate, fruit, cane-fruit, berry"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun (6 or more hours of direct sunlight a day)."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Raspberry (Rubus idaeus). Cool temperate; USDA zones 3a–8b.",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Cool temperate; USDA zones 3a–8b"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Very hardy cane fruit."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "USDA Plant Hardiness Zone: 3a–8b.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Zone 3 → high."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Cool-climate berry; struggles in hot humid summers; zones to 8b.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Cool-climate heuristic → low heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Even moisture."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Light: Full sun (6 or more hours of direct sunlight a day).",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Full sun."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Temperate cane fruit with winter dormancy; chill not quantified.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Needs winter chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "White flowers on floricanes (or primocanes for everbearing types).",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "White flowers in late spring to summer.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Red aggregate berries; floricane or primocane bearing by type.",
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Edible red aggregate fruit.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "reproductive-self_fertile",
+      "field": "reproductive.self_fertile",
+      "status": "asserted",
+      "value": true,
+      "sourceIds": [
+        "ncsu-rubus-idaeus"
+      ],
+      "shortExcerpt": "Most red raspberries self-fertile; page silent.",
+      "evidenceClass": "HEURISTIC_ASSERTION",
+      "transformation": "Self-fertile heuristic."
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}

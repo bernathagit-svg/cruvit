@@ -1,0 +1,273 @@
+{
+  "expansionContractVersion": "1.2.0",
+  "packetId": "lettuce-bulk-batch-3-v1",
+  "identity": {
+    "canonicalSlug": "lettuce",
+    "commonNameEn": "Lettuce",
+    "acceptedScientificName": "Lactuca sativa",
+    "aliases": [
+      "lettuce",
+      "lactuca sativa"
+    ]
+  },
+  "flags": {
+    "enforceBatch2EvidenceRule": true,
+    "batch2": false,
+    "batch3": true,
+    "forceClimateNeedsReview": false,
+    "botanicalVerified": true,
+    "notes": "Bulk catalog evidence-first ingest (bulk-catalog-batch-3-v1).",
+    "acceptedInfraspecificTaxaAllowed": true
+  },
+  "sources": [
+    {
+      "sourceId": "ncsu-lactuca-sativa",
+      "institution": "North Carolina State University Extension Gardener",
+      "publisher": "North Carolina State University Extension Gardener",
+      "title": "Lactuca sativa (Lettuce)",
+      "url": "https://plants.ces.ncsu.edu/plants/lactuca-sativa/",
+      "authorityTier": "university_extension",
+      "verifiedAt": "2026-08-31"
+    }
+  ],
+  "claims": [
+    {
+      "claimId": "identity-scientific",
+      "field": "scientific",
+      "status": "asserted",
+      "value": "Lactuca sativa",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Lactuca sativa — identity from North Carolina State University Extension Gardener.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "identity-aliases",
+      "field": "aliases",
+      "status": "asserted",
+      "value": [
+        "lettuce",
+        "lactuca sativa"
+      ],
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Common / synonym names for Lettuce."
+    },
+    {
+      "claimId": "climate-label",
+      "field": "climateLabel",
+      "status": "asserted",
+      "value": "Cool-season leafy annual",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Cool-season leafy annual"
+    },
+    {
+      "claimId": "tags",
+      "field": "tags",
+      "status": "asserted",
+      "value": [
+        "vegetable",
+        "annual",
+        "leafy",
+        "cool-season"
+      ],
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Catalog tags: vegetable, annual, leafy, cool-season"
+    },
+    {
+      "claimId": "care-sun",
+      "field": "care.sun",
+      "status": "asserted",
+      "value": "full sun",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Sun: Light: Full sun to Partial Shade in warm weather."
+    },
+    {
+      "claimId": "care-water",
+      "field": "care.water",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Water: Soil Drainage: Good Drainage; Moist."
+    },
+    {
+      "claimId": "care-growth",
+      "field": "care.growth",
+      "status": "asserted",
+      "value": "Woody landscape plant",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Growth habit summarized from landscape use."
+    },
+    {
+      "claimId": "care-size",
+      "field": "care.size",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Mature size not asserted without cultivar-specific measurement in packet sources.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "care-guide",
+      "field": "care.guide",
+      "status": "asserted",
+      "value": "Lettuce (Lactuca sativa). Cool-season leafy annual.",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Cool-season leafy annual"
+    },
+    {
+      "claimId": "groups",
+      "field": "groupIds",
+      "status": "asserted",
+      "value": [
+        "temperate-chill-fruit"
+      ],
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Structural groupIds: temperate-chill-fruit"
+    },
+    {
+      "claimId": "frostSensitivity",
+      "field": "frostSensitivity",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Cool-season annual; tolerates light frost.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Light frost OK."
+    },
+    {
+      "claimId": "coldTolerance",
+      "field": "coldTolerance",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Cool-season salad crop.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Medium."
+    },
+    {
+      "claimId": "heatTolerance",
+      "field": "heatTolerance",
+      "status": "asserted",
+      "value": "low",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Bolts and turns bitter in heat.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Low heat."
+    },
+    {
+      "claimId": "humidityTolerance",
+      "field": "humidityTolerance",
+      "status": "unknown",
+      "value": null,
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "NCSU/consulted page does not state atmospheric humidity tolerance; left UNKNOWN.",
+      "evidenceClass": "UNKNOWN"
+    },
+    {
+      "claimId": "waterNeeds",
+      "field": "waterNeeds",
+      "status": "asserted",
+      "value": "medium",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage; Moist.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Even moisture."
+    },
+    {
+      "claimId": "sunNeeds",
+      "field": "sunNeeds",
+      "status": "asserted",
+      "value": "full_sun",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Light: Full sun to Partial Shade in warm weather.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Sun; shade helps in heat."
+    },
+    {
+      "claimId": "drainageNeeds",
+      "field": "drainageNeeds",
+      "status": "asserted",
+      "value": "high",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Soil Drainage: Good Drainage.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "Good drainage."
+    },
+    {
+      "claimId": "needsWinterChill",
+      "field": "needsWinterChill",
+      "status": "asserted",
+      "value": false,
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Cool-season annual; no winter chill requirement for leaf harvest.",
+      "evidenceClass": "SOURCE_SUPPORTED",
+      "transformation": "No chill."
+    },
+    {
+      "claimId": "floweringRequirements",
+      "field": "floweringRequirements",
+      "status": "asserted",
+      "value": "Yellow composite flowers when bolted.",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Yellow flowers after bolting.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    },
+    {
+      "claimId": "fruitingRequirements",
+      "field": "fruitingRequirements",
+      "status": "asserted",
+      "value": "Grown for leaves; seed after bolting.",
+      "sourceIds": [
+        "ncsu-lactuca-sativa"
+      ],
+      "shortExcerpt": "Edible leaves harvested before bolting.",
+      "evidenceClass": "SOURCE_SUPPORTED"
+    }
+  ],
+  "image": {
+    "status": "IMAGE_PENDING"
+  },
+  "humanApproval": {
+    "approvedForIngest": true,
+    "approvedAt": "2026-08-31",
+    "approvedBy": "Owner Bulk Catalog Expansion V1 Batch 2 authorization",
+    "notes": "Evidence-first ingestion; free/open sources only; no paid APIs."
+  }
+}
