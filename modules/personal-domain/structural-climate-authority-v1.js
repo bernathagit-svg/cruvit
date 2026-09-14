@@ -10,6 +10,11 @@
  * Does not invent values: missing fetch/fields → UNKNOWN slots.
  */
 
+import {
+  coldToleranceIsLow,
+  frostSensitivityIsHard
+} from '../suitability/hard-climate-survival-gate-v1.js';
+
 export const STRUCTURAL_CLIMATE_AUTHORITY_VERSION = '1.0.0';
 
 export const STRUCTURAL_CLIMATE_SOURCE = Object.freeze({
@@ -581,7 +586,7 @@ export function applyStructuralClimateToProfile(climateProfile = {}, structuralC
 export function outdoorDamagingColdUnsupported(meta, climateProfile) {
   const frost = String(meta?.frostSensitivity || '').toLowerCase();
   const cold = String(meta?.coldTolerance || '').toLowerCase();
-  if (frost !== 'high' || cold !== 'low') return false;
+  if (!frostSensitivityIsHard(frost) || !coldToleranceIsLow(cold)) return false;
   const raw = climateProfile?.coldestMonthMeanMinC;
   if (raw == null || raw === '') return false;
   const c = Number(raw);

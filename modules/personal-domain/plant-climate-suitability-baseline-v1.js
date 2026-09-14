@@ -12,6 +12,10 @@
 
 import { quantitativeColdSurvivalUnsupported } from '../catalog-expansion/plant-climate-quantitative-evidence-v1-contract.js';
 import { outdoorDamagingColdUnsupported } from './structural-climate-authority-v1.js';
+import {
+  coldToleranceIsLow,
+  frostSensitivityIsHard
+} from '../suitability/hard-climate-survival-gate-v1.js';
 
 export const PLANT_CLIMATE_SUITABILITY_BASELINE_VERSION = '1.0.0-real-world-repair';
 
@@ -78,7 +82,7 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
     };
   }
 
-  if (frost === 'high' && freezingRisk !== 'low' && freezingRisk !== '') {
+  if (frostSensitivityIsHard(frost) && freezingRisk !== 'low' && freezingRisk !== '') {
     return {
       survivalHint: 'unreliable',
       confidence: extremes ? 'high' : 'medium',
@@ -88,7 +92,11 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
       authority: 'frostSensitivity-high'
     };
   }
-  if (frost === 'high' && climateProfile?.isFrostFreeGrowingClimate === false) {
+  if (
+    frostSensitivityIsHard(frost) &&
+    climateProfile?.isFrostFreeGrowingClimate === false &&
+    ((freezingRisk !== 'low' && freezingRisk !== '') || plantRequiresYearRoundWarmClimate(meta))
+  ) {
     return {
       survivalHint: 'unreliable',
       confidence: extremes ? 'high' : 'medium',
@@ -124,7 +132,7 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
         authority: 'frostSensitivity-medium-bounded'
       };
     }
-    if (frost === 'low' && coldTol === 'low') {
+    if (frost === 'low' && coldToleranceIsLow(coldTol)) {
       return {
         survivalHint: 'constrained',
         confidence: 'low',

@@ -27,6 +27,12 @@ import {
 } from './plant-climate-suitability-baseline-v1.js';
 import { resolveFruitingWithBiologicalEligibility, readBiologicalFruitSetEvidence } from '../catalog-expansion/reproductive-biology-v1-contract.js';
 import { applyEvidenceStrengthPropagation } from './evidence-strength-propagation-v1-contract.js';
+import {
+  frostSensitivityIsHard,
+  isHardFrostLimiter,
+  prioritizeHardFrostLimiters,
+  survivalFitIsHardCapped
+} from '../suitability/hard-climate-survival-gate-v1.js';
 
 export { atmosphericHumidityMismatchForLowTolerancePlant };
 export {
@@ -723,21 +729,26 @@ export function evaluateFloweringFromCatalogEvidence({
   if (
     !sheltered &&
     survival === SPECIFIC_OUTCOME_STATUS.UNRELIABLE &&
-    (frostSensitivity === 'high' || tropicalMoisturePlant)
+    (frostSensitivityIsHard(frostSensitivity) || tropicalMoisturePlant)
   ) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       evidence: 'negative:survival-failure-blocks-normal-flowering'
     };
   }
-  if (!sheltered && frostSensitivity === 'high' && freezingRisk !== 'low') {
+  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk !== 'low') {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       limiting: 'Frost risk is too high for reliable flowering.',
       evidence: 'negative:freezing-risk'
     };
   }
-  if (!sheltered && frostSensitivity === 'high' && !frostFree) {
+  if (
+    !sheltered &&
+    frostSensitivityIsHard(frostSensitivity) &&
+    !frostFree &&
+    (freezingRisk !== 'low' || plantRequiresYearRoundWarmClimate(meta))
+  ) {
     return {
       status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
       limiting: 'Needs frost-free conditions for flowering.',
@@ -774,7 +785,7 @@ export function evaluateFloweringFromCatalogEvidence({
   }
 
   // Positive path: only when climate can be compared to sourced requirements.
-  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivity === 'high';
+  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivityIsHard(frostSensitivity);
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
   const coolSlows = requirementsMentionCoolSlows(text);
 
@@ -988,7 +999,7 @@ export function evaluateFruitingFromCatalogEvidence({
     };
   }
 
-  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivity === 'high';
+  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivityIsHard(frostSensitivity);
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
 
   if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
@@ -1094,7 +1105,7 @@ function collectEngineFactors(suitability, extra = []) {
     const m = String(msg || '').trim();
     if (m && !out.includes(m)) out.push(m);
   }
-  return out;
+  return prioritizeHardFrostLimiters(out);
 }
 
 /**
@@ -1197,7 +1208,7 @@ export function deriveSpecificPlantOutcomes({
     usedVpd: false
   };
 
-  if (!sheltered && frostSensitivity === 'high' && freezingRisk !== 'low') {
+  if (!sheltered && frostSensitivityIsHard(frostSensitivity) && freezingRisk !== 'low') {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push('Frost risk is too high for this plant.');
     evidenceHints.survivalFields.push('frostSensitivity');
@@ -1228,7 +1239,12 @@ export function deriveSpecificPlantOutcomes({
     );
     evidenceHints.usedHumiditySurvival = true;
     evidenceHints.survivalFields.push('humidityTolerance');
-  } else if (!sheltered && frostSensitivity === 'high' && !frostFree) {
+  } else if (
+    !sheltered &&
+    frostSensitivityIsHard(frostSensitivity) &&
+    !frostFree &&
+    (freezingRisk !== 'low' || plantRequiresYearRoundWarmClimate(meta))
+  ) {
     survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
     limiting.push(
       'Needs a frost-free climate; outdoor reliability is limited where winters are cool or frost-prone.'
@@ -1296,6 +1312,22 @@ export function deriveSpecificPlantOutcomes({
         );
       }
     }
+  }
+
+  const engineFrost =
+    isHardFrostLimiter(s.explanationText) ||
+    (Array.isArray(s.warnings) && s.warnings.some((w) => isHardFrostLimiter(w)));
+  if (
+    !sheltered &&
+    survivalFitIsHardCapped(survivalFit, s.hardSurvivalBlocked) &&
+    (s.hardSurvivalBlocked === true || engineFrost)
+  ) {
+    survival = SPECIFIC_OUTCOME_STATUS.UNRELIABLE;
+    evidenceHints.survivalFields.push('frostSensitivity');
+    const frostMsg =
+      (Array.isArray(s.warnings) && s.warnings.find((w) => isHardFrostLimiter(w))) ||
+      (isHardFrostLimiter(s.explanationText) ? s.explanationText : 'Frost risk is too high for this plant.');
+    if (!limiting.some((m) => isHardFrostLimiter(m))) limiting.unshift(frostMsg);
   }
 
   const lowHumMismatch = lowHumMismatchEarly;

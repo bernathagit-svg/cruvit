@@ -11,13 +11,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   applyHardClimateSurvivalToFits,
+  coldToleranceIsLow,
   elevateAmbientFreezingRisk,
   enforceSurvivalDownstreamCaps,
   evaluateHardClimateSurvival,
+  frostSensitivityIsHard,
   hardFrostOutcomeInvariant,
   isExplicitFrostFreeProtectedContext,
   isHardFrostLimiter,
   isOrdinaryAreaShelter,
+  isStrongOutcomeBand,
+  prioritizeHardFrostLimiters,
   suppressStrongBandsWhenHardFrost
 } from '../modules/suitability/hard-climate-survival-gate-v1.js';
 import { formatSmartRecOutcomeBand } from '../modules/smart-recommendations/smart-rec-garden-intelligence-v1.js';
@@ -28,7 +32,11 @@ import {
 } from '../modules/personal-domain/coordinate-climate-garden-hydrate-v2.js';
 import { clearGlobalRuntimeCaches } from '../modules/personal-domain/coordinate-climate-global-lookup-v2.js';
 import { coordinateClimateProfileToStructuralPersistence } from '../modules/personal-domain/coordinate-climate-authority-v2-contract.js';
-import { findCatalogPlantBySlugOrName } from '../modules/personal-domain/specific-plant-suitability-contract.js';
+import {
+  deriveSpecificPlantOutcomes,
+  findCatalogPlantBySlugOrName
+} from '../modules/personal-domain/specific-plant-suitability-contract.js';
+import { BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1 } from '../modules/personal-domain/bootstrap-safe-climate-traits-migration-data-v1.js';
 import { isPaidAiAutomatedTestAllowed } from '../modules/runtime-guards/paid-ai-tests-gate-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -260,6 +268,45 @@ test('H. UNKNOWN / missing frost evidence is not optimistic in a freezing climat
   assert.notEqual(bands.survival, 'strong');
 });
 
+function resolveMojstranaClimate() {
+  clearGlobalRuntimeCaches();
+  resetCoordinateClimateRuntimeCounters();
+  const loc = { lat: 46.42383, lon: 13.8752, label: 'Mojstrana, Slovenia' };
+  const resolved = resolveGardenStructuralClimateFromCoordinateV2(loc.lat, loc.lon, {
+    dataRoot: DATA,
+    enqueuePrep: false,
+    label: loc.label
+  });
+  assert.equal(resolved.ok, true);
+  const structural =
+    resolved.structuralClimate || coordinateClimateProfileToStructuralPersistence(resolved.profile);
+  const climate = {
+    freezingRisk: structural.freezingRisk,
+    coldestMonthMeanMinC: structural.evidence?.coldestMonthMeanMinC ?? structural.coldestMonthMeanMinC,
+    thermalRegime: structural.thermalRegime,
+    isFrostFreeGrowingClimate: false,
+    structuralClimateStatus: 'known',
+    structuralClimate: structural
+  };
+  return { loc, structural, climate };
+}
+
+test('catalog ordinals: very_high frost / very_low cold are hard, not ignored', () => {
+  assert.equal(frostSensitivityIsHard('very_high'), true);
+  assert.equal(frostSensitivityIsHard('high'), true);
+  assert.equal(frostSensitivityIsHard('medium'), false);
+  assert.equal(frostSensitivityIsHard(''), false);
+  assert.equal(coldToleranceIsLow('very_low'), true);
+  assert.equal(coldToleranceIsLow('low'), true);
+  assert.equal(coldToleranceIsLow('high'), false);
+  const unnamed = applyOutdoorTender(
+    { frostSensitivity: 'very_high', coldTolerance: 'very_low' },
+    ALPINE_FREEZE
+  );
+  assert.equal(unnamed.verdict.hardBlocked, true);
+  assert.notEqual(unnamed.bands.survival, 'strong');
+});
+
 test('Mojstrana structural climate is hard freeze; lemon-class and mango-class both cap', () => {
   clearGlobalRuntimeCaches();
   resetCoordinateClimateRuntimeCounters();
@@ -346,6 +393,104 @@ test('Mojstrana structural climate is hard freeze; lemon-class and mango-class b
   assert.equal(liveMangoStyleContradiction.ok, false);
 });
 
+test('real catalog lemon × Mojstrana outdoor cannot display Survival Reliable', () => {
+  const lemonTraits = BOOTSTRAP_SAFE_CLIMATE_TRAITS_MIGRATION_V1.plants.lemon.climateTraits;
+  assert.equal(lemonTraits.frostSensitivity, 'very_high');
+  assert.equal(lemonTraits.coldTolerance, 'very_low');
+  assert.equal(lemonTraits.traitEvidenceClasses.frostSensitivity, 'SOURCE_SUPPORTED');
+  assert.equal(lemonTraits.traitEvidenceClasses.coldTolerance, 'SOURCE_SUPPORTED');
+  assert.ok(Array.isArray(lemonTraits.groupIds) && lemonTraits.groupIds.includes('warm-citrus-fruit-tree'));
+
+  const { loc, climate } = resolveMojstranaClimate();
+  assert.equal(climate.freezingRisk, 'high');
+  assert.ok(Number(climate.coldestMonthMeanMinC) <= 0);
+  assert.equal(elevateAmbientFreezingRisk(climate, loc), 'high');
+
+  const outdoor = applyOutdoorTender(lemonTraits, climate, { plantingMode: 'ground' });
+  assert.equal(outdoor.verdict.hardBlocked, true);
+  assert.ok(outdoor.fits.survivalFit <= 15);
+  assert.notEqual(outdoor.bands.survival, 'strong');
+
+  const lemonPlant = {
+    slug: 'lemon',
+    name: 'Lemon Tree',
+    scientific: 'Citrus × limon',
+    climateTraits: lemonTraits
+  };
+  const suitability = {
+    survivalFit: outdoor.fits.survivalFit,
+    thriveFit: outdoor.fits.thriveFit,
+    floweringFit: outdoor.fits.floweringFit,
+    fruitingFit: outdoor.fits.fruitingFit,
+    hardSurvivalBlocked: true,
+    recommendationLevel: 'blocked',
+    warnings: [outdoor.verdict.reason],
+    explanationText: outdoor.verdict.reason
+  };
+  const outcomes = deriveSpecificPlantOutcomes({
+    meta: lemonTraits,
+    climateProfile: climate,
+    suitability,
+    plant: lemonPlant,
+    protectedGrowing: false
+  });
+  const survivalLabel = String(outcomes.survivalLabel || outcomes.survival || '');
+  assert.notEqual(survivalLabel, 'Reliable');
+  assert.notEqual(survivalLabel.toLowerCase(), 'strong');
+  assert.notEqual(survivalLabel.toLowerCase(), 'good');
+  assert.equal(isStrongOutcomeBand(survivalLabel), false);
+  assert.equal(outcomes.survival, 'unreliable');
+  const primary = prioritizeHardFrostLimiters(outcomes.limitingFactors || [])[0] || '';
+  assert.equal(isHardFrostLimiter(primary), true);
+  assert.doesNotMatch(primary, /Growth confidence bounded/i);
+
+  const warmFrostFree = {
+    ...WARM_COASTAL,
+    coldestMonthMeanMinC: 12
+  };
+  const warm = applyOutdoorTender(lemonTraits, warmFrostFree, { plantingMode: 'ground' });
+  assert.equal(warm.verdict.hardBlocked, false);
+  const warmOutcomes = deriveSpecificPlantOutcomes({
+    meta: lemonTraits,
+    climateProfile: warmFrostFree,
+    suitability: {
+      survivalFit: warm.fits.survivalFit,
+      thriveFit: warm.fits.thriveFit,
+      floweringFit: warm.fits.floweringFit,
+      fruitingFit: warm.fits.fruitingFit,
+      hardSurvivalBlocked: false,
+      recommendationLevel: 'good',
+      warnings: [],
+      explanationText: ''
+    },
+    plant: lemonPlant,
+    protectedGrowing: false
+  });
+  assert.notEqual(warmOutcomes.survival, 'unreliable');
+
+  const greenhouse = applyOutdoorTender(lemonTraits, climate, { plantingMode: 'greenhouse' });
+  assert.equal(isExplicitFrostFreeProtectedContext({ plantingMode: 'greenhouse' }), true);
+  assert.equal(greenhouse.verdict.hardBlocked, false);
+  assert.ok(greenhouse.fits.survivalFit > outdoor.fits.survivalFit);
+});
+
+test('hard frost limiter outranks soft confidence warning', () => {
+  const ordered = prioritizeHardFrostLimiters([
+    'Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.',
+    'Frost risk is too high for this plant.'
+  ]);
+  assert.equal(ordered[0], 'Frost risk is too high for this plant.');
+});
+
+test('display safety net strips Reliable when survivalFit is hard-capped', () => {
+  const stripped = suppressStrongBandsWhenHardFrost(
+    { survival: 'Reliable', growth: 'Constrained', flowering: 'UNKNOWN', fruiting: 'UNKNOWN' },
+    'Growth confidence bounded: material growth/tolerance traits are not SOURCE_SUPPORTED — provisional only.',
+    8
+  );
+  assert.notEqual(String(stripped.survival).toLowerCase(), 'reliable');
+});
+
 test('display safety net strips strong bands when limiter is hard frost', () => {
   const stripped = suppressStrongBandsWhenHardFrost(
     { survival: 'strong', growth: 'strong', flowering: 'strong', fruiting: 'strong' },
@@ -366,6 +511,9 @@ test('engine wiring: frost block caps fits; gate is loaded; no plant/place hard-
   assert.match(app, /applyHardClimateSurvivalToFits/);
   assert.match(app, /enforceSurvivalDownstreamCaps/);
   assert.match(app, /suppressStrongBandsWhenHardFrost/);
+  assert.match(app, /climateTraitOrdinalIsHardFrost/);
+  assert.match(app, /hardSurvivalBlocked/);
+  assert.match(app, /prioritizeHardFrostLimiters/);
   assert.doesNotMatch(gateSrc, /lemon/i);
   assert.doesNotMatch(gateSrc, /mango/i);
   assert.doesNotMatch(gateSrc, /Mojstrana/i);

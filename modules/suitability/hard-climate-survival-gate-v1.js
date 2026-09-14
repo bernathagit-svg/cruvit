@@ -10,9 +10,18 @@
  * Not a second climate engine: callers still use smartRecEvaluateSuitability.
  * Not plant- or place-specific.
  */
-export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.0.0';
+export const HARD_CLIMATE_SURVIVAL_GATE_VERSION = '1.1.0';
 
 const RISK_RANK = Object.freeze({ unknown: 0, low: 1, medium: 2, high: 3 });
+
+/** Catalog climate ordinals — same scale as catalog-contradiction-gate-v1. */
+export const CLIMATE_TRAIT_ORDINAL = Object.freeze([
+  'very_low',
+  'low',
+  'medium',
+  'high',
+  'very_high'
+]);
 
 const EXPLICIT_FROST_FREE_PROTECTION = Object.freeze({
   greenhouse: true,
@@ -24,6 +33,21 @@ const EXPLICIT_FROST_FREE_PROTECTION = Object.freeze({
 
 function asText(value) {
   return String(value == null ? '' : value).trim().toLowerCase();
+}
+
+export function climateTraitOrdinalRank(value) {
+  return CLIMATE_TRAIT_ORDINAL.indexOf(asText(value).replace(/-/g, '_'));
+}
+
+/** high and very_high are both hard frost sensitivity. */
+export function frostSensitivityIsHard(value) {
+  return climateTraitOrdinalRank(value) >= climateTraitOrdinalRank('high');
+}
+
+/** low and very_low are both insufficient outdoor cold tolerance. */
+export function coldToleranceIsLow(value) {
+  const rank = climateTraitOrdinalRank(value);
+  return rank >= 0 && rank <= climateTraitOrdinalRank('low');
 }
 
 function finiteNumber(value) {
@@ -158,11 +182,13 @@ export function evaluateHardClimateSurvival({
     // Fall through to ambient rules — shelter/container must not erase freeze.
   }
 
+  const frostHard = frostSensitivityIsHard(frostSens);
+  const coldLow = coldToleranceIsLow(coldTol);
   const tender =
-    frostSens === 'high' ||
-    (coldTol === 'low' && (frostSens === 'high' || frostSens === 'medium' || frostSens === ''));
+    frostHard ||
+    (coldLow && (frostHard || frostSens === 'medium' || frostSens === ''));
 
-  if (frostSens === 'high' && ambientRisk !== 'low' && ambientRisk !== 'unknown') {
+  if (frostHard && ambientRisk !== 'low' && ambientRisk !== 'unknown') {
     return Object.assign({}, base, {
       hardBlocked: true,
       reason: 'Frost risk is too high for this plant.',
@@ -173,7 +199,7 @@ export function evaluateHardClimateSurvival({
     });
   }
 
-  if (frostSens === 'high' && ambientRisk === 'low' && cold != null && cold < 1) {
+  if (frostHard && ambientRisk === 'low' && cold != null && cold < 1) {
     return Object.assign({}, base, {
       hardBlocked: true,
       reason: 'Winter freeze / hard frost exceeds this plant’s outdoor survival tolerance.',
@@ -184,7 +210,7 @@ export function evaluateHardClimateSurvival({
     });
   }
 
-  if ((coldTol === 'low' || frostSens === 'high') && lethalAmbient) {
+  if ((coldLow || frostHard) && lethalAmbient) {
     return Object.assign({}, base, {
       hardBlocked: true,
       reason: 'Winter freeze / hard frost exceeds this plant’s outdoor survival tolerance.',
@@ -288,14 +314,14 @@ export function hardFrostOutcomeInvariant({
 } = {}) {
   const violations = [];
   const frostHard = isHardFrostLimiter(limiter);
-  if (frostHard && isStrongOutcomeBand(outcomes.survival)) {
-    violations.push('frost-limiter-with-strong-survival');
-  }
   const survivalHardBlocked =
     hardSurvivalBlocked === true ||
     (Number.isFinite(Number(survivalFit)) && Number(survivalFit) <= 15) ||
     asText(outcomes.survival) === 'unreliable' ||
     asText(outcomes.survival) === 'poor';
+  if ((frostHard || survivalHardBlocked) && isStrongOutcomeBand(outcomes.survival)) {
+    violations.push('frost-limiter-with-strong-survival');
+  }
   if (survivalHardBlocked || frostHard) {
     for (const dim of ['growth', 'flowering', 'fruiting']) {
       if (isStrongOutcomeBand(outcomes[dim])) {
@@ -306,27 +332,47 @@ export function hardFrostOutcomeInvariant({
   return { ok: violations.length === 0, violations };
 }
 
+export function survivalFitIsHardCapped(survivalFit, hardSurvivalBlocked) {
+  return hardSurvivalBlocked === true || (Number.isFinite(Number(survivalFit)) && Number(survivalFit) <= 15);
+}
+
+/** Hard frost / lethal winter must outrank provenance/confidence warnings. */
+export function prioritizeHardFrostLimiters(messages = []) {
+  const list = Array.isArray(messages) ? messages.map((m) => String(m || '').trim()).filter(Boolean) : [];
+  const hard = [];
+  const rest = [];
+  for (const msg of list) {
+    if (isHardFrostLimiter(msg)) hard.push(msg);
+    else rest.push(msg);
+  }
+  return hard.concat(rest);
+}
+
 export function suppressStrongBandsWhenHardFrost(outcomes, limiter, survivalFit) {
   const next = Object.assign({}, outcomes && typeof outcomes === 'object' ? outcomes : {});
-  const check = hardFrostOutcomeInvariant({ limiter, outcomes: next, survivalFit });
-  if (check.ok) return next;
+  const hardCap =
+    isHardFrostLimiter(limiter) ||
+    (Number.isFinite(Number(survivalFit)) && Number(survivalFit) <= 15);
+  if (!hardCap) return next;
   const capBand = (value) => {
     const raw = String(value || '').trim();
     if (!raw || raw.toUpperCase() === 'UNKNOWN') return raw || 'UNKNOWN';
     if (isStrongOutcomeBand(raw)) return 'weak';
     return raw;
   };
-  if (isHardFrostLimiter(limiter) || (Number.isFinite(Number(survivalFit)) && Number(survivalFit) <= 15)) {
-    next.survival = capBand(next.survival);
-    next.growth = capBand(next.growth);
-    next.flowering = capBand(next.flowering);
-    next.fruiting = capBand(next.fruiting);
-  }
+  next.survival = capBand(next.survival);
+  next.growth = capBand(next.growth);
+  next.flowering = capBand(next.flowering);
+  next.fruiting = capBand(next.fruiting);
   return next;
 }
 
 const api = {
   HARD_CLIMATE_SURVIVAL_GATE_VERSION,
+  CLIMATE_TRAIT_ORDINAL,
+  climateTraitOrdinalRank,
+  frostSensitivityIsHard,
+  coldToleranceIsLow,
   isOrdinaryAreaShelter,
   isExplicitFrostFreeProtectedContext,
   elevateAmbientFreezingRisk,
@@ -335,6 +381,8 @@ const api = {
   enforceSurvivalDownstreamCaps,
   isStrongOutcomeBand,
   isHardFrostLimiter,
+  survivalFitIsHardCapped,
+  prioritizeHardFrostLimiters,
   hardFrostOutcomeInvariant,
   suppressStrongBandsWhenHardFrost
 };

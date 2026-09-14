@@ -2074,10 +2074,17 @@ function climateSuitabilityV1IsFrostFreeGrowingClimate(garden){
   return false;
 }
 
+function climateTraitOrdinalIsHardFrost(value){
+  const gate=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
+  if(gate&&typeof gate.frostSensitivityIsHard==='function') return gate.frostSensitivityIsHard(value);
+  const s=String(value||'').trim().toLowerCase().replace(/-/g,'_');
+  return s==='high'||s==='very_high';
+}
+
 function climateSuitabilityV1HighFrostNeedsConservativeClimate(meta,indoorShelter,garden){
   return !indoorShelter
     &&!!meta
-    &&meta.frostSensitivity==='high'
+    &&climateTraitOrdinalIsHardFrost(meta.frostSensitivity)
     &&!climateSuitabilityV1IsFrostFreeGrowingClimate(garden);
 }
 
@@ -2161,7 +2168,7 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
     heatCold=80;
     humidity=80;
     const hotHumidStress=typeof smartRecClimateFeelsHotHumid==='function'?smartRecClimateFeelsHotHumid(garden):false;
-    if(!indoorShelter&&meta.frostSensitivity==='high'&&garden.freezingRisk!=='low'){
+    if(!indoorShelter&&climateTraitOrdinalIsHardFrost(meta.frostSensitivity)&&garden.freezingRisk!=='low'){
       blockWith('Frost risk is too high for this plant.');
       survival=Math.min(survival,8);
       thrive=Math.min(thrive,8);
@@ -6396,7 +6403,7 @@ function smartRecEvaluateSuitability(p){
     }else if(verdict.reason&&verdict.survivalCap!=null&&!verdict.protectedContext){
       addWarning(verdict.reason,8);
     }
-  }else if(!frostIndoorShelter&&meta.frostSensitivity==='high'&&climateProfile.freezingRisk!=='low'){
+  }else if(!frostIndoorShelter&&climateTraitOrdinalIsHardFrost(meta.frostSensitivity)&&climateProfile.freezingRisk!=='low'){
     blockWith('Frost risk is too high for this plant.');
     survivalFit=Math.min(survivalFit,8);
     thriveFit=Math.min(thriveFit,8);
@@ -6573,7 +6580,7 @@ function smartRecEvaluateSuitability(p){
   }
   if(!blocked&&catalogNeedsReview&&recommendationLevel==='excellent') recommendationLevel='good';
   const explanationText=warnings[0]||meta.survivalVsThriveNotes||'';
-  return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText};
+  return {suitabilityScore,recommendationLevel,survivalFit,thriveFit,floweringFit,fruitingFit,warnings,explanationText,hardSurvivalBlocked};
 }
 
 /**
@@ -8941,6 +8948,10 @@ function evaluateIdentifierGardenSuitability(canonicalSlug){
       warnings=factors.slice();
       primaryLimiter=String(factors[0]||primaryLimiter);
     }
+    if(gateApi&&typeof gateApi.prioritizeHardFrostLimiters==='function'){
+      warnings=gateApi.prioritizeHardFrostLimiters(warnings.concat(suitability.warnings||[]));
+      if(warnings.length) primaryLimiter=warnings[0];
+    }
   }else{
     const gi=typeof smartRecGardenIntelligenceApi==='function'?smartRecGardenIntelligenceApi():null;
     outcomes=gi&&typeof gi.smartRecDimensionDisplay==='function'
@@ -8948,7 +8959,11 @@ function evaluateIdentifierGardenSuitability(canonicalSlug){
       :null;
   }
   if(gateApi&&typeof gateApi.suppressStrongBandsWhenHardFrost==='function'&&outcomes){
-    outcomes=gateApi.suppressStrongBandsWhenHardFrost(outcomes,primaryLimiter,suitability.survivalFit);
+    outcomes=gateApi.suppressStrongBandsWhenHardFrost(
+      outcomes,
+      primaryLimiter,
+      suitability.survivalFit
+    );
   }
   return {
     ok:true,
@@ -9143,7 +9158,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
-<script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914c"></script>
+<script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914d"></script>
 <script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
