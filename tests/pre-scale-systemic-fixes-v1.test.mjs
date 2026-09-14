@@ -324,7 +324,15 @@ test('location: Brazil / California / Singapore / city / ambiguous', async () =>
   });
 });
 
-test('matrix hydrate + thermal + chill + differentiation', async () => {
+test(
+  'matrix hydrate + thermal + chill + differentiation',
+  {
+    skip:
+      process.env.CRUVIT_LIVE_CLIMATE_TESTS === '1'
+        ? false
+        : 'live geocode + Open-Meteo archive; set CRUVIT_LIVE_CLIMATE_TESTS=1 for bounded integration'
+  },
+  async () => {
   clearStructuralClimateCache();
   const doc = loadSeed();
   const plants = (doc.plants || []).filter((p) => CALIBRATION_SLUGS.includes(p.slug));

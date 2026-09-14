@@ -1,6 +1,8 @@
 /**
- * Coconut multi-location quality acceptance after general outcome authority fixes.
- * No hardcoded expected city outcomes — asserts quality gates + reports results.
+ * Coconut multi-location LIVE hydrate — bounded integration, not the fast core suite.
+ * Offline Coconut × Kochi authority lives in tests/garden-suitability-core-accuracy-v1.test.mjs.
+ *
+ * Run live: CRUVIT_LIVE_CLIMATE_TESTS=1 node --test tests/coconut-four-location-quality.test.mjs
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -217,7 +219,12 @@ test('Brazil country hit cannot become trusted Garden climate authority', () => 
   assert.equal(isTooBroadForGardenClimate({ name: 'israel', label: 'Israel', feature_code: 'PCLI' }), true);
 });
 
-test('Coconut five-location quality acceptance + latency', async (t) => {
+const LIVE = process.env.CRUVIT_LIVE_CLIMATE_TESTS === '1';
+
+test(
+  'Coconut five-location live hydrate (bounded integration)',
+  { skip: LIVE ? false : 'live Open-Meteo hydrate; set CRUVIT_LIVE_CLIMATE_TESTS=1 for bounded integration' },
+  async (t) => {
   const { plant, meta, traits } = loadCoconut();
   const cases = [
     { key: 'Brazil', query: 'Brazil' },
@@ -370,10 +377,13 @@ test('Coconut five-location quality acceptance + latency', async (t) => {
   assert.equal(cairo.overallCode, 'blocked');
   assert.equal(cairo.survival, 'Unreliable');
 
-  // Calibrated coconut may earn evidence-backed Good + Supported fruiting in humid tropical Kochi.
-  assert.equal(kochi.overallCode, 'good');
-  assert.equal(kochi.fruiting, 'Supported');
-  assert.equal(kochi.flowering, 'Supported');
+  // Evidence-honest Kochi: frost-free tropical is viable, but heuristic traits + missing
+  // fruit-set biology cannot authorize confident Good / Supported fruiting.
+  assert.notEqual(kochi.overallCode, 'blocked');
+  assert.notEqual(kochi.survival, 'Unreliable');
+  assert.notEqual(kochi.overallCode, 'good');
+  assert.notEqual(kochi.overallCode, 'excellent');
+  assert.notEqual(kochi.fruiting, 'Supported');
 
   // Non-hospitable sites: survival failure ⇒ blocked; no confident Good.
   for (const row of [cairo, tokyo, yehiam]) {

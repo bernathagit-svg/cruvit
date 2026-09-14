@@ -580,13 +580,31 @@ export function applyStructuralClimateToProfile(climateProfile = {}, structuralC
 }
 
 /**
- * Trait-driven damaging-cold check (general).
- * high frostSensitivity + low coldTolerance + known coldestMonthMeanMinC < threshold.
+ * Year-round-warm / tropical establishment need.
+ * Aligned with plantRequiresYearRoundWarmClimate — kept local to avoid import cycles.
+ * Cool-winter Mediterranean citrus (very_high/very_low, non-tropical groups) is excluded.
+ */
+function plantHasYearRoundWarmEstablishmentNeed(meta) {
+  const frost = String(meta?.frostSensitivity || '').toLowerCase();
+  const cold = String(meta?.coldTolerance || '').toLowerCase();
+  const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
+  if (groups.includes('tropical-frost-sensitive-fruit')) return true;
+  if (frost === 'high' && cold === 'low') return true;
+  const flower = String(meta?.floweringRequirements || '');
+  const fruit = String(meta?.fruitingRequirements || '');
+  return /tropical|year-?\s*round\s*warm|always.?hot|humid tropics/i.test(`${flower} ${fruit}`);
+}
+
+/**
+ * Trait-driven damaging-cold check (chilling injury without literal frost).
+ * Applies only when plant evidence authorizes year-round-warm / tropical need.
+ * Frost-sensitive Mediterranean plants are gated by freeze, not the 10°C tropical band.
  */
 export function outdoorDamagingColdUnsupported(meta, climateProfile) {
   const frost = String(meta?.frostSensitivity || '').toLowerCase();
   const cold = String(meta?.coldTolerance || '').toLowerCase();
   if (!frostSensitivityIsHard(frost) || !coldToleranceIsLow(cold)) return false;
+  if (!plantHasYearRoundWarmEstablishmentNeed(meta)) return false;
   const raw = climateProfile?.coldestMonthMeanMinC;
   if (raw == null || raw === '') return false;
   const c = Number(raw);

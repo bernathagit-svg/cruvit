@@ -785,7 +785,9 @@ export function evaluateFloweringFromCatalogEvidence({
   }
 
   // Positive path: only when climate can be compared to sourced requirements.
-  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivityIsHard(frostSensitivity);
+  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity alone.
+  // Mediterranean citrus can be frost-sensitive without requiring year-round-warm tropics.
+  const wantsWarm = requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta);
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
   const coolSlows = requirementsMentionCoolSlows(text);
 
@@ -866,7 +868,10 @@ export function evaluateFloweringFromCatalogEvidence({
     }
     // Requirements present and comparable, but climate fails the warm-tropical match
     // without already hitting a hard negative above — still a real comparison, not a default score.
-    if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
+    if (
+      !sheltered &&
+      (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal))
+    ) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNLIKELY,
         limiting: 'Climate is too cool / not frost-free for sourced warm flowering needs.',
@@ -999,7 +1004,9 @@ export function evaluateFruitingFromCatalogEvidence({
     };
   }
 
-  const wantsWarm = requirementsWantTropicalWarmth(text) || frostSensitivityIsHard(frostSensitivity);
+  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity alone.
+  // Mediterranean citrus can be frost-sensitive without requiring year-round-warm tropics.
+  const wantsWarm = requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta);
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
 
   if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
@@ -1069,7 +1076,10 @@ export function evaluateFruitingFromCatalogEvidence({
         evidence: 'partial:humidity-medium-non-tropical'
       });
     }
-    if (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal)) {
+    if (
+      !sheltered &&
+      (!frostFree || freezingRisk === 'high' || /cool|frost-prone|highland/.test(thermal))
+    ) {
       return {
         status: SPECIFIC_OUTCOME_STATUS.UNRELIABLE,
         limiting: 'Climate is too cool / not frost-free for sourced fruiting needs.',

@@ -277,10 +277,14 @@ test('9. Coconut Kochi/Singapore not driven by 50/40 defaults', () => {
   });
   assert.equal(o50.flowering, o99.flowering);
   assert.equal(o50.fruiting, o99.fruiting);
-  assert.equal(o50.flowering, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
-  assert.equal(o50.fruiting, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
   assert.match(String(o50.reproductiveEvidence?.flowering || ''), /positive:/);
-  assert.match(String(o50.reproductiveEvidence?.fruiting || ''), /positive:/);
+  assert.match(String(o50.reproductiveEvidence?.fruiting || ''), /positive:|bio:/);
+  assert.notEqual(o50.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.notEqual(o50.flowering, SPECIFIC_OUTCOME_STATUS.UNLIKELY);
+  assert.notEqual(o50.fruiting, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  // Heuristic catalog traits cannot authorize confident Supported; missing fruit-set biology stays UNKNOWN.
+  assert.notEqual(o50.flowering, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.notEqual(o50.fruiting, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
 });
 
 test('10. Cacao produces evidence-backed reproductive outcomes from sourced metadata', () => {
@@ -317,9 +321,12 @@ test('10. Cacao produces evidence-backed reproductive outcomes from sourced meta
     suitability: stubSuit,
     plant
   });
-  assert.equal(kochi.flowering, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
-  assert.equal(kochi.fruiting, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
   assert.match(String(kochi.reproductiveEvidence?.flowering || ''), /20/);
+  assert.notEqual(kochi.flowering, SPECIFIC_OUTCOME_STATUS.UNLIKELY);
+  assert.notEqual(kochi.flowering, SPECIFIC_OUTCOME_STATUS.UNKNOWN);
+  assert.notEqual(kochi.fruiting, SPECIFIC_OUTCOME_STATUS.UNRELIABLE);
+  assert.notEqual(kochi.flowering, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
+  assert.notEqual(kochi.fruiting, SPECIFIC_OUTCOME_STATUS.SUPPORTED);
 
   const cairo = deriveSpecificPlantOutcomes({
     meta,

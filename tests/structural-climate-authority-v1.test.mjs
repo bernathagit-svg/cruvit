@@ -162,7 +162,35 @@ test('aggregateArchiveDailyToNormals computes AI + coldest month', () => {
   assert.ok(agg.normals.coldestMonthMeanMinC < 10);
 });
 
-test('live hydrate Cairo vs Kochi differentiate moisture (network)', async (t) => {
+test('damaging-cold 10°C band is tropical year-round-warm, not Mediterranean citrus', () => {
+  const mildWinter = { coldestMonthMeanMinC: 7.75, freezingRisk: 'low', thermalRegime: 'cool-seasonal' };
+  const citrus = {
+    frostSensitivity: 'very_high',
+    coldTolerance: 'very_low',
+    groupIds: ['warm-citrus-fruit-tree']
+  };
+  const tropical = {
+    frostSensitivity: 'high',
+    coldTolerance: 'low',
+    groupIds: ['tropical-frost-sensitive-fruit']
+  };
+  assert.equal(outdoorDamagingColdUnsupported(citrus, mildWinter), false);
+  assert.equal(outdoorDamagingColdUnsupported(tropical, mildWinter), true);
+  assert.equal(
+    outdoorDamagingColdUnsupported(tropical, { coldestMonthMeanMinC: 24.35, freezingRisk: 'low' }),
+    false
+  );
+});
+
+test(
+  'live hydrate Cairo vs Kochi differentiate moisture (network)',
+  {
+    skip:
+      process.env.CRUVIT_LIVE_CLIMATE_TESTS === '1'
+        ? false
+        : 'live Open-Meteo archive; set CRUVIT_LIVE_CLIMATE_TESTS=1 for bounded integration'
+  },
+  async (t) => {
   let cairo;
   let kochi;
   try {

@@ -261,6 +261,28 @@ test('G. warm-climate tender plant remains viable when freeze risk is genuinely 
   assert.equal(bands.survival, 'strong');
 });
 
+test('cool-seasonal winters are not treated as lethal frost when month-min stays above freeze', () => {
+  const mildWinter = {
+    freezingRisk: 'low',
+    coldestMonthMeanMinC: 7.75,
+    thermalRegime: 'cool-seasonal',
+    structuralColdRisk: 'elevated',
+    isFrostFreeGrowingClimate: false,
+    structuralClimateStatus: 'known'
+  };
+  assert.equal(elevateAmbientFreezingRisk(mildWinter, { lat: 33.13, lon: 35.22 }), 'low');
+  const citrus = applyOutdoorTender(
+    { frostSensitivity: 'very_high', coldTolerance: 'very_low', groupIds: ['warm-citrus-fruit-tree'] },
+    mildWinter
+  );
+  assert.equal(citrus.verdict.hardBlocked, false);
+  const tropical = applyOutdoorTender(
+    { frostSensitivity: 'high', coldTolerance: 'low', groupIds: ['tropical-frost-sensitive-fruit'] },
+    ALPINE_FREEZE
+  );
+  assert.equal(tropical.verdict.hardBlocked, true);
+});
+
 test('H. UNKNOWN / missing frost evidence is not optimistic in a freezing climate', () => {
   const { verdict, fits, bands } = applyOutdoorTender({}, ALPINE_FREEZE);
   assert.equal(verdict.conservativeUnknown, true);
