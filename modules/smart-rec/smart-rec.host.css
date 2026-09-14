@@ -639,6 +639,54 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
   text-align: center;
 }
 
+#smart-rec-root .sr-outcomes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin: 8px 0 6px;
+}
+
+#smart-rec-root .sr-outcomes div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+#smart-rec-root .sr-outcomes dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(18, 53, 31, 0.55);
+}
+
+#smart-rec-root .sr-outcomes dd {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #12351f;
+}
+
+#smart-rec-root .sr-plant-level,
+#smart-rec-root .sr-plant-limiter,
+#smart-rec-root .sr-plant-unknown {
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(18, 53, 31, 0.72);
+}
+
+#smart-rec-root .sr-plant-owned {
+  display: inline-flex;
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(31, 90, 54, 0.1);
+  color: #1f5a36;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 #smart-rec-root .sr-plant-sci,
 #smart-rec-root .sr-plant-care,
 #smart-rec-root .sr-plant-climate {

@@ -14,6 +14,11 @@ import {
 } from './garden-areas-v1-contract.js';
 
 const HOST_ID = 'gardenAreasV1Host';
+let cachedGardenAreas = [];
+
+export function getCachedGardenAreas() {
+  return cachedGardenAreas.slice();
+}
 
 function escapeHtml(s) {
   return String(s ?? '')
@@ -166,6 +171,7 @@ export async function refreshGardenAreasV1() {
     }));
   } catch (_) {}
 
+  cachedGardenAreas = Array.isArray(areas) ? areas.slice() : [];
   host.innerHTML = renderGardenAreasHtml({ signedIn: true, areas, plants });
   wireAreaForm(host, pd);
   return { areas, plants };
@@ -246,7 +252,8 @@ if (isBrowser) {
     refresh: refreshGardenAreasV1,
     renderHtml: renderGardenAreasHtml,
     normalizeAreaContext,
-    buildAreaReadModel
+    buildAreaReadModel,
+    getCachedAreas: getCachedGardenAreas
   });
 
   function boot() {
