@@ -16,10 +16,12 @@ export const RUNTIME_MEDIA_CONTRACT_VERSION = '1.1.0-owned-display';
 export const IMAGE_READY = 'IMAGE_READY';
 export const IMAGE_PENDING = 'IMAGE_PENDING';
 export const IMAGE_OWNER_REVIEW = 'IMAGE_OWNER_REVIEW';
+export const IMAGE_BLOCKED = 'IMAGE_BLOCKED';
 
 const READY = IMAGE_READY;
 const PENDING = IMAGE_PENDING;
 const OWNER_REVIEW = IMAGE_OWNER_REVIEW;
+const BLOCKED = IMAGE_BLOCKED;
 
 function isHttpUrl(u) {
   return /^https?:\/\//i.test(String(u || ''));
@@ -229,6 +231,12 @@ export function resolvePlantDisplayMedia(plant) {
   }
 
   const status = media?.imageStatus || PENDING;
+  const honestStatus =
+    status === OWNER_REVIEW
+      ? OWNER_REVIEW
+      : status === BLOCKED
+        ? BLOCKED
+        : PENDING;
   return {
     kind: 'placeholder',
     url: '',
@@ -236,8 +244,8 @@ export function resolvePlantDisplayMedia(plant) {
     attribution: null,
     license: null,
     sourcePageUrl: null,
-    imageStatus: status === OWNER_REVIEW ? OWNER_REVIEW : PENDING,
-    pendingReason: media?.pendingReason || approved.reason || 'no-approved-catalog-media',
+    imageStatus: honestStatus,
+    pendingReason: media?.blockedReason || media?.pendingReason || approved.reason || 'no-approved-catalog-media',
     placeholder: true,
     authority: 'placeholder'
   };
@@ -313,6 +321,24 @@ export function mayPromoteUserMediaToCatalogImage() {
   return false;
 }
 
+/**
+ * Attach approved catalog media from canonical slug index when the instance
+ * object itself has none. Does not invent images. Does not promote user media.
+ */
+export function withCanonicalCatalogMedia(plant, catalogBySlug) {
+  if (!plant || typeof plant !== 'object') return plant;
+  if (!catalogBySlug || typeof catalogBySlug !== 'object') return plant;
+  const existing = getCatalogMediaRecord(plant);
+  if (existing && isApprovedCatalogMediaRecord(existing, plant).ok) return plant;
+  const slug = String(plant.profileSlug || plant.slug || '').trim().toLowerCase();
+  if (!slug) return plant;
+  const hit = catalogBySlug[slug];
+  if (!hit) return plant;
+  const media = hit.catalogMedia || hit.media || (hit.imageStatus ? hit : null);
+  if (!media || typeof media !== 'object') return plant;
+  return { ...plant, catalogMedia: media, media };
+}
+
 const api = {
   RUNTIME_MEDIA_CONTRACT_VERSION,
   getCatalogMediaRecord,
@@ -329,9 +355,11 @@ const api = {
   isBroadPlantIdentity,
   catalogMediaCompatibleWithPlantIdentity,
   mayPromoteUserMediaToCatalogImage,
+  withCanonicalCatalogMedia,
   IMAGE_READY: READY,
   IMAGE_PENDING: PENDING,
-  IMAGE_OWNER_REVIEW: OWNER_REVIEW
+  IMAGE_OWNER_REVIEW: OWNER_REVIEW,
+  IMAGE_BLOCKED: BLOCKED
 };
 
 export default api;

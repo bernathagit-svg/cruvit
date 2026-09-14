@@ -1022,6 +1022,16 @@ function mergePlantCatalogItems(items){
       return;
     }
     if(PLANT_INDEX[flat.slug]){
+      const existing=PLANT_INDEX[flat.slug];
+      const seedMedia=item&&item.media&&typeof item.media==='object'?item.media:null;
+      if(seedMedia){
+        existing.catalogMedia=seedMedia;
+        existing.media=seedMedia;
+        const overlayApproved=(typeof isApprovedCatalogMediaRecord==='function')
+          ?isApprovedCatalogMediaRecord(seedMedia,existing)
+          :{ok:false};
+        if(overlayApproved.ok&&overlayApproved.url) existing.imageUrl=overlayApproved.url;
+      }
       skipped.push({slug:flat.slug,reason:'exists'});
       return;
     }
@@ -1076,6 +1086,20 @@ async function loadPlantCatalogSeed(url){
       if(json.schemaVersion!==1) throw new Error('Plant catalog seed invalid: schemaVersion');
       if(!Array.isArray(json.plants)) throw new Error('Plant catalog seed invalid: plants array');
       const mergeResult=mergePlantCatalogItems(json.plants);
+      if(json.catalogMediaByCanonicalSlug&&typeof json.catalogMediaByCanonicalSlug==='object'){
+        Object.keys(json.catalogMediaByCanonicalSlug).forEach(slug=>{
+          const plant=PLANT_INDEX[slug];
+          if(!plant) return;
+          const media=json.catalogMediaByCanonicalSlug[slug];
+          if(!media||typeof media!=='object') return;
+          plant.catalogMedia=media;
+          plant.media=media;
+          const idxApproved=(typeof isApprovedCatalogMediaRecord==='function')
+            ?isApprovedCatalogMediaRecord(media,plant)
+            :{ok:false};
+          if(idxApproved.ok&&idxApproved.url) plant.imageUrl=idxApproved.url;
+        });
+      }
       plantCatalogSeedStatus.status='ready';
       plantCatalogSeedStatus.added=mergeResult.added.slice();
       plantCatalogSeedStatus.skipped=mergeResult.skipped.slice();
@@ -2993,11 +3017,25 @@ function resolvePlantDisplayMedia(plant){
       sourceProvider:media.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media,authority:'catalog_plants.media'
     };
   }
-  const status=media?.imageStatus||'IMAGE_PENDING';
+  const canonSlug=typeof resolveBootstrapPlantSlug==='function'
+    ?resolveBootstrapPlantSlug(plant.profileSlug||plant.slug||'')
+    :String(plant.profileSlug||plant.slug||'');
+  const canonRef=canonSlug&&typeof PLANT_INDEX==='object'?PLANT_INDEX[canonSlug]:null;
+  const canonMedia=canonRef?getCatalogMediaRecord(canonRef):null;
+  const canonApproved=canonMedia?isApprovedCatalogMediaRecord(canonMedia,Object.assign({},canonRef||{},plant)):{ok:false};
+  if(canonApproved.ok){
+    return {
+      kind:'catalog',url:canonApproved.url,attributionRequired:canonMedia.attributionRequired===true,
+      attribution:canonMedia.attribution||null,author:canonMedia.author||null,license:canonMedia.license||null,
+      licenseUrl:canonMedia.licenseUrl||null,sourcePageUrl:canonMedia.sourcePageUrl||null,
+      sourceProvider:canonMedia.sourceProvider||null,imageStatus:'IMAGE_READY',placeholder:false,media:canonMedia,authority:'catalog_plants.media'
+    };
+  }
+  const status=media?.imageStatus||canonMedia?.imageStatus||'IMAGE_PENDING';
   return {
     kind:'placeholder',url:'',attributionRequired:false,attribution:null,license:null,sourcePageUrl:null,
-    imageStatus:status==='IMAGE_OWNER_REVIEW'?'IMAGE_OWNER_REVIEW':'IMAGE_PENDING',
-    pendingReason:media?.pendingReason||approved.reason||'no-approved-catalog-media',placeholder:true,authority:'placeholder'
+    imageStatus:status==='IMAGE_OWNER_REVIEW'?'IMAGE_OWNER_REVIEW':(status==='IMAGE_BLOCKED'?'IMAGE_BLOCKED':'IMAGE_PENDING'),
+    pendingReason:media?.blockedReason||media?.pendingReason||canonMedia?.blockedReason||approved.reason||'no-approved-catalog-media',placeholder:true,authority:'placeholder'
   };
 }
 function formatCatalogAttributionLabel(displayMedia){

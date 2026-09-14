@@ -5,8 +5,12 @@
 
 import {
   IMAGE_PENDING,
+  IMAGE_READY,
+  IMAGE_BLOCKED,
   mediaCacheKey,
   pendingMediaRecord,
+  blockedMediaRecord,
+  parseScientificBinomial,
   reuseCachedResolution,
   selectPrimaryImageCandidate
 } from './licensed-image-pipeline-v1-contract.js';
@@ -25,6 +29,32 @@ function parseBoolish(v) {
 }
 
 /**
+ * Bounded Commons search queries for one plant. Scientific identity first;
+ * broad taxa may add a genus-scope alternative. No paid search.
+ */
+export function buildCommonsSearchQueries(plant) {
+  const scientific = String(plant.scientific || plant.acceptedScientificName || '').trim();
+  const common = String(plant.commonName || plant.names?.en || '').trim();
+  const parsed = parseScientificBinomial(scientific);
+  const queries = [];
+  const push = (q) => {
+    const s = String(q || '').trim();
+    if (s && !queries.includes(s)) queries.push(s);
+  };
+  if (scientific) push(`"${scientific}"`);
+  if (scientific && scientific.includes('×')) {
+    push(`"${scientific.replace(/×/g, 'x')}"`);
+    push(`"${scientific.replace(/\s*×\s*/g, ' ')}"`);
+  }
+  if (parsed?.genusOnly && parsed.genus && !parsed.ambiguous) {
+    push(`${parsed.genus} plant`);
+  }
+  if (scientific && common) push(`${scientific} ${common}`);
+  if (!scientific && common) push(`${common} plant`);
+  return queries.slice(0, 4);
+}
+
+/**
  * Search Commons file namespace for a scientific-name-oriented query.
  */
 export async function searchCommonsImageCandidates(plant, options = {}) {
@@ -33,7 +63,7 @@ export async function searchCommonsImageCandidates(plant, options = {}) {
   const common = String(plant.commonName || plant.names?.en || '').trim();
   if (!scientific && !common) return { ok: false, error: 'missing-identity', candidates: [] };
 
-  const query = scientific ? `"${scientific}"` : `${common} plant`;
+  const query = options.query || (scientific ? `"${scientific}"` : `${common} plant`);
 
   const searchParams = new URLSearchParams({
     action: 'query',
@@ -122,8 +152,24 @@ export async function searchCommonsImageCandidates(plant, options = {}) {
   };
 }
 
+function persistResolution(cacheStore, key, plant, out, query) {
+  if (!cacheStore) return;
+  return Promise.resolve(
+    cacheStore.set(key, {
+      status: out.status,
+      media: out.media,
+      scientific: plant.scientific,
+      rejected: out.rejected,
+      passedCount: out.passedCount,
+      resolvedAt: new Date().toISOString(),
+      query
+    })
+  );
+}
+
 /**
- * Full resolve: search → select. Optional cache reuse.
+ * Full resolve: bounded search alternatives → select. Optional cache reuse.
+ * After all query alternatives fail, returns IMAGE_BLOCKED (honest, no fabricated match).
  */
 export async function resolveLicensedImageForPlant(plant, options = {}) {
   const cacheStore = options.cacheStore || null;
@@ -137,57 +183,98 @@ export async function resolveLicensedImageForPlant(plant, options = {}) {
     }
   }
 
-  const search = await searchCommonsImageCandidates(plant, options);
-  if (!search.ok) {
+  const parsed = parseScientificBinomial(plant.scientific || plant.acceptedScientificName || '');
+  if (parsed?.ambiguous) {
     const out = {
-      status: IMAGE_PENDING,
-      media: pendingMediaRecord(plant, `source-search-failed:${search.error}`),
+      status: IMAGE_BLOCKED,
+      media: blockedMediaRecord(plant, 'identity-ambiguous'),
       rejected: [],
       passedCount: 0,
       cacheKey: key,
-      searchMs: search.searchMs || 0,
+      searchMs: 0,
       licenseValidationMs: 0,
-      sourceError: search.error
+      fromCache: false
     };
-    if (cacheStore && options.cachePending !== false) {
-      await Promise.resolve(
-        cacheStore.set(key, {
-          ...out,
-          scientific: plant.scientific,
-          resolvedAt: new Date().toISOString()
-        })
-      );
-    }
+    await persistResolution(cacheStore, key, plant, out, null);
     return out;
   }
 
-  const tLic = performance.now();
-  const selected = selectPrimaryImageCandidate(plant, search.candidates);
-  const licenseValidationMs = performance.now() - tLic;
+  const queries = options.query
+    ? [options.query]
+    : buildCommonsSearchQueries(plant);
+  const allRejected = [];
+  let bestNonReady = null;
+  let totalSearchMs = 0;
+  let totalLicMs = 0;
+  let lastQuery = queries[0] || '';
 
-  const out = {
-    ...selected,
-    cacheKey: key,
-    searchMs: search.searchMs,
-    licenseValidationMs,
-    query: search.query,
-    candidateCount: search.candidates.length,
-    fromCache: false
-  };
-
-  if (cacheStore) {
-    await Promise.resolve(
-      cacheStore.set(key, {
-        status: out.status,
-        media: out.media,
-        scientific: plant.scientific,
-        rejected: out.rejected,
-        passedCount: out.passedCount,
-        resolvedAt: new Date().toISOString(),
-        query: search.query
-      })
-    );
+  for (let i = 0; i < queries.length; i++) {
+    const query = queries[i];
+    lastQuery = query;
+    if (i > 0) {
+      await new Promise((r) => setTimeout(r, options.retryDelayMs ?? 400));
+    }
+    const search = await searchCommonsImageCandidates(plant, { ...options, query });
+    totalSearchMs += search.searchMs || 0;
+    if (!search.ok) {
+      bestNonReady = {
+        status: IMAGE_PENDING,
+        media: pendingMediaRecord(plant, `source-search-failed:${search.error}`),
+        rejected: allRejected,
+        passedCount: 0,
+        sourceError: search.error
+      };
+      continue;
+    }
+    const tLic = performance.now();
+    const selected = selectPrimaryImageCandidate(plant, search.candidates);
+    totalLicMs += performance.now() - tLic;
+    allRejected.push(...(selected.rejected || []));
+    if (selected.status === IMAGE_READY) {
+      const out = {
+        ...selected,
+        cacheKey: key,
+        searchMs: totalSearchMs,
+        licenseValidationMs: totalLicMs,
+        query,
+        queriesAttempted: i + 1,
+        candidateCount: search.candidates.length,
+        fromCache: false
+      };
+      await persistResolution(cacheStore, key, plant, out, query);
+      return out;
+    }
+    bestNonReady = selected;
   }
 
+  const failReason =
+    bestNonReady?.media?.pendingReason ||
+    bestNonReady?.sourceError ||
+    'no-license-safe-asset';
+  const blockedReason =
+    /identity/.test(String(failReason))
+      ? 'identity-ambiguous'
+      : /source-search-failed|http-/.test(String(failReason))
+        ? 'source-unavailable'
+        : 'no-license-safe-asset';
+  const out = {
+    status: IMAGE_BLOCKED,
+    media: blockedMediaRecord(plant, blockedReason, {
+      lastStatus: bestNonReady?.status || IMAGE_PENDING,
+      lastReason: failReason,
+      queriesAttempted: queries,
+      rejectedSample: allRejected.slice(0, 12)
+    }),
+    rejected: allRejected,
+    passedCount: bestNonReady?.passedCount || 0,
+    cacheKey: key,
+    searchMs: totalSearchMs,
+    licenseValidationMs: totalLicMs,
+    query: lastQuery,
+    queriesAttempted: queries.length,
+    fromCache: false,
+    sourceError: bestNonReady?.sourceError || null
+  };
+  await persistResolution(cacheStore, key, plant, out, lastQuery);
   return out;
 }

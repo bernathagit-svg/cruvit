@@ -63,11 +63,10 @@ test('A: owned plant with IMAGE_READY catalog resolves automatically (e.g. turme
   assert.equal(d.authority, 'catalog_plants.media');
 });
 
-test('B: Pineapple has no IMAGE_READY yet → honest placeholder (not false image)', () => {
+test('B: pineapple resolves catalog IMAGE_READY automatically, or honest placeholder if blocked', () => {
   const plants = loadSeedPlants();
   const pineapple = plants.find((p) => p.slug === 'pineapple');
   assert.ok(pineapple);
-  assert.notEqual(pineapple.media?.imageStatus, IMAGE_READY);
   const d = resolvePlantDisplayMedia({
     name: 'Pineapple',
     scientific: 'Ananas comosus',
@@ -75,13 +74,18 @@ test('B: Pineapple has no IMAGE_READY yet → honest placeholder (not false imag
     catalogMedia: pineapple.media,
     media: pineapple.media
   });
-  assert.equal(d.kind, 'placeholder');
-  const url = resolveOwnedPlantDisplayUrl({
-    name: 'Pineapple',
-    scientific: 'Ananas comosus',
-    catalogMedia: pineapple.media
-  });
-  assert.match(url, /^data:image\/svg\+xml/);
+  if (pineapple.media?.imageStatus === IMAGE_READY) {
+    assert.equal(d.kind, 'catalog');
+    assert.match(d.url, /^https:\/\//);
+  } else {
+    assert.equal(d.kind, 'placeholder');
+    const url = resolveOwnedPlantDisplayUrl({
+      name: 'Pineapple',
+      scientific: 'Ananas comosus',
+      catalogMedia: pineapple.media
+    });
+    assert.match(url, /^data:image\/svg\+xml/);
+  }
 });
 
 test('C: broad Banana (Musa spp.) rejects falsely specific cultivar imagery', () => {

@@ -12,6 +12,7 @@ export const LICENSED_IMAGE_PIPELINE_VERSION = '1.0.0';
 export const IMAGE_PENDING = 'IMAGE_PENDING';
 export const IMAGE_READY = 'IMAGE_READY';
 export const IMAGE_OWNER_REVIEW = 'IMAGE_OWNER_REVIEW';
+export const IMAGE_BLOCKED = 'IMAGE_BLOCKED';
 
 /** Storage strategy for V1: reference stable source assets; provenance retained locally. */
 export const STORAGE_STRATEGY_V1 = Object.freeze({
@@ -157,27 +158,83 @@ export function evaluateLicenseForCommercialCatalog(licenseShortName, options = 
   return { ok: true, commercialUseAllowed: true, attributionRequired, normalized };
 }
 
+const SCIENTIFIC_RANK_SKIP = /^(spp|sp|ssp|subsp|var|cultivar|cv|x|hybrid)$/i;
+
 /**
- * Parse binomial scientific name → { genus, species, epithet }.
+ * Parse binomial scientific name → { genus, species, epithet, genusOnly, broad, ambiguous }.
  */
 export function parseScientificBinomial(scientific) {
   const raw = String(scientific || '')
     .trim()
     .replace(/\s+/g, ' ');
   if (!raw) return null;
-  const parts = raw.split(' ').filter(Boolean);
-  if (parts.length < 2) {
-    return { genus: parts[0] || '', species: '', epithet: '', binomial: raw, genusOnly: true };
+  if (/^various\b/i.test(raw) || /^mixed\b/i.test(raw) || /not reliably determined/i.test(raw)) {
+    return {
+      genus: '',
+      species: '',
+      epithet: '',
+      binomial: raw,
+      genusOnly: true,
+      broad: true,
+      ambiguous: true
+    };
   }
-  const genus = parts[0];
-  const epithet = parts[1].replace(/[^a-zA-Z-]/g, '');
+  const parts = raw.split(' ').filter(Boolean);
+  const genus = parts[0] || '';
+  let epithet = '';
+  for (let i = 1; i < parts.length; i++) {
+    const tok = parts[i].replace(/[^a-zA-Z-]/g, '');
+    if (!tok || SCIENTIFIC_RANK_SKIP.test(tok)) continue;
+    epithet = tok;
+    break;
+  }
+  const broad = /\bspp\.?\b/i.test(raw) || !epithet;
+  if (!epithet) {
+    return {
+      genus,
+      species: '',
+      epithet: '',
+      binomial: raw,
+      genusOnly: true,
+      broad,
+      ambiguous: false
+    };
+  }
   return {
     genus,
     epithet,
     species: `${genus} ${epithet}`,
     binomial: `${genus} ${epithet}`,
-    genusOnly: false
+    genusOnly: false,
+    broad: /\bspp\.?\b/i.test(raw),
+    ambiguous: false
   };
+}
+
+function blobLooksCultivarSpecificForBroadPlant(plant, blob) {
+  const sci = String(plant.scientific || plant.acceptedScientificName || '').toLowerCase();
+  if (/musa/.test(sci) && /\bcavendish\b|\blady\s*finger\b|\bplantain\b/.test(blob)) return true;
+  if (/\bcv\.|\bcultivar\b|\b[''][a-z][^'']{1,40}['']/.test(blob) && /\bcultivar\b|\bcv\./.test(blob)) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Portrait preference only — never a hard reject. Used to rank living-plant views
+ * above herbarium sheets / illustrations / harvested-only fruit when identity-safe
+ * alternatives exist.
+ */
+export function scoreCatalogPortraitPreference(candidate) {
+  const blob = `${candidate.title || ''} ${String(candidate.description || '').replace(/<[^>]+>/g, ' ')}`.toLowerCase();
+  let score = 0;
+  if (/\b(habit|whole plant|in situ|garden|shrub|tree|vine|clump|growth form)\b/.test(blob)) score += 16;
+  if (/\b(flower|flowers|fruit|foliage|leaves|leaf|bloom)\b/.test(blob)) score += 8;
+  if (/\bherbarium\b|\bsheet\b/.test(blob)) score -= 22;
+  if (/\billustration\b|\bdrawing\b|\bengraving\b|\bwatercolor\b/.test(blob)) score -= 10;
+  if (/\bmicroscop/.test(blob)) score -= 28;
+  if (/\b(sliced|on a plate|harvested fruit|fruit only)\b/.test(blob)) score -= 8;
+  return score;
 }
 
 /**
@@ -194,7 +251,15 @@ export function scoreIdentityMatch(plant, candidate) {
   const blob = `${title} ${desc} ${cats}`.toLowerCase();
   const reasons = [];
 
-  if (!sci || !sci.genus) {
+  if (!sci || sci.ambiguous) {
+    return {
+      ok: false,
+      confidence: 'none',
+      score: 0,
+      reasons: [sci?.ambiguous ? 'identity-ambiguous' : 'missing-scientific-name']
+    };
+  }
+  if (!sci.genus) {
     return {
       ok: false,
       confidence: 'none',
@@ -228,6 +293,38 @@ export function scoreIdentityMatch(plant, candidate) {
       confidence: 'none',
       score: 0,
       reasons: ['common-name-without-scientific']
+    };
+  }
+
+  const plantIsBroad =
+    sci.broad === true ||
+    sci.genusOnly === true ||
+    /\bspp\.?\b/i.test(String(plant.scientific || '')) ||
+    String(plant.identityScope || '').toLowerCase() === 'broad' ||
+    String(plant.identityScope || '').toLowerCase() === 'genus';
+
+  if (plantIsBroad && sci.genusOnly) {
+    if (!hasGenus) {
+      return {
+        ok: false,
+        confidence: 'none',
+        score: 0,
+        reasons: ['no-genus-match-for-broad-identity']
+      };
+    }
+    if (blobLooksCultivarSpecificForBroadPlant(plant, blob)) {
+      return {
+        ok: false,
+        confidence: 'none',
+        score: 0,
+        reasons: ['cultivar-specificity-for-broad-identity']
+      };
+    }
+    return {
+      ok: true,
+      confidence: 'medium',
+      score: hasCommon ? 78 : 74,
+      reasons: ['genus-scope-match-for-broad-identity']
     };
   }
 
@@ -333,6 +430,23 @@ export function buildAttributionString({
 }
 
 /**
+ * Honest IMAGE_BLOCKED record after bounded pipeline attempts failed.
+ */
+export function blockedMediaRecord(plant, reason, details = {}) {
+  const scientific = plant.scientific || plant.acceptedScientificName || '';
+  const common = plant.commonName || plant.names?.en || plant.slug || '';
+  return {
+    imageStatus: IMAGE_BLOCKED,
+    searchQuery: `${scientific} ${common}`.trim(),
+    pendingReason: reason,
+    blockedReason: reason,
+    blockedDetails: details,
+    pipelineVersion: LICENSED_IMAGE_PIPELINE_VERSION,
+    verifiedAt: new Date().toISOString()
+  };
+}
+
+/**
  * Empty media provenance shell for IMAGE_PENDING.
  */
 export function pendingMediaRecord(plant, reason, details = {}) {
@@ -389,6 +503,13 @@ export function readyMediaRecord(plant, candidate, identity, licenseEval) {
     identityConfidence: identity.confidence,
     identityMatchMethod: identity.reasons?.join(',') || null,
     identityScore: identity.score,
+    identityScope: /\bspp\.?\b/i.test(String(plant.scientific || '')) ||
+      String(plant.identityScope || '').toLowerCase() === 'broad' ||
+      String(plant.identityScope || '').toLowerCase() === 'genus'
+      ? 'broad'
+      : 'species',
+    cultivarSpecific: false,
+    canonicalPlantIdentity: plant.slug || plant.canonicalSlug || null,
     isPrimary: true,
     transformation: {
       resized: !!(candidate.thumbUrl && candidate.thumbUrl !== assetUrl),
@@ -451,7 +572,16 @@ export function selectPrimaryImageCandidate(plant, candidates = []) {
       });
       continue;
     }
-    passed.push({ raw, licenseEval, identity, quality, rank: identity.score + (Number(raw.width) > 800 ? 5 : 0) });
+    passed.push({
+      raw,
+      licenseEval,
+      identity,
+      quality,
+      rank:
+        identity.score +
+        (Number(raw.width) > 800 ? 5 : 0) +
+        scoreCatalogPortraitPreference(raw)
+    });
   }
 
   passed.sort((a, b) => b.rank - a.rank);
@@ -479,7 +609,9 @@ export function selectPrimaryImageCandidate(plant, candidates = []) {
   }
 
   const top = unique[0];
-  if (top.identity.confidence === 'medium' && unique.length === 1) {
+  const broadOk =
+    top.identity.reasons?.includes('genus-scope-match-for-broad-identity') === true;
+  if (top.identity.confidence === 'medium' && unique.length === 1 && !broadOk) {
     // Single medium-confidence hit → owner review rather than silent attach
     return {
       status: IMAGE_OWNER_REVIEW,

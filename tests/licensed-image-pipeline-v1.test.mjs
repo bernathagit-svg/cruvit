@@ -11,6 +11,7 @@ import {
   IMAGE_PENDING,
   IMAGE_READY,
   IMAGE_OWNER_REVIEW,
+  IMAGE_BLOCKED,
   LICENSE_POLICY,
   STORAGE_STRATEGY_V1,
   IMAGE_SOURCE_EVALUATION,
@@ -104,6 +105,36 @@ test('identity matching rejects genus-only and common-name collisions', () => {
     { case: 'genus-only', rejected: true, reasons: genusOnly.reasons },
     { case: 'common-name-collision', rejected: true, reasons: commonOnly.reasons }
   );
+});
+
+test('broad taxa accept genus-scope images and reject cultivar false specificity', () => {
+  const banana = { scientific: 'Musa spp.', commonName: 'Banana', slug: 'banana', identityScope: 'broad' };
+  const rose = { scientific: 'Rosa spp.', commonName: 'Rose', slug: 'rose', identityScope: 'broad' };
+  const okMusa = scoreIdentityMatch(banana, {
+    title: 'Musa plant in a garden',
+    description: 'A Musa banana plant with large leaves'
+  });
+  assert.equal(okMusa.ok, true);
+  assert.ok(okMusa.reasons.includes('genus-scope-match-for-broad-identity'));
+
+  const cavendish = scoreIdentityMatch(banana, {
+    title: 'Cavendish banana cultivar',
+    description: 'Musa Cavendish commercial cultivar fruit'
+  });
+  assert.equal(cavendish.ok, false);
+
+  const okRose = scoreIdentityMatch(rose, {
+    title: 'Rosa shrub in bloom',
+    description: 'Garden Rosa plant with flowers'
+  });
+  assert.equal(okRose.ok, true);
+
+  const succulent = scoreIdentityMatch(
+    { scientific: 'Various succulent species', slug: 'succulent' },
+    { title: 'Succulent mix', description: 'Assorted pots' }
+  );
+  assert.equal(succulent.ok, false);
+  assert.ok(succulent.reasons.includes('identity-ambiguous'));
 });
 
 test('quality filter rejects tiny/svg/watermarked', () => {
@@ -342,7 +373,7 @@ test('live Commons acceptance set (bounded)', async (t) => {
     }
 
     assert.ok(
-      [IMAGE_READY, IMAGE_PENDING, IMAGE_OWNER_REVIEW].includes(resolution.status),
+      [IMAGE_READY, IMAGE_PENDING, IMAGE_OWNER_REVIEW, IMAGE_BLOCKED].includes(resolution.status),
       `${slug} unexpected status ${resolution.status}`
     );
 
@@ -393,7 +424,8 @@ test('live Commons acceptance set (bounded)', async (t) => {
   assert.ok(
     cacao.status === IMAGE_READY ||
       cacao.status === IMAGE_PENDING ||
-      cacao.status === IMAGE_OWNER_REVIEW
+      cacao.status === IMAGE_OWNER_REVIEW ||
+      cacao.status === IMAGE_BLOCKED
   );
 });
 

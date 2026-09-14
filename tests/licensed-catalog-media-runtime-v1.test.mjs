@@ -59,21 +59,25 @@ test('acceptance plants: IMAGE_READY → catalog URL + provenance + attribution'
   }
 });
 
-test('IMAGE_PENDING plant → placeholder, no search URL', () => {
-  const plants = loadSeedPlants();
-  const pending = plants.find(
-    (p) => p.media?.imageStatus === IMAGE_PENDING || !p.media?.imageStatus
-  );
-  assert.ok(pending, 'need at least one pending/missing media plant');
+test('IMAGE_PENDING / IMAGE_BLOCKED plant → placeholder, no search URL', () => {
   const display = resolvePlantDisplayMedia({
-    ...pending,
-    media: pending.media?.imageStatus
-      ? pending.media
-      : { imageStatus: IMAGE_PENDING, pendingReason: 'test' }
+    slug: 'pending-fixture',
+    name: 'Pending Fixture',
+    scientific: 'Fixture pendingus',
+    media: { imageStatus: IMAGE_PENDING, pendingReason: 'test' }
   });
   assert.equal(display.kind, 'placeholder');
   assert.ok(!display.url);
   assert.equal(display.imageStatus, IMAGE_PENDING);
+
+  const blocked = resolvePlantDisplayMedia({
+    slug: 'blocked-fixture',
+    name: 'Blocked Fixture',
+    scientific: 'Fixture blockedus',
+    media: { imageStatus: 'IMAGE_BLOCKED', blockedReason: 'identity-ambiguous', pendingReason: 'identity-ambiguous' }
+  });
+  assert.equal(blocked.kind, 'placeholder');
+  assert.equal(blocked.imageStatus, 'IMAGE_BLOCKED');
 });
 
 test('unknown / NC / incomplete license media never renders as catalog', () => {

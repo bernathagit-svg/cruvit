@@ -102,14 +102,22 @@
     {
       "slug": "cacao",
       "scientific": "Theobroma cacao",
-      "status": "IMAGE_PENDING",
-      "license": null,
-      "attributionRequired": null,
-      "pendingReason": "source-search-failed:fetch failed",
-      "searchMs": 10675.5463,
-      "licenseValidationMs": 0,
-      "passedCount": 0,
-      "rejectedTop": []
+      "status": "IMAGE_READY",
+      "license": "CC BY-SA 3.0",
+      "attributionRequired": true,
+      "pendingReason": null,
+      "searchMs": 1012.0740000000001,
+      "licenseValidationMs": 0.6216999999999189,
+      "candidateCount": 10,
+      "passedCount": 9,
+      "rejectedTop": [
+        {
+          "candidate": "Municipal Market of São Paulo city.jpg",
+          "stage": "identity",
+          "reason": "no-scientific-identity-match",
+          "confidence": "none"
+        }
+      ]
     },
     {
       "slug": "coconut",
@@ -118,8 +126,8 @@
       "license": "CC BY-SA 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 9229.5405,
-      "licenseValidationMs": 0.822199999998702,
+      "searchMs": 717.8756000000001,
+      "licenseValidationMs": 0.3338999999996304,
       "candidateCount": 10,
       "passedCount": 4,
       "rejectedTop": [
@@ -146,13 +154,13 @@
       "slug": "cypress",
       "scientific": "Cupressus sempervirens",
       "status": "IMAGE_READY",
-      "license": "CC BY-SA 3.0",
+      "license": "CC BY-SA 4.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 4690.921400000003,
-      "licenseValidationMs": 0.6073000000033062,
+      "searchMs": 762.6383000000001,
+      "licenseValidationMs": 2.0954999999999018,
       "candidateCount": 10,
-      "passedCount": 4,
+      "passedCount": 6,
       "rejectedTop": [
         {
           "candidate": "Med Cypress.jpg",
@@ -166,7 +174,7 @@
           "confidence": "none"
         },
         {
-          "candidate": "A View From the Bekaa.png",
+          "candidate": "Zentralbibliothek Zürich - Brissago. Kirche mit Cypressen - 991085797419705501.jpg",
           "stage": "identity",
           "reason": "common-name-without-scientific",
           "confidence": "none"
@@ -180,8 +188,8 @@
       "license": "CC BY 4.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 4790.734500000006,
-      "licenseValidationMs": 0.386899999997695,
+      "searchMs": 1070.3623999999995,
+      "licenseValidationMs": 0.3386000000000422,
       "candidateCount": 10,
       "passedCount": 8,
       "rejectedTop": [
@@ -203,28 +211,28 @@
       "slug": "plumeria",
       "scientific": "Plumeria rubra",
       "status": "IMAGE_READY",
-      "license": "CC BY-SA 3.0",
+      "license": "CC BY 3.0",
       "attributionRequired": true,
       "pendingReason": null,
-      "searchMs": 6348.756999999998,
-      "licenseValidationMs": 0.5867999999973108,
+      "searchMs": 681.5860000000002,
+      "licenseValidationMs": 0.6032999999997628,
       "candidateCount": 10,
       "passedCount": 10,
       "rejectedTop": []
     }
   ],
   "performance": {
-    "batch5Ms": 48202.1832,
-    "perPlantMeanMs": 7147.09994
+    "batch5Ms": 6078.109399999999,
+    "perPlantMeanMs": 848.90726
   },
   "idempotency": {
     "reuseStable": true,
     "cacheKey": "cacao__theobroma_cacao__v1.0.0"
   },
   "summary": {
-    "ready": 4,
-    "pending": 1,
+    "ready": 5,
+    "pending": 0,
     "verdict": "PASS"
   },
-  "generatedAt": "2026-08-29T15:56:18.247Z"
+  "generatedAt": "2026-09-14T15:58:49.742Z"
 }
