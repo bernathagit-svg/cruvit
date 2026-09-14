@@ -88,6 +88,39 @@ function applyOutdoorTender(meta, climate, protection = {}) {
   return { verdict, fits, bands: bandsFromFits(fits) };
 }
 
+function catalogClimateTraitsFromApp(slug) {
+  const app = fs.readFileSync(APP, 'utf8');
+  const marker = `{slug:'${slug}'`;
+  const i = app.indexOf(marker);
+  assert.ok(i >= 0, `catalog record missing for ${slug}`);
+  const slice = app.slice(i, i + 8000);
+  const key = 'climateTraits:';
+  const start = slice.indexOf(key);
+  assert.ok(start >= 0, `climateTraits missing for ${slug}`);
+  const jsonStart = start + key.length;
+  assert.equal(slice[jsonStart], '{');
+  let depth = 0;
+  let end = jsonStart;
+  for (; end < slice.length; end += 1) {
+    const ch = slice[end];
+    if (ch === '{') depth += 1;
+    else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        end += 1;
+        break;
+      }
+    }
+  }
+  const traits = JSON.parse(slice.slice(jsonStart, end));
+  return {
+    frostSensitivity: traits.frostSensitivity,
+    coldTolerance: traits.coldTolerance,
+    heatTolerance: traits.heatTolerance,
+    groupIds: []
+  };
+}
+
 test('contradiction invariant: frost limiter cannot coexist with strong survival', () => {
   const liveContradiction = hardFrostOutcomeInvariant({
     limiter: 'Frost risk is too high for this plant.',
@@ -99,6 +132,32 @@ test('contradiction invariant: frost limiter cannot coexist with strong survival
   assert.ok(liveContradiction.violations.includes('survival-blocked-with-strong-growth'));
   assert.ok(liveContradiction.violations.includes('survival-blocked-with-strong-flowering'));
   assert.ok(liveContradiction.violations.includes('survival-blocked-with-strong-fruiting'));
+});
+
+test('contradiction invariant is generic: any hard-frost limiter + strong bands fails, unnamed plants', () => {
+  const unnamedA = hardFrostOutcomeInvariant({
+    limiter: 'Winter freeze / hard frost exceeds this plant’s outdoor survival tolerance.',
+    outcomes: { survival: 'strong', growth: 'strong', flowering: 'strong', fruiting: 'strong' },
+    survivalFit: 80
+  });
+  const unnamedB = hardFrostOutcomeInvariant({
+    limiter: 'Lethal frost risk is too high for outdoor planting.',
+    outcomes: { survival: 'weak', growth: 'strong', flowering: 'strong', fruiting: 'strong' },
+    survivalFit: 8,
+    hardSurvivalBlocked: true
+  });
+  assert.equal(unnamedA.ok, false);
+  assert.equal(unnamedB.ok, false);
+  assert.ok(unnamedB.violations.includes('survival-blocked-with-strong-growth'));
+  assert.equal(
+    hardFrostOutcomeInvariant({
+      limiter: 'Frost risk is too high for this plant.',
+      outcomes: { survival: 'weak', growth: 'weak', flowering: 'weak', fruiting: 'weak' },
+      survivalFit: 8,
+      hardSurvivalBlocked: true
+    }).ok,
+    true
+  );
 });
 
 test('A. tender plant × hard-freeze outdoor cannot return strong survival', () => {
@@ -258,6 +317,33 @@ test('Mojstrana structural climate is hard freeze; lemon-class and mango-class b
     const pine = applyOutdoorTender(pineapple.climateTraits, climate);
     assert.equal(pine.verdict.hardBlocked, true);
   }
+
+  const catalogMango = catalogClimateTraitsFromApp('mango');
+  assert.equal(catalogMango.frostSensitivity, 'high');
+  assert.equal(catalogMango.coldTolerance, 'low');
+  catalogMango.groupIds = ['tropical-frost-sensitive-fruit'];
+  const mangoFromCatalog = applyOutdoorTender(catalogMango, climate);
+  assert.equal(mangoFromCatalog.verdict.hardBlocked, true);
+  assert.match(mangoFromCatalog.verdict.reason, /frost risk is too high|winter freeze|hard frost/i);
+  assert.notEqual(mangoFromCatalog.bands.survival, 'strong');
+  assert.notEqual(mangoFromCatalog.bands.growth, 'strong');
+  assert.notEqual(mangoFromCatalog.bands.flowering, 'strong');
+  assert.notEqual(mangoFromCatalog.bands.fruiting, 'strong');
+  assert.equal(
+    hardFrostOutcomeInvariant({
+      limiter: mangoFromCatalog.verdict.reason,
+      outcomes: mangoFromCatalog.bands,
+      survivalFit: mangoFromCatalog.fits.survivalFit,
+      hardSurvivalBlocked: true
+    }).ok,
+    true
+  );
+  const liveMangoStyleContradiction = hardFrostOutcomeInvariant({
+    limiter: 'Frost risk is too high for this plant.',
+    outcomes: { survival: 'strong', growth: 'strong', flowering: 'strong', fruiting: 'strong' },
+    survivalFit: 85
+  });
+  assert.equal(liveMangoStyleContradiction.ok, false);
 });
 
 test('display safety net strips strong bands when limiter is hard frost', () => {
