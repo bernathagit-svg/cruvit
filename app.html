@@ -2163,6 +2163,9 @@ function climateSuitabilityV1FromSnapshot(snapshot,options){
     const hotHumidStress=typeof smartRecClimateFeelsHotHumid==='function'?smartRecClimateFeelsHotHumid(garden):false;
     if(!indoorShelter&&meta.frostSensitivity==='high'&&garden.freezingRisk!=='low'){
       blockWith('Frost risk is too high for this plant.');
+      survival=Math.min(survival,8);
+      thrive=Math.min(thrive,8);
+      heatCold=Math.min(heatCold,8);
     }else if(!indoorShelter&&meta.frostSensitivity==='medium'&&garden.freezingRisk==='high'){
       survival=Math.min(survival,25);
       thrive=Math.min(thrive,20);
@@ -6060,6 +6063,28 @@ function smartRecCurrentContext(){
   };
 }
 
+function hardClimateSurvivalGateApi(){
+  return (typeof window!=='undefined'&&window.CruvitHardClimateSurvivalGate)||null;
+}
+
+function smartRecProtectionContext(){
+  const ctx=smartRecCurrentContext();
+  const areasApi=typeof window!=='undefined'?window.cruvitGardenAreasV1:null;
+  const areas=areasApi&&typeof areasApi.getCachedAreas==='function'?(areasApi.getCachedAreas()||[]):[];
+  const first=areas[0]||{};
+  const areaCtx=first.context&&typeof first.context==='object'?first.context:first;
+  const planting=String(areaCtx.plantingMode||areaCtx.planting_mode||areaCtx.siteType||'').trim().toLowerCase();
+  return {
+    indoorContext:ctx.indoorContext===true,
+    containerContext:ctx.containerContext===true,
+    plantingMode:planting||(ctx.indoorContext?'indoor':(ctx.groundContext?'ground':'')),
+    greenhouse:planting==='greenhouse',
+    frostFreeProtected:planting==='greenhouse'||planting==='conservatory',
+    sunExposure:areaCtx.sunExposure||areaCtx.sun_exposure||'',
+    windExposure:areaCtx.windExposure||areaCtx.wind_exposure||''
+  };
+}
+
 function broadClimateFromLabel(label){
   const climateLabel=String(label||'').toLowerCase();
   if(climateLabel.includes('cool temperate')) return 'cool-temperate';
@@ -6164,6 +6189,18 @@ function smartRecClimateProfile(){
   const coldestMonthMeanMinC=structuralClimate?.evidence?.coldestMonthMeanMinC??null;
   const elevationM=structuralClimate?.elevationM??structuralClimate?.evidence?.elevationM??loc?.elevation??null;
   const thermalRegime=structuralClimate?.thermalRegime||null;
+  const gateApi=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
+  if(gateApi&&typeof gateApi.elevateAmbientFreezingRisk==='function'){
+    freezingRisk=gateApi.elevateAmbientFreezingRisk({
+      freezingRisk,
+      coldestMonthMeanMinC,
+      thermalRegime,
+      structuralColdRisk:structuralClimate?.structuralColdRisk||null,
+      structuralClimateStatus:structuralClimate?.status||null,
+      structuralClimate,
+      isFrostFreeGrowingClimate:false
+    },{lat:loc.lat,lon:loc.lon});
+  }
   let resolvedBroad=broadClimate;
   if(thermalRegime==='cool-highland'||thermalRegime==='cool-seasonal'||thermalRegime==='frost-prone'){
     if(resolvedBroad==='tropical') resolvedBroad='highland-tropical';
@@ -6322,16 +6359,51 @@ function smartRecEvaluateSuitability(p){
   let warningPenalty=0;
   const addWarning=(msg,penalty=8)=>{smartRecAddUniqueMessage(warnings,msg);warningPenalty+=penalty;};
   const blockWith=(msg)=>{blocked=true;smartRecAddUniqueMessage(warnings,msg);};
-  const frostIndoorShelter=!!ctx.indoorContext;
+  const protectionContext=typeof smartRecProtectionContext==='function'?smartRecProtectionContext():{indoorContext:!!ctx.indoorContext};
+  const gateApi=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
+  const frostIndoorShelter=gateApi&&typeof gateApi.isExplicitFrostFreeProtectedContext==='function'
+    ?gateApi.isExplicitFrostFreeProtectedContext(protectionContext)
+    :!!ctx.indoorContext;
   const indoorShelter=frostIndoorShelter&&smartRecMetaHasGroup(meta,'tropical-shade-houseplant');
   const metaHasGroup=(groupId)=>smartRecMetaHasGroup(meta,groupId);
   const hotHumidStress=smartRecClimateFeelsHotHumid(climateProfile);
+  let hardSurvivalBlocked=false;
 
   if(ctx.safeIntent&&meta.warningFlags.some(flag=>flag==='toxic_pets'||flag==='toxic_humans')){
     blockWith('Not suitable for a pet-safe or child-safe recommendation.');
   }
-  if(!frostIndoorShelter&&meta.frostSensitivity==='high'&&climateProfile.freezingRisk!=='low'){
+  if(gateApi){
+    const loc=typeof ensureGardenLocation==='function'?ensureGardenLocation():{};
+    const verdict=gateApi.evaluateHardClimateSurvival({
+      meta,
+      climateProfile,
+      protectionContext,
+      coords:{lat:loc.lat,lon:loc.lon}
+    });
+    const gated=gateApi.applyHardClimateSurvivalToFits({
+      survivalFit,thriveFit,floweringFit,fruitingFit,heatColdFit,blocked:false
+    },verdict);
+    survivalFit=gated.survivalFit;
+    thriveFit=gated.thriveFit;
+    floweringFit=gated.floweringFit;
+    fruitingFit=gated.fruitingFit;
+    heatColdFit=gated.heatColdFit;
+    hardSurvivalBlocked=gated.hardSurvivalBlocked===true;
+    if(verdict.hardBlocked){
+      blockWith(verdict.reason||'Frost risk is too high for this plant.');
+    }else if(verdict.conservativeUnknown&&verdict.reason){
+      addWarning(verdict.reason,12);
+    }else if(verdict.reason&&verdict.survivalCap!=null&&!verdict.protectedContext){
+      addWarning(verdict.reason,8);
+    }
+  }else if(!frostIndoorShelter&&meta.frostSensitivity==='high'&&climateProfile.freezingRisk!=='low'){
     blockWith('Frost risk is too high for this plant.');
+    survivalFit=Math.min(survivalFit,8);
+    thriveFit=Math.min(thriveFit,8);
+    floweringFit=Math.min(floweringFit,8);
+    fruitingFit=Math.min(fruitingFit,5);
+    heatColdFit=Math.min(heatColdFit,8);
+    hardSurvivalBlocked=true;
   }else if(!frostIndoorShelter&&meta.frostSensitivity==='medium'&&climateProfile.freezingRisk==='high'){
     survivalFit=Math.min(survivalFit,25);
     thriveFit=Math.min(thriveFit,20);
@@ -6388,7 +6460,7 @@ function smartRecEvaluateSuitability(p){
   if(meta.hardBlockRules.includes('no-small-container')&&ctx.containerContext){
     blockWith('This plant is not a good fit for a compact balcony or container setup.');
   }
-  if(metaHasGroup('warm-citrus-fruit-tree')&&!frostIndoorShelter&&climateProfile.freezingRisk==='medium'){
+  if(metaHasGroup('warm-citrus-fruit-tree')&&!frostIndoorShelter&&climateProfile.freezingRisk==='medium'&&!hardSurvivalBlocked){
     thriveFit=Math.min(thriveFit,55);
     fruitingFit=Math.min(fruitingFit,55);
     heatColdFit=Math.min(heatColdFit,50);
@@ -6467,6 +6539,19 @@ function smartRecEvaluateSuitability(p){
   if(ctx.edibleIntent&&/cooler|winter|dry/i.test(String(meta.fruitingRequirements||''))&&climateProfile.alwaysHot&&!climateProfile.coolSeasonSignal){
     fruitingFit=Math.min(fruitingFit,20);
     addWarning('Fruiting reliability is doubtful in this location.',15);
+  }
+  if(gateApi&&typeof gateApi.enforceSurvivalDownstreamCaps==='function'){
+    const capped=gateApi.enforceSurvivalDownstreamCaps({
+      survivalFit,thriveFit,floweringFit,fruitingFit,hardSurvivalBlocked
+    });
+    survivalFit=capped.survivalFit;
+    thriveFit=capped.thriveFit;
+    floweringFit=capped.floweringFit;
+    fruitingFit=capped.fruitingFit;
+  }else if(hardSurvivalBlocked||survivalFit<=15){
+    thriveFit=Math.min(thriveFit,survivalFit,15);
+    floweringFit=Math.min(floweringFit,15);
+    fruitingFit=Math.min(fruitingFit,10);
   }
 
   const suitabilityScore=blocked?0:Math.max(0,Math.round(
@@ -8827,10 +8912,44 @@ function evaluateIdentifierGardenSuitability(canonicalSlug){
     ?evaluateSpecificPlantSuitability(plant)
     :smartRecEvaluateSuitability(plant);
   const meta=typeof smartRecClimateMetaForPlant==='function'?smartRecClimateMetaForPlant(plant):null;
-  const gi=typeof smartRecGardenIntelligenceApi==='function'?smartRecGardenIntelligenceApi():null;
-  const outcomes=gi&&typeof gi.smartRecDimensionDisplay==='function'
-    ?gi.smartRecDimensionDisplay(suitability,meta,plant)
-    :null;
+  const climateProfile=typeof getAppClimateProfile==='function'?getAppClimateProfile():null;
+  const protection=typeof smartRecProtectionContext==='function'?smartRecProtectionContext():{};
+  const gateApi=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
+  const protectedGrowing=gateApi&&typeof gateApi.isExplicitFrostFreeProtectedContext==='function'
+    ?gateApi.isExplicitFrostFreeProtectedContext(protection)
+    :false;
+  let outcomes=null;
+  let primaryLimiter=suitability.explanationText||'';
+  let warnings=Array.isArray(suitability.warnings)?suitability.warnings.slice():[];
+  if(typeof window!=='undefined'&&typeof window.cruvitDeriveSpecificPlantOutcomes==='function'){
+    const derived=window.cruvitDeriveSpecificPlantOutcomes({
+      meta,
+      climateProfile,
+      suitability,
+      plant,
+      protectedGrowing
+    });
+    const label=(status)=>String(status||'').trim()||'UNKNOWN';
+    outcomes={
+      survival:label(derived.survivalLabel||derived.survival),
+      growth:label(derived.growthLabel||derived.growth),
+      flowering:label(derived.floweringLabel||derived.flowering),
+      fruiting:label(derived.fruitingLabel||derived.fruiting)
+    };
+    const factors=Array.isArray(derived.limitingFactors)?derived.limitingFactors:[];
+    if(factors.length){
+      warnings=factors.slice();
+      primaryLimiter=String(factors[0]||primaryLimiter);
+    }
+  }else{
+    const gi=typeof smartRecGardenIntelligenceApi==='function'?smartRecGardenIntelligenceApi():null;
+    outcomes=gi&&typeof gi.smartRecDimensionDisplay==='function'
+      ?gi.smartRecDimensionDisplay(suitability,meta,plant)
+      :null;
+  }
+  if(gateApi&&typeof gateApi.suppressStrongBandsWhenHardFrost==='function'&&outcomes){
+    outcomes=gateApi.suppressStrongBandsWhenHardFrost(outcomes,primaryLimiter,suitability.survivalFit);
+  }
   return {
     ok:true,
     engine:'smartRecEvaluateSuitability',
@@ -8845,8 +8964,8 @@ function evaluateIdentifierGardenSuitability(canonicalSlug){
     floweringFit:suitability.floweringFit,
     fruitingFit:suitability.fruitingFit,
     outcomes:outcomes,
-    primaryLimiter:suitability.explanationText||'',
-    warnings:Array.isArray(suitability.warnings)?suitability.warnings.slice():[],
+    primaryLimiter:primaryLimiter,
+    warnings:warnings,
     recommendationLevel:suitability.recommendationLevel,
     suitabilityScore:suitability.suitabilityScore
   };
@@ -9024,6 +9143,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
+<script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914c"></script>
 <script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
