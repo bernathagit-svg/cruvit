@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
-<link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20250645">
+<link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260914a">
@@ -816,7 +816,7 @@
   <select class="entry-lang app-lang-select" id="appLangSelect" aria-label="Language"></select>
 </div>
 <script src="garden-modes.js?v=20260913e"></script>
-<script src="scripts/plant-identifier-loader.js?v=20250655"></script>
+<script src="scripts/plant-identifier-loader.js?v=20260914b"></script>
 <script src="modules/personal-domain/bootstrap-safe-climate-traits-migration-data-v1.browser.js?v=20260908a"></script>
 <script src="modules/personal-domain/bootstrap-unlocked-six-climate-traits-migration-data-v1.browser.js?v=20260908b"></script>
 <script>
@@ -8759,6 +8759,98 @@ function resolveCatalogIdentityDisplay(slug){
     imageStatus:display.imageStatus||null
   };
 }
+function getIdentifierLocationContextApi(){
+  return (typeof window!=='undefined'&&window.CruvitPlantIdentifierLocationContext)||null;
+}
+function buildIdentifierGardenLocationInput(){
+  const loc=typeof getAppLocation==='function'?getAppLocation():{};
+  const climate=loc.derivedClimateProfile||(typeof getAppClimateProfile==='function'?getAppClimateProfile():null);
+  const pd=window.cruvitPersonalDomainV0;
+  const structural=loc.structuralClimate&&typeof loc.structuralClimate==='object'?loc.structuralClimate:null;
+  return {
+    trusted:typeof hasTrustedAppLocation==='function'&&hasTrustedAppLocation()===true,
+    label:String(loc.label||'').trim(),
+    lat:loc.lat,
+    lon:loc.lon,
+    source:loc.source||'',
+    confirmationStatus:loc.confirmationStatus||'',
+    gardenProfileId:(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null,
+    climateAuthority:structural?.authority||structural?.source||structural?.status||climate?.structuralClimateStatus||null,
+    locationConfidence:climate?.locationConfidence||null
+  };
+}
+function getIdentifierGardenLocationContext(){
+  const api=getIdentifierLocationContextApi();
+  const input=buildIdentifierGardenLocationInput();
+  if(api&&typeof api.classifyIdentifierGardenLocationContext==='function'){
+    return api.classifyIdentifierGardenLocationContext(input);
+  }
+  return {
+    status:'LOCATION_MISSING',
+    askForLocation:true,
+    useForSuitability:false,
+    lat:null,
+    lon:null,
+    label:input.label||'',
+    gardenProfileId:input.gardenProfileId||null
+  };
+}
+function evaluateIdentifierGardenSuitability(canonicalSlug){
+  const classified=getIdentifierGardenLocationContext();
+  if(!classified||classified.useForSuitability!==true){
+    return {
+      ok:false,
+      reason:classified?.status||'untrusted-location',
+      askForLocation:classified?.askForLocation!==false,
+      engine:'smartRecEvaluateSuitability',
+      paidAiCalls:0,
+      locationLabel:classified?.label||'',
+      gardenProfileId:classified?.gardenProfileId||null
+    };
+  }
+  const slug=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(canonicalSlug):canonicalSlug;
+  const plant=(typeof PLANT_INDEX==='object'&&PLANT_INDEX[slug])||(PLANT_LIBRARY||[]).find((p)=>p.slug===slug)||null;
+  if(!plant){
+    return {
+      ok:false,
+      reason:'no-canonical-plant',
+      askForLocation:false,
+      engine:'smartRecEvaluateSuitability',
+      paidAiCalls:0,
+      locationLabel:classified.label||'',
+      gardenProfileId:classified.gardenProfileId||null,
+      lat:classified.lat,
+      lon:classified.lon
+    };
+  }
+  const suitability=typeof evaluateSpecificPlantSuitability==='function'
+    ?evaluateSpecificPlantSuitability(plant)
+    :smartRecEvaluateSuitability(plant);
+  const meta=typeof smartRecClimateMetaForPlant==='function'?smartRecClimateMetaForPlant(plant):null;
+  const gi=typeof smartRecGardenIntelligenceApi==='function'?smartRecGardenIntelligenceApi():null;
+  const outcomes=gi&&typeof gi.smartRecDimensionDisplay==='function'
+    ?gi.smartRecDimensionDisplay(suitability,meta,plant)
+    :null;
+  return {
+    ok:true,
+    engine:'smartRecEvaluateSuitability',
+    paidAiCalls:0,
+    locationLabel:classified.label||'',
+    gardenProfileId:classified.gardenProfileId||null,
+    lat:classified.lat,
+    lon:classified.lon,
+    climateAuthority:classified.climateAuthority||null,
+    survivalFit:suitability.survivalFit,
+    thriveFit:suitability.thriveFit,
+    floweringFit:suitability.floweringFit,
+    fruitingFit:suitability.fruitingFit,
+    outcomes:outcomes,
+    primaryLimiter:suitability.explanationText||'',
+    warnings:Array.isArray(suitability.warnings)?suitability.warnings.slice():[],
+    recommendationLevel:suitability.recommendationLevel,
+    suitabilityScore:suitability.suitabilityScore
+  };
+}
 async function commitIdentifiedPlantFromModule(result){
   if(!result) return {ok:false,reason:'empty-result'};
   const api=getIdentifierAcquireApi();
@@ -8836,6 +8928,9 @@ function plantIdentifierDeps(langOverride){
     getCatalogIdentities:getActiveCatalogIdentitiesForIdentifier,
     getIdentifierAliasMaps:identifierAliasMaps,
     resolveCatalogIdentityDisplay,
+    getGardenLocationContext:getIdentifierGardenLocationContext,
+    evaluateIdentifierGardenSuitability,
+    locationContextApi:getIdentifierLocationContextApi(),
     onIdentified(){
       dismissEntryScreen();
     },
@@ -8930,7 +9025,8 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
 <script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914a"></script>
-<script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914a"></script>
+<script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
+<script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>

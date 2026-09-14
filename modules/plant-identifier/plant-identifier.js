@@ -92,7 +92,14 @@
       chooseIdentity: 'Choose the catalog plant before adding to My Garden.',
       confirmAdd: 'Confirm and add to My Garden',
       identifyLater: 'Identify later',
-      confidenceValue: 'Confidence'
+      confidenceValue: 'Confidence',
+      evaluatingGarden: 'Evaluating garden location',
+      survivalDim: 'Survival',
+      growthDim: 'Growth',
+      floweringDim: 'Flowering',
+      fruitingDim: 'Fruiting',
+      limiterLabel: 'Primary limiter',
+      confirmIdentityForClimate: 'Confirm catalog identity to check climate compatibility.'
     },
     he: {
       modalTitle: 'זיהוי צמח',
@@ -174,7 +181,14 @@
       chooseIdentity: 'בחרו צמח מהקטלוג לפני הוספה לגינה.',
       confirmAdd: 'אישור והוספה לגינה שלי',
       identifyLater: 'זהוי מאוחר יותר',
-      confidenceValue: 'רמת ביטחון'
+      confidenceValue: 'רמת ביטחון',
+      evaluatingGarden: 'בודקים לפי מיקום הגינה',
+      survivalDim: 'הישרדות',
+      growthDim: 'צמיחה',
+      floweringDim: 'פריחה',
+      fruitingDim: 'הנבה',
+      limiterLabel: 'מגביל עיקרי',
+      confirmIdentityForClimate: 'אשרו זהות קטלוג כדי לבדוק התאמה לאקלים.'
     }
   };
 
@@ -875,7 +889,91 @@
     result.climate_summary = '';
     result.climate_zone = '';
     result._resolvedLocation = '';
+    result._climateOverride = false;
+    result._gardenLocationContext = null;
+    result._gardenSuitability = null;
     return result;
+  }
+
+  function locationContextApi() {
+    if (deps?.locationContextApi) return deps.locationContextApi;
+    return global.CruvitPlantIdentifierLocationContext || null;
+  }
+
+  function classifyGardenLocationContext() {
+    if (typeof deps?.getGardenLocationContext === 'function') {
+      return deps.getGardenLocationContext();
+    }
+    const api = locationContextApi();
+    const gl = getData()?.gardenLocation || {};
+    const payload = {
+      trusted: false,
+      label: gl.label || '',
+      lat: gl.lat,
+      lon: gl.lon,
+      source: gl.source || 'default',
+      confirmationStatus: String(gl.source || '').trim() === 'default' ? 'default' : '',
+      gardenProfileId: null,
+      climateAuthority: null,
+      locationConfidence: null
+    };
+    if (api && typeof api.classifyIdentifierGardenLocationContext === 'function') {
+      return api.classifyIdentifierGardenLocationContext(payload);
+    }
+    return {
+      status: 'LOCATION_MISSING',
+      askForLocation: true,
+      useForSuitability: false,
+      lat: null,
+      lon: null,
+      label: payload.label
+    };
+  }
+
+  function applyGardenLocationContext(result, catalogMatch) {
+    if (!result) return result;
+    const api = locationContextApi();
+    const classified = classifyGardenLocationContext();
+    result._gardenLocationContext = classified;
+    if (result._climateOverride) {
+      result._gardenSuitability = null;
+      return result;
+    }
+    let evaluation = null;
+    const slug = state.chosenCanonicalSlug || catalogMatch?.canonicalSlug || '';
+    const canEvaluate =
+      classified?.useForSuitability === true &&
+      !!slug &&
+      catalogMatch?.status !== 'NO_SAFE_CANONICAL_MATCH' &&
+      typeof deps?.evaluateIdentifierGardenSuitability === 'function';
+    if (canEvaluate) {
+      evaluation = deps.evaluateIdentifierGardenSuitability(slug);
+    } else if (classified?.useForSuitability === true) {
+      evaluation = {
+        ok: false,
+        reason: 'await-identity',
+        askForLocation: false,
+        engine: 'smartRecEvaluateSuitability',
+        paidAiCalls: 0,
+        locationLabel: classified.label || '',
+        gardenProfileId: classified.gardenProfileId || null
+      };
+    }
+    if (api && typeof api.applyIdentifierGardenSuitability === 'function') {
+      api.applyIdentifierGardenSuitability(result, classified, evaluation);
+    } else {
+      result._gardenSuitability = evaluation;
+    }
+    return result;
+  }
+
+  function hasGardenSuitability(result) {
+    const s = result?._gardenSuitability;
+    return !!(s && s.ok === true && !result._climateOverride);
+  }
+
+  function usesTrustedGardenLocation(result) {
+    return result?._gardenLocationContext?.status === 'TRUSTED_CONFIRMED' && !result._climateOverride;
   }
 
   function t(key) {
@@ -1469,38 +1567,59 @@
     return fit === 'high' ? '' : 'warn';
   }
 
-  function climateBadgeHtml(result) {
-    if (hasVerifiedClimateFit(result)) {
-      const zone = result.climate_zone ? ' · ' + result.climate_zone : '';
-      return (
-        '<div class="pi-score ' + fitClass(result.climate_fit) + '">' +
-        esc(t('climate') + ': ' + fitText(result.climate_fit) + zone) +
-        '</div>'
-      );
-    }
-    return '<div class="pi-score warn">' + esc(t('climate') + ': ' + t('unknown')) + '</div>';
+  function gardenLocationShort(result) {
+    const label = String(
+      result?._gardenSuitability?.locationLabel ||
+      result?._gardenLocationContext?.label ||
+      ''
+    ).trim();
+    return label.split(',')[0].trim() || label;
   }
 
-  function climateBlock(result) {
-    if (hasVerifiedClimateFit(result)) {
-      const locLine = result._resolvedLocation
-        ? '<p class="pi-muted pi-loc-line">' + esc(t('locResolved') + ': ' + result._resolvedLocation) + '</p>'
-        : '';
-      return (
-        locLine +
-        '<div class="pi-score ' + fitClass(result.climate_fit) + '">' +
-        esc(fitText(result.climate_fit)) + ' · ' + esc(result.climate_zone || '') +
-        '</div><p class="pi-muted" style="margin-top:12px">' + esc(result.climate_summary || '') + '</p>' +
-        '<button type="button" class="pi-btn pi-btn-secondary pi-change-loc" data-pi-action="change-climate">' +
-        esc(state.lang === 'he' ? 'שנה מיקום' : 'Change location') +
-        '</button>'
-      );
-    }
+  function climateChangeButtonHtml() {
+    return (
+      '<button type="button" class="pi-btn pi-btn-secondary pi-change-loc" data-pi-action="change-climate">' +
+      esc(state.lang === 'he' ? 'שנה מיקום' : 'Change location') +
+      '</button>'
+    );
+  }
+
+  function gardenSuitabilityBlockHtml(result) {
+    const api = locationContextApi();
+    const vm = api && typeof api.identifierSuitabilityViewModel === 'function'
+      ? api.identifierSuitabilityViewModel(result._gardenSuitability)
+      : result._gardenSuitability;
+    const loc = String(vm?.locationLabel || gardenLocationShort(result) || '').trim();
+    const outcomes = vm?.outcomes || result._gardenSuitability?.outcomes || {};
+    const rows = [
+      ['survival', t('survivalDim')],
+      ['growth', t('growthDim')],
+      ['flowering', t('floweringDim')],
+      ['fruiting', t('fruitingDim')]
+    ].map(([key, label]) =>
+      '<div><dt>' + esc(label) + '</dt><dd>' + esc(outcomes[key] || t('unknown')) + '</dd></div>'
+    ).join('');
+    const limiter = String(vm?.primaryLimiter || result._gardenSuitability?.primaryLimiter || '').trim();
+    return (
+      '<p class="pi-muted pi-loc-line">' + esc(t('evaluatingGarden') + ': ' + loc) + '</p>' +
+      '<dl class="pi-outcomes">' + rows + '</dl>' +
+      (limiter ? '<p class="pi-muted">' + esc(t('limiterLabel') + ': ' + limiter) + '</p>' : '') +
+      climateChangeButtonHtml()
+    );
+  }
+
+  function climateLocationPromptHtml(result, classified) {
+    const api = locationContextApi();
+    const showAdd = api && typeof api.identifierShouldShowAddLocationCopy === 'function'
+      ? api.identifierShouldShowAddLocationCopy(classified, { climateOverride: !!result._climateOverride })
+      : !usesTrustedGardenLocation(result);
     const savedLoc = normalizeLocationQuery(result._climateDraft || '');
-    const gardenLoc = normalizeLocationQuery(getData()?.gardenLocation?.label || '');
+    const gardenLoc = normalizeLocationQuery(
+      classified?.label || getData()?.gardenLocation?.label || ''
+    );
     const defaultLoc = savedLoc || gardenLoc;
     return (
-      '<p class="pi-muted">' + esc(t('climateUnknown')) + '</p>' +
+      (showAdd ? '<p class="pi-muted">' + esc(t('climateUnknown')) + '</p>' : '') +
       '<div class="pi-climate-prompt"><b>' + esc(t('checkClimateQuestion')) + '</b>' +
       '<label class="location-field-label" for="piClimateLocation">' + esc(t('locationFieldLabel')) + '</label>' +
       '<div class="location-search-wrap pi-climate-search">' +
@@ -1513,6 +1632,49 @@
       '<button type="button" class="pi-btn pi-btn-primary" data-pi-action="climate">' + esc(t('checkClimateBtn')) + '</button>' +
       '</div></div>'
     );
+  }
+
+  function climateBadgeHtml(result) {
+    if (hasGardenSuitability(result) || usesTrustedGardenLocation(result)) {
+      const short = gardenLocationShort(result);
+      return '<div class="pi-score">' + esc(t('climate') + ': ' + (short || t('locResolved'))) + '</div>';
+    }
+    if (hasVerifiedClimateFit(result)) {
+      const zone = result.climate_zone ? ' · ' + result.climate_zone : '';
+      return (
+        '<div class="pi-score ' + fitClass(result.climate_fit) + '">' +
+        esc(t('climate') + ': ' + fitText(result.climate_fit) + zone) +
+        '</div>'
+      );
+    }
+    return '<div class="pi-score warn">' + esc(t('climate') + ': ' + t('unknown')) + '</div>';
+  }
+
+  function climateBlock(result) {
+    const classified = result._gardenLocationContext || classifyGardenLocationContext();
+    if (hasGardenSuitability(result) && !result._climateOverride) {
+      return gardenSuitabilityBlockHtml(result);
+    }
+    if (usesTrustedGardenLocation(result) && !hasGardenSuitability(result)) {
+      const loc = String(classified.label || gardenLocationShort(result) || '').trim();
+      return (
+        '<p class="pi-muted pi-loc-line">' + esc(t('evaluatingGarden') + ': ' + loc) + '</p>' +
+        '<p class="pi-muted">' + esc(t('confirmIdentityForClimate')) + '</p>'
+      );
+    }
+    if (hasVerifiedClimateFit(result)) {
+      const locLine = result._resolvedLocation
+        ? '<p class="pi-muted pi-loc-line">' + esc(t('locResolved') + ': ' + result._resolvedLocation) + '</p>'
+        : '';
+      return (
+        locLine +
+        '<div class="pi-score ' + fitClass(result.climate_fit) + '">' +
+        esc(fitText(result.climate_fit)) + ' · ' + esc(result.climate_zone || '') +
+        '</div><p class="pi-muted" style="margin-top:12px">' + esc(result.climate_summary || '') + '</p>' +
+        climateChangeButtonHtml()
+      );
+    }
+    return climateLocationPromptHtml(result, classified);
   }
 
   function acquireApi() {
@@ -1556,6 +1718,7 @@
     if (classified.status === 'MATCHED_CANONICAL' && classified.canonicalSlug && !state.chosenCanonicalSlug) {
       state.chosenCanonicalSlug = classified.canonicalSlug;
     }
+    applyGardenLocationContext(result, classified);
     const chosenSlug = state.chosenCanonicalSlug || classified.canonicalSlug || '';
     const display = catalogDisplayFor(chosenSlug);
     const title = (display && display.name) || result.common_name || t('identity');
@@ -1614,10 +1777,18 @@
       '</div>';
     mount.classList.add('show');
     mount.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (!hasVerifiedClimateFit(result)) {
+    if (!hasVerifiedClimateFit(result) && !hasGardenSuitability(result)) {
+      const ctx = result._gardenLocationContext;
       const gl = getData()?.gardenLocation;
       const inputVal = normalizeLocationQuery($('climateLocation')?.value || '');
-      if (gl && inputVal && normalizeLocationQuery(gl.label || '') === inputVal && Number.isFinite(Number(gl.lat))) {
+      if (ctx?.useForSuitability && Number.isFinite(Number(ctx.lat)) && Number.isFinite(Number(ctx.lon))) {
+        state.pendingClimateLocation = {
+          label: ctx.label,
+          lat: ctx.lat,
+          lon: ctx.lon,
+          source: ctx.source || 'garden'
+        };
+      } else if (gl && inputVal && normalizeLocationQuery(gl.label || '') === inputVal && Number.isFinite(Number(gl.lat))) {
         state.pendingClimateLocation = Object.assign({}, gl, { source: 'garden' });
       }
     }
@@ -1908,6 +2079,8 @@
         if (state.lastResult) {
           state.lastResult._climateChecked = false;
           state.lastResult._hasClimate = false;
+          state.lastResult._climateOverride = true;
+          state.lastResult._gardenSuitability = null;
           renderResult(state.lastResult);
         }
       }

@@ -858,6 +858,34 @@
   font-size: 0.88rem;
 }
 
+.plant-identifier-module .pi-outcomes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin: 8px 0 10px;
+}
+
+.plant-identifier-module .pi-outcomes div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.plant-identifier-module .pi-outcomes dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pi-muted);
+}
+
+.plant-identifier-module .pi-outcomes dd {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pi-forest);
+}
+
 .plant-identifier-module .pi-input {
   width: 100%;
   border: 1px solid var(--pi-line);
