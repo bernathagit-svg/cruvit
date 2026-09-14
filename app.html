@@ -6633,27 +6633,85 @@ window.cruvitSpecificPlantSuitability={
   setAppLocation
 };
 
+function smartRecDeriveValidatedOutcomes(plant,suitability){
+  if(typeof window==='undefined'||typeof window.cruvitDeriveSpecificPlantOutcomes!=='function') return null;
+  const meta=typeof smartRecClimateMetaForPlant==='function'?smartRecClimateMetaForPlant(plant):null;
+  const climateProfile=typeof getAppClimateProfile==='function'?getAppClimateProfile():null;
+  const protection=typeof smartRecProtectionContext==='function'?smartRecProtectionContext():{};
+  const gateApi=typeof hardClimateSurvivalGateApi==='function'?hardClimateSurvivalGateApi():null;
+  const protectedGrowing=gateApi&&typeof gateApi.isExplicitFrostFreeProtectedContext==='function'
+    ?gateApi.isExplicitFrostFreeProtectedContext(protection)
+    :false;
+  return window.cruvitDeriveSpecificPlantOutcomes({
+    meta,
+    climateProfile,
+    suitability,
+    plant,
+    protectedGrowing
+  });
+}
+
 function smartRecDecoratePlant(p){
   const gi=smartRecGardenIntelligenceApi();
   const catalog=getSmartRecCatalogBySlug();
   const attached=gi&&typeof gi.attachSmartRecCatalogImage==='function'
     ?gi.attachSmartRecCatalogImage(p,catalog)
     :p;
-  const suitability=smartRecEvaluateSuitability(attached);
-  return Object.assign({},attached,{smartRecSuitability:suitability});
+  let suitability=smartRecEvaluateSuitability(attached);
+  const derived=smartRecDeriveValidatedOutcomes(attached,suitability);
+  if(gi&&typeof gi.alignSmartRecSuitabilityWithValidatedOutcomes==='function'){
+    suitability=gi.alignSmartRecSuitabilityWithValidatedOutcomes(suitability,derived);
+  }else if(suitability&&suitability.hardSurvivalBlocked===true){
+    suitability=Object.assign({},suitability,{recommendationLevel:'blocked',suitabilityScore:0});
+  }
+  return Object.assign({},attached,{smartRecSuitability:suitability,smartRecDerivedOutcomes:derived});
 }
 
 function smartRecPlantIsBlocked(p){
-  return p?.smartRecSuitability?.recommendationLevel==='blocked';
+  const s=p?.smartRecSuitability||{};
+  const d=p?.smartRecDerivedOutcomes||s.derivedOutcomes||null;
+  const gi=smartRecGardenIntelligenceApi();
+  if(gi&&typeof gi.isPositiveRecommendationIneligible==='function'){
+    return gi.isPositiveRecommendationIneligible({
+      hardSurvivalBlocked:s.hardSurvivalBlocked,
+      recommendationLevel:s.recommendationLevel,
+      derivedOverall:d?.overall,
+      derivedSurvival:d?.survival
+    });
+  }
+  return s.recommendationLevel==='blocked'||s.hardSurvivalBlocked===true;
 }
 
 function smartRecPlantSort(a,b){
   const aa=a.smartRecSuitability||{};
   const bb=b.smartRecSuitability||{};
-  const level=(SMART_REC_LEVEL_RANK[bb.recommendationLevel]||0)-(SMART_REC_LEVEL_RANK[aa.recommendationLevel]||0);
-  if(level) return level;
-  const score=(Number(bb.suitabilityScore)||0)-(Number(aa.suitabilityScore)||0);
-  if(score) return score;
+  const da=a.smartRecDerivedOutcomes||aa.derivedOutcomes||null;
+  const db=b.smartRecDerivedOutcomes||bb.derivedOutcomes||null;
+  const gi=smartRecGardenIntelligenceApi();
+  if(gi&&typeof gi.compareSmartRecRecommendationRank==='function'){
+    const ranked=gi.compareSmartRecRecommendationRank({
+      hardSurvivalBlocked:aa.hardSurvivalBlocked,
+      recommendationLevel:aa.recommendationLevel,
+      suitabilityScore:aa.suitabilityScore,
+      derivedOverall:da?.overall,
+      derivedSurvival:da?.survival
+    },{
+      hardSurvivalBlocked:bb.hardSurvivalBlocked,
+      recommendationLevel:bb.recommendationLevel,
+      suitabilityScore:bb.suitabilityScore,
+      derivedOverall:db?.overall,
+      derivedSurvival:db?.survival
+    });
+    if(ranked) return ranked;
+  }else{
+    const aInel=aa.hardSurvivalBlocked===true||aa.recommendationLevel==='blocked';
+    const bInel=bb.hardSurvivalBlocked===true||bb.recommendationLevel==='blocked';
+    if(aInel!==bInel) return aInel?1:-1;
+    const level=(SMART_REC_LEVEL_RANK[bb.recommendationLevel]||0)-(SMART_REC_LEVEL_RANK[aa.recommendationLevel]||0);
+    if(level) return level;
+    const score=(Number(bb.suitabilityScore)||0)-(Number(aa.suitabilityScore)||0);
+    if(score) return score;
+  }
   return String(a.name||'').localeCompare(String(b.name||''));
 }
 
@@ -7517,7 +7575,8 @@ function smartRecCardModel(p){
       ownedCanonicalSlugs:smartRecOwnedCanonicalSlugs(),
       confidenceNotes:climate.confidenceNotes||[],
       meta,
-      suitability:p.smartRecSuitability
+      suitability:p.smartRecSuitability,
+      derivedOutcomes:p.smartRecDerivedOutcomes||(p.smartRecSuitability&&p.smartRecSuitability.derivedOutcomes)||null
     });
   }
   const display=typeof resolvePlantDisplayMedia==='function'?resolvePlantDisplayMedia(p):{placeholder:true,url:'',imageStatus:'IMAGE_PENDING'};
@@ -9159,7 +9218,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
 <script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914e"></script>
-<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914a"></script>
+<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>

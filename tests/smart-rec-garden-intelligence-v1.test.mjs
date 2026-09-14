@@ -228,6 +228,8 @@ test('app wiring: catalog intelligence module, no Design start, no Identifier re
   const app = fs.readFileSync(APP, 'utf8');
   assert.match(app, /smart-rec-garden-intelligence-v1\.js/);
   assert.match(app, /buildSmartRecCardModel/);
+  assert.match(app, /alignSmartRecSuitabilityWithValidatedOutcomes/);
+  assert.match(app, /isPositiveRecommendationIneligible/);
   assert.match(app, /data-sr-outcome="\$\{escapeAttr\(key\)\}"/);
   assert.match(app, /row\('survival',copy\.survival\)/);
   assert.match(app, /row\('growth',copy\.growth\)/);

@@ -12,7 +12,7 @@ import {
   withCanonicalCatalogMedia
 } from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 
-export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.0.0';
+export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.1.0';
 
 /** Same collapse table as Catalog Images V1 — not a second identity registry. */
 export const SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
@@ -109,6 +109,78 @@ export function smartRecDimensionDisplay(suitability = {}, meta = null, plant = 
   };
 }
 
+const POSITIVE_LEVELS = Object.freeze({ excellent: true, good: true });
+
+/**
+ * Hard-blocked Survival / validated blocked overall cannot be a positive recommendation.
+ * Stale suitabilityScore / recommendationLevel cannot override that.
+ */
+export function isPositiveRecommendationIneligible({
+  hardSurvivalBlocked,
+  recommendationLevel,
+  derivedOverall,
+  derivedSurvival
+} = {}) {
+  if (hardSurvivalBlocked === true) return true;
+  const level = asText(recommendationLevel).toLowerCase();
+  if (level === 'blocked') return true;
+  const overall = asText(derivedOverall).toLowerCase();
+  if (overall === 'blocked') return true;
+  const survival = asText(derivedSurvival).toLowerCase();
+  if (survival === 'unreliable' || survival === 'poor') return true;
+  return false;
+}
+
+export function isPositiveRecommendationRank(recommendationLevel) {
+  return !!POSITIVE_LEVELS[asText(recommendationLevel).toLowerCase()];
+}
+
+export function validatedSmartRecCardOutcomes(derived, suitability, meta, plant) {
+  if (derived && (derived.survivalLabel || derived.survival)) {
+    return {
+      survival: derived.survivalLabel || derived.survival || 'UNKNOWN',
+      growth: derived.growthLabel || derived.growth || 'UNKNOWN',
+      flowering: derived.floweringLabel || derived.flowering || 'UNKNOWN',
+      fruiting: derived.fruitingLabel || derived.fruiting || 'UNKNOWN'
+    };
+  }
+  return smartRecDimensionDisplay(suitability, meta, plant);
+}
+
+export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, derived = null) {
+  const next = Object.assign({}, suitability && typeof suitability === 'object' ? suitability : {});
+  const ineligible = isPositiveRecommendationIneligible({
+    hardSurvivalBlocked: next.hardSurvivalBlocked,
+    recommendationLevel: next.recommendationLevel,
+    derivedOverall: derived?.overall,
+    derivedSurvival: derived?.survival
+  });
+  if (ineligible) {
+    next.recommendationLevel = 'blocked';
+    next.suitabilityScore = 0;
+    next.hardSurvivalBlocked = true;
+  }
+  const derivedLimiter = Array.isArray(derived?.limitingFactors)
+    ? derived.limitingFactors.map((m) => asText(m)).find(Boolean)
+    : '';
+  if (derivedLimiter) next.explanationText = derivedLimiter;
+  next.derivedOutcomes = derived || next.derivedOutcomes || null;
+  return next;
+}
+
+const LEVEL_RANK = Object.freeze({ excellent: 4, good: 3, borderline: 2, blocked: 1 });
+
+export function compareSmartRecRecommendationRank(a = {}, b = {}) {
+  const aInel = isPositiveRecommendationIneligible(a);
+  const bInel = isPositiveRecommendationIneligible(b);
+  if (aInel !== bInel) return aInel ? 1 : -1;
+  const level =
+    (LEVEL_RANK[asText(b.recommendationLevel).toLowerCase()] || 0) -
+    (LEVEL_RANK[asText(a.recommendationLevel).toLowerCase()] || 0);
+  if (level) return level;
+  return (Number(b.suitabilityScore) || 0) - (Number(a.suitabilityScore) || 0);
+}
+
 export function ownedCanonicalSlugSet(plants, extraMaps = {}) {
   const set = new Set();
   for (const p of plants || []) {
@@ -148,14 +220,23 @@ export function buildSmartRecCardModel(plant, options = {}) {
   const attached = attachSmartRecCatalogImage(plant, catalogBySlug, extraMaps);
   const display = resolvePlantDisplayMedia(attached);
   const suitability = plant?.smartRecSuitability || options.suitability || {};
+  const derived =
+    options.derivedOutcomes ||
+    plant?.smartRecDerivedOutcomes ||
+    suitability.derivedOutcomes ||
+    null;
   const meta = options.meta || null;
-  const outcomes = smartRecDimensionDisplay(suitability, meta, attached);
+  const outcomes = validatedSmartRecCardOutcomes(derived, suitability, meta, attached);
   const canonicalSlug = resolveSmartRecCanonicalSlug(attached.slug || plant?.slug, extraMaps);
   const owned = options.ownedCanonicalSlugs instanceof Set && options.ownedCanonicalSlugs.has(canonicalSlug);
   const limiter = asText(
-    suitability.explanationText || (Array.isArray(suitability.warnings) ? suitability.warnings[0] : '')
+    suitability.explanationText ||
+      (Array.isArray(derived?.limitingFactors) ? derived.limitingFactors[0] : '') ||
+      (Array.isArray(suitability.warnings) ? suitability.warnings[0] : '')
   );
-  const unknowns = Array.isArray(options.confidenceNotes) ? options.confidenceNotes.filter(Boolean) : [];
+  const derivedUnknowns = Array.isArray(derived?.unknownEvidence) ? derived.unknownEvidence : [];
+  const noteUnknowns = Array.isArray(options.confidenceNotes) ? options.confidenceNotes : [];
+  const unknowns = [...noteUnknowns, ...derivedUnknowns].map(asText).filter(Boolean);
   const catalogImage = display.kind === 'catalog' && display.url ? display.url : '';
   return {
     canonicalSlug,
@@ -190,6 +271,11 @@ const api = {
   resolveSmartRecCatalogDisplay,
   formatSmartRecOutcomeBand,
   smartRecDimensionDisplay,
+  isPositiveRecommendationIneligible,
+  isPositiveRecommendationRank,
+  validatedSmartRecCardOutcomes,
+  alignSmartRecSuitabilityWithValidatedOutcomes,
+  compareSmartRecRecommendationRank,
   ownedCanonicalSlugSet,
   smartRecContextFromGardenArea,
   buildSmartRecCardModel,
