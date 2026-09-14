@@ -7498,7 +7498,8 @@ function safeUiAfterPlantAdd(){
             originSource:plant.source||'My Garden',
             profileSlug:plant.profileSlug||null,
             scientific:plant.scientific||null,
-            name:plant.name||null
+            name:plant.name||null,
+            sourceModule:plant.source==='Scan & Identify'?'plant_identifier':undefined
           }).catch((err)=>{
             console.warn('[GardenMemory] plant_added write failed',err&&err.message?err.message:err);
           });
@@ -8573,31 +8574,126 @@ function buildScanResultSummary(profile,climateFit,climateZone){
   if(profile.scientific) return `${fitLabel}${zone} · ${profile.scientific}`;
   return `${fitLabel}${zone}`;
 }
-async function commitIdentifiedPlantFromModule(result){
-  if(!result) return;
-  const dataUrl=String(result._img||'');
-  let imageBase64='';
-  let mediaType='image/jpeg';
-  const embedded=dataUrl.match(/^data:([^;]+);base64,(.+)$/i);
-  if(embedded){
-    mediaType=embedded[1].toLowerCase()==='image/jpg'?'image/jpeg':embedded[1].toLowerCase();
-    imageBase64=embedded[2].replace(/\s+/g,'');
-  }
-  const photo={
-    dataUrl,
-    imageBase64,
-    mediaType,
-    scanId:'pi-'+Date.now().toString(36)
+function getIdentifierAcquireApi(){
+  return (typeof window!=='undefined'&&window.CruvitPlantIdentifierGardenAcquire)||null;
+}
+function getActiveCatalogIdentitiesForIdentifier(){
+  const seen=new Set();
+  const out=[];
+  const push=(p)=>{
+    if(!p||!p.slug) return;
+    const slug=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(p.slug):p.slug;
+    if(!slug||seen.has(slug)) return;
+    seen.add(slug);
+    out.push({
+      slug,
+      name:p.name||'',
+      scientific:p.scientific||'',
+      aliases:Array.isArray(p.aliases)?p.aliases:[],
+      he:p.he||''
+    });
   };
-  const profile=buildScanProfileFromIdentifyResult(result,photo);
-  const ref=storePlantProfile(profile);
-  savePlantFromLibrary(ref.slug,'Scan & Identify');
+  (PLANT_LIBRARY||[]).forEach(push);
+  Object.keys(PLANT_INDEX||{}).forEach((k)=>push(PLANT_INDEX[k]));
+  return out;
+}
+function identifierAliasMaps(){
+  const api=getIdentifierAcquireApi();
+  const species=(api&&api.IDENTIFIER_SPECIES_ALIAS_ONTO_CANONICAL)||{};
+  return Object.assign({},BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL,species);
+}
+function identifierAcquireActorContext(){
+  const pd=window.cruvitPersonalDomainV0;
+  if(!pd) return {};
+  const session=typeof pd.getSession==='function'?pd.getSession():null;
+  const userId=session&&session.user&&session.user.id?session.user.id:'';
+  const gardens=typeof pd.getOwnedGardensCache==='function'?(pd.getOwnedGardensCache()||[]):[];
+  const activeGardenId=typeof pd.getActiveGardenId==='function'?(pd.getActiveGardenId()||''):'';
+  const garden=gardens.find((g)=>String(g.id)===String(activeGardenId))||null;
+  const serverAuthoritative=typeof pd.isServerPlantsAuthoritative==='function'&&pd.isServerPlantsAuthoritative();
+  return {
+    actorUserId:userId,
+    gardenOwnerUserId:garden&&garden.user_id?garden.user_id:'',
+    activeGardenId:activeGardenId||'',
+    targetGardenId:activeGardenId||'',
+    serverAuthoritative:!!serverAuthoritative,
+    sessionPresent:!!userId
+  };
+}
+let identifierAcquireIdempotency=null;
+function getIdentifierAcquireIdempotency(){
+  const api=getIdentifierAcquireApi();
+  if(!identifierAcquireIdempotency&&api&&typeof api.createIdentifierAcquireIdempotency==='function'){
+    const storage=(typeof sessionStorage!=='undefined')?sessionStorage:null;
+    identifierAcquireIdempotency=api.createIdentifierAcquireIdempotency(storage);
+  }
+  return identifierAcquireIdempotency;
+}
+function resolveCatalogIdentityDisplay(slug){
+  const canon=typeof resolveBootstrapPlantSlug==='function'?resolveBootstrapPlantSlug(slug):slug;
+  const ref=PLANT_INDEX[canon]||PLANT_LIBRARY.find((p)=>p.slug===canon);
+  if(!ref) return null;
+  const display=typeof resolvePlantDisplayMedia==='function'?resolvePlantDisplayMedia(ref):{kind:'placeholder',url:''};
+  return {
+    slug:canon,
+    name:ref.name||'',
+    scientific:ref.scientific||'',
+    imageUrl:(display.kind==='catalog'&&display.url)?display.url:'',
+    imageStatus:display.imageStatus||null
+  };
+}
+async function commitIdentifiedPlantFromModule(result){
+  if(!result) return {ok:false,reason:'empty-result'};
+  const api=getIdentifierAcquireApi();
+  if(!api) return {ok:false,reason:'acquire-contract-missing',message:'Identifier catalog contract is not loaded.'};
+  const catalog=getActiveCatalogIdentitiesForIdentifier();
+  const aliasMaps=identifierAliasMaps();
+  const classified=result._catalogMatch&&result._catalogMatch.status
+    ?result._catalogMatch
+    :api.classifyIdentifierCatalogMatch(result,catalog,{aliasMaps});
+  const actor=identifierAcquireActorContext();
+  const plan=api.confirmIdentifierGardenAcquire(Object.assign({
+    classified,
+    result,
+    catalog,
+    aliasMaps,
+    userConfirmed:result._userConfirmed===true,
+    chosenSlug:result._chosenCanonicalSlug||classified.canonicalSlug||'',
+    commitToken:result._commitToken||api.buildIdentifierCommitToken(result,classified.canonicalSlug||result._chosenCanonicalSlug||''),
+    idempotency:getIdentifierAcquireIdempotency()
+  },actor));
+  if(plan.duplicate){
+    return {ok:true,duplicate:true,canonicalSlug:plan.canonicalSlug};
+  }
+  if(!plan.ok||!plan.persist){
+    return {ok:false,reason:plan.reason,classified,message:plan.reason==='no-safe-canonical-match'?'No safe catalog match for this identification.':''};
+  }
+  const before=(data.plants||[]).length;
+  savePlantFromLibrary(plan.write.canonicalSlug,'Scan & Identify');
+  const plant=(data.plants||[])[(data.plants||[]).length-1];
+  if(plant&&(data.plants||[]).length>before){
+    if(typeof api.attachObservationalScanToOwnedPlant==='function'){
+      api.attachObservationalScanToOwnedPlant(plant,result._img||'');
+    }else if(result._img){
+      plant.scanPhotoUrl=result._img;
+    }
+    plant.identifyConfidence=result.confidence||'';
+    plant.identifyMatchClass=classified.status;
+    if(typeof resolvePlantDisplayMedia==='function'){
+      const display=resolvePlantDisplayMedia(plant);
+      plant.imageUrl=(display.kind==='catalog'||display.kind==='user'||display.kind==='user_cover')?display.url:'';
+    }
+  }
+  if(getIdentifierAcquireIdempotency()&&typeof getIdentifierAcquireIdempotency().mark==='function'){
+    getIdentifierAcquireIdempotency().mark(plan.commitToken);
+  }
   if(typeof PlantIdentifier!=='undefined'){
     PlantIdentifier.closeScan();
     PlantIdentifier.closeHome();
   }
   dismissEntryScreen();
   setTab('plants');
+  return {ok:true,duplicate:false,canonicalSlug:plan.write.canonicalSlug,plant};
 }
 
 function plantIdentifierDeps(langOverride){
@@ -8610,11 +8706,19 @@ function plantIdentifierDeps(langOverride){
     preparePlantPhoto:preparePlantPhotoForIdentify,
     lang,
     commitIdentifiedPlant(result){
-      void commitIdentifiedPlantFromModule(result).catch(err=>{
-        alert(err?.message||'Could not save this plant to your garden.');
+      return commitIdentifiedPlantFromModule(result).catch(err=>{
         console.error('commitIdentifiedPlantFromModule failed',err);
+        return {ok:false,reason:'commit-failed',message:err?.message||'Could not save this plant to your garden.'};
       });
     },
+    classifyCatalogMatch(result){
+      const api=getIdentifierAcquireApi();
+      if(!api) return {status:'NO_SAFE_CANONICAL_MATCH',canonicalSlug:null,candidates:[],reason:'acquire-contract-missing'};
+      return api.classifyIdentifierCatalogMatch(result,getActiveCatalogIdentitiesForIdentifier(),{aliasMaps:identifierAliasMaps()});
+    },
+    getCatalogIdentities:getActiveCatalogIdentitiesForIdentifier,
+    getIdentifierAliasMaps:identifierAliasMaps,
+    resolveCatalogIdentityDisplay,
     onIdentified(){
       dismissEntryScreen();
     },
@@ -8708,6 +8812,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 </script>
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
+<script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914a"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>

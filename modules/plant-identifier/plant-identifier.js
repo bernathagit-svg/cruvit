@@ -82,7 +82,17 @@
       growth: 'Growth',
       size: 'Size',
       botanicalProfile: 'Botanical profile',
-      soilLabel: 'Soil'
+      soilLabel: 'Soil',
+      observationPhoto: 'Your photo (observation)',
+      catalogIdentity: 'Catalog identity',
+      catalogImage: 'Catalog image',
+      matchCanonical: 'Matched catalog plant',
+      matchAmbiguous: 'More than one catalog match — choose one',
+      matchNone: 'No safe catalog match. Retry with another photo or identify later.',
+      chooseIdentity: 'Choose the catalog plant before adding to My Garden.',
+      confirmAdd: 'Confirm and add to My Garden',
+      identifyLater: 'Identify later',
+      confidenceValue: 'Confidence'
     },
     he: {
       modalTitle: 'זיהוי צמח',
@@ -154,7 +164,17 @@
       growth: 'צמיחה',
       size: 'גודל',
       botanicalProfile: 'פרופיל בוטני',
-      soilLabel: 'אדמה'
+      soilLabel: 'אדמה',
+      observationPhoto: 'התמונה שלך (תצפית)',
+      catalogIdentity: 'זהות קטלוג',
+      catalogImage: 'תמונת קטלוג',
+      matchCanonical: 'התאמה לצמח בקטלוג',
+      matchAmbiguous: 'יותר מהתאמה אחת בקטלוג — בחרו אחת',
+      matchNone: 'אין התאמת קטלוג בטוחה. נסו תמונה אחרת או זהו מאוחר יותר.',
+      chooseIdentity: 'בחרו צמח מהקטלוג לפני הוספה לגינה.',
+      confirmAdd: 'אישור והוספה לגינה שלי',
+      identifyLater: 'זהוי מאוחר יותר',
+      confidenceValue: 'רמת ביטחון'
     }
   };
 
@@ -176,7 +196,10 @@
     climateSearchTimer: null,
     climateSearchSeq: 0,
     climateSuggestions: [],
-    pendingClimateLocation: null
+    pendingClimateLocation: null,
+    saving: false,
+    chosenCanonicalSlug: '',
+    catalogMatch: null
   };
 
   const HEBREW_PLACE_ALIASES = {
@@ -1492,10 +1515,72 @@
     );
   }
 
+  function acquireApi() {
+    if (deps?.acquireApi) return deps.acquireApi;
+    return global.CruvitPlantIdentifierGardenAcquire || null;
+  }
+
+  function classifyCurrent(result) {
+    if (typeof deps?.classifyCatalogMatch === 'function') {
+      return deps.classifyCatalogMatch(result);
+    }
+    const api = acquireApi();
+    if (!api || typeof api.classifyIdentifierCatalogMatch !== 'function') {
+      return { status: 'NO_SAFE_CANONICAL_MATCH', canonicalSlug: null, candidates: [], reason: 'acquire-contract-missing' };
+    }
+    return api.classifyIdentifierCatalogMatch(result, deps?.getCatalogIdentities?.() || [], {
+      aliasMaps: deps?.getIdentifierAliasMaps?.() || {}
+    });
+  }
+
+  function catalogDisplayFor(slug) {
+    if (!slug) return null;
+    if (typeof deps?.resolveCatalogIdentityDisplay === 'function') {
+      return deps.resolveCatalogIdentityDisplay(slug);
+    }
+    return null;
+  }
+
+  function matchReasonMessage(status) {
+    if (status === 'MATCHED_CANONICAL') return t('matchCanonical');
+    if (status === 'AMBIGUOUS') return t('matchAmbiguous');
+    return t('matchNone');
+  }
+
   function renderResult(result) {
     const mount = $('result');
     if (!mount) return;
-    const alts = (result.alternatives || []).filter(Boolean);
+    const classified = classifyCurrent(result);
+    state.catalogMatch = classified;
+    result._catalogMatch = classified;
+    if (classified.status === 'MATCHED_CANONICAL' && classified.canonicalSlug && !state.chosenCanonicalSlug) {
+      state.chosenCanonicalSlug = classified.canonicalSlug;
+    }
+    const chosenSlug = state.chosenCanonicalSlug || classified.canonicalSlug || '';
+    const display = catalogDisplayFor(chosenSlug);
+    const title = (display && display.name) || result.common_name || t('identity');
+    const latin = (display && display.scientific) || result.scientific_name || '';
+    const confidence = String(result.confidence || '').trim();
+    const catalogImg = display && display.imageUrl ? display.imageUrl : '';
+    const candidates = classified.status === 'AMBIGUOUS' ? (classified.candidates || []) : [];
+    const canSave =
+      classified.status === 'MATCHED_CANONICAL' ||
+      (classified.status === 'AMBIGUOUS' && !!state.chosenCanonicalSlug);
+    const altChoices = candidates.map((c) => {
+      const selected = c.slug === state.chosenCanonicalSlug;
+      return (
+        '<button type="button" class="pi-choice-btn' +
+        (selected ? ' is-selected' : '') +
+        '" data-pi-choose-slug="' +
+        esc(c.slug) +
+        '" aria-pressed="' +
+        (selected ? 'true' : 'false') +
+        '">' +
+        esc(c.name || c.slug) +
+        (c.scientific ? ' <span class="pi-latin">' + esc(c.scientific) + '</span>' : '') +
+        '</button>'
+      );
+    }).join('');
     mount.innerHTML =
       '<div class="pi-result-toolbar">' +
         '<button type="button" class="pi-toolbar-btn" data-pi-action="home">' + esc(t('homeBtn')) + '</button>' +
@@ -1504,18 +1589,26 @@
       '<div class="pi-result-grid">' +
         '<div class="pi-card">' +
           '<img class="pi-plant-photo" src="' + esc(piImgSrc(result._img)) + '" alt="Plant">' +
-          '<h2 class="pi-r-title">' + esc(result.common_name || t('identity')) + '</h2>' +
-          '<div class="pi-latin">' + esc(result.scientific_name || '') + '</div>' +
+          '<p class="pi-muted pi-obs-label">' + esc(t('observationPhoto')) + '</p>' +
+          '<h2 class="pi-r-title">' + esc(title) + '</h2>' +
+          '<div class="pi-latin">' + esc(latin) + '</div>' +
+          (confidence ? '<div class="pi-score">' + esc(t('confidenceValue') + ': ' + confidence) + '</div>' : '') +
+          '<p class="pi-match-note">' + esc(matchReasonMessage(classified.status)) + '</p>' +
           climateBadgeHtml(result) +
         '</div>' +
         '<div class="pi-card">' +
-          '<h2>' + esc(t('identity')) + '</h2>' +
+          '<h2>' + esc(t('catalogIdentity')) + '</h2>' +
+          (catalogImg
+            ? '<img class="pi-catalog-photo" src="' + esc(catalogImg) + '" alt="' + esc(t('catalogImage')) + '">'
+            : '') +
+          (altChoices ? '<div class="pi-choices">' + altChoices + '</div>' : '') +
           '<p class="pi-muted pi-quick-care-sub">' + esc(t('quickCare')) + '</p>' +
-          '<p class="pi-muted">' + (alts.length ? esc((state.lang === 'he' ? 'אפשרויות נוספות: ' : 'Alternatives: ') + alts.join(', ')) : '') + '</p>' +
           careInfoGridHtml(result) +
           '<h2>' + esc(t('climate')) + '</h2>' + climateBlock(result) +
           '<div class="pi-actions">' +
-            '<button type="button" class="pi-small-btn pi-small-btn-primary" data-pi-action="save">' + esc(t('addGarden')) + '</button>' +
+            (canSave
+              ? '<button type="button" class="pi-small-btn pi-small-btn-primary" data-pi-action="save">' + esc(t('confirmAdd')) + '</button>'
+              : '<button type="button" class="pi-small-btn" data-pi-action="rescan">' + esc(t('identifyLater')) + '</button>') +
           '</div>' +
         '</div>' +
       '</div>';
@@ -1629,6 +1722,8 @@
       resetClimateCheckState(result);
       if (scanSeq !== state.scanSeq) return;
       state.lastResult = result;
+      state.chosenCanonicalSlug = '';
+      state.catalogMatch = null;
       applyIdentifyCareToDisplay(result);
       hideHome();
       closeWizard();
@@ -1719,24 +1814,51 @@
     );
   }
 
-  function saveToGarden() {
-    if (!state.lastResult) return;
-    if (typeof deps?.commitIdentifiedPlant === 'function') {
-      deps.commitIdentifiedPlant(state.lastResult);
-      toast(t('saved'));
+  function acquireFailMessage(reason) {
+    if (reason === 'ambiguous-choice-required') return t('chooseIdentity');
+    if (reason === 'no-safe-canonical-match' || reason === 'outside-current-catalog') return t('matchNone');
+    if (reason === 'confirmation-required') return t('confirmAdd');
+    if (reason === 'cross-user-denied' || reason === 'wrong-active-garden' || reason === 'auth-expiry') {
+      return state.lang === 'he' ? 'לא ניתן לשמור לגינה הפעילה.' : 'Could not save to the active garden.';
+    }
+    return t('aiError');
+  }
+
+  async function saveToGarden() {
+    if (!state.lastResult || state.saving) return;
+    const classified = state.catalogMatch || classifyCurrent(state.lastResult);
+    if (classified.status === 'NO_SAFE_CANONICAL_MATCH') {
+      showErr(t('matchNone'));
       return;
     }
-    if (typeof deps?.finalizePlantListChange !== 'function') {
-      throw new Error('PlantIdentifier: finalizePlantListChange() is required in init(deps).');
+    if (classified.status === 'AMBIGUOUS' && !state.chosenCanonicalSlug) {
+      showErr(t('chooseIdentity'));
+      return;
     }
-    const data = getData();
-    const plant = mapResultToPlant(state.lastResult);
-    data.plants = data.plants || [];
-    data.plants.push(plant);
-    data.events = data.events || [];
-    data.events.unshift(['Today', 'Plant added from scan', plant.name]);
-    deps.finalizePlantListChange();
-    toast(t('saved'));
+    if (typeof deps?.commitIdentifiedPlant !== 'function') {
+      showErr(t('matchNone'));
+      return;
+    }
+    state.saving = true;
+    try {
+      const payload = Object.assign({}, state.lastResult, {
+        _userConfirmed: true,
+        _chosenCanonicalSlug: state.chosenCanonicalSlug || classified.canonicalSlug || '',
+        _catalogMatch: classified,
+        _commitToken: state.lastResult._commitToken || ('pi-save-' + String(state.scanSeq || 0))
+      });
+      const out = await Promise.resolve(deps.commitIdentifiedPlant(payload));
+      if (out && out.duplicate) return;
+      if (out && out.ok === false) {
+        showErr(out.message || acquireFailMessage(out.reason));
+        return;
+      }
+      toast(t('saved'));
+    } catch (err) {
+      showErr(err?.message || t('networkError'));
+    } finally {
+      state.saving = false;
+    }
   }
 
   function bindEvents() {
@@ -1780,7 +1902,7 @@
     });
     rootEl.addEventListener('click', (e) => {
       const action = e.target?.closest?.('[data-pi-action]')?.dataset?.piAction;
-      if (action === 'save') saveToGarden();
+      if (action === 'save') void saveToGarden();
       if (action === 'climate') void checkClimateNow();
       if (action === 'change-climate') {
         if (state.lastResult) {
@@ -1792,6 +1914,12 @@
       if (action === 'geo') useGeoForClimate();
       if (action === 'home') goHomeFromModule();
       if (action === 'rescan') scanAgain();
+      const choice = e.target?.closest?.('[data-pi-choose-slug]');
+      if (choice) {
+        state.chosenCanonicalSlug = String(choice.dataset.piChooseSlug || '');
+        if (state.lastResult) renderResult(state.lastResult);
+        return;
+      }
       const suggestion = e.target?.closest?.('[data-pi-climate-suggestion]');
       if (suggestion) {
         selectClimateSuggestion(Number(suggestion.dataset.piClimateSuggestion));
@@ -1805,6 +1933,8 @@
             const items = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
             if (!items[index]) return;
             state.lastResult = items[index];
+            state.chosenCanonicalSlug = '';
+            state.catalogMatch = null;
             hideHome();
             closeWizard();
             if (careLooksEmpty(state.lastResult.care) || careLooksGeneric(state.lastResult.care)) {
@@ -1922,7 +2052,7 @@
     },
 
     saveToGarden() {
-      saveToGarden();
+      return saveToGarden();
     },
 
     getLastResult() {

@@ -5,7 +5,7 @@
 (function (global) {
   'use strict';
 
-  var VERSION = '20250658';
+  var VERSION = '20260914a';
   var loadPromise = null;
 
   function scriptUrls() {
