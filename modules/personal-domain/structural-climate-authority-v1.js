@@ -582,17 +582,41 @@ export function applyStructuralClimateToProfile(climateProfile = {}, structuralC
 /**
  * Year-round-warm / tropical establishment need.
  * Aligned with plantRequiresYearRoundWarmClimate — kept local to avoid import cycles.
- * Cool-winter Mediterranean citrus (very_high/very_low, non-tropical groups) is excluded.
+ * Frost sensitivity, chill, and negated always-hot prose are not tropical warmth.
  */
 function plantHasYearRoundWarmEstablishmentNeed(meta) {
-  const frost = String(meta?.frostSensitivity || '').toLowerCase();
-  const cold = String(meta?.coldTolerance || '').toLowerCase();
   const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
-  if (groups.includes('tropical-frost-sensitive-fruit')) return true;
-  if (frost === 'high' && cold === 'low') return true;
+  if (
+    groups.includes('tropical-frost-sensitive-fruit') ||
+    groups.includes('frost-sensitive-ornamental') ||
+    groups.includes('warm-climate-palm') ||
+    groups.includes('hot-dry-palm')
+  ) {
+    return true;
+  }
   const flower = String(meta?.floweringRequirements || '');
   const fruit = String(meta?.fruitingRequirements || '');
-  return /tropical|year-?\s*round\s*warm|always.?hot|humid tropics/i.test(`${flower} ${fruit}`);
+  const combined = `${flower} ${fruit}`;
+  if (
+    /(unsuitable|poor(?:\s+\w+){0,8}\s+in|fails?\s+in|not a confident match|are not a confident|incompatible|not suited)[^.!?;]*?(always-?hot|tropical)/i.test(
+      combined
+    ) ||
+    /poor flowering in always-?hot/i.test(combined)
+  ) {
+    return false;
+  }
+  if (meta?.needsWinterChill === true) return false;
+  if (groups.some((g) => /temperate-chill|cool-moist-berry|mediterranean-fruit/.test(String(g || '')))) {
+    return false;
+  }
+  const frost = String(meta?.frostSensitivity || '').toLowerCase();
+  const cold = String(meta?.coldTolerance || '').toLowerCase();
+  if ((frost === 'low' || frost === 'medium') && (cold === 'high' || cold === 'very_high')) {
+    return false;
+  }
+  return /warm\s+tropical|humid tropics|year-?\s*round\s*warm|frost-free tropical|tropical warmth|tropical conditions|tropical or subtropical conditions/i.test(
+    combined
+  );
 }
 
 /**

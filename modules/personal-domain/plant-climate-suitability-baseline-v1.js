@@ -17,7 +17,7 @@ import {
   frostSensitivityIsHard
 } from '../suitability/hard-climate-survival-gate-v1.js';
 
-export const PLANT_CLIMATE_SUITABILITY_BASELINE_VERSION = '1.0.0-real-world-repair';
+export const PLANT_CLIMATE_SUITABILITY_BASELINE_VERSION = '1.1.0-false-warm-repair';
 
 function frostOf(meta) {
   return String(meta?.frostSensitivity || '').toLowerCase();
@@ -155,16 +155,99 @@ export function assessPlantClimateColdSurvival(meta, climateProfile = {}) {
 }
 
 /**
+ * True when prose *rejects* year-round-warm / always-hot climates
+ * ("unsuitable for always-hot", "poor in always-hot tropics").
+ * Mentioning those tokens as a prohibition is not a tropical requirement.
+ */
+export function reproductiveProseRejectsYearRoundWarmNeed(text) {
+  const t = String(text || '');
+  if (!t.trim()) return false;
+  if (
+    /(unsuitable|poor(?:\s+\w+){0,8}\s+in|fails?\s+in|not a confident match|are not a confident|incompatible|not suited)[^.!?;]*?(always-?hot|tropical)/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (
+    /(always-?hot|tropical)[^.!?;]*?(are not a confident|without (?:a )?cool-season|without (?:winter )?chill)/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/poor flowering in always-?hot/i.test(t)) return true;
+  return false;
+}
+
+/**
+ * Positive year-round-warm / tropical / frost-free *climate* requirement.
+ * Does not fire on generic "warm" / "spring" / "summer", late-frost ripening notes,
+ * or negated always-hot / tropical wording.
+ */
+export function requirementsWantTropicalWarmth(text) {
+  const t = String(text || '');
+  if (!t.trim()) return false;
+  if (reproductiveProseRejectsYearRoundWarmNeed(t)) return false;
+  if (/frost-?\s*free\s+ripening/i.test(t) && !/tropical|year-?\s*round\s*warm/i.test(t)) {
+    return false;
+  }
+  if (
+    /warm\s+tropical|humid tropics|year-?\s*round\s*warm|frost-free tropical|tropical warmth|tropical conditions|tropical or subtropical conditions/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (
+    /(?:needs?|require[sd]?|must have|essential)[^.!?;]{0,80}(frost-?\s*free|tropical|year-?\s*round\s*warm)/i.test(
+      t
+    ) &&
+    !/ripening season/i.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function plantHasTemperateOrChillAuthority(meta) {
+  const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
+  if (groups.some((g) => /temperate-chill|cool-moist-berry|mediterranean-fruit/.test(String(g || '')))) {
+    return true;
+  }
+  if (meta?.needsWinterChill === true) return true;
+  const frost = frostOf(meta);
+  const cold = coldTolOf(meta);
+  if ((frost === 'low' || frost === 'medium') && (cold === 'high' || cold === 'very_high')) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * True only when plant evidence authorizes year-round-warm / tropical establishment need.
+ * Frost sensitivity or chill/cold-hardy traits are not interchangeable with tropical warmth.
  */
 export function plantRequiresYearRoundWarmClimate(meta) {
-  const frost = frostOf(meta);
   const groups = Array.isArray(meta?.groupIds) ? meta.groupIds : [];
-  if (groups.includes('tropical-frost-sensitive-fruit')) return true;
-  if (frost === 'high' && coldTolOf(meta) === 'low') return true;
+  if (
+    groups.includes('tropical-frost-sensitive-fruit') ||
+    groups.includes('frost-sensitive-ornamental') ||
+    groups.includes('warm-climate-palm') ||
+    groups.includes('hot-dry-palm')
+  ) {
+    return true;
+  }
   const flower = String(meta?.floweringRequirements || '');
   const fruit = String(meta?.fruitingRequirements || '');
-  if (/tropical|year-?\s*round\s*warm|always.?hot|humid tropics/i.test(`${flower} ${fruit}`)) {
+  const combined = `${flower} ${fruit}`.trim();
+  if (reproductiveProseRejectsYearRoundWarmNeed(combined)) return false;
+  if (plantHasTemperateOrChillAuthority(meta)) return false;
+  if (
+    requirementsWantTropicalWarmth(flower) ||
+    requirementsWantTropicalWarmth(fruit) ||
+    requirementsWantTropicalWarmth(combined)
+  ) {
     return true;
   }
   return false;

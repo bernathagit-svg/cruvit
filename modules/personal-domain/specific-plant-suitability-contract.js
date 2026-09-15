@@ -23,7 +23,9 @@ import { applyPreScaleSystemicDemotions } from './pre-scale-suitability-systemic
 import {
   assessPlantClimateColdSurvival,
   plantRequiresYearRoundWarmClimate,
-  buildPlantDiscriminatedSuitabilityStub
+  buildPlantDiscriminatedSuitabilityStub,
+  requirementsWantTropicalWarmth,
+  reproductiveProseRejectsYearRoundWarmNeed
 } from './plant-climate-suitability-baseline-v1.js';
 import { resolveFruitingWithBiologicalEligibility, readBiologicalFruitSetEvidence } from '../catalog-expansion/reproductive-biology-v1-contract.js';
 import { applyEvidenceStrengthPropagation } from './evidence-strength-propagation-v1-contract.js';
@@ -38,7 +40,9 @@ export { atmosphericHumidityMismatchForLowTolerancePlant };
 export {
   assessPlantClimateColdSurvival,
   plantRequiresYearRoundWarmClimate,
-  buildPlantDiscriminatedSuitabilityStub
+  buildPlantDiscriminatedSuitabilityStub,
+  requirementsWantTropicalWarmth,
+  reproductiveProseRejectsYearRoundWarmNeed
 };
 export {
   applyEvidenceStrengthPropagation,
@@ -660,12 +664,6 @@ function requirementsText(meta, kind) {
   return String(meta?.fruitingRequirements || '');
 }
 
-function requirementsWantTropicalWarmth(text) {
-  return /tropical|frost-?\s*free|year-?\s*round\s*warm|warm\s+tropical|near year-round|always.?hot/i.test(
-    String(text || '')
-  );
-}
-
 function requirementsMentionDroughtOrMoisture(text) {
   return /drought|soil moisture|year-round (soil )?moisture|humid|high humidity|moisture/i.test(
     String(text || '')
@@ -785,9 +783,11 @@ export function evaluateFloweringFromCatalogEvidence({
   }
 
   // Positive path: only when climate can be compared to sourced requirements.
-  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity alone.
-  // Mediterranean citrus can be frost-sensitive without requiring year-round-warm tropics.
-  const wantsWarm = requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta);
+  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity,
+  // generic warmth prose, late spring frost notes, or negated always-hot wording.
+  const wantsWarm =
+    !reproductiveProseRejectsYearRoundWarmNeed(text) &&
+    (requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta));
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
   const coolSlows = requirementsMentionCoolSlows(text);
 
@@ -1004,9 +1004,11 @@ export function evaluateFruitingFromCatalogEvidence({
     };
   }
 
-  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity alone.
-  // Mediterranean citrus can be frost-sensitive without requiring year-round-warm tropics.
-  const wantsWarm = requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta);
+  // Tropical warmth need is authorized by tropical evidence, not by frost sensitivity,
+  // generic warmth prose, late spring frost notes, or negated always-hot wording.
+  const wantsWarm =
+    !reproductiveProseRejectsYearRoundWarmNeed(text) &&
+    (requirementsWantTropicalWarmth(text) || plantRequiresYearRoundWarmClimate(meta));
   const droughtCue = requirementsMentionDroughtOrMoisture(text);
 
   if (droughtCue && (humiditySignal === 'low' || moistureMismatchForHighHumidityPlant(meta, env))) {
