@@ -379,7 +379,7 @@ test('app wiring consumes validated outcomes; Add keeps canonical identity; no p
   assert.match(app, /savePlantFromLibrary\(currentPlantSetup\.slug/);
   assert.match(app, /async function fetchPlantImageFromWikipedia[\s\S]*?return '';/);
   assert.match(app, /async function hydratePlantResultImages\(\)\{[\s\S]*?return;/);
-  assert.match(app, /smart-rec-garden-intelligence-v1\.js\?v=20260914b/);
+  assert.match(app, /smart-rec-garden-intelligence-v1\.js\?v=20260915a/);
   assert.doesNotMatch(app, /Garden Design integration started/);
   assert.doesNotMatch(module, /garden-design/);
   assert.doesNotMatch(module, /fetch\(/);

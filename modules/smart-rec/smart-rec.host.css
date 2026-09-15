@@ -8,7 +8,8 @@
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: opacity 0.4s ease, visibility 0.4s ease;
   background: #0f2418;
 }
@@ -59,8 +60,9 @@ body.sr-open #locationModal.open {
   box-sizing: border-box;
   width: 100%;
   max-width: 1120px;
-  height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100dvh;
+  height: auto;
+  max-height: none;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -157,6 +159,7 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(280px, 38%) minmax(0, 1fr);
+  grid-template-rows: auto minmax(320px, 1fr);
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.1);
@@ -165,7 +168,7 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
   box-shadow:
     0 24px 64px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Chat pane (left) */
@@ -325,7 +328,7 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
 #smart-rec-root .sr-results-pane {
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  min-height: 320px;
   min-width: 0;
   padding: 14px 14px 12px;
 }
@@ -421,8 +424,8 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
 
 #smart-rec-root .sr-results-body {
   flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
+  min-height: 240px;
+  overflow-y: visible;
   overflow-x: hidden;
 }
 
@@ -808,12 +811,12 @@ html[dir="rtl"] #smart-rec-root .sr-back .sr-back-arrow {
     height: auto;
     max-height: none;
     min-height: 100dvh;
-    overflow-y: auto;
+    overflow-y: visible;
   }
 
   #smart-rec-root .sr-app-panel {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(280px, 42vh) minmax(320px, 1fr);
+    grid-template-rows: auto auto minmax(320px, auto);
     overflow: visible;
   }
 

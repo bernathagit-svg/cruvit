@@ -12,7 +12,7 @@ import {
   withCanonicalCatalogMedia
 } from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 
-export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.1.0';
+export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.1.1';
 
 /** Same collapse table as Catalog Images V1 — not a second identity registry. */
 export const SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
@@ -181,6 +181,30 @@ export function compareSmartRecRecommendationRank(a = {}, b = {}) {
   return (Number(b.suitabilityScore) || 0) - (Number(a.suitabilityScore) || 0);
 }
 
+export function smartRecEmptyStateKind({ hasTrustedLocation, eligibleCount } = {}) {
+  if (hasTrustedLocation !== true) return 'need-location';
+  if (!Number(eligibleCount)) return 'none-eligible';
+  return null;
+}
+
+export function buildSmartRecVisibleResultsModel({
+  hasTrustedLocation,
+  eligiblePlants = [],
+  rankedLimit = 12
+} = {}) {
+  const ranked = Array.isArray(eligiblePlants) ? eligiblePlants.slice(0, rankedLimit) : [];
+  const emptyKind = smartRecEmptyStateKind({
+    hasTrustedLocation,
+    eligibleCount: ranked.length
+  });
+  return {
+    shouldRenderCards: !emptyKind && ranked.length > 0,
+    emptyKind,
+    ranked,
+    renderedCardCount: emptyKind ? 0 : ranked.length
+  };
+}
+
 export function ownedCanonicalSlugSet(plants, extraMaps = {}) {
   const set = new Set();
   for (const p of plants || []) {
@@ -276,6 +300,8 @@ const api = {
   validatedSmartRecCardOutcomes,
   alignSmartRecSuitabilityWithValidatedOutcomes,
   compareSmartRecRecommendationRank,
+  smartRecEmptyStateKind,
+  buildSmartRecVisibleResultsModel,
   ownedCanonicalSlugSet,
   smartRecContextFromGardenArea,
   buildSmartRecCardModel,

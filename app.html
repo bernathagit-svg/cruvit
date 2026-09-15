@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
 <link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
-<link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260914a">
+<link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260915a">
 <link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913h">
 <link rel="stylesheet" href="modules/personal-domain/garden-areas-v1.css?v=20260913b">
 <link rel="stylesheet" href="modules/personal-domain/garden-profile-v0.css?v=20260911e">
@@ -7063,6 +7063,8 @@ function getSmartRecCopy(){
     },
     shellChatPlaceholder:he?'שוחח עם יועץ הגינה כדי לקבל המלצות מותאמות מהספרייה הרשמית.':'Chat with the garden advisor to get tailored picks from the official library.',
     shellResultsEmpty:he?'ענה ליועץ בצ\'אט כדי לראות צמחים מומלצים.':'Answer the advisor in chat to see recommended plants.',
+    needLocationEmpty:he?'קבע מיקום גינה מאומת כדי לראות צמחים שיכולים לשרוד כאן.':'Set a trusted garden location to see plants that can survive here.',
+    noneEligibleEmpty:he?'אין בספרייה צמח שמתאים בביטחון לאקלים החיצוני של הגינה הזו. מגבלות אקלים קשיחות, כמו כפור, פוסלות את השאר.':'No catalog plants are a confident outdoor match for this garden climate. Hard climate limits, such as frost, exclude the rest.',
     shellComposerPlaceholder:he?'תאר מה אתה מחפש…':'Describe what you want…',
     shellResultsTitle:he?'המלצות':'Recommendations'
   };
@@ -7077,9 +7079,9 @@ function initSmartRecSession(){
   smartRecHasInteracted=false;
   normalizeGardenDataShape();
   updateSmartRecResultsHeader([]);
-  renderSmartRecResultsEmpty();
   smartRecBootMessages();
   renderSmartRecComposerOptions();
+  refreshSmartRecBrowse();
   const copy=getSmartRecCopy();
   const input=document.getElementById('smartRecSearch');
   if(input){input.value='';input.placeholder=copy.shellComposerWaiting;input.disabled=true;input.setAttribute('aria-disabled','true');}
@@ -7104,11 +7106,7 @@ function smartRecOnLocationUpdated(){
   const root=document.getElementById('smart-rec-root');
   if(!root||!root.classList.contains('sr-active'))return;
   try{ if(typeof refreshSrHeroAnswerPreview==='function') refreshSrHeroAnswerPreview(); }catch(_){}
-  if(smartRecSession.step==='results'){
-    refreshSmartRecBrowse();
-  }else{
-    updateSmartRecResultsHeader([]);
-  }
+  refreshSmartRecBrowse();
   if(smartRecSession.locationConfirmed||smartRecSession.step!=='location')return;
   const snap=getSmartRecLocationSnapshot();
   smartRecMessages=smartRecMessages.filter(m=>m.kind!=='location-ask');
@@ -7166,8 +7164,7 @@ function smartRecRequestLocationChange(){
   smartRecMessages.push({role:'advisor',kind:'location-ask',loc:snap.loc,climate:snap.climate,hasLoc:snap.hasLoc});
   renderSmartRecMessages();
   renderSmartRecComposerOptions();
-  updateSmartRecResultsHeader([]);
-  renderSmartRecResultsEmpty();
+  refreshSmartRecBrowse();
   openLocationModal();
   setTimeout(()=>{
     const input=document.getElementById('locationInput');
@@ -7264,11 +7261,18 @@ function renderSmartRecMessages(){
   thread.innerHTML=html||`<div class="sr-chat-placeholder"><div class="sr-chat-placeholder-icon" aria-hidden="true">🌿</div><p>${copy.shellChatPlaceholder}</p></div>`;
   thread.scrollTop=thread.scrollHeight;
 }
-function renderSmartRecResultsEmpty(){
+function renderSmartRecResultsEmpty(kind){
   const results=document.getElementById('smartRecResults');
   if(!results)return;
   const copy=getSmartRecCopy();
-  results.innerHTML=`<div class="sr-results-empty-state"><div class="sr-results-empty-icon" aria-hidden="true">🌱</div><p>${copy.shellResultsEmpty}</p></div>`;
+  const gi=smartRecGardenIntelligenceApi();
+  const emptyKind=kind||(gi&&typeof gi.smartRecEmptyStateKind==='function'
+    ?gi.smartRecEmptyStateKind({hasTrustedLocation:hasTrustedAppLocation(),eligibleCount:0})
+    :'need-location');
+  const reason=emptyKind==='need-location'
+    ?copy.needLocationEmpty
+    :(emptyKind==='none-eligible'?copy.noneEligibleEmpty:copy.shellResultsEmpty);
+  results.innerHTML=`<div class="sr-results-empty-state" data-sr-empty="${escapeAttr(emptyKind||'waiting')}"><div class="sr-results-empty-icon" aria-hidden="true">🌱</div><p>${escapeHtml(reason)}</p></div>`;
   const countEl=document.getElementById('srResultsCount');
   if(countEl)countEl.textContent='';
   const sub=document.getElementById('srResultsSubtitle');
@@ -7489,7 +7493,14 @@ function getSmartRecBrowsePlants(){
     }));
   }
   return smartRecDedupePlants(
-    filtered.map(smartRecDecoratePlant).filter(p=>!smartRecPlantIsBlocked(p)).sort(smartRecPlantSort)
+    filtered.map((p)=>{
+      try{
+        return smartRecDecoratePlant(p);
+      }catch(err){
+        console.warn('Smart Rec decorate failed', p&&p.slug, err);
+        return null;
+      }
+    }).filter((p)=>p&&!smartRecPlantIsBlocked(p)).sort(smartRecPlantSort)
   );
 }
 function renderSmartRecComposerOptions(){
@@ -7535,13 +7546,25 @@ function renderSmartRecSelectedStrip(plants){
   strip.innerHTML=`<div class="sr-selected-label">${copy.selectedPicks}</div><div class="sr-selected-row">${picks.map(p=>`<button type="button" class="sr-selected-pill" onclick="showPlantSetup('${p.slug}','Smart Recommendations')"><span class="sr-selected-ico">${p.icon||'🌿'}</span><span>${escapeHtml(p.name)}</span></button>`).join('')}</div>`;
 }
 function refreshSmartRecBrowse(){
-  if(smartRecSession.step!=='results'){
-    renderSmartRecResultsEmpty();
+  if(!hasTrustedAppLocation()){
+    renderSmartRecResultsEmpty('need-location');
     updateSmartRecResultsHeader([]);
     return;
   }
-  const plants=getSmartRecBrowsePlants().slice(0,12);
+  let plants=[];
+  try{
+    plants=getSmartRecBrowsePlants().slice(0,12);
+  }catch(err){
+    console.warn('Smart Rec browse failed',err);
+    renderSmartRecResultsEmpty('none-eligible');
+    updateSmartRecResultsHeader([]);
+    return;
+  }
   updateSmartRecResultsHeader(plants);
+  if(!plants.length){
+    renderSmartRecResultsEmpty('none-eligible');
+    return;
+  }
   renderSmartRecGrid(plants,'Smart Recommendations');
 }
 function onSmartRecSearch(_query){
@@ -7617,12 +7640,12 @@ function renderSmartRecPlantCard(p,source){
   const limiter=model.limiter||'';
   const unknownNote=(model.unknowns||[])[0]||'';
   const level=p.smartRecSuitability&&p.smartRecSuitability.recommendationLevel?p.smartRecSuitability.recommendationLevel:'';
-  return `<article class="sr-plant-card" role="button" tabindex="0" onclick="showPlantSetup('${canon}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${canon}','${source}')"><div class="sr-plant-thumb">${smartRecCatalogThumb(p,model)}${p.icon?`<span class="sr-plant-emoji">${p.icon}</span>`:''}${typeLabel?`<span class="sr-plant-type">${escapeHtml(typeLabel)}</span>`:''}</div><div class="sr-plant-body"><h3 class="sr-plant-name">${escapeHtml(model.name||p.name)}</h3><p class="sr-plant-sci">${escapeHtml(model.scientific||p.scientific||'')}</p>${level?`<p class="sr-plant-level">${escapeHtml(level)}</p>`:''}${smartRecOutcomesHtml(model,copy)}${limiter?`<p class="sr-plant-limiter">${escapeHtml(limiter)}</p>`:''}${unknownNote?`<p class="sr-plant-unknown">${escapeHtml(unknownNote)}</p>`:''}${model.alreadyOwned?`<span class="sr-plant-owned">${escapeHtml(copy.alreadyOwned)}</span>`:''}</div><button type="button" class="sr-plant-add" onclick="event.stopPropagation();showPlantSetup('${canon}','${source}')">${copy.addGarden||copy.add}</button></article>`;
+  return `<article class="sr-plant-card" data-sr-plant-card="${escapeAttr(canon)}" role="button" tabindex="0" onclick="showPlantSetup('${canon}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${canon}','${source}')"><div class="sr-plant-thumb">${smartRecCatalogThumb(p,model)}${p.icon?`<span class="sr-plant-emoji">${p.icon}</span>`:''}${typeLabel?`<span class="sr-plant-type">${escapeHtml(typeLabel)}</span>`:''}</div><div class="sr-plant-body"><h3 class="sr-plant-name">${escapeHtml(model.name||p.name)}</h3><p class="sr-plant-sci">${escapeHtml(model.scientific||p.scientific||'')}</p>${level?`<p class="sr-plant-level">${escapeHtml(level)}</p>`:''}${smartRecOutcomesHtml(model,copy)}${limiter?`<p class="sr-plant-limiter">${escapeHtml(limiter)}</p>`:''}${unknownNote?`<p class="sr-plant-unknown">${escapeHtml(unknownNote)}</p>`:''}${model.alreadyOwned?`<span class="sr-plant-owned">${escapeHtml(copy.alreadyOwned)}</span>`:''}</div><button type="button" class="sr-plant-add" onclick="event.stopPropagation();showPlantSetup('${canon}','${source}')">${copy.addGarden||copy.add}</button></article>`;
 }
 function renderSmartRecTable(plants,source){
   const copy=getSmartRecCopy();
   const list=(plants||[]).filter(Boolean);
-  if(!list.length)return `<div class="sr-empty">${copy.noResults}</div>`;
+  if(!list.length)return `<div class="sr-empty" data-sr-empty="none-eligible">${copy.noneEligibleEmpty||copy.noResults}</div>`;
   const rows=list.map(p=>{
     const typeLabel=smartRecTypeLabel(p)||'—';
     const model=smartRecCardModel(p);
@@ -7652,10 +7675,10 @@ function renderSmartRecGrid(plants,source,note=''){
   const list=(plants||[]).filter(Boolean);
   const countEl=document.getElementById('srResultsCount');
   if(countEl)countEl.textContent=list.length?copy.resultsCount(list.length):'';
-  const gridHtml=list.length?list.map(p=>renderSmartRecPlantCard(p,source)).join(''):`<div class="sr-empty">${copy.noResults}</div>`;
+  const gridHtml=list.length?list.map(p=>renderSmartRecPlantCard(p,source)).join(''):`<div class="sr-empty" data-sr-empty="none-eligible">${copy.noneEligibleEmpty||copy.noResults}</div>`;
   const tableHtml=renderSmartRecTable(list,source);
   host.innerHTML=(note?`<div class="sr-results-note">${note}</div>`:'')+
-    `<div class="sr-view sr-view-photos ${smartRecView==='photos'?'active':''}"><div class="sr-grid">${gridHtml}</div></div>`+
+    `<div class="sr-view sr-view-photos ${smartRecView==='photos'?'active':''}"><div class="sr-grid" data-sr-card-count="${list.length}">${gridHtml}</div></div>`+
     `<div class="sr-view sr-view-table ${smartRecView==='table'?'active':''}">${tableHtml}</div>`;
   setTimeout(hydratePlantResultImages,0);
 }
@@ -9218,7 +9241,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
 <script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914e"></script>
-<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260914b"></script>
+<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260915a"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
