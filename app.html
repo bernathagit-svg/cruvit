@@ -6660,7 +6660,14 @@ function smartRecDecoratePlant(p){
   let suitability=smartRecEvaluateSuitability(attached);
   const derived=smartRecDeriveValidatedOutcomes(attached,suitability);
   if(gi&&typeof gi.alignSmartRecSuitabilityWithValidatedOutcomes==='function'){
-    suitability=gi.alignSmartRecSuitabilityWithValidatedOutcomes(suitability,derived);
+    const ctx=typeof smartRecCurrentContext==='function'?smartRecCurrentContext():{};
+    const chips=typeof smartRecActiveChips!=='undefined'&&smartRecActiveChips instanceof Set?[...smartRecActiveChips]:[];
+    suitability=gi.alignSmartRecSuitabilityWithValidatedOutcomes(suitability,derived,{
+      plant:attached,
+      meta:typeof smartRecClimateMetaForPlant==='function'?smartRecClimateMetaForPlant(attached):null,
+      intent:Object.assign({},ctx,{chips}),
+      he:typeof getSmartRecLang==='function'&&getSmartRecLang()==='he'
+    });
   }else if(suitability&&suitability.hardSurvivalBlocked===true){
     suitability=Object.assign({},suitability,{recommendationLevel:'blocked',suitabilityScore:0});
   }
@@ -6694,13 +6701,15 @@ function smartRecPlantSort(a,b){
       recommendationLevel:aa.recommendationLevel,
       suitabilityScore:aa.suitabilityScore,
       derivedOverall:da?.overall,
-      derivedSurvival:da?.survival
+      derivedSurvival:da?.survival,
+      purposeFit:aa.purposeFit
     },{
       hardSurvivalBlocked:bb.hardSurvivalBlocked,
       recommendationLevel:bb.recommendationLevel,
       suitabilityScore:bb.suitabilityScore,
       derivedOverall:db?.overall,
-      derivedSurvival:db?.survival
+      derivedSurvival:db?.survival,
+      purposeFit:bb.purposeFit
     });
     if(ranked) return ranked;
   }else{
@@ -7639,7 +7648,7 @@ function renderSmartRecPlantCard(p,source){
   const typeLabel=smartRecTypeLabel(p);
   const limiter=model.limiter||'';
   const unknownNote=(model.unknowns||[])[0]||'';
-  const level=p.smartRecSuitability&&p.smartRecSuitability.recommendationLevel?p.smartRecSuitability.recommendationLevel:'';
+  const level=model.recommendationLabel||(p.smartRecSuitability&&(p.smartRecSuitability.recommendationLabel||p.smartRecSuitability.recommendationLevel))||'';
   return `<article class="sr-plant-card" data-sr-plant-card="${escapeAttr(canon)}" role="button" tabindex="0" onclick="showPlantSetup('${canon}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${canon}','${source}')"><div class="sr-plant-thumb">${smartRecCatalogThumb(p,model)}${p.icon?`<span class="sr-plant-emoji">${p.icon}</span>`:''}${typeLabel?`<span class="sr-plant-type">${escapeHtml(typeLabel)}</span>`:''}</div><div class="sr-plant-body"><h3 class="sr-plant-name">${escapeHtml(model.name||p.name)}</h3><p class="sr-plant-sci">${escapeHtml(model.scientific||p.scientific||'')}</p>${level?`<p class="sr-plant-level">${escapeHtml(level)}</p>`:''}${smartRecOutcomesHtml(model,copy)}${limiter?`<p class="sr-plant-limiter">${escapeHtml(limiter)}</p>`:''}${unknownNote?`<p class="sr-plant-unknown">${escapeHtml(unknownNote)}</p>`:''}${model.alreadyOwned?`<span class="sr-plant-owned">${escapeHtml(copy.alreadyOwned)}</span>`:''}</div><button type="button" class="sr-plant-add" onclick="event.stopPropagation();showPlantSetup('${canon}','${source}')">${copy.addGarden||copy.add}</button></article>`;
 }
 function renderSmartRecTable(plants,source){
@@ -7650,7 +7659,7 @@ function renderSmartRecTable(plants,source){
     const typeLabel=smartRecTypeLabel(p)||'—';
     const model=smartRecCardModel(p);
     const canon=model.canonicalSlug||p.slug;
-    return `<tr class="sr-table-row" tabindex="0" onclick="showPlantSetup('${canon}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${canon}','${source}')"><td><div class="sr-table-plant"><span class="sr-table-thumb">${smartRecCatalogThumb(p,model)}</span><span><b>${escapeHtml(model.name||p.name)}</b><small>${escapeHtml(model.scientific||p.scientific||'')}</small></span></div></td><td>${escapeHtml(typeLabel)}</td><td>${escapeHtml(p.sun||'—')}</td><td>${escapeHtml(p.water||'—')}</td><td>${escapeHtml((p.smartRecSuitability&&p.smartRecSuitability.recommendationLevel)||p.climate||'—')}</td><td><button type="button" class="sr-table-add" onclick="event.stopPropagation();showPlantSetup('${canon}','${source}')">${copy.tableAction}</button></td></tr>`;
+    return `<tr class="sr-table-row" tabindex="0" onclick="showPlantSetup('${canon}','${source}')" onkeydown="if(event.key==='Enter')showPlantSetup('${canon}','${source}')"><td><div class="sr-table-plant"><span class="sr-table-thumb">${smartRecCatalogThumb(p,model)}</span><span><b>${escapeHtml(model.name||p.name)}</b><small>${escapeHtml(model.scientific||p.scientific||'')}</small></span></div></td><td>${escapeHtml(typeLabel)}</td><td>${escapeHtml(p.sun||'—')}</td><td>${escapeHtml(p.water||'—')}</td><td>${escapeHtml(model.recommendationLabel||(p.smartRecSuitability&&p.smartRecSuitability.recommendationLevel)||p.climate||'—')}</td><td><button type="button" class="sr-table-add" onclick="event.stopPropagation();showPlantSetup('${canon}','${source}')">${copy.tableAction}</button></td></tr>`;
   }).join('');
   return `<div class="sr-table-scroll"><table class="sr-table"><thead><tr><th>${copy.tablePlant}</th><th>${copy.tabTable==='טבלה'?'סוג':'Type'}</th><th>${copy.tableSun}</th><th>${copy.tableWater}</th><th>${copy.tableClimate}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
@@ -9241,7 +9250,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <!-- Non-authoritative startup-only Plant Identity Shadow adapter (zero runtime consumers). -->
 <script type="module" src="modules/catalog-media/licensed-catalog-media-runtime-v1.js?v=20260913b"></script>
 <script type="module" src="modules/suitability/hard-climate-survival-gate-v1.js?v=20260914e"></script>
-<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260915a"></script>
+<script type="module" src="modules/smart-recommendations/smart-rec-garden-intelligence-v1.js?v=20260915c"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-garden-acquire-v1.js?v=20260914b"></script>
 <script type="module" src="modules/plant-identifier/plant-identifier-location-context-v1.js?v=20260914b"></script>
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>

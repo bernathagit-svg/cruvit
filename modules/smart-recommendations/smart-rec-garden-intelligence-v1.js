@@ -12,7 +12,20 @@ import {
   withCanonicalCatalogMedia
 } from '../catalog-media/licensed-catalog-media-runtime-v1.js';
 
-export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.1.1';
+import {
+  applyPurposePolicyToSuitability,
+  purposeRankBand
+} from './smart-rec-purpose-policy-v1.js';
+export { PURPOSE_FIT_STATUS, PURPOSE_ROLES, SMART_REC_PURPOSE_POLICY_VERSION } from './smart-rec-purpose-policy-v1.js';
+export {
+  applyPurposePolicyToSuitability,
+  catalogPurposeCapabilities,
+  evaluatePurposeFit,
+  formatPurposeRecommendationLabel,
+  resolveSmartRecPurpose
+} from './smart-rec-purpose-policy-v1.js';
+
+export const SMART_REC_GARDEN_INTELLIGENCE_VERSION = '1.2.0-purpose-aware';
 
 /** Same collapse table as Catalog Images V1 — not a second identity registry. */
 export const SMART_REC_SPECIES_ALIAS_ONTO_CANONICAL = Object.freeze({
@@ -147,7 +160,7 @@ export function validatedSmartRecCardOutcomes(derived, suitability, meta, plant)
   return smartRecDimensionDisplay(suitability, meta, plant);
 }
 
-export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, derived = null) {
+export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, derived = null, options = {}) {
   const next = Object.assign({}, suitability && typeof suitability === 'object' ? suitability : {});
   const ineligible = isPositiveRecommendationIneligible({
     hardSurvivalBlocked: next.hardSurvivalBlocked,
@@ -165,7 +178,7 @@ export function alignSmartRecSuitabilityWithValidatedOutcomes(suitability = {}, 
     : '';
   if (derivedLimiter) next.explanationText = derivedLimiter;
   next.derivedOutcomes = derived || next.derivedOutcomes || null;
-  return next;
+  return applyPurposePolicyToSuitability(next, derived, options);
 }
 
 const LEVEL_RANK = Object.freeze({ excellent: 4, good: 3, borderline: 2, blocked: 1 });
@@ -174,6 +187,8 @@ export function compareSmartRecRecommendationRank(a = {}, b = {}) {
   const aInel = isPositiveRecommendationIneligible(a);
   const bInel = isPositiveRecommendationIneligible(b);
   if (aInel !== bInel) return aInel ? 1 : -1;
+  const purposeDelta = (purposeRankBand(b.purposeFit) || 0) - (purposeRankBand(a.purposeFit) || 0);
+  if (purposeDelta) return purposeDelta;
   const level =
     (LEVEL_RANK[asText(b.recommendationLevel).toLowerCase()] || 0) -
     (LEVEL_RANK[asText(a.recommendationLevel).toLowerCase()] || 0);
@@ -274,6 +289,9 @@ export function buildSmartRecCardModel(plant, options = {}) {
     attribution: display.kind === 'catalog' ? display.attribution || null : null,
     outcomes,
     recommendationLevel: suitability.recommendationLevel || '',
+    recommendationLabel: suitability.recommendationLabel || suitability.recommendationLevel || '',
+    purposeRole: suitability.purpose?.role || '',
+    purposeFit: suitability.purposeFit?.status || '',
     limiter,
     unknowns,
     alreadyOwned: !!owned,
@@ -299,6 +317,7 @@ const api = {
   isPositiveRecommendationRank,
   validatedSmartRecCardOutcomes,
   alignSmartRecSuitabilityWithValidatedOutcomes,
+  applyPurposePolicyToSuitability,
   compareSmartRecRecommendationRank,
   smartRecEmptyStateKind,
   buildSmartRecVisibleResultsModel,
