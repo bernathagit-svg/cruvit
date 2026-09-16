@@ -1161,6 +1161,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 
       <!-- Plants list toggle button -->
       <!-- Plants section — always visible, no toggle -->
+      <div id="gdAreaSelectHost" class="field-group" style="display:none;margin-bottom:12px"></div>
       <div class="pc-plants-section" id="plantsSection">
         <div class="pc-left-panel">
           <div class="pc-left-logo">
@@ -1230,6 +1231,13 @@ let selectedPlantLayerId = null;
 let overlayPlacementActive = false;
 let gdLayerDrag = null;
 let gdLayerIdCounter = 0;
+let gdOwnedGardenContext = null;
+let gdSelectedAreaId = null;
+let gdDesignPersistStore = null;
+let gdCommitWaiters = {};
+let gdSuitabilityWaiters = {};
+let gdOpenPlantPopupIdx = null;
+let gdDesignAssetIndex = null;
 let smartInclude1 = true, smartInclude2 = true;
 // styleData[group][styleName] = {trees, shrubs, flowers, herbs}
 let styleData = {'1':{}, '2':{}};
@@ -1528,13 +1536,329 @@ function gdDefaultInitialGroundPosition(spriteType, index) {
   };
 }
 
+function gdOwnedGardenApi() {
+  return window.CruvitGardenDesignOwnedGarden || null;
+}
+
+function gdPostToHost(payload) {
+  const api = gdOwnedGardenApi();
+  const origin = api && typeof api.gardenDesignPostTargetOrigin === 'function'
+    ? api.gardenDesignPostTargetOrigin()
+    : (window.location.origin === 'null' ? '*' : window.location.origin);
+  try {
+    window.parent.postMessage(payload, origin);
+  } catch (e) {}
+}
+
+function gdAcceptHostMessage(ev) {
+  const api = gdOwnedGardenApi();
+  if (api && typeof api.acceptGardenDesignMessage === 'function') {
+    return api.acceptGardenDesignMessage(ev, {
+      allowedTypes: api.GD_HOST_TO_DESIGN ? Object.values(api.GD_HOST_TO_DESIGN) : null,
+      expectedSource: window.parent
+    });
+  }
+  if (!ev.data || typeof ev.data !== 'object') return { ok: false };
+  if (typeof ev.data.type !== 'string' || ev.data.type.indexOf('cruvit:garden-design-') !== 0) return { ok: false };
+  if (ev.origin && ev.origin !== 'null' && ev.origin !== window.location.origin) return { ok: false };
+  return { ok: true, type: ev.data.type, payload: ev.data };
+}
+
+function gdResolveLayerIdentity(plantOrLayer) {
+  const api = gdOwnedGardenApi();
+  const ctx = gdOwnedGardenContext || {};
+  if (api && typeof api.resolveDesignCanonicalIdentity === 'function') {
+    return api.resolveDesignCanonicalIdentity(plantOrLayer || {}, {
+      catalog: ctx.catalog || [],
+      aliasMaps: ctx.aliasMaps || {}
+    });
+  }
+  return { canonicalSlug: latinToSlug((plantOrLayer && (plantOrLayer.latin || plantOrLayer.species || plantOrLayer.canonicalSlug)) || ''), catalogRecord: null };
+}
+
+function gdPlantCardDedupeKey(p) {
+  if (p && p.gardenPlantId) return 'owned:' + p.gardenPlantId;
+  return 'proposed:' + String((p && (p.canonicalSlug || p.name)) || '').toLowerCase();
+}
+
+function gdResolvedPhotoLocation() {
+  const locEl = document.getElementById('photoLoc');
+  const typed = locEl && locEl.value.trim();
+  if (typed) return typed;
+  const gardenLoc = gdOwnedGardenContext && gdOwnedGardenContext.location;
+  if (gardenLoc && gardenLoc.status === 'TRUSTED_CONFIRMED' && gardenLoc.label) {
+    if (locEl) locEl.value = gardenLoc.label;
+    const flow = document.getElementById('flow-val-loc1');
+    if (flow) flow.textContent = gardenLoc.label;
+    return gardenLoc.label;
+  }
+  return '';
+}
+
+function gdNormalizeIncomingPlant(p) {
+  const ident = gdResolveLayerIdentity(p || {});
+  return Object.assign({}, p, {
+    active: true,
+    imgUrl: undefined,
+    canonicalSlug: ident.canonicalSlug || p.canonicalSlug || null,
+    kind: p.kind || (p.gardenPlantId ? 'owned' : 'proposed'),
+    gardenPlantId: p.gardenPlantId || null,
+    gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || null,
+    areaId: p.areaId || gdSelectedAreaId || null,
+    growthStage: p.growthStage || 'mature',
+    targetGrowthStage: p.targetGrowthStage || 'mature',
+    season: p.season || 'unknown',
+    phenology: p.phenology || 'vegetative'
+  });
+}
+
+function gdPersistDesignSnapshot() {
+  const api = gdOwnedGardenApi();
+  if (!api || !gdOwnedGardenContext) return;
+  if (api.designPaidAiForAction) api.designPaidAiForAction('drag');
+  if (!gdDesignPersistStore) gdDesignPersistStore = api.createLocalDesignPersistence(window.localStorage);
+  gdDesignPersistStore.save({
+    userId: gdOwnedGardenContext.userId,
+    gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+    areaId: gdSelectedAreaId,
+    placements: plantLayers.map(function(l) {
+      return {
+        id: l.id,
+        kind: l.kind,
+        status: l.status,
+        canonicalSlug: l.canonicalSlug,
+        gardenPlantId: l.gardenPlantId,
+        areaId: l.areaId,
+        growthStage: l.growthStage,
+        targetGrowthStage: l.targetGrowthStage,
+        season: l.season,
+        phenology: l.phenology,
+        x: l.x,
+        y: l.y,
+        scale: l.scale,
+        rotation: l.rotation,
+        zIndex: l.zIndex,
+        name: l.name,
+        species: l.species
+      };
+    })
+  });
+}
+
+function gdIndexDesignAssetRegistry(registry) {
+  const api = window.CruvitGardenDesignAssetRegistry;
+  if (!api || !registry) return;
+  gdDesignAssetIndex = api.indexDesignAssetRegistry(registry);
+}
+
+function gdApplyOwnedGardenContext(ctx) {
+  if (!ctx || typeof ctx !== 'object') return;
+  gdOwnedGardenContext = Object.assign({}, gdOwnedGardenContext || {}, ctx);
+  const api = gdOwnedGardenApi();
+  if (api && api.designPaidAiForAction) api.designPaidAiForAction('load-context');
+  if (ctx.designAssetRegistry) gdIndexDesignAssetRegistry(ctx.designAssetRegistry);
+  const loc = (gdOwnedGardenContext && gdOwnedGardenContext.location) || {};
+  if (loc.status === 'TRUSTED_CONFIRMED' && loc.label) {
+    ['photoLoc', 'sketchLoc'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (el && !el.value) el.value = loc.label;
+    });
+    const flow = document.getElementById('flow-val-loc1');
+    if (flow && loc.label) flow.textContent = loc.label;
+  }
+  gdRenderAreaSelect();
+  gdRefreshOwnedGardenOption();
+}
+
+function gdRenderAreaSelect() {
+  const host = document.getElementById('gdAreaSelectHost');
+  if (!host) return;
+  const areas = (gdOwnedGardenContext && Array.isArray(gdOwnedGardenContext.areas)) ? gdOwnedGardenContext.areas : [];
+  if (!areas.length) {
+    host.style.display = 'none';
+    host.innerHTML = '';
+    return;
+  }
+  host.style.display = 'block';
+  const opts = ['<option value="">Garden-level context</option>'].concat(areas.map(function(a) {
+    const id = a.id || '';
+    const sel = id && id === gdSelectedAreaId ? ' selected' : '';
+    return '<option value="' + gdEscAttr(id) + '"' + sel + '>' + gdEscAttr(a.name || 'Area') + '</option>';
+  }));
+  host.innerHTML = '<label class="field-label" for="gdAreaSelect">Garden area</label><select class="field-select" id="gdAreaSelect" onchange="gdOnAreaSelect(this.value)">' + opts.join('') + '</select>';
+}
+
+function gdOnAreaSelect(id) {
+  gdSelectedAreaId = id || null;
+  plantLayers.forEach(function(l) {
+    if (l.kind === 'proposed') l.areaId = gdSelectedAreaId;
+  });
+  gdPersistDesignSnapshot();
+}
+
+function gdRefreshOwnedGardenOption() {
+  const el = document.getElementById('apmOwnedOption');
+  if (!el) return;
+  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
+  el.style.display = owned.length ? '' : 'none';
+}
+
+function showApmOwned() {
+  document.getElementById('apmStep1').style.display = 'none';
+  document.getElementById('apmStep2List').style.display = '';
+  document.getElementById('apmStep2Write').style.display = 'none';
+  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
+  const list = document.getElementById('apmPlantList');
+  if (!owned.length) {
+    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">No owned plants in this garden yet.</p>';
+    return;
+  }
+  list.innerHTML = owned.map(function(p, i) {
+    const already = plantLayers.some(function(l) { return l.gardenPlantId && l.gardenPlantId === p.gardenPlantId; });
+    const slug = p.canonicalSlug || '';
+    return '<div class="apm-plant-chip' + (already ? ' selected' : '') + '" onclick="placeOwnedGardenPlant(' + i + ')"><div class="apm-chip-img-ph">🌿</div><span class="apm-chip-lbl">' + gdEscAttr(p.name || slug) + (already ? ' (placed)' : '') + '</span></div>';
+  }).join('');
+  const btn = document.getElementById('apmConfirmBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Tap a plant to place it'; }
+}
+
+function placeOwnedGardenPlant(idx) {
+  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
+  const p = owned[idx];
+  if (!p) return;
+  const existing = plantLayers.filter(function(l) { return l.gardenPlantId && l.gardenPlantId === p.gardenPlantId; });
+  if (existing.length) {
+    selectedPlantLayerId = existing[0].id;
+    renderPlantLayers();
+    closeAddPlantModal();
+    return;
+  }
+  const ident = gdResolveLayerIdentity(p);
+  const spriteType = getPlantSpriteType({ name: p.name, latin: p.scientific });
+  const pos = gdDefaultInitialGroundPosition(spriteType, plantLayers.length);
+  addPlantLayerAt(p.name, pos.x, pos.y, {
+    name: p.name,
+    latin: p.scientific,
+    canonicalSlug: ident.canonicalSlug,
+    kind: 'owned',
+    gardenPlantId: p.gardenPlantId,
+    gardenProfileId: gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId,
+    areaId: p.areaId || gdSelectedAreaId,
+    emoji: '🌿'
+  }, true);
+  showPlants([{ name: p.name, latin: p.scientific, emoji: '🌿', kind: 'owned', gardenPlantId: p.gardenPlantId, canonicalSlug: ident.canonicalSlug }]);
+  gdPersistDesignSnapshot();
+  closeAddPlantModal();
+}
+
+function requestCommitProposedLayer(layer) {
+  if (!layer || layer.kind === 'owned' || layer.gardenPlantId) return;
+  const api = gdOwnedGardenApi();
+  if (api && api.designPaidAiForAction) api.designPaidAiForAction('commit-proposal');
+  const requestId = 'c_' + Date.now();
+  gdCommitWaiters[requestId] = layer.id;
+  try {
+    gdPostToHost({
+      type: 'cruvit:garden-design-commit-proposal',
+      requestId,
+      userConfirmed: true,
+      canonicalSlug: layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug,
+      gardenProfileId: layer.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId),
+      areaId: layer.areaId || gdSelectedAreaId,
+      placement: { id: layer.id, kind: layer.kind }
+    });
+  } catch (e) {}
+}
+
+function gdOnCommitResult(msg) {
+  const layerId = msg.requestId ? gdCommitWaiters[msg.requestId] : selectedPlantLayerId;
+  delete gdCommitWaiters[msg.requestId];
+  if (!msg.ok) return;
+  const layer = plantLayers.find(function(l) { return l.id === layerId; });
+  if (!layer) return;
+  if (msg.gardenPlantId) {
+    layer.kind = 'owned';
+    layer.status = 'committed';
+    layer.gardenPlantId = msg.gardenPlantId;
+    layer.canonicalSlug = msg.canonicalSlug || layer.canonicalSlug;
+  }
+  renderPlantLayers();
+  renderPlantsDrawer();
+  gdPersistDesignSnapshot();
+  gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' });
+}
+
+window.addEventListener('message', function(ev) {
+  const accepted = gdAcceptHostMessage(ev);
+  if (!accepted.ok) return;
+  const d = accepted.payload || ev.data;
+  if (d.type === 'cruvit:garden-design-context') gdApplyOwnedGardenContext(d);
+  if (d.type === 'cruvit:garden-design-owned-plants') {
+    if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
+    gdOwnedGardenContext.ownedPlants = d.ownedPlants || [];
+    gdRefreshOwnedGardenOption();
+  }
+  if (d.type === 'cruvit:garden-design-areas') {
+    if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
+    gdOwnedGardenContext.areas = d.areas || [];
+    gdRenderAreaSelect();
+  }
+  if (d.type === 'cruvit:garden-design-asset-registry') gdIndexDesignAssetRegistry(d.designAssetRegistry);
+  if (d.type === 'cruvit:garden-design-commit-result') gdOnCommitResult(d);
+  if (d.type === 'cruvit:garden-design-suitability-result') gdOnSuitabilityResult(d);
+});
+
+function gdRequestSuitabilityForPlant(plant, idx) {
+  if (!plant) return;
+  const slug = plant.canonicalSlug || gdResolveLayerIdentity(plant).canonicalSlug;
+  if (!slug) return;
+  const loc = gdOwnedGardenContext && gdOwnedGardenContext.location;
+  const access = gdOwnedGardenContext && gdOwnedGardenContext.suitabilityAccess;
+  if (!loc || loc.useForSuitability !== true || (access && access.available === false)) return;
+  const requestId = 's_' + idx + '_' + Date.now();
+  gdSuitabilityWaiters[requestId] = idx;
+  try {
+    gdPostToHost({
+      type: 'cruvit:garden-design-suitability-request',
+      requestId,
+      canonicalSlug: slug,
+      area: gdSelectedAreaId ? { id: gdSelectedAreaId } : null
+    });
+  } catch (e) {}
+}
+
+function gdOnSuitabilityResult(msg) {
+  const idx = msg.requestId ? gdSuitabilityWaiters[msg.requestId] : gdOpenPlantPopupIdx;
+  delete gdSuitabilityWaiters[msg.requestId];
+  if (typeof idx !== 'number' || !currentPlants[idx] || !msg.evaluation) return;
+  const api = gdOwnedGardenApi();
+  const presented = (msg.evaluation && msg.evaluation.presentation && msg.evaluation.presentation.recommendCopy)
+    ? msg.evaluation.presentation
+    : (api && typeof api.presentDesignSuitability === 'function' ? api.presentDesignSuitability(msg.evaluation) : null);
+  currentPlants[idx].designSuitability = presented || msg.evaluation.presentation || null;
+  currentPlants[idx].designSuitabilityRaw = msg.evaluation;
+  if (gdOpenPlantPopupIdx === idx) gdRenderPlantPopupSuitability(currentPlants[idx]);
+}
+
 function createPlantLayerFromPlant(p, x, y, zIndex) {
   const spriteType = getPlantSpriteType(p);
+  const resolved = gdResolveLayerIdentity(p);
   return {
     id: newPlantLayerId(),
     name: p.name,
-    species: p.latin || '',
-    slug: latinToSlug(p.latin),
+    species: p.latin || p.scientific || '',
+    slug: resolved.canonicalSlug || latinToSlug(p.latin),
+    canonicalSlug: resolved.canonicalSlug || null,
+    kind: p.kind || (p.gardenPlantId ? 'owned' : 'proposed'),
+    gardenPlantId: p.gardenPlantId || null,
+    gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || null,
+    areaId: p.areaId || gdSelectedAreaId || null,
+    source: 'garden-design',
+    status: p.gardenPlantId ? 'owned' : 'proposed',
+    growthStage: p.growthStage || 'mature',
+    targetGrowthStage: p.targetGrowthStage || 'mature',
+    season: p.season || 'unknown',
+    phenology: p.phenology || 'vegetative',
     x: Math.min(0.96, Math.max(0.04, x)),
     y: gdClampInitialGroundY(spriteType, y),
     scale: gdDefaultLayerScale(p),
@@ -1672,6 +1996,7 @@ function finishPhotoOverlayResult(data) {
   renderPlantLayers();
   renderPlantsDrawer();
   gdPrefetchPlantAssetsIfNeeded();
+  gdPersistDesignSnapshot();
   const localNote = document.getElementById('gdLocalPreviewNote');
   if (localNote) localNote.style.display = data.localPreview ? 'block' : 'none';
   gdUpdatePlacementNote();
@@ -1744,8 +2069,21 @@ function gdMatchPlantAssetKey(layer, manifest) {
   if (!manifest || !manifest.plants) return null;
   const plants = manifest.plants;
   if (layer.assetKey && plants[layer.assetKey]) return layer.assetKey;
-  const slug = (layer.slug || latinToSlug(layer.species || '')).toLowerCase();
+  const slug = (layer.canonicalSlug || layer.slug || latinToSlug(layer.species || '')).toLowerCase();
   if (slug && plants[slug]) return slug;
+  const registryApi = window.CruvitGardenDesignAssetRegistry;
+  const maps = (gdOwnedGardenContext && gdOwnedGardenContext.aliasMaps) || {};
+  const manifestMap = maps.manifestKeyToCanonical && Object.keys(maps.manifestKeyToCanonical).length
+    ? maps.manifestKeyToCanonical
+    : maps;
+  if (slug) {
+    for (const key of Object.keys(plants)) {
+      const mapped = (registryApi && typeof registryApi.resolveManifestKeyToCanonical === 'function')
+        ? registryApi.resolveManifestKeyToCanonical(key, Object.keys(manifestMap).length ? manifestMap : undefined)
+        : (manifestMap[key] || key);
+      if (mapped === slug) return key;
+    }
+  }
   const nameSlug = gdSlugifyPlantName(layer.name);
   if (nameSlug && plants[nameSlug]) return nameSlug;
   const speciesNorm = gdNormalizePlantToken(layer.species);
@@ -1802,6 +2140,38 @@ function resolvePlantLayerAsset(layer, manifest) {
     source: null,
     license: null
   };
+  const registryApi = window.CruvitGardenDesignAssetRegistry;
+  if (registryApi && gdDesignAssetIndex) {
+    const slug = (layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug || '').toLowerCase();
+    if (slug) {
+      const resolved = registryApi.resolveDesignAsset({
+        canonicalSlug: slug,
+        growthStage: layer.growthStage,
+        season: layer.season && layer.season !== 'unknown' ? layer.season : undefined,
+        phenology: layer.phenology,
+        formView: layer.formView
+      }, gdDesignAssetIndex);
+      if (resolved && resolved.visualReady && resolved.url) {
+        return {
+          spriteType: spriteType,
+          assetKey: resolved.canonicalSlug,
+          variantId: resolved.assetId,
+          urlCandidates: [resolved.url],
+          anchor: anchor,
+          baseWidthPx: (resolved.variant && resolved.variant.baseWidthPx) || null,
+          visualReady: true,
+          status: resolved.approvalStatus,
+          thumbUrl: null,
+          source: resolved.provenance && resolved.provenance.source,
+          license: null,
+          growthStage: resolved.growthStage,
+          season: resolved.season,
+          phenology: resolved.phenology,
+          fallback: resolved.fallback
+        };
+      }
+    }
+  }
   if (!manifest || !GD_USE_PLANT_ASSETS) return base;
   const assetKey = gdMatchPlantAssetKey(layer, manifest);
   if (!assetKey) return base;
@@ -2064,6 +2434,7 @@ function onPlantLayerPointerUp(e) {
   gdSafeReleasePointerCapture(gdLayerDrag.captureEl, e.pointerId);
   gdLayerDrag = null;
   gdSetLayerDragScrollLock(false);
+  gdPersistDesignSnapshot();
 }
 
 document.addEventListener('pointermove', onPlantLayerPointerMove, { passive: false });
@@ -2100,6 +2471,7 @@ function setPlantLayerScale(scale) {
   if (el) applyLayerDomTransform(layer, el);
   const slider = document.getElementById('gdLayerScaleSlider');
   if (slider) slider.value = layer.scale;
+  gdPersistDesignSnapshot();
 }
 
 function deleteSelectedPlantLayer() {
@@ -2112,10 +2484,16 @@ function deleteSelectedPlantLayer() {
     gdRemovePlantCardIfNoLayers(removed.name, removed.species, removed.slug);
   }
   renderPlantsDrawer();
+  gdPersistDesignSnapshot();
 }
 
 function plantMatchesLayer(plant, layer) {
   if (!plant || !layer) return false;
+  if (plant.gardenPlantId) return layer.gardenPlantId === plant.gardenPlantId;
+  if (layer.gardenPlantId) return false;
+  const pCanon = (plant.canonicalSlug || '').toLowerCase();
+  const lCanon = (layer.canonicalSlug || '').toLowerCase();
+  if (pCanon && lCanon && pCanon === lCanon) return true;
   const pName = (plant.name || '').toLowerCase().trim();
   const lName = (layer.name || '').toLowerCase().trim();
   if (pName && lName && pName === lName) return true;
@@ -2184,6 +2562,7 @@ function decrementPlantLayerQuantity(idx) {
     currentPlants.splice(idx, 1);
   }
   renderPlantsDrawer();
+  gdPersistDesignSnapshot();
 }
 
 function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
@@ -2197,11 +2576,23 @@ function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
   } else {
     finalY = Math.min(0.96, Math.max(0.04, y));
   }
+  const resolvedMeta = gdResolveLayerIdentity(plantMeta || probe);
   plantLayers.push({
     id: newPlantLayerId(),
     name,
-    species: plantMeta?.latin || template?.species || '',
-    slug: latinToSlug(plantMeta?.latin || template?.species),
+    species: plantMeta?.latin || plantMeta?.scientific || template?.species || '',
+    slug: resolvedMeta.canonicalSlug || latinToSlug(plantMeta?.latin || template?.species),
+    canonicalSlug: resolvedMeta.canonicalSlug || template?.canonicalSlug || null,
+    kind: plantMeta?.kind || template?.kind || (plantMeta?.gardenPlantId ? 'owned' : 'proposed'),
+    gardenPlantId: plantMeta?.gardenPlantId || template?.gardenPlantId || null,
+    gardenProfileId: plantMeta?.gardenProfileId || template?.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || null,
+    areaId: plantMeta?.areaId || template?.areaId || gdSelectedAreaId || null,
+    source: 'garden-design',
+    status: (plantMeta?.gardenPlantId || template?.gardenPlantId) ? 'owned' : 'proposed',
+    growthStage: plantMeta?.growthStage || template?.growthStage || 'mature',
+    targetGrowthStage: plantMeta?.targetGrowthStage || template?.targetGrowthStage || 'mature',
+    season: plantMeta?.season || template?.season || 'unknown',
+    phenology: plantMeta?.phenology || template?.phenology || 'vegetative',
     x: Math.min(0.96, Math.max(0.04, x)),
     y: finalY,
     scale: template ? template.scale : gdDefaultLayerScale(probe),
@@ -2213,6 +2604,7 @@ function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
   });
   selectedPlantLayerId = plantLayers[plantLayers.length - 1].id;
   renderPlantLayers();
+  gdPersistDesignSnapshot();
 }
 
 function resetPlantLayerState() {
@@ -2238,11 +2630,10 @@ function resetPlantLayerState() {
 // ── Show plants ──
 function showPlants(plants) {
   // Accumulate: keep existing active plants, add new ones
-  const newPlants = plants.map(p => ({...p, active: true, imgUrl: undefined}));
+  const newPlants = (plants || []).map(gdNormalizeIncomingPlant);
   if (currentPlants.length > 0) {
-    // Merge: add new plants that don't already exist by name
-    const existingNames = new Set(currentPlants.map(p => p.name.toLowerCase()));
-    const toAdd = newPlants.filter(p => !existingNames.has(p.name.toLowerCase()));
+    const existingKeys = new Set(currentPlants.map(gdPlantCardDedupeKey));
+    const toAdd = newPlants.filter(p => !existingKeys.has(gdPlantCardDedupeKey(p)));
     currentPlants = [...currentPlants, ...toAdd];
   } else {
     currentPlants = newPlants;
@@ -2366,17 +2757,38 @@ const CARE_ICONS = {
   difficulty: { easy:'🌿 Easy', moderate:'✂️ Moderate', expert:'🔬 Expert' }
 };
 
-function openPlantPopup(idx, scrollToWarn) {
-  if (typeof idx !== 'number') return;
-  if (!currentPlants || currentPlants.length === 0) return;
-  const p = currentPlants[idx];
-  if (!p || !p.name) return;
-  document.getElementById('ppName').textContent = p.name;
-  document.getElementById('ppLatin').textContent = p.latin || '';
-
-  // Climate match
+function gdRenderPlantPopupSuitability(p) {
   const climateSec = document.getElementById('ppClimateSection');
-  const cm = p.cm ?? p.climate_match;
+  const suitSec = document.getElementById('ppSuitabilitySection');
+  const loc = gdOwnedGardenContext && gdOwnedGardenContext.location;
+  const presented = p && p.designSuitability;
+  if (suitSec) {
+    if (presented && presented.recommendCopy) {
+      suitSec.style.display = '';
+      const copyEl = document.getElementById('ppSuitabilityCopy');
+      const addEl = document.getElementById('ppSuitabilityAdd');
+      if (copyEl) copyEl.textContent = presented.recommendCopy;
+      if (addEl) addEl.textContent = presented.hardBlocked
+        ? (presented.addCopy || 'You can still add this plant') + ' — not a recommendation.'
+        : (presented.addCopy || '');
+      suitSec.className = 'pc-popup-section' + (presented.hardBlocked ? ' gd-suitability-blocked' : '');
+    } else if (loc && loc.useForSuitability !== true) {
+      suitSec.style.display = '';
+      const copyEl = document.getElementById('ppSuitabilityCopy');
+      const addEl = document.getElementById('ppSuitabilityAdd');
+      if (copyEl) copyEl.textContent = 'Garden location is not confirmed, so CRUVIT will not present a garden suitability recommendation here.';
+      if (addEl) addEl.textContent = '';
+    } else {
+      suitSec.style.display = 'none';
+    }
+  }
+  const trustedGarden = loc && loc.useForSuitability === true;
+  const cm = p && (p.cm ?? p.climate_match);
+  if (!climateSec) return;
+  if (trustedGarden) {
+    climateSec.style.display = 'none';
+    return;
+  }
   if (cm != null) {
     climateSec.style.display = '';
     const pct = Math.max(0, Math.min(100, Math.round(cm)));
@@ -2388,8 +2800,20 @@ function openPlantPopup(idx, scrollToWarn) {
   } else {
     climateSec.style.display = 'none';
   }
+}
 
-  // Warnings
+function openPlantPopup(idx, scrollToWarn) {
+  if (typeof idx !== 'number') return;
+  if (!currentPlants || currentPlants.length === 0) return;
+  const p = currentPlants[idx];
+  if (!p || !p.name) return;
+  gdOpenPlantPopupIdx = idx;
+  document.getElementById('ppName').textContent = p.name;
+  document.getElementById('ppLatin').textContent = p.latin || '';
+
+  gdRenderPlantPopupSuitability(p);
+  gdRequestSuitabilityForPlant(p, idx);
+
   const warnSec = document.getElementById('ppWarnSection');
   const warnList = (p.warnings||[]).filter(w => WARN_LABELS[w]);
   warnSec.style.display = '';
@@ -2401,7 +2825,6 @@ function openPlantPopup(idx, scrollToWarn) {
     document.getElementById('ppWarnList').innerHTML = '<div class="pc-popup-row" style="color:var(--green3)">✅ <span>No warnings for this plant</span></div>';
   }
 
-  // Care
   const careSec = document.getElementById('ppCareSection');
   if (p.care) {
     careSec.style.display = '';
@@ -2417,7 +2840,6 @@ function openPlantPopup(idx, scrollToWarn) {
     careSec.style.display = 'none';
   }
 
-  // Placement
   const roleSec = document.getElementById('ppRoleSection');
   if (p.role) {
     roleSec.style.display = '';
@@ -2439,6 +2861,7 @@ function openPlantPopup(idx, scrollToWarn) {
 let apmSelected = new Set();
 
 function openAddPlantModal() {
+  gdRefreshOwnedGardenOption();
   // Build plant list from current style
   const allPlants = [];
   const allStyles = {...(styleData['1']||{}), ...(styleData['2']||{})};
@@ -2599,6 +3022,15 @@ function confirmApmWrite() {
   refineDesign();
 }
 
+function commitProposedPlantCard(idx) {
+  const p = currentPlants[idx];
+  if (!p || p.gardenPlantId || p.kind === 'owned') return;
+  const matching = plantLayers.filter(function(l) { return plantMatchesLayer(p, l) && !l.gardenPlantId; });
+  const layer = matching[0] || (selectedPlantLayerId && plantLayers.find(function(l) { return l.id === selectedPlantLayerId; }));
+  if (!layer || layer.kind === 'owned' || layer.gardenPlantId) return;
+  requestCommitProposedLayer(layer);
+}
+
 function toggleCart(idx) {
   const p = currentPlants[idx];
   if (!p) return;
@@ -2655,6 +3087,7 @@ function closeWarnPopup() {
 
 function closePlantPopup(e) {
   if (e && e.type === 'click' && e.target !== document.getElementById('plantPopupOverlay')) return;
+  gdOpenPlantPopupIdx = null;
   document.getElementById('plantPopupOverlay').classList.remove('open');
 }
 
@@ -2742,6 +3175,7 @@ function renderPlantsDrawer() {
             <button class="pc-icon-btn has-warn" onclick="event.stopPropagation();openWarnPopup(${i})" title="Warnings">⚠️</button>
             <button class="pc-icon-btn" onclick="event.stopPropagation();openPlantPopup(${i})" title="Plant details">🌱</button>
             <button class="pc-icon-btn cart ${cartPlants.has(p.name)?'added':''}" onclick="event.stopPropagation();toggleCart(${i})" title="Add to cart">${cartPlants.has(p.name)?'🛒':'🛍️'}</button>
+            ${overlayQty && !p.gardenPlantId ? `<button class="pc-icon-btn" onclick="event.stopPropagation();commitProposedPlantCard(${i})" title="Add to My Garden">＋</button>` : ''}
           </div>
         </div>
       </div>
@@ -3949,7 +4383,7 @@ function getSpecificPlantsStr(group) {
 let designMode = 'auto'; // 'auto' or 'manual'
 
 function showDesignChoice() {
-  const locRaw = document.getElementById('photoLoc').value.trim();
+  const locRaw = gdResolvedPhotoLocation();
   const err = document.getElementById('photoErr');
   if (!photoB64 || !locRaw) {
     err.textContent = 'Please upload a photo and enter your location.';
@@ -3983,7 +4417,7 @@ function confirmDesignMode() {
 
 async function runPhotoManual() {
   if (!photoB64) { alert('Please upload a photo first.'); return; }
-  const locRaw = document.getElementById('photoLoc').value.trim();
+  const locRaw = gdResolvedPhotoLocation();
   if (!locRaw) { document.getElementById('photoErr').textContent = 'Please enter your location.'; document.getElementById('photoErr').classList.add('show'); return; }
 
   closePlantPopup(null);
@@ -4058,11 +4492,11 @@ function safeParseJSON(txt) {
   }
 }
 async function runPhoto(){
+  const err=document.getElementById('photoErr');
+  const locRaw=gdResolvedPhotoLocation();
+  if(!photoB64||!locRaw){err.textContent='Please upload a photo and enter your location.';err.classList.add('show');return;}
   const loc=getLocStr('photoLoc');
   const prefs=document.getElementById('photoPrefs').value.trim();
-  const err=document.getElementById('photoErr');
-  const locRaw=document.getElementById('photoLoc').value.trim();
-  if(!photoB64||!locRaw){err.textContent='Please upload a photo and enter your location.';err.classList.add('show');return;}
   err.classList.remove('show');
   closePlantPopup(null);
   setFlowPulse(null);
@@ -4240,6 +4674,13 @@ The plants array MUST match the exact counts specified above.`}]);
       <div id="apmStep1">
         <p class="apm-title">🌱 Add plants to your garden</p>
         <div class="apm-options">
+          <div class="apm-option" id="apmOwnedOption" style="display:none" onclick="showApmOwned()">
+            <div class="apm-option-icon">🏡</div>
+            <div>
+              <div class="apm-option-text">From My Garden</div>
+              <div class="apm-option-sub">Place a plant you already own — same garden plant</div>
+            </div>
+          </div>
           <div class="apm-option" onclick="showApmList()">
             <div class="apm-option-icon">📋</div>
             <div>
@@ -4282,6 +4723,11 @@ The plants array MUST match the exact counts specified above.`}]);
       <button class="pc-popup-close" onclick="closePlantPopup(null)">✕</button>
       <div class="pc-popup-title" id="ppName"></div>
       <div class="pc-popup-latin" id="ppLatin"></div>
+      <div class="pc-popup-section" id="ppSuitabilitySection" style="display:none">
+        <div class="pc-popup-section-lbl">Garden suitability</div>
+        <div id="ppSuitabilityCopy" class="pc-climate-reason"></div>
+        <div id="ppSuitabilityAdd" class="pc-climate-reason" style="margin-top:6px"></div>
+      </div>
       <div class="pc-popup-section" id="ppClimateSection">
         <div class="pc-popup-section-lbl">Climate match</div>
         <div class="pc-climate-pct" id="ppClimatePct"></div>
@@ -4342,6 +4788,18 @@ The plants array MUST match the exact counts specified above.`}]);
       if(e&&e.message&&/netlify|fetch|failed|ai design|json/i.test(e.message)) gdFatal(e.message);
     });
   })();
+  </script>
+  <script type="module">
+    import './garden-design-variant-policy-v1.js?v=20260916a';
+    import './garden-design-asset-registry-v1.js?v=20260916a';
+    import './garden-design-owned-garden-v1.js?v=20260916a';
+    try {
+      const api = window.CruvitGardenDesignOwnedGarden;
+      const origin = api && typeof api.gardenDesignPostTargetOrigin === 'function'
+        ? api.gardenDesignPostTargetOrigin()
+        : (window.location.origin === 'null' ? '*' : window.location.origin);
+      window.parent.postMessage({ type: 'cruvit:garden-design-ready' }, origin);
+    } catch (e) {}
   </script>
 </body>
 </html>

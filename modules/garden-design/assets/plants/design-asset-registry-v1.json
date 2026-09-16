@@ -1,0 +1,152 @@
+{
+  "version": "1.0.0",
+  "contract": "garden-design-asset-registry-v1",
+  "identityAuthority": "canonical-catalog",
+  "notASecondCatalog": true,
+  "generateOnLookup": false,
+  "notes": "Presentation assets only. Mapped from the existing Garden Design cutout manifest. Do not replace working olive cutouts. Missing variants remain UNKNOWN until an approved production wave.",
+  "manifestKeyToCanonical": {
+    "olive-tree": "olive",
+    "italian-cypress": "cypress",
+    "rosemary": "rosemary",
+    "lavender": "lavender",
+    "bougainvillea": "bougainvillea"
+  },
+  "sets": [
+    {
+      "canonicalSlug": "olive",
+      "designAssetSetId": "olive-design-v1",
+      "identityScope": "species",
+      "manifestKey": "olive-tree",
+      "variants": [
+        {
+          "assetId": "olive-mature-summer-vegetative-v1",
+          "growthStage": "mature",
+          "season": "summer",
+          "phenology": "vegetative",
+          "formView": null,
+          "file": "olive-tree/variants/summer-mature.png",
+          "defaultFile": "olive-tree/default.png",
+          "width": 512,
+          "height": 768,
+          "baseWidthPx": 320,
+          "approvalStatus": "approved",
+          "transparencyReady": true,
+          "identityConfidence": "species",
+          "cultivarSpecific": false,
+          "comingSoon": false,
+          "status": "ready",
+          "provenance": {
+            "source": "garden-design-manifest",
+            "generationMethod": "prepared-cutout",
+            "tier": "tier-1"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalSlug": "rosemary",
+      "designAssetSetId": "rosemary-design-v1",
+      "identityScope": "species",
+      "manifestKey": "rosemary",
+      "variants": [
+        {
+          "assetId": "rosemary-mature-summer-vegetative-missing",
+          "growthStage": "mature",
+          "season": "summer",
+          "phenology": "vegetative",
+          "file": "rosemary/variants/summer-mature.png",
+          "approvalStatus": "missing",
+          "transparencyReady": false,
+          "identityConfidence": "species",
+          "cultivarSpecific": false,
+          "comingSoon": true,
+          "status": "missing",
+          "provenance": {
+            "source": "garden-design-manifest",
+            "generationMethod": "unproduced",
+            "tier": "declared"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalSlug": "lavender",
+      "designAssetSetId": "lavender-design-v1",
+      "identityScope": "species",
+      "manifestKey": "lavender",
+      "variants": [
+        {
+          "assetId": "lavender-mature-summer-flowering-missing",
+          "growthStage": "mature",
+          "season": "summer",
+          "phenology": "flowering",
+          "file": "lavender/variants/summer-mature.png",
+          "approvalStatus": "missing",
+          "transparencyReady": false,
+          "identityConfidence": "species",
+          "cultivarSpecific": false,
+          "comingSoon": true,
+          "status": "missing",
+          "provenance": {
+            "source": "garden-design-manifest",
+            "generationMethod": "unproduced",
+            "tier": "declared"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "designAssetSetId": "bougainvillea-design-v1",
+      "identityScope": "genus",
+      "manifestKey": "bougainvillea",
+      "variants": [
+        {
+          "assetId": "bougainvillea-mature-summer-flowering-missing",
+          "growthStage": "mature",
+          "season": "summer",
+          "phenology": "flowering",
+          "file": "bougainvillea/variants/summer-mature.png",
+          "approvalStatus": "missing",
+          "transparencyReady": false,
+          "identityConfidence": "genus",
+          "cultivarSpecific": false,
+          "comingSoon": true,
+          "status": "missing",
+          "provenance": {
+            "source": "garden-design-manifest",
+            "generationMethod": "unproduced",
+            "tier": "declared"
+          }
+        }
+      ]
+    },
+    {
+      "canonicalSlug": "cypress",
+      "designAssetSetId": "cypress-design-v1",
+      "identityScope": "species",
+      "manifestKey": "italian-cypress",
+      "variants": [
+        {
+          "assetId": "cypress-mature-summer-vegetative-missing",
+          "growthStage": "mature",
+          "season": "summer",
+          "phenology": "vegetative",
+          "file": "italian-cypress/variants/summer-mature.png",
+          "approvalStatus": "missing",
+          "transparencyReady": false,
+          "identityConfidence": "species",
+          "cultivarSpecific": false,
+          "comingSoon": true,
+          "status": "missing",
+          "provenance": {
+            "source": "garden-design-manifest",
+            "generationMethod": "unproduced",
+            "tier": "declared"
+          }
+        }
+      ]
+    }
+  ]
+}

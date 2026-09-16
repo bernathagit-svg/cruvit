@@ -7799,7 +7799,7 @@ function safeUiAfterPlantAdd(){
             profileSlug:plant.profileSlug||null,
             scientific:plant.scientific||null,
             name:plant.name||null,
-            sourceModule:plant.source==='Scan & Identify'?'plant_identifier':undefined
+            sourceModule:plant.source==='Scan & Identify'?'plant_identifier':plant.source==='Garden Design'?'garden_design':undefined
           }).catch((err)=>{
             console.warn('[GardenMemory] plant_added write failed',err&&err.message?err.message:err);
           });
@@ -8272,6 +8272,264 @@ function setGardenDesignShellOpen(open){
   if(app) app.classList.toggle('gd-open',!!open);
 }
 
+function getDesignCatalogIdentities(){
+  const aliasMaps=Object.assign({},
+    typeof BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL==='object'?BOOTSTRAP_IDENTITY_ALIAS_TO_CANONICAL:{},
+    typeof SPECIES_PACKET_ALIAS_TO_CANONICAL==='object'?SPECIES_PACKET_ALIAS_TO_CANONICAL:{},
+    {'olive-tree':'olive','italian-cypress':'cypress'}
+  );
+  const catalog=(Array.isArray(PLANT_LIBRARY)?PLANT_LIBRARY:[]).map((p)=>({
+    slug:p.slug,
+    name:p.name,
+    scientific:p.scientific,
+    aliases:Array.isArray(p.aliases)?p.aliases:[],
+    tags:Array.isArray(p.tags)?p.tags:[],
+    growth:p.growth||'',
+    identityScope:/\bspp\.?\b/i.test(String(p.scientific||''))?'genus':undefined,
+    climateTraits:p.climateTraits?{
+      groupIds:p.climateTraits.groupIds,
+      floweringRequirements:p.climateTraits.floweringRequirements,
+      fruitingRequirements:p.climateTraits.fruitingRequirements
+    }:undefined
+  }));
+  return {catalog,aliasMaps};
+}
+
+function getDesignOwnedPlants(){
+  return (data.plants||[]).filter((p)=>p&&p.archived!==true).map((p)=>({
+    gardenPlantId:p.serverId||p.id||null,
+    clientInstanceId:p.id||null,
+    canonicalSlug:p.profileSlug||p.slug||null,
+    name:p.name||'',
+    scientific:p.scientific||'',
+    areaId:p.gardenAreaId||null
+  }));
+}
+
+function getDesignGardenAreas(){
+  try{
+    const ui=window.cruvitGardenAreasV1;
+    if(ui&&typeof ui.getCachedAreas==='function') return ui.getCachedAreas()||[];
+  }catch(_){}
+  return [];
+}
+
+let gardenDesignAssetRegistryCache=null;
+
+function getGardenDesignFrame(){
+  const root=document.getElementById('garden-design-root');
+  return root?root.querySelector('iframe.gd-frame'):null;
+}
+
+function gardenDesignPostToFrame(payload){
+  const frame=getGardenDesignFrame();
+  if(!frame||!frame.contentWindow) return;
+  const api=window.CruvitGardenDesignOwnedGarden;
+  const origin=api&&typeof api.gardenDesignPostTargetOrigin==='function'
+    ?api.gardenDesignPostTargetOrigin()
+    :(window.location.origin==='null'?'*':window.location.origin);
+  try{
+    frame.contentWindow.postMessage(payload,origin);
+  }catch(e){
+    console.warn('Garden Design postMessage failed',e);
+  }
+}
+
+function loadGardenDesignAssetRegistry(){
+  if(gardenDesignAssetRegistryCache) return Promise.resolve(gardenDesignAssetRegistryCache);
+  return fetch('modules/garden-design/assets/plants/design-asset-registry-v1.json')
+    .then(function(r){ if(!r.ok) throw new Error('design-asset-registry missing'); return r.json(); })
+    .then(function(json){ gardenDesignAssetRegistryCache=json; return json; })
+    .catch(function(){ return null; });
+}
+
+function buildGardenDesignContextPayload(){
+  const loc=typeof buildIdentifierGardenLocationInput==='function'?buildIdentifierGardenLocationInput():{};
+  const api=window.CruvitGardenDesignOwnedGarden;
+  const classified=api&&typeof api.classifyDesignGardenLocation==='function'
+    ?api.classifyDesignGardenLocation(loc)
+    :(typeof getIdentifierGardenLocationContext==='function'?getIdentifierGardenLocationContext():null);
+  const pd=window.cruvitPersonalDomainV0;
+  const session=pd&&typeof pd.getSession==='function'?pd.getSession():null;
+  const identities=getDesignCatalogIdentities();
+  identities.aliasMaps=Object.assign({},identities.aliasMaps,{
+    manifestKeyToCanonical:Object.assign({'olive-tree':'olive','italian-cypress':'cypress'},identities.aliasMaps.manifestKeyToCanonical||{})
+  });
+  const suitabilityAccess=api&&typeof api.buildDesignSuitabilityAccess==='function'
+    ?api.buildDesignSuitabilityAccess(classified||{})
+    :{engine:'smartRecEvaluateSuitability',available:false,status:'UNKNOWN',iframeMustNotEvaluate:true};
+  return {
+    type:'cruvit:garden-design-context',
+    gardenProfileId:(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null,
+    userId:session&&session.user?session.user.id:null,
+    location:classified,
+    suitabilityAccess:suitabilityAccess,
+    ownedPlants:getDesignOwnedPlants(),
+    areas:getDesignGardenAreas(),
+    catalog:identities.catalog,
+    aliasMaps:identities.aliasMaps,
+    designAssetRegistry:gardenDesignAssetRegistryCache,
+    paidAiAutomatedCalls:0,
+    sameOrigin:true
+  };
+}
+
+function postGardenDesignContext(){
+  const payload=buildGardenDesignContextPayload();
+  gardenDesignPostToFrame(payload);
+  gardenDesignPostToFrame({type:'cruvit:garden-design-owned-plants',ownedPlants:payload.ownedPlants||[]});
+  gardenDesignPostToFrame({type:'cruvit:garden-design-areas',areas:payload.areas||[]});
+  if(payload.designAssetRegistry){
+    gardenDesignPostToFrame({type:'cruvit:garden-design-asset-registry',designAssetRegistry:payload.designAssetRegistry});
+  }
+}
+
+function evaluateDesignGardenSuitability(canonicalSlug,area){
+  const api=window.CruvitGardenDesignOwnedGarden;
+  const loc=typeof buildIdentifierGardenLocationInput==='function'?buildIdentifierGardenLocationInput():{};
+  const classified=api&&typeof api.classifyDesignGardenLocation==='function'
+    ?api.classifyDesignGardenLocation(loc)
+    :null;
+  const access=api&&typeof api.buildDesignSuitabilityAccess==='function'
+    ?api.buildDesignSuitabilityAccess(classified||{})
+    :{available:false,status:'UNKNOWN'};
+  if(!access.available){
+    const unavailable={
+      ok:false,
+      engine:'smartRecEvaluateSuitability',
+      paidAiCalls:0,
+      available:false,
+      status:'UNKNOWN',
+      reason:access.reason||'untrusted-location',
+      gardenProfileId:classified&&classified.gardenProfileId
+    };
+    if(api&&typeof api.presentDesignSuitability==='function'){
+      unavailable.presentation=api.presentDesignSuitability(unavailable);
+    }
+    return unavailable;
+  }
+  const evaluation=typeof evaluateIdentifierGardenSuitability==='function'
+    ?evaluateIdentifierGardenSuitability(canonicalSlug)
+    :{ok:false,engine:'smartRecEvaluateSuitability',paidAiCalls:0};
+  if(area&&typeof area==='object'){
+    evaluation.areaId=area.id||area.areaId||null;
+    const ctx=area.context||area;
+    evaluation.areaContext={
+      sunExposure:ctx.sunExposure||null,
+      plantingMode:ctx.plantingMode||null,
+      windExposure:ctx.windExposure||null,
+      shelter:ctx.shelter||null
+    };
+  }
+  if(api&&typeof api.presentDesignSuitability==='function'){
+    evaluation.presentation=api.presentDesignSuitability(evaluation);
+  }
+  evaluation.paidAiCalls=0;
+  evaluation.available=true;
+  return evaluation;
+}
+
+let gardenDesignCommitIdempotency=null;
+function getGardenDesignCommitIdempotency(){
+  const api=window.CruvitGardenDesignOwnedGarden;
+  if(!gardenDesignCommitIdempotency){
+    gardenDesignCommitIdempotency=api&&typeof api.createDesignCommitIdempotency==='function'
+      ?api.createDesignCommitIdempotency()
+      :{seen:()=>false,mark:()=>{}};
+  }
+  return gardenDesignCommitIdempotency;
+}
+
+async function commitDesignProposalToGarden(payload){
+  const api=window.CruvitGardenDesignOwnedGarden;
+  if(!api) return {ok:false,reason:'owned-garden-contract-missing'};
+  const pd=window.cruvitPersonalDomainV0;
+  const gardenProfileId=(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||payload.gardenProfileId||null;
+  const plan=api.confirmDesignProposalCommit(Object.assign({},payload,{
+    userConfirmed:payload.userConfirmed===true,
+    gardenProfileId,
+    idempotency:getGardenDesignCommitIdempotency()
+  }));
+  if(plan.duplicate){
+    return {ok:true,duplicate:true,canonicalSlug:plan.canonicalSlug,gardenPlantId:plan.gardenPlantId||null};
+  }
+  if(!plan.ok||!plan.persist){
+    return {ok:false,reason:plan.reason||'commit-blocked'};
+  }
+  const before=(data.plants||[]).length;
+  savePlantFromLibrary(plan.write.canonicalSlug,'Garden Design');
+  const plant=(data.plants||[])[(data.plants||[]).length-1];
+  if(!plant||(data.plants||[]).length<=before){
+    return {ok:false,reason:'write-path-did-not-add'};
+  }
+  if(plan.write.areaId&&pd&&typeof pd.assignPlantToAreaOnActiveGarden==='function'&&(plant.serverId||plant.id)){
+    try{
+      await pd.assignPlantToAreaOnActiveGarden({
+        plantId:plant.serverId||null,
+        garden_plant_id:plant.serverId||null,
+        plantName:plant.name,
+        areaId:plan.write.areaId
+      });
+      plant.gardenAreaId=plan.write.areaId;
+    }catch(err){
+      console.warn('Garden Design area assign failed',err&&err.message?err.message:err);
+    }
+  }
+  getGardenDesignCommitIdempotency().mark(plan.commitToken);
+  return {
+    ok:true,
+    duplicate:false,
+    canonicalSlug:plan.write.canonicalSlug,
+    gardenPlantId:plant.serverId||plant.id,
+    clientInstanceId:plant.id
+  };
+}
+
+window.commitDesignProposalToGarden=commitDesignProposalToGarden;
+window.addEventListener('message',function(ev){
+  const api=window.CruvitGardenDesignOwnedGarden;
+  const frame=getGardenDesignFrame();
+  const accepted=api&&typeof api.acceptGardenDesignMessage==='function'
+    ?api.acceptGardenDesignMessage(ev,{
+      allowedTypes:api.GD_DESIGN_TO_HOST?Object.values(api.GD_DESIGN_TO_HOST):null,
+      expectedSource:frame?frame.contentWindow:null
+    })
+    :null;
+  if(accepted){
+    if(!accepted.ok) return;
+  }else{
+    const d=ev.data;
+    if(!d||typeof d!=='object'||typeof d.type!=='string'||d.type.indexOf('cruvit:garden-design-')!==0) return;
+    if(ev.origin&&ev.origin!=='null'&&ev.origin!==window.location.origin) return;
+  }
+  const d=ev.data;
+  if(!d||typeof d!=='object') return;
+  if(d.type==='cruvit:garden-design-ready'){
+    loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });
+    return;
+  }
+  if(d.type==='cruvit:garden-design-refresh-owned-plants'){
+    postGardenDesignContext();
+    return;
+  }
+  if(d.type==='cruvit:garden-design-commit-proposal'){
+    commitDesignProposalToGarden(d).then(function(res){
+      gardenDesignPostToFrame(Object.assign({type:'cruvit:garden-design-commit-result',requestId:d.requestId||null},res));
+    }).catch(function(err){
+      console.warn('Garden Design commit failed',err);
+    });
+    return;
+  }
+  if(d.type==='cruvit:garden-design-suitability-request'){
+    const evaluation=evaluateDesignGardenSuitability(d.canonicalSlug,d.area);
+    gardenDesignPostToFrame({
+      type:'cruvit:garden-design-suitability-result',
+      requestId:d.requestId||null,
+      evaluation
+    });
+  }
+});
+
 function openGardenDesign(){
   const root=document.getElementById('garden-design-root');
   if(!root) return;
@@ -8281,8 +8539,11 @@ function openGardenDesign(){
     frame.className='gd-frame';
     frame.title='Garden Design Studio';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
-    frame.src='modules/garden-design/index.html?v=20250701';
+    frame.src='modules/garden-design/index.html?v=20260916a';
     root.appendChild(frame);
+    frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
+  }else{
+    loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });
   }
   dismissEntryScreen();
   setGardenDesignShellOpen(true);
@@ -9261,5 +9522,8 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/personal-domain/garden-areas-v1-ui.js?v=20260914a"></script>
 <script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>
 <script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913e"></script>
+<script type="module" src="modules/garden-design/garden-design-variant-policy-v1.js?v=20260916a"></script>
+<script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916a"></script>
+<script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260916a"></script>
 </body>
 </html>

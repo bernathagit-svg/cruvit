@@ -3,6 +3,11 @@
  * Do NOT generate images per user placement. Assets are prepared once, stored, reused.
  * Binaries → CRUVIT-controlled object storage (Supabase Storage when implemented).
  * Metadata → catalog_design_assets (public shared). User photos are NEVER design assets.
+ *
+ * Two image authorities, one botanical identity:
+ *   Catalog Images V1 = informational / identification
+ *   Garden Design assets = transparent composition cutouts (multi-state registry)
+ * Design assets are NOT a second plant-identity authority. Lookup never generates.
  */
 
 export const GARDEN_DESIGN_ASSET_CONTRACT_VERSION = '1.0.0';
