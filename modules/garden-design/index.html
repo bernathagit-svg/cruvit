@@ -864,6 +864,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
       </div>
       <div class="error-box" id="sketchErr"></div>
       <button class="submit-btn" onclick="runSketch()">✨ Generate my garden plan</button>
+      <button type="button" class="back-btn" id="btnManualPlacement" onclick="openManualOwnedPlantPlacement()" style="margin-top:12px;width:100%;justify-content:center">Open manual placement</button>
     </div>
 
     <!-- LOADING -->
@@ -1124,6 +1125,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
       <div id="gdPlacementNote" class="gd-placement-note" style="display:none">
         📍 Placement preview on your original photo — drag plants to adjust position and size. This is not an AI-redesigned image.
       </div>
+      <div id="gdOwnedPlantsStatus" class="gd-placement-note" style="display:none"></div>
       <div id="gdLocalPreviewNote" class="gd-local-preview-note" style="display:none">
         Local preview: sample placement layers for testing. Real recommendations require Netlify functions.
       </div>
@@ -1220,6 +1222,7 @@ const GD_USE_REMOTE_PLANT_URLS = false;
 const GD_DEV_PLACEHOLDER_QUERY = /(?:^|[?&])gdSvgPlaceholders=1(?:&|$)/.test(window.location.search);
 const GD_IS_LOCAL_ASSET_DEV = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const GD_PLACEMENT_NOTE_DEFAULT = '📍 Placement preview on your original photo - drag plants to adjust position and size. This is not an AI-redesigned image.';
+const GD_PLACEMENT_NOTE_MANUAL = 'Manual placement — drag plants to adjust. No AI generation.';
 const GD_PLACEMENT_NOTE_READY_ONLY = ' Showing plants with ready visual previews. Other recommended plants are listed below.';
 const GD_PLANT_ASSETS_BASE = 'assets/plants/';
 let gdPlantAssetsManifest = null;
@@ -1229,6 +1232,7 @@ let basePhotoB64 = null, basePhotoDataUrl = null;
 let plantLayers = [];
 let selectedPlantLayerId = null;
 let overlayPlacementActive = false;
+let gdManualPlacementActive = false;
 let gdLayerDrag = null;
 let gdLayerIdCounter = 0;
 let gdOwnedGardenContext = null;
@@ -1696,19 +1700,38 @@ function gdOnAreaSelect(id) {
   gdPersistDesignSnapshot();
 }
 
+function gdOwnedPlantsFromContext() {
+  const ctx = gdOwnedGardenContext || {};
+  return Array.isArray(ctx.ownedPlants) ? ctx.ownedPlants : [];
+}
+
 function gdRefreshOwnedGardenOption() {
   const el = document.getElementById('apmOwnedOption');
-  if (!el) return;
-  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
-  el.style.display = owned.length ? '' : 'none';
+  const owned = gdOwnedPlantsFromContext();
+  if (el) el.style.display = owned.length ? '' : 'none';
+  const status = document.getElementById('gdOwnedPlantsStatus');
+  if (!status) return;
+  const err = gdOwnedGardenContext && gdOwnedGardenContext.ownedPlantsError;
+  if (err) {
+    status.style.display = 'block';
+    status.textContent = 'Could not load My Garden plants. ' + err;
+  } else {
+    status.style.display = 'none';
+    status.textContent = '';
+  }
 }
 
 function showApmOwned() {
   document.getElementById('apmStep1').style.display = 'none';
   document.getElementById('apmStep2List').style.display = '';
   document.getElementById('apmStep2Write').style.display = 'none';
-  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
+  const owned = gdOwnedPlantsFromContext();
   const list = document.getElementById('apmPlantList');
+  const err = gdOwnedGardenContext && gdOwnedGardenContext.ownedPlantsError;
+  if (err) {
+    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">Could not load My Garden plants. ' + gdEscAttr(err) + '</p>';
+    return;
+  }
   if (!owned.length) {
     list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">No owned plants in this garden yet.</p>';
     return;
@@ -1723,9 +1746,11 @@ function showApmOwned() {
 }
 
 function placeOwnedGardenPlant(idx) {
-  const owned = (gdOwnedGardenContext && gdOwnedGardenContext.ownedPlants) || [];
+  const owned = gdOwnedPlantsFromContext();
   const p = owned[idx];
   if (!p) return;
+  const api = gdOwnedGardenApi();
+  if (api && typeof api.designPaidAiForAction === 'function') api.designPaidAiForAction('place-owned');
   const existing = plantLayers.filter(function(l) { return l.gardenPlantId && l.gardenPlantId === p.gardenPlantId; });
   if (existing.length) {
     selectedPlantLayerId = existing[0].id;
@@ -1796,6 +1821,8 @@ window.addEventListener('message', function(ev) {
   if (d.type === 'cruvit:garden-design-owned-plants') {
     if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
     gdOwnedGardenContext.ownedPlants = d.ownedPlants || [];
+    gdOwnedGardenContext.ownedPlantsError = d.ownedPlantsError || null;
+    gdOwnedGardenContext.ownedPlantsOk = d.ownedPlantsOk !== false;
     gdRefreshOwnedGardenOption();
   }
   if (d.type === 'cruvit:garden-design-areas') {
@@ -1952,7 +1979,9 @@ function setOverlayPlacementUI(active) {
   const chat = document.querySelector('.redesign-chat');
   if (wrap) wrap.classList.toggle('overlay-placement-active', active);
   if (note) note.style.display = active ? 'block' : 'none';
-  if (label) label.textContent = active ? 'Your photo (base layer)' : 'Your redesign ✨';
+  if (label) label.textContent = active
+    ? (gdManualPlacementActive ? 'Manual placement' : 'Your photo (base layer)')
+    : 'Your redesign ✨';
   if (chat) chat.style.display = active ? 'none' : '';
   const host = document.getElementById('plantLayersHost');
   if (host) host.style.display = active ? 'block' : 'none';
@@ -1979,6 +2008,7 @@ function finishPhotoOverlayResult(data) {
   lastGeneratedB64 = photoB64;
   lastGeneratedMediaType = (photoDataUrl && photoDataUrl.startsWith('data:image/png')) ? 'image/png' : 'image/jpeg';
   isPhotoMode = true;
+  gdManualPlacementActive = !!(data && data.manualPlacement);
 
   const descEl = document.getElementById('resultDesc');
   if (descEl) {
@@ -2237,9 +2267,10 @@ function gdUpdatePlacementNote() {
   const hiddenCount = GD_USE_PLANT_ASSETS && !gdShouldRenderSvgPlaceholders()
     ? plantLayers.filter(layer => !gdLayerHasReadyCutout(layer)).length
     : 0;
+  const baseNote = gdManualPlacementActive ? GD_PLACEMENT_NOTE_MANUAL : GD_PLACEMENT_NOTE_DEFAULT;
   note.textContent = hiddenCount > 0
-    ? GD_PLACEMENT_NOTE_DEFAULT + GD_PLACEMENT_NOTE_READY_ONLY
-    : GD_PLACEMENT_NOTE_DEFAULT;
+    ? baseNote + GD_PLACEMENT_NOTE_READY_ONLY
+    : baseNote;
 }
 
 function gdBuildPlantLayerVisualInner(layer, resolved) {
@@ -2616,6 +2647,7 @@ function resetPlantLayerState() {
   plantLayers = [];
   selectedPlantLayerId = null;
   gdLayerDrag = null;
+  gdManualPlacementActive = false;
   basePhotoB64 = null;
   basePhotoDataUrl = null;
   setOverlayPlacementUI(false);
@@ -4604,6 +4636,29 @@ The plants array MUST match the exact counts specified above.`}
   }
 }
 
+function gdManualPlacementPlotDataUrl() {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800"><rect width="1200" height="800" fill="#e7efe4"/><rect x="36" y="36" width="1128" height="728" rx="18" fill="#d5e4cc" stroke="#8aaa78" stroke-width="3"/></svg>';
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+function openManualOwnedPlantPlacement() {
+  const api = gdOwnedGardenApi();
+  if (api && typeof api.designPaidAiForAction === 'function') api.designPaidAiForAction('manual-placement');
+  try { gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' }); } catch (e) {}
+  closePlantPopup(null);
+  if (typeof setFlowPulse === 'function') setFlowPulse(null);
+  resetPlantLayerState();
+  currentPlants = [];
+  photoDataUrl = gdManualPlacementPlotDataUrl();
+  photoB64 = null;
+  finishPhotoOverlayResult({
+    description: '',
+    plants: [],
+    placements: [],
+    manualPlacement: true
+  });
+}
+
 async function runSketch(){
   const w=document.getElementById('gW').value;
   const l=document.getElementById('gL').value;
@@ -4790,9 +4845,9 @@ The plants array MUST match the exact counts specified above.`}]);
   })();
   </script>
   <script type="module">
-    import './garden-design-variant-policy-v1.js?v=20260916a';
-    import './garden-design-asset-registry-v1.js?v=20260916a';
-    import './garden-design-owned-garden-v1.js?v=20260916a';
+    import './garden-design-variant-policy-v1.js?v=20260916b';
+    import './garden-design-asset-registry-v1.js?v=20260916b';
+    import './garden-design-owned-garden-v1.js?v=20260916b';
     try {
       const api = window.CruvitGardenDesignOwnedGarden;
       const origin = api && typeof api.gardenDesignPostTargetOrigin === 'function'

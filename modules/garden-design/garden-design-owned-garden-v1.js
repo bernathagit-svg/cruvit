@@ -468,6 +468,73 @@ export function designMemoryEventForAction(action) {
   return { emit: false, reason: 'not-a-lifecycle-event' };
 }
 
+function mapServerGardenPlantRow(row) {
+  if (!row || typeof row !== 'object') return null;
+  if (row.archived === true) return null;
+  const gardenPlantId = asText(row.id || row.gardenPlantId);
+  if (!gardenPlantId) return null;
+  return {
+    gardenPlantId,
+    clientInstanceId: asText(row.client_instance_id || row.clientInstanceId) || null,
+    canonicalSlug: asText(row.profile_slug || row.canonicalSlug || row.profileSlug) || null,
+    name: asText(row.name) || '',
+    scientific: asText(row.scientific) || '',
+    areaId: asText(row.garden_area_id || row.areaId) || null,
+    gardenProfileId: asText(row.garden_profile_id || row.gardenProfileId) || null
+  };
+}
+
+/**
+ * Authenticated Garden OS is the only owned-plant source.
+ * Local/legacy plants must not substitute when a garden_profile_id exists.
+ */
+export function resolveDesignOwnedPlantsFromGardenOs(input = {}) {
+  const session = input.session && typeof input.session === 'object' ? input.session : null;
+  const userId = session && session.user && session.user.id ? asText(session.user.id) : '';
+  const gardenProfileId = asText(input.gardenProfileId);
+  const fetchError = asText(input.fetchError);
+  const localPlants = Array.isArray(input.localPlants) ? input.localPlants : [];
+  const localNames = localPlants.map((p) => asText(p && p.name)).filter(Boolean);
+  const base = {
+    authenticated: !!userId,
+    gardenProfileId: gardenProfileId || null,
+    usedLocalFallback: false,
+    paidAiCalls: 0,
+    ignoredLocalNames: localNames
+  };
+  if (!userId || !gardenProfileId) {
+    return Object.assign({}, base, {
+      ok: true,
+      source: 'none',
+      ownedPlants: [],
+      fromMyGardenVisible: false,
+      error: null
+    });
+  }
+  if (fetchError || !Array.isArray(input.serverPlantRows)) {
+    return Object.assign({}, base, {
+      ok: false,
+      source: 'garden_plants',
+      ownedPlants: [],
+      fromMyGardenVisible: false,
+      error: fetchError || 'owned-plants-load-failed'
+    });
+  }
+  const ownedPlants = input.serverPlantRows.map(mapServerGardenPlantRow).filter(Boolean);
+  return Object.assign({}, base, {
+    ok: true,
+    source: 'garden_plants',
+    ownedPlants,
+    fromMyGardenVisible: ownedPlants.length > 0,
+    error: null
+  });
+}
+
+export function ownedPlacementMustNotInsertGardenPlant(beforeCount, afterCount, action) {
+  if (asText(action).toLowerCase() !== 'place-owned') return false;
+  return Number(beforeCount) === Number(afterCount);
+}
+
 export function designPaidAiForAction(action) {
   const a = asText(action).toLowerCase();
   const automated = [
@@ -481,7 +548,9 @@ export function designPaidAiForAction(action) {
     'delete',
     'commit-proposal',
     'place-owned',
-    'place-proposed'
+    'place-proposed',
+    'manual-placement',
+    'open-manual-canvas'
   ];
   if (automated.includes(a)) {
     return { allowed: false, paidAiCalls: 0, automated: true };
@@ -589,6 +658,8 @@ const api = {
   confirmDesignProposalCommit,
   designMemoryEventForAction,
   designPaidAiForAction,
+  resolveDesignOwnedPlantsFromGardenOs,
+  ownedPlacementMustNotInsertGardenPlant,
   assertSourcePhotoImmutable,
   designPersistenceKey,
   serializeDesignSnapshot,

@@ -8305,15 +8305,52 @@ function getDesignCatalogIdentities(){
   return {catalog,aliasMaps};
 }
 
+let gardenDesignOwnedPlantsState={ok:true,source:'none',ownedPlants:[],error:null,usedLocalFallback:false};
+
 function getDesignOwnedPlants(){
-  return (data.plants||[]).filter((p)=>p&&p.archived!==true).map((p)=>({
-    gardenPlantId:p.serverId||p.id||null,
-    clientInstanceId:p.id||null,
-    canonicalSlug:p.profileSlug||p.slug||null,
-    name:p.name||'',
-    scientific:p.scientific||'',
-    areaId:p.gardenAreaId||null
-  }));
+  return (gardenDesignOwnedPlantsState.ownedPlants||[]).slice();
+}
+
+async function refreshGardenDesignOwnedPlants(){
+  const pd=window.cruvitPersonalDomainV0;
+  const api=window.CruvitGardenDesignOwnedGarden;
+  const session=pd&&typeof pd.getSession==='function'?pd.getSession():null;
+  const gardenProfileId=(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null;
+  let serverPlantRows=null;
+  let fetchError=null;
+  const authenticated=!!(session&&session.user&&session.user.id);
+  if(authenticated&&gardenProfileId){
+    if(pd&&typeof pd.listPlantsForActiveGarden==='function'){
+      try{
+        serverPlantRows=await pd.listPlantsForActiveGarden();
+      }catch(err){
+        fetchError=(err&&err.message)?err.message:'owned-plants-load-failed';
+        serverPlantRows=null;
+      }
+    }else{
+      fetchError='owned-plants-list-unavailable';
+    }
+  }
+  if(api&&typeof api.resolveDesignOwnedPlantsFromGardenOs==='function'){
+    gardenDesignOwnedPlantsState=api.resolveDesignOwnedPlantsFromGardenOs({
+      session,
+      gardenProfileId,
+      serverPlantRows,
+      fetchError,
+      localPlants:data.plants||[]
+    });
+  }else if(authenticated&&gardenProfileId){
+    gardenDesignOwnedPlantsState={
+      ok:false,
+      source:'garden_plants',
+      ownedPlants:[],
+      error:fetchError||'owned-plants-resolver-missing',
+      usedLocalFallback:false
+    };
+  }else{
+    gardenDesignOwnedPlantsState={ok:true,source:'none',ownedPlants:[],error:null,usedLocalFallback:false};
+  }
+  return gardenDesignOwnedPlantsState;
 }
 
 function getDesignGardenAreas(){
@@ -8377,6 +8414,9 @@ function buildGardenDesignContextPayload(){
     location:classified,
     suitabilityAccess:suitabilityAccess,
     ownedPlants:getDesignOwnedPlants(),
+    ownedPlantsOk:gardenDesignOwnedPlantsState.ok!==false,
+    ownedPlantsError:gardenDesignOwnedPlantsState.error||null,
+    ownedPlantsSource:gardenDesignOwnedPlantsState.source||null,
     areas:getDesignGardenAreas(),
     catalog:identities.catalog,
     aliasMaps:identities.aliasMaps,
@@ -8387,13 +8427,22 @@ function buildGardenDesignContextPayload(){
 }
 
 function postGardenDesignContext(){
-  const payload=buildGardenDesignContextPayload();
-  gardenDesignPostToFrame(payload);
-  gardenDesignPostToFrame({type:'cruvit:garden-design-owned-plants',ownedPlants:payload.ownedPlants||[]});
-  gardenDesignPostToFrame({type:'cruvit:garden-design-areas',areas:payload.areas||[]});
-  if(payload.designAssetRegistry){
-    gardenDesignPostToFrame({type:'cruvit:garden-design-asset-registry',designAssetRegistry:payload.designAssetRegistry});
-  }
+  const send=function(){
+    const payload=buildGardenDesignContextPayload();
+    gardenDesignPostToFrame(payload);
+    gardenDesignPostToFrame({
+      type:'cruvit:garden-design-owned-plants',
+      ownedPlants:payload.ownedPlants||[],
+      ownedPlantsOk:payload.ownedPlantsOk,
+      ownedPlantsError:payload.ownedPlantsError||null,
+      ownedPlantsSource:payload.ownedPlantsSource||null
+    });
+    gardenDesignPostToFrame({type:'cruvit:garden-design-areas',areas:payload.areas||[]});
+    if(payload.designAssetRegistry){
+      gardenDesignPostToFrame({type:'cruvit:garden-design-asset-registry',designAssetRegistry:payload.designAssetRegistry});
+    }
+  };
+  refreshGardenDesignOwnedPlants().then(send).catch(send);
 }
 
 function evaluateDesignGardenSuitability(canonicalSlug,area){
@@ -8551,7 +8600,7 @@ function openGardenDesign(){
     frame.className='gd-frame';
     frame.title='Garden Design Studio';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
-    frame.src='modules/garden-design/index.html?v=20260916a';
+    frame.src='modules/garden-design/index.html?v=20260916b';
     root.appendChild(frame);
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
@@ -9534,8 +9583,8 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/personal-domain/garden-areas-v1-ui.js?v=20260914a"></script>
 <script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>
 <script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913e"></script>
-<script type="module" src="modules/garden-design/garden-design-variant-policy-v1.js?v=20260916a"></script>
-<script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916a"></script>
-<script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260916a"></script>
+<script type="module" src="modules/garden-design/garden-design-variant-policy-v1.js?v=20260916b"></script>
+<script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916b"></script>
+<script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260916b"></script>
 </body>
 </html>

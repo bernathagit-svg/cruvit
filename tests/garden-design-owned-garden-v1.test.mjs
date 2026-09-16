@@ -22,6 +22,8 @@ import {
   classifyDesignGardenLocation,
   shouldInventSecondLocation,
   createOwnedDesignPlacement,
+  resolveDesignOwnedPlantsFromGardenOs,
+  ownedPlacementMustNotInsertGardenPlant,
   createProposedDesignPlacement,
   duplicateDesignPlacement,
   ownedPlacementOwnershipCount,
@@ -581,6 +583,88 @@ test('K: Olive resolves through the Design Asset Registry as the first approved 
   assert.equal(olive.growthStage, 'mature');
   assert.ok(olive.assetId);
   assert.ok(olive.approvalStatus === 'approved' || olive.visualReady === true);
+});
+
+test('manual owned-plant path: no paid AI, server garden_plants only, placement keeps garden_plant_id', () => {
+  assert.equal(isPaidAiAutomatedTestAllowed({}), false);
+  assert.equal(designPaidAiForAction('manual-placement').paidAiCalls, 0);
+  assert.equal(designPaidAiForAction('open-manual-canvas').paidAiCalls, 0);
+  assert.equal(designPaidAiForAction('place-owned').paidAiCalls, 0);
+
+  const gd = gdSrc();
+  const app = appSrc();
+  assert.match(gd, /function openManualOwnedPlantPlacement/);
+  assert.match(gd, /id="btnManualPlacement"/);
+  assert.match(gd, /Open manual placement/);
+  assert.doesNotMatch(
+    gd.slice(gd.indexOf('function openManualOwnedPlantPlacement'), gd.indexOf('async function runSketch')),
+    /claude\(|replicate\(|stabilityImg2Img\(|openai/i
+  );
+  assert.match(app, /listPlantsForActiveGarden/);
+  assert.match(app, /resolveDesignOwnedPlantsFromGardenOs/);
+  assert.doesNotMatch(app, /gardenPlantId:p\.serverId\|\|p\.id/);
+
+  const moj = classifyDesignGardenLocation({
+    trusted: true,
+    confirmationStatus: 'confirmed',
+    label: 'Mojstrana, Slovenia',
+    lat: 46.42383,
+    lon: 13.8752,
+    gardenProfileId: 'garden-moj',
+    source: 'confirmed'
+  });
+  assert.equal(moj.status, 'TRUSTED_CONFIRMED');
+  assert.equal(moj.gardenProfileId, 'garden-moj');
+
+  const localLegacy = [
+    { name: 'Lavender', id: 'local-1' },
+    { name: 'Rosemary', id: 'local-2' },
+    { name: 'Jasmine', id: 'local-3' }
+  ];
+  const serverRows = [
+    { id: 'gp-mango', name: 'Mango Tree', profile_slug: 'mango', scientific: 'Mangifera indica', garden_profile_id: 'garden-moj' },
+    { id: 'gp-banana', name: 'Banana', profile_slug: 'banana', scientific: 'Musa spp.', garden_profile_id: 'garden-moj' },
+    { id: 'gp-pineapple', name: 'Pineapple', profile_slug: 'pineapple', scientific: 'Ananas comosus', garden_profile_id: 'garden-moj' }
+  ];
+  const resolved = resolveDesignOwnedPlantsFromGardenOs({
+    session: { user: { id: 'owner-1' } },
+    gardenProfileId: 'garden-moj',
+    serverPlantRows: serverRows,
+    localPlants: localLegacy
+  });
+  assert.equal(resolved.ok, true);
+  assert.equal(resolved.source, 'garden_plants');
+  assert.equal(resolved.usedLocalFallback, false);
+  assert.equal(resolved.fromMyGardenVisible, true);
+  assert.equal(resolved.paidAiCalls, 0);
+  const names = resolved.ownedPlants.map((p) => p.name);
+  assert.deepEqual(names, ['Mango Tree', 'Banana', 'Pineapple']);
+  assert.equal(names.includes('Lavender'), false);
+  assert.equal(names.includes('Rosemary'), false);
+  assert.equal(names.includes('Jasmine'), false);
+
+  const mango = resolved.ownedPlants[0];
+  const placed = createOwnedDesignPlacement({
+    gardenProfileId: 'garden-moj',
+    gardenPlantId: mango.gardenPlantId,
+    canonicalSlug: mango.canonicalSlug,
+    x: 0.4,
+    y: 0.7
+  });
+  assert.equal(placed.gardenPlantId, 'gp-mango');
+  assert.equal(placed.createsGardenPlant, false);
+  assert.equal(ownedPlacementMustNotInsertGardenPlant(3, 3, 'place-owned'), true);
+
+  const failed = resolveDesignOwnedPlantsFromGardenOs({
+    session: { user: { id: 'owner-1' } },
+    gardenProfileId: 'garden-moj',
+    fetchError: 'network down',
+    localPlants: localLegacy
+  });
+  assert.equal(failed.ok, false);
+  assert.equal(failed.ownedPlants.length, 0);
+  assert.equal(failed.usedLocalFallback, false);
+  assert.equal(failed.fromMyGardenVisible, false);
 });
 
 test('no paid network during this suite', () => {
