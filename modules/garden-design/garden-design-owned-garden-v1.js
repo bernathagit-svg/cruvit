@@ -535,6 +535,24 @@ export function ownedPlacementMustNotInsertGardenPlant(beforeCount, afterCount, 
   return Number(beforeCount) === Number(afterCount);
 }
 
+/** Empty or populated design canvas must always expose Add plants. */
+export function manualCanvasAddPlantsPolicy(input = {}) {
+  const designPlacementCount = Array.isArray(input.plantLayers)
+    ? input.plantLayers.length
+    : Number(input.designPlacementCount) || 0;
+  const currentPlantCount = Array.isArray(input.currentPlants)
+    ? input.currentPlants.length
+    : Number(input.currentPlantCount) || 0;
+  return {
+    showAddPlants: true,
+    hideWhenEmpty: false,
+    designPlacementCount,
+    currentPlantCount,
+    counterMeansDesignPlacementsOnly: true,
+    paidAiCalls: 0
+  };
+}
+
 export function designPaidAiForAction(action) {
   const a = asText(action).toLowerCase();
   const automated = [
@@ -660,6 +678,7 @@ const api = {
   designPaidAiForAction,
   resolveDesignOwnedPlantsFromGardenOs,
   ownedPlacementMustNotInsertGardenPlant,
+  manualCanvasAddPlantsPolicy,
   assertSourcePhotoImmutable,
   designPersistenceKey,
   serializeDesignSnapshot,

@@ -1172,10 +1172,10 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
           <div class="pc-left-counter">
             <span class="pc-left-counter-n" id="plantsCount">0</span>
           </div>
-          <div class="pc-left-label">Plants added<br>to your garden</div>
+          <div class="pc-left-label" id="gdDesignPlantsCountLabel">Plants placed<br>in this design</div>
         </div>
         <div class="pc-right-panel">
-          <p class="pc-right-title">Your garden plants 🌿</p>
+          <p class="pc-right-title">Plants in this design 🌿</p>
           <div class="pc-scroll" id="plantsGrid"></div>
           <div class="pc-bottom-actions">
             <button class="apply-removals-btn" onclick="applyRemovals()" id="applyRemovalsBtn" style="display:none">
@@ -1705,20 +1705,26 @@ function gdOwnedPlantsFromContext() {
   return Array.isArray(ctx.ownedPlants) ? ctx.ownedPlants : [];
 }
 
+function gdRetryOwnedPlants() {
+  try { gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' }); } catch (e) {}
+}
+
 function gdRefreshOwnedGardenOption() {
   const el = document.getElementById('apmOwnedOption');
   const owned = gdOwnedPlantsFromContext();
   if (el) el.style.display = owned.length ? '' : 'none';
   const status = document.getElementById('gdOwnedPlantsStatus');
-  if (!status) return;
-  const err = gdOwnedGardenContext && gdOwnedGardenContext.ownedPlantsError;
-  if (err) {
-    status.style.display = 'block';
-    status.textContent = 'Could not load My Garden plants. ' + err;
-  } else {
-    status.style.display = 'none';
-    status.textContent = '';
+  if (status) {
+    const err = gdOwnedGardenContext && gdOwnedGardenContext.ownedPlantsError;
+    if (err) {
+      status.style.display = 'block';
+      status.innerHTML = 'Could not load My Garden plants. ' + gdEscAttr(err) + ' <button type="button" onclick="gdRetryOwnedPlants()">Retry</button>';
+    } else {
+      status.style.display = 'none';
+      status.textContent = '';
+    }
   }
+  if (overlayPlacementActive || gdManualPlacementActive) ensureDesignPlantsPanelVisible();
 }
 
 function showApmOwned() {
@@ -1729,7 +1735,7 @@ function showApmOwned() {
   const list = document.getElementById('apmPlantList');
   const err = gdOwnedGardenContext && gdOwnedGardenContext.ownedPlantsError;
   if (err) {
-    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">Could not load My Garden plants. ' + gdEscAttr(err) + '</p>';
+    list.innerHTML = '<p style="font-size:13px;color:var(--muted);padding:8px 0">Could not load My Garden plants. ' + gdEscAttr(err) + '</p><button type="button" class="apm-confirm" onclick="gdRetryOwnedPlants();showApmOwned()">Retry</button>';
     return;
   }
   if (!owned.length) {
@@ -2659,6 +2665,25 @@ function resetPlantLayerState() {
   gdUpdatePlacementNote();
 }
 
+function ensureAddPlantsCard() {
+  const gridEl = document.getElementById('plantsGrid');
+  if (!gridEl) return;
+  if (gridEl.querySelector('.pc-add-card')) return;
+  const addCard = document.createElement('div');
+  addCard.className = 'pc-add-card';
+  addCard.id = 'gdAddPlantsCard';
+  addCard.setAttribute('role', 'button');
+  addCard.onclick = openAddPlantModal;
+  addCard.innerHTML = '<div class="pc-add-card-icon">+</div><span class="pc-add-card-lbl">Add plants</span>';
+  gridEl.appendChild(addCard);
+}
+
+function ensureDesignPlantsPanelVisible() {
+  const sec = document.getElementById('plantsSection');
+  if (sec) sec.classList.add('visible');
+  ensureAddPlantsCard();
+}
+
 // ── Show plants ──
 function showPlants(plants) {
   // Accumulate: keep existing active plants, add new ones
@@ -2676,26 +2701,7 @@ function showPlants(plants) {
   if (overlayPlacementActive && isPhotoMode) {
     syncPlantLayersWithPlants();
   }
-  // Update counter
-  const countEl = document.getElementById('plantsCount');
-  if (countEl) {
-    countEl.textContent = (overlayPlacementActive && isPhotoMode)
-      ? plantLayers.length
-      : currentPlants.filter(p => p.active).length;
-  }
-
-  // Add the + card at the end
-  const gridEl = document.getElementById('plantsGrid');
-  if (gridEl) {
-    const addCard = document.createElement('div');
-    addCard.className = 'pc-add-card';
-    addCard.onclick = openAddPlantModal;
-    addCard.innerHTML = '<div class="pc-add-card-icon">+</div><span class="pc-add-card-lbl">Add plants</span>';
-    gridEl.appendChild(addCard);
-  }
-  // Show the plants section panel
-  const sec = document.getElementById('plantsSection');
-  if (sec) sec.classList.add('visible');
+  ensureDesignPlantsPanelVisible();
 }
 
 // ── Wikipedia plant images ──
@@ -3128,6 +3134,10 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlantPo
 
 function renderPlantsDrawer() {
   const grid = document.getElementById('plantsGrid');
+  if (!grid) {
+    ensureAddPlantsCard();
+    return;
+  }
 
   grid.innerHTML = currentPlants.map((p, i) => {
     const removed = !p.active;
@@ -3232,6 +3242,7 @@ function renderPlantsDrawer() {
       ? `🔄 Remove ${count} marked plant${count > 1 ? 's' : ''} from preview`
       : `🔄 Apply — remove ${count} marked plant${count > 1 ? 's' : ''} from image`;
   }
+  ensureAddPlantsCard();
 }
 
 function togglePlant(idx) {
@@ -4845,9 +4856,9 @@ The plants array MUST match the exact counts specified above.`}]);
   })();
   </script>
   <script type="module">
-    import './garden-design-variant-policy-v1.js?v=20260916b';
-    import './garden-design-asset-registry-v1.js?v=20260916b';
-    import './garden-design-owned-garden-v1.js?v=20260916b';
+    import './garden-design-variant-policy-v1.js?v=20260916c';
+    import './garden-design-asset-registry-v1.js?v=20260916c';
+    import './garden-design-owned-garden-v1.js?v=20260916c';
     try {
       const api = window.CruvitGardenDesignOwnedGarden;
       const origin = api && typeof api.gardenDesignPostTargetOrigin === 'function'

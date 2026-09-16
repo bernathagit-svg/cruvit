@@ -24,6 +24,7 @@ import {
   createOwnedDesignPlacement,
   resolveDesignOwnedPlantsFromGardenOs,
   ownedPlacementMustNotInsertGardenPlant,
+  manualCanvasAddPlantsPolicy,
   createProposedDesignPlacement,
   duplicateDesignPlacement,
   ownedPlacementOwnershipCount,
@@ -665,6 +666,64 @@ test('manual owned-plant path: no paid AI, server garden_plants only, placement 
   assert.equal(failed.ownedPlants.length, 0);
   assert.equal(failed.usedLocalFallback, false);
   assert.equal(failed.fromMyGardenVisible, false);
+});
+
+test('empty manual canvas always shows Add plants; owned list stays server Garden OS', () => {
+  const empty = manualCanvasAddPlantsPolicy({ currentPlants: [], plantLayers: [] });
+  assert.equal(empty.showAddPlants, true);
+  assert.equal(empty.hideWhenEmpty, false);
+  assert.equal(empty.designPlacementCount, 0);
+  assert.equal(empty.counterMeansDesignPlacementsOnly, true);
+  assert.equal(empty.paidAiCalls, 0);
+  assert.equal(manualCanvasAddPlantsPolicy({ currentPlantCount: 0, designPlacementCount: 0 }).showAddPlants, true);
+
+  const gd = gdSrc();
+  assert.match(gd, /function ensureAddPlantsCard/);
+  assert.match(gd, /function ensureDesignPlantsPanelVisible/);
+  assert.match(gd, /function gdRetryOwnedPlants/);
+  const drawer = gd.slice(gd.indexOf('function renderPlantsDrawer'), gd.indexOf('function togglePlant'));
+  assert.match(drawer, /ensureAddPlantsCard\(\)/);
+  assert.doesNotMatch(drawer, /if \(currentPlants\.length/);
+  const showFn = gd.slice(gd.indexOf('function showPlants'), gd.indexOf('const plantImgCache'));
+  assert.match(showFn, /ensureDesignPlantsPanelVisible\(\)/);
+  assert.doesNotMatch(showFn, /if \(currentPlants\.length > 0\) \{\s*ensure/);
+  const refreshFn = gd.slice(gd.indexOf('function gdRefreshOwnedGardenOption'), gd.indexOf('function showApmOwned'));
+  assert.match(refreshFn, /ensureDesignPlantsPanelVisible\(\)/);
+  assert.match(refreshFn, /Retry/);
+  assert.match(gd, /function openAddPlantModal/);
+  assert.match(gd, /From My Garden/);
+  assert.match(gd, /Plants placed/);
+  assert.match(gd, /in this design/);
+  assert.doesNotMatch(gd, /Plants added<br>to your garden/);
+
+  const session = { user: { id: 'owner-1' } };
+  const localLegacy = [{ name: 'Lavender' }, { name: 'Rosemary' }, { name: 'Jasmine' }];
+  const serverRows = [
+    { id: 'gp-mango', name: 'Mango Tree', profile_slug: 'mango', garden_profile_id: 'garden-moj' },
+    { id: 'gp-banana', name: 'Banana', profile_slug: 'banana', garden_profile_id: 'garden-moj' },
+    { id: 'gp-pineapple', name: 'Pineapple', profile_slug: 'pineapple', garden_profile_id: 'garden-moj' }
+  ];
+  const owned = resolveDesignOwnedPlantsFromGardenOs({
+    session,
+    gardenProfileId: 'garden-moj',
+    serverPlantRows: serverRows,
+    localPlants: localLegacy
+  });
+  assert.equal(owned.fromMyGardenVisible, true);
+  assert.deepEqual(owned.ownedPlants.map((p) => p.name), ['Mango Tree', 'Banana', 'Pineapple']);
+  assert.equal(owned.usedLocalFallback, false);
+  const mango = createOwnedDesignPlacement({
+    gardenProfileId: 'garden-moj',
+    gardenPlantId: 'gp-mango',
+    canonicalSlug: 'mango'
+  });
+  assert.equal(mango.gardenPlantId, 'gp-mango');
+  assert.equal(mango.createsGardenPlant, false);
+  assert.equal(ownedPlacementMustNotInsertGardenPlant(3, 3, 'place-owned'), true);
+  assert.equal(designPaidAiForAction('manual-placement').paidAiCalls, 0);
+  assert.match(gd, /gdRenderAreaSelect/);
+  assert.doesNotMatch(gd, /create table/i);
+  assert.doesNotMatch(appSrc(), /GARDEN_DESIGN_PERSISTENCE_MIGRATION applied/i);
 });
 
 test('no paid network during this suite', () => {
