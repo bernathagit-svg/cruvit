@@ -153,7 +153,7 @@ button { cursor: pointer; }
   align-items: center;
   justify-content: flex-end;
   gap: 8px;
-  max-width: min(100vw - 24px, 420px);
+  max-width: min(100vw - 24px, 560px);
 }
 
 .global-app-settings .app-lang-select {
@@ -246,6 +246,39 @@ button { cursor: pointer; }
   opacity: 0.9;
 }
 
+.global-app-settings .app-account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(220px, 42vw);
+}
+
+.global-app-settings .app-account-avatar {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--forest);
+  color: #fffef9;
+  font: 700 10px/22px var(--font-sans);
+  text-align: center;
+  overflow: hidden;
+}
+
+.global-app-settings .app-account-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.global-app-settings .app-account-identity {
+  font: 600 var(--text-xs)/var(--leading-snug) var(--font-sans);
+  color: var(--forest);
+  word-break: break-word;
+  margin-bottom: 8px;
+}
+
 [dir="rtl"] .global-app-settings .app-lang-select {
   background-position: left 14px center;
   padding: 10px 16px 10px 38px;
@@ -269,6 +302,11 @@ button { cursor: pointer; }
     max-width: min(168px, 42vw);
     font-size: var(--text-xs);
     padding: 8px 12px;
+  }
+
+  .global-app-settings .app-account-chip {
+    max-width: min(148px, 36vw);
+    gap: 6px;
   }
 
   [dir="rtl"] .global-app-settings .app-lang-select {

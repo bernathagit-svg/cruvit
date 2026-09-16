@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700;800;900&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20250705a">
+<link rel="stylesheet" href="styles.css?v=20260916a">
 <link rel="stylesheet" href="garden-modes.css?v=20250630">
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
@@ -811,6 +811,16 @@
       <button type="button" class="btn main app-loc-btn" id="appLocApplyBtn">Use this location</button>
       <button type="button" class="btn light app-loc-btn" id="appLocGeoBtn">Use my current location</button>
       <button type="button" class="btn light app-loc-btn app-loc-reset" id="appLocResetBtn">Reset location</button>
+    </div>
+  </div>
+  <div class="app-loc-wrap" id="appAccountWrap" data-auth-state="guest">
+    <button type="button" class="app-loc-chip app-account-chip" id="appAccountChip" data-auth-state="guest" aria-label="Guest. Sign in" aria-haspopup="dialog" aria-expanded="false" aria-controls="appAccountMenu">
+      <span class="app-account-avatar" id="appAccountAvatar" hidden></span>
+      <span id="appAccountChipLabel">Sign in</span>
+    </button>
+    <div class="app-loc-popover hidden" id="appAccountMenu" role="menu" aria-label="Account">
+      <div class="app-account-identity" id="appAccountIdentity" hidden></div>
+      <button type="button" class="btn light app-loc-btn" id="appAccountSignOutBtn" role="menuitem" hidden>Sign out</button>
     </div>
   </div>
   <select class="entry-lang app-lang-select" id="appLangSelect" aria-label="Language"></select>
@@ -8361,7 +8371,9 @@ function buildGardenDesignContextPayload(){
   return {
     type:'cruvit:garden-design-context',
     gardenProfileId:(pd&&typeof pd.getActiveGardenId==='function'&&pd.getActiveGardenId())||null,
-    userId:session&&session.user?session.user.id:null,
+    userId:(window.CruvitGlobalAuthSessionIndicator&&typeof window.CruvitGlobalAuthSessionIndicator.hostUserIdFromSession==='function')
+      ?window.CruvitGlobalAuthSessionIndicator.hostUserIdFromSession(session)
+      :(session&&session.user&&session.user.id?session.user.id:null),
     location:classified,
     suitabilityAccess:suitabilityAccess,
     ownedPlants:getDesignOwnedPlants(),
@@ -9517,7 +9529,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260915b"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260916a"></script>
 <script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913h"></script>
 <script type="module" src="modules/personal-domain/garden-areas-v1-ui.js?v=20260914a"></script>
 <script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>

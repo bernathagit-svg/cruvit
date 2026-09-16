@@ -46,6 +46,7 @@ import {
   assertAreaOwnedByGarden,
   validateAreaName
 } from './garden-areas-v1-contract.js';
+import { presentAuthSessionIndicatorFromDocument } from './global-auth-session-indicator-v1.js';
 import './garden-closed-loop-care-v1-browser.js';
 import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
@@ -160,6 +161,20 @@ function setStatus(text, kind) {
   }
 }
 
+function emitAuthSessionChanged() {
+  presentAuthSessionIndicatorFromDocument(currentSession);
+  try {
+    window.dispatchEvent(new CustomEvent('cruvit:auth-session-changed', {
+      detail: {
+        authenticated: !!(currentSession && currentSession.user),
+        userId: currentSession && currentSession.user ? currentSession.user.id : null
+      }
+    }));
+  } catch {
+    /* ignore */
+  }
+}
+
 function setSignedOutUi() {
   const signedOut = document.getElementById('pdV0SignedOut');
   const signedIn = document.getElementById('pdV0SignedIn');
@@ -167,6 +182,7 @@ function setSignedOutUi() {
   if (signedIn) signedIn.hidden = true;
   const chip = document.getElementById('pdV0AccountChip');
   if (chip) chip.textContent = 'Sign in';
+  emitAuthSessionChanged();
 }
 
 function setSignedInUi(email) {
@@ -178,6 +194,7 @@ function setSignedInUi(email) {
   if (emailEl) emailEl.textContent = email || '';
   const chip = document.getElementById('pdV0AccountChip');
   if (chip) chip.textContent = email ? email.split('@')[0] : 'Account';
+  emitAuthSessionChanged();
 }
 
 function getStoredActiveGardenId() {
@@ -1190,6 +1207,7 @@ async function signOut() {
   clearAuthenticatedHydratedTasks();
   ownedGardensCache = [];
   setStoredActiveGardenId('');
+  currentSession = null;
   if (!supabase) {
     setSignedOutUi();
     renderGardenProfileList([]);
