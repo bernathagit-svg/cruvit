@@ -8,6 +8,7 @@
 
 import { GARDEN_SOURCE_MODULES, GARDEN_EVENT_TYPES } from '../personal-domain/garden-os-spine-v1-contract.js';
 import {
+  DESIGN_ASSET_FALLBACK,
   resolveManifestKeyToCanonical
 } from './garden-design-asset-registry-v1.js';
 
@@ -535,6 +536,42 @@ export function ownedPlacementMustNotInsertGardenPlant(beforeCount, afterCount, 
   return Number(beforeCount) === Number(afterCount);
 }
 
+export function resolveOwnedPlacementAreaId(input = {}) {
+  if (input.userChangedArea === true) return asText(input.designLevelAreaId) || null;
+  if (input.kind === DESIGN_PLANT_KIND.OWNED || input.gardenPlantId) {
+    return asText(input.ownedAreaId || input.areaId) || null;
+  }
+  return asText(input.areaId || input.designLevelAreaId) || null;
+}
+
+/** Missing approved cutouts must still render a visible, draggable placeholder. */
+export function resolveOwnedPlacementVisual(input = {}) {
+  const visualReady = input.visualReady === true && !!(input.url || (input.urlCandidates && input.urlCandidates.length));
+  const canonicalSlug = slugify(input.canonicalSlug);
+  return {
+    canonicalSlug,
+    renderVisible: true,
+    draggable: true,
+    resizable: true,
+    deletable: true,
+    duplicateVisualAllowed: true,
+    visualReady,
+    fallback: visualReady ? (input.fallback || null) : DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER,
+    usedWebImage: false,
+    substitutedSpecies: false,
+    generateOnRender: false,
+    paidAiCalls: 0
+  };
+}
+
+export function designPlacementCountFromLayers(plantLayers) {
+  return Array.isArray(plantLayers) ? plantLayers.length : 0;
+}
+
+export function ownedInventoryMustNotAutoPlace(ownedCount, placementCount) {
+  return Number(ownedCount) > 0 && Number(placementCount) === 0;
+}
+
 /** Empty or populated design canvas must always expose Add plants. */
 export function manualCanvasAddPlantsPolicy(input = {}) {
   const designPlacementCount = Array.isArray(input.plantLayers)
@@ -678,6 +715,10 @@ const api = {
   designPaidAiForAction,
   resolveDesignOwnedPlantsFromGardenOs,
   ownedPlacementMustNotInsertGardenPlant,
+  resolveOwnedPlacementAreaId,
+  resolveOwnedPlacementVisual,
+  designPlacementCountFromLayers,
+  ownedInventoryMustNotAutoPlace,
   manualCanvasAddPlantsPolicy,
   assertSourcePhotoImmutable,
   designPersistenceKey,

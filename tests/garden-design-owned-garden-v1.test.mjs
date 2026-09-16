@@ -24,6 +24,10 @@ import {
   createOwnedDesignPlacement,
   resolveDesignOwnedPlantsFromGardenOs,
   ownedPlacementMustNotInsertGardenPlant,
+  resolveOwnedPlacementAreaId,
+  resolveOwnedPlacementVisual,
+  designPlacementCountFromLayers,
+  ownedInventoryMustNotAutoPlace,
   manualCanvasAddPlantsPolicy,
   createProposedDesignPlacement,
   duplicateDesignPlacement,
@@ -722,6 +726,101 @@ test('empty manual canvas always shows Add plants; owned list stays server Garde
   assert.equal(ownedPlacementMustNotInsertGardenPlant(3, 3, 'place-owned'), true);
   assert.equal(designPaidAiForAction('manual-placement').paidAiCalls, 0);
   assert.match(gd, /gdRenderAreaSelect/);
+  assert.doesNotMatch(gd, /create table/i);
+  assert.doesNotMatch(appSrc(), /GARDEN_DESIGN_PERSISTENCE_MIGRATION applied/i);
+});
+
+test('owned placement missing cutout stays visible; count is plantLayers only', () => {
+  const mangoId = '5fdd5d4c-adbf-4451-a784-2e2a7d271662';
+  const patioId = 'b394f661-0edd-4740-a04b-8bcc420590c9';
+  const owned = resolveDesignOwnedPlantsFromGardenOs({
+    session: { user: { id: 'owner-1' } },
+    gardenProfileId: 'garden-moj',
+    serverPlantRows: [
+      { id: mangoId, name: 'Mango Tree', profile_slug: 'mango', garden_profile_id: 'garden-moj', garden_area_id: patioId },
+      { id: 'gp-banana', name: 'Banana', profile_slug: 'banana', garden_profile_id: 'garden-moj' },
+      { id: 'gp-pineapple', name: 'Pineapple', profile_slug: 'pineapple', garden_profile_id: 'garden-moj' }
+    ],
+    localPlants: [{ name: 'Lavender' }]
+  });
+  assert.equal(owned.ownedPlants.length, 3);
+  assert.equal(ownedInventoryMustNotAutoPlace(owned.ownedPlants.length, 0), true);
+  assert.equal(designPlacementCountFromLayers([]), 0);
+
+  const mango = createOwnedDesignPlacement({
+    gardenProfileId: 'garden-moj',
+    gardenPlantId: mangoId,
+    canonicalSlug: 'mango',
+    areaId: patioId,
+    x: 0.15,
+    y: 0.78
+  });
+  assert.equal(mango.gardenPlantId, mangoId);
+  assert.equal(mango.canonicalSlug, 'mango');
+  assert.equal(mango.createsGardenPlant, false);
+  assert.equal(mango.areaId, patioId);
+  assert.equal(designPlacementCountFromLayers([mango]), 1);
+
+  const areaKept = resolveOwnedPlacementAreaId({
+    kind: 'owned',
+    gardenPlantId: mangoId,
+    ownedAreaId: patioId,
+    designLevelAreaId: null,
+    userChangedArea: false
+  });
+  assert.equal(areaKept, patioId);
+
+  const mangoAsset = resolveDesignAsset({ canonicalSlug: 'mango', growthStage: 'mature' }, assetIndex);
+  assert.equal(mangoAsset.visualReady, false);
+  assert.equal(mangoAsset.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(mangoAsset.substitutedSpecies, false);
+  assert.equal(mangoAsset.usedWebImage, false);
+  assert.equal(mangoAsset.generateOnRender, false);
+  const mangoVisual = resolveOwnedPlacementVisual({
+    canonicalSlug: 'mango',
+    visualReady: mangoAsset.visualReady,
+    url: mangoAsset.url
+  });
+  assert.equal(mangoVisual.renderVisible, true);
+  assert.equal(mangoVisual.draggable, true);
+  assert.equal(mangoVisual.resizable, true);
+  assert.equal(mangoVisual.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(mangoVisual.usedWebImage, false);
+  assert.equal(mangoVisual.paidAiCalls, 0);
+
+  const olive = resolveDesignAsset({ canonicalSlug: 'olive', growthStage: 'mature' }, assetIndex);
+  assert.equal(olive.visualReady, true);
+  assert.ok(olive.url);
+  const oliveVisual = resolveOwnedPlacementVisual({
+    canonicalSlug: 'olive',
+    visualReady: olive.visualReady,
+    url: olive.url,
+    fallback: olive.fallback
+  });
+  assert.equal(oliveVisual.visualReady, true);
+  assert.notEqual(oliveVisual.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+
+  const dup = duplicateDesignPlacement(mango);
+  assert.equal(dup.gardenPlantId, mangoId);
+  assert.equal(dup.createsGardenPlant, false);
+  const counts = ownedPlacementOwnershipCount([mango, dup], mangoId);
+  assert.equal(counts.visualCount, 2);
+  assert.equal(counts.ownershipRecords, 1);
+  assert.equal(counts.duplicateOwnership, false);
+  assert.equal(ownedPlacementMustNotInsertGardenPlant(3, 3, 'place-owned'), true);
+
+  const gd = gdSrc();
+  assert.match(gd, /function gdBuildHonestPlaceholderHtml/);
+  assert.match(gd, /function gdUpsertPlacedPlantCard/);
+  assert.match(gd, /function gdDesignPlacementCount/);
+  assert.match(gd, /data-fallback="honest-placeholder"/);
+  assert.match(gd, /gdDesignPlacementCount\(\)/);
+  assert.doesNotMatch(gd, /showPlants\(gdOwnedPlantsFromContext/);
+  assert.doesNotMatch(gd, /showPlants\(owned/);
+  assert.doesNotMatch(gd, /if \(!resolved\.visualReady && !gdShouldRenderSvgPlaceholders\(\)\) \{[\s\S]{0,80}aria-hidden="true"/);
+  assert.doesNotMatch(gd.slice(gd.indexOf('function gdBuildPlantLayerVisualInner'), gd.indexOf('function gdOnPlantCutoutError')), /wikipedia/i);
+  assert.match(gd, /countLayersForPlant\(p\) === 0/);
+  assert.equal(designPaidAiForAction('place-owned').paidAiCalls, 0);
   assert.doesNotMatch(gd, /create table/i);
   assert.doesNotMatch(appSrc(), /GARDEN_DESIGN_PERSISTENCE_MIGRATION applied/i);
 });
