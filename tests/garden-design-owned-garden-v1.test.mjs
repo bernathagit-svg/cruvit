@@ -183,6 +183,7 @@ test('B/C: owned plant keeps garden_plant_id and canonical slug', () => {
   assert.equal(owned.gardenPlantId, 'gp_mango_1');
   assert.equal(owned.canonicalSlug, 'mango');
   assert.equal(owned.createsGardenPlant, false);
+  assert.notEqual(owned.growthStage, 'mature');
   const ident = resolveDesignCanonicalIdentity({ name: 'Mango Tree', slug: 'mango' }, { catalog, aliasMaps });
   assert.equal(ident.canonicalSlug, 'mango');
   assert.equal(ident.inferredCultivar, false);
@@ -368,6 +369,7 @@ test('alias / manifest key collapse onto canonical identity', () => {
 });
 
 test('variant policy is trait-based, not a 36-image cartesian product', () => {
+  assert.equal(cartesianVariantCount(['young', 'intermediate', 'mature'], ['spring', 'summer', 'autumn', 'winter'], ['vegetative', 'flowering', 'fruiting', 'dormant']), 48);
   assert.equal(cartesianVariantCount(['young', 'intermediate', 'mature'], ['spring', 'summer', 'autumn', 'winter'], ['vegetative', 'flowering', 'fruiting']), 36);
   const apple = catalog.find((p) => p.slug === 'apple');
   const applePlan = requiredDesignVariantRoles(apple);
@@ -382,7 +384,8 @@ test('variant policy is trait-based, not a 36-image cartesian product', () => {
   assert.equal(palm.form, DESIGN_GROWTH_FORMS.PALM_STRUCTURAL_EVERGREEN);
   assert.ok(palm.roles.some((r) => r.growthStage === 'intermediate'));
   const annual = requiredDesignVariantRoles(catalog.find((p) => p.slug === 'basil'));
-  assert.equal(annual.form, DESIGN_GROWTH_FORMS.ANNUAL_VEGETABLE);
+  assert.notEqual(annual.visualForm, 'annual');
+  assert.equal(annual.lifecycle, 'annual');
   const policySrc = fs.readFileSync(
     path.join(ROOT, 'modules', 'garden-design', 'garden-design-variant-policy-v1.js'),
     'utf8'
@@ -448,6 +451,8 @@ test('coverage audit: current Design-enabled set is olive-only; no mass wave', (
   assert.equal(coverage.massGenerationStarted, false);
   assert.equal(DESIGN_ASSET_PRODUCTION_PIPELINE.autonomousGeneration, false);
   assert.equal(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.fullCatalogRequired, false);
+  assert.equal(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.arbitraryPlantCountForbidden, true);
+  assert.deepEqual(CORE_FREEZE_MINIMUM_DESIGN_COVERAGE.proposedLaunchCanonicalSlugs, []);
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
   const ready = Object.values(manifest.plants || {}).filter((p) => {
     const v = p.variants && p.variants[p.defaultVariant];
@@ -460,6 +465,7 @@ test('host and iframe wire Garden OS without a second catalog or auto-own', () =
   const app = appSrc();
   const gd = gdSrc();
   assert.match(app, /garden-design-owned-garden-v1\.js/);
+  assert.match(app, /garden-design-variant-selection-policy-v1\.js/);
   assert.match(app, /openGardenDesign/);
   assert.match(app, /cruvit:garden-design-context/);
   assert.match(app, /cruvit:garden-design-owned-plants/);
@@ -482,6 +488,9 @@ test('host and iframe wire Garden OS without a second catalog or auto-own', () =
   assert.doesNotMatch(gd, /create table/i);
   assert.doesNotMatch(app, /GARDEN_DESIGN_PERSISTENCE_MIGRATION applied/i);
   assert.doesNotMatch(gd, /supabase\.from\(['"]garden_plants['"]\)/);
+  assert.doesNotMatch(gd, /supabase\.from\(['"]garden_designs['"]\)/);
+  assert.doesNotMatch(gd, /createClient\s*\(/);
+  assert.doesNotMatch(gd, /garden-design-server-persistence-v1/);
 });
 
 test('A/B: Mojstrana trusted context is honest; missing location stays UNKNOWN', () => {

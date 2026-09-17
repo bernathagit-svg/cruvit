@@ -8546,6 +8546,57 @@ async function commitDesignProposalToGarden(payload){
   };
 }
 
+let gardenDesignHostPersistence=null;
+function getGardenDesignHostPersistence(){
+  const api=window.CruvitGardenDesignServerPersistence;
+  const pd=window.cruvitPersonalDomainV0;
+  if(!api||typeof api.createGardenDesignHostPersistence!=='function'||!pd) return null;
+  if(gardenDesignHostPersistence) return gardenDesignHostPersistence;
+  gardenDesignHostPersistence=api.createGardenDesignHostPersistence({
+    getSupabase:function(){ return pd.getSupabaseClient?pd.getSupabaseClient():null; },
+    getSessionUserId:function(){
+      const session=pd.getSession?pd.getSession():null;
+      return session&&session.user&&session.user.id?session.user.id:null;
+    },
+    getActiveGardenId:function(){ return pd.getActiveGardenId?pd.getActiveGardenId():null; },
+    getOwnedPlants:function(){ return getDesignOwnedPlants(); },
+    listOwnedPlantRows:function(){
+      return pd.listPlantsForActiveGarden?pd.listPlantsForActiveGarden():Promise.resolve([]);
+    }
+  });
+  return gardenDesignHostPersistence;
+}
+
+function gardenDesignPersistResultType(requestType){
+  if(requestType==='cruvit:garden-design-load-design') return 'cruvit:garden-design-load-result';
+  if(requestType==='cruvit:garden-design-save-placement') return 'cruvit:garden-design-save-placement-result';
+  if(requestType==='cruvit:garden-design-update-placement') return 'cruvit:garden-design-update-placement-result';
+  if(requestType==='cruvit:garden-design-delete-placement') return 'cruvit:garden-design-delete-placement-result';
+  if(requestType==='cruvit:garden-design-save-design') return 'cruvit:garden-design-save-design-result';
+  if(requestType==='cruvit:garden-design-save-source-media') return 'cruvit:garden-design-save-source-media-result';
+  return null;
+}
+
+function handleGardenDesignPersistenceRequest(d){
+  const resultType=gardenDesignPersistResultType(d&&d.type);
+  if(!resultType) return false;
+  const persist=getGardenDesignHostPersistence();
+  const payload=Object.assign({},d||{});
+  delete payload.userId;
+  delete payload.user_id;
+  const done=function(res){
+    gardenDesignPostToFrame(Object.assign({type:resultType,requestId:d.requestId||null,paidAiCalls:0},res||{ok:false,code:'PERSISTENCE_UNAVAILABLE'}));
+  };
+  if(!persist){
+    done({ok:false,code:'PERSISTENCE_UNAVAILABLE',keepLocalCanvas:true,paidAiCalls:0});
+    return true;
+  }
+  persist.handle(d.type,payload).then(done).catch(function(err){
+    done({ok:false,code:'PERSISTENCE_FAILED',error:err&&err.message,keepLocalCanvas:true,paidAiCalls:0});
+  });
+  return true;
+}
+
 window.commitDesignProposalToGarden=commitDesignProposalToGarden;
 window.addEventListener('message',function(ev){
   const api=window.CruvitGardenDesignOwnedGarden;
@@ -8575,12 +8626,32 @@ window.addEventListener('message',function(ev){
   }
   if(d.type==='cruvit:garden-design-commit-proposal'){
     commitDesignProposalToGarden(d).then(function(res){
-      gardenDesignPostToFrame(Object.assign({type:'cruvit:garden-design-commit-result',requestId:d.requestId||null},res));
+      const persist=getGardenDesignHostPersistence();
+      const after=function(finalRes){
+        gardenDesignPostToFrame(Object.assign({type:'cruvit:garden-design-commit-result',requestId:d.requestId||null},finalRes));
+      };
+      if(res&&res.ok&&persist&&d.placement&&(d.placement.clientInstanceId||d.placement.id)){
+        persist.savePlacement({
+          designClientInstanceId:d.designClientInstanceId,
+          gardenAreaId:d.areaId||null,
+          placement:Object.assign({},d.placement,{
+            clientInstanceId:d.placement.clientInstanceId||d.placement.id,
+            kind:'owned',
+            gardenPlantId:res.gardenPlantId,
+            canonicalSlug:res.canonicalSlug
+          })
+        }).then(function(saved){
+          after(Object.assign({},res,{revision:saved&&saved.revision,designId:saved&&saved.designId,placementUpdated:!!(saved&&saved.ok)}));
+        }).catch(function(){ after(res); });
+        return;
+      }
+      after(res);
     }).catch(function(err){
       console.warn('Garden Design commit failed',err);
     });
     return;
   }
+  if(handleGardenDesignPersistenceRequest(d)) return;
   if(d.type==='cruvit:garden-design-suitability-request'){
     const evaluation=evaluateDesignGardenSuitability(d.canonicalSlug,d.area);
     gardenDesignPostToFrame({
@@ -8600,7 +8671,7 @@ function openGardenDesign(){
     frame.className='gd-frame';
     frame.title='Garden Design Studio';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
-    frame.src='modules/garden-design/index.html?v=20260916d';
+    frame.src='modules/garden-design/index.html?v=20260917b';
     root.appendChild(frame);
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
@@ -9586,6 +9657,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-variant-policy-v1.js?v=20260917a"></script>
 <script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916d"></script>
 <script type="module" src="modules/garden-design/garden-design-variant-selection-policy-v1.js?v=20260917a"></script>
-<script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260916d"></script>
+<script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260917b"></script>
+<script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260917b"></script>
 </body>
 </html>

@@ -1135,7 +1135,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
       <div id="gdLayerToolbar" class="gd-layer-toolbar">
         <span class="gd-layer-toolbar-name" id="gdLayerToolbarName">Select a plant</span>
         <button type="button" class="gd-layer-btn" onclick="adjustPlantLayerScale(-0.1)" aria-label="Smaller">−</button>
-        <input type="range" class="gd-layer-scale-slider" id="gdLayerScaleSlider" min="0.35" max="2.2" step="0.05" value="1" oninput="setPlantLayerScale(parseFloat(this.value))"/>
+        <input type="range" class="gd-layer-scale-slider" id="gdLayerScaleSlider" min="0.35" max="2.2" step="0.05" value="1" oninput="gdPreviewPlantLayerScale(parseFloat(this.value))" onchange="setPlantLayerScale(parseFloat(this.value))"/>
         <button type="button" class="gd-layer-btn" onclick="adjustPlantLayerScale(0.1)" aria-label="Larger">+</button>
         <button type="button" class="gd-layer-btn danger" onclick="deleteSelectedPlantLayer()">Remove</button>
       </div>
@@ -1167,6 +1167,7 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
       <!-- Plants list toggle button -->
       <!-- Plants section — always visible, no toggle -->
       <div id="gdAreaSelectHost" class="field-group" style="display:none;margin-bottom:12px"></div>
+      <div id="gdPersistNote" class="gd-persist-note" style="display:none;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(61,138,80,.28);border-radius:10px;background:rgba(255,255,255,.72);color:#1b4332;font-size:13px"></div>
       <div class="pc-plants-section" id="plantsSection">
         <div class="pc-left-panel">
           <div class="pc-left-logo">
@@ -1241,7 +1242,15 @@ let gdLayerIdCounter = 0;
 let gdOwnedGardenContext = null;
 let gdSelectedAreaId = null;
 let gdDesignPersistStore = null;
+let gdServerRefStore = null;
 let gdCommitWaiters = {};
+let gdHydratingFromServer = false;
+let gdHostPersistTimer = null;
+let gdPendingHostOps = [];
+let gdDesignClientInstanceId = null;
+let gdServerDesignMeta = null;
+let gdPersistDebounceMs = 600;
+let gdLastLoadKey = null;
 let gdSuitabilityWaiters = {};
 let gdOpenPlantPopupIdx = null;
 let gdDesignAssetIndex = null;
@@ -1439,6 +1448,14 @@ function handlePhoto(e) {
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
+  try {
+    gdPostToHost({
+      type: 'cruvit:garden-design-save-source-media',
+      designClientInstanceId: gdEnsureDesignClientInstanceId(),
+      gardenAreaId: gdSelectedAreaId,
+      file: file
+    });
+  } catch (err) {}
 }
 
 // ── Plants list state ──
@@ -1624,44 +1641,377 @@ function gdNormalizeIncomingPlant(p) {
     gardenPlantId: p.gardenPlantId || null,
     gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || null,
     areaId: areaId || null,
-    growthStage: p.growthStage || 'mature',
+    growthStage: p.growthStage || (owned ? 'unspecified' : 'young'),
     targetGrowthStage: p.targetGrowthStage || 'mature',
     season: p.season || 'unknown',
     phenology: p.phenology || 'vegetative'
   });
 }
 
-function gdPersistDesignSnapshot() {
+function gdSetPersistNote(text) {
+  const el = document.getElementById('gdPersistNote');
+  if (!el) return;
+  if (!text) {
+    el.style.display = 'none';
+    el.textContent = '';
+    return;
+  }
+  el.style.display = 'block';
+  el.textContent = text;
+}
+
+function gdEnsureLocalStores() {
   const api = gdOwnedGardenApi();
-  if (!api || !gdOwnedGardenContext) return;
-  if (api.designPaidAiForAction) api.designPaidAiForAction('drag');
+  if (!api) return null;
   if (!gdDesignPersistStore) gdDesignPersistStore = api.createLocalDesignPersistence(window.localStorage);
+  if (!gdServerRefStore && typeof api.createServerDesignRefPersistence === 'function') {
+    gdServerRefStore = api.createServerDesignRefPersistence(window.localStorage);
+  }
+  return api;
+}
+
+function gdEnsureDesignClientInstanceId() {
+  const api = gdEnsureLocalStores();
+  if (gdDesignClientInstanceId) return gdDesignClientInstanceId;
+  if (gdServerDesignMeta && gdServerDesignMeta.designClientInstanceId) {
+    gdDesignClientInstanceId = gdServerDesignMeta.designClientInstanceId;
+    return gdDesignClientInstanceId;
+  }
+  if (api && gdOwnedGardenContext && gdServerRefStore) {
+    const ref = gdServerRefStore.load({
+      userId: gdOwnedGardenContext.userId,
+      gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+      areaId: gdSelectedAreaId
+    });
+    if (ref && ref.clientInstanceId) {
+      gdDesignClientInstanceId = ref.clientInstanceId;
+      return gdDesignClientInstanceId;
+    }
+  }
+  gdDesignClientInstanceId = (api && typeof api.createDesignClientInstanceId === 'function')
+    ? api.createDesignClientInstanceId()
+    : ('gd_d_' + Date.now());
+  if (gdServerRefStore && gdOwnedGardenContext) {
+    gdServerRefStore.save({
+      userId: gdOwnedGardenContext.userId,
+      gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+      areaId: gdSelectedAreaId,
+      clientInstanceId: gdDesignClientInstanceId
+    });
+  }
+  return gdDesignClientInstanceId;
+}
+
+function gdLayerSnapshotList() {
+  return plantLayers.map(function(l) {
+    return {
+      id: l.id,
+      kind: l.kind,
+      status: l.status,
+      canonicalSlug: l.canonicalSlug,
+      gardenPlantId: l.gardenPlantId,
+      areaId: l.areaId,
+      growthStage: l.growthStage,
+      targetGrowthStage: l.targetGrowthStage,
+      season: l.season,
+      phenology: l.phenology,
+      x: l.x,
+      y: l.y,
+      scale: l.scale,
+      rotation: l.rotation,
+      zIndex: l.zIndex,
+      name: l.name,
+      species: l.species
+    };
+  });
+}
+
+function gdWriteLocalCache(durableDatabase) {
+  const api = gdEnsureLocalStores();
+  if (!api || !gdOwnedGardenContext) return;
   gdDesignPersistStore.save({
     userId: gdOwnedGardenContext.userId,
     gardenProfileId: gdOwnedGardenContext.gardenProfileId,
     areaId: gdSelectedAreaId,
-    placements: plantLayers.map(function(l) {
-      return {
-        id: l.id,
-        kind: l.kind,
-        status: l.status,
-        canonicalSlug: l.canonicalSlug,
-        gardenPlantId: l.gardenPlantId,
-        areaId: l.areaId,
-        growthStage: l.growthStage,
-        targetGrowthStage: l.targetGrowthStage,
-        season: l.season,
-        phenology: l.phenology,
-        x: l.x,
-        y: l.y,
-        scale: l.scale,
-        rotation: l.rotation,
-        zIndex: l.zIndex,
-        name: l.name,
-        species: l.species
-      };
-    })
+    placements: gdLayerSnapshotList(),
+    durableDatabase: durableDatabase === true,
+    designId: gdServerDesignMeta && gdServerDesignMeta.designId,
+    designClientInstanceId: gdEnsureDesignClientInstanceId(),
+    revision: gdServerDesignMeta && gdServerDesignMeta.revision
   });
+}
+
+function gdHostPlacementPayload(layer) {
+  const api = gdOwnedGardenApi();
+  if (api && typeof api.mapLayerToHostPlacementPayload === 'function') {
+    return api.mapLayerToHostPlacementPayload(layer);
+  }
+  return {
+    clientInstanceId: layer.id,
+    kind: layer.kind,
+    gardenPlantId: layer.gardenPlantId || null,
+    canonicalSlug: layer.canonicalSlug || null,
+    gardenAreaId: layer.areaId || null,
+    x: layer.x,
+    y: layer.y,
+    scale: layer.scale,
+    rotation: layer.rotation,
+    zOrder: layer.zIndex,
+    label: layer.name,
+    scientific: layer.species,
+    growthStage: layer.growthStage,
+    targetGrowthStage: layer.targetGrowthStage,
+    season: layer.season,
+    phenology: layer.phenology
+  };
+}
+
+function gdFlushHostPersist() {
+  gdHostPersistTimer = null;
+  const api = gdOwnedGardenApi();
+  const ops = (api && typeof api.collapseAutosaveOps === 'function')
+    ? api.collapseAutosaveOps(gdPendingHostOps)
+    : gdPendingHostOps.slice();
+  gdPendingHostOps = [];
+  if (!ops.length || gdHydratingFromServer) return;
+  ops.forEach(function(op) {
+    if (op.action === 'delete') {
+      gdPostToHost({
+        type: 'cruvit:garden-design-delete-placement',
+        clientInstanceId: op.clientInstanceId,
+        designClientInstanceId: gdEnsureDesignClientInstanceId(),
+        gardenAreaId: gdSelectedAreaId
+      });
+      return;
+    }
+    const layer = plantLayers.find(function(l) { return l.id === op.clientInstanceId; });
+    if (!layer) return;
+    const type = op.action === 'update' ? 'cruvit:garden-design-update-placement' : 'cruvit:garden-design-save-placement';
+    gdPostToHost({
+      type: type,
+      designClientInstanceId: gdEnsureDesignClientInstanceId(),
+      gardenAreaId: gdSelectedAreaId,
+      placement: gdHostPlacementPayload(layer)
+    });
+  });
+}
+
+function gdScheduleHostPersist(op) {
+  if (gdHydratingFromServer) return;
+  const api = gdOwnedGardenApi();
+  const phase = op && op.phase;
+  if (api && typeof api.shouldWriteOnPointerPhase === 'function' && phase && !api.shouldWriteOnPointerPhase(phase)) {
+    return;
+  }
+  if (phase === 'pointermove') return;
+  gdPendingHostOps.push(op);
+  const wait = (api && api.GD_AUTOSAVE_DEBOUNCE_MS) || gdPersistDebounceMs;
+  if (op && op.action === 'delete') {
+    if (gdHostPersistTimer) {
+      clearTimeout(gdHostPersistTimer);
+      gdHostPersistTimer = null;
+    }
+    gdFlushHostPersist();
+    return;
+  }
+  if (gdHostPersistTimer) clearTimeout(gdHostPersistTimer);
+  gdHostPersistTimer = setTimeout(gdFlushHostPersist, wait);
+}
+
+function gdPersistDesignSnapshot(options) {
+  const opts = options || {};
+  const api = gdOwnedGardenApi();
+  if (!api || !gdOwnedGardenContext) return;
+  if (api.designPaidAiForAction) api.designPaidAiForAction(opts.hostAction === 'create' ? 'place-owned' : 'autosave');
+  gdWriteLocalCache(false);
+  if (opts.skipHost === true || gdHydratingFromServer) return;
+  if (opts.phase === 'pointermove') return;
+  if (opts.deletedClientInstanceId) {
+    gdScheduleHostPersist({ action: 'delete', clientInstanceId: opts.deletedClientInstanceId, phase: 'delete' });
+    return;
+  }
+  if (opts.clientInstanceId) {
+    gdScheduleHostPersist({
+      action: opts.hostAction || 'update',
+      clientInstanceId: opts.clientInstanceId,
+      phase: opts.phase || 'pointerup'
+    });
+    return;
+  }
+  plantLayers.forEach(function(l) {
+    gdScheduleHostPersist({
+      action: opts.hostAction || 'update',
+      clientInstanceId: l.id,
+      phase: opts.phase || 'create'
+    });
+  });
+}
+
+function gdRequestLoadDesign(force) {
+  if (!gdOwnedGardenContext || !gdOwnedGardenContext.gardenProfileId) return;
+  const key = String(gdOwnedGardenContext.gardenProfileId || '') + '|' + (gdSelectedAreaId || 'garden');
+  if (!force && gdLastLoadKey === key) return;
+  gdLastLoadKey = key;
+  const api = gdEnsureLocalStores();
+  const localSnapshot = gdDesignPersistStore
+    ? gdDesignPersistStore.load({
+      userId: gdOwnedGardenContext.userId,
+      gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+      areaId: gdSelectedAreaId
+    })
+    : null;
+  const ref = gdServerRefStore
+    ? gdServerRefStore.load({
+      userId: gdOwnedGardenContext.userId,
+      gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+      areaId: gdSelectedAreaId
+    })
+    : null;
+  gdPostToHost({
+    type: 'cruvit:garden-design-load-design',
+    gardenAreaId: gdSelectedAreaId,
+    cachedDesignId: ref && ref.designId,
+    designClientInstanceId: (ref && ref.clientInstanceId) || gdDesignClientInstanceId,
+    localSnapshot: localSnapshot
+  });
+}
+
+function gdHydrateServerDesign(msg) {
+  const api = gdOwnedGardenApi();
+  gdHydratingFromServer = true;
+  try {
+    gdServerDesignMeta = {
+      designId: msg.designId,
+      designClientInstanceId: msg.designClientInstanceId,
+      revision: msg.revision,
+      gardenAreaId: msg.gardenAreaId || null
+    };
+    gdDesignClientInstanceId = msg.designClientInstanceId || gdDesignClientInstanceId;
+    if (gdServerRefStore && gdOwnedGardenContext) {
+      gdServerRefStore.save({
+        userId: gdOwnedGardenContext.userId,
+        gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+        areaId: gdSelectedAreaId,
+        designId: msg.designId,
+        clientInstanceId: gdDesignClientInstanceId
+      });
+    }
+    const ownedPlants = gdOwnedPlantsFromContext();
+    const layers = [];
+    const placements = Array.isArray(msg.placements) ? msg.placements : [];
+    for (let i = 0; i < placements.length; i++) {
+      const mapped = (api && typeof api.mapServerPlacementToLayer === 'function')
+        ? api.mapServerPlacementToLayer(placements[i], ownedPlants)
+        : { ok: true, layer: Object.assign({ id: placements[i].clientInstanceId }, placements[i]) };
+      if (!mapped.ok) {
+        gdSetPersistNote('This design could not be restored: plant identity on the server does not match My Garden. Nothing was guessed.');
+        return;
+      }
+      const layer = mapped.layer;
+      layer.spriteType = getPlantSpriteType(layer);
+      layer.isTree = layer.spriteType === 'tree';
+      layer.emoji = layer.emoji || '🌿';
+      layers.push(layer);
+    }
+    plantLayers = layers;
+    currentPlants = [];
+    const baseUrl = msg.editorBaseMediaUrl || msg.derivedBaseMediaUrl || msg.sourceMediaUrl || null;
+    if (baseUrl) {
+      photoDataUrl = baseUrl;
+      photoB64 = null;
+      isPhotoMode = true;
+      gdManualPlacementActive = false;
+    } else {
+      photoDataUrl = gdManualPlacementPlotDataUrl();
+      photoB64 = null;
+      isPhotoMode = true;
+      gdManualPlacementActive = true;
+    }
+    finishPhotoOverlayResult({
+      description: '',
+      plants: [],
+      placements: [],
+      manualPlacement: gdManualPlacementActive,
+      skipPersist: true,
+      skipLayerRebuild: true
+    });
+    plantLayers = layers;
+    selectedPlantLayerId = null;
+    layers.forEach(function(layer) {
+      gdUpsertPlacedPlantCard({
+        name: layer.name,
+        latin: layer.species,
+        emoji: '🌿',
+        kind: layer.kind,
+        gardenPlantId: layer.gardenPlantId,
+        gardenProfileId: gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId,
+        canonicalSlug: layer.canonicalSlug,
+        areaId: layer.areaId
+      });
+    });
+    renderPlantLayers();
+    renderPlantsDrawer();
+    gdWriteLocalCache(true);
+  } finally {
+    gdHydratingFromServer = false;
+  }
+}
+
+function gdOnLoadResult(msg) {
+  if (!msg) return;
+  if (msg.code === 'EMPTY_SERVER_DESIGN') {
+    gdServerDesignMeta = null;
+    if (msg.localRestore && msg.localRestore.code === 'LOCAL_DESIGN_RESTORE_AVAILABLE') {
+      gdSetPersistNote('A local draft is available for this garden. It was not imported automatically. Restore will be an explicit step.');
+    } else {
+      gdSetPersistNote('');
+    }
+    return;
+  }
+  if (msg.code === 'MULTIPLE_DESIGNS_REQUIRE_SELECTION') {
+    gdSetPersistNote('Multiple designs exist for this garden context. Choose one in a later Design picker — none was selected automatically.');
+    return;
+  }
+  if (msg.code === 'IDENTITY_INCONSISTENT' || msg.ok === false) {
+    gdSetPersistNote('Garden Design could not load this project safely. Plant identity did not match My Garden.');
+    return;
+  }
+  if (msg.ok && msg.designId) {
+    gdSetPersistNote('');
+    gdHydrateServerDesign(msg);
+  }
+}
+
+function gdOnPersistResult(msg) {
+  if (!msg) return;
+  if (msg.ok) {
+    gdServerDesignMeta = Object.assign({}, gdServerDesignMeta || {}, {
+      designId: msg.designId || (gdServerDesignMeta && gdServerDesignMeta.designId),
+      designClientInstanceId: msg.designClientInstanceId || gdDesignClientInstanceId,
+      revision: msg.revision
+    });
+    if (msg.designClientInstanceId) gdDesignClientInstanceId = msg.designClientInstanceId;
+    if (gdServerRefStore && gdOwnedGardenContext) {
+      gdServerRefStore.save({
+        userId: gdOwnedGardenContext.userId,
+        gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+        areaId: gdSelectedAreaId,
+        designId: gdServerDesignMeta.designId,
+        clientInstanceId: gdDesignClientInstanceId
+      });
+    }
+    gdWriteLocalCache(true);
+    if (msg.sourceMediaUrl) {
+      photoDataUrl = msg.sourceMediaUrl;
+      const img = document.getElementById('imgAfter');
+      if (img && msg.sourceMediaUrl) img.src = msg.sourceMediaUrl;
+    }
+    return;
+  }
+  gdWriteLocalCache(false);
+  if (msg.keepLocalCanvas) {
+    gdSetPersistNote('Could not save to the server just now. Your canvas is unchanged and will retry with the same design.');
+  }
 }
 
 function gdIndexDesignAssetRegistry(registry) {
@@ -1687,6 +2037,7 @@ function gdApplyOwnedGardenContext(ctx) {
   }
   gdRenderAreaSelect();
   gdRefreshOwnedGardenOption();
+  gdRequestLoadDesign();
 }
 
 function gdRenderAreaSelect() {
@@ -1712,7 +2063,14 @@ function gdOnAreaSelect(id) {
   plantLayers.forEach(function(l) {
     if (l.kind === 'proposed') l.areaId = gdSelectedAreaId;
   });
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({ phase: 'change', hostAction: 'update' });
+  gdPostToHost({
+    type: 'cruvit:garden-design-save-design',
+    designClientInstanceId: gdEnsureDesignClientInstanceId(),
+    gardenAreaId: gdSelectedAreaId
+  });
+  gdLastLoadKey = null;
+  gdRequestLoadDesign(true);
 }
 
 function gdOwnedPlantsFromContext() {
@@ -1846,7 +2204,11 @@ function placeOwnedGardenPlant(idx) {
   });
   renderPlantsDrawer();
   ensureDesignPlantsPanelVisible();
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({
+    clientInstanceId: plantLayers[plantLayers.length - 1] && plantLayers[plantLayers.length - 1].id,
+    hostAction: 'create',
+    phase: 'create'
+  });
   closeAddPlantModal();
 }
 
@@ -1864,7 +2226,8 @@ function requestCommitProposedLayer(layer) {
       canonicalSlug: layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug,
       gardenProfileId: layer.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId),
       areaId: layer.areaId || gdSelectedAreaId,
-      placement: { id: layer.id, kind: layer.kind }
+      designClientInstanceId: gdEnsureDesignClientInstanceId(),
+      placement: Object.assign({ id: layer.id, kind: layer.kind }, gdHostPlacementPayload(layer))
     });
   } catch (e) {}
 }
@@ -1883,7 +2246,11 @@ function gdOnCommitResult(msg) {
   }
   renderPlantLayers();
   renderPlantsDrawer();
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({
+    clientInstanceId: layer.id,
+    hostAction: 'update',
+    phase: 'commit'
+  });
   gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' });
 }
 
@@ -1907,6 +2274,12 @@ window.addEventListener('message', function(ev) {
   if (d.type === 'cruvit:garden-design-asset-registry') gdIndexDesignAssetRegistry(d.designAssetRegistry);
   if (d.type === 'cruvit:garden-design-commit-result') gdOnCommitResult(d);
   if (d.type === 'cruvit:garden-design-suitability-result') gdOnSuitabilityResult(d);
+  if (d.type === 'cruvit:garden-design-load-result') gdOnLoadResult(d);
+  if (d.type === 'cruvit:garden-design-save-placement-result') gdOnPersistResult(d);
+  if (d.type === 'cruvit:garden-design-update-placement-result') gdOnPersistResult(d);
+  if (d.type === 'cruvit:garden-design-delete-placement-result') gdOnPersistResult(d);
+  if (d.type === 'cruvit:garden-design-save-design-result') gdOnPersistResult(d);
+  if (d.type === 'cruvit:garden-design-save-source-media-result') gdOnPersistResult(d);
 });
 
 function gdRequestSuitabilityForPlant(plant, idx) {
@@ -1958,7 +2331,7 @@ function createPlantLayerFromPlant(p, x, y, zIndex) {
       : (p.areaId || gdSelectedAreaId || null),
     source: 'garden-design',
     status: p.gardenPlantId ? 'owned' : 'proposed',
-    growthStage: p.growthStage || 'mature',
+    growthStage: p.growthStage || ((p.kind === 'owned' || p.gardenPlantId) ? 'unspecified' : 'young'),
     targetGrowthStage: p.targetGrowthStage || 'mature',
     season: p.season || 'unknown',
     phenology: p.phenology || 'vegetative',
@@ -2092,17 +2465,19 @@ function finishPhotoOverlayResult(data) {
     descEl.style.display = data.description ? '' : 'none';
   }
 
-  plantLayers = buildPlantLayersFromAnalysis(data.plants, data.placements);
-  selectedPlantLayerId = null;
+  if (!(data && data.skipLayerRebuild)) {
+    plantLayers = buildPlantLayersFromAnalysis(data.plants, data.placements);
+    selectedPlantLayerId = null;
+    currentPlants = [];
+    showPlants(data.plants || []);
+    syncPlantLayersWithPlants();
+  }
   gdAllowSvgPlaceholders = !!(data && data.localPreview) || GD_DEV_PLACEHOLDER_QUERY || GD_IS_LOCAL_ASSET_DEV;
-  currentPlants = [];
   setOverlayPlacementUI(true);
-  showPlants(data.plants || []);
-  syncPlantLayersWithPlants();
   renderPlantLayers();
   renderPlantsDrawer();
   gdPrefetchPlantAssetsIfNeeded();
-  gdPersistDesignSnapshot();
+  if (!(data && data.skipPersist)) gdPersistDesignSnapshot({ phase: 'create', hostAction: 'update' });
   const localNote = document.getElementById('gdLocalPreviewNote');
   if (localNote) localNote.style.display = data.localPreview ? 'block' : 'none';
   gdUpdatePlacementNote();
@@ -2539,10 +2914,11 @@ function onPlantLayerPointerMove(e) {
 
 function onPlantLayerPointerUp(e) {
   if (!gdLayerDrag || gdLayerDrag.pointerId !== e.pointerId) return;
+  const layerId = gdLayerDrag.layerId;
   gdSafeReleasePointerCapture(gdLayerDrag.captureEl, e.pointerId);
   gdLayerDrag = null;
   gdSetLayerDragScrollLock(false);
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({ clientInstanceId: layerId, hostAction: 'update', phase: 'pointerup' });
 }
 
 document.addEventListener('pointermove', onPlantLayerPointerMove, { passive: false });
@@ -2567,11 +2943,20 @@ function updateLayerToolbar() {
   if (slider) slider.value = layer.scale;
 }
 
+function gdPreviewPlantLayerScale(scale) {
+  const layer = getSelectedPlantLayer();
+  if (!layer) return;
+  layer.scale = Math.min(2.2, Math.max(0.35, scale));
+  const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
+  if (el) applyLayerDomTransform(layer, el);
+}
+
 function adjustPlantLayerScale(delta) {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
   layer.scale = Math.min(2.2, Math.max(0.35, layer.scale + delta));
   renderPlantLayers();
+  gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
 }
 
 function setPlantLayerScale(scale) {
@@ -2582,7 +2967,7 @@ function setPlantLayerScale(scale) {
   if (el) applyLayerDomTransform(layer, el);
   const slider = document.getElementById('gdLayerScaleSlider');
   if (slider) slider.value = layer.scale;
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
 }
 
 function deleteSelectedPlantLayer() {
@@ -2595,7 +2980,11 @@ function deleteSelectedPlantLayer() {
     gdRemovePlantCardIfNoLayers(removed.name, removed.species, removed.slug);
   }
   renderPlantsDrawer();
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({
+    deletedClientInstanceId: removed && removed.id,
+    phase: 'delete',
+    hostAction: 'delete'
+  });
 }
 
 function plantMatchesLayer(plant, layer) {
@@ -2673,7 +3062,11 @@ function decrementPlantLayerQuantity(idx) {
     currentPlants.splice(idx, 1);
   }
   renderPlantsDrawer();
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({
+    deletedClientInstanceId: target && target.id,
+    phase: 'delete',
+    hostAction: 'delete'
+  });
 }
 
 function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
@@ -2727,7 +3120,11 @@ function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
   });
   selectedPlantLayerId = plantLayers[plantLayers.length - 1].id;
   renderPlantLayers();
-  gdPersistDesignSnapshot();
+  gdPersistDesignSnapshot({
+    clientInstanceId: selectedPlantLayerId,
+    hostAction: 'create',
+    phase: 'create'
+  });
 }
 
 function resetPlantLayerState() {
@@ -4741,6 +5138,11 @@ function openManualOwnedPlantPlacement() {
   const api = gdOwnedGardenApi();
   if (api && typeof api.designPaidAiForAction === 'function') api.designPaidAiForAction('manual-placement');
   try { gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' }); } catch (e) {}
+  if (gdServerDesignMeta && Array.isArray(plantLayers) && plantLayers.length) {
+    show('s-result');
+    setOverlayPlacementUI(true);
+    return;
+  }
   closePlantPopup(null);
   if (typeof setFlowPulse === 'function') setFlowPulse(null);
   resetPlantLayerState();
@@ -4944,7 +5346,7 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-asset-registry-v1.js?v=20260916d';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
-    import './garden-design-owned-garden-v1.js?v=20260916d';
+    import './garden-design-owned-garden-v1.js?v=20260917b';
     try {
       const api = window.CruvitGardenDesignOwnedGarden;
       const origin = api && typeof api.gardenDesignPostTargetOrigin === 'function'

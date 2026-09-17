@@ -11,6 +11,10 @@ import {
   DESIGN_ASSET_FALLBACK,
   resolveManifestKeyToCanonical
 } from './garden-design-asset-registry-v1.js';
+import {
+  ownedPlacementVisualDefaults,
+  proposedPlacementVisualDefaults
+} from './garden-design-variant-selection-policy-v1.js';
 
 export const GARDEN_DESIGN_OWNED_GARDEN_VERSION = '1.0.0';
 
@@ -37,15 +41,34 @@ export const GD_HOST_TO_DESIGN = Object.freeze({
   AREAS: 'cruvit:garden-design-areas',
   ASSET_REGISTRY: 'cruvit:garden-design-asset-registry',
   COMMIT_RESULT: 'cruvit:garden-design-commit-result',
-  SUITABILITY_RESULT: 'cruvit:garden-design-suitability-result'
+  SUITABILITY_RESULT: 'cruvit:garden-design-suitability-result',
+  LOAD_RESULT: 'cruvit:garden-design-load-result',
+  SAVE_PLACEMENT_RESULT: 'cruvit:garden-design-save-placement-result',
+  UPDATE_PLACEMENT_RESULT: 'cruvit:garden-design-update-placement-result',
+  DELETE_PLACEMENT_RESULT: 'cruvit:garden-design-delete-placement-result',
+  SAVE_DESIGN_RESULT: 'cruvit:garden-design-save-design-result',
+  SAVE_SOURCE_MEDIA_RESULT: 'cruvit:garden-design-save-source-media-result'
 });
 
 export const GD_DESIGN_TO_HOST = Object.freeze({
   READY: 'cruvit:garden-design-ready',
   SUITABILITY_REQUEST: 'cruvit:garden-design-suitability-request',
   COMMIT_PROPOSAL: 'cruvit:garden-design-commit-proposal',
-  REFRESH_OWNED: 'cruvit:garden-design-refresh-owned-plants'
+  REFRESH_OWNED: 'cruvit:garden-design-refresh-owned-plants',
+  LOAD_DESIGN: 'cruvit:garden-design-load-design',
+  SAVE_PLACEMENT: 'cruvit:garden-design-save-placement',
+  UPDATE_PLACEMENT: 'cruvit:garden-design-update-placement',
+  DELETE_PLACEMENT: 'cruvit:garden-design-delete-placement',
+  SAVE_DESIGN: 'cruvit:garden-design-save-design',
+  SAVE_SOURCE_MEDIA: 'cruvit:garden-design-save-source-media'
 });
+
+export const GD_AUTOSAVE_DEBOUNCE_MS = 600;
+export const GD_SERVER_REF_KEY_PREFIX = 'cruvit_gd_server_ref_v1';
+export const EMPTY_SERVER_DESIGN = 'EMPTY_SERVER_DESIGN';
+export const MULTIPLE_DESIGNS_REQUIRE_SELECTION = 'MULTIPLE_DESIGNS_REQUIRE_SELECTION';
+export const LOCAL_DESIGN_RESTORE_AVAILABLE = 'LOCAL_DESIGN_RESTORE_AVAILABLE';
+export const IDENTITY_INCONSISTENT = 'IDENTITY_INCONSISTENT';
 
 const GD_BRIDGE_TYPES = new Set([
   ...Object.values(GD_HOST_TO_DESIGN),
@@ -121,6 +144,11 @@ export const DESIGN_OWNED_VISUAL_POLICY = Object.freeze({
 });
 
 export const WESTERN_GALILEE_DEFAULT_LABEL = 'Western Galilee, Israel';
+
+function stageKnownFromInput(input, visual) {
+  const stage = asText(input.growthStage || visual.growthStage).toLowerCase();
+  return stage === 'young' || stage === 'intermediate' || stage === 'mature';
+}
 
 function asText(value) {
   return String(value == null ? '' : value).trim();
@@ -257,6 +285,7 @@ export function createOwnedDesignPlacement(input = {}) {
   if (!gardenProfileId) throw new Error('garden_profile_id is required');
   if (!gardenPlantId) throw new Error('garden_plant_id is required');
   if (!canonicalSlug) throw new Error('canonical slug is required');
+  const visual = ownedPlacementVisualDefaults();
   return {
     kind: DESIGN_PLANT_KIND.OWNED,
     status: DESIGN_PLACEMENT_STATUS.OWNED,
@@ -265,10 +294,12 @@ export function createOwnedDesignPlacement(input = {}) {
     canonicalSlug,
     areaId: asText(input.areaId) || null,
     source: DESIGN_SOURCE_TOKEN,
-    growthStage: input.growthStage || 'mature',
-    targetGrowthStage: input.targetGrowthStage || 'mature',
-    season: input.season || 'unknown',
-    phenology: input.phenology || 'vegetative',
+    growthStage: input.growthStage || visual.growthStage,
+    targetGrowthStage: input.targetGrowthStage || visual.targetGrowthStage,
+    season: input.season || visual.season,
+    phenology: input.phenology || visual.phenology,
+    stageKnown: stageKnownFromInput(input, visual),
+    ageKnown: false,
     x: Number.isFinite(Number(input.x)) ? Number(input.x) : 0.5,
     y: Number.isFinite(Number(input.y)) ? Number(input.y) : 0.76,
     scale: Number.isFinite(Number(input.scale)) ? Number(input.scale) : 1,
@@ -283,6 +314,7 @@ export function createProposedDesignPlacement(input = {}) {
   const canonicalSlug = slugify(input.canonicalSlug);
   if (!gardenProfileId) throw new Error('garden_profile_id is required');
   if (!canonicalSlug) throw new Error('canonical slug is required');
+  const visual = proposedPlacementVisualDefaults();
   return {
     kind: DESIGN_PLANT_KIND.PROPOSED,
     status: DESIGN_PLACEMENT_STATUS.PROPOSED,
@@ -291,10 +323,13 @@ export function createProposedDesignPlacement(input = {}) {
     canonicalSlug,
     areaId: asText(input.areaId) || null,
     source: DESIGN_SOURCE_TOKEN,
-    growthStage: input.growthStage || 'mature',
-    targetGrowthStage: input.targetGrowthStage || 'mature',
-    season: input.season || 'unknown',
-    phenology: input.phenology || 'vegetative',
+    growthStage: input.growthStage || visual.growthStage,
+    targetGrowthStage: input.targetGrowthStage || visual.targetGrowthStage,
+    season: input.season || visual.season,
+    phenology: input.phenology || visual.phenology,
+    stageKnown: false,
+    ageKnown: false,
+    maturePreviewImpliesCurrentSize: false,
     x: Number.isFinite(Number(input.x)) ? Number(input.x) : 0.5,
     y: Number.isFinite(Number(input.y)) ? Number(input.y) : 0.76,
     scale: Number.isFinite(Number(input.scale)) ? Number(input.scale) : 1,
@@ -481,7 +516,10 @@ function mapServerGardenPlantRow(row) {
     name: asText(row.name) || '',
     scientific: asText(row.scientific) || '',
     areaId: asText(row.garden_area_id || row.areaId) || null,
-    gardenProfileId: asText(row.garden_profile_id || row.gardenProfileId) || null
+    gardenProfileId: asText(row.garden_profile_id || row.gardenProfileId) || null,
+    addedAt: row.added_at || row.addedAt || null,
+    ageKnown: false,
+    growthStage: null
   };
 }
 
@@ -605,7 +643,14 @@ export function designPaidAiForAction(action) {
     'place-owned',
     'place-proposed',
     'manual-placement',
-    'open-manual-canvas'
+    'open-manual-canvas',
+    'load-design',
+    'save-placement',
+    'update-placement',
+    'delete-placement',
+    'save-design',
+    'save-source-media',
+    'autosave'
   ];
   if (automated.includes(a)) {
     return { allowed: false, paidAiCalls: 0, automated: true };
@@ -636,6 +681,7 @@ export function designPersistenceKey({ userId, gardenProfileId, areaId } = {}) {
 }
 
 export function serializeDesignSnapshot(input = {}) {
+  const durableDatabase = input.durableDatabase === true;
   return {
     type: 'design_output',
     notSourceEvidence: true,
@@ -646,7 +692,193 @@ export function serializeDesignSnapshot(input = {}) {
     areaId: asText(input.areaId) || null,
     placements: Array.isArray(input.placements) ? input.placements : [],
     sourcePhotoImmutable: true,
+    durableDatabase,
+    role: durableDatabase ? 'cache' : 'pending',
+    designId: asText(input.designId) || null,
+    designClientInstanceId: asText(input.designClientInstanceId) || null,
+    revision: Number.isFinite(Number(input.revision)) ? Number(input.revision) : null,
     savedAt: input.savedAt || new Date().toISOString()
+  };
+}
+
+export function createDesignClientInstanceId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return 'gd_d_' + crypto.randomUUID();
+  }
+  return 'gd_d_' + Date.now() + '_' + Math.random().toString(36).slice(2, 12);
+}
+
+export function designServerRefKey({ userId, gardenProfileId, areaId } = {}) {
+  const user = asText(userId) || 'anon';
+  const garden = asText(gardenProfileId) || 'no-garden';
+  const area = asText(areaId) || 'garden';
+  return `${GD_SERVER_REF_KEY_PREFIX}:${user}:${garden}:${area}`;
+}
+
+export function shouldWriteOnPointerPhase(phase) {
+  const p = asText(phase).toLowerCase();
+  if (p === 'pointermove' || p === 'mousemove' || p === 'touchmove' || p === 'input') return false;
+  return p === 'pointerup' || p === 'pointercancel' || p === 'change' || p === 'create' || p === 'delete' || p === 'commit';
+}
+
+export function collapseAutosaveOps(ops) {
+  const byId = new Map();
+  for (const op of Array.isArray(ops) ? ops : []) {
+    if (!op) continue;
+    if (asText(op.phase || op.reason).toLowerCase() === 'pointermove') continue;
+    const id = asText(op.clientInstanceId);
+    if (!id) continue;
+    if (asText(op.action) === 'delete') {
+      byId.set(id, { action: 'delete', clientInstanceId: id });
+      continue;
+    }
+    const prev = byId.get(id);
+    if (prev && prev.action === 'delete') continue;
+    byId.set(id, Object.assign({}, prev || {}, op, { clientInstanceId: id }));
+  }
+  return Array.from(byId.values());
+}
+
+export function classifyLegacyLocalSnapshotImport(snapshot, expected = {}) {
+  const expectedUser = asText(expected.userId);
+  const expectedGarden = asText(expected.gardenProfileId);
+  const expectedArea = asText(expected.areaId) || '';
+  if (!snapshot || typeof snapshot !== 'object') {
+    return { import: false, autoImport: false, code: null, snapshotIntact: false };
+  }
+  const snapUser = asText(snapshot.userId);
+  const snapGarden = asText(snapshot.gardenProfileId);
+  const snapArea = asText(snapshot.areaId) || '';
+  if (!snapUser || snapUser === 'anon') {
+    return { import: false, autoImport: false, code: 'ANONYMOUS_SNAPSHOT_BLOCKED', snapshotIntact: true };
+  }
+  if (expectedUser && snapUser !== expectedUser) {
+    return { import: false, autoImport: false, code: 'USER_MISMATCH', snapshotIntact: true };
+  }
+  if (expectedGarden && snapGarden !== expectedGarden) {
+    return { import: false, autoImport: false, code: 'GARDEN_MISMATCH', snapshotIntact: true };
+  }
+  if (expectedArea !== snapArea) {
+    return { import: false, autoImport: false, code: 'AREA_MISMATCH', snapshotIntact: true, mergeForbidden: true };
+  }
+  return {
+    import: false,
+    autoImport: false,
+    code: LOCAL_DESIGN_RESTORE_AVAILABLE,
+    snapshotIntact: true,
+    reason: 'explicit-restore-required'
+  };
+}
+
+export function mapLayerToHostPlacementPayload(layer = {}) {
+  const kind = asText(layer.kind) === DESIGN_PLANT_KIND.OWNED || layer.gardenPlantId
+    ? DESIGN_PLANT_KIND.OWNED
+    : DESIGN_PLANT_KIND.PROPOSED;
+  return {
+    clientInstanceId: asText(layer.id || layer.clientInstanceId),
+    kind,
+    gardenPlantId: kind === DESIGN_PLANT_KIND.OWNED ? (asText(layer.gardenPlantId) || null) : null,
+    canonicalSlug: asText(layer.canonicalSlug) || null,
+    gardenAreaId: asText(layer.areaId || layer.gardenAreaId) || null,
+    designAssetId: asText(layer.designAssetId) || null,
+    growthStage: asText(layer.growthStage) || null,
+    targetGrowthStage: asText(layer.targetGrowthStage) || null,
+    season: asText(layer.season) || null,
+    phenology: asText(layer.phenology) || null,
+    x: Number(layer.x),
+    y: Number(layer.y),
+    scale: Number(layer.scale),
+    rotation: Number(layer.rotation) || 0,
+    zOrder: Number(layer.zOrder != null ? layer.zOrder : layer.zIndex) || 0,
+    label: asText(layer.name || layer.label) || null,
+    scientific: asText(layer.species || layer.scientific) || null
+  };
+}
+
+export function mapServerPlacementToLayer(placement = {}, ownedPlants = []) {
+  const clientInstanceId = asText(placement.clientInstanceId || placement.client_instance_id);
+  if (!clientInstanceId) {
+    return { ok: false, reason: IDENTITY_INCONSISTENT, detail: 'missing-client-instance-id' };
+  }
+  const kind = asText(placement.kind) === DESIGN_PLANT_KIND.OWNED ? DESIGN_PLANT_KIND.OWNED : DESIGN_PLANT_KIND.PROPOSED;
+  const gardenPlantId = asText(placement.gardenPlantId || placement.garden_plant_id) || null;
+  if (kind === DESIGN_PLANT_KIND.OWNED) {
+    if (!gardenPlantId) {
+      return { ok: false, reason: IDENTITY_INCONSISTENT, detail: 'owned-missing-garden-plant-id' };
+    }
+    const plant = (Array.isArray(ownedPlants) ? ownedPlants : []).find(
+      (p) => asText(p.gardenPlantId || p.id) === gardenPlantId
+    );
+    if (!plant) {
+      return { ok: false, reason: IDENTITY_INCONSISTENT, detail: 'owned-plant-missing-from-garden', gardenPlantId };
+    }
+  }
+  const canonicalSlug = kind === DESIGN_PLANT_KIND.OWNED
+    ? asText(
+        (Array.isArray(ownedPlants) ? ownedPlants : []).find((p) => asText(p.gardenPlantId || p.id) === gardenPlantId)
+          ?.canonicalSlug || placement.canonicalSlug || placement.canonical_slug
+      )
+    : asText(placement.canonicalSlug || placement.canonical_slug);
+  return {
+    ok: true,
+    layer: {
+      id: clientInstanceId,
+      clientInstanceId,
+      serverId: asText(placement.id || placement.serverId) || null,
+      name: asText(placement.label || placement.name) || canonicalSlug || 'Plant',
+      species: asText(placement.scientific || placement.species) || '',
+      slug: canonicalSlug,
+      canonicalSlug,
+      kind,
+      gardenPlantId: kind === DESIGN_PLANT_KIND.OWNED ? gardenPlantId : null,
+      areaId: asText(placement.gardenAreaId || placement.garden_area_id || placement.areaId) || null,
+      source: 'garden-design',
+      status: kind === DESIGN_PLANT_KIND.OWNED ? 'owned' : 'proposed',
+      growthStage: asText(placement.growthStage || placement.growth_stage) || 'mature',
+      targetGrowthStage: asText(placement.targetGrowthStage || placement.target_growth_stage) || 'mature',
+      season: asText(placement.season) || 'unknown',
+      phenology: asText(placement.phenology) || 'vegetative',
+      designAssetId: asText(placement.designAssetId || placement.design_asset_id) || null,
+      x: Number(placement.x),
+      y: Number(placement.y),
+      scale: Number(placement.scale),
+      rotation: Number(placement.rotation) || 0,
+      zIndex: Number(placement.zOrder != null ? placement.zOrder : placement.z_order) || 1,
+      emoji: '🌿',
+      createsGardenPlant: false
+    }
+  };
+}
+
+export function createServerDesignRefPersistence(store) {
+  const mem = store && typeof store === 'object' ? store : {};
+  return {
+    save(ref) {
+      const key = designServerRefKey(ref);
+      const value = JSON.stringify({
+        designId: asText(ref.designId) || null,
+        clientInstanceId: asText(ref.clientInstanceId || ref.designClientInstanceId) || null,
+        gardenProfileId: asText(ref.gardenProfileId) || null,
+        gardenAreaId: asText(ref.gardenAreaId || ref.areaId) || null,
+        userId: asText(ref.userId) || null
+      });
+      if (typeof mem.setItem === 'function') mem.setItem(key, value);
+      else mem[key] = value;
+      return { ok: true, key };
+    },
+    load(ids) {
+      const key = designServerRefKey(ids);
+      const raw = typeof mem.getItem === 'function' ? mem.getItem(key) : mem[key];
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw);
+        if (asText(ids.userId) && asText(parsed.userId) && asText(parsed.userId) !== asText(ids.userId)) return null;
+        if (asText(ids.gardenProfileId) && asText(parsed.gardenProfileId) !== asText(ids.gardenProfileId)) return null;
+        return parsed;
+      } catch (_) {
+        return null;
+      }
+    }
   };
 }
 
@@ -694,6 +926,12 @@ const api = {
   GD_BRIDGE_SAME_ORIGIN,
   GD_HOST_TO_DESIGN,
   GD_DESIGN_TO_HOST,
+  GD_AUTOSAVE_DEBOUNCE_MS,
+  GD_SERVER_REF_KEY_PREFIX,
+  EMPTY_SERVER_DESIGN,
+  MULTIPLE_DESIGNS_REQUIRE_SELECTION,
+  LOCAL_DESIGN_RESTORE_AVAILABLE,
+  IDENTITY_INCONSISTENT,
   isGardenDesignBridgeType,
   gardenDesignPostTargetOrigin,
   acceptGardenDesignMessage,
@@ -724,7 +962,15 @@ const api = {
   designPersistenceKey,
   serializeDesignSnapshot,
   readDesignSnapshot,
-  createLocalDesignPersistence
+  createLocalDesignPersistence,
+  createDesignClientInstanceId,
+  designServerRefKey,
+  shouldWriteOnPointerPhase,
+  collapseAutosaveOps,
+  classifyLegacyLocalSnapshotImport,
+  mapLayerToHostPlacementPayload,
+  mapServerPlacementToLayer,
+  createServerDesignRefPersistence
 };
 
 export default api;

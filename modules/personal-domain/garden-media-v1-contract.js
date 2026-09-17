@@ -81,6 +81,7 @@ export const MEDIA_PURPOSES = Object.freeze([
   'garden_overview',
   'area_reference',
   'design_source',
+  'design_output',
   'progress_photo'
 ]);
 
