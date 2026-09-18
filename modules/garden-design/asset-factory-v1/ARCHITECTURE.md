@@ -48,6 +48,12 @@ Template `design-cutout-v1` built from scientific identity, visualForm, growthSt
 
 Wraps `paid-image-spend-gate-v1`. Envelope: `runId`, `provider`, `model`, `maxJobs`, `maxCalls`, `maxRetries`, `maxSpendUsd`. Missing any required field or `--dry-run` → 0 network. No carry-forward, no top-up, no billing/key changes. Does not probe keys with a generation request.
 
+The hard USD gate charges **total expected API spend** (known image-output + conservative text-input allowance). Image-output-only caps such as `$0.50` are insufficient because gpt-image-2 also bills text-input tokens ($5 / 1M, published). Exact per-run tokens are unknown until usage returns.
+
+## In-garden QA
+
+Isolation transparency is not enough. Approval requires `ASSET_QA = PASS` and `IN_GARDEN_QA = PASS`. The required composition background is the real persisted Garden Design source photo (`garden_designs.source_media_id` → `garden_media` → private `user-garden-media` signed URL). Local representative photos are supplementary only. If the signed URL cannot be loaded safely, review is **BLOCKED** — no silent fallback. Runtime blend (contact shadow / slight tone / light edge soften) is a CSS experiment only and is not baked into botanical identity.
+
 ## Technical QA (local, $0)
 
 Decode, PNG/WebP, alpha present, transparent corners, no opaque rectangular plate, dimensions, bbox, crop, edge contact, alpha coverage, halo/background heuristics, file size. PASS/FAIL + reasons.
@@ -74,7 +80,7 @@ Proposed record: assetId, canonicalSlug, variantKey, promptTemplateVersion, prov
 
 ## Storage scale plan
 
-**Recommend:** binaries in `catalog-design-assets` object storage/CDN; job + QA metadata in a durable job store; thin public row in `catalog_design_assets` only on APPROVED. Repo PNG embedding does not scale to thousands of assets or Netlify frontend deploys. User garden photos must never auto-promote. No storage migration in this task.
+**Recommend:** approved binaries in dedicated Cloudflare R2 bucket `cruvit-design-assets` (`design-assets/{canonicalSlug}/{assetId}.png`); candidates in temporary working storage; metadata in Supabase/registry. Do not mix with the climate-data bucket. Do not create the bucket until calibration proves the pipeline. User garden photos must never be copied into the repo. No storage migration in this task.
 
 ## Prioritization
 

@@ -36,8 +36,13 @@ export function buildPromptRecord(job = {}, options = {}) {
   const phenology = asText(job.phenology) || 'vegetative';
   const season = asText(job.season) || 'season-neutral';
   const formView = asText(job.formView);
+  const identityNote =
+    job.identityPrecision === 'GENUS_VISUALLY_REPRESENTABLE' || job.identityScope === 'genus'
+      ? 'Remain at genus-level identity. Do not invent a species or cultivar. Neutral vegetative morphology only; no fruit, flowers, or cultivar traits.'
+      : '';
   const prompt = [
     `Photorealistic horticultural specimen of a ${stage} ${form}, ${scientificIdentity(job)}.`,
+    identityNote,
     `Habit modifiers: ${habit}.`,
     `Phenology must be ${phenology} only.`,
     `Season context: ${season}.`,
@@ -57,6 +62,8 @@ export function buildPromptRecord(job = {}, options = {}) {
     model,
     settings,
     prompt,
+    identityPrecision: job.identityPrecision || null,
+    identityScope: job.identityScope || null,
     jobId: job.jobId || null,
     canonicalSlug: job.canonicalSlug || null,
     variantKey: job.variantKey || null

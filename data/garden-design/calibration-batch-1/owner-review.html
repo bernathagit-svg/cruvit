@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Design Asset Factory — Calibration review (8 jobs)</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; }
+    h1 { font-size: 22px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .job { background: #fff; border: 1px solid #ddd; margin: 24px 0; padding: 16px; }
+    .meta, .why, .empty, .cap { font-size: 13px; color: #444; }
+    .empty { color: #8a2b2b; }
+    .previews, .scenes, .raw-blend { display: flex; gap: 12px; flex-wrap: wrap; }
+    .slot { width: 160px; height: 220px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .white { background: #fff; border: 1px solid #eee; }
+    .dark { background: #1a1a1a; color: #aaa; }
+    .scene { width: 240px; height: 160px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; }
+    .scene.is-blocked { outline: 2px solid #c44; }
+    .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 4px 6px; font-size: 10px; }
+    .ghost.small { width: 18%; height: 28%; }
+    .ghost.medium { width: 28%; height: 44%; }
+    .ghost.large { width: 40%; height: 62%; }
+    .ghost.blocked { width: 80%; text-align: center; }
+    .harness img.cutout { height: 55%; position: absolute; left: 52%; bottom: 10%; transform: translateX(-50%); }
+    .harness.blend img.cutout { filter: brightness(0.96) contrast(0.94) saturate(0.9) blur(0.35px) drop-shadow(0 10px 14px rgba(0,0,0,0.2)); }
+    .scene.harness { width: 280px; height: 180px; }
+    code { font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Calibration review — 8 jobs, no generation</h1>
+  <p class="warn"><strong>REAL SAVED GARDEN PHOTO: BLOCKED</strong> (source_media_id_missing). Path: garden_designs.source_media_id → garden_media → private user-garden-media signed URL. Local stand-ins are supplementary and <em>not</em> sufficient for IN_GARDEN_QA = PASS. Host may inject <code>window.__CRUVIT_GARDEN_SOURCE_SIGNED_URL__</code> at review time. Do not copy the private photo into the repo.</p>
+  <p>Owner question: does this actually look like the plant is in my garden? Checks: perspective match; ground contact; sticker look; sharpness mismatch; saturation/contrast mismatch; halo/fringe; believable scale; silhouette in scene.</p>
+  <article class="job" id="job-mango">
+  <header>
+    <h2>1. mango · tree · mature</h2>
+    <p class="meta">Mangifera indica · SPECIES_SUPPORTED · mature__season-neutral__vegetative__leafy · owned-plants</p>
+    <p class="why">Tests tree silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">mango · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">mango · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">mango · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">mango</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">mango</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-lavender">
+  <header>
+    <h2>2. lavender · shrub · mature</h2>
+    <p class="meta">Lavandula angustifolia · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · garden-design-surfaced</p>
+    <p class="why">Tests shrub silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">lavender · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">lavender · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">lavender · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">lavender</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">lavender</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-pineapple">
+  <header>
+    <h2>3. pineapple · rosette · mature</h2>
+    <p class="meta">Ananas comosus · SPECIES_SUPPORTED · mature__season-neutral__vegetative__rosette · owned-plants</p>
+    <p class="why">Tests rosette silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">pineapple</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">pineapple</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-banana">
+  <header>
+    <h2>4. banana · herbaceous-clump · mature</h2>
+    <p class="meta">Musa spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__mature-clump · owned-plants</p>
+    <p class="why">Tests herbaceous-clump silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">banana · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">banana · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">banana · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">banana</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">banana</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-areca-palm">
+  <header>
+    <h2>5. areca-palm · palm · mature</h2>
+    <p class="meta">Dypsis lutescens · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests palm silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">areca-palm</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">areca-palm</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-bougainvillea">
+  <header>
+    <h2>6. bougainvillea · climber · mature</h2>
+    <p class="meta">Bougainvillea spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__coverage · garden-design-surfaced</p>
+    <p class="why">Tests climber silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">bougainvillea</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">bougainvillea</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-aloe-vera">
+  <header>
+    <h2>7. aloe-vera · succulent-form · mature</h2>
+    <p class="meta">Aloe vera · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests succulent-form silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">aloe-vera</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">aloe-vera</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+<article class="job" id="job-eggplant">
+  <header>
+    <h2>8. eggplant · subshrub · mature</h2>
+    <p class="meta">Solanum melongena · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests subshrub silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="empty">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED.</p>
+    <p class="meta">Approval rule: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. Blend verdict after generation: RAW_PASS / RUNTIME_BLEND_REQUIRED / FAIL. Permanent blending is not implemented.</p>
+  </header>
+  <div class="previews">
+    <figure class="checker"><figcaption>Checkerboard / transparent</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+    <figure class="white"><figcaption>White</figcaption><div class="slot white"><span>empty</span></div></figure>
+    <figure class="dark"><figcaption>Dark</figcaption><div class="slot dark"><span>empty</span></div></figure>
+  </div>
+  <h3>In-garden composition (real photo required)</h3>
+  <div class="scenes"><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · BLOCKED</div></div>
+      <p class="cap">small · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · BLOCKED</div></div>
+      <p class="cap">medium · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div><div class="scene-col">
+      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · BLOCKED</div></div>
+      <p class="cap">large · REAL garden photo (required)</p>
+      <div class="raw-blend">
+        <figure><figcaption>RAW CUTOUT</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
+        <figure><figcaption>RUNTIME BLEND EXPERIMENT</figcaption><div class="slot checkerboard"><span>CSS only · not baked</span></div></figure>
+      </div>
+    </div></div>
+  <h3>Supplementary local backgrounds (not sufficient alone)</h3>
+  <div class="scenes">
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">eggplant</div></div>
+      <p class="cap">medium · supplementary B</p></div>
+    <div class="scene-col"><div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">eggplant</div></div>
+      <p class="cap">medium · supplementary C</p></div>
+  </div>
+</article>
+  <section class="job">
+    <h2>Method harness (not a calibration candidate)</h2>
+    <p class="meta">Approved olive cutout on supplementary local backgrounds only. Proves layout + CSS blend toggle. Not a substitute for the real saved garden photo.</p>
+    <label><input type="checkbox" id="blendToggle"/> Show runtime-blend experiment (CSS only, not permanent, does not alter the garden photo)</label>
+    <div class="scenes">
+      <div class="scene harness raw" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout" src="../../modules/garden-design/assets/plants/olive-tree/variants/summer-mature.png" alt="olive raw"/></div>
+      <div class="scene harness raw" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout" src="../../modules/garden-design/assets/plants/olive-tree/variants/summer-mature.png" alt="olive raw"/></div>
+      <div class="scene harness blend" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout" src="../../modules/garden-design/assets/plants/olive-tree/variants/summer-mature.png" alt="olive blend"/></div>
+      <div class="scene harness blend" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout" src="../../modules/garden-design/assets/plants/olive-tree/variants/summer-mature.png" alt="olive blend"/></div>
+    </div>
+  </section>
+  <p>Scales: small, medium, large. Runtime blend permanently implemented: false. Alter garden photo: false. AI/inpainting: false.</p>
+  <script>
+    (function () {
+      var injected = window.__CRUVIT_GARDEN_SOURCE_SIGNED_URL__;
+      if (injected && /^https:\/\//i.test(injected)) {
+        document.querySelectorAll('.scene.real').forEach(function (el) {
+          el.style.backgroundImage = 'url(' + JSON.stringify(injected) + ')';
+          el.classList.remove('is-blocked');
+        });
+      }
+      var toggle = document.getElementById('blendToggle');
+      if (toggle) {
+        toggle.addEventListener('change', function () {
+          document.querySelectorAll('.harness.blend').forEach(function (el) {
+            el.style.display = toggle.checked ? 'block' : 'none';
+          });
+        });
+      }
+      document.querySelectorAll('.harness.blend').forEach(function (el) { el.style.display = 'none'; });
+    })();
+  </script>
+</body>
+</html>

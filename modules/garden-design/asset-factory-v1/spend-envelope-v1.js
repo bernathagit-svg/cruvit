@@ -10,6 +10,10 @@ import {
   recordAttempt,
   PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536
 } from '../../runtime-guards/paid-image-spend-gate-v1.js';
+import {
+  proposeSafeCalibrationEnvelope,
+  totalExpectedUsdPerCall
+} from './total-api-cost-v1.js';
 
 export const FACTORY_SPEND_ENVELOPE_VERSION = '1.0.0';
 
@@ -48,6 +52,9 @@ export function parseSpendEnvelope(argv = []) {
     maxJobs > 0 &&
     maxCalls > 0 &&
     maxSpendUsd > 0;
+  const usdPerImageOutput = PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536;
+  const usdPerCallTotal = totalExpectedUsdPerCall({ imageOutputUsd: usdPerImageOutput });
+  const usdPerTextInputAllowance = +(usdPerCallTotal - usdPerImageOutput).toFixed(6);
   return {
     runId,
     provider,
@@ -56,7 +63,10 @@ export function parseSpendEnvelope(argv = []) {
     maxCalls,
     maxRetries,
     maxSpendUsd,
-    usdPerCall: PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536,
+    usdPerImageOutput,
+    usdPerTextInputAllowance,
+    usdPerCall: usdPerCallTotal,
+    usdPerCallTotal,
     dryRun,
     defaultDeny: !approved,
     allowPaidCalls: flags.allowPaidCalls
@@ -82,19 +92,25 @@ export function classifyProviderKey(envelope, rawKey) {
 export function buildEnvelopePreflight(envelope, keyStatus = {}, plannedJobs = 0) {
   const maxCalls = envelope.dryRun || envelope.defaultDeny ? 0 : Number(envelope.maxCalls || 0);
   const maxJobs = envelope.dryRun || envelope.defaultDeny ? 0 : Number(envelope.maxJobs || 0);
-  const usd = Number(envelope.usdPerCall || PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536);
+  const usdImage = Number(envelope.usdPerImageOutput || PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536);
+  const usdTotal = Number(envelope.usdPerCallTotal || envelope.usdPerCall || totalExpectedUsdPerCall());
   const approvedCalls = Math.min(maxCalls, Math.max(0, Number(plannedJobs || 0)));
+  const envelopeMax = Number(envelope.maxSpendUsd || 0);
   return {
     runId: envelope.runId || '',
     provider: envelope.provider,
     model: envelope.model,
     numberOfApprovedCalls: approvedCalls,
-    estimatedImageOutputCostUsd: +(approvedCalls * usd).toFixed(3),
+    estimatedImageOutputCostUsd: +(approvedCalls * usdImage).toFixed(3),
+    estimatedTotalApiCostUsd: +(approvedCalls * usdTotal).toFixed(3),
     maximumApprovedCalls: maxCalls,
     maximumApprovedJobs: maxJobs,
     maximumRetries: envelope.dryRun || envelope.defaultDeny ? 0 : Number(envelope.maxRetries || 0),
-    maximumEstimatedSpendUsd: +(maxCalls * usd).toFixed(3),
-    envelopeMaxSpendUsd: Number(envelope.maxSpendUsd || 0),
+    maximumEstimatedImageOutputUsd: +(maxCalls * usdImage).toFixed(3),
+    maximumEstimatedSpendUsd: +(maxCalls * usdTotal).toFixed(3),
+    envelopeMaxSpendUsd: envelopeMax,
+    envelopeCoversMaxCalls: envelopeMax + 1e-9 >= maxCalls * usdTotal && maxCalls > 0,
+    gateEnforces: 'total-expected-api-spend',
     billingKeyReadiness: keyStatus.billingKeyReadiness || 'UNKNOWN',
     openaiApiKey: keyStatus.openaiApiKey || keyStatus.apiKey || 'unknown',
     networkValidation: keyStatus.networkValidation || 'not-performed',
@@ -111,11 +127,13 @@ export function formatEnvelopePreflight(preflight) {
     `model: ${preflight.model}`,
     `number of approved calls: ${preflight.numberOfApprovedCalls}`,
     `estimated image-output cost: $${preflight.estimatedImageOutputCostUsd}`,
+    `estimated total API cost: $${preflight.estimatedTotalApiCostUsd}`,
     `maximum approved calls: ${preflight.maximumApprovedCalls}`,
     `maximum approved jobs: ${preflight.maximumApprovedJobs}`,
     `maximum retries: ${preflight.maximumRetries}`,
     `maximum estimated spend: $${preflight.maximumEstimatedSpendUsd}`,
     `envelope max spend usd: $${preflight.envelopeMaxSpendUsd}`,
+    `gate enforces: ${preflight.gateEnforces}`,
     `billing/key readiness: ${preflight.billingKeyReadiness}`,
     `OPENAI_API_KEY: ${preflight.openaiApiKey}`,
     `dry-run: ${preflight.dryRun}`,
@@ -156,7 +174,9 @@ export function assertSpendEnvelope(envelope, counters = {}) {
     err.code = 'PAID_SPEND_RETRY_LIMIT';
     throw err;
   }
-  const nextCost = Number(envelope.usdPerCall || PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536);
+  const nextCost = Number(
+    envelope.usdPerCallTotal || envelope.usdPerCall || totalExpectedUsdPerCall()
+  );
   const spent = Number(counters.spentUsd || 0);
   if (spent + nextCost > Number(envelope.maxSpendUsd || 0) + 1e-9) {
     const err = new Error('PAID_SPEND_USD_LIMIT');
@@ -178,4 +198,13 @@ export function createEnvelopeCounters(envelope) {
   };
 }
 
-export { recordAttempt, createCallCounter };
+export const KEY_BILLING_OWNER_ACTIONS = Object.freeze([
+  'Do not replace, paste, or probe an API key from this chat.',
+  'Later, privately create or locate an OpenAI API key that can call Images API (gpt-image-2).',
+  'Place it only in local process env as OPENAI_API_KEY. Never commit it. Never paste it into git, issues, or chat.',
+  'Confirm the OpenAI account has Images API access and an active billing method or credits. Do not add a card or buy credits from this task.',
+  'Do not send a generation request to test the key. Readiness stays UNKNOWN until an approved envelope runs.',
+  'This factory remains DEFAULT DENY until a later owner envelope is explicitly approved.'
+]);
+
+export { recordAttempt, createCallCounter, proposeSafeCalibrationEnvelope };

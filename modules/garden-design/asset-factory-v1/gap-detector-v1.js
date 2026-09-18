@@ -7,8 +7,9 @@ import { isUsableDesignVariant } from '../garden-design-asset-registry-v1.js';
 import { seasonMatchesRole } from '../garden-design-variant-policy-v1.js';
 import { deriveVariantDemand, slugify, variantKeyFromRole } from './variant-demand-v1.js';
 import { FACTORY_PRIORITY_BANDS } from './design-asset-factory-v1.js';
+import { classifySpendBlock } from './spend-block-v1.js';
 
-function variantMatchesRole(variant, role) {
+export function variantMatchesRole(variant, role) {
   if (!variant) return false;
   if (String(variant.growthStage || '') !== String(role.growthStage || '')) return false;
   if (String(variant.phenology || 'vegetative') !== String(role.phenology || 'vegetative')) return false;
@@ -19,7 +20,7 @@ function variantMatchesRole(variant, role) {
   return true;
 }
 
-function approvedCovers(set, role) {
+export function approvedCovers(set, role) {
   const variants = Array.isArray(set?.variants) ? set.variants : [];
   return variants.some((v) => isUsableDesignVariant(v) && variantMatchesRole(v, role));
 }
@@ -55,19 +56,24 @@ export function detectDesignAssetGaps(plants = [], registry = {}, signals = {}) 
   for (const plant of plants) {
     const demand = deriveVariantDemand(plant);
     if (!demand.canonicalSlug) continue;
-    if (demand.morphologyUnknown) {
-      blocked.push({
-        canonicalSlug: demand.canonicalSlug,
-        visualForm: demand.visualForm,
-        required: true,
-        reason: 'unresolved-morphology-authority',
-        state: 'BLOCKED'
-      });
-      continue;
-    }
     const set = bySlug.get(demand.canonicalSlug) || null;
     const rank = priorityForPlant(demand.canonicalSlug, signals);
     for (const role of demand.requiredVariants) {
+      const spendBlock = classifySpendBlock(plant, demand, role);
+      if (spendBlock.blocked) {
+        blocked.push({
+          canonicalSlug: demand.canonicalSlug,
+          visualForm: demand.visualForm,
+          variantKey: role.variantKey || variantKeyFromRole(role),
+          required: true,
+          reason: spendBlock.primaryReason,
+          reasons: spendBlock.reasons,
+          metadataFix: spendBlock.metadataFix,
+          identityPrecision: spendBlock.identityPrecision,
+          state: 'BLOCKED'
+        });
+        continue;
+      }
       if (approvedCovers(set, role)) continue;
       jobs.push({
         canonicalSlug: demand.canonicalSlug,
@@ -83,8 +89,25 @@ export function detectDesignAssetGaps(plants = [], registry = {}, signals = {}) 
         priority: rank.priority,
         priorityBand: rank.band,
         morphologyAuthority: demand.morphologyAuthority,
-        scientific: demand.scientific
+        scientific: demand.scientific,
+        identityPrecision: spendBlock.identityPrecision,
+        identityScope: plant.identityScope || null
       });
+    }
+    if (!demand.requiredVariants.length) {
+      const spendBlock = classifySpendBlock(plant, demand);
+      if (spendBlock.blocked) {
+        blocked.push({
+          canonicalSlug: demand.canonicalSlug,
+          visualForm: demand.visualForm,
+          required: true,
+          reason: spendBlock.primaryReason,
+          reasons: spendBlock.reasons,
+          metadataFix: spendBlock.metadataFix,
+          identityPrecision: spendBlock.identityPrecision,
+          state: 'BLOCKED'
+        });
+      }
     }
   }
   jobs.sort((a, b) => b.priority - a.priority || a.jobId.localeCompare(b.jobId));

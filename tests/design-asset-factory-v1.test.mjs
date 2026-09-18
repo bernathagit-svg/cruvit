@@ -32,8 +32,27 @@ import {
   STORAGE_PLAN,
   PROPOSED_DB_CHANGES,
   runFactory,
-  listFactoryProviders
+  listFactoryProviders,
+  inspectCanonicalCatalog,
+  ownedPlantPriorityReport,
+  genusEligibilityDelta,
+  selectCalibrationBatch,
+  replaceBlockedCalibrationJobs,
+  classifyIdentityPrecision,
+  IDENTITY_PRECISION,
+  composeApprovalVerdict,
+  assessInGardenQa,
+  classifyCutoutIntegration,
+  resolveSavedGardenDesignSourcePhoto,
+  classifyCalibrationReviewReadiness,
+  proposeSafeCalibrationEnvelope,
+  estimateCalibrationApiSpend,
+  LOCKED_CALIBRATION_SLUGS
 } from '../modules/garden-design/asset-factory-v1/index.js';
+import {
+  loadCanonicalCatalog,
+  loadOwnedGardenSignals
+} from '../modules/garden-design/asset-factory-v1/catalog-source-v1.js';
 import { DESIGN_ASSET_PRODUCTION_PIPELINE } from '../modules/garden-design/garden-design-variant-policy-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -334,4 +353,219 @@ test('CLI --dry-run exits 0, prints preflight, prints no secret', () => {
   assert.match(proc.stdout, /default deny: true/);
   assert.doesNotMatch(proc.stdout, /sk-test-not-a-real-secret/);
   assert.match(proc.stdout, /networkRequests": 0/);
+  assert.match(proc.stdout, /attemptedPaidCalls": 0/);
+});
+
+test('owned priority follows Garden OS rows, not hard-coded plant names', () => {
+  const factoryJs = [
+    'gap-detector-v1.js',
+    'catalog-inspect-v1.js',
+    'spend-block-v1.js',
+    'catalog-source-v1.js',
+    'identity-precision-v1.js',
+    'calibration-batch-v1.js'
+  ].map((f) => fs.readFileSync(path.join(FACTORY_DIR, f), 'utf8')).join('\n');
+  assert.doesNotMatch(factoryJs, /if \(slug === 'mango'\)/);
+  assert.doesNotMatch(factoryJs, /if \(slug === 'banana'\)/);
+  assert.doesNotMatch(factoryJs, /if \(slug === 'pineapple'\)/);
+  const oliveOwned = loadOwnedGardenSignals({
+    garden_plants: [{ id: 'gp-olive', profile_slug: 'olive', name: 'Olive' }]
+  });
+  const inspect = inspectCanonicalCatalog(
+    [
+      { slug: 'olive', canonicalSlug: 'olive', scientific: 'Olea europaea', tags: ['tree', 'evergreen'], growth: 'Evergreen tree' },
+      { slug: 'mango', canonicalSlug: 'mango', scientific: 'Mangifera indica', tags: ['tree', 'evergreen'], growth: 'Evergreen tree' }
+    ],
+    { sets: [] },
+    { ownedCanonicalSlugs: oliveOwned.ownedCanonicalSlugs }
+  );
+  const olive = inspect.plants.find((p) => p.canonicalSlug === 'olive');
+  const mango = inspect.plants.find((p) => p.canonicalSlug === 'mango');
+  assert.equal(olive.priorityBand, 'owned-plants');
+  assert.equal(olive.priority, 100);
+  assert.equal(mango.priorityBand, 'remaining-catalog');
+  assert.notEqual(mango.priority, 100);
+});
+
+test('genus identity: coherent vegetative form is representable; woody genus stays blocked', () => {
+  const clump = {
+    slug: 'fixture-genus-clump',
+    canonicalSlug: 'fixture-genus-clump',
+    scientific: 'Musa spp.',
+    identityScope: 'genus',
+    tags: ['fruit'],
+    growth: 'Fast herbaceous plant with pups'
+  };
+  const woody = {
+    slug: 'fixture-genus-tree',
+    canonicalSlug: 'fixture-genus-tree',
+    scientific: 'Quercus spp.',
+    identityScope: 'genus',
+    tags: ['tree'],
+    growth: 'Deciduous landscape tree'
+  };
+  const clumpDemand = deriveVariantDemand(clump);
+  const woodyDemand = deriveVariantDemand(woody);
+  const veg = clumpDemand.requiredVariants.find((r) => r.phenology === 'vegetative');
+  assert.equal(
+    classifyIdentityPrecision(clump, clumpDemand, veg).identityPrecision,
+    IDENTITY_PRECISION.GENUS_VISUALLY_REPRESENTABLE
+  );
+  assert.equal(classifyIdentityPrecision(clump, clumpDemand, veg).generationEligible, true);
+  const treeRole = woodyDemand.requiredVariants.find((r) => r.phenology === 'vegetative');
+  assert.equal(
+    classifyIdentityPrecision(woody, woodyDemand, treeRole).identityPrecision,
+    IDENTITY_PRECISION.GENUS_BLOCKED
+  );
+  const flowerRole = { growthStage: 'mature', phenology: 'flowering', season: 'season-neutral' };
+  assert.equal(
+    classifyIdentityPrecision(clump, clumpDemand, flowerRole).identityPrecision,
+    IDENTITY_PRECISION.GENUS_BLOCKED
+  );
+  const src = fs.readFileSync(path.join(FACTORY_DIR, 'identity-precision-v1.js'), 'utf8');
+  assert.doesNotMatch(src, /if \(slug === 'banana'\)/);
+});
+
+test('real catalog inspect: olive coverage, genus banana representable, candidates not approved', () => {
+  const catalog = loadCanonicalCatalog(ROOT);
+  const registry = JSON.parse(fs.readFileSync(REGISTRY_PATH, 'utf8'));
+  const owned = loadOwnedGardenSignals(
+    JSON.parse(
+      fs.readFileSync(path.join(ROOT, 'data', 'garden-os', 'mojstrana-owned-plants-v1.json'), 'utf8')
+    )
+  );
+  const inspect = inspectCanonicalCatalog(catalog.plants, registry, {
+    ownedCanonicalSlugs: owned.ownedCanonicalSlugs,
+    gardenDesignSurfacedSlugs: registry.sets.map((s) => s.canonicalSlug)
+  });
+  assert.ok(inspect.totals.canonicalPlantsInspected > 50);
+  const olive = inspect.plants.find((p) => p.canonicalSlug === 'olive');
+  assert.equal(olive.approvedRequiredCount, 1);
+  assert.ok(olive.missingRequiredCount >= 1);
+  assert.equal(olive.designReady, false);
+  const banana = inspect.plants.find((p) => p.canonicalSlug === 'banana');
+  assert.equal(banana.identityPrecision, IDENTITY_PRECISION.GENUS_VISUALLY_REPRESENTABLE);
+  assert.equal(banana.spendBlocked, false);
+  assert.ok(inspect.eligibleJobs.some((j) => j.canonicalSlug === 'banana'));
+  const bougainvillea = inspect.plants.find((p) => p.canonicalSlug === 'bougainvillea');
+  assert.equal(bougainvillea.identityPrecision, IDENTITY_PRECISION.GENUS_VISUALLY_REPRESENTABLE);
+  const ownedReport = ownedPlantPriorityReport(inspect, owned);
+  assert.deepEqual(
+    ownedReport.map((r) => r.canonicalSlug).sort(),
+    ['banana', 'mango', 'pineapple']
+  );
+  assert.ok(ownedReport.every((r) => r.priorityComponents.hardCodedNameBoost === false));
+  assert.ok(ownedReport.every((r) => r.priorityBand === 'owned-plants'));
+  const batch = selectCalibrationBatch(inspect.eligibleJobs, 8);
+  assert.equal(batch.length, 8);
+  assert.equal(new Set(batch.map((j) => j.visualForm)).size, 8);
+  assert.equal(composeApprovalVerdict('PASS', 'UNKNOWN').approvalEligible, false);
+  assert.equal(assessInGardenQa({ generated: false }).result, 'BLOCKED');
+  assert.equal(
+    assessInGardenQa({ generated: false, realSavedGardenPhotoReady: true }).result,
+    'UNKNOWN'
+  );
+  assert.equal(batch.map((j) => j.canonicalSlug).join(','), LOCKED_CALIBRATION_SLUGS.join(','));
+  const delta = genusEligibilityDelta(inspect);
+  assert.ok(delta.newlyEligibleGenusNeutralPlants.some((p) => p.canonicalSlug === 'banana'));
+  assert.equal(
+    (registry.sets || []).some((s) =>
+      (s.variants || []).some((v) => String(v.file || '').includes('batch-1-candidates'))
+    ),
+    false
+  );
+  assert.ok(inspect.eligibleJobs.every((j) => j.required === true));
+  assert.equal(inspect.totals.cartesianExplosionAvoided, true);
+});
+
+test('real saved garden photo is required; local stand-ins are not a silent fallback', () => {
+  const missing = resolveSavedGardenDesignSourcePhoto({});
+  assert.equal(missing.status, 'BLOCKED');
+  const local = resolveSavedGardenDesignSourcePhoto({
+    sourceMediaId: '11111111-1111-1111-1111-111111111111',
+    sourceMediaUrl: 'homepage-v1/assets/hero-garden.jpg'
+  });
+  assert.equal(local.status, 'BLOCKED');
+  const copied = resolveSavedGardenDesignSourcePhoto({
+    sourceMediaId: '11111111-1111-1111-1111-111111111111',
+    sourceMediaUrl: 'https://signed.example/user-garden-media/x',
+    copyToRepo: true
+  });
+  assert.equal(copied.status, 'BLOCKED');
+  const ready = resolveSavedGardenDesignSourcePhoto({
+    sourceMediaId: '11111111-1111-1111-1111-111111111111',
+    sourceMediaUrl: 'https://signed.example/user-garden-media/x?token=1'
+  });
+  assert.equal(ready.status, 'READY');
+  const blockedReview = classifyCalibrationReviewReadiness({});
+  assert.equal(blockedReview.status, 'BLOCKED');
+  assert.equal(blockedReview.sufficientForInGardenQa, false);
+  assert.equal(blockedReview.silentLocalFallback, false);
+});
+
+test('evidence-quality block auto-replaces from a missing morphology class', () => {
+  const jobs = [
+    { canonicalSlug: 'mango', visualForm: 'tree', growthStage: 'mature', phenology: 'vegetative', priority: 100, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'lavender', visualForm: 'shrub', growthStage: 'mature', phenology: 'vegetative', priority: 60, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'pineapple', visualForm: 'rosette', growthStage: 'mature', phenology: 'vegetative', priority: 100, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'banana', visualForm: 'herbaceous-clump', growthStage: 'mature', phenology: 'vegetative', priority: 100, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'GENUS_VISUALLY_REPRESENTABLE' },
+    { canonicalSlug: 'areca-palm', visualForm: 'palm', growthStage: 'mature', phenology: 'vegetative', priority: 10, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'bougainvillea', visualForm: 'climber', growthStage: 'mature', phenology: 'vegetative', priority: 60, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'GENUS_VISUALLY_REPRESENTABLE' },
+    { canonicalSlug: 'aloe-vera', visualForm: 'succulent-form', growthStage: 'mature', phenology: 'vegetative', priority: 10, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'eggplant', visualForm: 'subshrub', growthStage: 'mature', phenology: 'vegetative', priority: 10, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'lemon-grass', visualForm: 'grass-like', growthStage: 'mature', phenology: 'vegetative', priority: 10, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' },
+    { canonicalSlug: 'other-tree', visualForm: 'tree', growthStage: 'mature', phenology: 'vegetative', priority: 10, morphologyAuthority: 'canonical_growth_metadata', identityPrecision: 'SPECIES_SUPPORTED' }
+  ];
+  const batch = selectCalibrationBatch(jobs, 8);
+  assert.deepEqual(batch.map((j) => j.canonicalSlug), LOCKED_CALIBRATION_SLUGS);
+  const replaced = replaceBlockedCalibrationJobs(batch, jobs, ['mango']);
+  assert.equal(replaced.length, 8);
+  assert.equal(replaced.some((j) => j.canonicalSlug === 'mango'), false);
+  assert.equal(replaced.some((j) => j.canonicalSlug === 'other-tree'), false);
+  assert.ok(replaced.some((j) => j.canonicalSlug === 'lemon-grass' && j.visualForm === 'grass-like'));
+  assert.equal(new Set(replaced.map((j) => j.visualForm)).size, 8);
+});
+
+test('spend gate uses total API spend; $0.50 is not a safe 12-call cap', () => {
+  const spend = estimateCalibrationApiSpend();
+  assert.equal(spend.rejectedMaxSpendUsd, 0.5);
+  assert.ok(spend.expectedTotalApiSpendUsdAtMaxCalls > 0.5);
+  assert.equal(spend.maxSpendUsd, 1.5);
+  assert.equal(spend.authorized, false);
+  const proposed = proposeSafeCalibrationEnvelope();
+  assert.equal(proposed.approved, false);
+  assert.equal(proposed.maxSpendUsd, 1.5);
+  const halfDollar = parseSpendEnvelope([
+    '--run-id=run-1',
+    '--max-jobs=8',
+    '--max-calls=12',
+    '--max-spend-usd=0.50'
+  ]);
+  assert.throws(
+    () =>
+      assertSpendEnvelope(halfDollar, {
+        attemptedCalls: 0,
+        jobsStarted: 0,
+        spentUsd: 0.492,
+        billingKeyReadiness: 'UNKNOWN'
+      }),
+    (err) => err.code === 'PAID_SPEND_USD_LIMIT'
+  );
+  assert.equal(classifyCutoutIntegration({ ASSET_QA: 'PASS', IN_GARDEN_QA: 'PASS' }), 'RAW_PASS');
+  assert.equal(
+    classifyCutoutIntegration({
+      ASSET_QA: 'PASS',
+      IN_GARDEN_QA: 'FAIL',
+      reasonCodes: ['STICKER_LOOK']
+    }),
+    'RUNTIME_BLEND_REQUIRED'
+  );
+  assert.equal(
+    classifyCutoutIntegration({
+      ASSET_QA: 'PASS',
+      IN_GARDEN_QA: 'FAIL',
+      reasonCodes: ['FLOATING']
+    }),
+    'FAIL'
+  );
 });
