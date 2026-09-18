@@ -630,6 +630,10 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
           </div>
         </div>
         <img class="upload-preview" id="photoPreview" style="cursor:pointer;border-radius:16px;width:100%;max-height:320px;object-fit:cover;margin-top:0" onclick="document.getElementById('fileInput').click()"/>
+        <div id="gdPhotoPersistStatus" class="gd-persist-status" role="status" aria-live="polite" style="margin-top:10px">
+          <span id="gdPhotoPersistStatusText"></span>
+          <button type="button" id="gdPhotoPersistRetryBtn" class="gd-persist-retry" hidden onclick="gdRetryLastPersist()">Retry</button>
+        </div>
         <div id="changePhotoBtn" style="display:none;margin-top:8px;text-align:center">
           <button onclick="document.getElementById('fileInput').click()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif">↺ Change photo</button>
         </div>
@@ -1256,6 +1260,8 @@ let gdHydratingFromServer = false;
 let gdHostPersistTimer = null;
 let gdPendingHostOps = [];
 let gdLastPersistOps = [];
+let gdLastSourceMediaPost = null;
+let gdPersistStatusKind = 'save';
 let gdPersistStatusState = '';
 let gdDesignClientInstanceId = null;
 let gdServerDesignMeta = null;
@@ -1454,18 +1460,51 @@ function handlePhoto(e) {
       const p = document.getElementById('photoPreview');
       p.src = photoDataUrl; p.classList.add('show');
       document.getElementById('uploadCard').style.display = 'none';
+      gdSetPersistStatus('saving', null, 'photo');
+      if (typeof canvas.toBlob === 'function') {
+        canvas.toBlob(function(blob) {
+          if (!blob) {
+            gdSetPersistStatus('error', 'Not saved — retry', 'photo');
+            return;
+          }
+          gdPostSourcePhotoBytes(blob, 'garden-source.jpg');
+        }, 'image/jpeg', 0.75);
+      } else {
+        gdSetPersistStatus('error', 'Not saved — retry', 'photo');
+      }
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(file);
-  try {
-    gdPostToHost({
+}
+
+function gdPostSourcePhotoBytes(blob, fileName) {
+  if (!blob) {
+    gdSetPersistStatus('error', 'Not saved — retry', 'photo');
+    return;
+  }
+  if (typeof blob.arrayBuffer !== 'function') {
+    gdSetPersistStatus('error', 'Not saved — retry', 'photo');
+    return;
+  }
+  gdSetPersistStatus('saving', null, 'photo');
+  blob.arrayBuffer().then(function(buf) {
+    const payload = {
       type: 'cruvit:garden-design-save-source-media',
       designClientInstanceId: gdEnsureDesignClientInstanceId(),
       gardenAreaId: gdSelectedAreaId,
-      file: file
-    });
-  } catch (err) {}
+      fileName: fileName || 'garden-source.jpg',
+      fileType: blob.type || 'image/jpeg',
+      fileSize: blob.size,
+      fileBytes: buf
+    };
+    delete payload.file;
+    delete payload.userId;
+    gdLastSourceMediaPost = payload;
+    gdPostToHost(payload);
+  }).catch(function() {
+    gdSetPersistStatus('error', 'Not saved — retry', 'photo');
+  });
 }
 
 // ── Plants list state ──
@@ -1670,29 +1709,42 @@ function gdSetPersistNote(text) {
   el.textContent = text;
 }
 
-function gdSetPersistStatus(state, detail) {
-  const wrap = document.getElementById('gdPersistStatus');
-  const text = document.getElementById('gdPersistStatusText');
-  const retry = document.getElementById('gdPersistRetryBtn');
-  if (!wrap || !text) return;
+function gdSetPersistStatus(state, detail, kind) {
+  if (kind) gdPersistStatusKind = kind;
+  const nodes = [
+    { wrap: document.getElementById('gdPersistStatus'), text: document.getElementById('gdPersistStatusText'), retry: document.getElementById('gdPersistRetryBtn') },
+    { wrap: document.getElementById('gdPhotoPersistStatus'), text: document.getElementById('gdPhotoPersistStatusText'), retry: document.getElementById('gdPhotoPersistRetryBtn') }
+  ];
   gdPersistStatusState = state || '';
-  if (!state) {
-    wrap.classList.remove('is-visible', 'is-error');
-    wrap.style.display = 'none';
-    text.textContent = '';
-    if (retry) retry.hidden = true;
-    return;
-  }
-  wrap.classList.add('is-visible');
-  wrap.style.display = 'flex';
-  wrap.classList.toggle('is-error', state === 'error');
-  if (state === 'saving') text.textContent = 'Saving…';
-  else if (state === 'saved') text.textContent = 'Saved';
-  else text.textContent = detail || 'Not saved — retry';
-  if (retry) retry.hidden = state !== 'error';
+  const label = !state
+    ? ''
+    : (state === 'saving'
+      ? (gdPersistStatusKind === 'photo' ? 'Uploading…' : 'Saving…')
+      : (state === 'saved' ? 'Saved' : (detail || 'Not saved — retry')));
+  nodes.forEach(function(node) {
+    if (!node.wrap || !node.text) return;
+    if (!state) {
+      node.wrap.classList.remove('is-visible', 'is-error');
+      node.wrap.style.display = 'none';
+      node.text.textContent = '';
+      if (node.retry) node.retry.hidden = true;
+      return;
+    }
+    node.wrap.classList.add('is-visible');
+    node.wrap.style.display = 'flex';
+    node.wrap.classList.toggle('is-error', state === 'error');
+    node.text.textContent = label;
+    if (node.retry) node.retry.hidden = state !== 'error';
+  });
 }
 
 function gdRetryLastPersist() {
+  if (gdLastSourceMediaPost && gdPersistStatusKind === 'photo') {
+    const payload = Object.assign({}, gdLastSourceMediaPost);
+    gdSetPersistStatus('saving', null, 'photo');
+    gdPostToHost(payload);
+    return;
+  }
   if (!gdLastPersistOps.length) return;
   gdPendingHostOps = gdLastPersistOps.slice();
   gdSetPersistStatus('saving');
@@ -1962,6 +2014,11 @@ function gdHydrateServerDesign(msg) {
       photoB64 = null;
       isPhotoMode = true;
       gdManualPlacementActive = false;
+      const preview = document.getElementById('photoPreview');
+      if (preview) {
+        preview.src = baseUrl;
+        preview.classList.add('show');
+      }
     } else {
       photoDataUrl = gdManualPlacementPlotDataUrl();
       photoB64 = null;
@@ -2025,11 +2082,13 @@ function gdOnLoadResult(msg) {
 
 function gdOnPersistResult(msg) {
   if (!msg) return;
+  const isPhoto = msg.type === 'cruvit:garden-design-save-source-media-result' || msg.purpose === 'design_source';
   if (msg.ok) {
     gdServerDesignMeta = Object.assign({}, gdServerDesignMeta || {}, {
       designId: msg.designId || (gdServerDesignMeta && gdServerDesignMeta.designId),
       designClientInstanceId: msg.designClientInstanceId || gdDesignClientInstanceId,
-      revision: msg.revision
+      revision: msg.revision,
+      sourceMediaId: msg.sourceMediaId || (gdServerDesignMeta && gdServerDesignMeta.sourceMediaId) || null
     });
     if (msg.designClientInstanceId) gdDesignClientInstanceId = msg.designClientInstanceId;
     if (gdServerRefStore && gdOwnedGardenContext) {
@@ -2042,12 +2101,19 @@ function gdOnPersistResult(msg) {
       });
     }
     gdWriteLocalCache(true);
-    gdSetPersistStatus('saved');
+    gdSetPersistStatus('saved', null, isPhoto ? 'photo' : 'save');
     gdSetPersistNote('');
+    if (isPhoto) gdLastSourceMediaPost = null;
     if (msg.sourceMediaUrl) {
       photoDataUrl = msg.sourceMediaUrl;
+      photoB64 = null;
+      const preview = document.getElementById('photoPreview');
+      if (preview) {
+        preview.src = msg.sourceMediaUrl;
+        preview.classList.add('show');
+      }
       const img = document.getElementById('imgAfter');
-      if (img && msg.sourceMediaUrl) img.src = msg.sourceMediaUrl;
+      if (img) img.src = msg.sourceMediaUrl;
     }
     return;
   }
@@ -2061,7 +2127,15 @@ function gdOnPersistResult(msg) {
       message: msg.error || msg.code || 'not_saved'
     });
   } catch (e) {}
-  gdSetPersistStatus('error', 'Not saved — retry');
+  if (isPhoto && msg.sourceMediaId) {
+    gdLastSourceMediaPost = {
+      type: 'cruvit:garden-design-save-source-media',
+      designClientInstanceId: msg.designClientInstanceId || gdEnsureDesignClientInstanceId(),
+      gardenAreaId: gdSelectedAreaId,
+      sourceMediaId: msg.sourceMediaId
+    };
+  }
+  gdSetPersistStatus('error', 'Not saved — retry', isPhoto ? 'photo' : 'save');
   if (msg.keepLocalCanvas) {
     gdSetPersistNote('Canvas is unchanged. Durable save did not complete.');
   }

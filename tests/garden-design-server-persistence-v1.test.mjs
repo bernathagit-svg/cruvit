@@ -30,7 +30,9 @@ import {
   createGardenDesignMemorySupabase,
   createGardenDesignHostPersistence,
   GRANT_MODEL_V31,
-  DESIGN_PROTECTED_UPDATE_COLUMNS
+  DESIGN_PROTECTED_UPDATE_COLUMNS,
+  reconstructGardenDesignSourceFile,
+  extractGardenMediaRow
 } from '../modules/garden-design/garden-design-server-persistence-v1.js';
 import {
   indexDesignAssetRegistry,
@@ -636,7 +638,9 @@ test('AC: pre-existing empty/valid design is never deleted by compensation', asy
       scale: 1
     }
   });
-  assert.equal(failedNew.compensatedEmptyDesign, true);
+  assert.equal(failedNew.ok, false);
+  assert.equal(failedNew.createdDesign, false);
+  assert.equal(failedNew.compensatedEmptyDesign, false);
   assert.equal(mem.db.garden_designs.length, 1);
   assert.equal(mem.db.garden_designs[0].id, 'design-preexisting');
 
@@ -783,6 +787,190 @@ test('AF: V3.1 grants — first owned Mango insert + retry is exactly 1 design a
   const ensureSlice = persistSrc.slice(persistSrc.indexOf('async function ensureDesign'), persistSrc.indexOf('async function compensateNewlyCreatedEmptyDesign'));
   assert.doesNotMatch(ensureSlice, /\.upsert\(/);
   assert.match(ensureSlice, /\.insert\(insertRow\)/);
+});
+
+test('AG: source photo contract — select triggers save-source-media via ArrayBuffer, never File/Data URL', () => {
+  const gd = src('modules/garden-design/index.html');
+  const handlePhoto = gd.slice(gd.indexOf('function handlePhoto'), gd.indexOf('function gdPostSourcePhotoBytes'));
+  const postBytes = gd.slice(gd.indexOf('function gdPostSourcePhotoBytes'), gd.indexOf('function isOverlayPlacementMode'));
+  assert.match(gd, /onchange="handlePhoto\(event\)"/);
+  assert.match(handlePhoto, /gdSetPersistStatus\('saving', null, 'photo'\)/);
+  assert.match(handlePhoto, /canvas\.toBlob/);
+  assert.doesNotMatch(handlePhoto, /file:\s*file/);
+  assert.match(postBytes, /fileBytes:\s*buf/);
+  assert.match(postBytes, /delete payload\.file/);
+  assert.doesNotMatch(postBytes, /file:\s*file/);
+  const runPhoto = gd.slice(gd.indexOf('function runPhoto'), gd.indexOf('function runPhoto') + 2500);
+  assert.doesNotMatch(runPhoto, /save-source-media/);
+  assert.match(gd, /Uploading…/);
+  assert.match(gd, /Not saved — retry/);
+  assert.match(gd, /id="gdPhotoPersistStatus"/);
+  const persistStatus = gd.slice(gd.indexOf('function gdSetPersistStatus'), gd.indexOf('function gdRetryLastPersist'));
+  assert.match(persistStatus, /Saved/);
+  assert.doesNotMatch(handlePhoto, /gdSetPersistStatus\('saved'/);
+});
+
+test('AH: reconstructGardenDesignSourceFile rejects Data URL and accepts ArrayBuffer', async () => {
+  const denied = reconstructGardenDesignSourceFile({ file: 'data:image/jpeg;base64,abc' });
+  assert.equal(denied.ok, false);
+  assert.equal(denied.code, 'DATA_URL_FORBIDDEN');
+  const missing = reconstructGardenDesignSourceFile({});
+  assert.equal(missing.ok, false);
+  assert.equal(missing.code, 'FILE_REQUIRED');
+  const bytes = await jpegFile().arrayBuffer();
+  const ok = reconstructGardenDesignSourceFile({
+    fileBytes: bytes,
+    fileName: 'garden-source.jpg',
+    fileType: 'image/jpeg'
+  });
+  assert.equal(ok.ok, true);
+  assert.equal(typeof ok.file === 'string' && ok.file.startsWith('data:'), false);
+  assert.ok(ok.file);
+  assert.equal(extractGardenMediaRow({ media: { id: 'm1', purpose: 'design_source' } }).id, 'm1');
+  assert.equal(extractGardenMediaRow({ row: { id: 'm2', purpose: 'design_source' } }).id, 'm2');
+});
+
+test('AI: successful source upload creates one design_source, attaches existing design, hydrates signed URL', async () => {
+  let createCount = 0;
+  const preexisting = {
+    id: 'design-mojstrana',
+    garden_profile_id: GARDEN,
+    user_id: USER,
+    client_instance_id: 'gd_d_existing',
+    garden_area_id: null,
+    status: 'active',
+    title: 'Garden Design',
+    revision: 2,
+    source_media_id: null
+  };
+  const { mem, host } = makeHost({
+    garden_designs: [preexisting],
+    createSourceMedia: async ({ file, purpose, sourceModule, gardenProfileId }) => {
+      createCount += 1;
+      assert.equal(typeof file === 'string' && String(file).startsWith('data:'), false);
+      assert.equal(purpose, 'design_source');
+      assert.equal(sourceModule, 'garden_design');
+      const row = {
+        id: 'media-source-live',
+        garden_profile_id: gardenProfileId,
+        storage_path: `${USER}/${GARDEN}/media-source-live/garden-source.jpg`,
+        storage_bucket: 'user-garden-media',
+        purpose,
+        source_module: sourceModule,
+        metadata: {},
+        validation_state: 'validated'
+      };
+      mem.db.garden_media.push(row);
+      return { media: row };
+    },
+    getSignedUrl: async ({ storagePath }) => ({ signedUrl: 'https://signed.example/user-garden-media/' + storagePath })
+  });
+  const bytes = await jpegFile().arrayBuffer();
+  const saved = await host.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_new_from_iframe',
+    gardenAreaId: null,
+    fileName: 'garden-source.jpg',
+    fileType: 'image/jpeg',
+    fileBytes: bytes
+  });
+  assert.equal(saved.ok, true);
+  assert.equal(saved.purpose, 'design_source');
+  assert.equal(saved.mediaValidationState, 'validated');
+  assert.equal(saved.storedAsDataUrl, false);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_designs[0].id, 'design-mojstrana');
+  assert.equal(mem.db.garden_designs[0].source_media_id, 'media-source-live');
+  assert.equal(mem.db.garden_media.length, 1);
+  assert.equal(mem.db.garden_media[0].purpose, 'design_source');
+  assert.equal(mem.db.garden_media[0].validation_state, 'validated');
+  assert.equal(looksLikePostgresDataUrl(mem.db.garden_media[0]), false);
+  assert.equal(looksLikePostgresDataUrl(mem.db.garden_designs[0]), false);
+  assert.match(saved.sourceMediaUrl, /^https:\/\/signed\.example\//);
+  const loaded = await host.loadDesign({ cachedDesignId: 'design-mojstrana' });
+  assert.match(loaded.editorBaseMediaUrl, /^https:\/\/signed\.example\//);
+  assert.equal(loaded.sourceMediaId, 'media-source-live');
+  assert.equal(createCount, 1);
+
+  const retried = await host.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_new_from_iframe',
+    sourceMediaId: 'media-source-live'
+  });
+  assert.equal(retried.ok, true);
+  assert.equal(createCount, 1);
+  assert.equal(mem.db.garden_media.length, 1);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(designPaidAiForAction('save-source-media').paidAiCalls, 0);
+});
+
+test('AJ: source upload failure and attach failure stay Not saved; retry does not duplicate', async () => {
+  let createCount = 0;
+  const preexisting = {
+    id: 'design-attach',
+    garden_profile_id: GARDEN,
+    user_id: USER,
+    client_instance_id: 'gd_d_attach',
+    garden_area_id: null,
+    status: 'active',
+    title: 'Garden Design',
+    revision: 1,
+    source_media_id: null
+  };
+  const { host: failHost } = makeHost({
+    fail: { garden_media: 'insert' }
+  });
+  const bytes = await jpegFile().arrayBuffer();
+  const uploadFail = await failHost.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_attach',
+    fileBytes: bytes,
+    fileName: 'garden-source.jpg',
+    fileType: 'image/jpeg'
+  });
+  assert.equal(uploadFail.ok, false);
+  assert.equal(uploadFail.code, 'MEDIA_UPLOAD_FAILED');
+  assert.equal(uploadFail.keepLocalCanvas, true);
+
+  const { mem, host } = makeHost({
+    garden_designs: [preexisting],
+    fail: { once: 'garden_designs.update' },
+    createSourceMedia: async ({ gardenProfileId }) => {
+      createCount += 1;
+      const row = {
+        id: 'media-orphan-keep',
+        garden_profile_id: gardenProfileId,
+        storage_path: `${USER}/${GARDEN}/media-orphan-keep/garden-source.jpg`,
+        storage_bucket: 'user-garden-media',
+        purpose: 'design_source',
+        source_module: 'garden_design',
+        metadata: {},
+        validation_state: 'validated'
+      };
+      mem.db.garden_media.push(row);
+      return { media: row };
+    }
+  });
+  const attachFail = await host.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_attach',
+    fileBytes: bytes,
+    fileName: 'garden-source.jpg',
+    fileType: 'image/jpeg'
+  });
+  assert.equal(attachFail.ok, false);
+  assert.ok(['DESIGN_ATTACH_FAILED', 'DESIGN_WRITE_FAILED'].includes(attachFail.code));
+  assert.equal(attachFail.sourceMediaId, 'media-orphan-keep');
+  assert.equal(attachFail.mediaKept, true);
+  assert.equal(mem.db.garden_media.length, 1);
+  assert.equal(mem.db.garden_designs[0].source_media_id, null);
+  assert.equal(createCount, 1);
+
+  const retried = await host.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_attach',
+    sourceMediaId: 'media-orphan-keep'
+  });
+  assert.equal(retried.ok, true);
+  assert.equal(createCount, 1);
+  assert.equal(mem.db.garden_media.length, 1);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_designs[0].source_media_id, 'media-orphan-keep');
 });
 
 function looksLikePostgresDataUrl(row) {

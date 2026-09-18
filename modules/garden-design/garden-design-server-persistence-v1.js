@@ -207,6 +207,52 @@ function placementMutablePatch(row) {
   };
 }
 
+function isDataUrlValue(value) {
+  return typeof value === 'string' && value.startsWith('data:');
+}
+
+function isBinarySourceBytes(value) {
+  if (!value) return false;
+  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) return true;
+  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView(value)) return true;
+  return false;
+}
+
+export function reconstructGardenDesignSourceFile(payload = {}) {
+  if (isDataUrlValue(payload.file) || isDataUrlValue(payload.blob) || isDataUrlValue(payload.fileBytes)) {
+    return { ok: false, code: 'DATA_URL_FORBIDDEN', file: null };
+  }
+  const bytes = payload.fileBytes;
+  if (isBinarySourceBytes(bytes)) {
+    const type = asText(payload.fileType) || 'image/jpeg';
+    const name = asText(payload.fileName) || 'garden-source.jpg';
+    const blob = new Blob([bytes], { type });
+    if (typeof File === 'function') {
+      try {
+        return { ok: true, code: null, file: new File([blob], name, { type }) };
+      } catch (_) {
+        blob.name = name;
+        return { ok: true, code: null, file: blob };
+      }
+    }
+    blob.name = name;
+    return { ok: true, code: null, file: blob };
+  }
+  const file = payload.file || payload.blob;
+  if (file && typeof file === 'object' && (typeof file.size === 'number' || typeof file.slice === 'function')) {
+    return { ok: true, code: null, file };
+  }
+  return { ok: false, code: 'FILE_REQUIRED', file: null };
+}
+
+export function extractGardenMediaRow(media) {
+  if (!media || typeof media !== 'object') return null;
+  if (media.row && media.row.id) return media.row;
+  if (media.media && media.media.id) return media.media;
+  if (media.id && (media.storage_path || media.purpose || media.validation_state)) return media;
+  return null;
+}
+
 /**
  * In-memory Supabase stand-in for tests. Not used by the iframe.
  */
@@ -824,6 +870,30 @@ export function createGardenDesignHostPersistence(deps = {}) {
     const found = await findExistingDesign(payload);
     if (!found.ok) return found;
     if (found.design) return found;
+    let singles;
+    try {
+      singles = await listActiveDesigns(auth.supabase, auth.gardenProfileId, gardenAreaId);
+    } catch (err) {
+      const fail = persistFailFields(err, 'ensureDesign', 'list-active', { code: 'LOAD_FAILED' });
+      logPersistConsole(fail);
+      return fail;
+    }
+    if (Array.isArray(singles) && singles.length === 1) {
+      remember(auth.gardenProfileId, singles[0].garden_area_id, singles[0]);
+      return { ok: true, design: singles[0], created: false };
+    }
+    if (Array.isArray(singles) && singles.length > 1) {
+      return {
+        ok: false,
+        code: MULTIPLE_DESIGNS_REQUIRE_SELECTION,
+        keepLocalCanvas: true,
+        paidAiCalls: 0,
+        gardenProfileId: auth.gardenProfileId,
+        gardenAreaId,
+        designIds: singles.map((r) => r.id),
+        silentLatestForbidden: true
+      };
+    }
     const clientInstanceId = asNull(found.clientInstanceId) || asNull(payload.designClientInstanceId) || createDesignClientInstanceId();
 
     const insertRow = {
@@ -1156,39 +1226,77 @@ export function createGardenDesignHostPersistence(deps = {}) {
   async function saveSourceMedia(payload = {}) {
     designPaidAiForAction('save-source-media');
     const auth = authContext();
-    if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
-    const file = payload.file || payload.blob;
-    if (!file) return { ok: false, code: 'FILE_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
-    if (typeof file === 'string' && file.startsWith('data:')) {
-      return { ok: false, code: 'DATA_URL_FORBIDDEN', keepLocalCanvas: true, paidAiCalls: 0 };
-    }
-    let media;
-    try {
-      media = await createMedia({
-        supabase: auth.supabase,
-        userId: auth.sessionUserId,
-        gardenProfileId: auth.gardenProfileId,
-        gardenPlantId: null,
-        gardenAreaId: asNull(payload.gardenAreaId),
-        file,
-        setAsCover: false,
-        sourceModule: 'garden_design',
-        purpose: 'design_source'
+    if (!auth.ok) {
+      const fail = persistFailFields({ message: 'auth_or_garden_required' }, 'saveSourceMedia', 'auth', {
+        code: 'AUTH_OR_GARDEN_REQUIRED'
       });
-    } catch (err) {
-      return {
-        ok: false,
-        code: 'MEDIA_UPLOAD_FAILED',
-        error: err && (err.message || err.code),
-        keepLocalCanvas: true,
-        paidAiCalls: 0
-      };
+      logPersistConsole(fail);
+      return fail;
     }
-    const mediaRow = media && (media.row || media);
+    let mediaRow = null;
+    const existingMediaId = asNull(payload.sourceMediaId);
+    if (existingMediaId) {
+      const { data: existingMedia, error: mediaLookupError } = await auth.supabase
+        .from('garden_media')
+        .select(MEDIA_SELECT)
+        .eq('id', existingMediaId)
+        .eq('garden_profile_id', auth.gardenProfileId)
+        .maybeSingle();
+      if (mediaLookupError || !existingMedia) {
+        const fail = persistFailFields(mediaLookupError || { message: 'source_media_not_in_active_garden' }, 'saveSourceMedia', 'resolve-media', {
+          code: 'MEDIA_UPLOAD_FAILED'
+        });
+        logPersistConsole(fail);
+        return fail;
+      }
+      mediaRow = existingMedia;
+    } else {
+      const reconstructed = reconstructGardenDesignSourceFile(payload);
+      if (!reconstructed.ok) {
+        const fail = persistFailFields({ message: reconstructed.code }, 'saveSourceMedia', 'reconstruct-file', {
+          code: reconstructed.code,
+          keepLocalCanvas: true
+        });
+        logPersistConsole(fail);
+        return fail;
+      }
+      const file = reconstructed.file;
+      let media;
+      try {
+        media = await createMedia({
+          supabase: auth.supabase,
+          userId: auth.sessionUserId,
+          gardenProfileId: auth.gardenProfileId,
+          gardenPlantId: null,
+          gardenAreaId: asNull(payload.gardenAreaId),
+          file,
+          setAsCover: false,
+          sourceModule: 'garden_design',
+          purpose: 'design_source'
+        });
+      } catch (err) {
+        const fail = persistFailFields(err, 'saveSourceMedia', 'upload', {
+          code: 'MEDIA_UPLOAD_FAILED'
+        });
+        logPersistConsole(fail);
+        return fail;
+      }
+      mediaRow = extractGardenMediaRow(media);
+    }
     const mediaId = mediaRow && mediaRow.id;
-    if (!mediaId) return { ok: false, code: 'MEDIA_UPLOAD_FAILED', keepLocalCanvas: true, paidAiCalls: 0 };
+    if (!mediaId) {
+      const fail = persistFailFields({ message: 'media_row_missing' }, 'saveSourceMedia', 'extract-media', {
+        code: 'MEDIA_UPLOAD_FAILED'
+      });
+      logPersistConsole(fail);
+      return fail;
+    }
     if (looksLikeDataUrl(JSON.stringify(mediaRow.metadata || {}))) {
-      return { ok: false, code: 'DATA_URL_FORBIDDEN', paidAiCalls: 0 };
+      const fail = persistFailFields({ message: 'data_url_forbidden' }, 'saveSourceMedia', 'metadata', {
+        code: 'DATA_URL_FORBIDDEN'
+      });
+      logPersistConsole(fail);
+      return fail;
     }
     const attached = await saveDesign({
       designClientInstanceId: payload.designClientInstanceId,
@@ -1197,24 +1305,25 @@ export function createGardenDesignHostPersistence(deps = {}) {
     });
     const signed = await signedMediaUrl(auth.supabase, mediaId);
     if (!attached.ok) {
-      return {
-        ok: false,
+      const fail = persistFailFields({
+        message: attached.error || attached.code,
+        code: attached.supabaseCode || attached.code
+      }, 'saveSourceMedia', 'attach', {
         code: attached.code || 'DESIGN_ATTACH_FAILED',
-        error: attached.error,
         sourceMediaId: mediaId,
-        storagePath: signed.storagePath || (mediaRow && mediaRow.storage_path) || null,
+        storagePath: signed.storagePath || mediaRow.storage_path || null,
         purpose: 'design_source',
         sourceModule: 'garden_design',
         mediaKept: true,
         mediaDeleted: false,
-        mediaValidationState: (mediaRow && mediaRow.validation_state) || 'validated',
+        mediaValidationState: mediaRow.validation_state || 'validated',
         designAuthority: false,
         compensatedEmptyDesign: !!attached.compensatedEmptyDesign,
         leftoverEmptyDesign: !!attached.leftoverEmptyDesign,
-        keepLocalCanvas: true,
-        storedAsDataUrl: false,
-        paidAiCalls: 0
-      };
+        storedAsDataUrl: false
+      });
+      logPersistConsole(fail);
+      return fail;
     }
     return Object.assign({}, attached, {
       ok: attached.ok,
@@ -1226,8 +1335,10 @@ export function createGardenDesignHostPersistence(deps = {}) {
       storedAsDataUrl: false,
       mediaKept: true,
       mediaDeleted: false,
+      mediaValidationState: mediaRow.validation_state || 'validated',
       designAuthority: true,
-      paidAiCalls: 0
+      paidAiCalls: 0,
+      createdDesign: !!attached.createdDesign
     });
   }
 
@@ -1276,6 +1387,8 @@ const api = {
   GRANT_MODEL_V31,
   DESIGN_PROTECTED_UPDATE_COLUMNS,
   iframeMustNotCreateSupabaseClient,
+  reconstructGardenDesignSourceFile,
+  extractGardenMediaRow,
   createGardenDesignMemorySupabase,
   createGardenDesignHostPersistence
 };
