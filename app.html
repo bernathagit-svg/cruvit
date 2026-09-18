@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
-<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20250701">
+<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260918a">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260915a">
 <link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913h">
@@ -692,6 +692,10 @@
 <div id="plant-identifier-root"></div>
 <div id="garden-design-root" aria-hidden="true">
   <button type="button" class="gd-back" onclick="closeGardenDesign()"><span class="gd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
+</div>
+<div id="design-asset-calibration-root" aria-hidden="true">
+  <button type="button" class="dac-back" onclick="closeDesignAssetCalibrationReview()"><span aria-hidden="true">←</span><span>Close review</span></button>
+  <p class="dac-status" id="designAssetCalibrationStatus"></p>
 </div>
 <div id="plant-doctor-root" aria-hidden="true">
   <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
@@ -8713,6 +8717,84 @@ function closeGardenDesign(){
   scrollToPageTop('auto');
 }
 
+function closeDesignAssetCalibrationReview(){
+  const root=document.getElementById('design-asset-calibration-root');
+  if(!root) return;
+  root.classList.remove('dac-active');
+  root.setAttribute('aria-hidden','true');
+}
+
+function openDesignAssetCalibrationReview(){
+  const root=document.getElementById('design-asset-calibration-root');
+  if(!root) return;
+  const status=document.getElementById('designAssetCalibrationStatus');
+  if(status) status.textContent='';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='Design asset calibration review';
+    root.appendChild(frame);
+  }
+  const persist=getGardenDesignHostPersistence();
+  const helper=window.CruvitCalibrationGardenSource;
+  const owned=window.CruvitGardenDesignOwnedGarden;
+  const pd=window.cruvitPersonalDomainV0;
+  const reviewSrc='modules/garden-design/calibration-review.html?v=20260918a';
+  const origin=(!window.location.origin||window.location.origin==='null')?'*':window.location.origin;
+  const inject=function(resolved){
+    try{
+      if(helper&&typeof helper.summarizeCalibrationSourceForLog==='function'){
+        console.warn('[calibration-garden-source]',helper.summarizeCalibrationSourceForLog(resolved||{}));
+      }
+    }catch(_){}
+    if(resolved&&resolved.code==='CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED'&&status){
+      status.textContent='CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED — select the active Garden Design. Latest is not chosen automatically.';
+    }
+    try{
+      if(helper&&typeof helper.buildCalibrationSourceInjectMessage==='function'&&frame.contentWindow){
+        frame.contentWindow.postMessage(helper.buildCalibrationSourceInjectMessage(resolved||{}),origin);
+      }
+    }catch(_){}
+  };
+  frame.onload=function(){
+    if(frame._dacResolved) inject(frame._dacResolved);
+  };
+  frame.src=reviewSrc;
+  if(!persist||!helper||typeof helper.loadCalibrationGardenSourcePhoto!=='function'||!pd){
+    if(status) status.textContent='AUTH_OR_GARDEN_REQUIRED';
+    return;
+  }
+  const session=pd.getSession?pd.getSession():null;
+  const userId=session&&session.user&&session.user.id?session.user.id:null;
+  const gardenId=pd.getActiveGardenId?pd.getActiveGardenId():null;
+  let cachedDesignId=null;
+  if(owned&&typeof owned.createServerDesignRefPersistence==='function'&&userId&&gardenId){
+    const ref=owned.createServerDesignRefPersistence(window.localStorage).load({
+      userId:userId,
+      gardenProfileId:gardenId,
+      areaId:null
+    });
+    cachedDesignId=ref&&ref.designId?ref.designId:null;
+  }
+  helper.loadCalibrationGardenSourcePhoto(function(payload){
+    return persist.loadDesign(payload);
+  },{
+    gardenAreaId:null,
+    cachedDesignId:cachedDesignId
+  }).then(function(resolved){
+    frame._dacResolved=resolved;
+    inject(resolved);
+  });
+}
+
+window.openDesignAssetCalibrationReview=openDesignAssetCalibrationReview;
+window.addEventListener('load',function(){
+  if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
+});
+
 /* ── Plant Doctor (isolated iframe module) ── */
 let plantDoctorOpenedFromGarden=false;
 let plantDoctorSessionContext=null;
@@ -9683,6 +9765,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916d"></script>
 <script type="module" src="modules/garden-design/garden-design-variant-selection-policy-v1.js?v=20260917a"></script>
 <script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260917d"></script>
-<script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260917d"></script>
+<script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260918a"></script>
+<script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260918a"></script>
 </body>
 </html>

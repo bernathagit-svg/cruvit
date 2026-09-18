@@ -200,6 +200,7 @@ export function main(argv = process.argv.slice(2)) {
         reportPath: REPORT_REL.replace(/\\/g, '/'),
         calibrationPath: 'data/garden-design/design-asset-factory-calibration-batch-v1.json',
         reviewPath: path.relative(ROOT, review.htmlPath).replace(/\\/g, '/'),
+        liveReviewPath: path.relative(ROOT, review.livePath).replace(/\\/g, '/'),
         ...proof,
         networkRequests: proof.attemptedNetworkCalls,
         canonicalPlantsInspected: report.gapSummary.canonicalPlantsInspected,

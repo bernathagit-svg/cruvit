@@ -18,16 +18,18 @@ export const IN_GARDEN_REASON_CODES = Object.freeze([
   'SAVED_GARDEN_PHOTO_UNAVAILABLE'
 ]);
 
-export const IN_GARDEN_REVIEW_CHECKS = Object.freeze([
-  'perspective match',
-  'ground contact',
-  'sticker look',
-  'sharpness mismatch',
-  'saturation/contrast mismatch',
-  'halo/fringe',
-  'believable scale',
-  'silhouette in scene'
+export const IN_GARDEN_REVIEW_FIELDS = Object.freeze([
+  'PERSPECTIVE',
+  'GROUND_CONTACT',
+  'STICKER_LOOK',
+  'HALO',
+  'SHARPNESS_MATCH',
+  'COLOR_TONAL_MATCH',
+  'SCALE_REALISM',
+  'SILHOUETTE'
 ]);
+
+export const IN_GARDEN_REVIEW_CHECKS = IN_GARDEN_REVIEW_FIELDS;
 
 export const CUTOUT_INTEGRATION_VERDICT = Object.freeze({
   RAW_PASS: 'RAW_PASS',
@@ -118,9 +120,12 @@ export function assessInGardenQa(input = {}) {
   };
 }
 
-export function composeApprovalVerdict(assetQaResult, inGardenQaResult) {
+export function composeApprovalVerdict(assetQaResult, inGardenQaResult, options = {}) {
   const asset = String(assetQaResult || 'UNKNOWN');
-  const garden = String(inGardenQaResult || 'UNKNOWN');
+  let garden = String(inGardenQaResult || 'UNKNOWN');
+  if (garden === 'PASS' && options.realSavedGardenPhotoUsed !== true) {
+    garden = 'BLOCKED';
+  }
   const approved = asset === 'PASS' && garden === 'PASS';
   return {
     ASSET_QA: asset,
@@ -128,7 +133,7 @@ export function composeApprovalVerdict(assetQaResult, inGardenQaResult) {
     approvalEligible: approved,
     note: approved
       ? 'Both gates passed.'
-      : 'An asset cannot become APPROVED unless ASSET_QA=PASS and IN_GARDEN_QA=PASS. UNKNOWN never auto-approves.'
+      : 'An asset cannot become APPROVED unless ASSET_QA=PASS and IN_GARDEN_QA=PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. UNKNOWN never auto-approves.'
   };
 }
 

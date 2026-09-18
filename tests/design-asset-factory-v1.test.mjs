@@ -47,13 +47,19 @@ import {
   classifyCalibrationReviewReadiness,
   proposeSafeCalibrationEnvelope,
   estimateCalibrationApiSpend,
-  LOCKED_CALIBRATION_SLUGS
+  LOCKED_CALIBRATION_SLUGS,
+  loadCalibrationGardenSourcePhoto,
+  resolveCalibrationGardenSourceFromLoad,
+  summarizeCalibrationSourceForLog,
+  CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED,
+  IN_GARDEN_REVIEW_FIELDS
 } from '../modules/garden-design/asset-factory-v1/index.js';
 import {
   loadCanonicalCatalog,
   loadOwnedGardenSignals
 } from '../modules/garden-design/asset-factory-v1/catalog-source-v1.js';
 import { DESIGN_ASSET_PRODUCTION_PIPELINE } from '../modules/garden-design/garden-design-variant-policy-v1.js';
+import { buildCalibrationReviewHtml } from '../modules/garden-design/asset-factory-v1/calibration-review-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -568,4 +574,68 @@ test('spend gate uses total API spend; $0.50 is not a safe 12-call cap', () => {
     }),
     'FAIL'
   );
+});
+
+test('host calibration source uses selected design and never logs the signed URL', async () => {
+  const loaded = {
+    ok: true,
+    code: 'LOADED',
+    paidAiCalls: 0,
+    designId: 'design-1',
+    gardenProfileId: 'garden-mojstrana',
+    sourceMediaId: 'media-source-1',
+    sourceMediaUrl: 'https://signed.example/user-garden-media/secret-token'
+  };
+  const ready = resolveCalibrationGardenSourceFromLoad(loaded);
+  assert.equal(ready.ok, true);
+  assert.equal(ready.code, 'READY');
+  const summary = JSON.stringify(summarizeCalibrationSourceForLog(ready));
+  assert.equal(summary.includes('secret-token'), false);
+  assert.equal(summary.includes('https://signed.example'), false);
+  assert.match(summary, /"hasSignedUrl":true/);
+
+  const multi = resolveCalibrationGardenSourceFromLoad({
+    ok: false,
+    code: 'MULTIPLE_DESIGNS_REQUIRE_SELECTION',
+    designIds: ['d1', 'd2'],
+    silentLatestForbidden: true,
+    paidAiCalls: 0
+  });
+  assert.equal(multi.code, CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED);
+  assert.equal(multi.silentLatestForbidden, true);
+  assert.equal(multi.sourceMediaUrl, null);
+
+  const selected = await loadCalibrationGardenSourcePhoto(async (payload) => {
+    assert.equal(payload.cachedDesignId, 'design-1');
+    return loaded;
+  }, { cachedDesignId: 'design-1' });
+  assert.equal(selected.code, 'READY');
+
+  const blockedPass = composeApprovalVerdict('PASS', 'PASS', { realSavedGardenPhotoUsed: false });
+  assert.equal(blockedPass.IN_GARDEN_QA, 'BLOCKED');
+  assert.equal(blockedPass.approvalEligible, false);
+  const allowed = composeApprovalVerdict('PASS', 'PASS', { realSavedGardenPhotoUsed: true });
+  assert.equal(allowed.approvalEligible, true);
+  assert.ok(IN_GARDEN_REVIEW_FIELDS.includes('PERSPECTIVE'));
+  assert.ok(IN_GARDEN_REVIEW_FIELDS.includes('SILHOUETTE'));
+
+  const reviewHtml = buildCalibrationReviewHtml([
+    {
+      rank: 1,
+      canonicalSlug: 'mango',
+      visualForm: 'tree',
+      growthStage: 'mature',
+      scientific: 'Mangifera indica',
+      identityPrecision: 'SPECIES_SUPPORTED',
+      variantKey: 'mature',
+      priorityReason: 'owned-plants',
+      whyUsefulForCalibration: 'tree'
+    }
+  ]);
+  assert.match(reviewHtml, /data-panel="A"/);
+  assert.match(reviewHtml, /data-panel="B"/);
+  assert.match(reviewHtml, /cruvit:calibration-garden-source/);
+  assert.doesNotMatch(reviewHtml, /supabase/i);
+  assert.doesNotMatch(reviewHtml, /signed\.example/);
+  assert.doesNotMatch(reviewHtml, /sk-/);
 });

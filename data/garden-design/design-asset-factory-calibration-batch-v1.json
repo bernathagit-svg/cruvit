@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T20:01:05.565Z",
+  "generatedAt": "2026-09-18T20:12:46.666Z",
   "imagesGenerated": false,
   "jobs": [
     {
@@ -458,21 +458,21 @@
       "large"
     ],
     "checks": [
-      "perspective match",
-      "ground contact",
-      "sticker look",
-      "sharpness mismatch",
-      "saturation/contrast mismatch",
-      "halo/fringe",
-      "believable scale",
-      "silhouette in scene"
+      "PERSPECTIVE",
+      "GROUND_CONTACT",
+      "STICKER_LOOK",
+      "HALO",
+      "SHARPNESS_MATCH",
+      "COLOR_TONAL_MATCH",
+      "SCALE_REALISM",
+      "SILHOUETTE"
     ],
     "approvalRule": "ASSET_QA=PASS AND IN_GARDEN_QA=PASS",
     "sampleVerdict": {
       "ASSET_QA": "UNKNOWN",
       "IN_GARDEN_QA": "BLOCKED",
       "approvalEligible": false,
-      "note": "An asset cannot become APPROVED unless ASSET_QA=PASS and IN_GARDEN_QA=PASS. UNKNOWN never auto-approves."
+      "note": "An asset cannot become APPROVED unless ASSET_QA=PASS and IN_GARDEN_QA=PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. UNKNOWN never auto-approves."
     },
     "runtimeBlendPermanent": false
   },

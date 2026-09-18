@@ -671,14 +671,14 @@ export function createGardenDesignHostPersistence(deps = {}) {
     return mapped.filter((p) => !p.gardenProfileId || p.gardenProfileId === gardenProfileId);
   }
 
-  async function signedMediaUrl(supabase, mediaId) {
+  async function signedMediaUrl(supabase, mediaId, gardenProfileId) {
     if (!mediaId) return { mediaId: null, signedUrl: null, storagePath: null };
-    const { data, error } = await supabase
-      .from('garden_media')
-      .select(MEDIA_SELECT)
-      .eq('id', mediaId)
-      .maybeSingle();
-    if (error || !data || !data.storage_path) return { mediaId, signedUrl: null, storagePath: null };
+    let q = supabase.from('garden_media').select(MEDIA_SELECT).eq('id', mediaId);
+    if (gardenProfileId) q = q.eq('garden_profile_id', gardenProfileId);
+    const { data, error } = await q.maybeSingle();
+    if (error || !data || !data.storage_path) {
+      return { mediaId, signedUrl: null, storagePath: null, notInActiveGarden: Boolean(mediaId && gardenProfileId) };
+    }
     try {
       const signed = await signedUrlFn({ supabase, storagePath: data.storage_path, mediaId: data.id });
       return {
@@ -716,8 +716,8 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   async function buildLoadResult(supabase, design, ownedPlants, extra = {}) {
     const placements = await loadPlacements(supabase, design.id);
-    const source = await signedMediaUrl(supabase, design.source_media_id);
-    const derived = await signedMediaUrl(supabase, design.derived_base_media_id);
+    const source = await signedMediaUrl(supabase, design.source_media_id, design.garden_profile_id);
+    const derived = await signedMediaUrl(supabase, design.derived_base_media_id, design.garden_profile_id);
     const editorBase = derived.signedUrl ? derived : source;
     remember(design.garden_profile_id, design.garden_area_id, design);
     const identityErrors = [];
@@ -1303,7 +1303,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
       gardenAreaId: payload.gardenAreaId,
       sourceMediaId: mediaId
     });
-    const signed = await signedMediaUrl(auth.supabase, mediaId);
+    const signed = await signedMediaUrl(auth.supabase, mediaId, auth.gardenProfileId);
     if (!attached.ok) {
       const fail = persistFailFields({
         message: attached.error || attached.code,

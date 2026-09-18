@@ -74,3 +74,56 @@
 html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
   transform: scaleX(-1);
 }
+
+#design-asset-calibration-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2310;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  background: #f4f1ea;
+}
+
+#design-asset-calibration-root.dac-active {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+#design-asset-calibration-root .dac-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #f4f1ea;
+}
+
+#design-asset-calibration-root .dac-back,
+#design-asset-calibration-root .dac-status {
+  position: absolute;
+  z-index: 2;
+  font: 700 14px/1 Inter, system-ui, sans-serif;
+}
+
+#design-asset-calibration-root .dac-back {
+  top: max(14px, env(safe-area-inset-top));
+  inset-inline-start: max(14px, env(safe-area-inset-left));
+  height: 44px;
+  padding: 0 18px 0 14px;
+  border: 1px solid rgba(15, 61, 46, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 254, 249, 0.92);
+  color: #0f3d2e;
+  cursor: pointer;
+}
+
+#design-asset-calibration-root .dac-status {
+  top: max(14px, env(safe-area-inset-top));
+  inset-inline-start: 168px;
+  inset-inline-end: 16px;
+  color: #4a2;
+  font-weight: 600;
+}

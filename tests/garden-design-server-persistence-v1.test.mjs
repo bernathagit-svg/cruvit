@@ -142,7 +142,8 @@ test('A: iframe contains no direct Supabase write path', () => {
   assert.doesNotMatch(gd, /supabase\.from\s*\(/);
   assert.doesNotMatch(gd, /garden-design-server-persistence-v1/);
   assert.match(app, /garden-design-server-persistence-v1\.js/);
-  assert.match(app, /handleGardenDesignPersistenceRequest/);
+  assert.match(app, /openDesignAssetCalibrationReview/);
+  assert.match(app, /calibration-garden-source-host-v1/);
   assert.match(gd, /cruvit:garden-design-load-design/);
   assert.match(gd, /cruvit:garden-design-save-placement/);
   assert.match(gd, /Not saved — retry/);
@@ -495,6 +496,39 @@ test('W/X: source image is stored through garden_media, reload uses signed URL',
   assert.match(loaded.editorBaseMediaUrl, /^https:\/\/signed\.example\//);
   assert.equal(loaded.sourceMediaId, 'media-source-1');
   assert.equal(loaded.derivedBaseMediaId, null);
+});
+
+test('source media from another garden is not signed for calibration', async () => {
+  const { host } = makeHost({
+    garden_designs: [
+      {
+        id: 'design-photo',
+        garden_profile_id: GARDEN,
+        user_id: USER,
+        client_instance_id: 'gd_d_photo',
+        garden_area_id: null,
+        status: 'active',
+        title: 'Garden Design',
+        revision: 1,
+        source_media_id: 'media-foreign',
+        derived_base_media_id: null
+      }
+    ],
+    garden_media: [
+      {
+        id: 'media-foreign',
+        garden_profile_id: 'garden-other',
+        storage_path: `${USER}/garden-other/media-foreign/garden.jpg`,
+        storage_bucket: 'user-garden-media',
+        purpose: 'design_source'
+      }
+    ],
+    getSignedUrl: async ({ storagePath }) => ({ signedUrl: 'https://signed.example/user-garden-media/' + storagePath })
+  });
+  const loaded = await host.loadDesign({ cachedDesignId: 'design-photo' });
+  assert.equal(loaded.ok, true);
+  assert.equal(loaded.sourceMediaId, 'media-foreign');
+  assert.equal(loaded.sourceMediaUrl, null);
 });
 
 test('Y: Catalog/Card image path remains separate and unchanged', () => {

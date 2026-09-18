@@ -46,12 +46,18 @@ export {
   isCalibrationEvidenceBlocked,
   LOCKED_CALIBRATION_SLUGS
 } from './calibration-batch-v1.js';
-export { assessInGardenQa, composeApprovalVerdict, classifyCutoutIntegration } from './in-garden-qa-v1.js';
+export { assessInGardenQa, composeApprovalVerdict, classifyCutoutIntegration, IN_GARDEN_REVIEW_FIELDS } from './in-garden-qa-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
   classifyCalibrationReviewReadiness
 } from './garden-photo-review-path-v1.js';
+export {
+  loadCalibrationGardenSourcePhoto,
+  resolveCalibrationGardenSourceFromLoad,
+  summarizeCalibrationSourceForLog,
+  CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED
+} from './calibration-garden-source-host-v1.js';
 export { proposeSafeCalibrationEnvelope, KEY_BILLING_OWNER_ACTIONS } from './spend-envelope-v1.js';
 export { estimateCalibrationApiSpend } from './total-api-cost-v1.js';
 
