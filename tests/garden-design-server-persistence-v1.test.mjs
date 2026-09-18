@@ -28,7 +28,9 @@ import {
 import {
   iframeMustNotCreateSupabaseClient,
   createGardenDesignMemorySupabase,
-  createGardenDesignHostPersistence
+  createGardenDesignHostPersistence,
+  GRANT_MODEL_V31,
+  DESIGN_PROTECTED_UPDATE_COLUMNS
 } from '../modules/garden-design/garden-design-server-persistence-v1.js';
 import {
   indexDesignAssetRegistry,
@@ -141,6 +143,9 @@ test('A: iframe contains no direct Supabase write path', () => {
   assert.match(app, /handleGardenDesignPersistenceRequest/);
   assert.match(gd, /cruvit:garden-design-load-design/);
   assert.match(gd, /cruvit:garden-design-save-placement/);
+  assert.match(gd, /Not saved — retry/);
+  assert.match(gd, /gdRetryLastPersist/);
+  assert.match(gd, /gdSetPersistStatus/);
   assert.equal(GD_DESIGN_TO_HOST.LOAD_DESIGN, 'cruvit:garden-design-load-design');
   assert.equal(GD_HOST_TO_DESIGN.LOAD_RESULT, 'cruvit:garden-design-load-result');
 });
@@ -407,7 +412,7 @@ test('R: server revision is returned after successful mutation', async () => {
 });
 
 test('S: offline failure keeps local canvas / cache', async () => {
-  const { host } = makeHost({ fail: { garden_designs: 'upsert' } });
+  const { host } = makeHost({ fail: { garden_designs: 'insert' } });
   const result = await host.savePlacement({
     designClientInstanceId: 'gd_d_offline',
     placement: { clientInstanceId: 'pl_off', kind: 'owned', gardenPlantId: MANGO, x: 0.4, y: 0.8, scale: 1 }
@@ -556,7 +561,7 @@ function mutationWrites(writes) {
 }
 
 test('AA: first placement create succeeds, placement fails → no unintended empty design', async () => {
-  const { mem, host } = makeHost({ fail: { once: 'garden_design_placements.upsert' } });
+  const { mem, host } = makeHost({ fail: { once: 'garden_design_placements.insert' } });
   const designClientInstanceId = 'gd_d_first_fail';
   const failed = await host.savePlacement({
     designClientInstanceId,
@@ -579,7 +584,7 @@ test('AA: first placement create succeeds, placement fails → no unintended emp
 });
 
 test('AB: retry after AA reuses clientInstanceId and creates exactly one design + placement', async () => {
-  const { mem, host } = makeHost({ fail: { once: 'garden_design_placements.upsert' } });
+  const { mem, host } = makeHost({ fail: { once: 'garden_design_placements.insert' } });
   const designClientInstanceId = 'gd_d_retry_same';
   const clientInstanceId = 'pl_retry_same';
   const payload = {
@@ -618,7 +623,7 @@ test('AC: pre-existing empty/valid design is never deleted by compensation', asy
   };
   const { mem, host } = makeHost({
     garden_designs: [preexisting],
-    fail: { once: 'garden_design_placements.upsert' }
+    fail: { once: 'garden_design_placements.insert' }
   });
   const failedNew = await host.savePlacement({
     designClientInstanceId: 'gd_d_other_new',
@@ -635,7 +640,7 @@ test('AC: pre-existing empty/valid design is never deleted by compensation', asy
   assert.equal(mem.db.garden_designs.length, 1);
   assert.equal(mem.db.garden_designs[0].id, 'design-preexisting');
 
-  mem.fail.once = 'garden_design_placements.upsert';
+  mem.fail.once = 'garden_design_placements.insert';
   const failedExisting = await host.savePlacement({
     designClientInstanceId: 'gd_d_preexisting',
     placement: {
@@ -706,6 +711,78 @@ test('AE: pointermove network writes = 0', () => {
   assert.doesNotMatch(moveFn, /garden-design-save-placement/);
   assert.doesNotMatch(moveFn, /garden-design-update-placement/);
   assert.match(gd, /phase === 'pointermove'/);
+});
+
+test('AF: V3.1 grants — first owned Mango insert + retry is exactly 1 design and 1 placement', async () => {
+  const plants = seedPlants();
+  const mem = createGardenDesignMemorySupabase({
+    garden_plants: plants,
+    grantModel: GRANT_MODEL_V31
+  });
+  assert.equal(mem.grantModel, GRANT_MODEL_V31);
+  DESIGN_PROTECTED_UPDATE_COLUMNS.forEach((col) => {
+    assert.equal(['revision', 'client_instance_id', 'user_id', 'garden_profile_id'].includes(col), true);
+  });
+
+  const upsertDenied = await mem
+    .from('garden_designs')
+    .upsert({
+      garden_profile_id: GARDEN,
+      user_id: USER,
+      client_instance_id: 'gd_d_grant_probe',
+      garden_area_id: null,
+      status: 'active',
+      title: 'Garden Design'
+    }, { onConflict: 'garden_profile_id,client_instance_id' })
+    .single();
+  assert.equal(upsertDenied.error && upsertDenied.error.code, '42501');
+  assert.equal(mem.db.garden_designs.length, 0);
+  assert.equal(mem.db.garden_design_placements.length, 0);
+
+  const host = createGardenDesignHostPersistence({
+    supabase: mem,
+    getSupabase: () => mem,
+    sessionUserId: USER,
+    activeGardenId: GARDEN,
+    ownedPlants: ownedFromSeed(plants)
+  });
+  const payload = {
+    designClientInstanceId: 'gd_d_mango_v31',
+    gardenAreaId: null,
+    placement: {
+      clientInstanceId: 'pl_mango_v31',
+      kind: 'owned',
+      gardenPlantId: MANGO,
+      canonicalSlug: 'iframe-ignored',
+      x: 0.4,
+      y: 0.8,
+      scale: 1,
+      label: 'Mango'
+    }
+  };
+  const first = await host.handle('cruvit:garden-design-save-placement', payload);
+  assert.equal(first.ok, true);
+  assert.equal(first.createdDesign, true);
+  assert.equal(first.gardenPlantId, MANGO);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  const successfulDesignWrites = mem.writes.filter((w) => w.table === 'garden_designs' && !w.error);
+  assert.equal(successfulDesignWrites.some((w) => String(w.op).includes('upsert')), false);
+  assert.equal(successfulDesignWrites.filter((w) => w.op === 'insert').length, 1);
+  assert.equal(mem.writes.filter((w) => w.table === 'garden_design_placements' && w.op === 'insert' && !w.error).length, 1);
+
+  const retry = await host.handle('cruvit:garden-design-save-placement', payload);
+  assert.equal(retry.ok, true);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  assert.equal(mem.db.garden_designs[0].client_instance_id, 'gd_d_mango_v31');
+  assert.equal(mem.db.garden_design_placements[0].client_instance_id, 'pl_mango_v31');
+  assert.equal(mem.db.garden_plants.length, 3);
+
+  const persistSrc = src('modules/garden-design/garden-design-server-persistence-v1.js');
+  const ensureSlice = persistSrc.slice(persistSrc.indexOf('async function ensureDesign'), persistSrc.indexOf('async function compensateNewlyCreatedEmptyDesign'));
+  assert.doesNotMatch(ensureSlice, /\.upsert\(/);
+  assert.match(ensureSlice, /\.insert\(insertRow\)/);
 });
 
 function looksLikePostgresDataUrl(row) {

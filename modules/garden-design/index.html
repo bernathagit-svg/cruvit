@@ -88,6 +88,10 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .field-select option{background:var(--dark2)}
 .field-textarea{resize:vertical;min-height:70px;line-height:1.6}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gd-persist-status{display:none;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(61,138,80,.28);border-radius:10px;background:rgba(255,255,255,.72);color:#1b4332;font-size:13px;align-items:center;gap:10px;flex-wrap:wrap}
+.gd-persist-status.is-visible{display:flex}
+.gd-persist-status.is-error{border-color:rgba(176,70,70,.45);background:rgba(255,244,244,.92);color:#7a2e2e}
+.gd-persist-retry{border:1px solid rgba(176,70,70,.4);background:#fff;color:#7a2e2e;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
 
 /* UPLOAD */
 .upload-area{border:2px dashed var(--border);border-radius:14px;padding:60px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;background:rgba(255,255,255,0.5)}
@@ -1167,6 +1171,10 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
       <!-- Plants list toggle button -->
       <!-- Plants section — always visible, no toggle -->
       <div id="gdAreaSelectHost" class="field-group" style="display:none;margin-bottom:12px"></div>
+      <div id="gdPersistStatus" class="gd-persist-status" role="status" aria-live="polite">
+        <span id="gdPersistStatusText"></span>
+        <button type="button" id="gdPersistRetryBtn" class="gd-persist-retry" hidden onclick="gdRetryLastPersist()">Retry</button>
+      </div>
       <div id="gdPersistNote" class="gd-persist-note" style="display:none;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(61,138,80,.28);border-radius:10px;background:rgba(255,255,255,.72);color:#1b4332;font-size:13px"></div>
       <div class="pc-plants-section" id="plantsSection">
         <div class="pc-left-panel">
@@ -1247,6 +1255,8 @@ let gdCommitWaiters = {};
 let gdHydratingFromServer = false;
 let gdHostPersistTimer = null;
 let gdPendingHostOps = [];
+let gdLastPersistOps = [];
+let gdPersistStatusState = '';
 let gdDesignClientInstanceId = null;
 let gdServerDesignMeta = null;
 let gdPersistDebounceMs = 600;
@@ -1660,6 +1670,35 @@ function gdSetPersistNote(text) {
   el.textContent = text;
 }
 
+function gdSetPersistStatus(state, detail) {
+  const wrap = document.getElementById('gdPersistStatus');
+  const text = document.getElementById('gdPersistStatusText');
+  const retry = document.getElementById('gdPersistRetryBtn');
+  if (!wrap || !text) return;
+  gdPersistStatusState = state || '';
+  if (!state) {
+    wrap.classList.remove('is-visible', 'is-error');
+    wrap.style.display = 'none';
+    text.textContent = '';
+    if (retry) retry.hidden = true;
+    return;
+  }
+  wrap.classList.add('is-visible');
+  wrap.style.display = 'flex';
+  wrap.classList.toggle('is-error', state === 'error');
+  if (state === 'saving') text.textContent = 'Saving…';
+  else if (state === 'saved') text.textContent = 'Saved';
+  else text.textContent = detail || 'Not saved — retry';
+  if (retry) retry.hidden = state !== 'error';
+}
+
+function gdRetryLastPersist() {
+  if (!gdLastPersistOps.length) return;
+  gdPendingHostOps = gdLastPersistOps.slice();
+  gdSetPersistStatus('saving');
+  gdFlushHostPersist();
+}
+
 function gdEnsureLocalStores() {
   const api = gdOwnedGardenApi();
   if (!api) return null;
@@ -1774,6 +1813,8 @@ function gdFlushHostPersist() {
     : gdPendingHostOps.slice();
   gdPendingHostOps = [];
   if (!ops.length || gdHydratingFromServer) return;
+  gdLastPersistOps = ops.slice();
+  gdSetPersistStatus('saving');
   ops.forEach(function(op) {
     if (op.action === 'delete') {
       gdPostToHost({
@@ -2001,6 +2042,8 @@ function gdOnPersistResult(msg) {
       });
     }
     gdWriteLocalCache(true);
+    gdSetPersistStatus('saved');
+    gdSetPersistNote('');
     if (msg.sourceMediaUrl) {
       photoDataUrl = msg.sourceMediaUrl;
       const img = document.getElementById('imgAfter');
@@ -2009,8 +2052,18 @@ function gdOnPersistResult(msg) {
     return;
   }
   gdWriteLocalCache(false);
+  try {
+    console.warn('[garden-design-persist]', {
+      stage: msg.stage || 'iframe-result',
+      operation: msg.operation || msg.type,
+      code: msg.code || null,
+      supabaseCode: msg.supabaseCode || null,
+      message: msg.error || msg.code || 'not_saved'
+    });
+  } catch (e) {}
+  gdSetPersistStatus('error', 'Not saved — retry');
   if (msg.keepLocalCanvas) {
-    gdSetPersistNote('Could not save to the server just now. Your canvas is unchanged and will retry with the same design.');
+    gdSetPersistNote('Canvas is unchanged. Durable save did not complete.');
   }
 }
 
