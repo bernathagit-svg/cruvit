@@ -1,0 +1,20 @@
+{
+  "applyMigrationNow": false,
+  "productionCatalogMutated": false,
+  "concept": "botanicalTaxonId",
+  "note": "canonicalSlug is a product/common-name identity. It is not necessarily a unique botanical taxon. Size evidence should attach to botanicalTaxonId.",
+  "fields": {
+    "botanicalTaxonId": "stable taxon key, matching-normalized",
+    "acceptedScientificName": "display/authority string; may keep ×",
+    "rank": "SPECIES | SUBSPECIES | VARIETY | GENUS",
+    "synonyms": "scientific synonyms for matching only",
+    "canonicalPlantAliases": "canonicalSlug list that resolve to this taxon"
+  },
+  "sizeEvidenceAttachesTo": "BOTANICAL_TAXON_IDENTITY",
+  "exceptionsRemainSeparate": [
+    "cultivar",
+    "rootstock",
+    "architecture",
+    "maintained-scenario"
+  ]
+}

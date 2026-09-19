@@ -1,0 +1,2081 @@
+{
+  "contract": "tree-taxonomy-duplicate-gate-v1",
+  "productionCatalogMutated": false,
+  "massSizeEnrichmentStarted": false,
+  "physicalScaleReadyBooleanForbidden": true,
+  "sizeReadinessSemantics": {
+    "HEIGHT_SCALE_READY": "HEIGHT_SCALE_READY",
+    "SPREAD_SCALE_READY": "SPREAD_SCALE_READY",
+    "FULL_SIZE_READY": "FULL_SIZE_READY"
+  },
+  "orangeDuplicateDecision": {
+    "code": "ORANGE_DUPLICATE_DECISION",
+    "mergedNow": false,
+    "productionCatalogMutated": false,
+    "enrichIndependently": false,
+    "classes": [
+      "A",
+      "C"
+    ],
+    "determination": "Same canonical botanical taxon (sweet orange). Catalog notation is inconsistent: orange uses Citrus sinensis; sweet-orange uses Citrus × sinensis. Hybrid marker × is matching-only, not a distinct taxon.",
+    "classA": "same canonical botanical taxon",
+    "classB": "not proven as a distinct product taxon; common-name split (Orange Tree vs Sweet orange) is not botanical distinctness",
+    "classC": "taxonomic notation inconsistency (hybrid marker × / x omitted)",
+    "classD": "notation is explained; remaining product-alias question is held, not merged",
+    "slugs": [
+      "orange",
+      "sweet-orange"
+    ],
+    "proposedBotanicalTaxonId": "taxon:citrus-sinensis",
+    "proposedAcceptedScientificName": "Citrus × sinensis",
+    "proposedAliases": [
+      "orange",
+      "sweet-orange"
+    ],
+    "sizeEvidenceOwnership": "BOTANICAL_TAXON_IDENTITY",
+    "action": "MERGE_CANDIDATE",
+    "hold": "ALIAS_OR_DUPLICATE_HOLD"
+  },
+  "botanicalTaxonIdProposal": {
+    "applyMigrationNow": false,
+    "productionCatalogMutated": false,
+    "concept": "botanicalTaxonId",
+    "note": "canonicalSlug is a product/common-name identity. It is not necessarily a unique botanical taxon. Size evidence should attach to botanicalTaxonId.",
+    "fields": {
+      "botanicalTaxonId": "stable taxon key, matching-normalized",
+      "acceptedScientificName": "display/authority string; may keep ×",
+      "rank": "SPECIES | SUBSPECIES | VARIETY | GENUS",
+      "synonyms": "scientific synonyms for matching only",
+      "canonicalPlantAliases": "canonicalSlug list that resolve to this taxon"
+    },
+    "sizeEvidenceAttachesTo": "BOTANICAL_TAXON_IDENTITY",
+    "exceptionsRemainSeparate": [
+      "cultivar",
+      "rootstock",
+      "architecture",
+      "maintained-scenario"
+    ]
+  },
+  "records": [
+    {
+      "canonicalSlug": "almond",
+      "commonName": "Almond",
+      "scientificName": "Prunus dulcis",
+      "normalizedScientificIdentity": {
+        "original": "Prunus dulcis",
+        "matchingKey": "prunus|dulcis",
+        "genus": "Prunus",
+        "epithet": "dulcis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Prunus dulcis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "almond",
+        "prunus dulcis",
+        "שקד",
+        "עץ שקד",
+        "almond tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "almond",
+        "prunus dulcis",
+        "שקד",
+        "עץ שקד",
+        "almond tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "apple",
+      "commonName": "Apple Tree",
+      "scientificName": "Malus domestica",
+      "normalizedScientificIdentity": {
+        "original": "Malus domestica",
+        "matchingKey": "malus|domestica",
+        "genus": "Malus",
+        "epithet": "domestica",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Malus domestica",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [
+        "apple-tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "apple-tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "apricot",
+      "commonName": "Apricot Tree",
+      "scientificName": "Prunus armeniaca",
+      "normalizedScientificIdentity": {
+        "original": "Prunus armeniaca",
+        "matchingKey": "prunus|armeniaca",
+        "genus": "Prunus",
+        "epithet": "armeniaca",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Prunus armeniaca",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "avocado",
+      "commonName": "Avocado Tree",
+      "scientificName": "Persea americana",
+      "normalizedScientificIdentity": {
+        "original": "Persea americana",
+        "matchingKey": "persea|americana",
+        "genus": "Persea",
+        "epithet": "americana",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Persea americana",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "blue-gum",
+      "commonName": "Blue Gum",
+      "scientificName": "Eucalyptus globulus",
+      "normalizedScientificIdentity": {
+        "original": "Eucalyptus globulus",
+        "matchingKey": "eucalyptus|globulus",
+        "genus": "Eucalyptus",
+        "epithet": "globulus",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Eucalyptus globulus",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": "NATURAL_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "blue gum",
+        "eucalyptus globulus",
+        "tasmanian blue gum"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "blue gum",
+        "eucalyptus globulus",
+        "tasmanian blue gum"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "breadfruit",
+      "commonName": "Breadfruit",
+      "scientificName": "Artocarpus altilis",
+      "normalizedScientificIdentity": {
+        "original": "Artocarpus altilis",
+        "matchingKey": "artocarpus|altilis",
+        "genus": "Artocarpus",
+        "epithet": "altilis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Artocarpus altilis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "breadfruit",
+        "artocarpus altilis",
+        "ulu"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "breadfruit",
+        "artocarpus altilis",
+        "ulu"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "cacao",
+      "commonName": "Cacao",
+      "scientificName": "Theobroma cacao",
+      "normalizedScientificIdentity": {
+        "original": "Theobroma cacao",
+        "matchingKey": "theobroma|cacao",
+        "genus": "Theobroma",
+        "epithet": "cacao",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Theobroma cacao",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "cacao",
+        "cocoa",
+        "chocolate bean",
+        "theobroma cacao",
+        "cacaoyer",
+        "cacaotier",
+        "kakao",
+        "cacau"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "cacao",
+        "cocoa",
+        "chocolate bean",
+        "theobroma cacao",
+        "cacaoyer",
+        "cacaotier",
+        "kakao",
+        "cacau"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "carob",
+      "commonName": "Carob",
+      "scientificName": "Ceratonia siliqua",
+      "normalizedScientificIdentity": {
+        "original": "Ceratonia siliqua",
+        "matchingKey": "ceratonia|siliqua",
+        "genus": "Ceratonia",
+        "epithet": "siliqua",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Ceratonia siliqua",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "carob",
+        "ceratonia siliqua",
+        "locust bean",
+        "St John's bread"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "carob",
+        "ceratonia siliqua",
+        "locust bean",
+        "St John's bread"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "cedar",
+      "commonName": "Cedar",
+      "scientificName": "Cedrus libani",
+      "normalizedScientificIdentity": {
+        "original": "Cedrus libani",
+        "matchingKey": "cedrus|libani",
+        "genus": "Cedrus",
+        "epithet": "libani",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Cedrus libani",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "cedar",
+        "cedar tree",
+        "cedrus",
+        "ארז",
+        "עץ ארז"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "cedar",
+        "cedar tree",
+        "cedrus",
+        "ארז",
+        "עץ ארז"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "cherimoya",
+      "commonName": "Cherimoya",
+      "scientificName": "Annona cherimola",
+      "normalizedScientificIdentity": {
+        "original": "Annona cherimola",
+        "matchingKey": "annona|cherimola",
+        "genus": "Annona",
+        "epithet": "cherimola",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Annona cherimola",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "cherimoya",
+        "custard apple",
+        "annona cherimola",
+        "צ'רימויה",
+        "annona"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "cherimoya",
+        "custard apple",
+        "annona cherimola",
+        "צ'רימויה",
+        "annona"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "cypress",
+      "commonName": "Cypress",
+      "scientificName": "Cupressus sempervirens",
+      "normalizedScientificIdentity": {
+        "original": "Cupressus sempervirens",
+        "matchingKey": "cupressus|sempervirens",
+        "genus": "Cupressus",
+        "epithet": "sempervirens",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Cupressus sempervirens",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": true,
+        "evaluatedScenario": "LANDSCAPE_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "cypress",
+        "cupressus",
+        "ברוש",
+        "ברוש מצוי",
+        "cypress tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "cypress",
+        "cupressus",
+        "ברוש",
+        "ברוש מצוי",
+        "cypress tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "durian",
+      "commonName": "Durian",
+      "scientificName": "Durio zibethinus",
+      "normalizedScientificIdentity": {
+        "original": "Durio zibethinus",
+        "matchingKey": "durio|zibethinus",
+        "genus": "Durio",
+        "epithet": "zibethinus",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Durio zibethinus",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "durian",
+        "durio zibethinus",
+        "king of fruits"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "durian",
+        "durio zibethinus",
+        "king of fruits"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "english-walnut",
+      "commonName": "English Walnut",
+      "scientificName": "Juglans regia",
+      "normalizedScientificIdentity": {
+        "original": "Juglans regia",
+        "matchingKey": "juglans|regia",
+        "genus": "Juglans",
+        "epithet": "regia",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Juglans regia",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "english walnut",
+        "persian walnut",
+        "juglans regia",
+        "common walnut"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "english walnut",
+        "persian walnut",
+        "juglans regia",
+        "common walnut"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "ficus-benjamina",
+      "commonName": "Weeping Fig",
+      "scientificName": "Ficus benjamina",
+      "normalizedScientificIdentity": {
+        "original": "Ficus benjamina",
+        "matchingKey": "ficus|benjamina",
+        "genus": "Ficus",
+        "epithet": "benjamina",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Ficus benjamina",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "fiddle-leaf-fig",
+      "commonName": "Fiddle Leaf Fig",
+      "scientificName": "Ficus lyrata",
+      "normalizedScientificIdentity": {
+        "original": "Ficus lyrata",
+        "matchingKey": "ficus|lyrata",
+        "genus": "Ficus",
+        "epithet": "lyrata",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Ficus lyrata",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "fiddle leaf fig",
+        "ficus lyrata",
+        "עץ פicus",
+        "עץ כינור",
+        "fiddle-leaf fig"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "fiddle leaf fig",
+        "ficus lyrata",
+        "עץ פicus",
+        "עץ כינור",
+        "fiddle-leaf fig"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "ginkgo",
+      "commonName": "Ginkgo",
+      "scientificName": "Ginkgo biloba",
+      "normalizedScientificIdentity": {
+        "original": "Ginkgo biloba",
+        "matchingKey": "ginkgo|biloba",
+        "genus": "Ginkgo",
+        "epithet": "biloba",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Ginkgo biloba",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "ginkgo",
+        "ginkgo biloba",
+        "maidenhair tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "ginkgo",
+        "ginkgo biloba",
+        "maidenhair tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "grapefruit",
+      "commonName": "Grapefruit",
+      "scientificName": "Citrus × paradisi",
+      "normalizedScientificIdentity": {
+        "original": "Citrus × paradisi",
+        "matchingKey": "citrus|paradisi",
+        "genus": "Citrus",
+        "epithet": "paradisi",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": true,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Citrus paradisi",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "grapefruit",
+        "citrus paradisi",
+        "citrus × paradisi"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "grapefruit",
+        "citrus paradisi",
+        "citrus × paradisi"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "guava",
+      "commonName": "Guava Tree",
+      "scientificName": "Psidium guajava",
+      "normalizedScientificIdentity": {
+        "original": "Psidium guajava",
+        "matchingKey": "psidium|guajava",
+        "genus": "Psidium",
+        "epithet": "guajava",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Psidium guajava",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "jaboticaba",
+      "commonName": "Jaboticaba",
+      "scientificName": "Plinia cauliflora",
+      "normalizedScientificIdentity": {
+        "original": "Plinia cauliflora",
+        "matchingKey": "plinia|cauliflora",
+        "genus": "Plinia",
+        "epithet": "cauliflora",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Plinia cauliflora",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "jaboticaba",
+        "plinia cauliflora",
+        "brazilian grape tree",
+        "myrciaria cauliflora"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "jaboticaba",
+        "plinia cauliflora",
+        "brazilian grape tree",
+        "myrciaria cauliflora"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "jackfruit",
+      "commonName": "Jackfruit",
+      "scientificName": "Artocarpus heterophyllus",
+      "normalizedScientificIdentity": {
+        "original": "Artocarpus heterophyllus",
+        "matchingKey": "artocarpus|heterophyllus",
+        "genus": "Artocarpus",
+        "epithet": "heterophyllus",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Artocarpus heterophyllus",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "jackfruit",
+        "artocarpus heterophyllus",
+        "ג'קפירit",
+        "jack fruit",
+        "פרי ג'קפירit"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "jackfruit",
+        "artocarpus heterophyllus",
+        "ג'קפירit",
+        "jack fruit",
+        "פרי ג'קפירit"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "japanese-maple",
+      "commonName": "Japanese Maple",
+      "scientificName": "Acer palmatum",
+      "normalizedScientificIdentity": {
+        "original": "Acer palmatum",
+        "matchingKey": "acer|palmatum",
+        "genus": "Acer",
+        "epithet": "palmatum",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Acer palmatum",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": "LANDSCAPE_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "japanese maple",
+        "acer palmatum",
+        "אדר יפני",
+        "מייפל יפני",
+        "עץ אדר"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "japanese maple",
+        "acer palmatum",
+        "אדר יפני",
+        "מייפל יפני",
+        "עץ אדר"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "lemon",
+      "commonName": "Lemon Tree",
+      "scientificName": "Citrus × limon",
+      "normalizedScientificIdentity": {
+        "original": "Citrus × limon",
+        "matchingKey": "citrus|limon",
+        "genus": "Citrus",
+        "epithet": "limon",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": true,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Citrus limon",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": "LANDSCAPE_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "longan",
+      "commonName": "Longan",
+      "scientificName": "Dimocarpus longan",
+      "normalizedScientificIdentity": {
+        "original": "Dimocarpus longan",
+        "matchingKey": "dimocarpus|longan",
+        "genus": "Dimocarpus",
+        "epithet": "longan",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Dimocarpus longan",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "longan",
+        "dimocarpus longan",
+        "dragon eye"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "longan",
+        "dimocarpus longan",
+        "dragon eye"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "loquat",
+      "commonName": "Loquat",
+      "scientificName": "Eriobotrya japonica",
+      "normalizedScientificIdentity": {
+        "original": "Eriobotrya japonica",
+        "matchingKey": "eriobotrya|japonica",
+        "genus": "Eriobotrya",
+        "epithet": "japonica",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Eriobotrya japonica",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "loquat",
+        "eriobotrya japonica",
+        "japanese plum"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "loquat",
+        "eriobotrya japonica",
+        "japanese plum"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "lychee",
+      "commonName": "Lychee Tree",
+      "scientificName": "Litchi chinensis",
+      "normalizedScientificIdentity": {
+        "original": "Litchi chinensis",
+        "matchingKey": "litchi|chinensis",
+        "genus": "Litchi",
+        "epithet": "chinensis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Litchi chinensis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "mandarin",
+      "commonName": "Mandarin / Clementine Tree",
+      "scientificName": "Citrus reticulata",
+      "normalizedScientificIdentity": {
+        "original": "Citrus reticulata",
+        "matchingKey": "citrus|reticulata",
+        "genus": "Citrus",
+        "epithet": "reticulata",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Citrus reticulata",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "mango",
+      "commonName": "Mango Tree",
+      "scientificName": "Mangifera indica",
+      "normalizedScientificIdentity": {
+        "original": "Mangifera indica",
+        "matchingKey": "mangifera|indica",
+        "genus": "Mangifera",
+        "epithet": "indica",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Mangifera indica",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": true,
+        "evaluatedScenario": "LANDSCAPE_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "mangosteen",
+      "commonName": "Mangosteen",
+      "scientificName": "Garcinia mangostana",
+      "normalizedScientificIdentity": {
+        "original": "Garcinia mangostana",
+        "matchingKey": "garcinia|mangostana",
+        "genus": "Garcinia",
+        "epithet": "mangostana",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Garcinia mangostana",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "mangosteen",
+        "garcinia mangostana",
+        "purple mangosteen"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "mangosteen",
+        "garcinia mangostana",
+        "purple mangosteen"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "moringa",
+      "commonName": "Moringa",
+      "scientificName": "Moringa oleifera",
+      "normalizedScientificIdentity": {
+        "original": "Moringa oleifera",
+        "matchingKey": "moringa|oleifera",
+        "genus": "Moringa",
+        "epithet": "oleifera",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Moringa oleifera",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "moringa",
+        "drumstick tree",
+        "moringa oleifera",
+        "מורינגה",
+        "עץ מורינגה"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "moringa",
+        "drumstick tree",
+        "moringa oleifera",
+        "מורינגה",
+        "עץ מורינגה"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "olive",
+      "commonName": "Olive Tree",
+      "scientificName": "Olea europaea",
+      "normalizedScientificIdentity": {
+        "original": "Olea europaea",
+        "matchingKey": "olea|europaea",
+        "genus": "Olea",
+        "epithet": "europaea",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Olea europaea",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": true,
+        "SPREAD_SCALE_READY": true,
+        "FULL_SIZE_READY": true,
+        "evaluatedScenario": "LANDSCAPE_MATURE",
+        "unknownDimensions": {
+          "height": false,
+          "spread": false
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "orange",
+      "commonName": "Orange Tree",
+      "scientificName": "Citrus sinensis",
+      "normalizedScientificIdentity": {
+        "original": "Citrus sinensis",
+        "matchingKey": "citrus|sinensis",
+        "genus": "Citrus",
+        "epithet": "sinensis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Citrus sinensis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "LOW",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [
+        "sweet-orange"
+      ],
+      "aliasOrSynonymCandidates": [
+        "orange",
+        "sweet-orange",
+        "Citrus sinensis",
+        "Citrus × sinensis"
+      ],
+      "action": "MERGE_CANDIDATE"
+    },
+    {
+      "canonicalSlug": "peach",
+      "commonName": "Peach Tree",
+      "scientificName": "Prunus persica",
+      "normalizedScientificIdentity": {
+        "original": "Prunus persica",
+        "matchingKey": "prunus|persica",
+        "genus": "Prunus",
+        "epithet": "persica",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Prunus persica",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [
+        "peach-tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "peach-tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "pear",
+      "commonName": "Pear Tree",
+      "scientificName": "Pyrus communis",
+      "normalizedScientificIdentity": {
+        "original": "Pyrus communis",
+        "matchingKey": "pyrus|communis",
+        "genus": "Pyrus",
+        "epithet": "communis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Pyrus communis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plant-library",
+      "aliases": [
+        "pear-tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "pear-tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "persimmon",
+      "commonName": "Persimmon",
+      "scientificName": "Diospyros kaki",
+      "normalizedScientificIdentity": {
+        "original": "Diospyros kaki",
+        "matchingKey": "diospyros|kaki",
+        "genus": "Diospyros",
+        "epithet": "kaki",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Diospyros kaki",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "persimmon",
+        "diospyros kaki",
+        "japanese persimmon",
+        "kaki"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "persimmon",
+        "diospyros kaki",
+        "japanese persimmon",
+        "kaki"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "pistachio",
+      "commonName": "Pistachio",
+      "scientificName": "Pistacia vera",
+      "normalizedScientificIdentity": {
+        "original": "Pistacia vera",
+        "matchingKey": "pistacia|vera",
+        "genus": "Pistacia",
+        "epithet": "vera",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Pistacia vera",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "pistachio",
+        "pistacia vera",
+        "פיסטוק",
+        "עץ פיסטוק",
+        "pistachio tree"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "pistachio",
+        "pistacia vera",
+        "פיסטוק",
+        "עץ פיסטוק",
+        "pistachio tree"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "rambutan",
+      "commonName": "Rambutan",
+      "scientificName": "Nephelium lappaceum",
+      "normalizedScientificIdentity": {
+        "original": "Nephelium lappaceum",
+        "matchingKey": "nephelium|lappaceum",
+        "genus": "Nephelium",
+        "epithet": "lappaceum",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Nephelium lappaceum",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "rambutan",
+        "nephelium lappaceum",
+        "רמבוטן",
+        "rambutan fruit",
+        "nephelium"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "rambutan",
+        "nephelium lappaceum",
+        "רמבוטן",
+        "rambutan fruit",
+        "nephelium"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "silver-birch",
+      "commonName": "Silver Birch",
+      "scientificName": "Betula pendula",
+      "normalizedScientificIdentity": {
+        "original": "Betula pendula",
+        "matchingKey": "betula|pendula",
+        "genus": "Betula",
+        "epithet": "pendula",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Betula pendula",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "silver birch",
+        "betula pendula",
+        "european white birch"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "silver birch",
+        "betula pendula",
+        "european white birch"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "southern-magnolia",
+      "commonName": "Southern Magnolia",
+      "scientificName": "Magnolia grandiflora",
+      "normalizedScientificIdentity": {
+        "original": "Magnolia grandiflora",
+        "matchingKey": "magnolia|grandiflora",
+        "genus": "Magnolia",
+        "epithet": "grandiflora",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Magnolia grandiflora",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "southern magnolia",
+        "magnolia grandiflora",
+        "bull bay"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "southern magnolia",
+        "magnolia grandiflora",
+        "bull bay"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "starfruit",
+      "commonName": "Starfruit",
+      "scientificName": "Averrhoa carambola",
+      "normalizedScientificIdentity": {
+        "original": "Averrhoa carambola",
+        "matchingKey": "averrhoa|carambola",
+        "genus": "Averrhoa",
+        "epithet": "carambola",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Averrhoa carambola",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "starfruit",
+        "carambola",
+        "averrhoa carambola",
+        "קרמבולה",
+        "פרי כוכב"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "starfruit",
+        "carambola",
+        "averrhoa carambola",
+        "קרמבולה",
+        "פרי כוכב"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "sweet-cherry",
+      "commonName": "Sweet Cherry",
+      "scientificName": "Prunus avium",
+      "normalizedScientificIdentity": {
+        "original": "Prunus avium",
+        "matchingKey": "prunus|avium",
+        "genus": "Prunus",
+        "epithet": "avium",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Prunus avium",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "sweet cherry",
+        "prunus avium",
+        "wild cherry"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "sweet cherry",
+        "prunus avium",
+        "wild cherry"
+      ],
+      "action": "KEEP_DISTINCT"
+    },
+    {
+      "canonicalSlug": "sweet-orange",
+      "commonName": "Sweet orange",
+      "scientificName": "Citrus × sinensis",
+      "normalizedScientificIdentity": {
+        "original": "Citrus × sinensis",
+        "matchingKey": "citrus|sinensis",
+        "genus": "Citrus",
+        "epithet": "sinensis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": true,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Citrus sinensis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "LOW",
+      "cultivarOrRootstockSensitive": true,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "sweet orange",
+        "citrus sinensis",
+        "citrus × sinensis",
+        "orange"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [
+        "orange"
+      ],
+      "aliasOrSynonymCandidates": [
+        "orange",
+        "sweet-orange",
+        "Citrus sinensis",
+        "Citrus × sinensis"
+      ],
+      "action": "MERGE_CANDIDATE"
+    },
+    {
+      "canonicalSlug": "white-sapote",
+      "commonName": "White Sapote",
+      "scientificName": "Casimiroa edulis",
+      "normalizedScientificIdentity": {
+        "original": "Casimiroa edulis",
+        "matchingKey": "casimiroa|edulis",
+        "genus": "Casimiroa",
+        "epithet": "edulis",
+        "infraspecificRank": null,
+        "infraspecificEpithet": null,
+        "hybridMarkerPresent": false,
+        "rank": "SPECIES",
+        "authorFreeBinomial": "Casimiroa edulis",
+        "productionNameRewritten": false
+      },
+      "taxonomicRankScope": "SPECIES",
+      "identityConfidence": "HIGH",
+      "cultivarOrRootstockSensitive": false,
+      "sizeReadiness": {
+        "HEIGHT_SCALE_READY": false,
+        "SPREAD_SCALE_READY": false,
+        "FULL_SIZE_READY": false,
+        "evaluatedScenario": null,
+        "unknownDimensions": {
+          "height": "UNKNOWN",
+          "spread": "UNKNOWN"
+        },
+        "physicalScaleReadyBooleanForbidden": true
+      },
+      "descriptiveSource": "plants.seed.json",
+      "aliases": [
+        "white sapote",
+        "casimiroa edulis",
+        "mexican apple"
+      ],
+      "productionCatalogMutated": false,
+      "duplicateCanonicalSlugCandidates": [],
+      "aliasOrSynonymCandidates": [
+        "white sapote",
+        "casimiroa edulis",
+        "mexican apple"
+      ],
+      "action": "KEEP_DISTINCT"
+    }
+  ],
+  "massEnrichmentEligibility": {
+    "UNIQUE_TREE_TAXA_READY_FOR_SIZE_ENRICHMENT": {
+      "count": 40,
+      "slugs": [
+        "almond",
+        "apple",
+        "apricot",
+        "avocado",
+        "blue-gum",
+        "breadfruit",
+        "cacao",
+        "carob",
+        "cedar",
+        "cherimoya",
+        "cypress",
+        "durian",
+        "english-walnut",
+        "ficus-benjamina",
+        "fiddle-leaf-fig",
+        "ginkgo",
+        "grapefruit",
+        "guava",
+        "jaboticaba",
+        "jackfruit",
+        "japanese-maple",
+        "lemon",
+        "longan",
+        "loquat",
+        "lychee",
+        "mandarin",
+        "mango",
+        "mangosteen",
+        "moringa",
+        "olive",
+        "peach",
+        "pear",
+        "persimmon",
+        "pistachio",
+        "rambutan",
+        "silver-birch",
+        "southern-magnolia",
+        "starfruit",
+        "sweet-cherry",
+        "white-sapote"
+      ]
+    },
+    "ALIAS_OR_DUPLICATE_HOLD": {
+      "count": 2,
+      "slugs": [
+        "orange",
+        "sweet-orange"
+      ]
+    },
+    "IDENTITY_REVIEW_REQUIRED": {
+      "count": 0,
+      "slugs": []
+    },
+    "MULTI_FORM_HOLD": {
+      "count": 5,
+      "slugs": [
+        "fig",
+        "plumeria",
+        "pomegranate",
+        "quince",
+        "strawberry-guava"
+      ]
+    },
+    "GENUS_LEVEL_HOLD": {
+      "count": 4,
+      "slugs": [
+        "melaleuca",
+        "oak-tree",
+        "pine-tree",
+        "plum"
+      ]
+    }
+  },
+  "pilotConflictClassification": [
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "blue-gum",
+      "topic": "height",
+      "sourceA": "blue-gum__usda-feis__natural-mature-height",
+      "sourceB": "blue-gum__calpoly-selectree__landscape-maxima",
+      "differingRanges": "FEIS generally 30–55 m tall vs SelecTree maximum landscape height 80 ft (~24.4 m)",
+      "differingContext": "Ecological/naturalized stature versus landscape selection maxima. Do not downscale the FEIS botanical range because home gardens cannot accommodate it. Do not average.",
+      "possibleExplanations": [
+        "landscape context",
+        "source definition",
+        "maximum vs typical"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "FEIS NATURAL_MATURE typical range vs SelecTree landscape maxima. Already captured as different scenarios."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "cypress",
+      "topic": "height-max",
+      "sourceA": "cypress__uf-ifas-st225__landscape-columnar",
+      "sourceB": "cypress__ncsu-ces__landscape-columnar",
+      "differingRanges": "UF/IFAS height 40–60 ft vs NCSU 40–70 ft; spread both 3–6 ft",
+      "differingContext": "Same columnar landscape form; height maxima differ. Do not average. Narrow spread is architecture, not error.",
+      "possibleExplanations": [
+        "landscape context",
+        "cultivar",
+        "source definition"
+      ],
+      "classification": "TRUE_SOURCE_CONFLICT",
+      "reason": "Same LANDSCAPE_MATURE columnar scenario; height maxima 60 vs 70 ft disagree. Spread agrees. Do not average."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "apple",
+      "topic": "standard-height",
+      "sourceA": "apple__extension-org__standard-unpruned",
+      "sourceB": "apple__umd-extension__standard-seedling",
+      "differingRanges": "about 30 ft unpruned vs 30–40 ft seedling standard",
+      "differingContext": "Both are seedling/standard class. Do not average. Spread given only by the about-30-ft record.",
+      "possibleExplanations": [
+        "source definition",
+        "climate",
+        "maintenance"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "Both seedling/standard class. One record is approximate “about 30 ft”; the other is a 30–40 ft range. Source definition, not a second taxon."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "japanese-maple",
+      "topic": "species-range",
+      "sourceA": "japanese-maple__morton-arboretum__species-landscape",
+      "sourceB": "japanese-maple__vt-extension__cultivar-dependent",
+      "differingRanges": "Morton 15–25 ft tall × 15–35 ft wide vs Virginia 12–25 ft tall × 10–25 ft wide, both depending on cultivar",
+      "differingContext": "Cultivar variability is the shared explanation. Do not average. Do not invent cultivar records.",
+      "possibleExplanations": [
+        "cultivar",
+        "source definition",
+        "landscape context"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "Both sources state cultivar-dependent stature. Range mismatch is cultivar variability, not a second species."
+    }
+  ],
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "paidBotanicalAcquisitionUsd": 0,
+    "additionalSpendUsd": 0
+  }
+}

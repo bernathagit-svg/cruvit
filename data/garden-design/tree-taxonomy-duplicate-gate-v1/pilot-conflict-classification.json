@@ -1,0 +1,69 @@
+{
+  "contract": "tree-taxonomy-duplicate-gate-v1",
+  "conflicts": [
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "blue-gum",
+      "topic": "height",
+      "sourceA": "blue-gum__usda-feis__natural-mature-height",
+      "sourceB": "blue-gum__calpoly-selectree__landscape-maxima",
+      "differingRanges": "FEIS generally 30–55 m tall vs SelecTree maximum landscape height 80 ft (~24.4 m)",
+      "differingContext": "Ecological/naturalized stature versus landscape selection maxima. Do not downscale the FEIS botanical range because home gardens cannot accommodate it. Do not average.",
+      "possibleExplanations": [
+        "landscape context",
+        "source definition",
+        "maximum vs typical"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "FEIS NATURAL_MATURE typical range vs SelecTree landscape maxima. Already captured as different scenarios."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "cypress",
+      "topic": "height-max",
+      "sourceA": "cypress__uf-ifas-st225__landscape-columnar",
+      "sourceB": "cypress__ncsu-ces__landscape-columnar",
+      "differingRanges": "UF/IFAS height 40–60 ft vs NCSU 40–70 ft; spread both 3–6 ft",
+      "differingContext": "Same columnar landscape form; height maxima differ. Do not average. Narrow spread is architecture, not error.",
+      "possibleExplanations": [
+        "landscape context",
+        "cultivar",
+        "source definition"
+      ],
+      "classification": "TRUE_SOURCE_CONFLICT",
+      "reason": "Same LANDSCAPE_MATURE columnar scenario; height maxima 60 vs 70 ft disagree. Spread agrees. Do not average."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "apple",
+      "topic": "standard-height",
+      "sourceA": "apple__extension-org__standard-unpruned",
+      "sourceB": "apple__umd-extension__standard-seedling",
+      "differingRanges": "about 30 ft unpruned vs 30–40 ft seedling standard",
+      "differingContext": "Both are seedling/standard class. Do not average. Spread given only by the about-30-ft record.",
+      "possibleExplanations": [
+        "source definition",
+        "climate",
+        "maintenance"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "Both seedling/standard class. One record is approximate “about 30 ft”; the other is a 30–40 ft range. Source definition, not a second taxon."
+    },
+    {
+      "code": "SOURCE_CONFLICT_REVIEW_REQUIRED",
+      "canonicalSlug": "japanese-maple",
+      "topic": "species-range",
+      "sourceA": "japanese-maple__morton-arboretum__species-landscape",
+      "sourceB": "japanese-maple__vt-extension__cultivar-dependent",
+      "differingRanges": "Morton 15–25 ft tall × 15–35 ft wide vs Virginia 12–25 ft tall × 10–25 ft wide, both depending on cultivar",
+      "differingContext": "Cultivar variability is the shared explanation. Do not average. Do not invent cultivar records.",
+      "possibleExplanations": [
+        "cultivar",
+        "source definition",
+        "landscape context"
+      ],
+      "classification": "CONTEXT_EXPLAINED",
+      "reason": "Both sources state cultivar-dependent stature. Range mismatch is cultivar variability, not a second species."
+    }
+  ]
+}

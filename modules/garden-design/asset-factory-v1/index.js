@@ -131,6 +131,14 @@ export {
   writeBotanicalSizeEvidencePilotReports,
   BOTANICAL_SIZE_EVIDENCE_PILOT_VERSION
 } from './botanical-size-evidence-pilot-v1.js';
+export {
+  SIZE_READINESS,
+  TAXONOMY_ACTIONS,
+  ORANGE_DUPLICATE_DECISION,
+  auditTreeTaxonomyDuplicates,
+  writeTreeTaxonomyDuplicateGateReports,
+  TREE_TAXONOMY_DUPLICATE_GATE_VERSION
+} from './tree-taxonomy-duplicate-gate-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
