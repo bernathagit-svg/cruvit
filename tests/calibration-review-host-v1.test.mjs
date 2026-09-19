@@ -15,7 +15,9 @@ import {
 import {
   CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED,
   applyCalibrationSourceToReviewDocument,
-  buildCalibrationSourceInjectMessage
+  buildCalibrationSourceInjectMessage,
+  CANDIDATE_NOT_GENERATED_YET,
+  IN_GARDEN_QA_UNKNOWN_COPY
 } from '../modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js';
 import {
   CALIBRATION_REVIEW_UI_STATUS,
@@ -289,4 +291,56 @@ test('N/O: zero generation, no polling, iframe cache injects once-ready result',
   assert.equal(msg.imageGenerationCalls, 0);
   assert.equal(msg.paidAiCalls, 0);
   assert.equal(msg.sourceMediaUrl.startsWith('https://'), true);
+});
+
+test('REAL_GARDEN_SOURCE_LOADED removes stale waiting-for-host copy', () => {
+  const ghosts = ['mango', 'lavender', 'pineapple'].map((slug) => ({
+    classList: { remove() {}, add() {} },
+    textContent: slug + ' · waiting for host signed URL'
+  }));
+  const empty = {
+    setAttribute() {},
+    textContent:
+      'Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.'
+  };
+  const scenes = ghosts.map((ghost) => ({
+    style: {},
+    classList: { remove() {} },
+    querySelector: () => ghost
+  }));
+  const applied = applyCalibrationSourceToReviewDocument(
+    {
+      querySelectorAll(sel) {
+        if (sel === '.scene.real') return scenes;
+        if (sel === '[data-in-garden-status]') return [empty];
+        return [];
+      },
+      getElementById() {
+        return { className: '', textContent: '' };
+      }
+    },
+    'https://signed.example/user-garden-media/token'
+  );
+  assert.equal(applied.applied, true);
+  assert.equal(applied.sceneCount, 3);
+  for (const ghost of ghosts) {
+    assert.equal(ghost.textContent, CANDIDATE_NOT_GENERATED_YET);
+    assert.equal(String(ghost.textContent).includes('waiting for host signed URL'), false);
+  }
+  assert.equal(empty.textContent, IN_GARDEN_QA_UNKNOWN_COPY);
+  assert.match(empty.textContent, /IN_GARDEN_QA = UNKNOWN/);
+  assert.doesNotMatch(empty.textContent, /IN_GARDEN_QA = PASS/);
+  assert.doesNotMatch(empty.textContent, /waiting for host signed URL/);
+
+  const review = read('modules/garden-design/calibration-review.html');
+  assert.match(review, /waiting for host signed URL/);
+  assert.match(review, /ghost\.textContent = 'Candidate not generated yet'/);
+  assert.match(
+    review,
+    /el\.textContent = 'Candidate not generated yet\. ASSET_QA = UNKNOWN\. IN_GARDEN_QA = UNKNOWN\.'/
+  );
+  const applyFn = review.slice(review.indexOf('function applySignedUrl'), review.indexOf('function applyUiStatus'));
+  assert.match(applyFn, /IN_GARDEN_QA = UNKNOWN/);
+  assert.doesNotMatch(applyFn, /IN_GARDEN_QA = PASS/);
+  assert.doesNotMatch(applyFn, /waiting for host signed URL/);
 });

@@ -8819,7 +8819,7 @@ function openDesignAssetCalibrationReview(){
   frame.onload=function(){
     if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   };
-  const reviewSrc='modules/garden-design/calibration-review.html?v=20260919a';
+  const reviewSrc='modules/garden-design/calibration-review.html?v=20260919b';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(!ctrl){
@@ -9805,7 +9805,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-variant-selection-policy-v1.js?v=20260917a"></script>
 <script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260917d"></script>
 <script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260918a"></script>
-<script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260919a"></script>
+<script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260919b"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919a"></script>
 </body>
 </html>

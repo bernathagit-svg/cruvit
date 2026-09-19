@@ -148,7 +148,10 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
           var ghost = el.querySelector('.ghost');
-          if (ghost) ghost.classList.remove('blocked');
+          if (ghost) {
+            ghost.classList.remove('blocked');
+            ghost.textContent = 'Candidate not generated yet';
+          }
         });
         var banner = document.getElementById('realGardenBanner');
         if (banner) {
@@ -157,7 +160,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
         }
         document.querySelectorAll('[data-in-garden-status]').forEach(function (el) {
           el.setAttribute('data-in-garden-status', 'UNKNOWN');
-          el.textContent = String(el.textContent || '').replace(/IN_GARDEN_QA = BLOCKED until the real Garden photo loads\\./, 'IN_GARDEN_QA = UNKNOWN. Real Garden photo is loaded.');
+          el.textContent = 'Candidate not generated yet. ASSET_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN.';
         });
         return true;
       }

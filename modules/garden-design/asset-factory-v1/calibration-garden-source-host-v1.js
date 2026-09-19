@@ -121,6 +121,17 @@ export function buildCalibrationSourceInjectMessage(resolved = {}, uiStatus = nu
   };
 }
 
+export const CANDIDATE_NOT_GENERATED_YET = 'Candidate not generated yet';
+export const IN_GARDEN_QA_UNKNOWN_COPY =
+  'Candidate not generated yet. ASSET_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN.';
+
+export function applyLoadedGardenSourceCopy(ghost) {
+  if (!ghost) return false;
+  if (ghost.classList && typeof ghost.classList.remove === 'function') ghost.classList.remove('blocked');
+  ghost.textContent = CANDIDATE_NOT_GENERATED_YET;
+  return true;
+}
+
 export function applyCalibrationSourceToReviewDocument(doc, sourceMediaUrl) {
   if (!doc) return { applied: false, reason: 'document_missing' };
   const url = asText(sourceMediaUrl);
@@ -129,8 +140,7 @@ export function applyCalibrationSourceToReviewDocument(doc, sourceMediaUrl) {
   scenes.forEach((el) => {
     el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
     el.classList.remove('is-blocked');
-    const ghost = el.querySelector('.ghost');
-    if (ghost) ghost.classList.remove('blocked');
+    applyLoadedGardenSourceCopy(el.querySelector ? el.querySelector('.ghost') : null);
   });
   const banner = doc.getElementById ? doc.getElementById('realGardenBanner') : null;
   if (banner) {
@@ -141,9 +151,7 @@ export function applyCalibrationSourceToReviewDocument(doc, sourceMediaUrl) {
   doc.querySelectorAll &&
     doc.querySelectorAll('[data-in-garden-status]').forEach((el) => {
       el.setAttribute('data-in-garden-status', 'UNKNOWN');
-      if (el.classList.contains('empty')) {
-        el.textContent = String(el.textContent || '').replace(/IN_GARDEN_QA = BLOCKED/, 'IN_GARDEN_QA = UNKNOWN');
-      }
+      el.textContent = IN_GARDEN_QA_UNKNOWN_COPY;
     });
   return { applied: true, sceneCount: scenes.length };
 }
@@ -157,7 +165,10 @@ const api = {
   resolveCalibrationGardenSourceFromLoad,
   loadCalibrationGardenSourcePhoto,
   buildCalibrationSourceInjectMessage,
-  applyCalibrationSourceToReviewDocument
+  applyLoadedGardenSourceCopy,
+  applyCalibrationSourceToReviewDocument,
+  CANDIDATE_NOT_GENERATED_YET,
+  IN_GARDEN_QA_UNKNOWN_COPY
 };
 
 export default api;
