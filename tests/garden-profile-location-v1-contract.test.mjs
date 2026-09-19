@@ -15,6 +15,7 @@ import {
   mayWriteLegacyLocalLocationToServer,
   nullServerLocationPayload,
   resolveActiveGardenId,
+  resolvePersistedActiveGardenId,
   roundLocationCoord,
   serverLocationToAppPartial,
   shouldAcceptLocationHydration
@@ -154,6 +155,37 @@ test('active garden selection: 0 / 1 / many', () => {
   assert.equal(resolveActiveGardenId([{ id: 'g1' }, { id: 'g2' }], null), null);
   assert.equal(resolveActiveGardenId([{ id: 'g1' }, { id: 'g2' }], 'g2'), 'g2');
   assert.equal(resolveActiveGardenId([{ id: 'g1' }, { id: 'g2' }], 'missing'), null);
+});
+
+test('persisted last-active garden restores across empty session tab without guessing latest', () => {
+  const gardens = [{ id: 'garden-a' }, { id: 'garden-mojstrana' }];
+  assert.equal(
+    resolvePersistedActiveGardenId({
+      ownedRows: gardens,
+      sessionStoredId: '',
+      userId: 'user-1',
+      lastActiveByUser: { 'user-1': 'garden-mojstrana' }
+    }),
+    'garden-mojstrana'
+  );
+  assert.equal(
+    resolvePersistedActiveGardenId({
+      ownedRows: gardens,
+      sessionStoredId: 'garden-a',
+      userId: 'user-1',
+      lastActiveByUser: { 'user-1': 'garden-mojstrana' }
+    }),
+    'garden-a'
+  );
+  assert.equal(
+    resolvePersistedActiveGardenId({
+      ownedRows: gardens,
+      sessionStoredId: '',
+      userId: 'user-2',
+      lastActiveByUser: { 'user-1': 'garden-mojstrana' }
+    }),
+    null
+  );
 });
 
 test('hydration stale-response guard', () => {

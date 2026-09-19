@@ -11,7 +11,7 @@ import {
   isCompleteServerLocation,
   mayWriteLegacyLocalLocationToServer,
   nullServerLocationPayload,
-  resolveActiveGardenId,
+  resolvePersistedActiveGardenId,
   serverLocationToAppPartial,
   shouldAcceptLocationHydration
 } from './garden-profile-location-contract.js';
@@ -102,6 +102,7 @@ window.cruvitBootstrapSafeClimateTraitsMigration = {
 
 const AUTH_CONFIG_PATH = '/.netlify/functions/auth-config';
 const SESSION_STORAGE_KEY = 'cruvit_pd_v0_active_garden_id';
+const LAST_ACTIVE_GARDEN_BY_USER_KEY = 'cruvit_pd_v0_last_active_garden_by_user';
 
 const GARDEN_SELECT =
   'id,name,created_at,updated_at,user_id,location_label,location_lat,location_lon,location_climate,location_country,location_region,location_timezone,location_source,location_confirmed_at,location_updated_at,location_structural_climate,location_structural_climate_version,location_structural_climate_fetched_at,location_structural_climate_source,location_structural_climate_status';
@@ -236,17 +237,47 @@ function getStoredActiveGardenId() {
   }
 }
 
+function readLastActiveGardenByUser() {
+  try {
+    const raw = localStorage.getItem(LAST_ACTIVE_GARDEN_BY_USER_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function rememberLastActiveGardenForUser(id) {
+  const userId = currentSession && currentSession.user ? String(currentSession.user.id || '').trim() : '';
+  if (!userId || !id) return;
+  try {
+    const next = { ...readLastActiveGardenByUser(), [userId]: String(id) };
+    localStorage.setItem(LAST_ACTIVE_GARDEN_BY_USER_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore */
+  }
+}
+
 function setStoredActiveGardenId(id) {
   try {
-    if (id) sessionStorage.setItem(SESSION_STORAGE_KEY, String(id));
-    else sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    if (id) {
+      sessionStorage.setItem(SESSION_STORAGE_KEY, String(id));
+      rememberLastActiveGardenForUser(id);
+    } else sessionStorage.removeItem(SESSION_STORAGE_KEY);
   } catch {
     /* ignore */
   }
 }
 
 function getActiveGardenId() {
-  return resolveActiveGardenId(ownedGardensCache, getStoredActiveGardenId());
+  const userId = currentSession && currentSession.user ? currentSession.user.id : '';
+  return resolvePersistedActiveGardenId({
+    ownedRows: ownedGardensCache,
+    sessionStoredId: getStoredActiveGardenId(),
+    lastActiveByUser: readLastActiveGardenByUser(),
+    userId
+  });
 }
 
 async function fetchAuthConfig() {
@@ -1095,7 +1126,12 @@ async function refreshOwnedGardenProfiles() {
     const rows = Array.isArray(data) ? data : [];
     ownedGardensCache = rows;
 
-    const activeId = resolveActiveGardenId(rows, getStoredActiveGardenId());
+    const activeId = resolvePersistedActiveGardenId({
+      ownedRows: rows,
+      sessionStoredId: getStoredActiveGardenId(),
+      lastActiveByUser: readLastActiveGardenByUser(),
+      userId: requestUserId
+    });
     if (rows.length === 1) {
       setStoredActiveGardenId(rows[0].id);
     } else if (!activeId) {

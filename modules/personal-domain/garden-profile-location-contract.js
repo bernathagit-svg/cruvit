@@ -173,6 +173,21 @@ export function resolveActiveGardenId(ownedRows, storedActiveId) {
 }
 
 /**
+ * Session tab selection wins. If this tab has no active garden id yet,
+ * restore the same user's last explicitly selected garden when it still
+ * belongs to the owned set. Does not pick latest-by-updated_at.
+ */
+export function resolvePersistedActiveGardenId(input = {}) {
+  const sessionStoredId = String(input.sessionStoredId || '').trim();
+  const fromSession = resolveActiveGardenId(input.ownedRows, sessionStoredId);
+  if (sessionStoredId && fromSession) return fromSession;
+  const userId = String(input.userId || '').trim();
+  const byUser = input.lastActiveByUser && typeof input.lastActiveByUser === 'object' ? input.lastActiveByUser : {};
+  const lastForUser = userId ? String(byUser[userId] || '').trim() : '';
+  return resolveActiveGardenId(input.ownedRows, lastForUser || sessionStoredId);
+}
+
+/**
  * Stale-response guard for async location hydration.
  * Drop hydrate if user signed out, switched, or active garden changed.
  */

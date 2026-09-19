@@ -182,6 +182,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .harness.blend img.cutout { filter: ${blendFilter}; }
     .scene.harness { width: 280px; height: 180px; }
     code { font-size: 12px; }
+    .owner-feedback { overflow: auto; }
+    .owner-feedback table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .owner-feedback th, .owner-feedback td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+    .owner-feedback pre { white-space: pre-wrap; background: #111; color: #f4f1ea; padding: 12px; font-size: 12px; }
+    #copy-owner-feedback-summary { margin: 8px 8px 8px 0; padding: 8px 12px; }
   </style>
 </head>
 <body>
@@ -192,6 +197,31 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   <p>Owner question: does this actually look like the plant is in my garden? Fields: ${esc(
     IN_GARDEN_REVIEW_FIELDS.join(', ')
   )}.</p>
+  <section class="job owner-feedback" id="owner-feedback-summary">
+    <h2>Owner review summary</h2>
+    <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. OWNER_VISUAL_QA from this session is valid. IN_GARDEN_QA is INVALID_FOR_THIS_SESSION unless a signed Garden photo loaded.</p>
+    <p>
+      <button type="button" id="copy-owner-feedback-summary">Copy review summary</button>
+      <span id="owner-feedback-copy-status"></span>
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>canonicalSlug</th>
+          <th>OWNER_VISUAL_QA</th>
+          <th>checked fields</th>
+          <th>BOTANICAL_IDENTITY_QA</th>
+          <th>ASSET_QA</th>
+          <th>IN_GARDEN_QA</th>
+        </tr>
+      </thead>
+      <tbody id="owner-feedback-table-body"></tbody>
+    </table>
+    <h3>Proposed prompt correction map</h3>
+    <p id="owner-feedback-prompt-map" class="note">Derived only from actual checked fields. Do not regenerate yet.</p>
+    <h3>Machine-readable summary</h3>
+    <pre id="owner-feedback-json">{}</pre>
+  </section>
   ${cards}
   <section class="job">
     <h2>Method harness (not a calibration candidate)</h2>
@@ -212,6 +242,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       var MESSAGE_TYPE = ${JSON.stringify(CALIBRATION_SOURCE_MESSAGE_TYPE)};
       function applySignedUrl(url) {
         if (!url || !/^https:\\/\\//i.test(url)) return false;
+        document.documentElement.setAttribute('data-calibration-ui-status', 'REAL_GARDEN_SOURCE_LOADED');
         document.querySelectorAll('.scene.real').forEach(function (el) {
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
@@ -234,10 +265,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
         return true;
       }
       function applyUiStatus(d) {
+        var status = (d && (d.uiStatus || d.code)) || '';
+        if (status) document.documentElement.setAttribute('data-calibration-ui-status', status);
         if (d && d.sourceMediaUrl && applySignedUrl(d.sourceMediaUrl)) return;
         var banner = document.getElementById('realGardenBanner');
         if (!banner) return;
-        var status = (d && (d.uiStatus || d.code)) || '';
         var labels = {
           LOADING_GARDEN_CONTEXT: 'Loading Garden context…',
           LOADING_GARDEN_PHOTO: 'Loading Garden photo…',
@@ -251,6 +283,14 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
         if (!status || !labels[status]) return;
         banner.className = status === 'REAL_GARDEN_SOURCE_LOADED' ? 'ok' : 'warn';
         banner.textContent = labels[status];
+        if (status !== 'REAL_GARDEN_SOURCE_LOADED') {
+          document.querySelectorAll('[data-in-garden-status]').forEach(function (el) {
+            el.setAttribute('data-in-garden-status', 'INVALID_FOR_THIS_SESSION');
+            if (el.getAttribute('data-generated') === 'true') {
+              el.textContent = 'Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = INVALID_FOR_THIS_SESSION. OWNER_VISUAL_QA remains valid. Do not score IN_GARDEN_QA from black B/C/D panels.';
+            }
+          });
+        }
       }
       window.addEventListener('message', function (ev) {
         if (ev.origin && ev.origin !== 'null' && ev.origin !== window.location.origin) return;

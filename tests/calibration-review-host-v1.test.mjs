@@ -22,7 +22,8 @@ import {
 import {
   CALIBRATION_REVIEW_UI_STATUS,
   createCalibrationReviewHostController,
-  mapCalibrationReviewUiStatus
+  mapCalibrationReviewUiStatus,
+  resolveCalibrationHostGarden
 } from '../modules/garden-design/asset-factory-v1/calibration-review-host-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -261,6 +262,8 @@ test('N/O: zero generation, no polling, iframe cache injects once-ready result',
   assert.match(app, /Loading Garden context/);
   assert.match(app, /cruvit:auth-session-changed/);
   assert.match(app, /cruvit:garden-context-ready/);
+  assert.match(app, /getOwnedGardens/);
+  assert.match(app, /DOMContentLoaded/);
   assert.match(review, /applyUiStatus/);
   assert.match(review, /LOADING_GARDEN_CONTEXT/);
   assert.doesNotMatch(review, /Waiting for authenticated host to inject/);
@@ -344,4 +347,53 @@ test('REAL_GARDEN_SOURCE_LOADED removes stale waiting-for-host copy', () => {
   assert.doesNotMatch(applyFn, /waiting for host signed URL/);
   const generator = read('modules/garden-design/asset-factory-v1/calibration-review-v1.js');
   assert.match(generator, /waiting for host signed URL/);
+});
+
+test('P: garden-context-ready without gardenProfileId uses live active garden', async () => {
+  let readiness = {
+    status: 'RESTORING',
+    authenticated: true,
+    gardenProfileId: null,
+    gardenCount: 0,
+    profilesHydrated: false
+  };
+  const { ctrl, loads, statuses } = makeController({
+    getReadiness: () => readiness,
+    getOwnedGardens: () => [{ id: 'garden-mojstrana', name: 'Mojstrana' }]
+  });
+  ctrl.open();
+  readiness = {
+    status: 'READY',
+    authenticated: true,
+    gardenProfileId: 'garden-mojstrana',
+    gardenCount: 1,
+    profilesHydrated: true
+  };
+  await ctrl.onGardenContextReady({ authenticated: true, gardenCount: 1 });
+  assert.equal(loads.length, 1);
+  assert.equal(statuses.at(-1), CALIBRATION_REVIEW_UI_STATUS.REAL_GARDEN_SOURCE_LOADED);
+});
+
+test('Q: a single owned garden recovers NO_ACTIVE_GARDEN without guessing among many', async () => {
+  const { ctrl, loads, statuses } = makeController({
+    getReadiness: () => ({
+      status: 'NO_ACTIVE_GARDEN',
+      authenticated: true,
+      gardenProfileId: null,
+      gardenCount: 1,
+      profilesHydrated: true
+    }),
+    getOwnedGardens: () => [{ id: 'garden-mojstrana', name: 'Mojstrana' }]
+  });
+  await ctrl.open();
+  assert.equal(loads.length, 1);
+  assert.equal(statuses.at(-1), CALIBRATION_REVIEW_UI_STATUS.REAL_GARDEN_SOURCE_LOADED);
+  assert.equal(
+    resolveCalibrationHostGarden(
+      { authenticated: true, gardenProfileId: null, gardenCount: 2, profilesHydrated: true, status: 'NO_ACTIVE_GARDEN' },
+      { authenticated: true },
+      [{ id: 'g1' }, { id: 'g2' }]
+    ).status,
+    'NO_ACTIVE_GARDEN'
+  );
 });

@@ -60,8 +60,64 @@ export function mapCalibrationReviewUiStatus(resolved = {}, readiness = {}) {
   return CALIBRATION_REVIEW_UI_STATUS.SOURCE_PHOTO_UNAVAILABLE;
 }
 
+export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, ownedGardens = []) {
+  const live = readiness && typeof readiness === 'object' ? readiness : {};
+  const detail = eventDetail && typeof eventDetail === 'object' ? eventDetail : {};
+  const rows = Array.isArray(ownedGardens) ? ownedGardens.filter((row) => row && row.id) : [];
+  const authenticated = live.authenticated === true || detail.authenticated === true;
+  const gardenProfileId =
+    (live.gardenProfileId && String(live.gardenProfileId)) ||
+    (detail.gardenProfileId && String(detail.gardenProfileId)) ||
+    (rows.length === 1 ? String(rows[0].id) : null);
+  const gardenCount = Number.isFinite(Number(live.gardenCount))
+    ? Number(live.gardenCount)
+    : Number.isFinite(Number(detail.gardenCount))
+      ? Number(detail.gardenCount)
+      : rows.length;
+  const profilesHydrated =
+    live.profilesHydrated === true ||
+    live.status === 'READY' ||
+    live.status === 'NO_ACTIVE_GARDEN' ||
+    live.status === 'SIGNED_OUT';
+  if (!authenticated && profilesHydrated) {
+    return {
+      authenticated: false,
+      gardenProfileId: null,
+      gardenCount: 0,
+      profilesHydrated: true,
+      status: 'SIGNED_OUT'
+    };
+  }
+  if (!profilesHydrated) {
+    return {
+      authenticated,
+      gardenProfileId: authenticated ? gardenProfileId : null,
+      gardenCount,
+      profilesHydrated: false,
+      status: 'RESTORING'
+    };
+  }
+  if (!gardenProfileId) {
+    return {
+      authenticated: true,
+      gardenProfileId: null,
+      gardenCount,
+      profilesHydrated: true,
+      status: 'NO_ACTIVE_GARDEN'
+    };
+  }
+  return {
+    authenticated: true,
+    gardenProfileId,
+    gardenCount,
+    profilesHydrated: true,
+    status: 'READY'
+  };
+}
+
 export function createCalibrationReviewHostController(deps = {}) {
   const getReadiness = typeof deps.getReadiness === 'function' ? deps.getReadiness : () => ({ status: 'RESTORING' });
+  const getOwnedGardens = typeof deps.getOwnedGardens === 'function' ? deps.getOwnedGardens : () => [];
   const loadSource = typeof deps.loadSource === 'function' ? deps.loadSource : async () => ({ ok: false, code: 'SOURCE_PHOTO_UNAVAILABLE' });
   const setStatus = typeof deps.setStatus === 'function' ? deps.setStatus : () => {};
   const injectResolved = typeof deps.injectResolved === 'function' ? deps.injectResolved : () => {};
@@ -72,6 +128,10 @@ export function createCalibrationReviewHostController(deps = {}) {
   let resolvedGardenId = null;
   let inflight = null;
   let uiStatus = null;
+
+  function liveGarden() {
+    return resolveCalibrationHostGarden(getReadiness() || {}, {}, getOwnedGardens() || []);
+  }
 
   function publish(status, resolved) {
     uiStatus = status;
@@ -90,7 +150,7 @@ export function createCalibrationReviewHostController(deps = {}) {
   }
 
   async function resolveSource() {
-    const readiness = getReadiness() || {};
+    const readiness = liveGarden();
     if (readiness.status !== 'READY' || !readiness.gardenProfileId) return null;
     if (resolvedGardenId && resolvedGardenId === readiness.gardenProfileId && cachedResolved) {
       injectCacheIfFrameReady();
@@ -116,7 +176,7 @@ export function createCalibrationReviewHostController(deps = {}) {
       open = true;
       cachedResolved = null;
       resolvedGardenId = null;
-      const readiness = getReadiness() || {};
+      const readiness = liveGarden();
       if (readiness.status === 'READY') {
         return resolveSource();
       }
@@ -141,12 +201,16 @@ export function createCalibrationReviewHostController(deps = {}) {
     onAuthSessionChanged(detail = {}) {
       if (!open) return null;
       if (detail.authenticated === true) {
-        const readiness = getReadiness() || {};
+        const readiness = liveGarden();
         if (readiness.status === 'READY') return resolveSource();
+        if (readiness.status === 'NO_ACTIVE_GARDEN') {
+          publish(CALIBRATION_REVIEW_UI_STATUS.NO_ACTIVE_GARDEN);
+          return null;
+        }
         publish(CALIBRATION_REVIEW_UI_STATUS.LOADING_GARDEN_CONTEXT);
         return null;
       }
-      const readiness = getReadiness() || {};
+      const readiness = liveGarden();
       if (readiness.profilesHydrated === true && readiness.status === 'SIGNED_OUT') {
         cachedResolved = null;
         resolvedGardenId = null;
@@ -158,13 +222,14 @@ export function createCalibrationReviewHostController(deps = {}) {
     },
     onGardenContextReady(detail = {}) {
       if (!open) return null;
-      if (detail.authenticated !== true) {
+      const readiness = resolveCalibrationHostGarden(getReadiness() || {}, detail, getOwnedGardens() || []);
+      if (readiness.authenticated !== true) {
         cachedResolved = null;
         resolvedGardenId = null;
         publish(CALIBRATION_REVIEW_UI_STATUS.AUTH_REQUIRED);
         return null;
       }
-      if (!detail.gardenProfileId) {
+      if (!readiness.gardenProfileId) {
         publish(CALIBRATION_REVIEW_UI_STATUS.NO_ACTIVE_GARDEN);
         return null;
       }
@@ -189,6 +254,7 @@ const api = {
   CALIBRATION_REVIEW_UI_STATUS,
   CALIBRATION_REVIEW_STATUS_LABEL,
   mapCalibrationReviewUiStatus,
+  resolveCalibrationHostGarden,
   createCalibrationReviewHostController
 };
 

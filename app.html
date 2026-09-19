@@ -8739,6 +8739,11 @@ function ensureDesignAssetCalibrationReviewHost(){
       if(pd&&typeof pd.getGardenContextReadiness==='function') return pd.getGardenContextReadiness();
       return { status:'RESTORING', authenticated:false, gardenProfileId:null, gardenCount:0, profilesHydrated:false };
     },
+    getOwnedGardens:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getOwnedGardensCache==='function') return pd.getOwnedGardensCache();
+      return [];
+    },
     loadSource:async function(readiness){
       const persist=getGardenDesignHostPersistence();
       const helper=window.CruvitCalibrationGardenSource;
@@ -8819,7 +8824,7 @@ function openDesignAssetCalibrationReview(){
   frame.onload=function(){
     if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   };
-  const reviewSrc='modules/garden-design/calibration-review.html?v=20260919c';
+  const reviewSrc='modules/garden-design/calibration-review.html?v=20260919d';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(!ctrl){
@@ -8830,7 +8835,13 @@ function openDesignAssetCalibrationReview(){
 }
 
 window.openDesignAssetCalibrationReview=openDesignAssetCalibrationReview;
+window.addEventListener('DOMContentLoaded',function(){
+  ensureDesignAssetCalibrationReviewHost();
+});
 window.addEventListener('load',function(){
+  if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
+});
+window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
 });
 
@@ -9795,7 +9806,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/identity/plant-identity-shadow.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-audit.js"></script>
 <script type="module" src="modules/identity/my-garden-identity-sidecar.js"></script>
-<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260919a"></script>
+<script type="module" src="modules/personal-domain/garden-profile-v0.js?v=20260919b"></script>
 <script type="module" src="modules/personal-domain/garden-dashboard-v1-ui.js?v=20260913h"></script>
 <script type="module" src="modules/personal-domain/garden-areas-v1-ui.js?v=20260914a"></script>
 <script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>
@@ -9806,6 +9817,6 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260917d"></script>
 <script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260918a"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260919b"></script>
-<script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919a"></script>
+<script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919b"></script>
 </body>
 </html>
