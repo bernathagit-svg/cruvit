@@ -53,6 +53,11 @@ export {
   evaluateTreeScaleModel,
   SIZE_EVIDENCE_UNKNOWN
 } from './composition-calibration-v2.js';
+export {
+  computeTreeSceneScaleV3,
+  evaluateMatureTreeAntiMiniatureInvariant,
+  TREE_SCALE_MODEL_VERSION
+} from './composition-calibration-v3.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

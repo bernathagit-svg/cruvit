@@ -12,6 +12,12 @@ import {
   contactShadowForScale,
   sampleLocalSceneFromRgba
 } from './composition-calibration-v2.js';
+import {
+  TREE_SCALE_MULTIPLIER_RANGE,
+  TREE_SCALE_MULTIPLIER_STORAGE_KEY,
+  computeTreeSceneScaleV3,
+  parseTreeScaleMultiplier
+} from './composition-calibration-v3.js';
 
 function clamp(value, min, max) {
   const n = Number(value);
@@ -61,6 +67,34 @@ async function sampleAroundPlacement(url, scene, placement) {
   }
 }
 
+function parseBbox(scene) {
+  const raw = scene.getAttribute('data-bbox') || '';
+  const parts = raw.split(',').map(Number);
+  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return null;
+  return { exists: true, minX: parts[0], minY: parts[1], maxX: parts[2], maxY: parts[3] };
+}
+
+function parseCanvas(scene) {
+  const raw = scene.getAttribute('data-canvas') || '1024,1536';
+  const parts = raw.split(',').map(Number);
+  return {
+    width: Number.isFinite(parts[0]) ? parts[0] : 1024,
+    height: Number.isFinite(parts[1]) ? parts[1] : 1536
+  };
+}
+
+function currentTreeMultiplier(doc, article) {
+  const input = (article && article.querySelector('[data-tree-scale-multiplier]')) || doc.querySelector('[data-tree-scale-multiplier]');
+  if (input && input.value) return parseTreeScaleMultiplier(input.value);
+  try {
+    const stored = window.sessionStorage && window.sessionStorage.getItem(TREE_SCALE_MULTIPLIER_STORAGE_KEY);
+    if (stored) return parseTreeScaleMultiplier(JSON.parse(stored).mango);
+  } catch {
+    /* ignore */
+  }
+  return TREE_SCALE_MULTIPLIER_RANGE.proposedDefault;
+}
+
 function applyPlacement(scene, options = {}) {
   const placement = scene.querySelector('[data-role="placement"]');
   const img = scene.querySelector('img.cutout');
@@ -71,21 +105,47 @@ function applyPlacement(scene, options = {}) {
   const ownerScale = options.ownerScale != null
     ? options.ownerScale
     : Number(scene.getAttribute('data-owner-scale') || 1);
-  const scale = computeSceneVisualScale({
-    visualForm,
-    depthId,
-    ownerScale,
-    sizeEvidence: { status: scene.getAttribute('data-size-evidence') || 'SIZE_EVIDENCE_UNKNOWN' }
-  });
+  const model = scene.getAttribute('data-scale-model') || options.scaleModel || 'v2';
+  const canvas = parseCanvas(scene);
+  const bbox = parseBbox(scene);
+  let scale;
+  if (model === 'v3' && visualForm === 'tree') {
+    scale = computeTreeSceneScaleV3({
+      visualForm,
+      growthStage: scene.getAttribute('data-growth-stage') || 'mature',
+      depthId,
+      ownerScale,
+      treeScaleMultiplier: options.treeScaleMultiplier,
+      bbox,
+      canvasWidth: canvas.width,
+      canvasHeight: canvas.height,
+      sizeEvidence: { status: scene.getAttribute('data-size-evidence') || 'SIZE_EVIDENCE_UNKNOWN' }
+    });
+  } else {
+    scale = computeSceneVisualScale({
+      visualForm,
+      depthId,
+      ownerScale,
+      sizeEvidence: { status: scene.getAttribute('data-size-evidence') || 'SIZE_EVIDENCE_UNKNOWN' }
+    });
+  }
   scene.setAttribute('data-depth-id', scale.depthId);
   scene.setAttribute('data-owner-scale', String(scale.ownerScale));
   placement.style.left = '50%';
   placement.style.bottom = `${scale.yBottomPct}%`;
   placement.style.transform = 'translateX(-50%)';
   const sceneH = scene.clientHeight || 300;
-  img.style.maxHeight = `${(scale.heightPct / 100) * sceneH}px`;
+  const imgPct = scale.imgHeightPct != null ? scale.imgHeightPct : scale.heightPct;
+  const imgPx = (imgPct / 100) * sceneH;
+  img.style.maxHeight = `${imgPx}px`;
   img.style.maxWidth = '100%';
-  const shadowSpec = contactShadowForScale({ heightPct: scale.heightPct, depthId: scale.depthId });
+  const anchorNy = scale.groundAnchor && Number(scale.groundAnchor.ny);
+  if (model === 'v3' && Number.isFinite(anchorNy) && anchorNy < 0.995) {
+    img.style.marginBottom = `${-((1 - anchorNy) * imgPx)}px`;
+  } else {
+    img.style.marginBottom = '0';
+  }
+  const shadowSpec = contactShadowForScale({ heightPct: scale.heightPct || scale.visibleHeightPct, depthId: scale.depthId });
   if (shadow) {
     shadow.style.width = `${shadowSpec.widthPct}%`;
     shadow.style.height = `${shadowSpec.heightPx}px`;
@@ -102,7 +162,7 @@ function applyBlendFilter(img, adaptation) {
 }
 
 async function refreshV2Scenes(doc) {
-  const scenes = [...doc.querySelectorAll('.scene.blend-v2-scene, .scene.perspective-scene, .scene.fixed-scale-v2-scene')];
+  const scenes = [...doc.querySelectorAll('.scene.blend-v2-scene, .scene.perspective-scene, .scene.fixed-scale-v2-scene, .scene.tree-v3-scene, .scene.form-compare-scene')];
   const firstReal = scenes.find((el) => el.classList.contains('real') || el.classList.contains('blend-v2-scene'));
   const url = sceneUrlFrom(firstReal);
   let sample = { available: false, reason: 'LOCAL_SCENE_SAMPLE_UNAVAILABLE' };
@@ -127,28 +187,66 @@ async function refreshV2Scenes(doc) {
     }
     const applied = applyPlacement(scene, {
       depthId: scene.getAttribute('data-lock-depth') || (depthSelect && depthSelect.value) || 'middle',
-      ownerScale: scaleInput ? Number(scaleInput.value) : 1
+      ownerScale: scaleInput ? Number(scaleInput.value) : 1,
+      treeScaleMultiplier: currentTreeMultiplier(doc, article),
+      scaleModel: scene.getAttribute('data-scale-model') || 'v2'
     });
     if (applied) applyBlendFilter(applied.img, adaptation);
     const readout = article && article.querySelector('[data-v2-scale-readout]');
-    if (readout && applied && !scene.getAttribute('data-lock-depth')) {
+    if (readout && applied && !scene.getAttribute('data-lock-depth') && scene.getAttribute('data-scale-model') !== 'v3') {
       readout.textContent = `visual height ${applied.scale.heightPct.toFixed(1)}% · depth ${applied.scale.depthId} · owner scale ${applied.scale.ownerScale.toFixed(2)} · visual aid only, not cm`;
+    }
+    const v3Readout = article && article.querySelector('[data-v3-scale-readout]');
+    if (v3Readout && applied && scene.getAttribute('data-scale-model') === 'v3' && scene.getAttribute('data-lock-depth') === 'middle') {
+      const visible = applied.scale.visibleHeightPct || applied.scale.heightPct;
+      v3Readout.textContent = `V3 visible height ${visible.toFixed(1)}% · img ${applied.scale.imgHeightPct.toFixed(1)}% of scene · multiplier ${applied.scale.treeScaleMultiplier.toFixed(2)} · visual aid only, not cm`;
     }
   });
   return { sample, adaptation, version: RUNTIME_BLEND_V2.version };
 }
 
+function persistTreeMultiplier(doc) {
+  const input = doc.querySelector('[data-tree-scale-multiplier]');
+  if (!input) return;
+  const value = parseTreeScaleMultiplier(input.value);
+  const label = doc.querySelector('[data-tree-scale-multiplier-value]');
+  if (label) label.textContent = value.toFixed(2);
+  try {
+    window.sessionStorage.setItem(
+      TREE_SCALE_MULTIPLIER_STORAGE_KEY,
+      JSON.stringify({ mango: value, calibrationOnly: true, lockedUniversal: false })
+    );
+  } catch {
+    /* ignore */
+  }
+}
+
 function wireControls(doc) {
-  doc.querySelectorAll('[data-v2-depth], [data-v2-owner-scale]').forEach((el) => {
+  doc.querySelectorAll('[data-v2-depth], [data-v2-owner-scale], [data-tree-scale-multiplier]').forEach((el) => {
     if (el.dataset.v2Wired) return;
     el.dataset.v2Wired = '1';
     el.addEventListener('input', () => {
+      persistTreeMultiplier(doc);
       refreshV2Scenes(doc);
     });
     el.addEventListener('change', () => {
+      persistTreeMultiplier(doc);
       refreshV2Scenes(doc);
     });
   });
+  try {
+    const stored = window.sessionStorage && window.sessionStorage.getItem(TREE_SCALE_MULTIPLIER_STORAGE_KEY);
+    const input = doc.querySelector('[data-tree-scale-multiplier]');
+    if (stored && input) {
+      const parsed = JSON.parse(stored);
+      if (parsed && parsed.mango != null) {
+        input.value = String(parseTreeScaleMultiplier(parsed.mango));
+        persistTreeMultiplier(doc);
+      }
+    }
+  } catch {
+    /* ignore */
+  }
 }
 
 export function initCompositionCalibrationV2(doc) {

@@ -83,12 +83,12 @@ test('live calibration review wires actual cutouts, not placeholders', () => {
   assert.match(review, /data-blend-scale="medium"/);
   assert.match(review, /raw-blend-pair/);
   assert.match(review, /owner-feedback-table-body/);
-  assert.match(review, /RAW vs BLEND V1 vs BLEND V2/);
-  assert.match(review, /data-composition-v2-class="RUNTIME_SOLVABLE"/);
-  assert.match(review, /data-composition-v2-class="REGEN_REQUIRED"/);
-  assert.match(review, /TREE_SCALE_MODEL/);
-  assert.match(review, /composition-calibration-v2-runtime\.js/);
-  assert.match(review, /Does this now look like a plant actually standing in the garden/);
+  assert.match(review, /TREE SCALE V3/);
+  assert.match(review, /CURRENT V2/);
+  assert.match(review, /data-composition-v2-class="RUNTIME_SCALE_SOLVABLE"/);
+  assert.match(review, /Does this finally read as a mature tree/);
+  assert.match(review, /data-tree-scale-multiplier/);
+  assert.match(review, /Form relative scale/);
   assert.match(review, /data-learning-class="REGEN_REQUIRED"/);
   assert.match(review, /cutout medium blend-v1/);
   assert.equal(OWNER_VISUAL_QA_STORAGE_KEY, 'cruvit:calibration-batch-1-owner-visual-qa');
@@ -234,8 +234,8 @@ test('RAW vs BLEND V1 is runtime CSS only and cannot claim to fix architecture',
     }
   ]);
   assert.match(html, /RAW vs BLEND V1 vs BLEND V2/);
-  assert.match(html, /data-composition-v2-class="RUNTIME_SOLVABLE" disabled/);
-  assert.match(html, /TREE_SCALE_MODEL/);
+  assert.match(html, /data-composition-v2-class="RUNTIME_SCALE_SOLVABLE" disabled/);
+  assert.match(html, /TREE SCALE V3/);
   assert.match(html, /ground-shadow/);
   assert.match(html, /data-blend-scale="medium"/);
   assert.match(html, /raw-blend-pair/);

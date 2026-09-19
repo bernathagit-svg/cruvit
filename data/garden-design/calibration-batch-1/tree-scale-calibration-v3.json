@@ -1,0 +1,239 @@
+{
+  "contract": "tree-scale-calibration-v3",
+  "currentProblem": "V2 used the shared form×depth curve and sized the PNG canvas. Transparent margin made the visible mango read as a miniature tree.",
+  "model": "tree-scale-v3",
+  "treeDepths": {
+    "near": {
+      "id": "near",
+      "yBottomPct": 3,
+      "depthFactor": 1,
+      "shadowSoftness": 0.8,
+      "label": "near-ground"
+    },
+    "middle": {
+      "id": "middle",
+      "yBottomPct": 12,
+      "depthFactor": 0.88,
+      "shadowSoftness": 1.05,
+      "label": "middle depth"
+    },
+    "far": {
+      "id": "far",
+      "yBottomPct": 24,
+      "depthFactor": 0.74,
+      "shadowSoftness": 1.28,
+      "label": "far depth"
+    }
+  },
+  "visibleTargets": {
+    "near": 92,
+    "middle": 80,
+    "far": 66
+  },
+  "multiplierRange": {
+    "min": 0.8,
+    "max": 1.7,
+    "step": 0.02,
+    "proposedDefault": 1
+  },
+  "universalMultiplierLocked": false,
+  "formRelativeScale": {
+    "treeUsesSharedCurve": false,
+    "shrub": 0.42,
+    "rosette": 0.32,
+    "herbaceous-clump": 0.78
+  },
+  "invariant": {
+    "result": "TREE_SCALE_V3_ANTI_MINIATURE_PASS",
+    "model": "tree-scale-v3",
+    "multiplier": 1,
+    "farVsNear": 0.717391304347826,
+    "notMiniatureFar": true,
+    "rows": [
+      {
+        "depthId": "near",
+        "treeVisiblePct": 92,
+        "v2TreeHeightPct": 82,
+        "shrubHeightPct": 34.44,
+        "rosetteHeightPct": 26.240000000000002,
+        "clumpHeightPct": 63.96,
+        "dominatesShrub": true,
+        "dominatesRosette": true,
+        "dominatesClump": true,
+        "largerThanV2": true
+      },
+      {
+        "depthId": "middle",
+        "treeVisiblePct": 80,
+        "v2TreeHeightPct": 62.32,
+        "shrubHeightPct": 26.1744,
+        "rosetteHeightPct": 19.942400000000003,
+        "clumpHeightPct": 48.6096,
+        "dominatesShrub": true,
+        "dominatesRosette": true,
+        "dominatesClump": true,
+        "largerThanV2": true
+      },
+      {
+        "depthId": "far",
+        "treeVisiblePct": 66,
+        "v2TreeHeightPct": 47.559999999999995,
+        "shrubHeightPct": 19.975199999999997,
+        "rosetteHeightPct": 18,
+        "clumpHeightPct": 37.096799999999995,
+        "dominatesShrub": true,
+        "dominatesRosette": true,
+        "dominatesClump": true,
+        "largerThanV2": true
+      }
+    ],
+    "usedInventedMeters": false,
+    "regeneratedMango": false,
+    "centimeterAccuracy": false
+  },
+  "mangoV2VsV3": [
+    {
+      "depthId": "near",
+      "v2": {
+        "visualForm": "tree",
+        "depthId": "near",
+        "yBottomPct": 6,
+        "formFactor": 1,
+        "depthFactor": 1,
+        "ownerScale": 1,
+        "heightPct": 82,
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+      },
+      "v3": {
+        "model": "tree-scale-v3",
+        "visualForm": "tree",
+        "growthStage": "mature",
+        "depthId": "near",
+        "yBottomPct": 3,
+        "depthFactor": 1,
+        "ownerScale": 1,
+        "treeScaleMultiplier": 1,
+        "bboxFillRatio": 0.8294270833333334,
+        "targetVisiblePct": 92,
+        "imgHeightPct": 110.9199372056515,
+        "visibleHeightPct": 92,
+        "heightPct": 92,
+        "groundAnchor": {
+          "nx": 0.50830078125,
+          "ny": 0.92578125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "usesSharedShrubScaleCurve": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Tree-specific scene scale. Compensates transparent PNG margin so the visible specimen, not the 1024×1536 canvas, sets size. Not a physical meter claim."
+      }
+    },
+    {
+      "depthId": "middle",
+      "v2": {
+        "visualForm": "tree",
+        "depthId": "middle",
+        "yBottomPct": 20,
+        "formFactor": 1,
+        "depthFactor": 0.76,
+        "ownerScale": 1,
+        "heightPct": 62.32,
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+      },
+      "v3": {
+        "model": "tree-scale-v3",
+        "visualForm": "tree",
+        "growthStage": "mature",
+        "depthId": "middle",
+        "yBottomPct": 12,
+        "depthFactor": 0.88,
+        "ownerScale": 1,
+        "treeScaleMultiplier": 1,
+        "bboxFillRatio": 0.8294270833333334,
+        "targetVisiblePct": 80,
+        "imgHeightPct": 96.45211930926216,
+        "visibleHeightPct": 80,
+        "heightPct": 80,
+        "groundAnchor": {
+          "nx": 0.50830078125,
+          "ny": 0.92578125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "usesSharedShrubScaleCurve": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Tree-specific scene scale. Compensates transparent PNG margin so the visible specimen, not the 1024×1536 canvas, sets size. Not a physical meter claim."
+      }
+    },
+    {
+      "depthId": "far",
+      "v2": {
+        "visualForm": "tree",
+        "depthId": "far",
+        "yBottomPct": 36,
+        "formFactor": 1,
+        "depthFactor": 0.58,
+        "ownerScale": 1,
+        "heightPct": 47.559999999999995,
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+      },
+      "v3": {
+        "model": "tree-scale-v3",
+        "visualForm": "tree",
+        "growthStage": "mature",
+        "depthId": "far",
+        "yBottomPct": 24,
+        "depthFactor": 0.74,
+        "ownerScale": 1,
+        "treeScaleMultiplier": 1,
+        "bboxFillRatio": 0.8294270833333334,
+        "targetVisiblePct": 66,
+        "imgHeightPct": 79.57299843014128,
+        "visibleHeightPct": 66,
+        "heightPct": 66,
+        "groundAnchor": {
+          "nx": 0.50830078125,
+          "ny": 0.92578125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+        "usedInventedMeters": false,
+        "usedPngPixelHeightAsBotanicalSize": false,
+        "usesSharedShrubScaleCurve": false,
+        "accuracy": "visual-aid-not-centimeter",
+        "note": "Tree-specific scene scale. Compensates transparent PNG margin so the visible specimen, not the 1024×1536 canvas, sets size. Not a physical meter claim."
+      }
+    }
+  ],
+  "mangoClass": {
+    "class": "RUNTIME_SCALE_SOLVABLE",
+    "problem": "B_SCENE_SCALE_PERSPECTIVE",
+    "note": "Owner: Blend V2 improved integration. Remaining dominant issue is miniature scene scale, not a regeneration of the binary. Not an approval."
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "approvedAssets": 0,
+  "productionRegistryChanged": false,
+  "regenerate": false,
+  "fixedSmallHeightPct": 34
+}

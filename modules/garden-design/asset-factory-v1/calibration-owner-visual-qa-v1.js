@@ -10,6 +10,7 @@ import {
   applyOwnerVisualVerdict,
   applyRound1Class,
   applyCompositionV2Class,
+  applyTreeScaleMultiplier,
   buildOwnerFeedbackSummary,
   buildRound1FinalSnapshot,
   derivePromptFactoryV2Learning,
@@ -232,6 +233,14 @@ export function initOwnerVisualQa(doc) {
   });
   renderSummary(documentRef, state);
   wireScaleToggles(documentRef);
+  documentRef.querySelectorAll('[data-tree-scale-multiplier]').forEach((input) => {
+    if (input.dataset.ownerWired) return;
+    input.dataset.ownerWired = '1';
+    input.addEventListener('input', () => {
+      state = applyTreeScaleMultiplier(state, 'mango', input.value);
+      saveOwnerVisualQa(store, state);
+    });
+  });
   const copyBtn = documentRef.getElementById('copy-owner-feedback-summary');
   if (copyBtn && !copyBtn.dataset.wired) {
     copyBtn.dataset.wired = '1';

@@ -18,6 +18,13 @@ import {
   buildCompositionV2Report
 } from './composition-calibration-v2.js';
 import {
+  TREE_SCALE_MULTIPLIER_RANGE,
+  TREE_SCENE_DEPTHS,
+  buildTreeScaleV3Report,
+  evaluateMatureTreeAntiMiniatureInvariant,
+  recommendCompositionV3Class
+} from './composition-calibration-v3.js';
+import {
   classifyCalibrationReviewReadiness,
   LOCAL_SUPPLEMENTARY_BACKGROUNDS,
   SAVED_GARDEN_PHOTO_AUTHORITY
@@ -115,9 +122,10 @@ function ownerVisualQaPanel(job) {
     <button type="button" data-learning-class="REGEN_REQUIRED" disabled>REGEN_REQUIRED</button>
     <button type="button" data-learning-class="REJECT_IDENTITY" disabled>REJECT_IDENTITY</button>
   </div>
-  <p class="note">COMPOSITION V2 class is not production approval. RUNTIME_SOLVABLE only for sticker look, minor tone/sharpness, ground contact, or scene scale. REGEN_REQUIRED when silhouette, inherent perspective, crown/body proportion, or botanical architecture is wrong.</p>
+  <p class="note">COMPOSITION class is not production approval. RUNTIME_SCALE_SOLVABLE: architecture is acceptable; only scene size is wrong. RUNTIME_SOLVABLE: sticker/tone/ground/scene scale. REGEN_REQUIRED: silhouette, inherent perspective, or crown/body proportion is wrong.</p>
   <p class="note" data-v2-recommendation></p>
   <div class="verdicts" role="group" aria-label="Composition V2 class">
+    <button type="button" data-composition-v2-class="RUNTIME_SCALE_SOLVABLE" disabled>RUNTIME_SCALE_SOLVABLE</button>
     <button type="button" data-composition-v2-class="RUNTIME_SOLVABLE" disabled>RUNTIME_SOLVABLE</button>
     <button type="button" data-composition-v2-class="REGEN_REQUIRED" disabled>REGEN_REQUIRED</button>
   </div>
@@ -140,6 +148,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   const plantsBySlug = options.plantsBySlug || {};
   const libraryCopyBySlug = options.libraryCopyBySlug || {};
   const treeScale = evaluateTreeScaleModel();
+  const treeV3 = evaluateMatureTreeAntiMiniatureInvariant();
   const generatedCount = batch.filter((j) => j.candidateRelPath).length;
   const heading = generatedCount
     ? `Calibration review — ${batch.length} jobs, ${generatedCount} candidates for owner visual review`
@@ -149,15 +158,21 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     const plant = plantsBySlug[job.canonicalSlug] || {};
     const sizeEvidence = auditBotanicalSizeEvidence(plant, libraryCopyBySlug[job.canonicalSlug] || {});
     const contract = buildDesignAssetScaleContract(job, sizeEvidence);
+    const bbox = contract.intrinsicBoundingBox;
     return {
       'data-visual-form': job.visualForm || '',
+      'data-growth-stage': job.growthStage || 'mature',
       'data-size-evidence': sizeEvidence.status,
       'data-ground-anchor': `${contract.groundAnchor.nx},${contract.groundAnchor.ny}`,
+      'data-canvas': `${contract.canvasWidth},${contract.canvasHeight}`,
+      'data-bbox': bbox ? `${bbox.minX},${bbox.minY},${bbox.maxX},${bbox.maxY}` : '',
       'data-depth-id': extra.depthId || 'middle',
+      'data-scale-model': extra.scaleModel || 'v2',
       ...(extra.lockDepth ? { 'data-lock-depth': extra.lockDepth } : {})
     };
   }
 
+  const bySlug = Object.fromEntries((Array.isArray(batch) ? batch : []).map((job) => [job.canonicalSlug, job]));
   const cards = batch
     .map((job) => {
       const title = `${job.rank}. ${esc(job.canonicalSlug)} · ${esc(job.visualForm)} · ${esc(job.growthStage)}`;
@@ -166,24 +181,63 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       const plant = plantsBySlug[job.canonicalSlug] || {};
       const sizeEvidence = auditBotanicalSizeEvidence(plant, libraryCopyBySlug[job.canonicalSlug] || {});
       const contract = buildDesignAssetScaleContract(job, sizeEvidence);
-      const recommendation = recommendCompositionV2Class(job.canonicalSlug);
+      const recommendation = recommendCompositionV3Class(job.canonicalSlug) || recommendCompositionV2Class(job.canonicalSlug);
       const status = generated
         ? 'Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.'
         : 'Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.';
+      const compareSlugs = [
+        { slug: 'mango', label: 'mango tree' },
+        { slug: 'lavender', label: 'lavender shrub' },
+        { slug: 'pineapple', label: 'pineapple rosette' },
+        { slug: 'banana', label: 'banana clump' }
+      ];
+      const formCompare =
+        job.canonicalSlug === 'mango' && generated
+          ? `<h3>Form relative scale — same Garden photo, middle depth</h3>
+  <p class="note">Tree uses V3. Shrub / rosette / clump keep V2 form factors. Not derived from PNG pixel height. Goal: the tree must feel structurally larger.</p>
+  <div class="scenes">
+    ${compareSlugs
+      .map((row) => {
+        const other = bySlug[row.slug];
+        const otherSrc = other ? candidateSrc(other, options, rel) : '';
+        const scaleModel = row.slug === 'mango' ? 'v3' : 'v2';
+        const extraClass = row.slug === 'mango' ? 'real blend-v2-scene tree-v3-scene form-compare-scene' : 'real blend-v2-scene form-compare-scene';
+        return sceneBlock(
+          row.label,
+          `${row.label} · ${scaleModel}`,
+          extraClass,
+          'middle',
+          row.slug,
+          '',
+          true,
+          otherSrc,
+          'blend-v2',
+          { placement: true, attrs: v2SceneAttrs(other || { canonicalSlug: row.slug, visualForm: other && other.visualForm }, { depthId: 'middle', lockDepth: 'middle', scaleModel }) }
+        );
+      })
+      .join('\n    ')}
+  </div>`
+          : '';
       const treeBlock =
         job.visualForm === 'tree' && generated
-          ? `<h3>Tree scale test — existing ${esc(job.canonicalSlug)} binary, no regeneration</h3>
-  <p class="note">A mature tree should not look like a miniature specimen only because it sits farther up the canvas. Original fixed small/medium/large versus perspective-aware near/middle/far. Visual aid, not centimeter accuracy. TREE_SCALE_MODEL result: ${esc(treeScale.result)}.</p>
+          ? `<h3>Tree scale V2 vs V3 — existing ${esc(job.canonicalSlug)} binary, no regeneration</h3>
+  <p class="note">Owner question: Does this finally read as a mature tree, not a miniature tree? V2 used the shared shrub-capable curve and sized the PNG canvas. V3 is tree-only, bbox-compensated, with gentler depth falloff. TREE_SCALE_V3: ${esc(treeV3.result)}. V2 model: ${esc(treeScale.result)}.</p>
+  <p class="note">TREE SCALE MULTIPLIER is calibration-only for mango. Proposed default ${TREE_SCALE_MULTIPLIER_RANGE.proposedDefault}. Range ${TREE_SCALE_MULTIPLIER_RANGE.min}–${TREE_SCALE_MULTIPLIER_RANGE.max}. Not a locked universal value until owner review.</p>
+  <label>TREE SCALE MULTIPLIER <input type="range" data-tree-scale-multiplier min="${TREE_SCALE_MULTIPLIER_RANGE.min}" max="${TREE_SCALE_MULTIPLIER_RANGE.max}" step="${TREE_SCALE_MULTIPLIER_RANGE.step}" value="${TREE_SCALE_MULTIPLIER_RANGE.proposedDefault}"/> <strong data-tree-scale-multiplier-value>${TREE_SCALE_MULTIPLIER_RANGE.proposedDefault.toFixed(2)}</strong></label>
+  <p class="note" data-v3-scale-readout>V3 visual aid only, not cm</p>
+  <h4>CURRENT V2</h4>
   <div class="scenes">
-    ${sceneBlock('FIXED small', 'original fixed scale — small', 'real fixed-scale-v2-scene', 'small', job.canonicalSlug, '', true, cutout, 'small blend-v2')}
-    ${sceneBlock('FIXED medium', 'original fixed scale — medium', 'real fixed-scale-v2-scene', 'medium', job.canonicalSlug, '', true, cutout, 'medium blend-v2')}
-    ${sceneBlock('FIXED large', 'original fixed scale — large', 'real fixed-scale-v2-scene', 'large', job.canonicalSlug, '', true, cutout, 'large blend-v2')}
+    ${sceneBlock('V2 NEAR', 'CURRENT V2 — near', 'real blend-v2-scene perspective-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'near', lockDepth: 'near', scaleModel: 'v2' }) })}
+    ${sceneBlock('V2 MIDDLE', 'CURRENT V2 — middle', 'real blend-v2-scene perspective-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v2' }) })}
+    ${sceneBlock('V2 FAR', 'CURRENT V2 — far', 'real blend-v2-scene perspective-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'v2' }) })}
   </div>
+  <h4>TREE SCALE V3</h4>
   <div class="scenes">
-    ${sceneBlock('NEAR', 'perspective-aware — near-ground', 'real blend-v2-scene perspective-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'near', lockDepth: 'near' }) })}
-    ${sceneBlock('MIDDLE', 'perspective-aware — middle depth', 'real blend-v2-scene perspective-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle' }) })}
-    ${sceneBlock('FAR', 'perspective-aware — far depth', 'real blend-v2-scene perspective-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far' }) })}
-  </div>`
+    ${sceneBlock('V3 NEAR', 'TREE SCALE V3 — near', 'real blend-v2-scene tree-v3-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'near', lockDepth: 'near', scaleModel: 'v3' }) })}
+    ${sceneBlock('V3 MIDDLE', 'TREE SCALE V3 — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
+    ${sceneBlock('V3 FAR', 'TREE SCALE V3 — far', 'real blend-v2-scene tree-v3-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'v3' }) })}
+  </div>
+  ${formCompare}`
           : '';
       return `<article class="job" id="job-${esc(job.canonicalSlug)}" data-visual-form="${esc(job.visualForm || '')}" data-size-evidence="${esc(sizeEvidence.status)}">
   <header>
@@ -249,6 +303,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real { width: 420px; height: 300px; }
+    .scene.real.tree-v3-scene { width: 480px; height: 360px; }
     .checkerboard-scene { width: 280px; height: 360px; }
     .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
     .scene img.cutout.small { max-height: 34%; }
@@ -303,7 +358,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     IN_GARDEN_REVIEW_FIELDS.join(', ')
   )}.</p>
   <p id="composition-v2-sample-status" class="note">LOCAL SCENE MATCHING: waiting for signed Garden photo. Bounds brightness ${LOCAL_SCENE_MATCH_BOUNDS.brightness.min}–${LOCAL_SCENE_MATCH_BOUNDS.brightness.max}, contrast ${LOCAL_SCENE_MATCH_BOUNDS.contrast.min}–${LOCAL_SCENE_MATCH_BOUNDS.contrast.max}, saturate ${LOCAL_SCENE_MATCH_BOUNDS.saturate.min}–${LOCAL_SCENE_MATCH_BOUNDS.saturate.max}, blur ${LOCAL_SCENE_MATCH_BOUNDS.blurPx.min}–${LOCAL_SCENE_MATCH_BOUNDS.blurPx.max}px, opacity ${LOCAL_SCENE_MATCH_BOUNDS.opacity.min}–${LOCAL_SCENE_MATCH_BOUNDS.opacity.max}, hue-rotate 0. Depths: ${Object.keys(SCENE_DEPTHS).join(', ')}.</p>
-  <p class="note">Tree scale model (existing mango binary, no regeneration): ${esc(treeScale.result)}. Blend V2 version ${esc(RUNTIME_BLEND_V2.version)}. Prompt Factory V2 tree rules prepared, not executed. approved assets: 0. production registry changed: NO.</p>
+  <p class="note">Tree scale V2 (shared curve): ${esc(treeScale.result)}. Tree scale V3 (tree-only, bbox-compensated): ${esc(treeV3.result)}. Depths V3 near/middle/far factors ${TREE_SCENE_DEPTHS.near.depthFactor} / ${TREE_SCENE_DEPTHS.middle.depthFactor} / ${TREE_SCENE_DEPTHS.far.depthFactor}. Owner question for mango: Does this finally read as a mature tree, not a miniature tree? approved assets: 0. production registry changed: NO.</p>
   <section class="job owner-feedback" id="owner-feedback-summary">
     <h2>Owner review summary</h2>
     <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. Frequencies are sums of checked fields in that record. Flattened reports are not used.</p>
@@ -495,11 +550,19 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
   const report = buildCompositionV2Report(withCandidates, catalog);
   const reportPath = path.join(dir, 'composition-calibration-v2.json');
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+  const mangoJob = withCandidates.find((job) => job.canonicalSlug === 'mango') || {};
+  const v3Report = buildTreeScaleV3Report({
+    bbox: mangoJob.technicalQa && mangoJob.technicalQa.metrics && mangoJob.technicalQa.metrics.bbox
+  });
+  const v3Path = path.join(dir, 'tree-scale-calibration-v3.json');
+  fs.writeFileSync(v3Path, `${JSON.stringify(v3Report, null, 2)}\n`);
   return {
     htmlPath,
     livePath,
     reportPath,
+    v3Path,
     treeScale: report.treeScale.result,
+    treeScaleV3: v3Report.invariant.result,
     sizeEvidenceUnknown: report.assets.every(
       (asset) => asset.sizeEvidence.matureHeightM === SIZE_EVIDENCE_UNKNOWN
     ),
