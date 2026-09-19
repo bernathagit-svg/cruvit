@@ -11,9 +11,10 @@ import {
   isCompleteServerLocation,
   mayWriteLegacyLocalLocationToServer,
   nullServerLocationPayload,
-  resolvePersistedActiveGardenId,
+  resolveLiveActiveGardenId,
   serverLocationToAppPartial,
-  shouldAcceptLocationHydration
+  shouldAcceptLocationHydration,
+  shouldTreatAuthSessionAsSignedOut
 } from './garden-profile-location-contract.js';
 import {
   buildServerPlantPayload,
@@ -270,13 +271,25 @@ function setStoredActiveGardenId(id) {
   }
 }
 
+function readTrustedAppLocation() {
+  try {
+    if (typeof window.getCruvitTrustedGardenLocation === 'function') {
+      return window.getCruvitTrustedGardenLocation();
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 function getActiveGardenId() {
   const userId = currentSession && currentSession.user ? currentSession.user.id : '';
-  return resolvePersistedActiveGardenId({
+  return resolveLiveActiveGardenId({
     ownedRows: ownedGardensCache,
     sessionStoredId: getStoredActiveGardenId(),
     lastActiveByUser: readLastActiveGardenByUser(),
-    userId
+    userId,
+    trustedLocation: readTrustedAppLocation()
   });
 }
 
@@ -369,19 +382,11 @@ async function ensureClient() {
       detectSessionInUrl: true
     }
   });
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabase.auth.onAuthStateChange((event, session) => {
     const hadUser = !!(currentSession && currentSession.user);
-    currentSession = session;
-    if (session?.user) {
-      if (!hadUser) gardenProfilesHydrated = false;
-      setSignedInUi(session.user.email || session.user.id);
-      // Capture anonymous/local location before any server hydrate overwrites working cache.
-      captureLocalSnapshotIfNeeded();
-      refreshOwnedGardenProfiles().catch((err) => {
-        setStatus(err.message || 'Could not load garden profiles.', 'error');
-        emitGardenContextReady();
-      });
-    } else {
+    if (!session?.user) {
+      if (!shouldTreatAuthSessionAsSignedOut(event, session)) return;
+      currentSession = session;
       ownedGardensCache = [];
       setStoredActiveGardenId('');
       setSignedOutUi();
@@ -390,7 +395,16 @@ async function ensureClient() {
       clearAuthenticatedHydratedPlants();
       clearAuthenticatedHydratedTasks();
       emitGardenContextReady();
+      return;
     }
+    currentSession = session;
+    if (!hadUser) gardenProfilesHydrated = false;
+    setSignedInUi(session.user.email || session.user.id);
+    captureLocalSnapshotIfNeeded();
+    refreshOwnedGardenProfiles().catch((err) => {
+      setStatus(err.message || 'Could not load garden profiles.', 'error');
+      emitGardenContextReady();
+    });
   });
   return supabase;
 }
@@ -1126,11 +1140,12 @@ async function refreshOwnedGardenProfiles() {
     const rows = Array.isArray(data) ? data : [];
     ownedGardensCache = rows;
 
-    const activeId = resolvePersistedActiveGardenId({
+    const activeId = resolveLiveActiveGardenId({
       ownedRows: rows,
       sessionStoredId: getStoredActiveGardenId(),
       lastActiveByUser: readLastActiveGardenByUser(),
-      userId: requestUserId
+      userId: requestUserId,
+      trustedLocation: readTrustedAppLocation()
     });
     if (rows.length === 1) {
       setStoredActiveGardenId(rows[0].id);

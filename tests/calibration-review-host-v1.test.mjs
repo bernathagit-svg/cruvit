@@ -104,6 +104,8 @@ test('Personal Domain emits garden-context-ready after profiles hydrate, not at 
   assert.match(profile, /gardenProfilesHydrated = false/);
   assert.match(profile, /getGardenContextReadiness/);
   assert.match(profile, /GARDEN_CONTEXT_READY_EVENT/);
+  assert.match(profile, /shouldTreatAuthSessionAsSignedOut/);
+  assert.match(profile, /resolveLiveActiveGardenId/);
   assert.match(read('modules/personal-domain/garden-context-ready-v1.js'), /cruvit:garden-context-ready/);
   assert.doesNotMatch(profile, /sourceMediaUrl/);
 });
@@ -372,6 +374,50 @@ test('P: garden-context-ready without gardenProfileId uses live active garden', 
   await ctrl.onGardenContextReady({ authenticated: true, gardenCount: 1 });
   assert.equal(loads.length, 1);
   assert.equal(statuses.at(-1), CALIBRATION_REVIEW_UI_STATUS.REAL_GARDEN_SOURCE_LOADED);
+});
+
+test('R: Mojstrana location uniquely restores active garden among many', async () => {
+  const loads = [];
+  const { ctrl, statuses } = makeController({
+    getReadiness: () => ({
+      status: 'NO_ACTIVE_GARDEN',
+      authenticated: true,
+      gardenProfileId: null,
+      gardenCount: 2,
+      profilesHydrated: true
+    }),
+    getOwnedGardens: () => [
+      { id: 'garden-galilee', name: 'Western Galilee', location_label: 'Western Galilee, Israel' },
+      { id: 'garden-mojstrana', name: 'Mojstrana Test Garden', location_label: 'Mojstrana, Slovenia' }
+    ],
+    getTrustedLocation: () => ({ label: 'Mojstrana, Slovenia', lat: 46.4872, lon: 13.8706, source: 'manual' }),
+    loadSource: async (readiness) => {
+      loads.push(readiness.gardenProfileId);
+      return {
+        ok: true,
+        code: 'READY',
+        sourceMediaUrl: 'https://signed.example/user-garden-media/token',
+        sourceMediaId: 'media-1',
+        paidAiCalls: 0,
+        imageGenerationCalls: 0
+      };
+    }
+  });
+  await ctrl.open();
+  assert.deepEqual(loads, ['garden-mojstrana']);
+  assert.equal(statuses.at(-1), CALIBRATION_REVIEW_UI_STATUS.REAL_GARDEN_SOURCE_LOADED);
+  assert.equal(
+    resolveCalibrationHostGarden(
+      { authenticated: true, gardenProfileId: null, gardenCount: 2, profilesHydrated: true, status: 'NO_ACTIVE_GARDEN' },
+      { authenticated: true },
+      [
+        { id: 'g1', location_label: 'Mojstrana, Slovenia' },
+        { id: 'g2', location_label: 'Mojstrana, Slovenia' }
+      ],
+      { label: 'Mojstrana, Slovenia' }
+    ).status,
+    'NO_ACTIVE_GARDEN'
+  );
 });
 
 test('Q: a single owned garden recovers NO_ACTIVE_GARDEN without guessing among many', async () => {

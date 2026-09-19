@@ -4,7 +4,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { IN_GARDEN_SCALES, RUNTIME_BLEND_EXPERIMENT, IN_GARDEN_REVIEW_FIELDS } from './in-garden-qa-v1.js';
+import { IN_GARDEN_SCALES, RUNTIME_BLEND_EXPERIMENT, RUNTIME_BLEND_V1, IN_GARDEN_REVIEW_FIELDS } from './in-garden-qa-v1.js';
 import {
   classifyCalibrationReviewReadiness,
   LOCAL_SUPPLEMENTARY_BACKGROUNDS,
@@ -82,6 +82,12 @@ function ownerVisualQaPanel(job) {
     <button type="button" data-verdict="REJECT">REJECT</button>
   </div>
   <div class="fields">${fields}</div>
+  <p class="note">After RAW vs BLEND V1 on the real Garden photo, classify. This is not approval.</p>
+  <div class="verdicts" role="group" aria-label="Learning class">
+    <button type="button" data-learning-class="BLEND_SOLVABLE">BLEND_SOLVABLE</button>
+    <button type="button" data-learning-class="REGEN_REQUIRED">REGEN_REQUIRED</button>
+    <button type="button" data-learning-class="REJECT_IDENTITY">REJECT_IDENTITY</button>
+  </div>
 </aside>`;
 }
 
@@ -94,6 +100,9 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   const blend = RUNTIME_BLEND_EXPERIMENT.aids;
   const shadow = blend.contactShadow;
   const blendFilter = `brightness(${blend.brightness}) contrast(${blend.contrast}) saturate(${blend.saturation}) blur(${blend.edgeSofteningPx}px) drop-shadow(0 ${shadow.offsetYPx}px ${shadow.blurPx}px rgba(0,0,0,${shadow.opacity}))`;
+  const v1 = RUNTIME_BLEND_V1.aids;
+  const v1Shadow = v1.contactShadow;
+  const blendV1Filter = `brightness(${v1.brightness}) contrast(${v1.contrast}) saturate(${v1.saturation}) blur(${v1.edgeSofteningPx}px) drop-shadow(0 ${v1Shadow.offsetYPx}px ${v1Shadow.blurPx}px rgba(0,0,0,${v1Shadow.opacity}))`;
   const generatedCount = batch.filter((j) => j.candidateRelPath).length;
   const heading = generatedCount
     ? `Calibration review — ${batch.length} jobs, ${generatedCount} candidates for owner visual review`
@@ -124,6 +133,12 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     ${sceneBlock('B', 'REAL Garden photo — small', 'real', 'small', job.canonicalSlug, '', true, cutout, 'small')}
     ${sceneBlock('C', 'REAL Garden photo — medium', 'real', 'medium', job.canonicalSlug, '', true, cutout, 'medium')}
     ${sceneBlock('D', 'REAL Garden photo — large plausible', 'real', 'large', job.canonicalSlug, '', true, cutout, 'large')}
+  </div>
+  <h3>RAW vs BLEND V1 (existing binary, runtime only)</h3>
+  <p class="note">BLEND V1 may help STICKER_LOOK, SHARPNESS_MATCH, COLOR_TONAL_MATCH, GROUND_CONTACT, HALO. It cannot fix PERSPECTIVE, SILHOUETTE, SCALE_REALISM, or plant architecture. No AI. Garden photo is not altered. Binary is not baked.</p>
+  <div class="scenes">
+    ${sceneBlock('RAW', 'RAW — real Garden photo', 'real', 'medium', job.canonicalSlug, '', true, cutout, 'medium')}
+    ${sceneBlock('BLEND V1', 'BLEND V1 — real Garden photo', 'real blend-v1-scene', 'medium', job.canonicalSlug, '', true, cutout, 'medium blend-v1')}
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
@@ -179,6 +194,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .harness img.cutout { height: 55%; position: absolute; left: 52%; bottom: 10%; transform: translateX(-50%); }
     .slot img.cutout { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); max-height: 88%; max-width: 80%; object-fit: contain; object-position: bottom center; }
     .slot.blend-slot img.cutout, .slot img.cutout.blend { filter: ${blendFilter}; }
+    .scene.real img.cutout.blend-v1, .scene.blend-v1-scene img.cutout.blend-v1 { filter: ${blendV1Filter}; }
     .harness.blend img.cutout { filter: ${blendFilter}; }
     .scene.harness { width: 280px; height: 180px; }
     code { font-size: 12px; }

@@ -1009,6 +1009,14 @@ test('AJ: source upload failure and attach failure stay Not saved; retry does no
   assert.equal(mem.db.garden_designs[0].source_media_id, 'media-orphan-keep');
 });
 
+test('loadDesign uses payload gardenProfileId when session active garden is empty', async () => {
+  const { host } = makeHost({ activeGardenId: '' });
+  const loaded = await host.loadDesign({ gardenProfileId: GARDEN, gardenAreaId: null });
+  assert.notEqual(loaded.code, 'AUTH_OR_GARDEN_REQUIRED');
+  assert.equal(loaded.gardenProfileId, GARDEN);
+  assert.equal(loaded.code, EMPTY_SERVER_DESIGN);
+});
+
 function looksLikePostgresDataUrl(row) {
   const blob = JSON.stringify(row || {});
   return blob.includes('data:image') || blob.includes('data:application');

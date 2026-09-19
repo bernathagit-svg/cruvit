@@ -1,0 +1,125 @@
+{
+  "contract": "calibration-round-1-learning-v1",
+  "runId": "design-asset-calibration-batch-1",
+  "source": "owner-completed-visual-review",
+  "storageKey": "cruvit:calibration-batch-1-owner-visual-qa",
+  "approvedAssets": 0,
+  "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+  "IN_GARDEN_QA_ALIAS": "NOT_RUN",
+  "IN_GARDEN_QA_REASON": "This session did not load the real Garden photo (NO_ACTIVE_GARDEN; B/C/D black). OWNER_VISUAL_QA remains valid.",
+  "BOTANICAL_IDENTITY_QA": "UNKNOWN",
+  "ASSET_QA": "UNKNOWN",
+  "everyAssetVerdict": "NEEDS_BLEND",
+  "frequencies": {
+    "STICKER_LOOK": "8/8",
+    "SILHOUETTE": "8/8",
+    "PERSPECTIVE": "7/8",
+    "SCALE_REALISM": "7/8",
+    "SHARPNESS_MATCH": "6/8",
+    "GROUND_CONTACT": "1/8",
+    "HALO": "1/8",
+    "COLOR_TONAL_MATCH": "1/8"
+  },
+  "knownFieldOwners": {
+    "GROUND_CONTACT": ["mango"],
+    "HALO": ["mango"],
+    "COLOR_TONAL_MATCH": ["mango"]
+  },
+  "unresolvedExceptionSlugs": {
+    "PERSPECTIVE": "1 of 8 unchecked; slug not identified beyond owner frequencies",
+    "SCALE_REALISM": "1 of 8 unchecked; slug not identified beyond owner frequencies",
+    "SHARPNESS_MATCH": "2 of 8 unchecked; slugs not identified beyond owner frequencies"
+  },
+  "systemWideIssues": ["STICKER_LOOK", "SILHOUETTE", "PERSPECTIVE", "SCALE_REALISM", "SHARPNESS_MATCH"],
+  "runtimeBlendIssues": ["STICKER_LOOK", "SHARPNESS_MATCH", "COLOR_TONAL_MATCH", "GROUND_CONTACT", "HALO"],
+  "promptGenerationIssues": ["PERSPECTIVE", "SILHOUETTE", "SCALE_REALISM"],
+  "blendCannotFix": ["PERSPECTIVE", "SILHOUETTE", "SCALE_REALISM"],
+  "proposedClassBeforeRealGardenBlend": "REGEN_REQUIRED",
+  "blendSolvableConfirmed": [],
+  "regenRequiredProposed": [
+    "mango",
+    "lavender",
+    "pineapple",
+    "banana",
+    "areca-palm",
+    "bougainvillea",
+    "aloe-vera",
+    "eggplant"
+  ],
+  "rejectIdentity": [],
+  "jobs": [
+    {
+      "canonicalSlug": "mango",
+      "candidateAssetId": "mango-mature-vegetative-v1",
+      "file": "mango-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE", "GROUND_CONTACT", "HALO", "COLOR_TONAL_MATCH"],
+      "checkedFieldsNote": "Also counted in 7/8 PERSPECTIVE, 7/8 SCALE_REALISM, 6/8 SHARPNESS_MATCH; mango-specific extras are GROUND_CONTACT, HALO, COLOR_TONAL_MATCH.",
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "lavender",
+      "candidateAssetId": "lavender-mature-vegetative-v1",
+      "file": "lavender-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "candidateAssetId": "pineapple-mature-vegetative-v1",
+      "file": "pineapple-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "banana",
+      "candidateAssetId": "banana-mature-vegetative-v1",
+      "file": "banana-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "areca-palm",
+      "candidateAssetId": "areca-palm-mature-vegetative-v1",
+      "file": "areca-palm-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "candidateAssetId": "bougainvillea-mature-vegetative-v1",
+      "file": "bougainvillea-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "aloe-vera",
+      "candidateAssetId": "aloe-vera-mature-vegetative-v1",
+      "file": "aloe-vera-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "eggplant",
+      "candidateAssetId": "eggplant-mature-vegetative-v1",
+      "file": "eggplant-mature-vegetative-v1.png",
+      "OWNER_VISUAL_QA": "NEEDS_BLEND",
+      "checkedFields": ["STICKER_LOOK", "SILHOUETTE"],
+      "IN_GARDEN_QA": "INVALID_FOR_THIS_SESSION",
+      "approvalStatus": "candidate"
+    }
+  ]
+}

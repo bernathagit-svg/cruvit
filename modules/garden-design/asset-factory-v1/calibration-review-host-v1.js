@@ -7,6 +7,7 @@ import {
   buildCalibrationSourceInjectMessage,
   summarizeCalibrationSourceForLog
 } from './calibration-garden-source-host-v1.js';
+import { resolveGardenIdByTrustedLocation } from '../../personal-domain/garden-profile-location-contract.js';
 
 export const CALIBRATION_REVIEW_UI_STATUS = Object.freeze({
   LOADING_GARDEN_CONTEXT: 'LOADING_GARDEN_CONTEXT',
@@ -60,7 +61,7 @@ export function mapCalibrationReviewUiStatus(resolved = {}, readiness = {}) {
   return CALIBRATION_REVIEW_UI_STATUS.SOURCE_PHOTO_UNAVAILABLE;
 }
 
-export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, ownedGardens = []) {
+export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, ownedGardens = [], trustedLocation = {}) {
   const live = readiness && typeof readiness === 'object' ? readiness : {};
   const detail = eventDetail && typeof eventDetail === 'object' ? eventDetail : {};
   const rows = Array.isArray(ownedGardens) ? ownedGardens.filter((row) => row && row.id) : [];
@@ -68,7 +69,8 @@ export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, o
   const gardenProfileId =
     (live.gardenProfileId && String(live.gardenProfileId)) ||
     (detail.gardenProfileId && String(detail.gardenProfileId)) ||
-    (rows.length === 1 ? String(rows[0].id) : null);
+    (rows.length === 1 ? String(rows[0].id) : null) ||
+    resolveGardenIdByTrustedLocation(rows, trustedLocation);
   const gardenCount = Number.isFinite(Number(live.gardenCount))
     ? Number(live.gardenCount)
     : Number.isFinite(Number(detail.gardenCount))
@@ -78,7 +80,8 @@ export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, o
     live.profilesHydrated === true ||
     live.status === 'READY' ||
     live.status === 'NO_ACTIVE_GARDEN' ||
-    live.status === 'SIGNED_OUT';
+    live.status === 'SIGNED_OUT' ||
+    detail.authenticated === true;
   if (!authenticated && profilesHydrated) {
     return {
       authenticated: false,
@@ -118,6 +121,7 @@ export function resolveCalibrationHostGarden(readiness = {}, eventDetail = {}, o
 export function createCalibrationReviewHostController(deps = {}) {
   const getReadiness = typeof deps.getReadiness === 'function' ? deps.getReadiness : () => ({ status: 'RESTORING' });
   const getOwnedGardens = typeof deps.getOwnedGardens === 'function' ? deps.getOwnedGardens : () => [];
+  const getTrustedLocation = typeof deps.getTrustedLocation === 'function' ? deps.getTrustedLocation : () => null;
   const loadSource = typeof deps.loadSource === 'function' ? deps.loadSource : async () => ({ ok: false, code: 'SOURCE_PHOTO_UNAVAILABLE' });
   const setStatus = typeof deps.setStatus === 'function' ? deps.setStatus : () => {};
   const injectResolved = typeof deps.injectResolved === 'function' ? deps.injectResolved : () => {};
@@ -128,9 +132,15 @@ export function createCalibrationReviewHostController(deps = {}) {
   let resolvedGardenId = null;
   let inflight = null;
   let uiStatus = null;
+  let lastContextDetail = null;
 
-  function liveGarden() {
-    return resolveCalibrationHostGarden(getReadiness() || {}, {}, getOwnedGardens() || []);
+  function liveGarden(eventDetail) {
+    return resolveCalibrationHostGarden(
+      getReadiness() || {},
+      eventDetail || lastContextDetail || {},
+      getOwnedGardens() || [],
+      getTrustedLocation() || {}
+    );
   }
 
   function publish(status, resolved) {
@@ -145,8 +155,14 @@ export function createCalibrationReviewHostController(deps = {}) {
   }
 
   function injectCacheIfFrameReady() {
-    if (!frameLoaded || !cachedResolved) return;
-    injectResolved(cachedResolved, uiStatus);
+    if (!frameLoaded) return;
+    if (cachedResolved) {
+      injectResolved(cachedResolved, uiStatus);
+      return;
+    }
+    if (uiStatus) {
+      injectResolved({ ok: false, code: uiStatus, paidAiCalls: 0, imageGenerationCalls: 0 }, uiStatus);
+    }
   }
 
   async function resolveSource() {
@@ -221,8 +237,9 @@ export function createCalibrationReviewHostController(deps = {}) {
       return null;
     },
     onGardenContextReady(detail = {}) {
+      lastContextDetail = detail || {};
       if (!open) return null;
-      const readiness = resolveCalibrationHostGarden(getReadiness() || {}, detail, getOwnedGardens() || []);
+      const readiness = liveGarden(lastContextDetail);
       if (readiness.authenticated !== true) {
         cachedResolved = null;
         resolvedGardenId = null;

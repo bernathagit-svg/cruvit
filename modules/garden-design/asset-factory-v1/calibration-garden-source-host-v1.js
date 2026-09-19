@@ -102,7 +102,8 @@ export async function loadCalibrationGardenSourcePhoto(loadDesignFn, payload = {
   const loaded = await loadDesignFn({
     gardenAreaId: payload.gardenAreaId == null ? null : payload.gardenAreaId,
     cachedDesignId: payload.cachedDesignId || null,
-    explicitDesignId: payload.explicitDesignId || payload.designId || null
+    explicitDesignId: payload.explicitDesignId || payload.designId || null,
+    gardenProfileId: payload.gardenProfileId || null
   });
   return resolveCalibrationGardenSourceFromLoad(loaded);
 }

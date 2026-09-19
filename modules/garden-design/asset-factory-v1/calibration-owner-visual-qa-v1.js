@@ -5,9 +5,13 @@
  */
 import {
   OWNER_VISUAL_QA_STORAGE_KEY,
+  LEARNING_CLASS_STORAGE_KEY,
+  LEARNING_EXPORT_STORAGE_KEY,
   applyOwnerVisualField,
   applyOwnerVisualVerdict,
+  applyLearningClass,
   buildOwnerFeedbackSummary,
+  exportCalibrationRound1Learning,
   loadOwnerVisualQa,
   saveOwnerVisualQa
 } from './calibration-review-candidates-v1.js';
@@ -42,6 +46,10 @@ function paint(root, record) {
       (verdict || 'UNREVIEWED') +
       '. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. IN_GARDEN_QA = INVALID_FOR_THIS_SESSION until a signed Garden photo loads. approvalStatus = candidate. Session-only.';
   }
+  const klass = root.getAttribute('data-learning-class-value');
+  root.querySelectorAll('[data-learning-class]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-learning-class') === klass ? 'true' : 'false');
+  });
 }
 
 function renderSummary(doc, state) {
@@ -103,9 +111,27 @@ export function initOwnerVisualQa(doc) {
   if (!documentRef) return { storageKey: OWNER_VISUAL_QA_STORAGE_KEY, wired: 0 };
   const store = storage();
   let state = loadOwnerVisualQa(store);
+  try {
+    if (store && typeof store.setItem === 'function') {
+      store.setItem(
+        LEARNING_EXPORT_STORAGE_KEY,
+        JSON.stringify(exportCalibrationRound1Learning(state, { uiStatus: currentUiStatus(documentRef) }))
+      );
+    }
+  } catch {
+    /* ignore */
+  }
+  let learning = {};
+  try {
+    const raw = store && store.getItem(LEARNING_CLASS_STORAGE_KEY);
+    learning = raw ? JSON.parse(raw) : {};
+  } catch {
+    learning = {};
+  }
   const panels = documentRef.querySelectorAll('.owner-visual-qa[data-slug]');
   panels.forEach((root) => {
     const slug = root.getAttribute('data-slug');
+    if (learning[slug]) root.setAttribute('data-learning-class-value', learning[slug]);
     paint(root, state[slug]);
     root.querySelectorAll('[data-verdict]').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -121,6 +147,18 @@ export function initOwnerVisualQa(doc) {
         saveOwnerVisualQa(store, state);
         paint(root, state[slug]);
         renderSummary(documentRef, state);
+      });
+    });
+    root.querySelectorAll('[data-learning-class]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        learning = applyLearningClass(learning, slug, btn.getAttribute('data-learning-class'));
+        try {
+          if (store) store.setItem(LEARNING_CLASS_STORAGE_KEY, JSON.stringify(learning));
+        } catch {
+          /* ignore */
+        }
+        root.setAttribute('data-learning-class-value', learning[slug] || '');
+        paint(root, state[slug]);
       });
     });
   });

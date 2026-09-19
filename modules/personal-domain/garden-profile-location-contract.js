@@ -188,6 +188,75 @@ export function resolvePersistedActiveGardenId(input = {}) {
 }
 
 /**
+ * Restore active garden from the trusted app location the owner already sees.
+ * Uses exact location_label or unique lat/lon match. Does not pick latest-by-updated_at.
+ */
+function locationCityToken(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .split(',')[0]
+    .split('·')[0]
+    .trim();
+}
+
+export function resolveGardenIdByTrustedLocation(ownedRows, loc = {}) {
+  const rows = Array.isArray(ownedRows) ? ownedRows.filter((r) => r?.id) : [];
+  if (!rows.length) return null;
+  const label = String(loc.label || loc.location_label || '').trim().toLowerCase();
+  if (label) {
+    const byLabel = rows.filter((row) => String(row.location_label || '').trim().toLowerCase() === label);
+    if (byLabel.length === 1) return String(byLabel[0].id);
+  }
+  const city = locationCityToken(label);
+  if (city) {
+    const byCity = rows.filter((row) => {
+      const rowLabel = String(row.location_label || '').trim().toLowerCase();
+      const rowName = String(row.name || '').trim().toLowerCase();
+      const rowCity = locationCityToken(rowLabel);
+      return (
+        rowCity === city ||
+        rowLabel === city ||
+        rowLabel.startsWith(city + ',') ||
+        rowLabel.startsWith(city + ' ') ||
+        (rowName && rowName.includes(city))
+      );
+    });
+    if (byCity.length === 1) return String(byCity[0].id);
+  }
+  const lat = Number(loc.lat ?? loc.location_lat);
+  const lon = Number(loc.lon ?? loc.location_lon);
+  if (Number.isFinite(lat) && Number.isFinite(lon)) {
+    const byCoord = rows.filter((row) => {
+      const rowLat = Number(row.location_lat);
+      const rowLon = Number(row.location_lon);
+      return Number.isFinite(rowLat) && Number.isFinite(rowLon) && Math.abs(rowLat - lat) < 0.0003 && Math.abs(rowLon - lon) < 0.0003;
+    });
+    if (byCoord.length === 1) return String(byCoord[0].id);
+  }
+  return null;
+}
+
+export function resolveLiveActiveGardenId(input = {}) {
+  return (
+    resolvePersistedActiveGardenId(input) ||
+    resolveGardenIdByTrustedLocation(input.ownedRows, input.trustedLocation || {}) ||
+    null
+  );
+}
+
+/**
+ * Supabase can emit INITIAL_SESSION/TOKEN_REFRESHED with a null session
+ * before getSession() restores the persisted user. That is not a real sign-out.
+ */
+export function shouldTreatAuthSessionAsSignedOut(event, session) {
+  if (session && session.user) return false;
+  const name = String(event || '');
+  if (name === 'INITIAL_SESSION' || name === 'TOKEN_REFRESHED') return false;
+  return true;
+}
+
+/**
  * Stale-response guard for async location hydration.
  * Drop hydrate if user signed out, switched, or active garden changed.
  */

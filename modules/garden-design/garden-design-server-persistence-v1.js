@@ -616,9 +616,9 @@ export function createGardenDesignHostPersistence(deps = {}) {
   const signedUrlFn = deps.getSignedUrl || getGardenMediaSignedUrl;
   const nowIso = () => (typeof deps.now === 'function' ? deps.now() : new Date().toISOString());
 
-  function authContext() {
+  function authContext(payload = {}) {
     const sessionUserId = asText(getSessionUserId());
-    const gardenProfileId = asText(getActiveGardenId());
+    const gardenProfileId = asText(payload.gardenProfileId) || asText(getActiveGardenId());
     const supabase = getSupabase();
     return {
       sessionUserId,
@@ -758,7 +758,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   async function loadDesign(payload = {}) {
     designPaidAiForAction('load-design');
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) {
       return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', durableDatabase: false, paidAiCalls: 0 };
     }

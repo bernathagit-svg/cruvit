@@ -4,12 +4,15 @@
  */
 export const CALIBRATION_REVIEW_ONLY = true;
 export const CALIBRATION_BATCH_1_RUN_ID = 'design-asset-calibration-batch-1';
-export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919d';
+export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919e';
 export const CALIBRATION_BATCH_1_DIR = 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1';
 export const CALIBRATION_BATCH_1_LIVE_BASE = 'assets/plants/batch-1-candidates/calibration-batch-1/';
 
 export const OWNER_VISUAL_VERDICTS = Object.freeze(['GOOD', 'NEEDS_BLEND', 'REJECT']);
 export const OWNER_VISUAL_QA_STORAGE_KEY = 'cruvit:calibration-batch-1-owner-visual-qa';
+export const LEARNING_CLASS_STORAGE_KEY = 'cruvit:calibration-batch-1-learning-class';
+export const LEARNING_EXPORT_STORAGE_KEY = 'cruvit:calibration-batch-1-round-1-learning';
+export const LEARNING_CLASSES = Object.freeze(['BLEND_SOLVABLE', 'REGEN_REQUIRED', 'REJECT_IDENTITY']);
 
 export const CALIBRATION_BATCH_1_CANDIDATES = Object.freeze([
   { rank: 1, canonicalSlug: 'mango', file: 'mango-mature-vegetative-v1.png' },
@@ -115,7 +118,7 @@ export const PROMPT_CORRECTION_BY_FIELD = Object.freeze({
   GROUND_CONTACT:
     'Enforce a natural planted base: the specimen meets soil; no floating cut and no detached pedestal.',
   STICKER_LOOK:
-    'Change lighting, detail, and contrast guidance so the specimen matches outdoor ambient light; avoid hard studio rim, plastic sheen, and cutout-card edges.',
+    'Do not try to solve sticker-look only in the prompt. Keep runtime integration (contact shadow, tonal adaptation, edge softening) as a separate responsibility.',
   HALO:
     'Remove fringe/halo; the edge must be photographic against transparency, with no glow matte.',
   SHARPNESS_MATCH:
@@ -175,6 +178,7 @@ export function buildOwnerFeedbackSummary(state = {}, options = {}) {
       : 'UNREVIEWED';
     return {
       canonicalSlug: row.canonicalSlug,
+      candidateAssetId: row.file.replace(/\.png$/i, ''),
       OWNER_VISUAL_QA: verdict,
       checkedFields: checkedIssueFields(record),
       BOTANICAL_IDENTITY_QA: 'UNKNOWN',
@@ -203,5 +207,53 @@ export function buildOwnerFeedbackSummary(state = {}, options = {}) {
     writeProductionRegistry: false,
     jobs,
     promptCorrectionMap: derivePromptCorrectionMap(jobs)
+  };
+}
+
+export function applyLearningClass(state, slug, klass) {
+  const next = { ...(state || {}) };
+  next[slug] = LEARNING_CLASSES.includes(klass) ? klass : null;
+  return next;
+}
+
+export const ROUND_1_OWNER_FREQUENCIES = Object.freeze({
+  STICKER_LOOK: '8/8',
+  SILHOUETTE: '8/8',
+  PERSPECTIVE: '7/8',
+  SCALE_REALISM: '7/8',
+  SHARPNESS_MATCH: '6/8',
+  GROUND_CONTACT: '1/8',
+  HALO: '1/8',
+  COLOR_TONAL_MATCH: '1/8'
+});
+
+export function exportCalibrationRound1Learning(state = {}, options = {}) {
+  const summary = buildOwnerFeedbackSummary(state, options);
+  return {
+    contract: 'calibration-round-1-learning-v1',
+    runId: CALIBRATION_BATCH_1_RUN_ID,
+    source: 'owner-completed-visual-review',
+    storageKey: OWNER_VISUAL_QA_STORAGE_KEY,
+    capturedFrom: 'sessionStorage',
+    capturedAt: options.capturedAt || null,
+    approvedAssets: 0,
+    everyAssetVerdict: summary.jobs.every((job) => job.OWNER_VISUAL_QA === 'NEEDS_BLEND')
+      ? 'NEEDS_BLEND'
+      : null,
+    frequencies: { ...ROUND_1_OWNER_FREQUENCIES },
+    IN_GARDEN_QA: summary.IN_GARDEN_QA,
+    IN_GARDEN_QA_ALIAS: summary.IN_GARDEN_QA === 'INVALID_FOR_THIS_SESSION' ? 'NOT_RUN' : summary.IN_GARDEN_QA,
+    BOTANICAL_IDENTITY_QA: 'UNKNOWN',
+    ASSET_QA: 'UNKNOWN',
+    writeProductionRegistry: false,
+    regenerate: false,
+    jobs: summary.jobs.map((job) => ({
+      canonicalSlug: job.canonicalSlug,
+      candidateAssetId: job.candidateAssetId,
+      OWNER_VISUAL_QA: job.OWNER_VISUAL_QA,
+      checkedFields: job.checkedFields,
+      IN_GARDEN_QA: job.IN_GARDEN_QA,
+      approvalStatus: 'candidate'
+    }))
   };
 }

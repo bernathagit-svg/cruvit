@@ -15,10 +15,13 @@ import {
   mayWriteLegacyLocalLocationToServer,
   nullServerLocationPayload,
   resolveActiveGardenId,
+  resolveGardenIdByTrustedLocation,
+  resolveLiveActiveGardenId,
   resolvePersistedActiveGardenId,
   roundLocationCoord,
   serverLocationToAppPartial,
-  shouldAcceptLocationHydration
+  shouldAcceptLocationHydration,
+  shouldTreatAuthSessionAsSignedOut
 } from '../modules/personal-domain/garden-profile-location-contract.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -186,6 +189,42 @@ test('persisted last-active garden restores across empty session tab without gue
     }),
     null
   );
+});
+
+test('unique Mojstrana location restores garden without latest-updated guess', () => {
+  const rows = [
+    { id: 'g-newer', name: 'Other Garden', location_label: 'London, United Kingdom', updated_at: '2026-09-19T00:00:00Z' },
+    { id: 'g-moj', name: 'Mojstrana Test Garden', location_label: 'Mojstrana, Slovenia', updated_at: '2026-01-01T00:00:00Z' }
+  ];
+  assert.equal(resolveGardenIdByTrustedLocation(rows, { label: 'Mojstrana, Slovenia' }), 'g-moj');
+  assert.equal(resolveGardenIdByTrustedLocation(rows, { label: 'Mojstrana' }), 'g-moj');
+  assert.equal(
+    resolveLiveActiveGardenId({
+      ownedRows: rows,
+      sessionStoredId: '',
+      userId: 'u1',
+      lastActiveByUser: {},
+      trustedLocation: { label: 'Mojstrana, Slovenia' }
+    }),
+    'g-moj'
+  );
+  assert.equal(
+    resolveGardenIdByTrustedLocation(
+      [
+        { id: 'a', name: 'Mojstrana A', location_label: 'Mojstrana, Slovenia' },
+        { id: 'b', name: 'Mojstrana B', location_label: 'Mojstrana, Slovenia' }
+      ],
+      { label: 'Mojstrana, Slovenia' }
+    ),
+    null
+  );
+});
+
+test('INITIAL_SESSION null is not a real sign-out', () => {
+  assert.equal(shouldTreatAuthSessionAsSignedOut('INITIAL_SESSION', null), false);
+  assert.equal(shouldTreatAuthSessionAsSignedOut('TOKEN_REFRESHED', null), false);
+  assert.equal(shouldTreatAuthSessionAsSignedOut('SIGNED_OUT', null), true);
+  assert.equal(shouldTreatAuthSessionAsSignedOut('SIGNED_IN', { user: { id: 'u1' } }), false);
 });
 
 test('hydration stale-response guard', () => {

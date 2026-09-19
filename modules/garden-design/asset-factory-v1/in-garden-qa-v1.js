@@ -53,6 +53,23 @@ export const RUNTIME_BLEND_EXPERIMENT = Object.freeze({
   })
 });
 
+/** Non-destructive Blend V1 for existing calibration candidates. Does not bake binaries. */
+export const RUNTIME_BLEND_V1 = Object.freeze({
+  version: 'blend-v1',
+  implementedPermanently: false,
+  altersGardenPhoto: false,
+  usesAiOrInpainting: false,
+  canAddress: Object.freeze(['STICKER_LOOK', 'SHARPNESS_MATCH', 'COLOR_TONAL_MATCH', 'GROUND_CONTACT', 'HALO']),
+  cannotAddress: Object.freeze(['PERSPECTIVE', 'SILHOUETTE', 'SCALE_REALISM']),
+  aids: Object.freeze({
+    contactShadow: { opacity: 0.32, blurPx: 18, offsetYPx: 12 },
+    brightness: 0.93,
+    contrast: 0.9,
+    saturation: 0.86,
+    edgeSofteningPx: 0.55
+  })
+});
+
 const ASSET_TO_IN_GARDEN = Object.freeze({
   halo: 'HALO',
   'background-artifact': 'HALO',
