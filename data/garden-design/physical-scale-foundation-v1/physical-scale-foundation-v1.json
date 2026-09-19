@@ -14,17 +14,26 @@
     "SOURCE_SUPPORTED_RANGE",
     "USER_CONFIRMED"
   ],
-  "photoCalibration": {
-    "contract": "garden-photo-scale-calibration-v1",
-    "model": "physical-scale-foundation-v1",
-    "references": [],
-    "captureWidthPx": null,
-    "captureHeightPx": null,
-    "pixelsPerMeterNear": null,
-    "pixelsPerMeterFar": null,
-    "accuracy": "garden-visualization-estimate-not-survey",
+  "photoScaleProductContract": {
+    "calibrationMandatory": false,
+    "gardenDesignBlockedWithoutCalibration": false,
+    "calibrationRepeatedPerPlant": false,
+    "calibrationRepeatedPerPlacement": false,
+    "accountWideUniversalCalibration": false,
+    "scope": "specific-garden-source-photo",
+    "modes": [
+      "ESTIMATED",
+      "CALIBRATED"
+    ],
+    "estimatedLabels": [
+      "Estimated size",
+      "Estimated mature size"
+    ],
+    "calibratedLabel": "Calibrated suggested size",
     "surveyingAccuracy": false
   },
+  "photoCalibrationOptional": true,
+  "gardenDesignBlockedWithoutCalibration": false,
   "perspective": {
     "nearReference": true,
     "farReference": true,
@@ -116,26 +125,26 @@
   ],
   "persistenceProposal": {
     "applyMigrationNow": false,
-    "note": "Schema proposal only. Existing garden_design_placements.growth_stage and scale stay. Do not overload scale as botanical truth. garden_designs.metadata may hold a session-shaped photo_scale_calibration without a new column, or add an explicit jsonb later.",
+    "note": "Schema proposal only. Photo scale belongs to a specific Garden source photo / design canvas, not each plant, not each placement, and not the whole account. Session-only until a later migration is approved.",
     "tables": [
       {
         "table": "garden_designs",
-        "column": "photo_scale_calibration",
-        "type": "jsonb",
-        "optionalInterim": "garden_designs.metadata.photo_scale_calibration",
-        "note": "Known reference dimensions on the saved Garden photo: points, knownMeters, near/far band. Not applied in this task."
+        "columns": [
+          "photo_scale_state",
+          "photo_scale_calibration",
+          "calibration_dismissed_for_now"
+        ],
+        "type": "jsonb-or-text",
+        "optionalInterim": "garden_designs.metadata.photo_scale",
+        "keyedBy": "source_media_id",
+        "note": "NOT_CALIBRATED | CALIBRATED plus optional two-point references. Reused for all placements on this photo. Not applied in this task."
       },
       {
         "table": "garden_design_placements",
         "columns": [
-          "growth_stage",
-          "botanical_target_height_m_min",
-          "botanical_target_height_m_max",
-          "botanical_height_evidence_class",
-          "suggested_scale",
           "user_scale_override"
         ],
-        "note": "Keep user_scale_override separate from botanical source truth. growth_stage already exists. Not applied in this task."
+        "note": "Do not store photo calibration on placements. Keep user_scale_override separate from botanical source truth. Not applied in this task."
       }
     ]
   },

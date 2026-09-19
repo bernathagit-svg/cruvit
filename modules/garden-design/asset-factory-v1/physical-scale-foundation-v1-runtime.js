@@ -6,17 +6,28 @@
 import { contactShadowForScale } from './composition-calibration-v2.js';
 import {
   PHOTO_SCALE_STORAGE_KEY,
+  PHOTO_SCALE_CHOICE_STORAGE_KEY,
+  PHOTO_SCALE_MODE,
+  PHOTO_SCALE_STATE,
   PHYSICAL_PLACEMENT,
   REFERENCE_KINDS,
   USER_CONFIRMED_SIZE_STORAGE_KEY,
   USER_SCALE_OVERRIDE_STORAGE_KEY,
   addKnownReference,
-  classifyCatalogDimensionEvidence,
   classifyUserConfirmedDimension,
   computePhysicalSceneScale,
   emptyPhotoScaleCalibration,
-  removeKnownReference
+  emptyPhotoScaleChoice,
+  removeKnownReference,
+  resolvePhotoScaleChoice
 } from './physical-scale-foundation-v1.js';
+import {
+  RANGE_BANDS,
+  RANGE_BAND_STORAGE_KEY,
+  SIZE_SCENARIOS,
+  SIZE_SCENARIO_STORAGE_KEY,
+  resolvePhysicalScaleEvidence
+} from './physical-scale-evidence-v1.js';
 
 function finitePositive(value) {
   const n = Number(value);
@@ -58,6 +69,27 @@ function writeJson(key, value) {
   }
 }
 
+function currentPhotoKey(doc) {
+  const root = doc.documentElement;
+  return (
+    (root && root.getAttribute('data-garden-source-media-id')) ||
+    (doc.body && doc.body.getAttribute('data-garden-source-media-id')) ||
+    'review-session-photo'
+  );
+}
+
+function loadChoiceStore() {
+  return readJson(PHOTO_SCALE_CHOICE_STORAGE_KEY, {});
+}
+
+function saveChoice(photoKey, patch) {
+  const store = loadChoiceStore();
+  const current = store[photoKey] || emptyPhotoScaleChoice(photoKey);
+  store[photoKey] = { ...current, ...patch, photoKey, gardenDesignBlocked: false };
+  writeJson(PHOTO_SCALE_CHOICE_STORAGE_KEY, store);
+  return store[photoKey];
+}
+
 function loadCalibration() {
   const stored = readJson(PHOTO_SCALE_STORAGE_KEY, null);
   if (stored && stored.contract === 'garden-photo-scale-calibration-v1') return stored;
@@ -75,6 +107,26 @@ function saveUserConfirmed(slug, growthStage, payload) {
   if (!payload) delete store[slug][growthStage];
   else store[slug][growthStage] = payload;
   writeJson(USER_CONFIRMED_SIZE_STORAGE_KEY, store);
+}
+
+function loadRangeBand() {
+  const stored = readJson(RANGE_BAND_STORAGE_KEY, { band: RANGE_BANDS.MID });
+  const band = String(stored && stored.band ? stored.band : RANGE_BANDS.MID).toUpperCase();
+  return RANGE_BANDS[band] || RANGE_BANDS.MID;
+}
+
+function saveRangeBand(band) {
+  writeJson(RANGE_BAND_STORAGE_KEY, { band });
+}
+
+function loadSizeScenario() {
+  const stored = readJson(SIZE_SCENARIO_STORAGE_KEY, { scenario: SIZE_SCENARIOS.NATURAL_MATURE });
+  const scenario = stored && stored.scenario;
+  return SIZE_SCENARIOS[scenario] || SIZE_SCENARIOS.NATURAL_MATURE;
+}
+
+function saveSizeScenario(scenario) {
+  writeJson(SIZE_SCENARIO_STORAGE_KEY, { scenario });
 }
 
 function loadOverride(slug) {
@@ -166,53 +218,53 @@ function applyPhysicalScene(scene, options) {
   const depthId = scene.getAttribute('data-lock-depth') || options.depthId || 'middle';
   const growthStage = scene.getAttribute('data-growth-stage') || options.growthStage || 'mature';
   const visualForm = scene.getAttribute('data-visual-form') || options.visualForm || 'unknown';
-  const heightMin = finitePositive(scene.getAttribute('data-height-min'));
-  const heightMax = finitePositive(scene.getAttribute('data-height-max')) || heightMin;
-  const sizeEvidence = scene.getAttribute('data-size-evidence') || '';
-  const catalog = classifyCatalogDimensionEvidence(
-    {
-      matureHeightMMin: heightMin,
-      matureHeightMMax: heightMax,
-      climateTraits: {
-        traitEvidenceClasses: {
-          matureHeightM:
-            sizeEvidence === 'SOURCE_SUPPORTED' || sizeEvidence === 'SOURCE_SUPPORTED_RANGE'
-              ? 'SOURCE_SUPPORTED'
-              : sizeEvidence
-        }
-      }
-    },
-    { visualForm, growthStage }
-  );
-  const userConfirmed = classifyUserConfirmedDimension({
-    ...(options.userConfirmed || {}),
+  const slug =
+    scene.getAttribute('data-canonical-slug') ||
+    (scene.closest('article.job') && scene.closest('article.job').id.replace(/^job-/, '')) ||
+    options.canonicalSlug ||
+    'mango';
+  const rangeBand = scene.getAttribute('data-lock-range-band') || options.rangeBand || RANGE_BANDS.MID;
+  const sizeScenario = scene.getAttribute('data-size-scenario') || options.sizeScenario || SIZE_SCENARIOS.NATURAL_MATURE;
+  const resolved = resolvePhysicalScaleEvidence({
+    canonicalSlug: slug,
+    visualForm,
     growthStage,
-    visualForm
+    sizeScenario,
+    userConfirmed: options.userConfirmed
   });
   const result = computePhysicalSceneScale({
     growthStage,
     visualForm,
-    catalogEvidence: catalog.mayDrivePhysicalMeterPreview ? catalog : { evidenceClass: catalog.evidenceClass, growthStage },
-    userConfirmed: userConfirmed.mayDrivePhysicalMeterPreview ? userConfirmed : { growthStage },
+    sizeScenario,
+    rangeBand,
+    resolvedEvidence: resolved,
     photoCalibration: options.calibration,
-    userOverride: options.userOverride,
+    userOverride: sizeScenario === SIZE_SCENARIOS.USER_OVERRIDE ? options.userOverride : options.userOverride,
     bbox,
     canvasHeight: canvas.height,
+    canvasWidth: canvas.width,
     sceneWidthPx: scene.clientWidth || 480,
     sceneHeightPx: scene.clientHeight || 360,
     depthId
   });
   const depth = PHYSICAL_PLACEMENT[depthId] || PHYSICAL_PLACEMENT.middle;
   placement.style.left = '50%';
-  placement.style.bottom = `${depth.yBottomPct}%`;
+  placement.style.bottom = `${result.yBottomPct != null ? result.yBottomPct : depth.yBottomPct}%`;
   placement.style.transform = 'translateX(-50%)';
-  if (result.status === 'PHYSICAL_SCALE_READY') {
-    img.style.maxHeight = `${result.imgHeightPx}px`;
-    img.style.maxWidth = '100%';
+  placement.style.width = 'auto';
+  placement.style.maxWidth = 'none';
+  const ready = result.status === 'PHYSICAL_SCALE_READY' || result.status === 'PHYSICAL_SCALE_ESTIMATED';
+  if (ready) {
+    const imgPx = result.imgHeightPx != null ? result.imgHeightPx : ((result.imgHeightPct || result.visibleHeightPct) / 100) * (scene.clientHeight || 360);
+    img.style.maxHeight = `${imgPx}px`;
+    img.style.height = `${imgPx}px`;
+    img.style.width = 'auto';
+    img.style.maxWidth = result.scaleMode === PHOTO_SCALE_MODE.CALIBRATED ? 'none' : '100%';
+    img.style.transform = 'none';
     img.style.opacity = '';
     if (overlay) overlay.hidden = true;
     const shadowSpec = contactShadowForScale({
-      heightPct: Math.min(result.visibleHeightPct, 90),
+      heightPct: Math.min(result.visibleHeightPct || 54, 90),
       depthId
     });
     if (shadow) {
@@ -222,12 +274,11 @@ function applyPhysicalScene(scene, options) {
       shadow.style.filter = `blur(${shadowSpec.blurPx}px)`;
     }
   } else {
-    img.style.maxHeight = '28%';
-    img.style.opacity = '0.22';
-    if (overlay) {
-      overlay.hidden = false;
-      overlay.textContent = `PHYSICAL_SCALE_BLOCKED · ${(result.reasons || []).join(' + ')} · ${result.note}`;
-    }
+    img.style.maxHeight = '54%';
+    img.style.height = '';
+    img.style.width = '';
+    img.style.opacity = '';
+    if (overlay) overlay.hidden = true;
   }
   return result;
 }
@@ -242,8 +293,31 @@ function currentStage(doc) {
   return (scene && scene.getAttribute('data-growth-stage')) || 'mature';
 }
 
+function syncPhotoScaleChoiceUi(doc, choice, calibration) {
+  const prompt = doc.getElementById('photo-scale-choice');
+  const harness = doc.getElementById('photo-scale-harness');
+  const later = doc.getElementById('photo-scale-calibrate-later');
+  const status = doc.getElementById('photo-scale-status');
+  const calibrated = choice.photoScaleState === PHOTO_SCALE_STATE.CALIBRATED;
+  const showHarness = calibrated || (choice.intent === 'calibrate' && !choice.calibrationDismissedForNow);
+  if (prompt) prompt.hidden = calibrated || choice.calibrationDismissedForNow || choice.intent === 'calibrate';
+  if (harness) harness.hidden = !showHarness;
+  if (later) later.hidden = !(choice.calibrationDismissedForNow && !calibrated);
+  if (status) {
+    if (calibrated) {
+      const n = (calibration.references || []).length;
+      status.textContent = `PHOTO_SCALE_STATE = CALIBRATED · reused for all placements on this photo · ${n} reference(s) · Calibrated suggested size · not a survey`;
+    } else {
+      status.textContent =
+        'PHOTO_SCALE_STATE = NOT_CALIBRATED · Estimated scale · Garden Design is fully usable · calibration optional · not meter accuracy';
+    }
+  }
+}
+
 function refreshPhysical(doc) {
   const calibration = loadCalibration();
+  const photoKey = currentPhotoKey(doc);
+  const choice = resolvePhotoScaleChoice(loadChoiceStore(), photoKey, calibration);
   const slug = currentSlug(doc);
   const stage = currentStage(doc);
   const storedConfirmed = loadUserConfirmed(slug, stage);
@@ -251,41 +325,62 @@ function refreshPhysical(doc) {
     ? classifyUserConfirmedDimension({ ...storedConfirmed, growthStage: stage })
     : { growthStage: stage };
   const override = loadOverride(slug);
+  const rangeBand = loadRangeBand();
+  const sizeScenario = loadSizeScenario();
   const calScene = doc.querySelector('.photo-cal-scene');
   if (calScene) paintCalibrationScene(calScene, calibration, doc.__cruvitPendingCal || {});
   listReferences(doc, calibration);
-  const ppmNear = calibration.pixelsPerMeterNear;
-  const ppmFar = calibration.pixelsPerMeterFar;
-  const status = doc.getElementById('photo-scale-status');
-  if (status) {
-    status.textContent = calibration.references.length
-      ? `Photo scale: ${calibration.references.length} reference(s). Near ${
-          Number.isFinite(ppmNear) ? `${ppmNear.toFixed(1)} px/m` : '—'
-        }. Far ${Number.isFinite(ppmFar) ? `${ppmFar.toFixed(1)} px/m` : '—'}. ${
-          calibration.hasPerspectivePair ? 'NEAR_FAR_INTERPOLATED' : 'SINGLE_REFERENCE'
-        }. Estimate, not a survey.`
-      : 'Photo scale: UNCALIBRATED. A Garden photo has no reliable meter scale until a known reference is marked.';
-  }
+  syncPhotoScaleChoiceUi(doc, choice, calibration);
   let last = null;
   doc.querySelectorAll('.physical-v1-scene').forEach((scene) => {
     last = applyPhysicalScene(scene, {
       calibration,
       userConfirmed,
       userOverride: override,
+      rangeBand,
+      sizeScenario,
+      canonicalSlug: slug,
       growthStage: scene.getAttribute('data-growth-stage') || stage,
       visualForm: scene.getAttribute('data-visual-form')
     });
   });
   const readout = doc.querySelector('[data-physical-scale-readout]');
   if (readout && last) {
-    if (last.status === 'PHYSICAL_SCALE_READY') {
-      readout.textContent = `${last.label}: ${last.displayHeightM.toFixed(2)} m (${last.botanicalEvidenceClass}) · visible ${last.visibleHeightPct.toFixed(0)}% of overlay · ${last.photoScaleMode} · not exact · not a survey`;
+    if (last.scaleMode === PHOTO_SCALE_MODE.CALIBRATED && last.status === 'PHYSICAL_SCALE_READY') {
+      const spread =
+        last.impliedSpreadM != null ? `implied spread ${last.impliedSpreadM.toFixed(1)} m` : 'spread n/a';
+      readout.textContent = `${last.label}: height ${last.displayHeightM.toFixed(1)} m · ${spread} · reused for every placement on this photo · not a survey`;
     } else {
-      readout.textContent = `${last.label}. ${(last.reasons || []).join(' + ')}. UNKNOWN must not pretend to know meters.`;
+      const botanical =
+        last.botanicalHeightM != null
+          ? `botanical range known (${last.botanicalEvidenceClass}) but not applied as meters`
+          : `botanical meters ${last.botanicalEvidenceClass || 'UNKNOWN'}`;
+      readout.textContent = `${last.label}. ${botanical}. Garden Design is not blocked. Manual resize always available.`;
     }
+  }
+  const arch = doc.querySelector('[data-architecture-class]');
+  if (arch && last) arch.textContent = last.architectureClass || 'UNKNOWN';
+  const evidenceStatus = doc.querySelector('[data-source-evidence-status]');
+  if (evidenceStatus) {
+    const resolved = resolvePhysicalScaleEvidence({
+      canonicalSlug: slug,
+      growthStage: stage,
+      visualForm: 'tree',
+      sizeScenario,
+      userConfirmed
+    });
+    evidenceStatus.textContent = `${resolved.evidenceClass} · ${resolved.sizeScenario || sizeScenario} · ${
+      resolved.source ? `${resolved.source.provider} ${resolved.source.sourceId}` : 'no source'
+    }`;
   }
   const suggested = doc.querySelector('[data-suggested-size-label]');
   if (suggested && last) suggested.textContent = last.label;
+  doc.querySelectorAll('[data-range-band]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-range-band') === rangeBand ? 'true' : 'false');
+  });
+  doc.querySelectorAll('[data-size-scenario]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-size-scenario') === sizeScenario ? 'true' : 'false');
+  });
   return last;
 }
 
@@ -408,16 +503,82 @@ function wireConfirmedAndOverride(doc) {
     if (min && stored.heightMMin) min.value = String(stored.heightMMin);
     if (max && stored.heightMMax) max.value = String(stored.heightMMax);
   }
+  doc.querySelectorAll('[data-range-band]').forEach((btn) => {
+    if (btn.dataset.physicalWired) return;
+    btn.dataset.physicalWired = '1';
+    btn.addEventListener('click', () => {
+      saveRangeBand(btn.getAttribute('data-range-band'));
+      refreshPhysical(doc);
+    });
+  });
+  doc.querySelectorAll('[data-size-scenario]').forEach((btn) => {
+    if (btn.dataset.physicalWired) return;
+    btn.dataset.physicalWired = '1';
+    btn.addEventListener('click', () => {
+      saveSizeScenario(btn.getAttribute('data-size-scenario'));
+      refreshPhysical(doc);
+    });
+  });
+  const band = loadRangeBand();
+  const scenario = loadSizeScenario();
+  doc.querySelectorAll('[data-range-band]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-range-band') === band ? 'true' : 'false');
+  });
+  doc.querySelectorAll('[data-size-scenario]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-size-scenario') === scenario ? 'true' : 'false');
+  });
+}
+
+function wirePhotoScaleChoice(doc) {
+  const calibrate = doc.getElementById('photo-scale-calibrate');
+  const cont = doc.getElementById('photo-scale-continue');
+  const later = doc.getElementById('photo-scale-calibrate-later');
+  if (calibrate && !calibrate.dataset.physicalWired) {
+    calibrate.dataset.physicalWired = '1';
+    calibrate.addEventListener('click', () => {
+      saveChoice(currentPhotoKey(doc), {
+        intent: 'calibrate',
+        calibrationDismissedForNow: false,
+        showCalibratePrompt: false,
+        photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED
+      });
+      refreshPhysical(doc);
+    });
+  }
+  if (cont && !cont.dataset.physicalWired) {
+    cont.dataset.physicalWired = '1';
+    cont.addEventListener('click', () => {
+      saveChoice(currentPhotoKey(doc), {
+        intent: null,
+        calibrationDismissedForNow: true,
+        showCalibratePrompt: false,
+        photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED
+      });
+      refreshPhysical(doc);
+    });
+  }
+  if (later && !later.dataset.physicalWired) {
+    later.dataset.physicalWired = '1';
+    later.addEventListener('click', () => {
+      saveChoice(currentPhotoKey(doc), {
+        intent: 'calibrate',
+        calibrationDismissedForNow: false,
+        showCalibratePrompt: false
+      });
+      refreshPhysical(doc);
+    });
+  }
 }
 
 export function initPhysicalScaleFoundationV1(doc) {
   const documentRef = doc || (typeof document !== 'undefined' ? document : null);
   if (!documentRef) return { wired: false };
   wirePhotoCalibration(documentRef);
+  wirePhotoScaleChoice(documentRef);
   wireConfirmedAndOverride(documentRef);
   refreshPhysical(documentRef);
   documentRef.addEventListener('calibration-ui-status', () => refreshPhysical(documentRef));
-  return { wired: true, mangoHardCoded: false };
+  return { wired: true, mangoHardCoded: false, gardenDesignBlocked: false };
 }
 
 if (typeof document !== 'undefined') {

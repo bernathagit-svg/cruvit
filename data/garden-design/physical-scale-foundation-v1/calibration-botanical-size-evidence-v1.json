@@ -1,0 +1,42 @@
+{
+  "contract": "calibration-botanical-size-evidence-v1",
+  "version": "physical-scale-evidence-v1.1",
+  "productionCatalogWritten": false,
+  "productionRegistryChanged": false,
+  "massCatalogEnrichment": false,
+  "applyMigrationNow": false,
+  "note": "Calibration-only source-supported dimension evidence. Not a universal cultivar guarantee. Not production catalog truth until a later catalog write is explicitly approved.",
+  "records": [
+    {
+      "canonicalSlug": "mango",
+      "scientific": "Mangifera indica",
+      "visualForm": "tree",
+      "growthStage": "mature",
+      "sizeScenario": "NATURAL_MATURE",
+      "evidenceClass": "SOURCE_SUPPORTED_RANGE",
+      "calibrationOnly": true,
+      "universalCultivarGuarantee": false,
+      "source": {
+        "provider": "UF/IFAS Extension",
+        "title": "Mangifera indica: Mango",
+        "sourceId": "UF_IFAS_ST404",
+        "originalUnit": "ft"
+      },
+      "original": {
+        "unit": "ft",
+        "heightFt": { "min": 30, "max": 60 },
+        "spreadFt": { "min": 30, "max": 50 }
+      },
+      "si": {
+        "unit": "m",
+        "heightM": { "min": 9.144, "max": 18.288 },
+        "spreadM": { "min": 9.144, "max": 15.24 }
+      },
+      "reportedRoundedM": {
+        "heightM": { "min": 9.1, "max": 18.3 },
+        "spreadM": { "min": 9.1, "max": 15.2 }
+      },
+      "note": "Landscape / ultimate mature architecture. Do not silently substitute a pruned maintenance-tree height."
+    }
+  ]
+}

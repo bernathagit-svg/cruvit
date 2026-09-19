@@ -28,9 +28,13 @@ import {
   DIMENSION_EVIDENCE,
   REFERENCE_KINDS,
   buildPhysicalScaleFoundationReport,
-  classifyCatalogDimensionEvidence,
   PHYSICAL_SCALE_PERSISTENCE_PROPOSAL
 } from './physical-scale-foundation-v1.js';
+import {
+  RANGE_BANDS,
+  SIZE_SCENARIOS,
+  resolvePhysicalScaleEvidence
+} from './physical-scale-evidence-v1.js';
 import {
   classifyCalibrationReviewReadiness,
   LOCAL_SUPPLEMENTARY_BACKGROUNDS,
@@ -180,7 +184,33 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       ...(typeof sizeEvidence.matureHeightM === 'number'
         ? { 'data-height-min': sizeEvidence.matureHeightM, 'data-height-max': sizeEvidence.matureHeightM }
         : {}),
-      ...(extra.lockDepth ? { 'data-lock-depth': extra.lockDepth } : {})
+      ...(extra.lockDepth ? { 'data-lock-depth': extra.lockDepth } : {}),
+      ...(extra.canonicalSlug ? { 'data-canonical-slug': extra.canonicalSlug } : {}),
+      ...(extra.sizeScenario ? { 'data-size-scenario': extra.sizeScenario } : {}),
+      ...(extra.rangeBand ? { 'data-lock-range-band': extra.rangeBand } : {})
+    };
+  }
+
+  function physicalSceneAttrs(job, extra = {}) {
+    const resolved = resolvePhysicalScaleEvidence({
+      canonicalSlug: job.canonicalSlug,
+      plant: plantsBySlug[job.canonicalSlug] || {},
+      visualForm: job.visualForm,
+      growthStage: job.growthStage,
+      sizeScenario: extra.sizeScenario || SIZE_SCENARIOS.NATURAL_MATURE
+    });
+    return {
+      ...v2SceneAttrs(job, { ...extra, scaleModel: 'physical-v1' }),
+      'data-canonical-slug': job.canonicalSlug || '',
+      'data-size-scenario': extra.sizeScenario || SIZE_SCENARIOS.NATURAL_MATURE,
+      'data-size-evidence': resolved.evidenceClass,
+      ...(resolved.heightM
+        ? { 'data-height-min': resolved.heightM.min, 'data-height-max': resolved.heightM.max }
+        : {}),
+      ...(resolved.spreadM
+        ? { 'data-spread-min': resolved.spreadM.min, 'data-spread-max': resolved.spreadM.max }
+        : {}),
+      ...(extra.rangeBand ? { 'data-lock-range-band': extra.rangeBand } : {})
     };
   }
 
@@ -193,9 +223,12 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       const plant = plantsBySlug[job.canonicalSlug] || {};
       const sizeEvidence = auditBotanicalSizeEvidence(plant, libraryCopyBySlug[job.canonicalSlug] || {});
       const contract = buildDesignAssetScaleContract(job, sizeEvidence);
-      const physicalEvidence = classifyCatalogDimensionEvidence(plant, {
+      const physicalEvidence = resolvePhysicalScaleEvidence({
+        canonicalSlug: job.canonicalSlug,
+        plant,
         visualForm: job.visualForm,
         growthStage: job.growthStage,
+        sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE,
         librarySizeCopy: (libraryCopyBySlug[job.canonicalSlug] || {}).size
       });
       const recommendation = recommendCompositionV3Class(job.canonicalSlug) || recommendCompositionV2Class(job.canonicalSlug);
@@ -255,29 +288,49 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     ${sceneBlock('V3 FAR', 'TREE SCALE V3 — far', 'real blend-v2-scene tree-v3-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'v3' }) })}
   </div>
   ${formCompare}
-  <h3>PHYSICAL SCALE V1 — mango is the calibration example only, not a hard-coded size</h3>
-  <p class="note">V3 is still a percentage-of-canvas heuristic. PHYSICAL V1 uses botanical evidence (SOURCE_SUPPORTED_RANGE or USER_CONFIRMED only) × photo scale × placement depth. Catalog meters for this slug start as ${esc(physicalEvidence.evidenceClass)}. CRUVIT does not invent mango meters. HEURISTIC_RANGE and UNKNOWN must not drive a labelled meter preview.</p>
-  <p class="note">Photo calibration is garden-level (harness above). Enter a USER_CONFIRMED mature height range if you know one. Label is <strong data-suggested-size-label>Suggested mature size</strong>, never Exact mature size.</p>
-  <label>USER_CONFIRMED height min (m) <input id="physical-height-min" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
-  <label>USER_CONFIRMED height max (m) <input id="physical-height-max" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
-  <button type="button" id="physical-user-confirm">Confirm as USER_CONFIRMED</button>
-  <button type="button" id="physical-user-clear">Clear USER_CONFIRMED</button>
-  <span id="physical-confirm-error" class="empty"></span>
-  <p class="note">Manual override is stored separately from botanical source truth.</p>
-  <label>Manual override multiplier <input id="physical-override-multiplier" type="range" min="0.5" max="2" step="0.02" value="1"/> <strong data-physical-override-value>1.00</strong></label>
-  <p class="note" data-physical-scale-readout>PHYSICAL_SCALE_BLOCKED until photo calibration and SOURCE_SUPPORTED_RANGE or USER_CONFIRMED (or a meter override).</p>
-  <h4>V2 vs V3 vs PHYSICAL V1 (middle)</h4>
-  <div class="scenes">
-    ${sceneBlock('V2 MID', 'CURRENT V2 — middle', 'real blend-v2-scene perspective-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v2' }) })}
-    ${sceneBlock('V3 MID', 'TREE SCALE V3 — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
-    ${sceneBlock('PHYS MID', 'PHYSICAL SCALE V1 — middle', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
+  <h3>PHYSICAL V1 — NATURAL MATURE (source-supported botanical size)</h3>
+  <p class="note">Owner supplies <strong>only the photo reference dimension</strong>. Do not type Mango mature height as the default workflow. USER_CONFIRMED is a fallback / override, not primary authority.</p>
+  <p class="note" data-source-evidence-status>SOURCE_SUPPORTED_RANGE · NATURAL_MATURE · waiting</p>
+  <p class="note">Mango landscape mature (UF/IFAS ST404, <em>Mangifera indica: Mango</em>): height 30–60 ft ≈ 9.1–18.3 m · spread 30–50 ft ≈ 9.1–15.2 m. Not a universal cultivar guarantee. Not written to the production catalog. Size scenario for this mature vegetative asset: NATURAL_MATURE. Evidence class: ${esc(physicalEvidence.evidenceClass)}.</p>
+  <p class="note">BOTANICAL TRUTH stays immutable. DESIGN PREVIEW is derived (LOW / MID / HIGH). USER OVERRIDE is personal Garden Design state and never overwrites botanical evidence.</p>
+  <div class="verdicts" role="group" aria-label="Size scenario">
+    <button type="button" data-size-scenario="NATURAL_MATURE" aria-pressed="true">NATURAL_MATURE</button>
+    <button type="button" data-size-scenario="MAINTAINED_GARDEN">MAINTAINED_GARDEN</button>
+    <button type="button" data-size-scenario="USER_OVERRIDE">USER_OVERRIDE</button>
   </div>
-  <h4>PHYSICAL SCALE V1 near / middle / far</h4>
-  <div class="scenes">
-    ${sceneBlock('PHYS NEAR', 'PHYSICAL SCALE V1 — near', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'near', lockDepth: 'near', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
-    ${sceneBlock('PHYS FAR', 'PHYSICAL SCALE V1 — far', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
+  <p class="note">MAINTAINED_GARDEN has no source-supported range yet. CRUVIT will not silently substitute the 30–60 ft natural mature height.</p>
+  <div class="verdicts" role="group" aria-label="Supported size range band">
+    <button type="button" data-range-band="LOW">LOW</button>
+    <button type="button" data-range-band="MID" aria-pressed="true">MID</button>
+    <button type="button" data-range-band="HIGH">HIGH</button>
   </div>
-  <p class="note">Owner question: Does this now read as the plausible size of a mature Mango tree relative to the real garden?</p>`
+  <p class="note">Without calibration: <strong>Estimated scale</strong> / Estimated mature size — not meter accuracy. After this photo is calibrated: <strong>Calibrated suggested size</strong> — MID representative preview, not botanical truth and not a survey. LOW / HIGH stay inside the supported range. User may resize afterward.</p>
+  <p class="note">Architecture class: <strong data-architecture-class>UNKNOWN</strong>. PNG is scaled uniformly. Spread is implied by the asset aspect, not by stretching X independently of Y.</p>
+  <p class="note" data-physical-scale-readout>Estimated mature size until this photo is calibrated. Garden Design is not blocked. Calibration is optional.</p>
+  <h4>V3 HEURISTIC vs PHYSICAL V1 — NATURAL MATURE (LOW / MID / HIGH)</h4>
+  <div class="scenes">
+    ${sceneBlock('V3 HEUR', 'V3 HEURISTIC — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
+    ${sceneBlock('PHYS LOW', 'PHYSICAL V1 NATURAL MATURE — LOW', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.LOW, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+    ${sceneBlock('PHYS MID', 'PHYSICAL V1 NATURAL MATURE — MID', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+    ${sceneBlock('PHYS HIGH', 'PHYSICAL V1 NATURAL MATURE — HIGH', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.HIGH, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+  </div>
+  <h4>PHYSICAL V1 NATURAL MATURE — near / far at MID</h4>
+  <div class="scenes">
+    ${sceneBlock('PHYS NEAR', 'PHYSICAL V1 NATURAL MATURE — near MID', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'near', lockDepth: 'near', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+    ${sceneBlock('PHYS FAR', 'PHYSICAL V1 NATURAL MATURE — far MID', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'far', lockDepth: 'far', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+  </div>
+  <p class="note">Owner question: Does the natural-mature Mango now have believable height and canopy relative to the real garden?</p>
+  <details>
+    <summary>USER_CONFIRMED fallback / USER_OVERRIDE (not the default workflow)</summary>
+    <p class="note">Use only when source-supported evidence is missing or the owner deliberately chooses another target size. This never overwrites botanical source evidence.</p>
+    <label>USER_CONFIRMED height min (m) <input id="physical-height-min" type="number" min="0.05" step="0.1" placeholder="fallback only"/></label>
+    <label>USER_CONFIRMED height max (m) <input id="physical-height-max" type="number" min="0.05" step="0.1" placeholder="fallback only"/></label>
+    <button type="button" id="physical-user-confirm">Confirm as USER_CONFIRMED fallback</button>
+    <button type="button" id="physical-user-clear">Clear USER_CONFIRMED</button>
+    <span id="physical-confirm-error" class="empty"></span>
+  </details>
+  <p class="note">Manual resize is stored separately from botanical source truth.</p>
+  <label>Manual override multiplier <input id="physical-override-multiplier" type="range" min="0.5" max="2" step="0.02" value="1"/> <strong data-physical-override-value>1.00</strong></label>`
           : '';
       return `<article class="job" id="job-${esc(job.canonicalSlug)}" data-visual-form="${esc(job.visualForm || '')}" data-size-evidence="${esc(sizeEvidence.status)}">
   <header>
@@ -347,7 +400,8 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .scene.real.photo-cal-scene { width: 640px; height: 420px; cursor: crosshair; }
     .cal-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #0f3d2e; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
     .cal-line { position: absolute; height: 2px; background: #e8c547; transform-origin: 0 50%; pointer-events: none; z-index: 2; }
-    .physical-blocked { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 2; background: rgba(18,18,18,.78); color: #fff; font-size: 12px; padding: 8px; }
+    .scene.physical-v1-scene .placement { width: auto; max-width: none; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none; width: auto; }
     .checkerboard-scene { width: 280px; height: 360px; }
     .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
     .scene img.cutout.small { max-height: 34%; }
@@ -404,18 +458,28 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   <p id="composition-v2-sample-status" class="note">LOCAL SCENE MATCHING: waiting for signed Garden photo. Bounds brightness ${LOCAL_SCENE_MATCH_BOUNDS.brightness.min}–${LOCAL_SCENE_MATCH_BOUNDS.brightness.max}, contrast ${LOCAL_SCENE_MATCH_BOUNDS.contrast.min}–${LOCAL_SCENE_MATCH_BOUNDS.contrast.max}, saturate ${LOCAL_SCENE_MATCH_BOUNDS.saturate.min}–${LOCAL_SCENE_MATCH_BOUNDS.saturate.max}, blur ${LOCAL_SCENE_MATCH_BOUNDS.blurPx.min}–${LOCAL_SCENE_MATCH_BOUNDS.blurPx.max}px, opacity ${LOCAL_SCENE_MATCH_BOUNDS.opacity.min}–${LOCAL_SCENE_MATCH_BOUNDS.opacity.max}, hue-rotate 0. Depths: ${Object.keys(SCENE_DEPTHS).join(', ')}.</p>
   <p class="note">Tree scale V2 (shared curve): ${esc(treeScale.result)}. Tree scale V3 (tree-only, bbox-compensated): ${esc(treeV3.result)}. PHYSICAL SCALE V1 is a meter estimate from botanical evidence + photo calibration + depth, not a survey. Depths V3 near/middle/far factors ${TREE_SCENE_DEPTHS.near.depthFactor} / ${TREE_SCENE_DEPTHS.middle.depthFactor} / ${TREE_SCENE_DEPTHS.far.depthFactor}. Evidence states: ${Object.values(DIMENSION_EVIDENCE).join(', ')}. approved assets: 0. production registry changed: NO.</p>
   <section class="job" id="photo-scale-calibration">
-    <h2>Photo scale calibration harness</h2>
-    <p class="note">A Garden photo has no reliable meter scale by default. Mark two points, enter a known distance, and optionally a near or far band. Interpolation by placement y is a visualization estimate, not surveying accuracy. Do not redesign the full Garden Design UI here.</p>
-    <p id="photo-scale-status" class="note">Photo scale: UNCALIBRATED.</p>
-    <div class="scenes">
-      ${sceneBlock('CAL', 'Known reference dimension — click two points', 'real photo-cal-scene', '', 'garden', '', true, '', '', { skipGhost: true })}
+    <h2>Photo scale calibration — optional</h2>
+    <p class="note">PRODUCT CONTRACT: calibration is optional and never blocks Garden Design. It belongs to this Garden photo, not each plant. All placements on the same photo reuse it. Not surveying accuracy. Without calibration: Estimated scale. With calibration: Calibrated suggested scale / Calibrated suggested size.</p>
+    <p id="photo-scale-status" class="note">PHOTO_SCALE_STATE = NOT_CALIBRATED · Estimated scale · Garden Design is fully usable.</p>
+    <div id="photo-scale-choice" class="verdicts" role="group" aria-label="Optional photo scale">
+      <button type="button" id="photo-scale-calibrate">Calibrate this photo</button>
+      <button type="button" id="photo-scale-continue">Continue without calibration</button>
     </div>
-    <label>Kind <select id="photo-scale-kind">${REFERENCE_KINDS.map((kind) => `<option value="${esc(kind)}">${esc(kind.replace(/_/g, ' '))}</option>`).join('')}</select></label>
-    <label>Known distance (m) <input id="photo-scale-meters" type="number" min="0.05" step="0.05" placeholder="e.g. door 2.1"/></label>
-    <label>Depth band <select id="photo-scale-depth"><option value="near">near</option><option value="far">far</option><option value="unspecified">unspecified</option></select></label>
-    <button type="button" id="photo-scale-add">Add reference</button>
-    <span id="photo-scale-error" class="empty"></span>
-    <ul id="photo-scale-ref-list"></ul>
+    <p>
+      <button type="button" id="photo-scale-calibrate-later" hidden>Calibrate later</button>
+    </p>
+    <div id="photo-scale-harness" hidden>
+      <p class="note">Mark two points, enter a known distance, optionally near/far. One calibration for this photo, reused for every plant placed on it.</p>
+      <div class="scenes">
+        ${sceneBlock('CAL', 'Known reference dimension — click two points', 'real photo-cal-scene', '', 'garden', '', true, '', '', { skipGhost: true })}
+      </div>
+      <label>Kind <select id="photo-scale-kind">${REFERENCE_KINDS.map((kind) => `<option value="${esc(kind)}">${esc(kind.replace(/_/g, ' '))}</option>`).join('')}</select></label>
+      <label>Known distance (m) <input id="photo-scale-meters" type="number" min="0.05" step="0.05" placeholder="e.g. door 2.1"/></label>
+      <label>Depth band <select id="photo-scale-depth"><option value="near">near</option><option value="far">far</option><option value="unspecified">unspecified</option></select></label>
+      <button type="button" id="photo-scale-add">Add reference</button>
+      <span id="photo-scale-error" class="empty"></span>
+      <ul id="photo-scale-ref-list"></ul>
+    </div>
   </section>
   <section class="job owner-feedback" id="owner-feedback-summary">
     <h2>Owner review summary</h2>

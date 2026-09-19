@@ -64,8 +64,19 @@ export {
   computePhysicalSceneScale,
   mayDrivePhysicalMeterPreview,
   DIMENSION_EVIDENCE,
-  PHYSICAL_SCALE_MODEL_VERSION
+  PHYSICAL_SCALE_MODEL_VERSION,
+  PHOTO_SCALE_PRODUCT_CONTRACT,
+  PHOTO_SCALE_STATE,
+  PHOTO_SCALE_MODE
 } from './physical-scale-foundation-v1.js';
+export {
+  resolvePhysicalScaleEvidence,
+  lookupCalibrationSizeEvidence,
+  factoryMayUsePhysicalScalePreview,
+  SIZE_SCENARIOS,
+  RANGE_BANDS,
+  PHYSICAL_SCALE_EVIDENCE_VERSION
+} from './physical-scale-evidence-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

@@ -18,6 +18,9 @@ import {
   DIMENSION_EVIDENCE,
   PHYSICAL_SCALE_MODEL_VERSION,
   PHYSICAL_SCALE_PERSISTENCE_PROPOSAL,
+  PHOTO_SCALE_PRODUCT_CONTRACT,
+  PHOTO_SCALE_STATE,
+  PHOTO_SCALE_MODE,
   addKnownReference,
   classifyCatalogDimensionEvidence,
   classifyUserConfirmedDimension,
@@ -25,8 +28,14 @@ import {
   emptyPhotoScaleCalibration,
   interpolatePixelsPerMeter,
   mayDrivePhysicalMeterPreview,
-  resolveGrowthStageDimensions
+  resolveGrowthStageDimensions,
+  resolvePhotoScaleChoice
 } from '../modules/garden-design/asset-factory-v1/physical-scale-foundation-v1.js';
+import {
+  lookupCalibrationSizeEvidence,
+  resolvePhysicalScaleEvidence,
+  SIZE_SCENARIOS
+} from '../modules/garden-design/asset-factory-v1/physical-scale-evidence-v1.js';
 import { CALIBRATION_BATCH_1_CACHE_BUST } from '../modules/garden-design/asset-factory-v1/calibration-review-candidates-v1.js';
 import { isUsableDesignVariant } from '../modules/garden-design/garden-design-asset-registry-v1.js';
 
@@ -138,7 +147,9 @@ test('photo calibration plus USER_CONFIRMED renders a physically larger mango th
   });
   const v2 = computeSceneVisualScale({ visualForm: 'tree', depthId: 'near', ownerScale: 1 });
   assert.equal(physical.status, 'PHYSICAL_SCALE_READY');
-  assert.equal(physical.label, 'Suggested mature size');
+  assert.match(physical.label, /Calibrated suggested size/);
+  assert.equal(physical.scaleMode, PHOTO_SCALE_MODE.CALIBRATED);
+  assert.equal(physical.gardenDesignBlocked, false);
   assert.equal(physical.exact, false);
   assert.equal(physical.mangoHardCoded, false);
   assert.equal(physical.usedInventedMeters, false);
@@ -148,8 +159,8 @@ test('photo calibration plus USER_CONFIRMED renders a physically larger mango th
   assert.equal(PHYSICAL_SCALE_MODEL_VERSION, 'physical-scale-foundation-v1');
 });
 
-test('UNKNOWN botanical meters stay blocked and do not pretend to know height', () => {
-  const blocked = computePhysicalSceneScale({
+test('UNKNOWN botanical meters stay honest and do not block Garden Design', () => {
+  const estimated = computePhysicalSceneScale({
     growthStage: 'mature',
     visualForm: 'tree',
     catalogEvidence: classifyCatalogDimensionEvidence({}, { growthStage: 'mature', visualForm: 'tree' }),
@@ -158,9 +169,11 @@ test('UNKNOWN botanical meters stay blocked and do not pretend to know height', 
     sceneHeightPx: 360,
     depthId: 'middle'
   });
-  assert.equal(blocked.status, 'PHYSICAL_SCALE_BLOCKED');
-  assert.ok(blocked.reasons.includes('BOTANICAL_METERS_UNKNOWN'));
-  assert.equal(blocked.displayHeightM, null);
+  assert.equal(estimated.status, 'PHYSICAL_SCALE_ESTIMATED');
+  assert.equal(estimated.gardenDesignBlocked, false);
+  assert.equal(estimated.displayHeightM, null);
+  assert.equal(estimated.usedInventedMeters, false);
+  assert.equal(estimated.label, 'Estimated size');
 });
 
 test('near/far references interpolate pixels-per-meter by placement y', () => {
@@ -213,7 +226,7 @@ test('user override is separate from botanical source truth', () => {
     sceneHeightPx: 360,
     depthId: 'middle'
   });
-  assert.equal(suggested.label, 'Suggested mature size');
+  assert.match(suggested.label, /Calibrated suggested size/);
   assert.equal(overridden.label, 'User override');
   assert.equal(overridden.userOverrideSeparateFromBotanicalTruth, true);
   assert.equal(overridden.suggestedHeightM, 8);
@@ -258,17 +271,90 @@ test('persistence proposal does not apply a migration', () => {
   );
 });
 
+test('photo calibration is optional and never blocks Garden Design', () => {
+  const confirmed = classifyUserConfirmedDimension({
+    heightMMin: 9.1,
+    heightMMax: 18.3,
+    growthStage: 'mature',
+    visualForm: 'tree'
+  });
+  const estimated = computePhysicalSceneScale({
+    growthStage: 'mature',
+    visualForm: 'tree',
+    userConfirmed: confirmed,
+    photoCalibration: emptyPhotoScaleCalibration(),
+    bbox: MANGO_BBOX,
+    canvasHeight: 1536,
+    sceneHeightPx: 360,
+    depthId: 'middle'
+  });
+  assert.equal(estimated.status, 'PHYSICAL_SCALE_ESTIMATED');
+  assert.equal(estimated.scaleMode, PHOTO_SCALE_MODE.ESTIMATED);
+  assert.equal(estimated.photoScaleState, PHOTO_SCALE_STATE.NOT_CALIBRATED);
+  assert.equal(estimated.gardenDesignBlocked, false);
+  assert.equal(estimated.calibrationMandatory, false);
+  assert.equal(estimated.label, 'Estimated mature size');
+  assert.equal(estimated.meterAccuracy, false);
+  assert.ok(estimated.visibleHeightPct > 20);
+  const dismissed = resolvePhotoScaleChoice(
+    { 'photo-a': { calibrationDismissedForNow: true } },
+    'photo-a',
+    emptyPhotoScaleCalibration()
+  );
+  assert.equal(dismissed.showCalibratePrompt, false);
+  assert.equal(dismissed.gardenDesignBlocked, false);
+  const otherPhoto = resolvePhotoScaleChoice(
+    { 'photo-a': { calibrationDismissedForNow: true } },
+    'photo-b',
+    emptyPhotoScaleCalibration()
+  );
+  assert.equal(otherPhoto.showCalibratePrompt, true);
+  assert.equal(PHOTO_SCALE_PRODUCT_CONTRACT.calibrationMandatory, false);
+  assert.equal(PHOTO_SCALE_PRODUCT_CONTRACT.gardenDesignBlockedWithoutCalibration, false);
+  assert.equal(PHOTO_SCALE_PRODUCT_CONTRACT.calibrationRepeatedPerPlant, false);
+});
+
+test('source-supported mango evidence does not require the owner to type mature height', () => {
+  const mango = lookupCalibrationSizeEvidence('mango', {
+    growthStage: 'mature',
+    sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE
+  });
+  assert.equal(mango.evidenceClass, DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE);
+  assert.equal(mango.source.sourceId, 'UF_IFAS_ST404');
+  const resolved = resolvePhysicalScaleEvidence({
+    canonicalSlug: 'mango',
+    growthStage: 'mature',
+    visualForm: 'tree',
+    sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE
+  });
+  assert.equal(resolved.mayDrivePhysicalMeterPreview, true);
+  const estimated = computePhysicalSceneScale({
+    growthStage: 'mature',
+    visualForm: 'tree',
+    resolvedEvidence: resolved,
+    photoCalibration: emptyPhotoScaleCalibration(),
+    bbox: MANGO_BBOX,
+    sceneHeightPx: 360,
+    depthId: 'middle'
+  });
+  assert.equal(estimated.gardenDesignBlocked, false);
+  assert.equal(estimated.scaleMode, PHOTO_SCALE_MODE.ESTIMATED);
+});
+
 test('review harness wires physical scale V1 without generation endpoints', () => {
   const html = read('modules/garden-design/calibration-review.html');
   const app = read('app.html');
-  assert.match(html, /PHYSICAL SCALE V1/);
-  assert.match(html, /Suggested mature size/);
+  assert.match(html, /PHYSICAL V1/);
+  assert.match(html, /Continue without calibration/);
+  assert.match(html, /Calibrate this photo/);
+  assert.match(html, /Estimated mature size/);
+  assert.match(html, /Calibrated suggested scale/);
+  assert.match(html, /Continue without calibration/);
   assert.match(html, /photo-cal-scene/);
   assert.match(html, /physical-v1-scene/);
-  assert.match(html, /Does this now read as the plausible size of a mature Mango tree/);
   assert.match(html, /physical-scale-foundation-v1-runtime\.js/);
   assert.match(app, new RegExp(`calibration-review\\.html\\?v=${CALIBRATION_BATCH_1_CACHE_BUST}`));
-  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919i');
+  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919k');
   assert.doesNotMatch(html, /api\.openai\.com/);
   assert.doesNotMatch(html, /images\/generations/);
 });

@@ -1,9 +1,11 @@
 /**
  * Garden Design physical-scale foundation V1.
  * Generic across visualForm. No species hard-coding. No invented meters.
- * Photo calibration + botanical evidence + depth → suggested render size.
+ * Photo calibration is OPTIONAL and never blocks Garden Design.
  * Estimate only. Not a survey. No generation. No spend.
  */
+import { computeSceneVisualScale } from './composition-calibration-v2.js';
+import { computeTreeSceneScaleV3 } from './composition-calibration-v3.js';
 
 export const PHYSICAL_SCALE_MODEL_VERSION = 'physical-scale-foundation-v1';
 
@@ -30,10 +32,39 @@ export const REFERENCE_KINDS = Object.freeze([
 ]);
 
 export const PHOTO_SCALE_STORAGE_KEY = 'cruvit:garden-photo-scale-calibration-v1';
+export const PHOTO_SCALE_CHOICE_STORAGE_KEY = 'cruvit:garden-photo-scale-choice-v1';
 export const USER_CONFIRMED_SIZE_STORAGE_KEY = 'cruvit:physical-scale-user-confirmed-v1';
 export const USER_SCALE_OVERRIDE_STORAGE_KEY = 'cruvit:physical-scale-user-override-v1';
 
+export const PHOTO_SCALE_STATE = Object.freeze({
+  NOT_CALIBRATED: 'NOT_CALIBRATED',
+  CALIBRATED: 'CALIBRATED'
+});
+
+export const PHOTO_SCALE_MODE = Object.freeze({
+  ESTIMATED: 'ESTIMATED',
+  CALIBRATED: 'CALIBRATED'
+});
+
+export const PHOTO_SCALE_PRODUCT_CONTRACT = Object.freeze({
+  calibrationMandatory: false,
+  gardenDesignBlockedWithoutCalibration: false,
+  calibrationRepeatedPerPlant: false,
+  calibrationRepeatedPerPlacement: false,
+  accountWideUniversalCalibration: false,
+  scope: 'specific-garden-source-photo',
+  modes: Object.freeze([PHOTO_SCALE_MODE.ESTIMATED, PHOTO_SCALE_MODE.CALIBRATED]),
+  estimatedLabels: Object.freeze(['Estimated size', 'Estimated mature size']),
+  calibratedLabel: 'Calibrated suggested size',
+  surveyingAccuracy: false
+});
+
 export const PHYSICAL_SCALE_ACCURACY = 'garden-visualization-estimate-not-survey';
+export const ARCHITECTURE_CLASSES = Object.freeze({
+  ARCHITECTURE_COMPATIBLE: 'ARCHITECTURE_COMPATIBLE',
+  REGEN_REQUIRED_ARCHITECTURE: 'REGEN_REQUIRED_ARCHITECTURE',
+  UNKNOWN: 'UNKNOWN'
+});
 
 /** Ground-plane placement. ny 0 = top (farther), ny 1 = bottom (nearer). Not a survey. */
 export const PHYSICAL_PLACEMENT = Object.freeze({
@@ -70,6 +101,15 @@ function bboxFillRatio(bbox = {}, canvasHeight = 1536) {
   return clamp((maxY - minY) / height, 0.35, 1);
 }
 
+function visibleWidthOverHeight(bbox = {}) {
+  const minX = Number(bbox.minX);
+  const maxX = Number(bbox.maxX);
+  const minY = Number(bbox.minY);
+  const maxY = Number(bbox.maxY);
+  if (![minX, maxX, minY, maxY].every(Number.isFinite) || maxX <= minX || maxY <= minY) return null;
+  return (maxX - minX) / (maxY - minY);
+}
+
 export function mayDrivePhysicalMeterPreview(evidenceClass) {
   return PHYSICAL_PREVIEW_DRIVE_CLASSES.includes(evidenceClass);
 }
@@ -78,6 +118,8 @@ export function emptyPhotoScaleCalibration() {
   return {
     contract: 'garden-photo-scale-calibration-v1',
     model: PHYSICAL_SCALE_MODEL_VERSION,
+    photoKey: null,
+    scope: 'specific-garden-source-photo',
     references: [],
     captureWidthPx: null,
     captureHeightPx: null,
@@ -86,6 +128,83 @@ export function emptyPhotoScaleCalibration() {
     accuracy: PHYSICAL_SCALE_ACCURACY,
     surveyingAccuracy: false
   };
+}
+
+export function photoScaleStateFromCalibration(calibration) {
+  const cal = recomputePhotoScale(calibration || emptyPhotoScaleCalibration());
+  const hasRef = (cal.references || []).some(
+    (row) => Number.isFinite(Number(row.knownMeters)) && Number(row.knownMeters) > 0
+  );
+  return hasRef ? PHOTO_SCALE_STATE.CALIBRATED : PHOTO_SCALE_STATE.NOT_CALIBRATED;
+}
+
+export function emptyPhotoScaleChoice(photoKey = null) {
+  return {
+    photoKey: photoKey || null,
+    photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED,
+    calibrationDismissedForNow: false,
+    intent: null,
+    showCalibratePrompt: true,
+    scope: 'specific-garden-source-photo',
+    gardenDesignBlocked: false
+  };
+}
+
+export function resolvePhotoScaleChoice(store, photoKey, calibration) {
+  const key = photoKey || 'unspecified-garden-photo';
+  const row =
+    store && typeof store === 'object' && store[key] && typeof store[key] === 'object'
+      ? store[key]
+      : emptyPhotoScaleChoice(key);
+  const state = photoScaleStateFromCalibration(calibration);
+  if (state === PHOTO_SCALE_STATE.CALIBRATED) {
+    return {
+      ...row,
+      photoKey: key,
+      photoScaleState: PHOTO_SCALE_STATE.CALIBRATED,
+      calibrationDismissedForNow: false,
+      intent: 'calibrate',
+      showCalibratePrompt: false,
+      gardenDesignBlocked: false
+    };
+  }
+  if (row.calibrationDismissedForNow) {
+    return {
+      ...row,
+      photoKey: key,
+      photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED,
+      showCalibratePrompt: false,
+      gardenDesignBlocked: false
+    };
+  }
+  return {
+    ...row,
+    photoKey: key,
+    photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED,
+    showCalibratePrompt: row.intent !== 'calibrate',
+    gardenDesignBlocked: false
+  };
+}
+
+function estimatedFormRelativeScale(input = {}) {
+  const visualForm = asText(input.visualForm) || 'unknown';
+  if (visualForm === 'tree') {
+    return computeTreeSceneScaleV3({
+      visualForm,
+      growthStage: input.growthStage || 'mature',
+      depthId: input.depthId || 'middle',
+      ownerScale: input.ownerScale,
+      bbox: input.bbox,
+      canvasWidth: input.canvasWidth,
+      canvasHeight: input.canvasHeight
+    });
+  }
+  return computeSceneVisualScale({
+    visualForm,
+    depthId: input.depthId || 'middle',
+    ownerScale: input.ownerScale,
+    sizeEvidence: input.sizeEvidence
+  });
 }
 
 export function pixelsPerMeterFromReference(ref, sceneWidthPx, sceneHeightPx) {
@@ -293,8 +412,19 @@ export function classifyUserConfirmedDimension(input = {}) {
 
 export function resolveGrowthStageDimensions(input = {}) {
   const stage = asText(input.growthStage) === 'young' ? 'young' : 'mature';
+  const scenario = asText(input.sizeScenario) || 'NATURAL_MATURE';
+  if (
+    input.resolvedEvidence &&
+    input.resolvedEvidence.growthStage === stage &&
+    typeof input.resolvedEvidence.mayDrivePhysicalMeterPreview === 'boolean'
+  ) {
+    return { ...input.resolvedEvidence, derivedFromOtherStage: false };
+  }
   const catalog = input.catalogEvidence && input.catalogEvidence.growthStage === stage ? input.catalogEvidence : null;
   const user = input.userConfirmed && input.userConfirmed.growthStage === stage ? input.userConfirmed : null;
+  if (scenario !== 'USER_OVERRIDE' && catalog && catalog.mayDrivePhysicalMeterPreview) {
+    return { ...catalog, resolvedFrom: catalog.evidenceClass, derivedFromOtherStage: false };
+  }
   if (user && user.mayDrivePhysicalMeterPreview) {
     return { ...user, resolvedFrom: 'USER_CONFIRMED', derivedFromOtherStage: false };
   }
@@ -316,8 +446,11 @@ export function resolveGrowthStageDimensions(input = {}) {
   };
 }
 
-export function suggestedHeightMFromRange(range) {
+export function suggestedHeightMFromRange(range, band = 'MID') {
   if (!range || !finitePositive(range.min) || !finitePositive(range.max)) return null;
+  const id = String(band || 'MID').toUpperCase();
+  if (id === 'LOW') return range.min;
+  if (id === 'HIGH') return range.max;
   return (range.min + range.max) / 2;
 }
 
@@ -336,14 +469,21 @@ export function computePhysicalSceneScale(input = {}) {
     width: sceneWidthPx,
     height: sceneHeightPx
   });
+  const rangeBand = String(input.rangeBand || 'MID').toUpperCase();
+  const sizeScenario = asText(input.sizeScenario || stageDims.sizeScenario) || 'NATURAL_MATURE';
   const override = input.userOverride && typeof input.userOverride === 'object' ? input.userOverride : { kind: 'none' };
   let displayHeightM = null;
   let label = 'Suggested mature size';
   let displaySource = 'none';
   if (stageDims.mayDrivePhysicalMeterPreview) {
-    displayHeightM = suggestedHeightMFromRange(stageDims.heightM);
+    displayHeightM = suggestedHeightMFromRange(stageDims.heightM, rangeBand);
     displaySource = 'suggested-from-evidence';
-    label = stageDims.growthStage === 'young' ? 'Suggested young size' : 'Suggested mature size';
+    label =
+      stageDims.growthStage === 'young'
+        ? 'Calibrated suggested size'
+        : rangeBand === 'MID'
+          ? 'Calibrated suggested size — MID representative preview, not botanical truth'
+          : `Calibrated suggested size — ${rangeBand} of supported range`;
   }
   if (override.kind === 'heightM' && finitePositive(override.value)) {
     displayHeightM = finitePositive(override.value);
@@ -359,45 +499,118 @@ export function computePhysicalSceneScale(input = {}) {
     displaySource = 'USER_OVERRIDE';
     label = 'User override';
   }
-  const reasons = [];
-  if (!displayHeightM) reasons.push('BOTANICAL_METERS_UNKNOWN');
-  if (!ppm.pixelsPerMeter) reasons.push('PHOTO_SCALE_UNCALIBRATED');
-  if (reasons.length) {
+  const photoScaleState = ppm.pixelsPerMeter
+    ? PHOTO_SCALE_STATE.CALIBRATED
+    : PHOTO_SCALE_STATE.NOT_CALIBRATED;
+  const canCalibrateMeters = Boolean(ppm.pixelsPerMeter && displayHeightM);
+  if (!canCalibrateMeters) {
+    const estimated = estimatedFormRelativeScale({
+      visualForm: asText(input.visualForm) || stageDims.visualForm,
+      growthStage: stageDims.growthStage,
+      depthId: input.depthId,
+      ownerScale: input.ownerScale,
+      bbox,
+      canvasWidth: finitePositive(input.canvasWidth) || 1024,
+      canvasHeight,
+      sizeEvidence: { status: stageDims.evidenceClass }
+    });
+    const imgPct = estimated.imgHeightPct != null ? estimated.imgHeightPct : estimated.heightPct;
+    const visiblePct = estimated.visibleHeightPct != null ? estimated.visibleHeightPct : estimated.heightPct;
+    const young = stageDims.growthStage === 'young';
+    const estimatedLabel = displayHeightM && !young ? 'Estimated mature size' : 'Estimated size';
     return {
-      status: 'PHYSICAL_SCALE_BLOCKED',
+      status: 'PHYSICAL_SCALE_ESTIMATED',
       model: PHYSICAL_SCALE_MODEL_VERSION,
-      reasons,
-      label: 'Physical size unavailable',
-      botanicalEvidenceClass: stageDims.evidenceClass,
-      photoScaleMode: ppm.mode,
-      displayHeightM: null,
+      scaleMode: PHOTO_SCALE_MODE.ESTIMATED,
+      photoScaleState,
+      gardenDesignBlocked: false,
+      calibrationMandatory: false,
+      reasons: displayHeightM ? [] : ['BOTANICAL_METERS_UNKNOWN'],
+      label: estimatedLabel,
       exact: false,
+      meterAccuracy: false,
+      displaySource: 'estimated-form-relative',
+      botanicalEvidenceClass: stageDims.evidenceClass,
+      botanicalHeightM: displayHeightM,
+      displayHeightM: null,
+      sizeScenario,
+      rangeBand,
+      imgHeightPct: imgPct,
+      visibleHeightPct: visiblePct,
+      imgHeightPx: (imgPct / 100) * sceneHeightPx,
+      visibleHeightPx: (visiblePct / 100) * sceneHeightPx,
+      yBottomPct: estimated.yBottomPct != null ? estimated.yBottomPct : PHYSICAL_PLACEMENT.middle.yBottomPct,
+      visualForm: asText(input.visualForm) || stageDims.visualForm || null,
+      growthStage: stageDims.growthStage,
       mangoHardCoded: false,
       usedInventedMeters: false,
-      accuracy: PHYSICAL_SCALE_ACCURACY,
-      note: reasons.includes('BOTANICAL_METERS_UNKNOWN')
-        ? 'UNKNOWN botanical meters. Do not pretend to know plant height. Enter USER_CONFIRMED range or a manual override in meters.'
-        : 'Photo has no known reference dimension yet.'
+      userOverrideSeparateFromBotanicalTruth: displaySource === 'USER_OVERRIDE',
+      accuracy: 'visual-aid-not-centimeter',
+      note: displayHeightM
+        ? `${estimatedLabel}. Botanical range is known but this render is not a meter measurement until the photo is calibrated.`
+        : `${estimatedLabel}. Botanical meters UNKNOWN. Do not invent meters. Garden Design stays usable. Manual resize always available.`
     };
   }
   const visibleHeightPx = displayHeightM * ppm.pixelsPerMeter;
   const imgHeightPx = visibleHeightPx / fill;
+  const widthOverHeight = visibleWidthOverHeight(bbox);
+  const impliedSpreadM = widthOverHeight && displayHeightM ? displayHeightM * widthOverHeight : null;
+  const spreadRange = stageDims.spreadM || null;
+  let architectureClass = ARCHITECTURE_CLASSES.UNKNOWN;
+  let architectureNote = 'No supported spread range to compare against the PNG aspect.';
+  if (impliedSpreadM && spreadRange && finitePositive(spreadRange.min) && finitePositive(spreadRange.max)) {
+    const inside = impliedSpreadM >= spreadRange.min * 0.92 && impliedSpreadM <= spreadRange.max * 1.08;
+    architectureClass = inside
+      ? ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE
+      : ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE;
+    architectureNote = inside
+      ? 'Uniform scale from height. Implied canopy from PNG aspect sits inside the supported spread range. PNG was not stretched.'
+      : 'Do not stretch the PNG independently in X/Y to fake botanical spread. REGEN_REQUIRED_ARCHITECTURE.';
+  }
+  const botanicalTruth = {
+    evidenceClass: stageDims.evidenceClass,
+    heightRangeM: stageDims.heightM || null,
+    spreadRangeM: spreadRange,
+    source: stageDims.source || null,
+    immutable: true
+  };
   return {
     status: 'PHYSICAL_SCALE_READY',
     model: PHYSICAL_SCALE_MODEL_VERSION,
+    scaleMode: PHOTO_SCALE_MODE.CALIBRATED,
+    photoScaleState: PHOTO_SCALE_STATE.CALIBRATED,
+    gardenDesignBlocked: false,
+    calibrationMandatory: false,
     reasons: [],
     label,
     exact: false,
     displaySource,
     botanicalEvidenceClass: stageDims.evidenceClass,
-    suggestedHeightM: suggestedHeightMFromRange(stageDims.heightM),
+    sizeScenario,
+    rangeBand,
+    suggestedHeightM: suggestedHeightMFromRange(stageDims.heightM, rangeBand),
     displayHeightM,
     heightRangeM: stageDims.heightM,
+    spreadRangeM: spreadRange,
+    impliedSpreadM,
+    stretchedPng: false,
+    architectureClass,
+    architectureNote,
+    botanicalTruth,
+    designPreview: {
+      rangeBand,
+      displayHeightM,
+      impliedSpreadM,
+      representativePreview: rangeBand === 'MID',
+      notBotanicalTruth: true
+    },
+    userOverrideSeparateFromBotanicalTruth: displaySource === 'USER_OVERRIDE',
     visibleHeightPx,
     imgHeightPx,
     imgHeightPct: (imgHeightPx / sceneHeightPx) * 100,
     visibleHeightPct: (visibleHeightPx / sceneHeightPx) * 100,
     bboxFillRatio: fill,
+    assetWidthOverHeight: widthOverHeight,
     pixelsPerMeter: ppm.pixelsPerMeter,
     photoScaleMode: ppm.mode,
     placementNy,
@@ -406,7 +619,6 @@ export function computePhysicalSceneScale(input = {}) {
     growthStage: stageDims.growthStage,
     mangoHardCoded: false,
     usedInventedMeters: false,
-    userOverrideSeparateFromBotanicalTruth: displaySource === 'USER_OVERRIDE',
     accuracy: PHYSICAL_SCALE_ACCURACY,
     note: `${label}. Visualization estimate, not an exact mature size and not a survey.`
   };
@@ -414,26 +626,24 @@ export function computePhysicalSceneScale(input = {}) {
 
 export const PHYSICAL_SCALE_PERSISTENCE_PROPOSAL = Object.freeze({
   applyMigrationNow: false,
-  note: 'Schema proposal only. Existing garden_design_placements.growth_stage and scale stay. Do not overload scale as botanical truth. garden_designs.metadata may hold a session-shaped photo_scale_calibration without a new column, or add an explicit jsonb later.',
+  note: 'Schema proposal only. Photo scale belongs to a specific Garden source photo / design canvas, not each plant, not each placement, and not the whole account. Session-only until a later migration is approved.',
   tables: Object.freeze([
     Object.freeze({
       table: 'garden_designs',
-      column: 'photo_scale_calibration',
-      type: 'jsonb',
-      optionalInterim: 'garden_designs.metadata.photo_scale_calibration',
-      note: 'Known reference dimensions on the saved Garden photo: points, knownMeters, near/far band. Not applied in this task.'
+      columns: Object.freeze([
+        'photo_scale_state',
+        'photo_scale_calibration',
+        'calibration_dismissed_for_now'
+      ]),
+      type: 'jsonb-or-text',
+      optionalInterim: 'garden_designs.metadata.photo_scale',
+      keyedBy: 'source_media_id',
+      note: 'NOT_CALIBRATED | CALIBRATED plus optional two-point references. Reused for all placements on this photo. Not applied in this task.'
     }),
     Object.freeze({
       table: 'garden_design_placements',
-      columns: Object.freeze([
-        'growth_stage',
-        'botanical_target_height_m_min',
-        'botanical_target_height_m_max',
-        'botanical_height_evidence_class',
-        'suggested_scale',
-        'user_scale_override'
-      ]),
-      note: 'Keep user_scale_override separate from botanical source truth. growth_stage already exists. Not applied in this task.'
+      columns: Object.freeze(['user_scale_override']),
+      note: 'Do not store photo calibration on placements. Keep user_scale_override separate from botanical source truth. Not applied in this task.'
     })
   ])
 });
@@ -474,7 +684,9 @@ export function buildPhysicalScaleFoundationReport(jobs = [], options = {}) {
       'Only SOURCE_SUPPORTED_RANGE or USER_CONFIRMED may drive a physically labelled meter preview. UNKNOWN must not pretend to know meters. HEURISTIC_RANGE is recorded but not labelled as meters.',
     dimensionEvidenceStates: Object.values(DIMENSION_EVIDENCE),
     physicalPreviewDriveClasses: PHYSICAL_PREVIEW_DRIVE_CLASSES.slice(),
-    photoCalibration: emptyPhotoScaleCalibration(),
+    photoScaleProductContract: PHOTO_SCALE_PRODUCT_CONTRACT,
+    photoCalibrationOptional: true,
+    gardenDesignBlockedWithoutCalibration: false,
     perspective: {
       nearReference: true,
       farReference: true,
