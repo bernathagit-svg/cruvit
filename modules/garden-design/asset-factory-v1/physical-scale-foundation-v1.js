@@ -93,21 +93,87 @@ function finitePositive(value) {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-function bboxFillRatio(bbox = {}, canvasHeight = 1536) {
+export const PHYSICAL_SCALE_RENDERING_INVARIANTS = Object.freeze({
+  visibleAlphaBboxOnly: true,
+  transparentMarginAffectsBotanicalScale: false,
+  autoFitToFrame: false,
+  clippingAllowed: true,
+  botanicalScaleTakesPrecedenceOverFullAssetVisibility: true,
+  groundAnchorFixed: true,
+  ownerRequiredToCalibrate: false
+});
+
+/**
+ * Uncalibrated visualization heuristic for converting botanical meters to scene pixels.
+ * Not photo calibration. Not a survey. Not shown as meter-accurate height.
+ */
+export const ESTIMATED_VIEWPORT_VERTICAL_SPAN_M = Object.freeze({
+  near: 5.5,
+  middle: 7.5,
+  far: 10
+});
+
+export function auditVisibleAlphaBbox(input = {}) {
+  const canvasWidthPx = finitePositive(input.canvasWidth) || 1024;
+  const canvasHeightPx = finitePositive(input.canvasHeight) || 1536;
+  const bbox = input.bbox || {};
+  const minX = Number(bbox.minX);
   const minY = Number(bbox.minY);
+  const maxX = Number(bbox.maxX);
   const maxY = Number(bbox.maxY);
-  const height = Number(canvasHeight) || 1536;
-  if (!Number.isFinite(minY) || !Number.isFinite(maxY) || maxY <= minY || height <= 0) return 1;
-  return clamp((maxY - minY) / height, 0.35, 1);
+  const exists =
+    [minX, minY, maxX, maxY].every(Number.isFinite) && maxX >= minX && maxY >= minY && canvasWidthPx > 0 && canvasHeightPx > 0;
+  if (!exists) {
+    return {
+      exists: false,
+      canvasWidthPx,
+      canvasHeightPx,
+      canvasAspect: canvasWidthPx / canvasHeightPx,
+      visibleWidthPx: null,
+      visibleHeightPx: null,
+      visibleAspect: null,
+      usedCanvasAspectForBotanicalScale: false,
+      source: 'visible-alpha-bbox'
+    };
+  }
+  const visibleWidthPx = maxX - minX + 1;
+  const visibleHeightPx = maxY - minY + 1;
+  return {
+    exists: true,
+    canvasWidthPx,
+    canvasHeightPx,
+    canvasAspect: canvasWidthPx / canvasHeightPx,
+    minX,
+    minY,
+    maxX,
+    maxY,
+    visibleWidthPx,
+    visibleHeightPx,
+    visibleAspect: visibleWidthPx / visibleHeightPx,
+    transparentMarginPx: Object.freeze({
+      left: minX,
+      top: minY,
+      right: canvasWidthPx - 1 - maxX,
+      bottom: canvasHeightPx - 1 - maxY
+    }),
+    usedCanvasAspectForBotanicalScale: false,
+    source: 'visible-alpha-bbox'
+  };
 }
 
-function visibleWidthOverHeight(bbox = {}) {
-  const minX = Number(bbox.minX);
-  const maxX = Number(bbox.maxX);
-  const minY = Number(bbox.minY);
-  const maxY = Number(bbox.maxY);
-  if (![minX, maxX, minY, maxY].every(Number.isFinite) || maxX <= minX || maxY <= minY) return null;
-  return (maxX - minX) / (maxY - minY);
+function visibleBboxFillRatio(audit) {
+  if (!audit || !audit.exists || !audit.visibleHeightPx || !audit.canvasHeightPx) return 1;
+  const fill = audit.visibleHeightPx / audit.canvasHeightPx;
+  return fill > 0 ? fill : 1;
+}
+
+function visibleWidthOverHeight(bbox = {}, canvas = {}) {
+  const audit = auditVisibleAlphaBbox({
+    bbox,
+    canvasWidth: canvas.width,
+    canvasHeight: canvas.height
+  });
+  return audit.visibleAspect;
 }
 
 export function mayDrivePhysicalMeterPreview(evidenceClass) {
@@ -460,8 +526,10 @@ export function computePhysicalSceneScale(input = {}) {
   const sceneHeightPx = finitePositive(input.sceneHeightPx) || 300;
   const sceneWidthPx = finitePositive(input.sceneWidthPx) || sceneHeightPx * (4 / 3);
   const bbox = input.bbox || {};
+  const canvasWidth = finitePositive(input.canvasWidth) || 1024;
   const canvasHeight = finitePositive(input.canvasHeight) || 1536;
-  const fill = bboxFillRatio(bbox, canvasHeight);
+  const audit = auditVisibleAlphaBbox({ bbox, canvasWidth, canvasHeight });
+  const fill = visibleBboxFillRatio(audit);
   const depth = PHYSICAL_PLACEMENT[input.depthId] || null;
   const placementNy =
     input.placementNy == null ? (depth ? depth.ny : PHYSICAL_PLACEMENT.middle.ny) : clamp(input.placementNy, 0, 1);
@@ -506,20 +574,38 @@ export function computePhysicalSceneScale(input = {}) {
   const forceEstimated = lockScaleMode === PHOTO_SCALE_MODE.ESTIMATED;
   const canCalibrateMeters = !forceEstimated && Boolean(ppm.pixelsPerMeter && displayHeightM);
   if (!canCalibrateMeters) {
-    const estimated = estimatedFormRelativeScale({
-      visualForm: asText(input.visualForm) || stageDims.visualForm,
-      growthStage: stageDims.growthStage,
-      depthId: input.depthId,
-      ownerScale: input.ownerScale,
-      bbox,
-      canvasWidth: finitePositive(input.canvasWidth) || 1024,
-      canvasHeight,
-      sizeEvidence: { status: stageDims.evidenceClass }
-    });
-    const imgPct = estimated.imgHeightPct != null ? estimated.imgHeightPct : estimated.heightPct;
-    const visiblePct = estimated.visibleHeightPct != null ? estimated.visibleHeightPct : estimated.heightPct;
     const young = stageDims.growthStage === 'young';
     const estimatedLabel = displayHeightM && !young ? 'Estimated mature size' : 'Estimated size';
+    let imgPct;
+    let visiblePct;
+    let yBottomPct = depth ? depth.yBottomPct : PHYSICAL_PLACEMENT.middle.yBottomPct;
+    let estimatedViewportSpanM = null;
+    let fitToFrame = false;
+    if (displayHeightM) {
+      const depthId = (depth && depth.id) || input.depthId || 'middle';
+      estimatedViewportSpanM =
+        ESTIMATED_VIEWPORT_VERTICAL_SPAN_M[depthId] || ESTIMATED_VIEWPORT_VERTICAL_SPAN_M.middle;
+      const visibleHeightPx = (displayHeightM / estimatedViewportSpanM) * sceneHeightPx;
+      const imgHeightPx = visibleHeightPx / fill;
+      imgPct = (imgHeightPx / sceneHeightPx) * 100;
+      visiblePct = (visibleHeightPx / sceneHeightPx) * 100;
+    } else {
+      const estimated = estimatedFormRelativeScale({
+        visualForm: asText(input.visualForm) || stageDims.visualForm,
+        growthStage: stageDims.growthStage,
+        depthId: input.depthId,
+        ownerScale: input.ownerScale,
+        bbox,
+        canvasWidth,
+        canvasHeight,
+        sizeEvidence: { status: stageDims.evidenceClass }
+      });
+      imgPct = estimated.imgHeightPct != null ? estimated.imgHeightPct : estimated.heightPct;
+      visiblePct = estimated.visibleHeightPct != null ? estimated.visibleHeightPct : estimated.heightPct;
+      yBottomPct = estimated.yBottomPct != null ? estimated.yBottomPct : yBottomPct;
+    }
+    const widthOverHeight = audit.visibleAspect;
+    const impliedSpreadM = widthOverHeight && displayHeightM ? displayHeightM * widthOverHeight : null;
     return {
       status: 'PHYSICAL_SCALE_ESTIMATED',
       model: PHYSICAL_SCALE_MODEL_VERSION,
@@ -532,17 +618,26 @@ export function computePhysicalSceneScale(input = {}) {
       label: estimatedLabel,
       exact: false,
       meterAccuracy: false,
-      displaySource: 'estimated-form-relative',
+      fitToFrame,
+      clippingAllowed: true,
+      usedVisibleAlphaBbox: true,
+      usedCanvasAspect: false,
+      visibleBboxAudit: audit,
+      estimatedViewportSpanM,
+      displaySource: displayHeightM ? 'estimated-source-supported-not-fit-to-frame' : 'estimated-form-relative',
       botanicalEvidenceClass: stageDims.evidenceClass,
       botanicalHeightM: displayHeightM,
       displayHeightM: null,
+      impliedSpreadM,
+      stretchedPng: false,
       sizeScenario,
       rangeBand,
       imgHeightPct: imgPct,
       visibleHeightPct: visiblePct,
       imgHeightPx: (imgPct / 100) * sceneHeightPx,
       visibleHeightPx: (visiblePct / 100) * sceneHeightPx,
-      yBottomPct: estimated.yBottomPct != null ? estimated.yBottomPct : PHYSICAL_PLACEMENT.middle.yBottomPct,
+      yBottomPct,
+      transparentBottomPadRatio: audit.transparentMarginPx ? audit.transparentMarginPx.bottom / audit.canvasHeightPx : 0,
       visualForm: asText(input.visualForm) || stageDims.visualForm || null,
       growthStage: stageDims.growthStage,
       mangoHardCoded: false,
@@ -550,13 +645,13 @@ export function computePhysicalSceneScale(input = {}) {
       userOverrideSeparateFromBotanicalTruth: displaySource === 'USER_OVERRIDE',
       accuracy: 'visual-aid-not-centimeter',
       note: displayHeightM
-        ? `${estimatedLabel}. Botanical range is known but this render is not a meter measurement until the photo is calibrated.`
+        ? `${estimatedLabel}. Botanical range known. Render is not meter-accurate until the photo is calibrated. Clipping is valid. Not fit-to-frame.`
         : `${estimatedLabel}. Botanical meters UNKNOWN. Do not invent meters. Garden Design stays usable. Manual resize always available.`
     };
   }
   const visibleHeightPx = displayHeightM * ppm.pixelsPerMeter;
   const imgHeightPx = visibleHeightPx / fill;
-  const widthOverHeight = visibleWidthOverHeight(bbox);
+  const widthOverHeight = audit.visibleAspect;
   const impliedSpreadM = widthOverHeight && displayHeightM ? displayHeightM * widthOverHeight : null;
   const spreadRange = stageDims.spreadM || null;
   let architectureClass = ARCHITECTURE_CLASSES.UNKNOWN;
@@ -567,7 +662,7 @@ export function computePhysicalSceneScale(input = {}) {
       ? ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE
       : ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE;
     architectureNote = inside
-      ? 'Uniform scale from height. Implied canopy from PNG aspect sits inside the supported spread range. PNG was not stretched.'
+      ? 'Uniform scale from visible alpha bbox height. Implied canopy uses visible bbox aspect, not PNG canvas aspect. PNG was not stretched.'
       : 'Do not stretch the PNG independently in X/Y to fake botanical spread. REGEN_REQUIRED_ARCHITECTURE.';
   }
   const botanicalTruth = {
@@ -588,6 +683,12 @@ export function computePhysicalSceneScale(input = {}) {
     reasons: [],
     label,
     exact: false,
+    fitToFrame: false,
+    clippingAllowed: true,
+    usedVisibleAlphaBbox: true,
+    usedCanvasAspect: false,
+    visibleBboxAudit: audit,
+    transparentBottomPadRatio: audit.transparentMarginPx ? audit.transparentMarginPx.bottom / audit.canvasHeightPx : 0,
     displaySource,
     botanicalEvidenceClass: stageDims.evidenceClass,
     sizeScenario,

@@ -6,6 +6,7 @@
 
 import {
   DIMENSION_EVIDENCE,
+  auditVisibleAlphaBbox,
   classifyCatalogDimensionEvidence,
   classifyUserConfirmedDimension,
   mayDrivePhysicalMeterPreview
@@ -193,23 +194,33 @@ export function factoryMayUsePhysicalScalePreview(evidenceClass) {
 }
 
 export function visiblePlantAspect(bbox = {}, canvas = {}) {
-  const minX = Number(bbox.minX);
-  const maxX = Number(bbox.maxX);
-  const minY = Number(bbox.minY);
-  const maxY = Number(bbox.maxY);
-  const width = Number(canvas.width) || 1024;
-  const height = Number(canvas.height) || 1536;
-  if (![minX, maxX, minY, maxY].every(Number.isFinite) || maxX <= minX || maxY <= minY) {
-    return { widthPx: null, heightPx: null, widthOverHeight: null, fillWidth: 1, fillHeight: 1 };
+  const audit = auditVisibleAlphaBbox({
+    bbox,
+    canvasWidth: canvas.width,
+    canvasHeight: canvas.height
+  });
+  if (!audit.exists) {
+    return {
+      widthPx: null,
+      heightPx: null,
+      widthOverHeight: null,
+      fillWidth: 1,
+      fillHeight: 1,
+      usedCanvasAspect: false,
+      source: 'visible-alpha-bbox'
+    };
   }
-  const widthPx = maxX - minX;
-  const heightPx = maxY - minY;
   return {
-    widthPx,
-    heightPx,
-    widthOverHeight: widthPx / heightPx,
-    fillWidth: widthPx / width,
-    fillHeight: heightPx / height
+    widthPx: audit.visibleWidthPx,
+    heightPx: audit.visibleHeightPx,
+    widthOverHeight: audit.visibleAspect,
+    fillWidth: audit.visibleWidthPx / audit.canvasWidthPx,
+    fillHeight: audit.visibleHeightPx / audit.canvasHeightPx,
+    canvasWidthPx: audit.canvasWidthPx,
+    canvasHeightPx: audit.canvasHeightPx,
+    canvasAspect: audit.canvasAspect,
+    usedCanvasAspect: false,
+    source: 'visible-alpha-bbox'
   };
 }
 
@@ -236,9 +247,11 @@ export function classifyArchitectureVsSpread(input = {}) {
     impliedSpreadM,
     supportedSpreadM: spread,
     assetWidthOverHeight: aspect.widthOverHeight,
+    usedCanvasAspect: false,
+    source: 'visible-alpha-bbox',
     stretchedPng: false,
     note: inside
-      ? 'Uniform scale from height. Implied canopy from the PNG aspect sits inside the supported spread range.'
+      ? 'Uniform scale from visible alpha bbox height. Implied canopy uses visible bbox aspect, not PNG canvas aspect.'
       : 'Do not stretch the PNG on X/Y to fake botanical spread. Asset architecture cannot represent this height-to-spread pair. REGEN_REQUIRED_ARCHITECTURE.'
   };
 }
@@ -259,6 +272,8 @@ export function evaluateMangoSourceSizeCalibration(input = {}) {
     : MANGO_CALIBRATION_BBOX;
   const canvasWidth = Number(input.canvasWidth) || 1024;
   const canvasHeight = Number(input.canvasHeight) || 1536;
+  const audit = auditVisibleAlphaBbox({ bbox, canvasWidth, canvasHeight });
+  const canvasImpliedSpreadIfUsed = (heightM) => heightM * (canvasWidth / canvasHeight);
   const bands = [RANGE_BANDS.LOW, RANGE_BANDS.MID, RANGE_BANDS.HIGH].map((band) => {
     const heightM = pickRangeValue(mango.heightM, band);
     const architecture = classifyArchitectureVsSpread({
@@ -281,7 +296,9 @@ export function evaluateMangoSourceSizeCalibration(input = {}) {
         band === RANGE_BANDS.LOW ? mango.reportedRoundedM.heightM.min : band === RANGE_BANDS.HIGH ? mango.reportedRoundedM.heightM.max : 13.7,
       architectureClass: architecture.class,
       impliedSpreadM: architecture.impliedSpreadM,
-      stretchedPng: false
+      canvasAspectImpliedSpreadM: canvasImpliedSpreadIfUsed(heightM),
+      stretchedPng: false,
+      usedCanvasAspect: false
     };
   });
   return {
@@ -304,12 +321,28 @@ export function evaluateMangoSourceSizeCalibration(input = {}) {
       spreadM: mango.spreadM
     },
     reportedRoundedM: mango.reportedRoundedM,
+    visibleBboxAudit: audit,
+    previousArchitectureGate: {
+      withdrawn: true,
+      reason:
+        'Architecture is locked to visible alpha bbox only. Full PNG canvas aspect must not drive implied spread, fill, or compatibility.',
+      previousUsedCanvasAspect: false,
+      recomputedFrom: 'inclusive-visible-alpha-bbox'
+    },
     rangeBands: bands,
     architectureGate: {
       stretchedPng: false,
       independentXyStretchForbidden: true,
+      usedVisibleAlphaBbox: true,
+      usedCanvasAspect: false,
       representativeMidClass: bands.find((row) => row.rangeBand === RANGE_BANDS.MID)?.architectureClass || ARCHITECTURE_CLASSES.UNKNOWN,
       anyRegenRequired: bands.some((row) => row.architectureClass === ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE)
+    },
+    renderingInvariants: {
+      autoFitToFrame: false,
+      clippingAllowed: true,
+      ownerRequiredToCalibrate: false,
+      transparentMarginAffectsBotanicalScale: false
     },
     spend: { openaiCalls: 0, imageGeneration: 0, additionalSpendUsd: 0 }
   };

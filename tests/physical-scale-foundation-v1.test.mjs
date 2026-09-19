@@ -21,6 +21,9 @@ import {
   PHOTO_SCALE_PRODUCT_CONTRACT,
   PHOTO_SCALE_STATE,
   PHOTO_SCALE_MODE,
+  PHYSICAL_SCALE_RENDERING_INVARIANTS,
+  ESTIMATED_VIEWPORT_VERTICAL_SPAN_M,
+  auditVisibleAlphaBbox,
   addKnownReference,
   classifyCatalogDimensionEvidence,
   classifyUserConfirmedDimension,
@@ -40,6 +43,7 @@ import {
   ARCHITECTURE_CLASSES
 } from '../modules/garden-design/asset-factory-v1/physical-scale-evidence-v1.js';
 import { CALIBRATION_BATCH_1_CACHE_BUST } from '../modules/garden-design/asset-factory-v1/calibration-review-candidates-v1.js';
+import { inspectTechnicalQa } from '../modules/garden-design/asset-factory-v1/technical-qa-v1.js';
 import { isUsableDesignVariant } from '../modules/garden-design/garden-design-asset-registry-v1.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -348,6 +352,9 @@ test('source-supported mango evidence does not require the owner to type mature 
   assert.equal(estimated.scaleMode, PHOTO_SCALE_MODE.ESTIMATED);
   assert.equal(estimated.label, 'Estimated mature size');
   assert.equal(estimated.displayHeightM, null);
+  assert.equal(estimated.fitToFrame, false);
+  assert.equal(estimated.clippingAllowed, true);
+  assert.ok(estimated.visibleHeightPct > 100);
   const lockedEstimated = computePhysicalSceneScale({
     growthStage: 'mature',
     visualForm: 'tree',
@@ -362,37 +369,62 @@ test('source-supported mango evidence does not require the owner to type mature 
   assert.equal(PHOTO_SCALE_PRODUCT_CONTRACT.calibrationMandatory, false);
 });
 
-test('mango architecture gate uses height and spread without stretching the PNG', () => {
-  const report = evaluateMangoSourceSizeCalibration({ bbox: MANGO_BBOX });
-  assert.equal(report.evidenceScope, EVIDENCE_SCOPE.SPECIES_GENERAL);
-  assert.equal(report.cultivarSpecific, false);
-  assert.equal(report.massCatalogEnrichment, false);
+test('mango architecture gate uses visible alpha bbox and withdraws canvas-aspect method', () => {
+  const png = fs.readFileSync(
+    path.join(ROOT, 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png')
+  );
+  const qa = inspectTechnicalQa(png);
+  assert.equal(qa.metrics.width, 1024);
+  assert.equal(qa.metrics.height, 1536);
+  const audit = auditVisibleAlphaBbox({
+    bbox: qa.metrics.bbox,
+    canvasWidth: qa.metrics.width,
+    canvasHeight: qa.metrics.height
+  });
+  assert.equal(audit.exists, true);
+  assert.equal(audit.visibleWidthPx, qa.metrics.bbox.maxX - qa.metrics.bbox.minX + 1);
+  assert.equal(audit.visibleHeightPx, qa.metrics.bbox.maxY - qa.metrics.bbox.minY + 1);
+  assert.notEqual(audit.visibleAspect, audit.canvasAspect);
+  assert.equal(audit.usedCanvasAspectForBotanicalScale, false);
+  const report = evaluateMangoSourceSizeCalibration({
+    bbox: qa.metrics.bbox,
+    canvasWidth: qa.metrics.width,
+    canvasHeight: qa.metrics.height
+  });
+  assert.equal(report.previousArchitectureGate.withdrawn, true);
+  assert.equal(report.architectureGate.usedVisibleAlphaBbox, true);
+  assert.equal(report.architectureGate.usedCanvasAspect, false);
   assert.equal(report.architectureGate.stretchedPng, false);
   const byBand = Object.fromEntries(report.rangeBands.map((row) => [row.rangeBand, row]));
+  assert.ok(Math.abs(byBand.MID.impliedSpreadM - 13.716 * audit.visibleAspect) < 0.001);
+  assert.notEqual(byBand.MID.impliedSpreadM, byBand.MID.canvasAspectImpliedSpreadM);
   assert.equal(byBand.LOW.architectureClass, ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE);
   assert.equal(byBand.MID.architectureClass, ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE);
   assert.equal(byBand.HIGH.architectureClass, ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE);
-  assert.equal(report.spend.imageGeneration, 0);
+  assert.equal(PHYSICAL_SCALE_RENDERING_INVARIANTS.autoFitToFrame, false);
+  assert.equal(PHYSICAL_SCALE_RENDERING_INVARIANTS.clippingAllowed, true);
+  assert.equal(PHYSICAL_SCALE_RENDERING_INVARIANTS.ownerRequiredToCalibrate, false);
+  assert.equal(PHYSICAL_SCALE_RENDERING_INVARIANTS.transparentMarginAffectsBotanicalScale, false);
 });
 
 test('review harness wires physical scale V1 without generation endpoints', () => {
   const html = read('modules/garden-design/calibration-review.html');
   const app = read('app.html');
-  assert.match(html, /A. ESTIMATED MATURE SIZE/);
-  assert.match(html, /B. CALIBRATED SUGGESTED SIZE/);
+  const runtime = read('modules/garden-design/asset-factory-v1/physical-scale-foundation-v1-runtime.js');
+  assert.match(html, /ESTIMATED MATURE SIZE — LOW \/ MID \/ HIGH/);
   assert.match(html, /Continue without calibration/);
   assert.match(html, /Calibrate this photo/);
   assert.match(html, /Estimated mature size/);
-  assert.match(html, /Calibrated suggested scale/);
-  assert.match(html, /ENH563/);
-  assert.match(html, /SPECIES_GENERAL/);
-  assert.match(html, /At a plausible mature Mango size/);
-  assert.match(html, /is the crown\/trunk architecture still believable/);
+  assert.match(html, /No fit-to-frame/);
+  assert.match(html, /genuinely large mature Mango tree/);
+  assert.match(html, /physical-v1-scene \{ overflow: hidden/);
+  assert.match(html, /max-height: none !important/);
   assert.match(html, /photo-cal-scene/);
-  assert.match(html, /physical-v1-scene/);
   assert.match(html, /physical-scale-foundation-v1-runtime\.js/);
+  assert.doesNotMatch(runtime, /maxWidth = result\.scaleMode === PHOTO_SCALE_MODE\.CALIBRATED \? 'none' : '100%'/);
   assert.match(app, new RegExp(`calibration-review\\.html\\?v=${CALIBRATION_BATCH_1_CACHE_BUST}`));
-  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919l');
+  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919m');
   assert.doesNotMatch(html, /api\.openai\.com/);
   assert.doesNotMatch(html, /images\/generations/);
+  assert.ok(ESTIMATED_VIEWPORT_VERTICAL_SPAN_M.middle > 0);
 });

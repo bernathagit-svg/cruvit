@@ -28,7 +28,9 @@ import {
   DIMENSION_EVIDENCE,
   REFERENCE_KINDS,
   buildPhysicalScaleFoundationReport,
-  PHYSICAL_SCALE_PERSISTENCE_PROPOSAL
+  PHYSICAL_SCALE_PERSISTENCE_PROPOSAL,
+  PHYSICAL_SCALE_RENDERING_INVARIANTS,
+  auditVisibleAlphaBbox
 } from './physical-scale-foundation-v1.js';
 import {
   RANGE_BANDS,
@@ -313,25 +315,19 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   </div>
   <p class="note">Architecture class: <strong data-architecture-class>UNKNOWN</strong>. ${esc(mangoArchitectureNote)}</p>
   <p class="note" data-physical-scale-readout>Estimated mature size until this photo is calibrated. Garden Design is not blocked. Calibration is optional.</p>
-  <h4>A. ESTIMATED MATURE SIZE</h4>
-  <p class="note">Photo scale not required. Uses SOURCE_SUPPORTED mango range, visualForm=tree, growthStage=mature, tree depth heuristic, and manual resize. Label: Estimated mature size. Not meter-accurate rendered height.</p>
+  <h4>ESTIMATED MATURE SIZE — LOW / MID / HIGH</h4>
+  <p class="note">Photo calibration is optional and not required for this review. Visible alpha bbox only. No fit-to-frame. A large mature tree may clip the photo. Ground anchor stays at the placement. Label: Estimated mature size. Not meter accuracy.</p>
   <div class="scenes">
-    ${sceneBlock('EST MID', 'A — Estimated mature size — middle', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'ESTIMATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('EST LOW', 'Estimated mature size — LOW of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.LOW, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'ESTIMATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('EST MID', 'Estimated mature size — MID representative preview', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'ESTIMATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('EST HIGH', 'Estimated mature size — HIGH of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.HIGH, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'ESTIMATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
   </div>
-  <h4>B. CALIBRATED SUGGESTED SIZE — LOW / MID / HIGH</h4>
-  <p class="note">Appears as Calibrated suggested size only after this photo is calibrated. Until then these panels stay Estimated mature size. Same Garden photo. No regeneration.</p>
+  <h4>Optional calibrated suggested size</h4>
+  <p class="note">Available separately if the owner later calibrates this photo. Not required for this review. Same Garden photo. No regeneration.</p>
   <div class="scenes">
-    ${sceneBlock('CAL LOW', 'B — Calibrated suggested size — LOW of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.LOW, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
-    ${sceneBlock('CAL MID', 'B — Calibrated suggested size — MID representative preview', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
-    ${sceneBlock('CAL HIGH', 'B — Calibrated suggested size — HIGH of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.HIGH, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('CAL MID', 'Optional calibrated suggested size — MID', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
   </div>
-  <h4>Calibrated MID — near / far</h4>
-  <div class="scenes">
-    ${sceneBlock('CAL NEAR', 'Calibrated suggested size — near MID', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'near', lockDepth: 'near', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
-    ${sceneBlock('CAL FAR', 'Calibrated suggested size — far MID', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'far', lockDepth: 'far', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
-  </div>
-  <p class="note">Owner question: At a plausible mature Mango size, does the tree now look physically believable in this garden?</p>
-  <p class="note">Second question: At that size, is the crown/trunk architecture still believable?</p>
+  <p class="note">Owner question: Does this now read as a genuinely large mature Mango tree, even if part of the canopy extends outside the photo?</p>
   <details>
     <summary>USER_CONFIRMED fallback (not the default workflow)</summary>
     <p class="note">Use only when source-supported evidence is missing or the owner deliberately chooses another target size. This never overwrites botanical source evidence. Owner is not asked to enter Mango height in the normal flow.</p>
@@ -409,11 +405,14 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real { width: 420px; height: 300px; }
     .scene.real.tree-v3-scene, .scene.real.physical-v1-scene { width: 480px; height: 360px; }
+    .scene.physical-v1-scene { overflow: hidden; }
+    .scene.physical-v1-scene .placement { width: auto; max-width: none; overflow: visible; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; object-fit: contain; object-position: bottom center; }
     .scene.real.photo-cal-scene { width: 640px; height: 420px; cursor: crosshair; }
     .cal-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #0f3d2e; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
     .cal-line { position: absolute; height: 2px; background: #e8c547; transform-origin: 0 50%; pointer-events: none; z-index: 2; }
-    .scene.physical-v1-scene .placement { width: auto; max-width: none; }
-    .scene.physical-v1-scene .placement img.cutout { max-width: none; width: auto; }
+    .scene.physical-v1-scene .placement { width: auto; max-width: none; overflow: visible; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; object-fit: contain; object-position: bottom center; }
     .checkerboard-scene { width: 280px; height: 360px; }
     .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
     .scene img.cutout.small { max-height: 34%; }
@@ -705,6 +704,25 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
   });
   const mangoSourcePath = path.join(physicalDir, 'mango-source-size-calibration-v1.json');
   fs.writeFileSync(mangoSourcePath, `${JSON.stringify(mangoSourceReport, null, 2)}\n`);
+  const invariantsPath = path.join(physicalDir, 'physical-scale-rendering-invariants-v1.json');
+  fs.writeFileSync(
+    invariantsPath,
+    `${JSON.stringify(
+      {
+        contract: 'physical-scale-rendering-invariants-v1',
+        ...PHYSICAL_SCALE_RENDERING_INVARIANTS,
+        visibleBboxAudit: mangoSourceReport.visibleBboxAudit || auditVisibleAlphaBbox({
+          bbox: mangoJob.technicalQa && mangoJob.technicalQa.metrics && mangoJob.technicalQa.metrics.bbox,
+          canvasWidth: 1024,
+          canvasHeight: 1536
+        }),
+        previousArchitectureGateWithdrawn: true,
+        spend: { openaiCalls: 0, imageGeneration: 0, additionalSpendUsd: 0 }
+      },
+      null,
+      2
+    )}\n`
+  );
   const schemaPath = path.join(physicalDir, 'persistence-schema-proposal.json');
   fs.writeFileSync(
     schemaPath,
@@ -717,6 +735,7 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
     v3Path,
     physicalPath,
     mangoSourcePath,
+    invariantsPath,
     schemaPath,
     treeScale: report.treeScale.result,
     treeScaleV3: v3Report.invariant.result,

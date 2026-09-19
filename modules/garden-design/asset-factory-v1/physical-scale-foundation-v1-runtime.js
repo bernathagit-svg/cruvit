@@ -254,15 +254,18 @@ function applyPhysicalScene(scene, options) {
   placement.style.transform = 'translateX(-50%)';
   placement.style.width = 'auto';
   placement.style.maxWidth = 'none';
+  placement.style.overflow = 'visible';
   const ready = result.status === 'PHYSICAL_SCALE_READY' || result.status === 'PHYSICAL_SCALE_ESTIMATED';
   if (ready) {
     const imgPx = result.imgHeightPx != null ? result.imgHeightPx : ((result.imgHeightPct || result.visibleHeightPct) / 100) * (scene.clientHeight || 360);
-    img.style.maxHeight = `${imgPx}px`;
+    img.style.maxHeight = 'none';
+    img.style.maxWidth = 'none';
     img.style.height = `${imgPx}px`;
     img.style.width = 'auto';
-    img.style.maxWidth = result.scaleMode === PHOTO_SCALE_MODE.CALIBRATED ? 'none' : '100%';
     img.style.transform = 'none';
     img.style.opacity = '';
+    const pad = Number(result.transparentBottomPadRatio);
+    img.style.marginBottom = Number.isFinite(pad) && pad > 0 ? `${-(pad * imgPx)}px` : '0px';
     if (overlay) overlay.hidden = true;
     const shadowSpec = contactShadowForScale({
       heightPct: Math.min(result.visibleHeightPct || 54, 90),

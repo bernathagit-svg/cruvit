@@ -67,7 +67,10 @@ export {
   PHYSICAL_SCALE_MODEL_VERSION,
   PHOTO_SCALE_PRODUCT_CONTRACT,
   PHOTO_SCALE_STATE,
-  PHOTO_SCALE_MODE
+  PHOTO_SCALE_MODE,
+  PHYSICAL_SCALE_RENDERING_INVARIANTS,
+  ESTIMATED_VIEWPORT_VERTICAL_SPAN_M,
+  auditVisibleAlphaBbox
 } from './physical-scale-foundation-v1.js';
 export {
   resolvePhysicalScaleEvidence,

@@ -53,6 +53,33 @@
       "max": 15.2
     }
   },
+  "visibleBboxAudit": {
+    "exists": true,
+    "canvasWidthPx": 1024,
+    "canvasHeightPx": 1536,
+    "canvasAspect": 0.6666666666666666,
+    "minX": 33,
+    "minY": 148,
+    "maxX": 1008,
+    "maxY": 1422,
+    "visibleWidthPx": 976,
+    "visibleHeightPx": 1275,
+    "visibleAspect": 0.7654901960784314,
+    "transparentMarginPx": {
+      "left": 33,
+      "top": 148,
+      "right": 15,
+      "bottom": 113
+    },
+    "usedCanvasAspectForBotanicalScale": false,
+    "source": "visible-alpha-bbox"
+  },
+  "previousArchitectureGate": {
+    "withdrawn": true,
+    "reason": "Architecture is locked to visible alpha bbox only. Full PNG canvas aspect must not drive implied spread, fill, or compatibility.",
+    "previousUsedCanvasAspect": false,
+    "recomputedFrom": "inclusive-visible-alpha-bbox"
+  },
   "rangeBands": [
     {
       "rangeBand": "LOW",
@@ -60,8 +87,10 @@
       "heightM": 9.144,
       "heightMRounded": 9.1,
       "architectureClass": "REGEN_REQUIRED_ARCHITECTURE",
-      "impliedSpreadM": 6.997959183673469,
-      "stretchedPng": false
+      "impliedSpreadM": 6.999642352941176,
+      "canvasAspectImpliedSpreadM": 6.096,
+      "stretchedPng": false,
+      "usedCanvasAspect": false
     },
     {
       "rangeBand": "MID",
@@ -69,8 +98,10 @@
       "heightM": 13.716000000000001,
       "heightMRounded": 13.7,
       "architectureClass": "ARCHITECTURE_COMPATIBLE",
-      "impliedSpreadM": 10.496938775510204,
-      "stretchedPng": false
+      "impliedSpreadM": 10.499463529411766,
+      "canvasAspectImpliedSpreadM": 9.144,
+      "stretchedPng": false,
+      "usedCanvasAspect": false
     },
     {
       "rangeBand": "HIGH",
@@ -78,15 +109,25 @@
       "heightM": 18.288,
       "heightMRounded": 18.3,
       "architectureClass": "ARCHITECTURE_COMPATIBLE",
-      "impliedSpreadM": 13.995918367346938,
-      "stretchedPng": false
+      "impliedSpreadM": 13.999284705882353,
+      "canvasAspectImpliedSpreadM": 12.192,
+      "stretchedPng": false,
+      "usedCanvasAspect": false
     }
   ],
   "architectureGate": {
     "stretchedPng": false,
     "independentXyStretchForbidden": true,
+    "usedVisibleAlphaBbox": true,
+    "usedCanvasAspect": false,
     "representativeMidClass": "ARCHITECTURE_COMPATIBLE",
     "anyRegenRequired": true
+  },
+  "renderingInvariants": {
+    "autoFitToFrame": false,
+    "clippingAllowed": true,
+    "ownerRequiredToCalibrate": false,
+    "transparentMarginAffectsBotanicalScale": false
   },
   "spend": {
     "openaiCalls": 0,
