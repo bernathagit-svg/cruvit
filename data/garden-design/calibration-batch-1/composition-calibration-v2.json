@@ -1,0 +1,572 @@
+{
+  "contract": "garden-composition-calibration-v2",
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "approvedAssets": 0,
+  "productionRegistryChanged": false,
+  "regenerate": false,
+  "treeScale": {
+    "result": "TREE_SCALE_MODEL_PASS",
+    "mangoNear": {
+      "visualForm": "tree",
+      "depthId": "near",
+      "yBottomPct": 6,
+      "formFactor": 1,
+      "depthFactor": 1,
+      "ownerScale": 1,
+      "heightPct": 82,
+      "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+      "usedInventedMeters": false,
+      "usedPngPixelHeightAsBotanicalSize": false,
+      "accuracy": "visual-aid-not-centimeter",
+      "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+    },
+    "mangoMiddle": {
+      "visualForm": "tree",
+      "depthId": "middle",
+      "yBottomPct": 20,
+      "formFactor": 1,
+      "depthFactor": 0.76,
+      "ownerScale": 1,
+      "heightPct": 62.32,
+      "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+      "usedInventedMeters": false,
+      "usedPngPixelHeightAsBotanicalSize": false,
+      "accuracy": "visual-aid-not-centimeter",
+      "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+    },
+    "mangoFar": {
+      "visualForm": "tree",
+      "depthId": "far",
+      "yBottomPct": 36,
+      "formFactor": 1,
+      "depthFactor": 0.58,
+      "ownerScale": 1,
+      "heightPct": 47.559999999999995,
+      "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+      "usedInventedMeters": false,
+      "usedPngPixelHeightAsBotanicalSize": false,
+      "accuracy": "visual-aid-not-centimeter",
+      "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+    },
+    "shrubFar": {
+      "visualForm": "shrub",
+      "depthId": "far",
+      "yBottomPct": 36,
+      "formFactor": 0.42,
+      "depthFactor": 0.58,
+      "ownerScale": 1,
+      "heightPct": 19.975199999999997,
+      "sizeEvidenceStatus": "SIZE_EVIDENCE_UNKNOWN",
+      "usedInventedMeters": false,
+      "usedPngPixelHeightAsBotanicalSize": false,
+      "accuracy": "visual-aid-not-centimeter",
+      "note": "Single-photo visual aid. Not a camera-calibrated physical measurement. Owner may still resize manually."
+    },
+    "farVsNear": 0.58,
+    "fixedSmallHeightPct": 34,
+    "regeneratedMango": false,
+    "centimeterAccuracy": false
+  },
+  "blendV2": {
+    "version": "blend-v2",
+    "bounds": {
+      "brightness": {
+        "min": 0.88,
+        "max": 1.08
+      },
+      "contrast": {
+        "min": 0.88,
+        "max": 1.06
+      },
+      "saturate": {
+        "min": 0.82,
+        "max": 1.05
+      },
+      "blurPx": {
+        "min": 0.2,
+        "max": 0.7
+      },
+      "opacity": {
+        "min": 0.94,
+        "max": 1
+      },
+      "hueRotateDeg": {
+        "min": 0,
+        "max": 0
+      }
+    },
+    "altersGardenPhoto": false,
+    "bakesIntoPng": false,
+    "usesAiOrInpainting": false
+  },
+  "assets": [
+    {
+      "canonicalSlug": "mango",
+      "visualForm": "tree",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": true,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Evergreen tropical/subtropical fruit tree",
+        "growthStage": null,
+        "qualitativeText": null,
+        "unprovenancedCatalogCopy": "3–10 m depending on variety and pruning",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "mango",
+        "visualForm": "tree",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 33,
+          "minY": 148,
+          "maxX": 1008,
+          "maxY": 1422,
+          "opaque": 716872
+        },
+        "groundAnchor": {
+          "nx": 0.50830078125,
+          "ny": 0.92578125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Evergreen tropical/subtropical fruit tree",
+          "growthStage": null,
+          "qualitativeText": null,
+          "unprovenancedCatalogCopy": "3–10 m depending on variety and pruning",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "REGEN_REQUIRED",
+      "recommendedNote": "Tree crown/trunk architecture and inherent perspective are not runtime-solvable. Scene scale experiment can only address B.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "lavender",
+      "visualForm": "shrub",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": false,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Evergreen aromatic shrub",
+        "growthStage": null,
+        "qualitativeText": null,
+        "unprovenancedCatalogCopy": "40–70 cm",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "lavender",
+        "visualForm": "shrub",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 47,
+          "minY": 355,
+          "maxX": 990,
+          "maxY": 1278,
+          "opaque": 575341
+        },
+        "groundAnchor": {
+          "nx": 0.50634765625,
+          "ny": 0.83203125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Evergreen aromatic shrub",
+          "growthStage": null,
+          "qualitativeText": null,
+          "unprovenancedCatalogCopy": "40–70 cm",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "RUNTIME_SOLVABLE",
+      "recommendedNote": "Remaining issues treated as sticker look, minor tone/sharpness, ground contact, and scene scale.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "visualForm": "rosette",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": false,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Rosette bromeliad; fruit from offset",
+        "growthStage": null,
+        "qualitativeText": "Rosette; ~1 m spread in ground or large pot",
+        "unprovenancedCatalogCopy": "60–120 cm spread",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "pineapple",
+        "visualForm": "rosette",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 3,
+          "minY": 261,
+          "maxX": 1017,
+          "maxY": 1356,
+          "opaque": 417182
+        },
+        "groundAnchor": {
+          "nx": 0.498046875,
+          "ny": 0.8828125,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Rosette bromeliad; fruit from offset",
+          "growthStage": null,
+          "qualitativeText": "Rosette; ~1 m spread in ground or large pot",
+          "unprovenancedCatalogCopy": "60–120 cm spread",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "RUNTIME_SOLVABLE",
+      "recommendedNote": "Remaining issues treated as sticker look, minor tone/sharpness, ground contact, and scene scale.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "banana",
+      "visualForm": "herbaceous-clump",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": true,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Fast herbaceous plant with pups",
+        "growthStage": null,
+        "qualitativeText": null,
+        "unprovenancedCatalogCopy": "2–5 m depending on variety",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "banana",
+        "visualForm": "herbaceous-clump",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 22,
+          "minY": 34,
+          "maxX": 993,
+          "maxY": 1488,
+          "opaque": 666877
+        },
+        "groundAnchor": {
+          "nx": 0.49560546875,
+          "ny": 0.96875,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Fast herbaceous plant with pups",
+          "growthStage": null,
+          "qualitativeText": null,
+          "unprovenancedCatalogCopy": "2–5 m depending on variety",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "REGEN_REQUIRED",
+      "recommendedNote": "Large herbaceous-clump architecture is treated like a tree-scale specimen; runtime cannot repair silhouette.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "areca-palm",
+      "visualForm": "palm",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": true,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Clumping feather palm",
+        "growthStage": null,
+        "qualitativeText": "Clumping palm; 2–3 m indoors, wider outdoors",
+        "unprovenancedCatalogCopy": "2–6 m outdoors; 1.5–2.5 m indoors",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "areca-palm",
+        "visualForm": "palm",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 43,
+          "minY": 36,
+          "maxX": 986,
+          "maxY": 1481,
+          "opaque": 666310
+        },
+        "groundAnchor": {
+          "nx": 0.50244140625,
+          "ny": 0.9641927083333334,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Clumping feather palm",
+          "growthStage": null,
+          "qualitativeText": "Clumping palm; 2–3 m indoors, wider outdoors",
+          "unprovenancedCatalogCopy": "2–6 m outdoors; 1.5–2.5 m indoors",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "REGEN_REQUIRED",
+      "recommendedNote": "Palm vertical architecture and specimen form are not runtime-solvable.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "visualForm": "climber",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": false,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Vigorous climber / shrub",
+        "growthStage": null,
+        "qualitativeText": null,
+        "unprovenancedCatalogCopy": "2–6 m",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "bougainvillea",
+        "visualForm": "climber",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 31,
+          "minY": 170,
+          "maxX": 1008,
+          "maxY": 1462,
+          "opaque": 484508
+        },
+        "groundAnchor": {
+          "nx": 0.50732421875,
+          "ny": 0.9518229166666666,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Vigorous climber / shrub",
+          "growthStage": null,
+          "qualitativeText": null,
+          "unprovenancedCatalogCopy": "2–6 m",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "RUNTIME_SOLVABLE",
+      "recommendedNote": "Climber remaining issues treated as scene scale plus sticker/tone integration.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "aloe-vera",
+      "visualForm": "succulent-form",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": false,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Clumping succulent",
+        "growthStage": null,
+        "qualitativeText": null,
+        "unprovenancedCatalogCopy": "30–70 cm",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "aloe-vera",
+        "visualForm": "succulent-form",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 35,
+          "minY": 188,
+          "maxX": 987,
+          "maxY": 1388,
+          "opaque": 416252
+        },
+        "groundAnchor": {
+          "nx": 0.4990234375,
+          "ny": 0.9036458333333334,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Clumping succulent",
+          "growthStage": null,
+          "qualitativeText": null,
+          "unprovenancedCatalogCopy": "30–70 cm",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "RUNTIME_SOLVABLE",
+      "recommendedNote": "Remaining issues treated as sticker look, minor tone/sharpness, ground contact, and scene scale.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    },
+    {
+      "canonicalSlug": "eggplant",
+      "visualForm": "subshrub",
+      "problems": {
+        "A_ASSET_STRUCTURAL_PROPORTION": false,
+        "B_SCENE_SCALE_PERSPECTIVE": true,
+        "C_VISUAL_INTEGRATION": true
+      },
+      "sizeEvidence": {
+        "status": "SIZE_EVIDENCE_UNKNOWN",
+        "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+        "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+        "growthForm": "Warm-season annual subshrub",
+        "growthStage": null,
+        "qualitativeText": "Subshrub; 80–120 cm tall",
+        "unprovenancedCatalogCopy": "60–120 cm",
+        "sourcePath": null,
+        "usedForPhysicalScale": false,
+        "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+      },
+      "scaleContract": {
+        "canonicalSlug": "eggplant",
+        "visualForm": "subshrub",
+        "nominalGrowthStage": "mature",
+        "canvasWidth": 1024,
+        "canvasHeight": 1536,
+        "intrinsicBoundingBox": {
+          "minX": 51,
+          "minY": 105,
+          "maxX": 978,
+          "maxY": 1418,
+          "opaque": 559624
+        },
+        "groundAnchor": {
+          "nx": 0.50244140625,
+          "ny": 0.9231770833333334,
+          "source": "alpha-bbox-base-center"
+        },
+        "sizeEvidence": {
+          "status": "SIZE_EVIDENCE_UNKNOWN",
+          "matureHeightM": "SIZE_EVIDENCE_UNKNOWN",
+          "matureSpreadM": "SIZE_EVIDENCE_UNKNOWN",
+          "growthForm": "Warm-season annual subshrub",
+          "growthStage": null,
+          "qualitativeText": "Subshrub; 80–120 cm tall",
+          "unprovenancedCatalogCopy": "60–120 cm",
+          "sourcePath": null,
+          "usedForPhysicalScale": false,
+          "note": "No source-supported mature height/spread. Do not invent 2m / 5m / 10m. Scene scale uses visualForm relative factor only."
+        },
+        "pngDimensionsAreBotanicalSize": false,
+        "note": "1024×1536 is the cutout canvas, not physical plant height or spread."
+      },
+      "recommendedClass": "RUNTIME_SOLVABLE",
+      "recommendedNote": "Remaining issues treated as sticker look, minor tone/sharpness, ground contact, and scene scale.",
+      "approvalStatus": "candidate",
+      "autoApproved": false
+    }
+  ]
+}

@@ -53,6 +53,8 @@ export const RUNTIME_BLEND_EXPERIMENT = Object.freeze({
   })
 });
 
+export { RUNTIME_BLEND_V2 } from './composition-calibration-v2.js';
+
 /** Non-destructive Blend V1 for existing calibration candidates. Does not bake binaries. */
 export const RUNTIME_BLEND_V1 = Object.freeze({
   version: 'blend-v1',

@@ -9,6 +9,7 @@ import {
   applyOwnerVisualField,
   applyOwnerVisualVerdict,
   applyRound1Class,
+  applyCompositionV2Class,
   buildOwnerFeedbackSummary,
   buildRound1FinalSnapshot,
   derivePromptFactoryV2Learning,
@@ -36,10 +37,10 @@ function gardenPhotoLoaded(doc) {
 
 function syncClassificationGate(doc) {
   const ready = gardenPhotoLoaded(doc);
-  doc.querySelectorAll('[data-learning-class]').forEach((btn) => {
+  doc.querySelectorAll('[data-learning-class], [data-composition-v2-class]').forEach((btn) => {
     btn.disabled = !ready;
     btn.title = ready
-      ? 'Round-1 class. Not production approval.'
+      ? 'Classification only. Not production approval.'
       : 'Wait for REAL_GARDEN_SOURCE_LOADED. Do not classify on black B/C/D panels.';
   });
 }
@@ -66,6 +67,10 @@ function paint(root, record, doc) {
   const klass = (record && record.ROUND_1_CLASS) || '';
   root.querySelectorAll('[data-learning-class]').forEach((btn) => {
     btn.setAttribute('aria-pressed', btn.getAttribute('data-learning-class') === klass ? 'true' : 'false');
+  });
+  const v2Class = (record && record.COMPOSITION_V2_CLASS) || '';
+  root.querySelectorAll('[data-composition-v2-class]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-composition-v2-class') === v2Class ? 'true' : 'false');
   });
   syncClassificationGate(doc || root.ownerDocument);
 }
@@ -210,6 +215,15 @@ export function initOwnerVisualQa(doc) {
       btn.addEventListener('click', () => {
         if (!gardenPhotoLoaded(documentRef)) return;
         state = applyRound1Class(state, slug, btn.getAttribute('data-learning-class'));
+        saveOwnerVisualQa(store, state);
+        paint(root, state[slug], documentRef);
+        renderSummary(documentRef, state);
+      });
+    });
+    root.querySelectorAll('[data-composition-v2-class]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!gardenPhotoLoaded(documentRef)) return;
+        state = applyCompositionV2Class(state, slug, btn.getAttribute('data-composition-v2-class'));
         saveOwnerVisualQa(store, state);
         paint(root, state[slug], documentRef);
         renderSummary(documentRef, state);

@@ -4,9 +4,11 @@
  * Does not call providers. Does not spend.
  */
 import { DEFAULT_GENERATION_SETTINGS } from './prompt-factory-v1.js';
+import { treePromptV2Lines } from './composition-calibration-v2.js';
 
 export const PROMPT_TEMPLATE_VERSION_V2 = 'design-cutout-v2';
 export const PROMPT_FACTORY_V2_LEARNING_STATUS = 'NOT_FINALIZED_PENDING_OWNER_CLASSIFICATION';
+export const PROMPT_FACTORY_V2_TREE_RULES_STATUS = 'PREPARED_NOT_EXECUTED';
 
 function asText(value) {
   return String(value == null ? '' : value).trim();
@@ -45,6 +47,7 @@ export function buildPromptRecordV2(job = {}, options = {}) {
     'Camera: planted-bed eye level, ground-level three-quarter view, as if standing in the garden looking at a real planted specimen.',
     'Explicitly forbid catalog elevation, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation.',
     'Silhouette: natural horticultural architecture with irregular organic branching or leaf arrangement. Avoid perfect stock-photo symmetry and lollipop-tree shapes.',
+    form === 'tree' ? treePromptV2Lines().join(' ') : '',
     'Scale and framing: realistic specimen proportions for overlay in a real garden photo. Preserve the full plant. Leave enough transparent margin that nothing is cropped. Do not miniaturize the plant inside a large empty canvas.',
     'Sharpness: natural photographic outdoor detail. Avoid hyper-detailed studio-render microtexture, plastic smoothness, and oversharpened CGI look.',
     'Isolated whole plant, true transparent background, no backdrop.',

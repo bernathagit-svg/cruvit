@@ -4,7 +4,7 @@
  */
 export const CALIBRATION_REVIEW_ONLY = true;
 export const CALIBRATION_BATCH_1_RUN_ID = 'design-asset-calibration-batch-1';
-export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919f';
+export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919g';
 export const CALIBRATION_BATCH_1_DIR = 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1';
 export const CALIBRATION_BATCH_1_LIVE_BASE = 'assets/plants/batch-1-candidates/calibration-batch-1/';
 
@@ -13,6 +13,7 @@ export const OWNER_VISUAL_QA_STORAGE_KEY = 'cruvit:calibration-batch-1-owner-vis
 export const LEARNING_CLASS_STORAGE_KEY = 'cruvit:calibration-batch-1-learning-class';
 export const LEARNING_EXPORT_STORAGE_KEY = 'cruvit:calibration-batch-1-round-1-learning';
 export const LEARNING_CLASSES = Object.freeze(['BLEND_SOLVABLE', 'REGEN_REQUIRED', 'REJECT_IDENTITY']);
+export const COMPOSITION_V2_CLASSES = Object.freeze(['RUNTIME_SOLVABLE', 'REGEN_REQUIRED']);
 
 export const CALIBRATION_BATCH_1_CANDIDATES = Object.freeze([
   { rank: 1, canonicalSlug: 'mango', file: 'mango-mature-vegetative-v1.png' },
@@ -50,6 +51,7 @@ export function emptyOwnerVisualRecord(slug) {
     ASSET_QA: 'UNKNOWN',
     approvalStatus: 'candidate',
     ROUND_1_CLASS: null,
+    COMPOSITION_V2_CLASS: null,
     fields: {
       PERSPECTIVE: false,
       GROUND_CONTACT: false,
@@ -220,6 +222,17 @@ export function applyRound1Class(state, slug, klass) {
   const next = { ...(state || {}) };
   const row = { ...(next[slug] || emptyOwnerVisualRecord(slug)) };
   row.ROUND_1_CLASS = LEARNING_CLASSES.includes(klass) ? klass : null;
+  row.BOTANICAL_IDENTITY_QA = 'UNKNOWN';
+  row.ASSET_QA = 'UNKNOWN';
+  row.approvalStatus = 'candidate';
+  next[slug] = row;
+  return next;
+}
+
+export function applyCompositionV2Class(state, slug, klass) {
+  const next = { ...(state || {}) };
+  const row = { ...(next[slug] || emptyOwnerVisualRecord(slug)) };
+  row.COMPOSITION_V2_CLASS = COMPOSITION_V2_CLASSES.includes(klass) ? klass : null;
   row.BOTANICAL_IDENTITY_QA = 'UNKNOWN';
   row.ASSET_QA = 'UNKNOWN';
   row.approvalStatus = 'candidate';

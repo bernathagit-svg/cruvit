@@ -46,7 +46,13 @@ export {
   isCalibrationEvidenceBlocked,
   LOCKED_CALIBRATION_SLUGS
 } from './calibration-batch-v1.js';
-export { assessInGardenQa, composeApprovalVerdict, classifyCutoutIntegration, IN_GARDEN_REVIEW_FIELDS } from './in-garden-qa-v1.js';
+export { assessInGardenQa, composeApprovalVerdict, classifyCutoutIntegration, IN_GARDEN_REVIEW_FIELDS, RUNTIME_BLEND_V2 } from './in-garden-qa-v1.js';
+export {
+  auditBotanicalSizeEvidence,
+  buildDesignAssetScaleContract,
+  evaluateTreeScaleModel,
+  SIZE_EVIDENCE_UNKNOWN
+} from './composition-calibration-v2.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

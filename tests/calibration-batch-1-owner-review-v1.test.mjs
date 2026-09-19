@@ -31,7 +31,8 @@ import { RUNTIME_BLEND_V1 } from '../modules/garden-design/asset-factory-v1/in-g
 import {
   buildPromptRecordV2,
   PROMPT_TEMPLATE_VERSION_V2,
-  PROMPT_FACTORY_V2_LEARNING_STATUS
+  PROMPT_FACTORY_V2_LEARNING_STATUS,
+  PROMPT_FACTORY_V2_TREE_RULES_STATUS
 } from '../modules/garden-design/asset-factory-v1/prompt-factory-v2.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -82,7 +83,12 @@ test('live calibration review wires actual cutouts, not placeholders', () => {
   assert.match(review, /data-blend-scale="medium"/);
   assert.match(review, /raw-blend-pair/);
   assert.match(review, /owner-feedback-table-body/);
-  assert.match(review, /RAW vs BLEND V1/);
+  assert.match(review, /RAW vs BLEND V1 vs BLEND V2/);
+  assert.match(review, /data-composition-v2-class="RUNTIME_SOLVABLE"/);
+  assert.match(review, /data-composition-v2-class="REGEN_REQUIRED"/);
+  assert.match(review, /TREE_SCALE_MODEL/);
+  assert.match(review, /composition-calibration-v2-runtime\.js/);
+  assert.match(review, /Does this now look like a plant actually standing in the garden/);
   assert.match(review, /data-learning-class="REGEN_REQUIRED"/);
   assert.match(review, /cutout medium blend-v1/);
   assert.equal(OWNER_VISUAL_QA_STORAGE_KEY, 'cruvit:calibration-batch-1-owner-visual-qa');
@@ -227,7 +233,10 @@ test('RAW vs BLEND V1 is runtime CSS only and cannot claim to fix architecture',
       candidateRelPath: 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png'
     }
   ]);
-  assert.match(html, /RAW vs BLEND V1/);
+  assert.match(html, /RAW vs BLEND V1 vs BLEND V2/);
+  assert.match(html, /data-composition-v2-class="RUNTIME_SOLVABLE" disabled/);
+  assert.match(html, /TREE_SCALE_MODEL/);
+  assert.match(html, /ground-shadow/);
   assert.match(html, /data-blend-scale="medium"/);
   assert.match(html, /raw-blend-pair/);
   assert.match(html, /data-learning-class="BLEND_SOLVABLE" disabled/);
@@ -261,6 +270,8 @@ test('Prompt Factory V2 is generic and does not spend', () => {
   assert.match(record.prompt, /irregular organic/);
   assert.match(record.prompt, /Do not miniaturize/);
   assert.match(record.prompt, /runtime integration/);
+  assert.match(record.prompt, /naturally grown garden specimen/);
+  assert.equal(PROMPT_FACTORY_V2_TREE_RULES_STATUS, 'PREPARED_NOT_EXECUTED');
   assert.doesNotMatch(record.prompt, /Mangifera indica must/);
   const src = read('modules/garden-design/asset-factory-v1/prompt-factory-v2.js');
   assert.doesNotMatch(src, /api\.openai\.com/);
