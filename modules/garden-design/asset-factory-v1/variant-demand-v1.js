@@ -56,6 +56,25 @@ export function deriveVariantDemand(plant = {}, options = {}) {
     required: true,
     reason: role.reason || '',
     reasonCodes: role.reasonCodes || [],
+    requirementState: role.requirementState || 'REQUIRED',
+    morphologyAuthority: demand.morphologyAuthority,
+    habitModifiers: demand.habitModifiers || [],
+    lifecycle: demand.lifecycle,
+    purposeCapabilities: demand.purposeCapabilities || []
+  }));
+  const optionalVariants = (demand.optionalVariants || []).map((role) => ({
+    ...jobIdentity(demand.canonicalSlug, role, options.assetVersion),
+    visualForm: demand.visualForm,
+    growthStage: role.growthStage,
+    phenology: role.phenology || role.phenologyState,
+    phenologyState: role.phenologyState || role.phenology,
+    architectureMode: role.architectureMode || null,
+    season: role.season || DESIGN_SEASON_NEUTRAL,
+    formView: role.formView || null,
+    required: false,
+    reason: role.reason || '',
+    reasonCodes: role.reasonCodes || [],
+    requirementState: role.requirementState || 'OPTIONAL',
     morphologyAuthority: demand.morphologyAuthority,
     habitModifiers: demand.habitModifiers || [],
     lifecycle: demand.lifecycle,
@@ -74,7 +93,9 @@ export function deriveVariantDemand(plant = {}, options = {}) {
       || demand.morphologyAuthority === DESIGN_MORPHOLOGY_AUTHORITY.UNKNOWN,
     scientific: demand.scientific,
     requiredVariants,
-    optionalVariants: [],
-    visualState: demand.visualState
+    optionalVariants,
+    unknownStates: demand.unknownStates || [],
+    visualState: demand.visualState,
+    generationDemandUsesRequiredOnly: true
   };
 }

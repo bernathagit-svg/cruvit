@@ -1,0 +1,120 @@
+{
+  "contract": "design-asset-visual-state-integrity-gate-v1",
+  "candidates": [
+    {
+      "canonicalSlug": "mango",
+      "file": "mango-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "lavender",
+      "file": "lavender-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "file": "pineapple-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "banana",
+      "file": "banana-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "areca-palm",
+      "file": "areca-palm-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "file": "bougainvillea-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "aloe-vera",
+      "file": "aloe-vera-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    },
+    {
+      "canonicalSlug": "eggplant",
+      "file": "eggplant-mature-vegetative-v1.png",
+      "classifiedAs": "mature+vegetative",
+      "filenameWordingDoesNotReclassify": true,
+      "approvalStatus": "candidate"
+    }
+  ],
+  "delta": {
+    "generateNow": false,
+    "keepExistingEightAsMatureVegetativeCandidates": true,
+    "oliveApprovedRemainsApproved": true,
+    "existingCalibrationSlugs": [
+      "mango",
+      "lavender",
+      "pineapple",
+      "banana",
+      "areca-palm",
+      "bougainvillea",
+      "aloe-vera",
+      "eggplant"
+    ],
+    "missingVariantsOnly": [
+      {
+        "axis": "young-vs-mature",
+        "canonicalSlug": "mango",
+        "missingVariant": "young/tree/vegetative",
+        "compareAgainst": "existing mango-mature-vegetative-v1 candidate"
+      },
+      {
+        "axis": "vegetative-vs-fruiting",
+        "canonicalSlug": "mango",
+        "missingVariant": "mature/tree/fruiting",
+        "compareAgainst": "existing mango-mature-vegetative-v1 candidate"
+      },
+      {
+        "axis": "vegetative-vs-flowering",
+        "canonicalSlug": "lavender",
+        "missingVariant": "mature/shrub/flowering",
+        "compareAgainst": "existing lavender-mature-vegetative-v1 candidate"
+      },
+      {
+        "axis": "vegetative-vs-fruiting-crop",
+        "canonicalSlug": "eggplant",
+        "missingVariant": "mature/shrub/fruiting",
+        "compareAgainst": "existing eggplant-mature-vegetative-v1 candidate"
+      },
+      {
+        "axis": "vegetative-vs-dormant",
+        "canonicalSlug": "apple",
+        "missingVariant": "mature/tree/dormant",
+        "compareAgainst": "apple mature/tree/vegetative (also missing; not one of the 8 candidates)"
+      },
+      {
+        "axis": "multi-form-tree-vs-shrub",
+        "canonicalSlug": "pomegranate",
+        "missingVariant": "mature/shrub/vegetative",
+        "compareAgainst": "pomegranate mature/tree/vegetative (also missing; not one of the 8 candidates)"
+      },
+      {
+        "axis": "young-vs-mature-herbaceous",
+        "canonicalSlug": "banana",
+        "missingVariant": "young/default/vegetative",
+        "compareAgainst": "existing banana-mature-vegetative-v1 candidate"
+      }
+    ]
+  }
+}

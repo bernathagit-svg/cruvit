@@ -17,8 +17,17 @@ export {
   writeDesignAssetVisualStatesReports,
   VISUAL_STATE_CALIBRATION_ROLES,
   VISUAL_STATE_FALLBACK,
-  selectVisualStateFallback
+  selectVisualStateFallback,
+  REQUIREMENT,
+  FALLBACK_REASON
 } from './design-asset-visual-states-v1.js';
+export {
+  DESIGN_ASSET_VISUAL_STATE_INTEGRITY_GATE_VERSION,
+  writeVisualStateIntegrityReports,
+  auditVisualStateIntegrity,
+  FACTORY_GENERATION_RULE,
+  REQUIREMENT_STATE
+} from './design-asset-visual-state-integrity-gate-v1.js';
 export { detectDesignAssetGaps, approvedCovers, priorityForPlant } from './gap-detector-v1.js';
 export {
   createJobStore,

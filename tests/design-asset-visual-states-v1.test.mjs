@@ -45,10 +45,10 @@ test('visual-state contract separates axes and does not cartesian-explode', () =
     tags: ['tree', 'fruit', 'evergreen'],
     growth: 'Evergreen fruit tree'
   });
-  assert.equal(mango.youngRequired, 'YES');
-  assert.equal(mango.floweringRequired, 'NO');
-  assert.equal(mango.fruitingRequired, 'YES');
-  assert.equal(mango.dormantRequired, 'NO');
+  assert.equal(mango.youngRequired, 'REQUIRED');
+  assert.equal(mango.floweringRequired, 'UNKNOWN');
+  assert.equal(mango.fruitingRequired, 'REQUIRED');
+  assert.equal(mango.dormantRequired, 'NOT_REQUIRED');
   assert.ok(!mango.reasonCodes.includes(VARIANT_REASON.FLOWERING_VISUALLY_SIGNIFICANT));
   assert.equal(visualStateKey(mango.baselineVariant).includes('summer'), false);
 
@@ -57,15 +57,15 @@ test('visual-state contract separates axes and does not cartesian-explode', () =
     tags: ['tree', 'evergreen', 'olives'],
     growth: 'Evergreen Mediterranean tree'
   });
-  assert.equal(olive.fruitingRequired, 'NO');
-  assert.equal(olive.dormantRequired, 'NO');
+  assert.equal(olive.fruitingRequired, 'NOT_REQUIRED');
+  assert.equal(olive.dormantRequired, 'NOT_REQUIRED');
 
   const aloe = deriveVisualStateRequirements({
     canonicalSlug: 'aloe-vera',
     tags: ['succulent', 'rosette'],
     growth: 'Succulent rosette'
   });
-  assert.equal(aloe.youngRequired, 'NO');
+  assert.equal(aloe.youngRequired, 'NOT_REQUIRED');
 
   const pomegranate = deriveVisualStateRequirements({
     canonicalSlug: 'pomegranate',
@@ -79,7 +79,9 @@ test('visual-state contract separates axes and does not cartesian-explode', () =
     { growthStage: 'mature', architectureMode: 'tree', phenologyState: 'fruiting' },
     [{ growthStage: 'mature', architectureMode: 'tree', phenology: 'vegetative' }]
   );
-  assert.equal(fallback.fallback, 'same-architecture-growth-vegetative');
+  assert.equal(fallback.fallbackReason, 'PHENOLOGY_VISUAL_FALLBACK');
+  assert.equal(fallback.desiredVisualState.phenologyState, 'fruiting');
+  assert.equal(fallback.actualRenderedVisualState.phenologyState, 'vegetative');
   assert.equal(FACTORY_PIPELINE_STEPS[1], 'visual-state-requirements');
   assert.equal(CALIBRATION_BATCH_1_CANDIDATES.length, 8);
   assert.equal(VISUAL_STATE_CALIBRATION_ROLES.length, 8);

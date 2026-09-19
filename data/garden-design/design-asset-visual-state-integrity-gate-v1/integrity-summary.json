@@ -1,0 +1,90 @@
+{
+  "contract": "design-asset-visual-state-integrity-gate-v1",
+  "verdict": "DESIGN_ASSET_VISUAL_STATE_INTEGRITY_GATE_V1_READY",
+  "requirementSemantics": [
+    "REQUIRED",
+    "OPTIONAL",
+    "NOT_REQUIRED",
+    "UNKNOWN"
+  ],
+  "factoryGenerationRule": {
+    "generateRequired": true,
+    "generateOptional": false,
+    "generateUnknown": false,
+    "generateNotRequired": false,
+    "generateOnRender": false,
+    "note": "Factory job derivation enqueues REQUIRED variants only. OPTIONAL stays out of the minimum queue. UNKNOWN and NOT_REQUIRED must not generate."
+  },
+  "counts": {
+    "canonicalPlants": 122,
+    "architectureBaselines": 127,
+    "requiredVariantsTotal": 273,
+    "optionalVariantsTotal": 1,
+    "unknownStateDecisions": 269,
+    "notRequiredDecisions": 72,
+    "requiredYoung": 69,
+    "requiredFlowering": 11,
+    "requiredFruiting": 48,
+    "requiredDormant": 18,
+    "multiFormRequiredVariants": 24,
+    "currentlyApprovedCoverage": 1,
+    "currentCalibrationCandidateCoverage": 8,
+    "missingRequiredVariants": 272,
+    "floweringRequiredCount": 11,
+    "floweringOptionalCount": 1,
+    "floweringUnknownCount": 110,
+    "floweringNotRequiredCount": 0,
+    "fruitingRequiredCount": 48,
+    "fruitingOptionalCount": 0,
+    "fruitingUnknownCount": 59,
+    "fruitingNotRequiredCount": 15,
+    "dormantRequiredCount": 18,
+    "dormantOptionalCount": 0,
+    "dormantUnknownCount": 74,
+    "dormantNotRequiredCount": 30,
+    "youngRequiredCount": 69,
+    "youngOptionalCount": 0,
+    "youngUnknownCount": 26,
+    "youngNotRequiredCount": 27
+  },
+  "flowering": {
+    "REQUIRED": 11,
+    "OPTIONAL": 1,
+    "NOT_REQUIRED": 0,
+    "UNKNOWN": 110
+  },
+  "fruiting": {
+    "REQUIRED": 48,
+    "OPTIONAL": 0,
+    "NOT_REQUIRED": 15,
+    "UNKNOWN": 59
+  },
+  "dormant": {
+    "REQUIRED": 18,
+    "OPTIONAL": 0,
+    "NOT_REQUIRED": 30,
+    "UNKNOWN": 74
+  },
+  "young": {
+    "REQUIRED": 69,
+    "OPTIONAL": 0,
+    "NOT_REQUIRED": 27,
+    "UNKNOWN": 26
+  },
+  "confirms": {
+    "unknownConvertedToNotRequiredAutomatically": false,
+    "dormantSilentlyFallsBackToLeafyVegetative": false,
+    "youngRequiredSilentlyFallsBackToMature": false,
+    "architectureMismatchFallbackAllowed": false,
+    "imageGeneration": 0,
+    "productionRegistryChanged": false,
+    "additionalSpendUsd": 0,
+    "treePhysicalScaleReopened": false
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "newBotanicalSourcing": 0,
+    "additionalSpendUsd": 0
+  }
+}

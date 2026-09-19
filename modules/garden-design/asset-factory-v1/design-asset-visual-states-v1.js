@@ -48,19 +48,46 @@ export const PHENOLOGY_STATE = Object.freeze({
 });
 
 export const REQUIREMENT = Object.freeze({
-  YES: 'YES',
-  NO: 'NO',
+  REQUIRED: 'REQUIRED',
+  OPTIONAL: 'OPTIONAL',
+  NOT_REQUIRED: 'NOT_REQUIRED',
   UNKNOWN: 'UNKNOWN'
+});
+
+export const CONFIDENCE = Object.freeze({
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
 });
 
 export const VARIANT_REASON = Object.freeze({
   GROWTH_ARCHITECTURE_CHANGE: 'GROWTH_ARCHITECTURE_CHANGE',
   FLOWERING_VISUALLY_SIGNIFICANT: 'FLOWERING_VISUALLY_SIGNIFICANT',
+  FLOWERING_MINOR_VISUAL_EFFECT: 'FLOWERING_MINOR_VISUAL_EFFECT',
+  FLOWERING_EVIDENCE_UNKNOWN: 'FLOWERING_EVIDENCE_UNKNOWN',
+  FLOWERING_STATE_NOT_MEANINGFUL_FOR_DESIGN: 'FLOWERING_STATE_NOT_MEANINGFUL_FOR_DESIGN',
   FRUITING_VISUALLY_SIGNIFICANT: 'FRUITING_VISUALLY_SIGNIFICANT',
+  FRUITING_MINOR_VISUAL_EFFECT: 'FRUITING_MINOR_VISUAL_EFFECT',
+  FRUITING_EVIDENCE_UNKNOWN: 'FRUITING_EVIDENCE_UNKNOWN',
   DECIDUOUS_DORMANCY_SIGNIFICANT: 'DECIDUOUS_DORMANCY_SIGNIFICANT',
+  DECIDUOUS_LEAF_OFF: 'DECIDUOUS_LEAF_OFF',
+  HERBACEOUS_DIEBACK: 'HERBACEOUS_DIEBACK',
+  EVERGREEN_NO_DORMANCY_ASSET: 'EVERGREEN_NO_DORMANCY_ASSET',
+  LIFECYCLE_EVIDENCE_UNKNOWN: 'LIFECYCLE_EVIDENCE_UNKNOWN',
+  GROWTH_STAGE_EVIDENCE_UNKNOWN: 'GROWTH_STAGE_EVIDENCE_UNKNOWN',
   MULTI_FORM_ARCHITECTURE: 'MULTI_FORM_ARCHITECTURE',
   NO_DISTINCT_VARIANT_REQUIRED: 'NO_DISTINCT_VARIANT_REQUIRED',
   BASELINE_MATURE_VEGETATIVE: 'BASELINE_MATURE_VEGETATIVE'
+});
+
+export const FALLBACK_REASON = Object.freeze({
+  NONE: 'NONE',
+  PHENOLOGY_VISUAL_FALLBACK: 'PHENOLOGY_VISUAL_FALLBACK',
+  DORMANT_ASSET_UNAVAILABLE: 'DORMANT_ASSET_UNAVAILABLE',
+  YOUNG_ASSET_UNAVAILABLE: 'YOUNG_ASSET_UNAVAILABLE',
+  ARCHITECTURE_MISMATCH_FORBIDDEN: 'ARCHITECTURE_MISMATCH_FORBIDDEN',
+  IDENTITY_MISMATCH_FORBIDDEN: 'IDENTITY_MISMATCH_FORBIDDEN',
+  HONEST_PLACEHOLDER: 'HONEST_PLACEHOLDER'
 });
 
 export const VISUAL_STATE_AXES = Object.freeze({
@@ -86,12 +113,19 @@ export const VISUAL_STATE_ASSET_IDENTITY = Object.freeze({
 export const VISUAL_STATE_FALLBACK = Object.freeze({
   generateOnRender: false,
   silentIncompatibleArchitectureSubstitution: false,
-  order: Object.freeze([
-    'exact-growthStage-architectureMode-phenologyState',
-    'same-architectureMode-growthStage-VEGETATIVE',
-    'mature-same-architectureMode-VEGETATIVE',
-    'honest-silhouette-placeholder'
-  ])
+  dormantSilentlyFallsBackToLeafyVegetative: false,
+  youngRequiredSilentlyFallsBackToMature: false,
+  architectureMismatchFallbackAllowed: false,
+  canonicalIdentitySubstitutionAllowed: false,
+  botanicalTruthUnchanged: true,
+  matrix: Object.freeze({
+    floweringMissing: 'same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK',
+    fruitingMissing: 'same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK',
+    dormantMissing: 'DORMANT_ASSET_UNAVAILABLE honest placeholder; never leafy vegetative',
+    youngMissing: 'YOUNG_ASSET_UNAVAILABLE honest placeholder; never mature-as-equivalent',
+    architectureMismatch: 'ARCHITECTURE_MISMATCH_FORBIDDEN',
+    identityMismatch: 'IDENTITY_MISMATCH_FORBIDDEN'
+  })
 });
 
 export const VISUAL_STATE_PHYSICAL_SCALE_LINK = Object.freeze({
@@ -145,76 +179,234 @@ function defaultArchitectureMode(plant = {}) {
   return modes[0] || 'default';
 }
 
-function youngRequirement(plant, visualForm) {
+function decision(state, reasonCode, evidenceBasis, confidence) {
+  return { state, reasonCode, evidenceBasis, confidence };
+}
+
+function formShowsFlowers(visualForm) {
+  return [
+    DESIGN_VISUAL_FORMS.SHRUB,
+    DESIGN_VISUAL_FORMS.SUBSHRUB,
+    DESIGN_VISUAL_FORMS.CLIMBER,
+    DESIGN_VISUAL_FORMS.HERBACEOUS_CLUMP,
+    DESIGN_VISUAL_FORMS.HERBACEOUS_UPRIGHT,
+    DESIGN_VISUAL_FORMS.TREE,
+    DESIGN_VISUAL_FORMS.GROUNDCOVER
+  ].includes(visualForm);
+}
+
+function formShowsFruit(visualForm) {
+  return [
+    DESIGN_VISUAL_FORMS.TREE,
+    DESIGN_VISUAL_FORMS.SHRUB,
+    DESIGN_VISUAL_FORMS.SUBSHRUB,
+    DESIGN_VISUAL_FORMS.PALM,
+    DESIGN_VISUAL_FORMS.CLIMBER,
+    DESIGN_VISUAL_FORMS.HERBACEOUS_CLUMP,
+    DESIGN_VISUAL_FORMS.HERBACEOUS_UPRIGHT,
+    DESIGN_VISUAL_FORMS.ROSETTE
+  ].includes(visualForm);
+}
+
+export function classifyYoungState(plant, visualForm) {
   const slug = slugify(plant.canonicalSlug || plant.slug);
-  if (slug === PAPAYA_FORM_DECISION.canonicalSlug) return REQUIREMENT.YES;
-  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) return REQUIREMENT.UNKNOWN;
+  const blob = traitBlob(plant);
+  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.GROWTH_STAGE_EVIDENCE_UNKNOWN,
+      'visualForm unknown; architecture/scale change cannot be judged',
+      CONFIDENCE.LOW
+    );
+  }
+  if (slug === PAPAYA_FORM_DECISION.canonicalSlug) {
+    return decision(
+      REQUIREMENT.REQUIRED,
+      VARIANT_REASON.GROWTH_ARCHITECTURE_CHANGE,
+      'papaya pachycaul scale/architecture changes materially between young and mature',
+      CONFIDENCE.HIGH
+    );
+  }
   if (
     visualForm === DESIGN_VISUAL_FORMS.TREE
     || visualForm === DESIGN_VISUAL_FORMS.PALM
     || visualForm === DESIGN_VISUAL_FORMS.CLIMBER
   ) {
-    return REQUIREMENT.YES;
+    return decision(
+      REQUIREMENT.REQUIRED,
+      VARIANT_REASON.GROWTH_ARCHITECTURE_CHANGE,
+      `visualForm=${visualForm}; young vs mature architecture/scale is materially different`,
+      CONFIDENCE.HIGH
+    );
   }
-  const blob = traitBlob(plant);
   if (visualForm === DESIGN_VISUAL_FORMS.HERBACEOUS_CLUMP && hasToken(blob, /\bbanana\b|\bpup\b|\blarge herbaceous\b/)) {
-    return REQUIREMENT.YES;
+    return decision(
+      REQUIREMENT.REQUIRED,
+      VARIANT_REASON.GROWTH_ARCHITECTURE_CHANGE,
+      'large herbaceous clump/pup architecture changes enough for Design',
+      CONFIDENCE.MEDIUM
+    );
   }
-  return REQUIREMENT.NO;
+  if (
+    visualForm === DESIGN_VISUAL_FORMS.ROSETTE
+    || visualForm === DESIGN_VISUAL_FORMS.SUCCULENT_FORM
+    || visualForm === DESIGN_VISUAL_FORMS.GRASS_LIKE
+    || visualForm === DESIGN_VISUAL_FORMS.GROUNDCOVER
+  ) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.NO_DISTINCT_VARIANT_REQUIRED,
+      `visualForm=${visualForm}; young plant keeps essentially the same architecture`,
+      CONFIDENCE.HIGH
+    );
+  }
+  return decision(
+    REQUIREMENT.NOT_REQUIRED,
+    VARIANT_REASON.NO_DISTINCT_VARIANT_REQUIRED,
+    `visualForm=${visualForm}; form/scale change is not material enough to require a young asset`,
+    CONFIDENCE.MEDIUM
+  );
 }
 
-function floweringRequirement(plant, visualForm) {
+export function classifyFloweringState(plant, visualForm) {
   const blob = traitBlob(plant);
-  if (hasToken(blob, /\bflowers enclosed\b|\bsyconium\b|\bnot showy\b|\binconspicuous\b/)) return REQUIREMENT.NO;
-  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) return REQUIREMENT.UNKNOWN;
-  const showy = hasToken(
+  if (hasToken(blob, /\bflowers enclosed\b|\bsyconium\b|\bnot showy\b|\binconspicuous\b/)) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.FLOWERING_STATE_NOT_MEANINGFUL_FOR_DESIGN,
+      'catalog evidence of inconspicuous or enclosed flowers',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.FLOWERING_EVIDENCE_UNKNOWN,
+      'visualForm unknown; flowering visual significance cannot be judged',
+      CONFIDENCE.LOW
+    );
+  }
+  const showyLexical = hasToken(
     blob,
     /\bornamental-flowering\b|\bshowy\b|\bbracts\b|\bflower spikes\b|\bblooms\b|\blavender\b|\bbougainvillea\b|\bplumeria\b|\brose\b|\bhibiscus\b/
   );
-  if (!showy) return REQUIREMENT.NO;
-  if (
-    visualForm === DESIGN_VISUAL_FORMS.SHRUB
-    || visualForm === DESIGN_VISUAL_FORMS.SUBSHRUB
-    || visualForm === DESIGN_VISUAL_FORMS.CLIMBER
-    || visualForm === DESIGN_VISUAL_FORMS.HERBACEOUS_CLUMP
-    || visualForm === DESIGN_VISUAL_FORMS.HERBACEOUS_UPRIGHT
-    || visualForm === DESIGN_VISUAL_FORMS.TREE
-  ) {
-    return REQUIREMENT.YES;
+  const floweringVisualTag = hasToken(blob, /\bflowering\b|\bflower\b/);
+  const springBloom = hasToken(blob, /\bspring-bloom\b|\bspring bloom\b/);
+  if ((showyLexical || floweringVisualTag) && formShowsFlowers(visualForm)) {
+    return decision(
+      REQUIREMENT.REQUIRED,
+      VARIANT_REASON.FLOWERING_VISUALLY_SIGNIFICANT,
+      showyLexical
+        ? 'showy/ornamental flower evidence in catalog traits'
+        : 'flower/flowering visual tag on a form that can display bloom',
+      showyLexical ? CONFIDENCE.HIGH : CONFIDENCE.MEDIUM
+    );
   }
-  return REQUIREMENT.NO;
-}
-
-function fruitingRequirement(plant, visualForm, purpose) {
-  const blob = traitBlob(plant);
-  if (hasToken(blob, /\bolives?\b/) && !hasToken(blob, /\bcitrus\b/)) return REQUIREMENT.NO;
-  if (purpose.herbHarvestUseful && !hasToken(blob, /\bfruit\b|\bcitrus\b|\bberry\b|\beggplant\b|\btomato\b/)) {
-    return REQUIREMENT.NO;
+  if (springBloom && visualForm === DESIGN_VISUAL_FORMS.TREE) {
+    return decision(
+      REQUIREMENT.OPTIONAL,
+      VARIANT_REASON.FLOWERING_MINOR_VISUAL_EFFECT,
+      'spring bloom is visually useful but not required for minimum fruit/nut-tree Design coverage',
+      CONFIDENCE.MEDIUM
+    );
   }
-  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) return REQUIREMENT.UNKNOWN;
-  const visibleFruit = hasToken(
-    blob,
-    /\bfruit\b|\bcitrus\b|\bberry\b|\bdrupe\b|\bpome\b|\beggplant\b|\btomato\b|\bbanana\b|\bpineapple\b|\bmango\b|\bavocado\b|\bpomegranate\b/
+  return decision(
+    REQUIREMENT.UNKNOWN,
+    VARIANT_REASON.FLOWERING_EVIDENCE_UNKNOWN,
+    'no catalog evidence that flowers are showy or insignificant; purpose=flowering was not used',
+    CONFIDENCE.LOW
   );
-  if (!visibleFruit) return REQUIREMENT.NO;
-  if (
-    visualForm === DESIGN_VISUAL_FORMS.TREE
-    || visualForm === DESIGN_VISUAL_FORMS.SHRUB
-    || visualForm === DESIGN_VISUAL_FORMS.PALM
-    || visualForm === DESIGN_VISUAL_FORMS.HERBACEOUS_CLUMP
-    || visualForm === DESIGN_VISUAL_FORMS.HERBACEOUS_UPRIGHT
-    || visualForm === DESIGN_VISUAL_FORMS.ROSETTE
-  ) {
-    return REQUIREMENT.YES;
-  }
-  return REQUIREMENT.NO;
 }
 
-function dormantRequirement(plant, visualForm) {
+export function classifyFruitingState(plant, visualForm, purpose) {
+  const blob = traitBlob(plant);
+  if (hasToken(blob, /\bolives?\b/) && !hasToken(blob, /\bcitrus\b/)) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.FRUITING_MINOR_VISUAL_EFFECT,
+      'olive fruit is catalog-evidenced but does not materially change garden silhouette',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (hasToken(blob, /\bnuts?\b/) && !hasToken(blob, /\bfruit\b|\bberry\b|\bcitrus\b|\bdrupe\b|\bpome\b/)) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.FRUITING_MINOR_VISUAL_EFFECT,
+      'nut crop evidence without fleshy fruit display',
+      CONFIDENCE.MEDIUM
+    );
+  }
+  if (hasToken(blob, /\bherb-edible\b|\bculinary\b|\bherbs?\b/) && !hasToken(blob, /\bfruit\b|\bcitrus\b|\bberry\b|\beggplant\b|\btomato\b|\bpepper\b/)) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.NO_DISTINCT_VARIANT_REQUIRED,
+      'herb/culinary catalog evidence without fruit-display evidence',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.FRUITING_EVIDENCE_UNKNOWN,
+      'visualForm unknown; fruit display cannot be judged',
+      CONFIDENCE.LOW
+    );
+  }
   const slug = slugify(plant.canonicalSlug || plant.slug);
-  if (slug === PAPAYA_FORM_DECISION.canonicalSlug) return REQUIREMENT.NO;
-  if (isEvergreenHabit(plant) && !isDeciduousHabit(plant)) return REQUIREMENT.NO;
-  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) return REQUIREMENT.UNKNOWN;
+  const visibleFruit = slug === 'fig' || hasToken(
+    blob,
+    /\bfruit\b|\bcitrus\b|\bberry\b|\bdrupe\b|\bpome\b|\beggplant\b|\btomato\b|\bpepper\b|\bbanana\b|\bpineapple\b|\bmango\b|\bavocado\b|\bpomegranate\b|\bgrape\b|\bkiwi\b|\bpassionfruit\b/
+  );
+  if (visibleFruit && formShowsFruit(visualForm)) {
+    return decision(
+      REQUIREMENT.REQUIRED,
+      VARIANT_REASON.FRUITING_VISUALLY_SIGNIFICANT,
+      'visible fruit evidence on a form where fruit display changes appearance or Design value',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (visibleFruit && !formShowsFruit(visualForm)) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.FRUITING_EVIDENCE_UNKNOWN,
+      `fruit evidence present but visualForm=${visualForm} is not a judged fruit-display form`,
+      CONFIDENCE.LOW
+    );
+  }
+  return decision(
+    REQUIREMENT.UNKNOWN,
+    VARIANT_REASON.FRUITING_EVIDENCE_UNKNOWN,
+    'no catalog evidence for or against a distinct fruiting visual state; edible purpose alone was not used',
+    CONFIDENCE.LOW
+  );
+}
+
+export function classifyDormantState(plant, visualForm) {
+  const slug = slugify(plant.canonicalSlug || plant.slug);
+  if (slug === PAPAYA_FORM_DECISION.canonicalSlug) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.EVERGREEN_NO_DORMANCY_ASSET,
+      'papaya is not a deciduous woody leaf-off subject',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (isEvergreenHabit(plant) && !isDeciduousHabit(plant)) {
+    return decision(
+      REQUIREMENT.NOT_REQUIRED,
+      VARIANT_REASON.EVERGREEN_NO_DORMANCY_ASSET,
+      'evergreen habit evidence; no fake dormant asset',
+      CONFIDENCE.HIGH
+    );
+  }
+  if (visualForm === DESIGN_VISUAL_FORMS.UNKNOWN) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.LIFECYCLE_EVIDENCE_UNKNOWN,
+      'visualForm unknown; dormant architecture cannot be judged',
+      CONFIDENCE.LOW
+    );
+  }
   const habit = classifyDesignHabitModifiers(plant);
   if (habit.deciduous === true) {
     if (
@@ -223,12 +415,36 @@ function dormantRequirement(plant, visualForm) {
       || visualForm === DESIGN_VISUAL_FORMS.SUBSHRUB
       || visualForm === DESIGN_VISUAL_FORMS.CLIMBER
     ) {
-      return REQUIREMENT.YES;
+      return decision(
+        REQUIREMENT.REQUIRED,
+        VARIANT_REASON.DECIDUOUS_LEAF_OFF,
+        'deciduous woody/climber leaf-off is materially distinct',
+        CONFIDENCE.HIGH
+      );
     }
-    if (habit.herbaceous) return REQUIREMENT.YES;
+    if (habit.herbaceous) {
+      return decision(
+        REQUIREMENT.REQUIRED,
+        VARIANT_REASON.HERBACEOUS_DIEBACK,
+        'herbaceous deciduous dieback is materially distinct for Design',
+        CONFIDENCE.MEDIUM
+      );
+    }
   }
-  if (!habit.deciduous && !habit.evergreen) return REQUIREMENT.UNKNOWN;
-  return REQUIREMENT.NO;
+  if (!habit.deciduous && !habit.evergreen) {
+    return decision(
+      REQUIREMENT.UNKNOWN,
+      VARIANT_REASON.LIFECYCLE_EVIDENCE_UNKNOWN,
+      'no evergreen or deciduous catalog evidence; lack of metadata is not evergreen truth',
+      CONFIDENCE.LOW
+    );
+  }
+  return decision(
+    REQUIREMENT.NOT_REQUIRED,
+    VARIANT_REASON.NO_DISTINCT_VARIANT_REQUIRED,
+    'lifecycle evidence does not support a distinct dormant asset',
+    CONFIDENCE.MEDIUM
+  );
 }
 
 function identityBlockers(plant, visualForm) {
@@ -240,7 +456,8 @@ function identityBlockers(plant, visualForm) {
   return blockers;
 }
 
-function makeVariant(plant, architectureMode, growthStage, phenologyState, reasonCodes) {
+function makeVariant(plant, architectureMode, growthStage, phenologyState, reasonCodes, requirementState) {
+  const required = requirementState === REQUIREMENT.REQUIRED;
   return {
     canonicalSlug: slugify(plant.canonicalSlug || plant.slug),
     visualForm: classifyDesignVisualForm(plant).visualForm,
@@ -249,11 +466,20 @@ function makeVariant(plant, architectureMode, growthStage, phenologyState, reaso
     phenologyState,
     phenology: phenologyState,
     season: DESIGN_SEASON_NEUTRAL,
-    required: true,
+    required,
+    requirementState,
     reasonCodes,
     reason: reasonCodes.join(', '),
     variantKey: visualStateKey({ growthStage, architectureMode, phenologyState })
   };
+}
+
+function pushStateVariant(target, plant, mode, stage, phenology, decisionRow) {
+  if (decisionRow.state === REQUIREMENT.REQUIRED) {
+    target.required.push(makeVariant(plant, mode, stage, phenology, [decisionRow.reasonCode], REQUIREMENT.REQUIRED));
+  } else if (decisionRow.state === REQUIREMENT.OPTIONAL) {
+    target.optional.push(makeVariant(plant, mode, stage, phenology, [decisionRow.reasonCode], REQUIREMENT.OPTIONAL));
+  }
 }
 
 export function deriveVisualStateRequirements(plant = {}) {
@@ -264,64 +490,49 @@ export function deriveVisualStateRequirements(plant = {}) {
   const modes = architectureModesForPlant(plant);
   const defaultMode = defaultArchitectureMode(plant);
   const blockers = identityBlockers(plant, visualForm);
-  const young = youngRequirement(plant, visualForm);
-  const flowering = floweringRequirement(plant, visualForm);
-  const fruiting = fruitingRequirement(plant, visualForm, purpose);
-  const dormant = dormantRequirement(plant, visualForm);
+  const young = classifyYoungState(plant, visualForm);
+  const flowering = classifyFloweringState(plant, visualForm);
+  const fruiting = classifyFruitingState(plant, visualForm, purpose);
+  const dormant = classifyDormantState(plant, visualForm);
   const reasonCodes = [VARIANT_REASON.BASELINE_MATURE_VEGETATIVE];
-  const variants = [];
+  const requiredVariants = [];
+  const optionalVariants = [];
 
   for (const mode of modes) {
-    variants.push(
+    requiredVariants.push(
       makeVariant(plant, mode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.VEGETATIVE, [
         VARIANT_REASON.BASELINE_MATURE_VEGETATIVE,
         ...(modes.length > 1 ? [VARIANT_REASON.MULTI_FORM_ARCHITECTURE] : [])
-      ])
+      ], REQUIREMENT.REQUIRED)
     );
   }
   if (modes.length > 1) reasonCodes.push(VARIANT_REASON.MULTI_FORM_ARCHITECTURE);
 
-  if (young === REQUIREMENT.YES) {
-    reasonCodes.push(VARIANT_REASON.GROWTH_ARCHITECTURE_CHANGE);
-    variants.push(
-      makeVariant(plant, defaultMode, GROWTH_STAGE.YOUNG, PHENOLOGY_STATE.VEGETATIVE, [
-        VARIANT_REASON.GROWTH_ARCHITECTURE_CHANGE
-      ])
-    );
-  }
-  if (flowering === REQUIREMENT.YES) {
-    reasonCodes.push(VARIANT_REASON.FLOWERING_VISUALLY_SIGNIFICANT);
-    variants.push(
-      makeVariant(plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.FLOWERING, [
-        VARIANT_REASON.FLOWERING_VISUALLY_SIGNIFICANT
-      ])
-    );
-  }
-  if (fruiting === REQUIREMENT.YES) {
-    reasonCodes.push(VARIANT_REASON.FRUITING_VISUALLY_SIGNIFICANT);
-    variants.push(
-      makeVariant(plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.FRUITING, [
-        VARIANT_REASON.FRUITING_VISUALLY_SIGNIFICANT
-      ])
-    );
-  }
-  if (dormant === REQUIREMENT.YES) {
-    reasonCodes.push(VARIANT_REASON.DECIDUOUS_DORMANCY_SIGNIFICANT);
-    variants.push(
-      makeVariant(plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.DORMANT, [
-        VARIANT_REASON.DECIDUOUS_DORMANCY_SIGNIFICANT
-      ])
-    );
-  }
+  const buckets = { required: requiredVariants, optional: optionalVariants };
+  pushStateVariant(buckets, plant, defaultMode, GROWTH_STAGE.YOUNG, PHENOLOGY_STATE.VEGETATIVE, young);
+  pushStateVariant(buckets, plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.FLOWERING, flowering);
+  pushStateVariant(buckets, plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.FRUITING, fruiting);
+  pushStateVariant(buckets, plant, defaultMode, GROWTH_STAGE.MATURE, PHENOLOGY_STATE.DORMANT, dormant);
+
+  if (young.state === REQUIREMENT.REQUIRED) reasonCodes.push(young.reasonCode);
+  if (flowering.state === REQUIREMENT.REQUIRED) reasonCodes.push(flowering.reasonCode);
+  if (fruiting.state === REQUIREMENT.REQUIRED) reasonCodes.push(fruiting.reasonCode);
+  if (dormant.state === REQUIREMENT.REQUIRED) reasonCodes.push(dormant.reasonCode);
   if (
-    young !== REQUIREMENT.YES
-    && flowering !== REQUIREMENT.YES
-    && fruiting !== REQUIREMENT.YES
-    && dormant !== REQUIREMENT.YES
+    young.state !== REQUIREMENT.REQUIRED
+    && flowering.state !== REQUIREMENT.REQUIRED
+    && fruiting.state !== REQUIREMENT.REQUIRED
+    && dormant.state !== REQUIREMENT.REQUIRED
     && modes.length === 1
   ) {
     reasonCodes.push(VARIANT_REASON.NO_DISTINCT_VARIANT_REQUIRED);
   }
+
+  const unknownStates = [];
+  if (young.state === REQUIREMENT.UNKNOWN) unknownStates.push('young');
+  if (flowering.state === REQUIREMENT.UNKNOWN) unknownStates.push('flowering');
+  if (fruiting.state === REQUIREMENT.UNKNOWN) unknownStates.push('fruiting');
+  if (dormant.state === REQUIREMENT.UNKNOWN) unknownStates.push('dormant');
 
   const blocked = blockers.length > 0;
   return {
@@ -333,17 +544,26 @@ export function deriveVisualStateRequirements(plant = {}) {
       phenologyState: PHENOLOGY_STATE.VEGETATIVE,
       architectureMode: defaultMode
     },
-    youngRequired: young,
-    floweringRequired: flowering,
-    fruitingRequired: fruiting,
-    dormantRequired: dormant,
+    youngRequired: young.state,
+    floweringRequired: flowering.state,
+    fruitingRequired: fruiting.state,
+    dormantRequired: dormant.state,
+    youngDecision: young,
+    floweringDecision: flowering,
+    fruitingDecision: fruiting,
+    dormantDecision: dormant,
     reasonCodes: [...new Set(reasonCodes)],
     identityBlockers: blockers,
-    assetCountRequired: variants.length,
-    variants,
+    assetCountRequired: requiredVariants.length,
+    assetCountOptional: optionalVariants.length,
+    variants: requiredVariants,
+    requiredVariants,
+    optionalVariants,
+    unknownStates,
     cartesianForbidden: true,
     seasonIsIdentity: false,
-    generationBlocked: blocked
+    generationBlocked: blocked,
+    phenologyNotAutomaticallyDoubledAcrossArchitecture: true
   };
 }
 
@@ -359,36 +579,114 @@ export function deriveVisualStateDemand(plant = {}) {
     morphologyAuthority: architecture.authority,
     morphologyUnknown: req.visualForm === DESIGN_VISUAL_FORMS.UNKNOWN,
     scientific: plant.scientific || plant.scientificName || plant.latin || null,
-    requiredVariants: req.variants,
-    optionalVariants: [],
-    visualState: req
+    requiredVariants: req.requiredVariants,
+    optionalVariants: req.optionalVariants,
+    unknownStates: req.unknownStates,
+    visualState: req,
+    generationDemandUsesRequiredOnly: true
+  };
+}
+
+function compatibleArchitecture(desiredArch, rowArch) {
+  const wanted = desiredArch || 'default';
+  const got = rowArch || wanted;
+  if (wanted === 'tree' && got === 'shrub') return false;
+  if (wanted === 'shrub' && got === 'tree') return false;
+  return got === wanted;
+}
+
+function desiredStateSnapshot(desired = {}) {
+  return {
+    canonicalSlug: desired.canonicalSlug || null,
+    botanicalTaxonId: desired.botanicalTaxonId || null,
+    architectureMode: desired.architectureMode || 'default',
+    growthStage: desired.growthStage || GROWTH_STAGE.MATURE,
+    phenologyState: desired.phenologyState || desired.phenology || PHENOLOGY_STATE.VEGETATIVE
+  };
+}
+
+function fallbackResult(desired, actual, fallbackReason, extra = {}) {
+  return {
+    fallback: fallbackReason === FALLBACK_REASON.NONE ? 'exact' : fallbackReason,
+    fallbackReason,
+    desiredVisualState: desiredStateSnapshot(desired),
+    actualRenderedVisualState: actual,
+    generateOnRender: false,
+    botanicalTruthUnchanged: true,
+    ...extra
   };
 }
 
 export function selectVisualStateFallback(desired = {}, available = []) {
   const list = Array.isArray(available) ? available : [];
-  const arch = desired.architectureMode || 'default';
-  const stage = desired.growthStage || GROWTH_STAGE.MATURE;
-  const pheno = desired.phenologyState || PHENOLOGY_STATE.VEGETATIVE;
-  const exact = list.find((row) =>
+  const wanted = desiredStateSnapshot(desired);
+  const identitySafe = list.filter((row) => {
+    if (wanted.canonicalSlug && row.canonicalSlug && slugify(row.canonicalSlug) !== slugify(wanted.canonicalSlug)) {
+      return false;
+    }
+    return true;
+  });
+  if (wanted.canonicalSlug && list.some((row) => row.canonicalSlug && slugify(row.canonicalSlug) !== slugify(wanted.canonicalSlug)) && !identitySafe.length) {
+    return fallbackResult(wanted, null, FALLBACK_REASON.IDENTITY_MISMATCH_FORBIDDEN, {
+      fallback: 'honest-placeholder'
+    });
+  }
+  const architectureSafe = identitySafe.filter((row) => compatibleArchitecture(wanted.architectureMode, row.architectureMode));
+  const mismatchedArchitecture = identitySafe.find((row) => !compatibleArchitecture(wanted.architectureMode, row.architectureMode));
+  const find = (stage, pheno) => architectureSafe.find((row) =>
     row.growthStage === stage
-    && (row.architectureMode || arch) === arch
     && (row.phenologyState || row.phenology) === pheno
   );
-  if (exact) return { ...exact, fallback: 'exact' };
-  const sameStageVeg = list.find((row) =>
-    row.growthStage === stage
-    && (row.architectureMode || arch) === arch
-    && (row.phenologyState || row.phenology) === PHENOLOGY_STATE.VEGETATIVE
-  );
-  if (sameStageVeg) return { ...sameStageVeg, fallback: 'same-architecture-growth-vegetative' };
-  const matureVeg = list.find((row) =>
-    row.growthStage === GROWTH_STAGE.MATURE
-    && (row.architectureMode || arch) === arch
-    && (row.phenologyState || row.phenology) === PHENOLOGY_STATE.VEGETATIVE
-  );
-  if (matureVeg) return { ...matureVeg, fallback: 'mature-vegetative-baseline' };
-  return { fallback: 'honest-placeholder', generateOnRender: false };
+
+  const exact = find(wanted.growthStage, wanted.phenologyState);
+  if (exact) {
+    return fallbackResult(wanted, {
+      canonicalSlug: wanted.canonicalSlug,
+      botanicalTaxonId: wanted.botanicalTaxonId,
+      architectureMode: wanted.architectureMode,
+      growthStage: wanted.growthStage,
+      phenologyState: wanted.phenologyState
+    }, FALLBACK_REASON.NONE, exact);
+  }
+
+  if (wanted.phenologyState === PHENOLOGY_STATE.DORMANT) {
+    return fallbackResult(wanted, null, FALLBACK_REASON.DORMANT_ASSET_UNAVAILABLE, {
+      fallback: 'honest-placeholder',
+      usedLeafyVegetative: false
+    });
+  }
+  if (wanted.growthStage === GROWTH_STAGE.YOUNG) {
+    return fallbackResult(wanted, null, FALLBACK_REASON.YOUNG_ASSET_UNAVAILABLE, {
+      fallback: 'honest-placeholder',
+      usedMatureAsEquivalent: false
+    });
+  }
+  if (
+    wanted.phenologyState === PHENOLOGY_STATE.FLOWERING
+    || wanted.phenologyState === PHENOLOGY_STATE.FRUITING
+  ) {
+    const veg = find(wanted.growthStage, PHENOLOGY_STATE.VEGETATIVE);
+    if (veg) {
+      return fallbackResult(wanted, {
+        canonicalSlug: wanted.canonicalSlug,
+        botanicalTaxonId: wanted.botanicalTaxonId,
+        architectureMode: wanted.architectureMode,
+        growthStage: wanted.growthStage,
+        phenologyState: PHENOLOGY_STATE.VEGETATIVE
+      }, FALLBACK_REASON.PHENOLOGY_VISUAL_FALLBACK, {
+        ...veg,
+        fallback: 'phenology-visual-fallback'
+      });
+    }
+  }
+  if (mismatchedArchitecture) {
+    return fallbackResult(wanted, null, FALLBACK_REASON.ARCHITECTURE_MISMATCH_FORBIDDEN, {
+      fallback: 'honest-placeholder'
+    });
+  }
+  return fallbackResult(wanted, null, FALLBACK_REASON.HONEST_PLACEHOLDER, {
+    fallback: 'honest-placeholder'
+  });
 }
 
 export const VISUAL_STATE_CALIBRATION_ROLES = Object.freeze([
@@ -489,14 +787,7 @@ export function auditCatalogVisualStates(plants = [], registry = {}) {
     counts.canonicalPlantsAudited += 1;
     counts.totalRequiredVariants += req.assetCountRequired;
     if (req.identityBlockers.length) counts.unknownOrBlocked += 1;
-    else if (
-      req.youngRequired === REQUIREMENT.UNKNOWN
-      || req.floweringRequired === REQUIREMENT.UNKNOWN
-      || req.fruitingRequired === REQUIREMENT.UNKNOWN
-      || req.dormantRequired === REQUIREMENT.UNKNOWN
-    ) {
-      counts.unknownOrBlocked += 1;
-    }
+    else if (req.unknownStates.length) counts.unknownOrBlocked += 1;
     for (const variant of req.variants) {
       if (variant.growthStage === GROWTH_STAGE.MATURE && variant.phenologyState === PHENOLOGY_STATE.VEGETATIVE) {
         counts.baselineMatureVegetative += 1;
@@ -551,6 +842,10 @@ export function writeDesignAssetVisualStatesReports(root, catalogPlants, registr
       floweringRequired: row.floweringRequired,
       fruitingRequired: row.fruitingRequired,
       dormantRequired: row.dormantRequired,
+      youngDecision: row.youngDecision,
+      floweringDecision: row.floweringDecision,
+      fruitingDecision: row.fruitingDecision,
+      dormantDecision: row.dormantDecision,
       reasonCodes: row.reasonCodes,
       identityBlockers: row.identityBlockers,
       assetCountRequired: row.assetCountRequired

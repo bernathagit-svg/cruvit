@@ -27,12 +27,19 @@
   "fallback": {
     "generateOnRender": false,
     "silentIncompatibleArchitectureSubstitution": false,
-    "order": [
-      "exact-growthStage-architectureMode-phenologyState",
-      "same-architectureMode-growthStage-VEGETATIVE",
-      "mature-same-architectureMode-VEGETATIVE",
-      "honest-silhouette-placeholder"
-    ]
+    "dormantSilentlyFallsBackToLeafyVegetative": false,
+    "youngRequiredSilentlyFallsBackToMature": false,
+    "architectureMismatchFallbackAllowed": false,
+    "canonicalIdentitySubstitutionAllowed": false,
+    "botanicalTruthUnchanged": true,
+    "matrix": {
+      "floweringMissing": "same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK",
+      "fruitingMissing": "same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK",
+      "dormantMissing": "DORMANT_ASSET_UNAVAILABLE honest placeholder; never leafy vegetative",
+      "youngMissing": "YOUNG_ASSET_UNAVAILABLE honest placeholder; never mature-as-equivalent",
+      "architectureMismatch": "ARCHITECTURE_MISMATCH_FORBIDDEN",
+      "identityMismatch": "IDENTITY_MISMATCH_FORBIDDEN"
+    }
   },
   "physicalScaleLink": {
     "matureVisualUsesMatureAuthority": true,
@@ -42,17 +49,17 @@
   },
   "counts": {
     "canonicalPlantsAudited": 122,
-    "totalRequiredVariants": 261,
+    "totalRequiredVariants": 273,
     "baselineMatureVegetative": 127,
     "youngVariantsRequired": 69,
-    "floweringVariantsRequired": 5,
-    "fruitingVariantsRequired": 42,
+    "floweringVariantsRequired": 11,
+    "fruitingVariantsRequired": 48,
     "dormantVariantsRequired": 18,
     "multiFormArchitectureVariants": 10,
-    "unknownOrBlocked": 80,
+    "unknownOrBlocked": 121,
     "currentlyApprovedCoverage": 1,
     "currentCalibrationCandidateCoverage": 8,
-    "missingRequiredVariants": 260
+    "missingRequiredVariants": 272
   },
   "spend": {
     "openaiCalls": 0,

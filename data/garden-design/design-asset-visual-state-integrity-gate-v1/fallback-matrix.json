@@ -1,0 +1,29 @@
+{
+  "contract": "design-asset-visual-state-integrity-gate-v1",
+  "fallback": {
+    "generateOnRender": false,
+    "silentIncompatibleArchitectureSubstitution": false,
+    "dormantSilentlyFallsBackToLeafyVegetative": false,
+    "youngRequiredSilentlyFallsBackToMature": false,
+    "architectureMismatchFallbackAllowed": false,
+    "canonicalIdentitySubstitutionAllowed": false,
+    "botanicalTruthUnchanged": true,
+    "matrix": {
+      "floweringMissing": "same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK",
+      "fruitingMissing": "same architectureMode + growthStage + VEGETATIVE with PHENOLOGY_VISUAL_FALLBACK",
+      "dormantMissing": "DORMANT_ASSET_UNAVAILABLE honest placeholder; never leafy vegetative",
+      "youngMissing": "YOUNG_ASSET_UNAVAILABLE honest placeholder; never mature-as-equivalent",
+      "architectureMismatch": "ARCHITECTURE_MISMATCH_FORBIDDEN",
+      "identityMismatch": "IDENTITY_MISMATCH_FORBIDDEN"
+    }
+  },
+  "reasons": {
+    "NONE": "NONE",
+    "PHENOLOGY_VISUAL_FALLBACK": "PHENOLOGY_VISUAL_FALLBACK",
+    "DORMANT_ASSET_UNAVAILABLE": "DORMANT_ASSET_UNAVAILABLE",
+    "YOUNG_ASSET_UNAVAILABLE": "YOUNG_ASSET_UNAVAILABLE",
+    "ARCHITECTURE_MISMATCH_FORBIDDEN": "ARCHITECTURE_MISMATCH_FORBIDDEN",
+    "IDENTITY_MISMATCH_FORBIDDEN": "IDENTITY_MISMATCH_FORBIDDEN",
+    "HONEST_PLACEHOLDER": "HONEST_PLACEHOLDER"
+  }
+}
