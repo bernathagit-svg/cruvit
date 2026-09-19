@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Garden Design size authority canary V1</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    h1 { font-size: 22px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note { font-size: 13px; color: #444; }
+    .job { background: #fff; border: 1px solid #ddd; margin: 24px 0; padding: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+    .scenes { display: flex; gap: 12px; flex-wrap: wrap; }
+    .scene { width: 480px; height: 360px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
+    .scene.physical-v1-scene { overflow: hidden; }
+    .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: auto; pointer-events: none; overflow: visible; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; object-fit: contain; object-position: bottom center; }
+    .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
+    .diag { background: #111; color: #f4f1ea; padding: 12px; font-size: 12px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Garden Design size authority canary V1</h1>
+  <p id="realGardenBanner" class="warn">Loading Garden context… Photo calibration remains optional. Global authority runtime is OFF. Canary only.</p>
+  <p class="note">globalAuthorityRuntimeEnabled = false · canaryAuthorityRuntimeEnabled = true · applyInProductionGardenDesign = false · Garden Design is not blocked.</p>
+  <p class="note">Mango LOW is this Garden Design's user state. It is not botanical authority. Olive uses Olive evidence. No new assets.</p>
+  <div id="canary-table"></div>
+  <section class="job">
+    <h2>Mango — READY + Garden LOW</h2>
+    <p class="note">LANDSCAPE_MATURE source-supported height + spread. ownerPreferredRangePosition = LOW is design state only.</p>
+    <div class="scenes">
+      <div class="scene real physical-v1-scene is-blocked" id="scene-mango" data-visual-form="tree" data-growth-stage="mature" data-canonical-slug="mango" data-lock-depth="middle" data-lock-range-band="LOW" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-ground-anchor="0.50830078125,0.92578125">
+        <div class="placement" data-role="placement">
+          <img class="cutout" alt="mango mature candidate" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919o" data-approval-status="candidate"/>
+          <span class="ground-shadow" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="job">
+    <h2>Olive — READY, own evidence</h2>
+    <p class="note">Must not reuse Mango size or Mango LOW. Same TREE renderer ≠ same tree size.</p>
+    <div class="scenes">
+      <div class="scene real physical-v1-scene is-blocked" id="scene-olive" data-visual-form="tree" data-growth-stage="mature" data-canonical-slug="olive" data-lock-depth="middle" data-lock-range-band="MID" data-canvas="677,369" data-bbox="138,22,538,352">
+        <div class="placement" data-role="placement">
+          <img class="cutout" alt="olive mature approved" src="assets/plants/olive-tree/variants/summer-mature.png?v=20260919o"/>
+          <span class="ground-shadow" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="job">
+    <h2>Diagnostic cases (no new assets)</h2>
+    <pre class="diag" id="diag-other"></pre>
+  </section>
+  <script type="module">
+    import {
+      resolveGardenSizeAuthority,
+      scaleFromGardenSizeAuthority
+    } from './asset-factory-v1/garden-design-size-authority-adapter-v1.js';
+
+    const CANARY = [
+      { slug: 'mango', ownerPreferredRangePosition: 'LOW', rangeBand: 'LOW' },
+      { slug: 'olive', rangeBand: 'MID' },
+      { slug: 'blue-gum' },
+      { slug: 'lemon' },
+      { slug: 'cypress' },
+      { slug: 'breadfruit' }
+    ];
+
+    function applyScene(scene, scale) {
+      const placement = scene.querySelector('[data-role="placement"]');
+      const img = scene.querySelector('img.cutout');
+      if (!placement || !img || !scale) return;
+      placement.style.left = '50%';
+      placement.style.bottom = `${scale.yBottomPct != null ? scale.yBottomPct : 20}%`;
+      placement.style.transform = 'translateX(-50%)';
+      const imgPx = scale.imgHeightPx != null ? scale.imgHeightPx : ((scale.imgHeightPct || 40) / 100) * (scene.clientHeight || 360);
+      img.style.maxHeight = 'none';
+      img.style.maxWidth = 'none';
+      img.style.height = `${imgPx}px`;
+      img.style.width = 'auto';
+      scene.classList.remove('is-blocked');
+    }
+
+    function rowHtml(result) {
+      return `<tr>
+        <td>${result.canonicalSlug}</td>
+        <td>${result.botanicalTaxonId || ''}</td>
+        <td>${result.runtimeAuthorityState || result.fallbackReason || ''}</td>
+        <td>${result.previewScenario || 'null'}</td>
+        <td>${result.heightAuthority}</td>
+        <td>${result.spreadAuthority}</td>
+        <td>${result.usedAuthoritativeMeters ? 'source-supported where allowed' : 'estimated / no meters'}</td>
+        <td>${result.selectedRuntimeBehavior}</td>
+        <td>${result.fallbackReason || ''}</td>
+      </tr>`;
+    }
+
+    async function main() {
+      const registry = await fetch('../../data/catalog/botanical-size-authority-v1.json').then((r) => r.json());
+      const results = CANARY.map((item) => resolveGardenSizeAuthority(registry, {
+        canonicalSlug: item.slug,
+        growthStage: 'mature',
+        canaryContext: true,
+        ownerPreferredRangePosition: item.ownerPreferredRangePosition || null
+      }));
+      document.getElementById('canary-table').innerHTML = `<table>
+        <thead><tr><th>slug</th><th>taxon</th><th>authority</th><th>scenario</th><th>height</th><th>spread</th><th>dimensions</th><th>behavior</th><th>fallback</th></tr></thead>
+        <tbody>${results.map(rowHtml).join('')}</tbody>
+      </table>`;
+      const mango = results.find((row) => row.canonicalSlug === 'mango');
+      const olive = results.find((row) => row.canonicalSlug === 'olive');
+      const mangoScene = document.getElementById('scene-mango');
+      const oliveScene = document.getElementById('scene-olive');
+      const mangoScale = scaleFromGardenSizeAuthority(mango, {
+        growthStage: 'mature',
+        depthId: 'middle',
+        rangeBand: 'LOW',
+        canvasWidth: 1024,
+        canvasHeight: 1536,
+        bbox: { minX: 33, minY: 148, maxX: 1008, maxY: 1422 },
+        sceneWidthPx: mangoScene.clientWidth || 480,
+        sceneHeightPx: mangoScene.clientHeight || 360
+      });
+      const oliveScale = scaleFromGardenSizeAuthority(olive, {
+        growthStage: 'mature',
+        depthId: 'middle',
+        rangeBand: 'MID',
+        canvasWidth: 677,
+        canvasHeight: 369,
+        bbox: { minX: 138, minY: 22, maxX: 538, maxY: 352 },
+        sceneWidthPx: oliveScene.clientWidth || 480,
+        sceneHeightPx: oliveScene.clientHeight || 360
+      });
+      if (mangoScale.ok) applyScene(mangoScene, mangoScale.scale);
+      if (oliveScale.ok) applyScene(oliveScene, oliveScale.scale);
+      const others = results.filter((row) => !['mango', 'olive'].includes(row.canonicalSlug));
+      document.getElementById('diag-other').textContent = JSON.stringify(others, null, 2);
+    }
+
+    function applySignedUrl(url) {
+      if (!url) return false;
+      document.querySelectorAll('.scene.real').forEach((el) => {
+        el.style.backgroundImage = `url("${url}")`;
+        el.classList.remove('is-blocked');
+      });
+      const banner = document.getElementById('realGardenBanner');
+      banner.className = 'ok';
+      banner.textContent = 'Real saved Garden Design source photo loaded via temporary signed URL. Bytes were not copied into the repo.';
+      return true;
+    }
+
+    window.addEventListener('message', (ev) => {
+      const d = ev && ev.data;
+      if (d && d.sourceMediaUrl) applySignedUrl(d.sourceMediaUrl);
+      const status = d && (d.uiStatus || d.code);
+      const banner = document.getElementById('realGardenBanner');
+      if (status && banner && !d.sourceMediaUrl) {
+        banner.className = status === 'REAL_GARDEN_SOURCE_LOADED' ? 'ok' : 'warn';
+        banner.textContent = String(status);
+      }
+    });
+
+    main().catch((err) => {
+      document.getElementById('diag-other').textContent = String(err && err.stack || err);
+    });
+  </script>
+</body>
+</html>

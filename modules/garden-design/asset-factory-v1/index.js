@@ -159,6 +159,14 @@ export {
 export {
   writeBotanicalSizeAuthorityRegistry
 } from './botanical-size-authority-v1-build.js';
+export {
+  resolveGardenSizeAuthority,
+  GARDEN_SIZE_AUTHORITY_ACTIVATION,
+  GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION
+} from './garden-design-size-authority-adapter-v1.js';
+export {
+  writeGardenDesignSizeAuthorityIntegrationReports
+} from './garden-design-size-authority-integration-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
