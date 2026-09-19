@@ -139,6 +139,11 @@ export {
   writeTreeTaxonomyDuplicateGateReports,
   TREE_TAXONOMY_DUPLICATE_GATE_VERSION
 } from './tree-taxonomy-duplicate-gate-v1.js';
+export {
+  writeTreeSizeEvidenceWaveReports,
+  buildWaveSummary,
+  TREE_SIZE_EVIDENCE_WAVE_VERSION
+} from './tree-size-evidence-wave-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
