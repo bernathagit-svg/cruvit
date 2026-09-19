@@ -58,6 +58,14 @@ export {
   evaluateMatureTreeAntiMiniatureInvariant,
   TREE_SCALE_MODEL_VERSION
 } from './composition-calibration-v3.js';
+export {
+  classifyCatalogDimensionEvidence,
+  classifyUserConfirmedDimension,
+  computePhysicalSceneScale,
+  mayDrivePhysicalMeterPreview,
+  DIMENSION_EVIDENCE,
+  PHYSICAL_SCALE_MODEL_VERSION
+} from './physical-scale-foundation-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

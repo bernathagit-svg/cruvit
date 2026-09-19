@@ -1,0 +1,25 @@
+{
+  "applyMigrationNow": false,
+  "note": "Schema proposal only. Existing garden_design_placements.growth_stage and scale stay. Do not overload scale as botanical truth. garden_designs.metadata may hold a session-shaped photo_scale_calibration without a new column, or add an explicit jsonb later.",
+  "tables": [
+    {
+      "table": "garden_designs",
+      "column": "photo_scale_calibration",
+      "type": "jsonb",
+      "optionalInterim": "garden_designs.metadata.photo_scale_calibration",
+      "note": "Known reference dimensions on the saved Garden photo: points, knownMeters, near/far band. Not applied in this task."
+    },
+    {
+      "table": "garden_design_placements",
+      "columns": [
+        "growth_stage",
+        "botanical_target_height_m_min",
+        "botanical_target_height_m_max",
+        "botanical_height_evidence_class",
+        "suggested_scale",
+        "user_scale_override"
+      ],
+      "note": "Keep user_scale_override separate from botanical source truth. growth_stage already exists. Not applied in this task."
+    }
+  ]
+}

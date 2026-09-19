@@ -25,6 +25,13 @@ import {
   recommendCompositionV3Class
 } from './composition-calibration-v3.js';
 import {
+  DIMENSION_EVIDENCE,
+  REFERENCE_KINDS,
+  buildPhysicalScaleFoundationReport,
+  classifyCatalogDimensionEvidence,
+  PHYSICAL_SCALE_PERSISTENCE_PROPOSAL
+} from './physical-scale-foundation-v1.js';
+import {
   classifyCalibrationReviewReadiness,
   LOCAL_SUPPLEMENTARY_BACKGROUNDS,
   SAVED_GARDEN_PHOTO_AUTHORITY
@@ -74,14 +81,16 @@ function sceneBlock(letter, label, className, scale, slug, backgroundUrl, blocke
     : cutoutSrc
       ? candidateImg(cutoutSrc, slug, cutoutScale || '')
       : '';
-  const ghost = cutout
+  const ghost = extras.skipGhost
+    ? ''
+    : cutout
     ? ''
     : blocked
       ? `<div class="ghost blocked">${esc(slug)} · waiting for host signed URL</div>`
       : `<div class="ghost ${esc(scale || '')}">${esc(slug)}</div>`;
   return `<div class="scene-col" data-panel="${esc(letter)}">
       <p class="cap"><strong>${esc(letter)}.</strong> ${esc(label)}</p>
-      <div class="scene ${className}${blocked ? ' is-blocked' : ''}"${bg}${sceneAttrs(extras.attrs || {})}>${ghost}${cutout}</div>
+      <div class="scene ${className}${blocked ? ' is-blocked' : ''}"${bg}${sceneAttrs(extras.attrs || {})}>${ghost}${cutout}${extras.inner || ''}</div>
     </div>`;
 }
 
@@ -168,6 +177,9 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       'data-bbox': bbox ? `${bbox.minX},${bbox.minY},${bbox.maxX},${bbox.maxY}` : '',
       'data-depth-id': extra.depthId || 'middle',
       'data-scale-model': extra.scaleModel || 'v2',
+      ...(typeof sizeEvidence.matureHeightM === 'number'
+        ? { 'data-height-min': sizeEvidence.matureHeightM, 'data-height-max': sizeEvidence.matureHeightM }
+        : {}),
       ...(extra.lockDepth ? { 'data-lock-depth': extra.lockDepth } : {})
     };
   }
@@ -181,6 +193,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       const plant = plantsBySlug[job.canonicalSlug] || {};
       const sizeEvidence = auditBotanicalSizeEvidence(plant, libraryCopyBySlug[job.canonicalSlug] || {});
       const contract = buildDesignAssetScaleContract(job, sizeEvidence);
+      const physicalEvidence = classifyCatalogDimensionEvidence(plant, {
+        visualForm: job.visualForm,
+        growthStage: job.growthStage,
+        librarySizeCopy: (libraryCopyBySlug[job.canonicalSlug] || {}).size
+      });
       const recommendation = recommendCompositionV3Class(job.canonicalSlug) || recommendCompositionV2Class(job.canonicalSlug);
       const status = generated
         ? 'Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.'
@@ -237,14 +254,37 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     ${sceneBlock('V3 MIDDLE', 'TREE SCALE V3 — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
     ${sceneBlock('V3 FAR', 'TREE SCALE V3 — far', 'real blend-v2-scene tree-v3-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'v3' }) })}
   </div>
-  ${formCompare}`
+  ${formCompare}
+  <h3>PHYSICAL SCALE V1 — mango is the calibration example only, not a hard-coded size</h3>
+  <p class="note">V3 is still a percentage-of-canvas heuristic. PHYSICAL V1 uses botanical evidence (SOURCE_SUPPORTED_RANGE or USER_CONFIRMED only) × photo scale × placement depth. Catalog meters for this slug start as ${esc(physicalEvidence.evidenceClass)}. CRUVIT does not invent mango meters. HEURISTIC_RANGE and UNKNOWN must not drive a labelled meter preview.</p>
+  <p class="note">Photo calibration is garden-level (harness above). Enter a USER_CONFIRMED mature height range if you know one. Label is <strong data-suggested-size-label>Suggested mature size</strong>, never Exact mature size.</p>
+  <label>USER_CONFIRMED height min (m) <input id="physical-height-min" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
+  <label>USER_CONFIRMED height max (m) <input id="physical-height-max" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
+  <button type="button" id="physical-user-confirm">Confirm as USER_CONFIRMED</button>
+  <button type="button" id="physical-user-clear">Clear USER_CONFIRMED</button>
+  <span id="physical-confirm-error" class="empty"></span>
+  <p class="note">Manual override is stored separately from botanical source truth.</p>
+  <label>Manual override multiplier <input id="physical-override-multiplier" type="range" min="0.5" max="2" step="0.02" value="1"/> <strong data-physical-override-value>1.00</strong></label>
+  <p class="note" data-physical-scale-readout>PHYSICAL_SCALE_BLOCKED until photo calibration and SOURCE_SUPPORTED_RANGE or USER_CONFIRMED (or a meter override).</p>
+  <h4>V2 vs V3 vs PHYSICAL V1 (middle)</h4>
+  <div class="scenes">
+    ${sceneBlock('V2 MID', 'CURRENT V2 — middle', 'real blend-v2-scene perspective-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v2' }) })}
+    ${sceneBlock('V3 MID', 'TREE SCALE V3 — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
+    ${sceneBlock('PHYS MID', 'PHYSICAL SCALE V1 — middle', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
+  </div>
+  <h4>PHYSICAL SCALE V1 near / middle / far</h4>
+  <div class="scenes">
+    ${sceneBlock('PHYS NEAR', 'PHYSICAL SCALE V1 — near', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'near', lockDepth: 'near', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
+    ${sceneBlock('PHYS FAR', 'PHYSICAL SCALE V1 — far', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'physical-v1' }), inner: '<div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div>' })}
+  </div>
+  <p class="note">Owner question: Does this now read as the plausible size of a mature Mango tree relative to the real garden?</p>`
           : '';
       return `<article class="job" id="job-${esc(job.canonicalSlug)}" data-visual-form="${esc(job.visualForm || '')}" data-size-evidence="${esc(sizeEvidence.status)}">
   <header>
     <h2>${title}</h2>
     <p class="meta">${esc(job.scientific || '')} · ${esc(job.identityPrecision)} · ${esc(job.variantKey)} · ${esc(job.priorityReason)}</p>
     <p class="why">${esc(job.whyUsefulForCalibration)}</p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: ${esc(sizeEvidence.status)}. Ground anchor: ${contract.groundAnchor.nx.toFixed(3)}, ${contract.groundAnchor.ny.toFixed(3)}. PNG ${contract.canvasWidth}×${contract.canvasHeight} is not botanical size. Recommended class (not approval): ${esc(recommendation.class)}.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: ${esc(sizeEvidence.status)}. Physical dimension class: ${esc(physicalEvidence.evidenceClass)}. mayDrivePhysicalMeterPreview: ${physicalEvidence.mayDrivePhysicalMeterPreview ? 'YES' : 'NO'}. Ground anchor: ${contract.groundAnchor.nx.toFixed(3)}, ${contract.groundAnchor.ny.toFixed(3)}. PNG ${contract.canvasWidth}×${contract.canvasHeight} is not botanical size. Recommended class (not approval): ${esc(recommendation.class)}.</p>
     <p class="empty" data-in-garden-status="${generated ? 'UNKNOWN' : 'BLOCKED'}" data-generated="${generated ? 'true' : 'false'}">${status}</p>
     ${generated ? ownerVisualQaPanel(job).replace('data-v2-recommendation></p>', `data-v2-recommendation>Recommended ${esc(recommendation.class)} — ${esc(recommendation.note)} Not auto-approved.</p>`) : ''}
     <p class="meta">Review fields: ${esc(IN_GARDEN_REVIEW_FIELDS.join(', '))}. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
@@ -303,7 +343,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real { width: 420px; height: 300px; }
-    .scene.real.tree-v3-scene { width: 480px; height: 360px; }
+    .scene.real.tree-v3-scene, .scene.real.physical-v1-scene { width: 480px; height: 360px; }
+    .scene.real.photo-cal-scene { width: 640px; height: 420px; cursor: crosshair; }
+    .cal-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #0f3d2e; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
+    .cal-line { position: absolute; height: 2px; background: #e8c547; transform-origin: 0 50%; pointer-events: none; z-index: 2; }
+    .physical-blocked { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 2; background: rgba(18,18,18,.78); color: #fff; font-size: 12px; padding: 8px; }
     .checkerboard-scene { width: 280px; height: 360px; }
     .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
     .scene img.cutout.small { max-height: 34%; }
@@ -358,7 +402,21 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     IN_GARDEN_REVIEW_FIELDS.join(', ')
   )}.</p>
   <p id="composition-v2-sample-status" class="note">LOCAL SCENE MATCHING: waiting for signed Garden photo. Bounds brightness ${LOCAL_SCENE_MATCH_BOUNDS.brightness.min}–${LOCAL_SCENE_MATCH_BOUNDS.brightness.max}, contrast ${LOCAL_SCENE_MATCH_BOUNDS.contrast.min}–${LOCAL_SCENE_MATCH_BOUNDS.contrast.max}, saturate ${LOCAL_SCENE_MATCH_BOUNDS.saturate.min}–${LOCAL_SCENE_MATCH_BOUNDS.saturate.max}, blur ${LOCAL_SCENE_MATCH_BOUNDS.blurPx.min}–${LOCAL_SCENE_MATCH_BOUNDS.blurPx.max}px, opacity ${LOCAL_SCENE_MATCH_BOUNDS.opacity.min}–${LOCAL_SCENE_MATCH_BOUNDS.opacity.max}, hue-rotate 0. Depths: ${Object.keys(SCENE_DEPTHS).join(', ')}.</p>
-  <p class="note">Tree scale V2 (shared curve): ${esc(treeScale.result)}. Tree scale V3 (tree-only, bbox-compensated): ${esc(treeV3.result)}. Depths V3 near/middle/far factors ${TREE_SCENE_DEPTHS.near.depthFactor} / ${TREE_SCENE_DEPTHS.middle.depthFactor} / ${TREE_SCENE_DEPTHS.far.depthFactor}. Owner question for mango: Does this finally read as a mature tree, not a miniature tree? approved assets: 0. production registry changed: NO.</p>
+  <p class="note">Tree scale V2 (shared curve): ${esc(treeScale.result)}. Tree scale V3 (tree-only, bbox-compensated): ${esc(treeV3.result)}. PHYSICAL SCALE V1 is a meter estimate from botanical evidence + photo calibration + depth, not a survey. Depths V3 near/middle/far factors ${TREE_SCENE_DEPTHS.near.depthFactor} / ${TREE_SCENE_DEPTHS.middle.depthFactor} / ${TREE_SCENE_DEPTHS.far.depthFactor}. Evidence states: ${Object.values(DIMENSION_EVIDENCE).join(', ')}. approved assets: 0. production registry changed: NO.</p>
+  <section class="job" id="photo-scale-calibration">
+    <h2>Photo scale calibration harness</h2>
+    <p class="note">A Garden photo has no reliable meter scale by default. Mark two points, enter a known distance, and optionally a near or far band. Interpolation by placement y is a visualization estimate, not surveying accuracy. Do not redesign the full Garden Design UI here.</p>
+    <p id="photo-scale-status" class="note">Photo scale: UNCALIBRATED.</p>
+    <div class="scenes">
+      ${sceneBlock('CAL', 'Known reference dimension — click two points', 'real photo-cal-scene', '', 'garden', '', true, '', '', { skipGhost: true })}
+    </div>
+    <label>Kind <select id="photo-scale-kind">${REFERENCE_KINDS.map((kind) => `<option value="${esc(kind)}">${esc(kind.replace(/_/g, ' '))}</option>`).join('')}</select></label>
+    <label>Known distance (m) <input id="photo-scale-meters" type="number" min="0.05" step="0.05" placeholder="e.g. door 2.1"/></label>
+    <label>Depth band <select id="photo-scale-depth"><option value="near">near</option><option value="far">far</option><option value="unspecified">unspecified</option></select></label>
+    <button type="button" id="photo-scale-add">Add reference</button>
+    <span id="photo-scale-error" class="empty"></span>
+    <ul id="photo-scale-ref-list"></ul>
+  </section>
   <section class="job owner-feedback" id="owner-feedback-summary">
     <h2>Owner review summary</h2>
     <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. Frequencies are sums of checked fields in that record. Flattened reports are not used.</p>
@@ -415,6 +473,10 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
           var ghost = el.querySelector('.ghost');
+          if (el.classList.contains('photo-cal-scene')) {
+            if (ghost) ghost.remove();
+            return;
+          }
           if (ghost && !el.querySelector('img.cutout')) {
             ghost.classList.remove('blocked');
             ghost.textContent = 'Candidate not generated yet';
@@ -483,6 +545,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   </script>
   <script type="module" src="asset-factory-v1/calibration-owner-visual-qa-v1.js?v=${CALIBRATION_BATCH_1_CACHE_BUST}"></script>
   <script type="module" src="asset-factory-v1/composition-calibration-v2-runtime.js?v=${CALIBRATION_BATCH_1_CACHE_BUST}"></script>
+  <script type="module" src="asset-factory-v1/physical-scale-foundation-v1-runtime.js?v=${CALIBRATION_BATCH_1_CACHE_BUST}"></script>
 </body>
 </html>`;
 }
@@ -521,7 +584,7 @@ function loadCompositionV2Catalog(root) {
 }
 
 export function writeCalibrationReviewSheet(root, batch, options = {}) {
-  const withCandidates = attachExistingCalibrationCandidates(batch, root);
+  const withCandidates = attachTechnicalQaFromResults(root, attachExistingCalibrationCandidates(batch, root));
   const catalog = loadCompositionV2Catalog(root);
   const htmlOptions = {
     ...options,
@@ -556,11 +619,23 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
   });
   const v3Path = path.join(dir, 'tree-scale-calibration-v3.json');
   fs.writeFileSync(v3Path, `${JSON.stringify(v3Report, null, 2)}\n`);
+  const physicalReport = buildPhysicalScaleFoundationReport(withCandidates, catalog);
+  const physicalDir = path.join(root, 'data', 'garden-design', 'physical-scale-foundation-v1');
+  fs.mkdirSync(physicalDir, { recursive: true });
+  const physicalPath = path.join(physicalDir, 'physical-scale-foundation-v1.json');
+  fs.writeFileSync(physicalPath, `${JSON.stringify(physicalReport, null, 2)}\n`);
+  const schemaPath = path.join(physicalDir, 'persistence-schema-proposal.json');
+  fs.writeFileSync(
+    schemaPath,
+    `${JSON.stringify({ ...PHYSICAL_SCALE_PERSISTENCE_PROPOSAL, applyMigrationNow: false }, null, 2)}\n`
+  );
   return {
     htmlPath,
     livePath,
     reportPath,
     v3Path,
+    physicalPath,
+    schemaPath,
     treeScale: report.treeScale.result,
     treeScaleV3: v3Report.invariant.result,
     sizeEvidenceUnknown: report.assets.every(
@@ -568,4 +643,21 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
     ),
     readiness: classifyCalibrationReviewReadiness(options.savedGardenPhoto || {})
   };
+}
+
+function attachTechnicalQaFromResults(root, batch) {
+  const resultsPath = path.join(root, 'data', 'garden-design', 'calibration-batch-1', 'results.json');
+  if (!fs.existsSync(resultsPath)) return batch;
+  let results;
+  try {
+    results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+  } catch {
+    return batch;
+  }
+  const bySlug = Object.fromEntries((results.jobs || []).map((job) => [job.canonicalSlug, job]));
+  return (Array.isArray(batch) ? batch : []).map((job) => {
+    const row = bySlug[job.canonicalSlug];
+    if (!row || !row.technicalQa) return job;
+    return { ...job, technicalQa: job.technicalQa || row.technicalQa };
+  });
 }

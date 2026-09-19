@@ -83,7 +83,9 @@ test('live calibration review wires actual cutouts, not placeholders', () => {
   assert.match(review, /data-blend-scale="medium"/);
   assert.match(review, /raw-blend-pair/);
   assert.match(review, /owner-feedback-table-body/);
-  assert.match(review, /TREE SCALE V3/);
+  assert.match(review, /PHYSICAL SCALE V1/);
+  assert.match(review, /photo-cal-scene/);
+  assert.match(review, /Does this now read as the plausible size of a mature Mango tree/);
   assert.match(review, /CURRENT V2/);
   assert.match(review, /data-composition-v2-class="RUNTIME_SCALE_SOLVABLE"/);
   assert.match(review, /Does this finally read as a mature tree/);

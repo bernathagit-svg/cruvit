@@ -162,7 +162,11 @@ function applyBlendFilter(img, adaptation) {
 }
 
 async function refreshV2Scenes(doc) {
-  const scenes = [...doc.querySelectorAll('.scene.blend-v2-scene, .scene.perspective-scene, .scene.fixed-scale-v2-scene, .scene.tree-v3-scene, .scene.form-compare-scene')];
+  const scenes = [
+    ...doc.querySelectorAll(
+      '.scene.blend-v2-scene, .scene.perspective-scene, .scene.fixed-scale-v2-scene, .scene.tree-v3-scene, .scene.form-compare-scene'
+    )
+  ].filter((el) => !el.classList.contains('physical-v1-scene') && !el.classList.contains('photo-cal-scene'));
   const firstReal = scenes.find((el) => el.classList.contains('real') || el.classList.contains('blend-v2-scene'));
   const url = sceneUrlFrom(firstReal);
   let sample = { available: false, reason: 'LOCAL_SCENE_SAMPLE_UNAVAILABLE' };

@@ -1,0 +1,149 @@
+{
+  "contract": "physical-scale-foundation-v1",
+  "currentScaleFailure": "Tree Scale V3 remains a percentage-of-canvas heuristic. Owner judged a mature mango at roughly ~2 m in the real Garden photo. That is not a physically meaningful Garden Design scale.",
+  "mangoHardCodedMultiplier": false,
+  "inventedBotanicalMeters": false,
+  "physicalPreviewRule": "Only SOURCE_SUPPORTED_RANGE or USER_CONFIRMED may drive a physically labelled meter preview. UNKNOWN must not pretend to know meters. HEURISTIC_RANGE is recorded but not labelled as meters.",
+  "dimensionEvidenceStates": [
+    "SOURCE_SUPPORTED_RANGE",
+    "USER_CONFIRMED",
+    "HEURISTIC_RANGE",
+    "UNKNOWN"
+  ],
+  "physicalPreviewDriveClasses": [
+    "SOURCE_SUPPORTED_RANGE",
+    "USER_CONFIRMED"
+  ],
+  "photoCalibration": {
+    "contract": "garden-photo-scale-calibration-v1",
+    "model": "physical-scale-foundation-v1",
+    "references": [],
+    "captureWidthPx": null,
+    "captureHeightPx": null,
+    "pixelsPerMeterNear": null,
+    "pixelsPerMeterFar": null,
+    "accuracy": "garden-visualization-estimate-not-survey",
+    "surveyingAccuracy": false
+  },
+  "perspective": {
+    "nearReference": true,
+    "farReference": true,
+    "interpolationByPlacementY": true,
+    "surveyingAccuracy": false
+  },
+  "growthStageRule": "Do not derive young size as a fixed percentage of mature size without evidence.",
+  "assets": [
+    {
+      "canonicalSlug": "mango",
+      "visualForm": "tree",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "lavender",
+      "visualForm": "shrub",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "visualForm": "rosette",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "banana",
+      "visualForm": "herbaceous-clump",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "areca-palm",
+      "visualForm": "palm",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "bougainvillea",
+      "visualForm": "climber",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "aloe-vera",
+      "visualForm": "succulent-form",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    },
+    {
+      "canonicalSlug": "eggplant",
+      "visualForm": "subshrub",
+      "growthStage": "mature",
+      "catalogEvidenceClass": "UNKNOWN",
+      "stageEvidenceClass": "UNKNOWN",
+      "mayDrivePhysicalMeterPreview": false,
+      "mangoHardCoded": false,
+      "inventedBotanicalMeters": false
+    }
+  ],
+  "persistenceProposal": {
+    "applyMigrationNow": false,
+    "note": "Schema proposal only. Existing garden_design_placements.growth_stage and scale stay. Do not overload scale as botanical truth. garden_designs.metadata may hold a session-shaped photo_scale_calibration without a new column, or add an explicit jsonb later.",
+    "tables": [
+      {
+        "table": "garden_designs",
+        "column": "photo_scale_calibration",
+        "type": "jsonb",
+        "optionalInterim": "garden_designs.metadata.photo_scale_calibration",
+        "note": "Known reference dimensions on the saved Garden photo: points, knownMeters, near/far band. Not applied in this task."
+      },
+      {
+        "table": "garden_design_placements",
+        "columns": [
+          "growth_stage",
+          "botanical_target_height_m_min",
+          "botanical_target_height_m_max",
+          "botanical_height_evidence_class",
+          "suggested_scale",
+          "user_scale_override"
+        ],
+        "note": "Keep user_scale_override separate from botanical source truth. growth_stage already exists. Not applied in this task."
+      }
+    ]
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "productionRegistryChanged": false,
+  "regenerate": false
+}

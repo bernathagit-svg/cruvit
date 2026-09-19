@@ -8,7 +8,11 @@
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real { width: 420px; height: 300px; }
-    .scene.real.tree-v3-scene { width: 480px; height: 360px; }
+    .scene.real.tree-v3-scene, .scene.real.physical-v1-scene { width: 480px; height: 360px; }
+    .scene.real.photo-cal-scene { width: 640px; height: 420px; cursor: crosshair; }
+    .cal-marker { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #0f3d2e; color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); pointer-events: none; z-index: 3; }
+    .cal-line { position: absolute; height: 2px; background: #e8c547; transform-origin: 0 50%; pointer-events: none; z-index: 2; }
+    .physical-blocked { position: absolute; left: 8px; right: 8px; top: 8px; z-index: 2; background: rgba(18,18,18,.78); color: #fff; font-size: 12px; padding: 8px; }
     .checkerboard-scene { width: 280px; height: 360px; }
     .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
     .scene img.cutout.small { max-height: 34%; }
@@ -59,7 +63,24 @@
   <p id="realGardenBanner" class="warn">Loading Garden context… Path: garden_designs.source_media_id → garden_media → private user-garden-media. Local stand-ins are supplementary only. Do not copy the private photo into the repo. No Storage credentials in this page.</p>
   <p>Owner question: Does this now look like a plant actually standing in the garden? Fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE.</p>
   <p id="composition-v2-sample-status" class="note">LOCAL SCENE MATCHING: waiting for signed Garden photo. Bounds brightness 0.88–1.08, contrast 0.88–1.06, saturate 0.82–1.05, blur 0.2–0.7px, opacity 0.94–1, hue-rotate 0. Depths: near, middle, far.</p>
-  <p class="note">Tree scale V2 (shared curve): TREE_SCALE_MODEL_PASS. Tree scale V3 (tree-only, bbox-compensated): TREE_SCALE_V3_ANTI_MINIATURE_PASS. Depths V3 near/middle/far factors 1 / 0.88 / 0.74. Owner question for mango: Does this finally read as a mature tree, not a miniature tree? approved assets: 0. production registry changed: NO.</p>
+  <p class="note">Tree scale V2 (shared curve): TREE_SCALE_MODEL_PASS. Tree scale V3 (tree-only, bbox-compensated): TREE_SCALE_V3_ANTI_MINIATURE_PASS. PHYSICAL SCALE V1 is a meter estimate from botanical evidence + photo calibration + depth, not a survey. Depths V3 near/middle/far factors 1 / 0.88 / 0.74. Evidence states: SOURCE_SUPPORTED_RANGE, USER_CONFIRMED, HEURISTIC_RANGE, UNKNOWN. approved assets: 0. production registry changed: NO.</p>
+  <section class="job" id="photo-scale-calibration">
+    <h2>Photo scale calibration harness</h2>
+    <p class="note">A Garden photo has no reliable meter scale by default. Mark two points, enter a known distance, and optionally a near or far band. Interpolation by placement y is a visualization estimate, not surveying accuracy. Do not redesign the full Garden Design UI here.</p>
+    <p id="photo-scale-status" class="note">Photo scale: UNCALIBRATED.</p>
+    <div class="scenes">
+      <div class="scene-col" data-panel="CAL">
+      <p class="cap"><strong>CAL.</strong> Known reference dimension — click two points</p>
+      <div class="scene real photo-cal-scene is-blocked"></div>
+    </div>
+    </div>
+    <label>Kind <select id="photo-scale-kind"><option value="door_height">door height</option><option value="fence_height">fence height</option><option value="wall_height">wall height</option><option value="path_width">path width</option><option value="planter_width">planter width</option><option value="known_garden_dimension">known garden dimension</option><option value="custom">custom</option></select></label>
+    <label>Known distance (m) <input id="photo-scale-meters" type="number" min="0.05" step="0.05" placeholder="e.g. door 2.1"/></label>
+    <label>Depth band <select id="photo-scale-depth"><option value="near">near</option><option value="far">far</option><option value="unspecified">unspecified</option></select></label>
+    <button type="button" id="photo-scale-add">Add reference</button>
+    <span id="photo-scale-error" class="empty"></span>
+    <ul id="photo-scale-ref-list"></ul>
+  </section>
   <section class="job owner-feedback" id="owner-feedback-summary">
     <h2>Owner review summary</h2>
     <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. Frequencies are sums of checked fields in that record. Flattened reports are not used.</p>
@@ -93,9 +114,9 @@
   <article class="job" id="job-mango" data-visual-form="tree" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>1. mango · tree · mature</h2>
-    <p class="meta">Mangifera indica · SPECIES_SUPPORTED · mature__season-neutral__vegetative__leafy · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.508, 0.926. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SCALE_SOLVABLE.</p>
+    <p class="meta">Mangifera indica · SPECIES_SUPPORTED · mature__season-neutral__vegetative__leafy · owned-plants</p>
+    <p class="why">Tests tree silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.508, 0.926. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SCALE_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="mango" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -127,22 +148,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -155,15 +176,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -183,30 +204,30 @@
   <div class="scenes">
     <div class="scene-col" data-panel="V2 NEAR">
       <p class="cap"><strong>V2 NEAR.</strong> CURRENT V2 — near</p>
-      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="near" data-scale-model="v2" data-lock-depth="near"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="near" data-scale-model="v2" data-lock-depth="near"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="V2 MIDDLE">
       <p class="cap"><strong>V2 MIDDLE.</strong> CURRENT V2 — middle</p>
-      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="V2 FAR">
       <p class="cap"><strong>V2 FAR.</strong> CURRENT V2 — far</p>
-      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="far" data-scale-model="v2" data-lock-depth="far"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="far" data-scale-model="v2" data-lock-depth="far"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <h4>TREE SCALE V3</h4>
   <div class="scenes">
     <div class="scene-col" data-panel="V3 NEAR">
       <p class="cap"><strong>V3 NEAR.</strong> TREE SCALE V3 — near</p>
-      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="near" data-scale-model="v3" data-lock-depth="near"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="near" data-scale-model="v3" data-lock-depth="near"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="V3 MIDDLE">
       <p class="cap"><strong>V3 MIDDLE.</strong> TREE SCALE V3 — middle</p>
-      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v3" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v3" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="V3 FAR">
       <p class="cap"><strong>V3 FAR.</strong> TREE SCALE V3 — far</p>
-      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="far" data-scale-model="v3" data-lock-depth="far"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="far" data-scale-model="v3" data-lock-depth="far"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <h3>Form relative scale — same Garden photo, middle depth</h3>
@@ -214,44 +235,82 @@
   <div class="scenes">
     <div class="scene-col" data-panel="mango tree">
       <p class="cap"><strong>mango tree.</strong> mango tree · v3</p>
-      <div class="scene real blend-v2-scene tree-v3-scene form-compare-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v3" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene tree-v3-scene form-compare-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v3" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="lavender shrub">
       <p class="cap"><strong>lavender shrub.</strong> lavender shrub · v2</p>
-      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="shrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50634765625,0.83203125" data-canvas="1024,1536" data-bbox="47,355,990,1278" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="shrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50634765625,0.83203125" data-canvas="1024,1536" data-bbox="47,355,990,1278" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="pineapple rosette">
       <p class="cap"><strong>pineapple rosette.</strong> pineapple rosette · v2</p>
-      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="rosette" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.498046875,0.8828125" data-canvas="1024,1536" data-bbox="3,261,1017,1356" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="rosette" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.498046875,0.8828125" data-canvas="1024,1536" data-bbox="3,261,1017,1356" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
     <div class="scene-col" data-panel="banana clump">
       <p class="cap"><strong>banana clump.</strong> banana clump · v2</p>
-      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="herbaceous-clump" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.49560546875,0.96875" data-canvas="1024,1536" data-bbox="22,34,993,1488" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene form-compare-scene is-blocked" data-visual-form="herbaceous-clump" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.49560546875,0.96875" data-canvas="1024,1536" data-bbox="22,34,993,1488" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
+  <h3>PHYSICAL SCALE V1 — mango is the calibration example only, not a hard-coded size</h3>
+  <p class="note">V3 is still a percentage-of-canvas heuristic. PHYSICAL V1 uses botanical evidence (SOURCE_SUPPORTED_RANGE or USER_CONFIRMED only) × photo scale × placement depth. Catalog meters for this slug start as UNKNOWN. CRUVIT does not invent mango meters. HEURISTIC_RANGE and UNKNOWN must not drive a labelled meter preview.</p>
+  <p class="note">Photo calibration is garden-level (harness above). Enter a USER_CONFIRMED mature height range if you know one. Label is <strong data-suggested-size-label>Suggested mature size</strong>, never Exact mature size.</p>
+  <label>USER_CONFIRMED height min (m) <input id="physical-height-min" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
+  <label>USER_CONFIRMED height max (m) <input id="physical-height-max" type="number" min="0.05" step="0.1" placeholder="empty until confirmed"/></label>
+  <button type="button" id="physical-user-confirm">Confirm as USER_CONFIRMED</button>
+  <button type="button" id="physical-user-clear">Clear USER_CONFIRMED</button>
+  <span id="physical-confirm-error" class="empty"></span>
+  <p class="note">Manual override is stored separately from botanical source truth.</p>
+  <label>Manual override multiplier <input id="physical-override-multiplier" type="range" min="0.5" max="2" step="0.02" value="1"/> <strong data-physical-override-value>1.00</strong></label>
+  <p class="note" data-physical-scale-readout>PHYSICAL_SCALE_BLOCKED until photo calibration and SOURCE_SUPPORTED_RANGE or USER_CONFIRMED (or a meter override).</p>
+  <h4>V2 vs V3 vs PHYSICAL V1 (middle)</h4>
+  <div class="scenes">
+    <div class="scene-col" data-panel="V2 MID">
+      <p class="cap"><strong>V2 MID.</strong> CURRENT V2 — middle</p>
+      <div class="scene real blend-v2-scene perspective-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v2" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+    </div>
+    <div class="scene-col" data-panel="V3 MID">
+      <p class="cap"><strong>V3 MID.</strong> TREE SCALE V3 — middle</p>
+      <div class="scene real blend-v2-scene tree-v3-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="v3" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+    </div>
+    <div class="scene-col" data-panel="PHYS MID">
+      <p class="cap"><strong>PHYS MID.</strong> PHYSICAL SCALE V1 — middle</p>
+      <div class="scene real blend-v2-scene physical-v1-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="middle" data-scale-model="physical-v1" data-lock-depth="middle"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div><div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div></div>
+    </div>
+  </div>
+  <h4>PHYSICAL SCALE V1 near / middle / far</h4>
+  <div class="scenes">
+    <div class="scene-col" data-panel="PHYS NEAR">
+      <p class="cap"><strong>PHYS NEAR.</strong> PHYSICAL SCALE V1 — near</p>
+      <div class="scene real blend-v2-scene physical-v1-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="near" data-scale-model="physical-v1" data-lock-depth="near"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div><div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div></div>
+    </div>
+    <div class="scene-col" data-panel="PHYS FAR">
+      <p class="cap"><strong>PHYS FAR.</strong> PHYSICAL SCALE V1 — far</p>
+      <div class="scene real blend-v2-scene physical-v1-scene is-blocked" data-visual-form="tree" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50830078125,0.92578125" data-canvas="1024,1536" data-bbox="33,148,1008,1422" data-depth-id="far" data-scale-model="physical-v1" data-lock-depth="far"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div><div class="physical-blocked" data-physical-blocked>PHYSICAL_SCALE_BLOCKED</div></div>
+    </div>
+  </div>
+  <p class="note">Owner question: Does this now read as the plausible size of a mature Mango tree relative to the real garden?</p>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919h" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919i" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-lavender" data-visual-form="shrub" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>2. lavender · shrub · mature</h2>
-    <p class="meta">Lavandula angustifolia · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.506, 0.832. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
+    <p class="meta">Lavandula angustifolia · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · garden-design-surfaced</p>
+    <p class="why">Tests shrub silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.506, 0.832. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="lavender" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -283,22 +342,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -311,15 +370,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="shrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50634765625,0.83203125" data-canvas="1024,1536" data-bbox="47,355,990,1278" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="shrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50634765625,0.83203125" data-canvas="1024,1536" data-bbox="47,355,990,1278" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -335,25 +394,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919h" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919i" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-pineapple" data-visual-form="rosette" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>3. pineapple · rosette · mature</h2>
-    <p class="meta">Ananas comosus · SPECIES_SUPPORTED · mature__season-neutral__vegetative__rosette · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.498, 0.883. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
+    <p class="meta">Ananas comosus · SPECIES_SUPPORTED · mature__season-neutral__vegetative__rosette · owned-plants</p>
+    <p class="why">Tests rosette silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.498, 0.883. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="pineapple" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -385,22 +444,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -413,15 +472,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="rosette" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.498046875,0.8828125" data-canvas="1024,1536" data-bbox="3,261,1017,1356" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="rosette" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.498046875,0.8828125" data-canvas="1024,1536" data-bbox="3,261,1017,1356" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -437,25 +496,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919h" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919i" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-banana" data-visual-form="herbaceous-clump" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>4. banana · herbaceous-clump · mature</h2>
-    <p class="meta">Musa spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__mature-clump · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.496, 0.969. PNG 1024×1536 is not botanical size. Recommended class (not approval): REGEN_REQUIRED.</p>
+    <p class="meta">Musa spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__mature-clump · owned-plants</p>
+    <p class="why">Tests herbaceous-clump silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.496, 0.969. PNG 1024×1536 is not botanical size. Recommended class (not approval): REGEN_REQUIRED.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="banana" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -487,22 +546,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -515,15 +574,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="herbaceous-clump" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.49560546875,0.96875" data-canvas="1024,1536" data-bbox="22,34,993,1488" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="herbaceous-clump" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.49560546875,0.96875" data-canvas="1024,1536" data-bbox="22,34,993,1488" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -539,25 +598,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919h" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919i" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-areca-palm" data-visual-form="palm" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>5. areca-palm · palm · mature</h2>
-    <p class="meta">Dypsis lutescens · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.502, 0.964. PNG 1024×1536 is not botanical size. Recommended class (not approval): REGEN_REQUIRED.</p>
+    <p class="meta">Dypsis lutescens · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests palm silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.502, 0.964. PNG 1024×1536 is not botanical size. Recommended class (not approval): REGEN_REQUIRED.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="areca-palm" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -589,22 +648,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -617,15 +676,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="palm" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50244140625,0.9641927083333334" data-canvas="1024,1536" data-bbox="43,36,986,1481" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="palm" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50244140625,0.9641927083333334" data-canvas="1024,1536" data-bbox="43,36,986,1481" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -641,25 +700,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919h" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919i" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-bougainvillea" data-visual-form="climber" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>6. bougainvillea · climber · mature</h2>
-    <p class="meta">Bougainvillea spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__coverage · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.507, 0.952. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
+    <p class="meta">Bougainvillea spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__coverage · garden-design-surfaced</p>
+    <p class="why">Tests climber silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.507, 0.952. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="bougainvillea" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -691,22 +750,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -719,15 +778,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="climber" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50732421875,0.9518229166666666" data-canvas="1024,1536" data-bbox="31,170,1008,1462" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="climber" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50732421875,0.9518229166666666" data-canvas="1024,1536" data-bbox="31,170,1008,1462" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -743,25 +802,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919h" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919i" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-aloe-vera" data-visual-form="succulent-form" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>7. aloe-vera · succulent-form · mature</h2>
-    <p class="meta">Aloe vera · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.499, 0.904. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
+    <p class="meta">Aloe vera · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests succulent-form silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.499, 0.904. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="aloe-vera" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -793,22 +852,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -821,15 +880,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="succulent-form" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.4990234375,0.9036458333333334" data-canvas="1024,1536" data-bbox="35,188,987,1388" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="succulent-form" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.4990234375,0.9036458333333334" data-canvas="1024,1536" data-bbox="35,188,987,1388" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -845,25 +904,25 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919h" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919i" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-eggplant" data-visual-form="subshrub" data-size-evidence="SIZE_EVIDENCE_UNKNOWN">
   <header>
     <h2>8. eggplant · subshrub · mature</h2>
-    <p class="meta">Solanum melongena · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · </p>
-    <p class="why"></p>
-    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Ground anchor: 0.502, 0.923. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
+    <p class="meta">Solanum melongena · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
+    <p class="why">Tests subshrub silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
+    <p class="meta">A asset structural proportion · B scene scale/perspective · C visual integration. Size evidence: SIZE_EVIDENCE_UNKNOWN. Physical dimension class: UNKNOWN. mayDrivePhysicalMeterPreview: NO. Ground anchor: 0.502, 0.923. PNG 1024×1536 is not botanical size. Recommended class (not approval): RUNTIME_SOLVABLE.</p>
     <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
     <aside class="owner-visual-qa" data-slug="eggplant" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
   <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
@@ -895,22 +954,22 @@
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>RAW vs BLEND V1 vs BLEND V2 (existing binary, runtime only)</h3>
@@ -923,15 +982,15 @@
   <div class="scenes raw-blend-pair raw-blend-v2-row">
     <div class="scene-col" data-panel="RAW">
       <p class="cap"><strong>RAW.</strong> RAW — real Garden photo</p>
-      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V1">
       <p class="cap"><strong>BLEND V1.</strong> BLEND V1 — real Garden photo</p>
-      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene real blend-v1-scene is-blocked"><img class="cutout medium blend-v1" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="BLEND V2">
       <p class="cap"><strong>BLEND V2.</strong> BLEND V2 — real Garden photo</p>
-      <div class="scene real blend-v2-scene is-blocked" data-visual-form="subshrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50244140625,0.9231770833333334" data-canvas="1024,1536" data-bbox="51,105,978,1418" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
+      <div class="scene real blend-v2-scene is-blocked" data-visual-form="subshrub" data-growth-stage="mature" data-size-evidence="SIZE_EVIDENCE_UNKNOWN" data-ground-anchor="0.50244140625,0.9231770833333334" data-canvas="1024,1536" data-bbox="51,105,978,1418" data-depth-id="middle" data-scale-model="v2"><div class="placement" data-role="placement"><img class="cutout blend-v2" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/><span class="ground-shadow" aria-hidden="true"></span></div></div>
     </div>
   </div>
   <p class="note">Blend V2 controls (calibration only). Ground position / botanical relative scale / owner scale. SIZE_EVIDENCE = SIZE_EVIDENCE_UNKNOWN. Form factor uses visualForm, not PNG pixels and not invented meters.</p>
@@ -947,17 +1006,17 @@
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
+      <div class="scene supp" style="background-image:url('../../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919h" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="../../../modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919i" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
   <section class="job">
@@ -983,6 +1042,10 @@
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
           var ghost = el.querySelector('.ghost');
+          if (el.classList.contains('photo-cal-scene')) {
+            if (ghost) ghost.remove();
+            return;
+          }
           if (ghost && !el.querySelector('img.cutout')) {
             ghost.classList.remove('blocked');
             ghost.textContent = 'Candidate not generated yet';
@@ -1049,7 +1112,8 @@
       document.querySelectorAll('.harness.blend').forEach(function (el) { el.style.display = 'none'; });
     })();
   </script>
-  <script type="module" src="asset-factory-v1/calibration-owner-visual-qa-v1.js?v=20260919h"></script>
-  <script type="module" src="asset-factory-v1/composition-calibration-v2-runtime.js?v=20260919h"></script>
+  <script type="module" src="asset-factory-v1/calibration-owner-visual-qa-v1.js?v=20260919i"></script>
+  <script type="module" src="asset-factory-v1/composition-calibration-v2-runtime.js?v=20260919i"></script>
+  <script type="module" src="asset-factory-v1/physical-scale-foundation-v1-runtime.js?v=20260919i"></script>
 </body>
 </html>
