@@ -1,25 +1,32 @@
 {
   "contract": "calibration-botanical-size-evidence-v1",
-  "version": "physical-scale-evidence-v1.1",
+  "version": "mango-source-size-calibration-v1",
   "productionCatalogWritten": false,
   "productionRegistryChanged": false,
   "massCatalogEnrichment": false,
   "applyMigrationNow": false,
-  "note": "Calibration-only source-supported dimension evidence. Not a universal cultivar guarantee. Not production catalog truth until a later catalog write is explicitly approved.",
+  "note": "Calibration-only source-supported dimension evidence for mango. SPECIES_GENERAL landscape guidance. Not a cultivar guarantee. Not production catalog truth until a later catalog write is explicitly approved.",
   "records": [
     {
       "canonicalSlug": "mango",
-      "scientific": "Mangifera indica",
+      "scientificName": "Mangifera indica",
       "visualForm": "tree",
       "growthStage": "mature",
       "sizeScenario": "NATURAL_MATURE",
       "evidenceClass": "SOURCE_SUPPORTED_RANGE",
+      "evidenceScope": "SPECIES_GENERAL",
+      "cultivarSpecific": false,
+      "cultivarMayOverrideLater": true,
+      "cultivarEnrichmentImplemented": false,
       "calibrationOnly": true,
       "universalCultivarGuarantee": false,
+      "ownerEntersMatureHeight": false,
       "source": {
         "provider": "UF/IFAS Extension",
         "title": "Mangifera indica: Mango",
-        "sourceId": "UF_IFAS_ST404",
+        "publication": "ENH563",
+        "sourceId": "UF_IFAS_ENH563_ST404",
+        "identifiers": ["ENH563", "ST404"],
         "originalUnit": "ft"
       },
       "original": {
@@ -36,7 +43,7 @@
         "heightM": { "min": 9.1, "max": 18.3 },
         "spreadM": { "min": 9.1, "max": 15.2 }
       },
-      "note": "Landscape / ultimate mature architecture. Do not silently substitute a pruned maintenance-tree height."
+      "note": "General species / landscape guidance. Do not silently substitute a pruned maintenance-tree height. Future cultivar evidence may override this range."
     }
   ]
 }

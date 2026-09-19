@@ -12,7 +12,13 @@ import {
 } from './physical-scale-foundation-v1.js';
 
 export const PHYSICAL_SCALE_EVIDENCE_VERSION = 'physical-scale-evidence-v1.1';
+export const MANGO_SOURCE_SIZE_CALIBRATION_VERSION = 'mango-source-size-calibration-v1';
 export const FT_TO_M = 0.3048;
+
+export const EVIDENCE_SCOPE = Object.freeze({
+  SPECIES_GENERAL: 'SPECIES_GENERAL',
+  CULTIVAR_SPECIFIC: 'CULTIVAR_SPECIFIC'
+});
 
 export const SIZE_SCENARIOS = Object.freeze({
   NATURAL_MATURE: 'NATURAL_MATURE',
@@ -40,18 +46,27 @@ export const CALIBRATION_BOTANICAL_SIZE_EVIDENCE = Object.freeze({
   mango: Object.freeze({
     canonicalSlug: 'mango',
     scientific: 'Mangifera indica',
+    scientificName: 'Mangifera indica',
     visualForm: 'tree',
     growthStage: 'mature',
     sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE,
     evidenceClass: DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE,
+    evidenceScope: EVIDENCE_SCOPE.SPECIES_GENERAL,
+    cultivarSpecific: false,
+    cultivarMayOverrideLater: true,
+    cultivarEnrichmentImplemented: false,
     calibrationOnly: true,
     productionCatalogWritten: false,
+    massCatalogEnrichment: false,
     universalCultivarGuarantee: false,
     mayDrivePhysicalMeterPreview: true,
+    ownerEntersMatureHeight: false,
     source: Object.freeze({
       provider: 'UF/IFAS Extension',
       title: 'Mangifera indica: Mango',
-      sourceId: 'UF_IFAS_ST404',
+      publication: 'ENH563',
+      sourceId: 'UF_IFAS_ENH563_ST404',
+      identifiers: Object.freeze(['ENH563', 'ST404']),
       originalUnit: 'ft'
     }),
     original: Object.freeze({
@@ -65,7 +80,7 @@ export const CALIBRATION_BOTANICAL_SIZE_EVIDENCE = Object.freeze({
       heightM: Object.freeze({ min: 9.1, max: 18.3 }),
       spreadM: Object.freeze({ min: 9.1, max: 15.2 })
     }),
-    note: 'Landscape / ultimate mature architecture from UF/IFAS ST404. Not a universal cultivar guarantee. Do not substitute maintained-garden height.'
+    note: 'General species / landscape guidance from UF/IFAS ENH563 / ST404. Not a cultivar guarantee. Future cultivar evidence may override this range. Do not substitute maintained-garden height.'
   })
 });
 
@@ -225,5 +240,77 @@ export function classifyArchitectureVsSpread(input = {}) {
     note: inside
       ? 'Uniform scale from height. Implied canopy from the PNG aspect sits inside the supported spread range.'
       : 'Do not stretch the PNG on X/Y to fake botanical spread. Asset architecture cannot represent this height-to-spread pair. REGEN_REQUIRED_ARCHITECTURE.'
+  };
+}
+
+const MANGO_CALIBRATION_BBOX = Object.freeze({
+  exists: true,
+  minX: 33,
+  minY: 148,
+  maxX: 1008,
+  maxY: 1422
+});
+
+export function evaluateMangoSourceSizeCalibration(input = {}) {
+  const mango = CALIBRATION_BOTANICAL_SIZE_EVIDENCE.mango;
+  const candidate = input.bbox || {};
+  const bbox = Number.isFinite(Number(candidate.minX)) && Number.isFinite(Number(candidate.maxY))
+    ? candidate
+    : MANGO_CALIBRATION_BBOX;
+  const canvasWidth = Number(input.canvasWidth) || 1024;
+  const canvasHeight = Number(input.canvasHeight) || 1536;
+  const bands = [RANGE_BANDS.LOW, RANGE_BANDS.MID, RANGE_BANDS.HIGH].map((band) => {
+    const heightM = pickRangeValue(mango.heightM, band);
+    const architecture = classifyArchitectureVsSpread({
+      bbox,
+      canvasWidth,
+      canvasHeight,
+      heightM,
+      spreadM: mango.spreadM
+    });
+    return {
+      rangeBand: band,
+      previewRole:
+        band === RANGE_BANDS.LOW
+          ? 'lower supported range'
+          : band === RANGE_BANDS.HIGH
+            ? 'upper supported range'
+            : 'representative preview inside range, not botanical truth',
+      heightM,
+      heightMRounded:
+        band === RANGE_BANDS.LOW ? mango.reportedRoundedM.heightM.min : band === RANGE_BANDS.HIGH ? mango.reportedRoundedM.heightM.max : 13.7,
+      architectureClass: architecture.class,
+      impliedSpreadM: architecture.impliedSpreadM,
+      stretchedPng: false
+    };
+  });
+  return {
+    contract: MANGO_SOURCE_SIZE_CALIBRATION_VERSION,
+    canonicalSlug: 'mango',
+    scientificName: mango.scientificName,
+    asset: 'mango-mature-vegetative-v1',
+    growthStage: 'mature',
+    sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE,
+    evidenceClass: mango.evidenceClass,
+    evidenceScope: mango.evidenceScope,
+    cultivarSpecific: false,
+    ownerEntersMatureHeight: false,
+    photoCalibrationOptional: true,
+    massCatalogEnrichment: false,
+    source: mango.source,
+    originalImperial: mango.original,
+    normalizedSi: mango.heightM && {
+      heightM: mango.heightM,
+      spreadM: mango.spreadM
+    },
+    reportedRoundedM: mango.reportedRoundedM,
+    rangeBands: bands,
+    architectureGate: {
+      stretchedPng: false,
+      independentXyStretchForbidden: true,
+      representativeMidClass: bands.find((row) => row.rangeBand === RANGE_BANDS.MID)?.architectureClass || ARCHITECTURE_CLASSES.UNKNOWN,
+      anyRegenRequired: bands.some((row) => row.architectureClass === ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE)
+    },
+    spend: { openaiCalls: 0, imageGeneration: 0, additionalSpendUsd: 0 }
   };
 }

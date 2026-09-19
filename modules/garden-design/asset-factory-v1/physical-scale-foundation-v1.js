@@ -502,7 +502,9 @@ export function computePhysicalSceneScale(input = {}) {
   const photoScaleState = ppm.pixelsPerMeter
     ? PHOTO_SCALE_STATE.CALIBRATED
     : PHOTO_SCALE_STATE.NOT_CALIBRATED;
-  const canCalibrateMeters = Boolean(ppm.pixelsPerMeter && displayHeightM);
+  const lockScaleMode = asText(input.lockScaleMode || input.forceScaleMode).toUpperCase();
+  const forceEstimated = lockScaleMode === PHOTO_SCALE_MODE.ESTIMATED;
+  const canCalibrateMeters = !forceEstimated && Boolean(ppm.pixelsPerMeter && displayHeightM);
   if (!canCalibrateMeters) {
     const estimated = estimatedFormRelativeScale({
       visualForm: asText(input.visualForm) || stageDims.visualForm,
@@ -522,6 +524,7 @@ export function computePhysicalSceneScale(input = {}) {
       status: 'PHYSICAL_SCALE_ESTIMATED',
       model: PHYSICAL_SCALE_MODEL_VERSION,
       scaleMode: PHOTO_SCALE_MODE.ESTIMATED,
+      lockScaleMode: forceEstimated ? PHOTO_SCALE_MODE.ESTIMATED : null,
       photoScaleState,
       gardenDesignBlocked: false,
       calibrationMandatory: false,
@@ -578,6 +581,7 @@ export function computePhysicalSceneScale(input = {}) {
     status: 'PHYSICAL_SCALE_READY',
     model: PHYSICAL_SCALE_MODEL_VERSION,
     scaleMode: PHOTO_SCALE_MODE.CALIBRATED,
+    lockScaleMode: lockScaleMode || PHOTO_SCALE_MODE.CALIBRATED,
     photoScaleState: PHOTO_SCALE_STATE.CALIBRATED,
     gardenDesignBlocked: false,
     calibrationMandatory: false,

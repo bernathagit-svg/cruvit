@@ -1,0 +1,96 @@
+{
+  "contract": "mango-source-size-calibration-v1",
+  "canonicalSlug": "mango",
+  "scientificName": "Mangifera indica",
+  "asset": "mango-mature-vegetative-v1",
+  "growthStage": "mature",
+  "sizeScenario": "NATURAL_MATURE",
+  "evidenceClass": "SOURCE_SUPPORTED_RANGE",
+  "evidenceScope": "SPECIES_GENERAL",
+  "cultivarSpecific": false,
+  "ownerEntersMatureHeight": false,
+  "photoCalibrationOptional": true,
+  "massCatalogEnrichment": false,
+  "source": {
+    "provider": "UF/IFAS Extension",
+    "title": "Mangifera indica: Mango",
+    "publication": "ENH563",
+    "sourceId": "UF_IFAS_ENH563_ST404",
+    "identifiers": [
+      "ENH563",
+      "ST404"
+    ],
+    "originalUnit": "ft"
+  },
+  "originalImperial": {
+    "unit": "ft",
+    "heightFt": {
+      "min": 30,
+      "max": 60
+    },
+    "spreadFt": {
+      "min": 30,
+      "max": 50
+    }
+  },
+  "normalizedSi": {
+    "heightM": {
+      "min": 9.144,
+      "max": 18.288
+    },
+    "spreadM": {
+      "min": 9.144,
+      "max": 15.24
+    }
+  },
+  "reportedRoundedM": {
+    "heightM": {
+      "min": 9.1,
+      "max": 18.3
+    },
+    "spreadM": {
+      "min": 9.1,
+      "max": 15.2
+    }
+  },
+  "rangeBands": [
+    {
+      "rangeBand": "LOW",
+      "previewRole": "lower supported range",
+      "heightM": 9.144,
+      "heightMRounded": 9.1,
+      "architectureClass": "REGEN_REQUIRED_ARCHITECTURE",
+      "impliedSpreadM": 6.997959183673469,
+      "stretchedPng": false
+    },
+    {
+      "rangeBand": "MID",
+      "previewRole": "representative preview inside range, not botanical truth",
+      "heightM": 13.716000000000001,
+      "heightMRounded": 13.7,
+      "architectureClass": "ARCHITECTURE_COMPATIBLE",
+      "impliedSpreadM": 10.496938775510204,
+      "stretchedPng": false
+    },
+    {
+      "rangeBand": "HIGH",
+      "previewRole": "upper supported range",
+      "heightM": 18.288,
+      "heightMRounded": 18.3,
+      "architectureClass": "ARCHITECTURE_COMPATIBLE",
+      "impliedSpreadM": 13.995918367346938,
+      "stretchedPng": false
+    }
+  ],
+  "architectureGate": {
+    "stretchedPng": false,
+    "independentXyStretchForbidden": true,
+    "representativeMidClass": "ARCHITECTURE_COMPATIBLE",
+    "anyRegenRequired": true
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  }
+}

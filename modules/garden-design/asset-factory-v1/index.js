@@ -73,9 +73,12 @@ export {
   resolvePhysicalScaleEvidence,
   lookupCalibrationSizeEvidence,
   factoryMayUsePhysicalScalePreview,
+  evaluateMangoSourceSizeCalibration,
   SIZE_SCENARIOS,
   RANGE_BANDS,
-  PHYSICAL_SCALE_EVIDENCE_VERSION
+  EVIDENCE_SCOPE,
+  PHYSICAL_SCALE_EVIDENCE_VERSION,
+  MANGO_SOURCE_SIZE_CALIBRATION_VERSION
 } from './physical-scale-evidence-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {

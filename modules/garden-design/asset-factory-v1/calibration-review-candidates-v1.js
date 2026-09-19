@@ -4,7 +4,7 @@
  */
 export const CALIBRATION_REVIEW_ONLY = true;
 export const CALIBRATION_BATCH_1_RUN_ID = 'design-asset-calibration-batch-1';
-export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919k';
+export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919l';
 export const CALIBRATION_BATCH_1_DIR = 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1';
 export const CALIBRATION_BATCH_1_LIVE_BASE = 'assets/plants/batch-1-candidates/calibration-batch-1/';
 

@@ -33,7 +33,8 @@ import {
 import {
   RANGE_BANDS,
   SIZE_SCENARIOS,
-  resolvePhysicalScaleEvidence
+  resolvePhysicalScaleEvidence,
+  evaluateMangoSourceSizeCalibration
 } from './physical-scale-evidence-v1.js';
 import {
   classifyCalibrationReviewReadiness,
@@ -210,7 +211,8 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       ...(resolved.spreadM
         ? { 'data-spread-min': resolved.spreadM.min, 'data-spread-max': resolved.spreadM.max }
         : {}),
-      ...(extra.rangeBand ? { 'data-lock-range-band': extra.rangeBand } : {})
+      ...(extra.rangeBand ? { 'data-lock-range-band': extra.rangeBand } : {}),
+      ...(extra.lockScaleMode ? { 'data-lock-scale-mode': extra.lockScaleMode } : {})
     };
   }
 
@@ -231,6 +233,17 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
         sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE,
         librarySizeCopy: (libraryCopyBySlug[job.canonicalSlug] || {}).size
       });
+      const mangoArchitecture =
+        job.canonicalSlug === 'mango'
+          ? evaluateMangoSourceSizeCalibration({
+              bbox: contract.intrinsicBoundingBox,
+              canvasWidth: contract.canvasWidth,
+              canvasHeight: contract.canvasHeight
+            })
+          : null;
+      const mangoArchitectureNote = mangoArchitecture
+        ? `MID ${mangoArchitecture.architectureGate.representativeMidClass}. LOW/HIGH architecture is reported per band. PNG was not stretched.`
+        : 'PNG is scaled uniformly. Spread is implied by the asset aspect, not by stretching X independently of Y.';
       const recommendation = recommendCompositionV3Class(job.canonicalSlug) || recommendCompositionV2Class(job.canonicalSlug);
       const status = generated
         ? 'Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.'
@@ -288,41 +301,40 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     ${sceneBlock('V3 FAR', 'TREE SCALE V3 — far', 'real blend-v2-scene tree-v3-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'far', lockDepth: 'far', scaleModel: 'v3' }) })}
   </div>
   ${formCompare}
-  <h3>PHYSICAL V1 — NATURAL MATURE (source-supported botanical size)</h3>
-  <p class="note">Owner supplies <strong>only the photo reference dimension</strong>. Do not type Mango mature height as the default workflow. USER_CONFIRMED is a fallback / override, not primary authority.</p>
-  <p class="note" data-source-evidence-status>SOURCE_SUPPORTED_RANGE · NATURAL_MATURE · waiting</p>
-  <p class="note">Mango landscape mature (UF/IFAS ST404, <em>Mangifera indica: Mango</em>): height 30–60 ft ≈ 9.1–18.3 m · spread 30–50 ft ≈ 9.1–15.2 m. Not a universal cultivar guarantee. Not written to the production catalog. Size scenario for this mature vegetative asset: NATURAL_MATURE. Evidence class: ${esc(physicalEvidence.evidenceClass)}.</p>
-  <p class="note">BOTANICAL TRUTH stays immutable. DESIGN PREVIEW is derived (LOW / MID / HIGH). USER OVERRIDE is personal Garden Design state and never overwrites botanical evidence.</p>
-  <div class="verdicts" role="group" aria-label="Size scenario">
-    <button type="button" data-size-scenario="NATURAL_MATURE" aria-pressed="true">NATURAL_MATURE</button>
-    <button type="button" data-size-scenario="MAINTAINED_GARDEN">MAINTAINED_GARDEN</button>
-    <button type="button" data-size-scenario="USER_OVERRIDE">USER_OVERRIDE</button>
-  </div>
-  <p class="note">MAINTAINED_GARDEN has no source-supported range yet. CRUVIT will not silently substitute the 30–60 ft natural mature height.</p>
+  <h3>Mango source size — NATURAL_MATURE (UF/IFAS ENH563 / ST404)</h3>
+  <p class="note">Owner supplies <strong>only the photo reference dimension</strong> if she chooses to calibrate. Do not type Mango mature height. SOURCE_SUPPORTED_RANGE is species-general landscape guidance, not a cultivar guarantee.</p>
+  <p class="note" data-source-evidence-status>SOURCE_SUPPORTED_RANGE · SPECIES_GENERAL · NATURAL_MATURE · waiting</p>
+  <p class="note">Mango landscape mature (UF/IFAS Extension, <em>Mangifera indica: Mango</em>, ENH563 / ST404): height 30–60 ft ≈ 9.1–18.3 m · spread 30–50 ft ≈ 9.1–15.2 m. Evidence scope: SPECIES_GENERAL. cultivar-specific: false. Not written to the production catalog. Asset: mango-mature-vegetative-v1 · growthStage: mature · scenario: NATURAL_MATURE. Evidence class: ${esc(physicalEvidence.evidenceClass)}.</p>
+  <p class="note">LOW / MID / HIGH are supported-range preview positions, not a hidden single botanical truth. PNG is scaled uniformly. Spread is implied by asset aspect. Do not stretch X/Y independently.</p>
   <div class="verdicts" role="group" aria-label="Supported size range band">
     <button type="button" data-range-band="LOW">LOW</button>
     <button type="button" data-range-band="MID" aria-pressed="true">MID</button>
     <button type="button" data-range-band="HIGH">HIGH</button>
   </div>
-  <p class="note">Without calibration: <strong>Estimated scale</strong> / Estimated mature size — not meter accuracy. After this photo is calibrated: <strong>Calibrated suggested size</strong> — MID representative preview, not botanical truth and not a survey. LOW / HIGH stay inside the supported range. User may resize afterward.</p>
-  <p class="note">Architecture class: <strong data-architecture-class>UNKNOWN</strong>. PNG is scaled uniformly. Spread is implied by the asset aspect, not by stretching X independently of Y.</p>
+  <p class="note">Architecture class: <strong data-architecture-class>UNKNOWN</strong>. ${esc(mangoArchitectureNote)}</p>
   <p class="note" data-physical-scale-readout>Estimated mature size until this photo is calibrated. Garden Design is not blocked. Calibration is optional.</p>
-  <h4>V3 HEURISTIC vs PHYSICAL V1 — NATURAL MATURE (LOW / MID / HIGH)</h4>
+  <h4>A. ESTIMATED MATURE SIZE</h4>
+  <p class="note">Photo scale not required. Uses SOURCE_SUPPORTED mango range, visualForm=tree, growthStage=mature, tree depth heuristic, and manual resize. Label: Estimated mature size. Not meter-accurate rendered height.</p>
   <div class="scenes">
-    ${sceneBlock('V3 HEUR', 'V3 HEURISTIC — middle', 'real blend-v2-scene tree-v3-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: v2SceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', scaleModel: 'v3' }) })}
-    ${sceneBlock('PHYS LOW', 'PHYSICAL V1 NATURAL MATURE — LOW', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.LOW, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
-    ${sceneBlock('PHYS MID', 'PHYSICAL V1 NATURAL MATURE — MID', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
-    ${sceneBlock('PHYS HIGH', 'PHYSICAL V1 NATURAL MATURE — HIGH', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.HIGH, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+    ${sceneBlock('EST MID', 'A — Estimated mature size — middle', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'ESTIMATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
   </div>
-  <h4>PHYSICAL V1 NATURAL MATURE — near / far at MID</h4>
+  <h4>B. CALIBRATED SUGGESTED SIZE — LOW / MID / HIGH</h4>
+  <p class="note">Appears as Calibrated suggested size only after this photo is calibrated. Until then these panels stay Estimated mature size. Same Garden photo. No regeneration.</p>
   <div class="scenes">
-    ${sceneBlock('PHYS NEAR', 'PHYSICAL V1 NATURAL MATURE — near MID', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'near', lockDepth: 'near', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
-    ${sceneBlock('PHYS FAR', 'PHYSICAL V1 NATURAL MATURE — far MID', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'far', lockDepth: 'far', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated scale</div>' })}
+    ${sceneBlock('CAL LOW', 'B — Calibrated suggested size — LOW of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.LOW, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('CAL MID', 'B — Calibrated suggested size — MID representative preview', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('CAL HIGH', 'B — Calibrated suggested size — HIGH of supported range', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.HIGH, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
   </div>
-  <p class="note">Owner question: Does the natural-mature Mango now have believable height and canopy relative to the real garden?</p>
+  <h4>Calibrated MID — near / far</h4>
+  <div class="scenes">
+    ${sceneBlock('CAL NEAR', 'Calibrated suggested size — near MID', 'real blend-v2-scene physical-v1-scene', 'near', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'near', lockDepth: 'near', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+    ${sceneBlock('CAL FAR', 'Calibrated suggested size — far MID', 'real blend-v2-scene physical-v1-scene', 'far', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'far', lockDepth: 'far', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
+  </div>
+  <p class="note">Owner question: At a plausible mature Mango size, does the tree now look physically believable in this garden?</p>
+  <p class="note">Second question: At that size, is the crown/trunk architecture still believable?</p>
   <details>
-    <summary>USER_CONFIRMED fallback / USER_OVERRIDE (not the default workflow)</summary>
-    <p class="note">Use only when source-supported evidence is missing or the owner deliberately chooses another target size. This never overwrites botanical source evidence.</p>
+    <summary>USER_CONFIRMED fallback (not the default workflow)</summary>
+    <p class="note">Use only when source-supported evidence is missing or the owner deliberately chooses another target size. This never overwrites botanical source evidence. Owner is not asked to enter Mango height in the normal flow.</p>
     <label>USER_CONFIRMED height min (m) <input id="physical-height-min" type="number" min="0.05" step="0.1" placeholder="fallback only"/></label>
     <label>USER_CONFIRMED height max (m) <input id="physical-height-max" type="number" min="0.05" step="0.1" placeholder="fallback only"/></label>
     <button type="button" id="physical-user-confirm">Confirm as USER_CONFIRMED fallback</button>
@@ -688,6 +700,11 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
   fs.mkdirSync(physicalDir, { recursive: true });
   const physicalPath = path.join(physicalDir, 'physical-scale-foundation-v1.json');
   fs.writeFileSync(physicalPath, `${JSON.stringify(physicalReport, null, 2)}\n`);
+  const mangoSourceReport = evaluateMangoSourceSizeCalibration({
+    bbox: mangoJob.technicalQa && mangoJob.technicalQa.metrics && mangoJob.technicalQa.metrics.bbox
+  });
+  const mangoSourcePath = path.join(physicalDir, 'mango-source-size-calibration-v1.json');
+  fs.writeFileSync(mangoSourcePath, `${JSON.stringify(mangoSourceReport, null, 2)}\n`);
   const schemaPath = path.join(physicalDir, 'persistence-schema-proposal.json');
   fs.writeFileSync(
     schemaPath,
@@ -699,6 +716,7 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
     reportPath,
     v3Path,
     physicalPath,
+    mangoSourcePath,
     schemaPath,
     treeScale: report.treeScale.result,
     treeScaleV3: v3Report.invariant.result,

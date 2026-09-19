@@ -239,6 +239,7 @@ function applyPhysicalScene(scene, options) {
     rangeBand,
     resolvedEvidence: resolved,
     photoCalibration: options.calibration,
+    lockScaleMode: scene.getAttribute('data-lock-scale-mode') || options.lockScaleMode || null,
     userOverride: sizeScenario === SIZE_SCENARIOS.USER_OVERRIDE ? options.userOverride : options.userOverride,
     bbox,
     canvasHeight: canvas.height,
@@ -369,9 +370,9 @@ function refreshPhysical(doc) {
       sizeScenario,
       userConfirmed
     });
-    evidenceStatus.textContent = `${resolved.evidenceClass} · ${resolved.sizeScenario || sizeScenario} · ${
-      resolved.source ? `${resolved.source.provider} ${resolved.source.sourceId}` : 'no source'
-    }`;
+    evidenceStatus.textContent = `${resolved.evidenceClass} · ${resolved.evidenceScope || 'SCOPE_UNSET'} · ${
+      resolved.sizeScenario || sizeScenario
+    } · ${resolved.source ? `${resolved.source.provider} ${resolved.source.publication || resolved.source.sourceId}` : 'no source'}`;
   }
   const suggested = doc.querySelector('[data-suggested-size-label]');
   if (suggested && last) suggested.textContent = last.label;

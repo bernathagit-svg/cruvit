@@ -34,7 +34,10 @@ import {
 import {
   lookupCalibrationSizeEvidence,
   resolvePhysicalScaleEvidence,
-  SIZE_SCENARIOS
+  evaluateMangoSourceSizeCalibration,
+  SIZE_SCENARIOS,
+  EVIDENCE_SCOPE,
+  ARCHITECTURE_CLASSES
 } from '../modules/garden-design/asset-factory-v1/physical-scale-evidence-v1.js';
 import { CALIBRATION_BATCH_1_CACHE_BUST } from '../modules/garden-design/asset-factory-v1/calibration-review-candidates-v1.js';
 import { isUsableDesignVariant } from '../modules/garden-design/garden-design-asset-registry-v1.js';
@@ -320,7 +323,11 @@ test('source-supported mango evidence does not require the owner to type mature 
     sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE
   });
   assert.equal(mango.evidenceClass, DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE);
-  assert.equal(mango.source.sourceId, 'UF_IFAS_ST404');
+  assert.equal(mango.evidenceScope, EVIDENCE_SCOPE.SPECIES_GENERAL);
+  assert.equal(mango.cultivarSpecific, false);
+  assert.equal(mango.ownerEntersMatureHeight, false);
+  assert.equal(mango.source.publication, 'ENH563');
+  assert.ok(mango.source.identifiers.includes('ST404'));
   const resolved = resolvePhysicalScaleEvidence({
     canonicalSlug: 'mango',
     growthStage: 'mature',
@@ -339,22 +346,53 @@ test('source-supported mango evidence does not require the owner to type mature 
   });
   assert.equal(estimated.gardenDesignBlocked, false);
   assert.equal(estimated.scaleMode, PHOTO_SCALE_MODE.ESTIMATED);
+  assert.equal(estimated.label, 'Estimated mature size');
+  assert.equal(estimated.displayHeightM, null);
+  const lockedEstimated = computePhysicalSceneScale({
+    growthStage: 'mature',
+    visualForm: 'tree',
+    resolvedEvidence: resolved,
+    photoCalibration: calibratedDoor(),
+    lockScaleMode: PHOTO_SCALE_MODE.ESTIMATED,
+    bbox: MANGO_BBOX,
+    sceneHeightPx: 360,
+    depthId: 'middle'
+  });
+  assert.equal(lockedEstimated.scaleMode, PHOTO_SCALE_MODE.ESTIMATED);
+  assert.equal(PHOTO_SCALE_PRODUCT_CONTRACT.calibrationMandatory, false);
+});
+
+test('mango architecture gate uses height and spread without stretching the PNG', () => {
+  const report = evaluateMangoSourceSizeCalibration({ bbox: MANGO_BBOX });
+  assert.equal(report.evidenceScope, EVIDENCE_SCOPE.SPECIES_GENERAL);
+  assert.equal(report.cultivarSpecific, false);
+  assert.equal(report.massCatalogEnrichment, false);
+  assert.equal(report.architectureGate.stretchedPng, false);
+  const byBand = Object.fromEntries(report.rangeBands.map((row) => [row.rangeBand, row]));
+  assert.equal(byBand.LOW.architectureClass, ARCHITECTURE_CLASSES.REGEN_REQUIRED_ARCHITECTURE);
+  assert.equal(byBand.MID.architectureClass, ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE);
+  assert.equal(byBand.HIGH.architectureClass, ARCHITECTURE_CLASSES.ARCHITECTURE_COMPATIBLE);
+  assert.equal(report.spend.imageGeneration, 0);
 });
 
 test('review harness wires physical scale V1 without generation endpoints', () => {
   const html = read('modules/garden-design/calibration-review.html');
   const app = read('app.html');
-  assert.match(html, /PHYSICAL V1/);
+  assert.match(html, /A. ESTIMATED MATURE SIZE/);
+  assert.match(html, /B. CALIBRATED SUGGESTED SIZE/);
   assert.match(html, /Continue without calibration/);
   assert.match(html, /Calibrate this photo/);
   assert.match(html, /Estimated mature size/);
   assert.match(html, /Calibrated suggested scale/);
-  assert.match(html, /Continue without calibration/);
+  assert.match(html, /ENH563/);
+  assert.match(html, /SPECIES_GENERAL/);
+  assert.match(html, /At a plausible mature Mango size/);
+  assert.match(html, /is the crown\/trunk architecture still believable/);
   assert.match(html, /photo-cal-scene/);
   assert.match(html, /physical-v1-scene/);
   assert.match(html, /physical-scale-foundation-v1-runtime\.js/);
   assert.match(app, new RegExp(`calibration-review\\.html\\?v=${CALIBRATION_BATCH_1_CACHE_BUST}`));
-  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919k');
+  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919l');
   assert.doesNotMatch(html, /api\.openai\.com/);
   assert.doesNotMatch(html, /images\/generations/);
 });
