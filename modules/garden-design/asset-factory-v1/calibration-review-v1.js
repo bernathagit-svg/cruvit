@@ -11,6 +11,12 @@ import {
   SAVED_GARDEN_PHOTO_AUTHORITY
 } from './garden-photo-review-path-v1.js';
 import { CALIBRATION_SOURCE_MESSAGE_TYPE } from './calibration-garden-source-host-v1.js';
+import {
+  CALIBRATION_BATCH_1_CACHE_BUST,
+  CALIBRATION_BATCH_1_CANDIDATES,
+  CALIBRATION_BATCH_1_LIVE_BASE,
+  calibrationCandidateRepoPath
+} from './calibration-review-candidates-v1.js';
 
 export const CALIBRATION_REVIEW_BACKGROUNDS = Object.freeze({
   savedGardenDesignSourcePhoto: SAVED_GARDEN_PHOTO_AUTHORITY,
@@ -28,17 +34,55 @@ function esc(value) {
     .replace(/"/g, '&quot;');
 }
 
-function sceneBlock(letter, label, className, scale, slug, backgroundUrl, blocked) {
+function sceneBlock(letter, label, className, scale, slug, backgroundUrl, blocked, cutoutSrc, cutoutScale) {
   const bg = backgroundUrl
     ? ` style="background-image:url('${esc(backgroundUrl)}')"`
     : '';
-  const ghost = blocked
-    ? `<div class="ghost blocked">${esc(slug)} · waiting for host signed URL</div>`
-    : `<div class="ghost ${esc(scale || '')}">${esc(slug)}</div>`;
+  const cutout = cutoutSrc
+    ? candidateImg(cutoutSrc, slug, cutoutScale || '')
+    : '';
+  const ghost = cutout
+    ? ''
+    : blocked
+      ? `<div class="ghost blocked">${esc(slug)} · waiting for host signed URL</div>`
+      : `<div class="ghost ${esc(scale || '')}">${esc(slug)}</div>`;
   return `<div class="scene-col" data-panel="${esc(letter)}">
       <p class="cap"><strong>${esc(letter)}.</strong> ${esc(label)}</p>
-      <div class="scene ${className}${blocked ? ' is-blocked' : ''}"${bg}>${ghost}</div>
+      <div class="scene ${className}${blocked ? ' is-blocked' : ''}"${bg}>${ghost}${cutout}</div>
     </div>`;
+}
+
+function candidateImg(src, slug, extraClass) {
+  if (!src) return '';
+  return `<img class="cutout ${esc(extraClass || '')}" src="${esc(src)}" alt="${esc(slug)} candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/>`;
+}
+
+function candidateSrc(job, options, rel) {
+  if (!job || !job.candidateRelPath) return '';
+  const posix = String(job.candidateRelPath).replace(/\\/g, '/');
+  const file = posix.split('/').pop();
+  const bust = options.cacheBust ? `?v=${esc(options.cacheBust)}` : '';
+  if (options.candidateBase) return `${options.candidateBase}${file}${bust}`;
+  return `${rel(posix)}${bust}`;
+}
+
+function ownerVisualQaPanel(job) {
+  const slug = esc(job.canonicalSlug);
+  const fields = IN_GARDEN_REVIEW_FIELDS.map(
+    (field) =>
+      `<label class="field"><input type="checkbox" data-field="${esc(field)}"/> ${esc(field.toLowerCase().replace(/_/g, ' '))}</label>`
+  ).join('');
+  return `<aside class="owner-visual-qa" data-slug="${slug}" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields">${fields}</div>
+</aside>`;
 }
 
 export function buildCalibrationReviewHtml(batch = [], options = {}) {
@@ -50,36 +94,46 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   const blend = RUNTIME_BLEND_EXPERIMENT.aids;
   const shadow = blend.contactShadow;
   const blendFilter = `brightness(${blend.brightness}) contrast(${blend.contrast}) saturate(${blend.saturation}) blur(${blend.edgeSofteningPx}px) drop-shadow(0 ${shadow.offsetYPx}px ${shadow.blurPx}px rgba(0,0,0,${shadow.opacity}))`;
+  const generatedCount = batch.filter((j) => j.candidateRelPath).length;
+  const heading = generatedCount
+    ? `Calibration review — ${batch.length} jobs, ${generatedCount} candidates for owner visual review`
+    : 'Calibration review — 8 jobs, no generation';
 
   const cards = batch
     .map((job) => {
       const title = `${job.rank}. ${esc(job.canonicalSlug)} · ${esc(job.visualForm)} · ${esc(job.growthStage)}`;
+      const cutout = candidateSrc(job, options, rel);
+      const generated = Boolean(cutout);
+      const status = generated
+        ? 'Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.'
+        : 'Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.';
       return `<article class="job" id="job-${esc(job.canonicalSlug)}">
   <header>
     <h2>${title}</h2>
     <p class="meta">${esc(job.scientific || '')} · ${esc(job.identityPrecision)} · ${esc(job.variantKey)} · ${esc(job.priorityReason)}</p>
     <p class="why">${esc(job.whyUsefulForCalibration)}</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: ${esc(IN_GARDEN_REVIEW_FIELDS.join(', '))}. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="${generated ? 'UNKNOWN' : 'BLOCKED'}" data-generated="${generated ? 'true' : 'false'}">${status}</p>
+    ${generated ? ownerVisualQaPanel(job) : ''}
+    <p class="meta">Review fields: ${esc(IN_GARDEN_REVIEW_FIELDS.join(', '))}. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
-    ${sceneBlock('A', 'transparent / checkerboard', 'checkerboard-scene', '', job.canonicalSlug, '', false)}
+    ${sceneBlock('A', 'transparent / checkerboard', 'checkerboard-scene', '', job.canonicalSlug, '', false, cutout, '')}
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
-    ${sceneBlock('B', 'REAL Garden photo — small', 'real', 'small', job.canonicalSlug, '', true)}
-    ${sceneBlock('C', 'REAL Garden photo — medium', 'real', 'medium', job.canonicalSlug, '', true)}
-    ${sceneBlock('D', 'REAL Garden photo — large plausible', 'real', 'large', job.canonicalSlug, '', true)}
+    ${sceneBlock('B', 'REAL Garden photo — small', 'real', 'small', job.canonicalSlug, '', true, cutout, 'small')}
+    ${sceneBlock('C', 'REAL Garden photo — medium', 'real', 'medium', job.canonicalSlug, '', true, cutout, 'medium')}
+    ${sceneBlock('D', 'REAL Garden photo — large plausible', 'real', 'large', job.canonicalSlug, '', true, cutout, 'large')}
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
-    ${sceneBlock('E', 'supplementary local scene 1', 'supp', 'medium', job.canonicalSlug, gardenE, false)}
-    ${sceneBlock('F', 'supplementary local scene 2', 'supp', 'medium', job.canonicalSlug, gardenF, false)}
+    ${sceneBlock('E', 'supplementary local scene 1', 'supp', 'medium', job.canonicalSlug, gardenE, false, cutout, 'medium')}
+    ${sceneBlock('F', 'supplementary local scene 2', 'supp', 'medium', job.canonicalSlug, gardenF, false, cutout, 'medium')}
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard">${cutout ? candidateImg(cutout, job.canonicalSlug, '') : '<span>empty</span>'}</div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard ${cutout ? 'blend-slot' : ''}">${cutout ? candidateImg(cutout, job.canonicalSlug, 'blend') : '<span>CSS only · not baked · does not alter source photo</span>'}</div></figure>
   </div>
 </article>`;
     })
@@ -92,7 +146,20 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   <title>Design Asset Factory — Calibration review (8 jobs)</title>
   <style>
     :root { font-family: "DM Sans", sans-serif; color: #122; }
-    body { margin: 24px; background: #f4f1ea; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
+    .scene.real { width: 420px; height: 300px; }
+    .checkerboard-scene { width: 280px; height: 360px; }
+    .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
+    .scene img.cutout.small { max-height: 34%; }
+    .scene img.cutout.medium { max-height: 54%; }
+    .scene img.cutout.large { max-height: 78%; }
+    .owner-visual-qa { margin: 12px 0; padding: 12px; border: 1px solid #cbb; background: #fbf8f2; }
+    .owner-visual-qa .verdicts { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .owner-visual-qa button { padding: 8px 12px; border: 1px solid #888; background: #fff; cursor: pointer; }
+    .owner-visual-qa button[aria-pressed="true"] { background: #0f3d2e; color: #fff; border-color: #0f3d2e; }
+    .owner-visual-qa .fields { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+    .owner-visual-qa .note, .qa-split { font-size: 13px; color: #444; }
     h1 { font-size: 22px; }
     .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
     .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
@@ -100,10 +167,9 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .meta, .why, .empty, .cap { font-size: 13px; color: #444; }
     .empty { color: #8a2b2b; }
     .previews, .scenes, .raw-blend { display: flex; gap: 12px; flex-wrap: wrap; }
-    .slot { width: 160px; height: 220px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px; }
+    .slot { width: 200px; height: 280px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px; position: relative; overflow: hidden; }
     .checkerboard, .checkerboard-scene { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
-    .checkerboard-scene { width: 240px; height: 160px; border: 1px solid #ccc; position: relative; }
-    .scene { width: 240px; height: 160px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; }
+    .checkerboard-scene { border: 1px solid #ccc; position: relative; }
     .scene.is-blocked { outline: 2px solid #c44; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 4px 6px; font-size: 10px; }
     .ghost.small { width: 18%; height: 28%; }
@@ -111,13 +177,15 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .ghost.large { width: 40%; height: 62%; }
     .ghost.blocked { width: 80%; text-align: center; }
     .harness img.cutout { height: 55%; position: absolute; left: 52%; bottom: 10%; transform: translateX(-50%); }
+    .slot img.cutout { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); max-height: 88%; max-width: 80%; object-fit: contain; object-position: bottom center; }
+    .slot.blend-slot img.cutout, .slot img.cutout.blend { filter: ${blendFilter}; }
     .harness.blend img.cutout { filter: ${blendFilter}; }
     .scene.harness { width: 280px; height: 180px; }
     code { font-size: 12px; }
   </style>
 </head>
 <body>
-  <h1>Calibration review — 8 jobs, no generation</h1>
+  <h1>${esc(heading)}</h1>
   <p id="realGardenBanner" class="warn">Loading Garden context… Path: garden_designs.source_media_id → garden_media → private ${esc(
     SAVED_GARDEN_PHOTO_AUTHORITY.storageBucket
   )}. Local stand-ins are supplementary only. Do not copy the private photo into the repo. No Storage credentials in this page.</p>
@@ -148,7 +216,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
           var ghost = el.querySelector('.ghost');
-          if (ghost) {
+          if (ghost && !el.querySelector('img.cutout')) {
             ghost.classList.remove('blocked');
             ghost.textContent = 'Candidate not generated yet';
           }
@@ -160,6 +228,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
         }
         document.querySelectorAll('[data-in-garden-status]').forEach(function (el) {
           el.setAttribute('data-in-garden-status', 'UNKNOWN');
+          if (el.getAttribute('data-generated') === 'true') return;
           el.textContent = 'Candidate not generated yet. ASSET_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN.';
         });
         return true;
@@ -201,19 +270,49 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       document.querySelectorAll('.harness.blend').forEach(function (el) { el.style.display = 'none'; });
     })();
   </script>
+  <script type="module" src="asset-factory-v1/calibration-owner-visual-qa-v1.js?v=${CALIBRATION_BATCH_1_CACHE_BUST}"></script>
 </body>
 </html>`;
 }
 
+export function attachExistingCalibrationCandidates(batch = [], root = process.cwd()) {
+  return (Array.isArray(batch) ? batch : []).map((job) => {
+    const row = CALIBRATION_BATCH_1_CANDIDATES.find((c) => c.canonicalSlug === job.canonicalSlug);
+    if (!row) return job;
+    const relPath = calibrationCandidateRepoPath(row.file);
+    const abs = path.join(root, ...relPath.split('/'));
+    if (!fs.existsSync(abs)) return job;
+    return {
+      ...job,
+      candidateRelPath: relPath,
+      generated: true,
+      assetQa: job.assetQa || 'UNKNOWN',
+      inGardenQa: job.inGardenQa || 'UNKNOWN'
+    };
+  });
+}
+
 export function writeCalibrationReviewSheet(root, batch, options = {}) {
-  const html = buildCalibrationReviewHtml(batch, options);
+  const withCandidates = attachExistingCalibrationCandidates(batch, root);
+  const liveHtml = buildCalibrationReviewHtml(withCandidates, {
+    ...options,
+    assetPrefix: '../../',
+    candidateBase: CALIBRATION_BATCH_1_LIVE_BASE,
+    cacheBust: CALIBRATION_BATCH_1_CACHE_BUST
+  });
+  const dataHtml = buildCalibrationReviewHtml(withCandidates, {
+    ...options,
+    assetPrefix: '../../../',
+    candidateBase: `../../../${CALIBRATION_BATCH_1_LIVE_BASE.replace(/^assets/, 'modules/garden-design/assets')}`,
+    cacheBust: CALIBRATION_BATCH_1_CACHE_BUST
+  });
   const dir = path.join(root, 'data', 'garden-design', 'calibration-batch-1');
   fs.mkdirSync(dir, { recursive: true });
   const htmlPath = path.join(dir, 'owner-review.html');
-  fs.writeFileSync(htmlPath, html);
+  fs.writeFileSync(htmlPath, dataHtml);
   const livePath = path.join(root, ...CALIBRATION_REVIEW_LIVE_REL.split('/'));
   fs.mkdirSync(path.dirname(livePath), { recursive: true });
-  fs.writeFileSync(livePath, html);
+  fs.writeFileSync(livePath, liveHtml);
   return {
     htmlPath,
     livePath,

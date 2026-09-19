@@ -333,7 +333,6 @@ test('REAL_GARDEN_SOURCE_LOADED removes stale waiting-for-host copy', () => {
   assert.doesNotMatch(empty.textContent, /waiting for host signed URL/);
 
   const review = read('modules/garden-design/calibration-review.html');
-  assert.match(review, /waiting for host signed URL/);
   assert.match(review, /ghost\.textContent = 'Candidate not generated yet'/);
   assert.match(
     review,
@@ -343,4 +342,6 @@ test('REAL_GARDEN_SOURCE_LOADED removes stale waiting-for-host copy', () => {
   assert.match(applyFn, /IN_GARDEN_QA = UNKNOWN/);
   assert.doesNotMatch(applyFn, /IN_GARDEN_QA = PASS/);
   assert.doesNotMatch(applyFn, /waiting for host signed URL/);
+  const generator = read('modules/garden-design/asset-factory-v1/calibration-review-v1.js');
+  assert.match(generator, /waiting for host signed URL/);
 });

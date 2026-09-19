@@ -5,7 +5,20 @@
   <title>Design Asset Factory — Calibration review (8 jobs)</title>
   <style>
     :root { font-family: "DM Sans", sans-serif; color: #122; }
-    body { margin: 24px; background: #f4f1ea; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
+    .scene.real { width: 420px; height: 300px; }
+    .checkerboard-scene { width: 280px; height: 360px; }
+    .scene img.cutout, .checkerboard-scene img.cutout { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); max-height: 88%; max-width: 78%; object-fit: contain; object-position: bottom center; }
+    .scene img.cutout.small { max-height: 34%; }
+    .scene img.cutout.medium { max-height: 54%; }
+    .scene img.cutout.large { max-height: 78%; }
+    .owner-visual-qa { margin: 12px 0; padding: 12px; border: 1px solid #cbb; background: #fbf8f2; }
+    .owner-visual-qa .verdicts { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .owner-visual-qa button { padding: 8px 12px; border: 1px solid #888; background: #fff; cursor: pointer; }
+    .owner-visual-qa button[aria-pressed="true"] { background: #0f3d2e; color: #fff; border-color: #0f3d2e; }
+    .owner-visual-qa .fields { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+    .owner-visual-qa .note, .qa-split { font-size: 13px; color: #444; }
     h1 { font-size: 22px; }
     .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
     .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
@@ -13,10 +26,9 @@
     .meta, .why, .empty, .cap { font-size: 13px; color: #444; }
     .empty { color: #8a2b2b; }
     .previews, .scenes, .raw-blend { display: flex; gap: 12px; flex-wrap: wrap; }
-    .slot { width: 160px; height: 220px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px; }
+    .slot { width: 200px; height: 280px; display: flex; align-items: center; justify-content: center; color: #888; font-size: 12px; position: relative; overflow: hidden; }
     .checkerboard, .checkerboard-scene { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
-    .checkerboard-scene { width: 240px; height: 160px; border: 1px solid #ccc; position: relative; }
-    .scene { width: 240px; height: 160px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; }
+    .checkerboard-scene { border: 1px solid #ccc; position: relative; }
     .scene.is-blocked { outline: 2px solid #c44; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 4px 6px; font-size: 10px; }
     .ghost.small { width: 18%; height: 28%; }
@@ -24,13 +36,15 @@
     .ghost.large { width: 40%; height: 62%; }
     .ghost.blocked { width: 80%; text-align: center; }
     .harness img.cutout { height: 55%; position: absolute; left: 52%; bottom: 10%; transform: translateX(-50%); }
+    .slot img.cutout { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); max-height: 88%; max-width: 80%; object-fit: contain; object-position: bottom center; }
+    .slot.blend-slot img.cutout, .slot img.cutout.blend { filter: brightness(0.96) contrast(0.94) saturate(0.9) blur(0.35px) drop-shadow(0 10px 14px rgba(0,0,0,0.2)); }
     .harness.blend img.cutout { filter: brightness(0.96) contrast(0.94) saturate(0.9) blur(0.35px) drop-shadow(0 10px 14px rgba(0,0,0,0.2)); }
     .scene.harness { width: 280px; height: 180px; }
     code { font-size: 12px; }
   </style>
 </head>
 <body>
-  <h1>Calibration review — 8 jobs, no generation</h1>
+  <h1>Calibration review — 8 jobs, 8 candidates for owner visual review</h1>
   <p id="realGardenBanner" class="warn">Loading Garden context… Path: garden_designs.source_media_id → garden_media → private user-garden-media. Local stand-ins are supplementary only. Do not copy the private photo into the repo. No Storage credentials in this page.</p>
   <p>Owner question: does this actually look like the plant is in my garden? Fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE.</p>
   <article class="job" id="job-mango">
@@ -38,45 +52,56 @@
     <h2>1. mango · tree · mature</h2>
     <p class="meta">Mangifera indica · SPECIES_SUPPORTED · mature__season-neutral__vegetative__leafy · owned-plants</p>
     <p class="why">Tests tree silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="mango" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">mango</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">mango · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">mango · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">mango · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">mango</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">mango</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/mango-mature-vegetative-v1.png?v=20260919c" alt="mango candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-lavender">
@@ -84,45 +109,56 @@
     <h2>2. lavender · shrub · mature</h2>
     <p class="meta">Lavandula angustifolia · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · garden-design-surfaced</p>
     <p class="why">Tests shrub silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="lavender" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">lavender</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">lavender · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">lavender · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">lavender · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">lavender</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">lavender</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/lavender-mature-vegetative-v1.png?v=20260919c" alt="lavender candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-pineapple">
@@ -130,45 +166,56 @@
     <h2>3. pineapple · rosette · mature</h2>
     <p class="meta">Ananas comosus · SPECIES_SUPPORTED · mature__season-neutral__vegetative__rosette · owned-plants</p>
     <p class="why">Tests rosette silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="pineapple" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">pineapple</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">pineapple · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">pineapple</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">pineapple</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png?v=20260919c" alt="pineapple candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-banana">
@@ -176,45 +223,56 @@
     <h2>4. banana · herbaceous-clump · mature</h2>
     <p class="meta">Musa spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__mature-clump · owned-plants</p>
     <p class="why">Tests herbaceous-clump silhouette and overlay composition. Owned-garden priority: measures the live Garden Design path. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="banana" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">banana</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">banana · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">banana · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">banana · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">banana</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">banana</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png?v=20260919c" alt="banana candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-areca-palm">
@@ -222,45 +280,56 @@
     <h2>5. areca-palm · palm · mature</h2>
     <p class="meta">Dypsis lutescens · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
     <p class="why">Tests palm silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="areca-palm" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">areca-palm</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">areca-palm · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">areca-palm</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">areca-palm</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/areca-palm-mature-vegetative-v1.png?v=20260919c" alt="areca-palm candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-bougainvillea">
@@ -268,45 +337,56 @@
     <h2>6. bougainvillea · climber · mature</h2>
     <p class="meta">Bougainvillea spp. · GENUS_VISUALLY_REPRESENTABLE · mature__season-neutral__vegetative__coverage · garden-design-surfaced</p>
     <p class="why">Tests climber silhouette and overlay composition. Already declared in Garden Design, so prompt/model must match existing product intent. Genus-level morphology-neutral vegetative asset; must not invent a species. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="bougainvillea" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">bougainvillea</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">bougainvillea · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">bougainvillea</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">bougainvillea</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/bougainvillea-mature-vegetative-v1.png?v=20260919c" alt="bougainvillea candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-aloe-vera">
@@ -314,45 +394,56 @@
     <h2>7. aloe-vera · succulent-form · mature</h2>
     <p class="meta">Aloe vera · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
     <p class="why">Tests succulent-form silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="aloe-vera" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">aloe-vera</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">aloe-vera · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">aloe-vera</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">aloe-vera</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png?v=20260919c" alt="aloe-vera candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
 <article class="job" id="job-eggplant">
@@ -360,45 +451,56 @@
     <h2>8. eggplant · subshrub · mature</h2>
     <p class="meta">Solanum melongena · SPECIES_SUPPORTED · mature__season-neutral__vegetative__default · remaining-catalog</p>
     <p class="why">Tests subshrub silhouette and overlay composition. Adds morphology diversity the owned/surfaced set does not cover. Species-supported identity for botanical correctness measurement. Mature stage is the default overlay specimen for visual-language consistency.</p>
-    <p class="empty" data-in-garden-status="BLOCKED">Candidate binary: NOT GENERATED. ASSET_QA = UNKNOWN. IN_GARDEN_QA = BLOCKED until the real Garden photo loads.</p>
-    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used.</p>
+    <p class="empty" data-in-garden-status="UNKNOWN" data-generated="true">Candidate binary: CANDIDATE ONLY. ASSET_QA = UNKNOWN. BOTANICAL_IDENTITY_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN. Owner visual review required. Do not auto-approve.</p>
+    <aside class="owner-visual-qa" data-slug="eggplant" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
+  <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
+  <div class="verdicts" role="group" aria-label="Visual verdict">
+    <button type="button" data-verdict="GOOD">GOOD</button>
+    <button type="button" data-verdict="NEEDS_BLEND">NEEDS BLEND</button>
+    <button type="button" data-verdict="REJECT">REJECT</button>
+  </div>
+  <div class="fields"><label class="field"><input type="checkbox" data-field="PERSPECTIVE"/> perspective</label><label class="field"><input type="checkbox" data-field="GROUND_CONTACT"/> ground contact</label><label class="field"><input type="checkbox" data-field="STICKER_LOOK"/> sticker look</label><label class="field"><input type="checkbox" data-field="HALO"/> halo</label><label class="field"><input type="checkbox" data-field="SHARPNESS_MATCH"/> sharpness match</label><label class="field"><input type="checkbox" data-field="COLOR_TONAL_MATCH"/> color tonal match</label><label class="field"><input type="checkbox" data-field="SCALE_REALISM"/> scale realism</label><label class="field"><input type="checkbox" data-field="SILHOUETTE"/> silhouette</label></div>
+</aside>
+    <p class="meta">Review fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE. Approval: ASSET_QA = PASS AND IN_GARDEN_QA = PASS. IN_GARDEN_QA may be PASS only when the real persisted Garden photo was used. Owner visual acceptance is not botanical identity PASS.</p>
   </header>
   <div class="previews">
     <div class="scene-col" data-panel="A">
       <p class="cap"><strong>A.</strong> transparent / checkerboard</p>
-      <div class="scene checkerboard-scene"><div class="ghost ">eggplant</div></div>
+      <div class="scene checkerboard-scene"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Real Garden photo (host signed URL)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="B">
       <p class="cap"><strong>B.</strong> REAL Garden photo — small</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout small" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="C">
       <p class="cap"><strong>C.</strong> REAL Garden photo — medium</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="D">
       <p class="cap"><strong>D.</strong> REAL Garden photo — large plausible</p>
-      <div class="scene real is-blocked"><div class="ghost blocked">eggplant · waiting for host signed URL</div></div>
+      <div class="scene real is-blocked"><img class="cutout large" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Supplementary local scenes (not sufficient alone)</h3>
   <div class="scenes">
     <div class="scene-col" data-panel="E">
       <p class="cap"><strong>E.</strong> supplementary local scene 1</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><div class="ghost medium">eggplant</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/hero-garden.jpg')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
     <div class="scene-col" data-panel="F">
       <p class="cap"><strong>F.</strong> supplementary local scene 2</p>
-      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><div class="ghost medium">eggplant</div></div>
+      <div class="scene supp" style="background-image:url('../../homepage-v1/assets/my-garden-snapshot.png')"><img class="cutout medium" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div>
     </div>
   </div>
   <h3>Raw vs runtime blend (experiment only, not permanent)</h3>
   <div class="raw-blend">
-    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><span>empty</span></div></figure>
-    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard"><span>CSS only · not baked · does not alter source photo</span></div></figure>
+    <figure><figcaption>RAW</figcaption><div class="slot checkerboard"><img class="cutout " src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
+    <figure><figcaption>RUNTIME BLEND</figcaption><div class="slot checkerboard blend-slot"><img class="cutout blend" src="assets/plants/batch-1-candidates/calibration-batch-1/eggplant-mature-vegetative-v1.png?v=20260919c" alt="eggplant candidate" data-review-role="calibration-candidate" data-approval-status="candidate"/></div></figure>
   </div>
 </article>
   <section class="job">
@@ -422,7 +524,7 @@
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
           var ghost = el.querySelector('.ghost');
-          if (ghost) {
+          if (ghost && !el.querySelector('img.cutout')) {
             ghost.classList.remove('blocked');
             ghost.textContent = 'Candidate not generated yet';
           }
@@ -434,6 +536,7 @@
         }
         document.querySelectorAll('[data-in-garden-status]').forEach(function (el) {
           el.setAttribute('data-in-garden-status', 'UNKNOWN');
+          if (el.getAttribute('data-generated') === 'true') return;
           el.textContent = 'Candidate not generated yet. ASSET_QA = UNKNOWN. IN_GARDEN_QA = UNKNOWN.';
         });
         return true;
@@ -475,5 +578,6 @@
       document.querySelectorAll('.harness.blend').forEach(function (el) { el.style.display = 'none'; });
     })();
   </script>
+  <script type="module" src="asset-factory-v1/calibration-owner-visual-qa-v1.js?v=20260919c"></script>
 </body>
 </html>
