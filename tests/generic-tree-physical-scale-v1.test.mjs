@@ -35,8 +35,10 @@ test('generic tree contract forbids universal size and mango copy', () => {
   assert.equal(GENERIC_TREE_SCALE_CONTRACT.otherFormsInheritTreeRules, false);
   assert.deepEqual(TREE_SIZE_EVIDENCE_PRECEDENCE, [
     'CULTIVAR_SPECIFIC_SOURCE',
+    'ROOTSTOCK_SPECIFIC_SOURCE',
+    'ARCHITECTURE_SPECIFIC_SOURCE',
     'SPECIES_SOURCE_SUPPORTED_RANGE',
-    'USER_CONFIRMED',
+    'USER_CONFIRMED_TARGET',
     'UNKNOWN'
   ]);
   assert.equal(MANGO_GARDEN_DESIGN_PREFERENCE.ownerPreferredRangePosition, 'LOW');

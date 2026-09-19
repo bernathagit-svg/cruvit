@@ -6,28 +6,25 @@
  */
 import { DESIGN_VISUAL_FORMS } from '../garden-design-variant-policy-v1.js';
 import {
-  DIMENSION_EVIDENCE,
   PHYSICAL_SCALE_RENDERING_INVARIANTS,
   computePhysicalSceneScale
 } from './physical-scale-foundation-v1.js';
 import {
   CALIBRATION_BOTANICAL_SIZE_EVIDENCE,
-  EVIDENCE_SCOPE,
   RANGE_BANDS,
   SIZE_SCENARIOS,
   resolvePhysicalScaleEvidence
 } from './physical-scale-evidence-v1.js';
 import { mayUseTreePhysicalScale } from './multi-form-plant-architecture-v1.js';
+import {
+  BOTANICAL_SIZE_EVIDENCE_PRECEDENCE,
+  classifyBotanicalSizePrecedence
+} from './botanical-size-evidence-contract-v2.js';
 
 export const GENERIC_TREE_PHYSICAL_SCALE_VERSION = 'generic-tree-physical-scale-v1';
 export const OWNER_SIZE_PREFERENCE_STORAGE_KEY = 'cruvit:garden-design-owner-size-preference-v1';
 
-export const TREE_SIZE_EVIDENCE_PRECEDENCE = Object.freeze([
-  'CULTIVAR_SPECIFIC_SOURCE',
-  'SPECIES_SOURCE_SUPPORTED_RANGE',
-  'USER_CONFIRMED',
-  'UNKNOWN'
-]);
+export const TREE_SIZE_EVIDENCE_PRECEDENCE = BOTANICAL_SIZE_EVIDENCE_PRECEDENCE;
 
 export const TREE_PHYSICAL_SCALE_CLASSES = Object.freeze({
   PHYSICAL_SCALE_READY: 'PHYSICAL_SCALE_READY',
@@ -94,19 +91,7 @@ export function mangoDimensionLeak(canonicalSlug, evidence = {}) {
 }
 
 export function classifyTreeSizePrecedence(evidence = {}) {
-  if (evidence.evidenceScope === EVIDENCE_SCOPE.CULTIVAR_SPECIFIC && evidence.mayDrivePhysicalMeterPreview) {
-    return 'CULTIVAR_SPECIFIC_SOURCE';
-  }
-  if (
-    evidence.evidenceClass === DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE &&
-    evidence.mayDrivePhysicalMeterPreview
-  ) {
-    return 'SPECIES_SOURCE_SUPPORTED_RANGE';
-  }
-  if (evidence.evidenceClass === DIMENSION_EVIDENCE.USER_CONFIRMED && evidence.mayDrivePhysicalMeterPreview) {
-    return 'USER_CONFIRMED';
-  }
-  return 'UNKNOWN';
+  return classifyBotanicalSizePrecedence(evidence);
 }
 
 export function computeTreePhysicalScale(input = {}) {

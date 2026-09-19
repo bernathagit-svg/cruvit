@@ -116,6 +116,13 @@ export {
   MULTI_FORM_ARCHITECTURE_CONTRACTS,
   MULTI_FORM_PLANT_ARCHITECTURE_VERSION
 } from './multi-form-plant-architecture-v1.js';
+export {
+  SIZE_EVIDENCE_SCENARIOS,
+  BOTANICAL_SIZE_EVIDENCE_PRECEDENCE,
+  classifyCultivarOrRootstockSensitivity,
+  ROLE_BASED_PILOT_SET,
+  BOTANICAL_SIZE_EVIDENCE_CONTRACT_VERSION
+} from './botanical-size-evidence-contract-v2.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

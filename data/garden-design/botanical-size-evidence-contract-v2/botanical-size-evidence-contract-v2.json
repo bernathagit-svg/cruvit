@@ -1,0 +1,291 @@
+{
+  "contract": "botanical-size-evidence-contract-v2",
+  "productionCatalogMutated": false,
+  "massTreeEnrichmentExecuted": false,
+  "universalMatureSize": false,
+  "userResizeChangesBotanicalTruth": false,
+  "applyMigrationNow": false,
+  "sizeEvidenceScenarios": {
+    "NATURAL_MATURE": "NATURAL_MATURE",
+    "LANDSCAPE_MATURE": "LANDSCAPE_MATURE",
+    "CULTIVATED_STANDARD": "CULTIVATED_STANDARD",
+    "MAINTAINED_GARDEN": "MAINTAINED_GARDEN",
+    "ROOTSTOCK_SPECIFIC": "ROOTSTOCK_SPECIFIC",
+    "CULTIVAR_SPECIFIC": "CULTIVAR_SPECIFIC",
+    "ARCHITECTURE_SPECIFIC": "ARCHITECTURE_SPECIFIC"
+  },
+  "evidenceRecordFields": [
+    "canonicalSlug",
+    "scientificName",
+    "architectureMode",
+    "growthStage",
+    "sizeScenario",
+    "heightMinM",
+    "heightMaxM",
+    "spreadMinM",
+    "spreadMaxM",
+    "sourceProvider",
+    "sourceTitle",
+    "sourceIdentifier",
+    "sourceUrl",
+    "originalUnit",
+    "originalRange",
+    "normalizedSi",
+    "identityScope",
+    "evidenceClass",
+    "conditions",
+    "originalSourceWording",
+    "provenanceVersion",
+    "provenanceTimestamp"
+  ],
+  "precedence": [
+    "CULTIVAR_SPECIFIC_SOURCE",
+    "ROOTSTOCK_SPECIFIC_SOURCE",
+    "ARCHITECTURE_SPECIFIC_SOURCE",
+    "SPECIES_SOURCE_SUPPORTED_RANGE",
+    "USER_CONFIRMED_TARGET",
+    "UNKNOWN"
+  ],
+  "cultivarOrRootstockSensitivity": {
+    "exhaustive": false,
+    "patterns": [
+      {
+        "patternId": "grafted-pome",
+        "exampleSlugs": [
+          "apple",
+          "pear"
+        ],
+        "exhaustive": false
+      },
+      {
+        "patternId": "citrus",
+        "exampleSlugs": [
+          "lemon",
+          "orange",
+          "mandarin",
+          "grapefruit",
+          "sweet-orange"
+        ],
+        "exhaustive": false
+      },
+      {
+        "patternId": "stone-fruit",
+        "exampleSlugs": [
+          "peach",
+          "apricot",
+          "almond",
+          "sweet-cherry"
+        ],
+        "exhaustive": false
+      }
+    ],
+    "pilotFlags": [
+      {
+        "canonicalSlug": "blue-gum",
+        "sensitive": false,
+        "flag": null,
+        "patternId": null,
+        "exhaustive": false,
+        "note": "Not flagged by the current data pattern. Absence of a flag is not proof that cultivar/rootstock does not matter."
+      },
+      {
+        "canonicalSlug": "cypress",
+        "sensitive": false,
+        "flag": null,
+        "patternId": null,
+        "exhaustive": false,
+        "note": "Not flagged by the current data pattern. Absence of a flag is not proof that cultivar/rootstock does not matter."
+      },
+      {
+        "canonicalSlug": "olive",
+        "sensitive": false,
+        "flag": null,
+        "patternId": null,
+        "exhaustive": false,
+        "note": "Not flagged by the current data pattern. Absence of a flag is not proof that cultivar/rootstock does not matter."
+      },
+      {
+        "canonicalSlug": "lemon",
+        "sensitive": true,
+        "flag": "CULTIVAR_OR_ROOTSTOCK_SENSITIVE",
+        "patternId": "citrus",
+        "exhaustive": false,
+        "note": "Species-level range is a starting bound, not the final personal-garden size."
+      },
+      {
+        "canonicalSlug": "apple",
+        "sensitive": true,
+        "flag": "CULTIVAR_OR_ROOTSTOCK_SENSITIVE",
+        "patternId": "grafted-pome",
+        "exhaustive": false,
+        "note": "Species-level range is a starting bound, not the final personal-garden size."
+      },
+      {
+        "canonicalSlug": "japanese-maple",
+        "sensitive": false,
+        "flag": null,
+        "patternId": null,
+        "exhaustive": false,
+        "note": "Not flagged by the current data pattern. Absence of a flag is not proof that cultivar/rootstock does not matter."
+      },
+      {
+        "canonicalSlug": "mango",
+        "sensitive": false,
+        "flag": null,
+        "patternId": null,
+        "exhaustive": false,
+        "note": "Not flagged by the current data pattern. Absence of a flag is not proof that cultivar/rootstock does not matter."
+      }
+    ]
+  },
+  "multiFormSizeRules": {
+    "slugs": [
+      "fig",
+      "plumeria",
+      "pomegranate",
+      "quince",
+      "strawberry-guava"
+    ],
+    "oneRangeForBothArchitecturesForbiddenUnlessSourceSaysSo": true,
+    "papayaExcludedFromTreeEnrichment": true,
+    "identityGapsExcluded": [
+      "melaleuca",
+      "oak-tree",
+      "pine-tree",
+      "plum"
+    ]
+  },
+  "sourceQualityHierarchy": {
+    "prefer": [
+      "UNIVERSITY_EXTENSION",
+      "BOTANICAL_GARDEN_ARBORETUM",
+      "GOVERNMENT_AGRICULTURAL_AUTHORITY",
+      "AUTHORITATIVE_HORTICULTURAL_INSTITUTION"
+    ],
+    "reject": [
+      "unsourced-nursery-marketing-copy",
+      "seo-aggregator",
+      "random-blog"
+    ],
+    "paidAcquisition": false
+  },
+  "roleBasedPilotSet": [
+    {
+      "role": "A",
+      "pattern": "large-natural-tree",
+      "canonicalSlug": "blue-gum",
+      "scientificName": "Eucalyptus globulus",
+      "rationale": "Tall natural canopy tree. Tests species-level NATURAL_MATURE ranges that must not be collapsed into a garden-maintained height."
+    },
+    {
+      "role": "B",
+      "pattern": "narrow-columnar-tree",
+      "canonicalSlug": "cypress",
+      "scientificName": "Cupressus sempervirens",
+      "rationale": "Columnar architecture. Tests height/spread independently so spread is not inferred from a generic tree size."
+    },
+    {
+      "role": "C",
+      "pattern": "mediterranean-orchard-landscape-tree",
+      "canonicalSlug": "olive",
+      "scientificName": "Olea europaea",
+      "rationale": "Landscape/orchard tree often maintained below natural mature size. Tests NATURAL_MATURE vs MAINTAINED_GARDEN as separate scenarios."
+    },
+    {
+      "role": "D",
+      "pattern": "citrus-cultivar-sensitive-tree",
+      "canonicalSlug": "lemon",
+      "scientificName": "Citrus × limon",
+      "rationale": "Citrus size is commonly cultivar/rootstock dependent. Species-level range must be flagged CULTIVAR_OR_ROOTSTOCK_SENSITIVE."
+    },
+    {
+      "role": "E",
+      "pattern": "deciduous-orchard-rootstock-sensitive-tree",
+      "canonicalSlug": "apple",
+      "scientificName": "Malus domestica",
+      "rationale": "Grafted pome fruit. Species-level height is not personal-garden truth without rootstock/cultivar evidence."
+    },
+    {
+      "role": "F",
+      "pattern": "small-ornamental-tree",
+      "canonicalSlug": "japanese-maple",
+      "scientificName": "Acer palmatum",
+      "rationale": "Small ornamental tree with wide cultivar stature range. Tests that a species band is not a universal garden size."
+    },
+    {
+      "role": "G",
+      "pattern": "broad-subtropical-fruit-tree",
+      "canonicalSlug": "mango",
+      "scientificName": "Mangifera indica",
+      "rationale": "Eligible KEEP_TREE with already-approved UF/IFAS species NATURAL_MATURE evidence. Proves the V2 record mapping without fetching new botanical values."
+    }
+  ],
+  "unknownFallback": {
+    "gardenDesignBlocked": false,
+    "label": "Estimated size",
+    "formHeuristic": true,
+    "manualResize": true,
+    "inventedMeters": false
+  },
+  "existingApprovedEvidenceMappedToV2": [
+    {
+      "canonicalSlug": "mango",
+      "scientificName": "Mangifera indica",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "sizeScenario": "NATURAL_MATURE",
+      "heightMinM": 9.144,
+      "heightMaxM": 18.288,
+      "spreadMinM": 9.144,
+      "spreadMaxM": 15.24,
+      "sourceProvider": "UF/IFAS Extension",
+      "sourceTitle": "Mangifera indica: Mango",
+      "sourceIdentifier": "UF_IFAS_ENH563_ST404",
+      "sourceUrl": null,
+      "originalUnit": "ft",
+      "originalRange": {
+        "unit": "ft",
+        "heightFt": {
+          "min": 30,
+          "max": 60
+        },
+        "spreadFt": {
+          "min": 30,
+          "max": 50
+        }
+      },
+      "normalizedSi": {
+        "min": 9.144,
+        "max": 18.288
+      },
+      "identityScope": "SPECIES",
+      "evidenceClass": "SOURCE_SUPPORTED_RANGE",
+      "conditions": "Species-general landscape guidance. Not a cultivar or rootstock guarantee. Not maintained-garden height.",
+      "originalSourceWording": "General species / landscape guidance from UF/IFAS ENH563 / ST404. Not a cultivar guarantee. Future cultivar evidence may override this range. Do not substitute maintained-garden height.",
+      "provenanceVersion": "UF_IFAS_ENH563_ST404",
+      "provenanceTimestamp": null,
+      "mayDrivePhysicalMeterPreview": true,
+      "productionCatalogWritten": false,
+      "calibrationOnly": true
+    }
+  ],
+  "futureWritePath": {
+    "applyWriteNow": false,
+    "productionCatalogMutated": false,
+    "applyMigrationNow": false,
+    "stages": [
+      "validate-evidence-record-against-contract-v2",
+      "store-overlay-json-not-plants-seed",
+      "keep-original-source-wording",
+      "write-production-catalog-only-after-owner-approval"
+    ],
+    "overlayDir": "data/garden-design/botanical-size-evidence-v2",
+    "note": "Future writes go to an overlay first, never flattened into a single matureHeightM/matureSpreadM pair."
+  },
+  "treeSizeEvidenceEligibleCount": 42,
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  }
+}
