@@ -274,12 +274,27 @@ function applyPhysicalScene(scene, options) {
   if (visualForm === 'tree') {
     const tree = computeTreePhysicalScale({
       ...scaleInput,
+      architectureMode: scene.getAttribute('data-architecture-mode') || options.architectureMode || null,
       ownerPreferredRangePosition: scene.getAttribute('data-lock-range-band')
         ? null
         : loadOwnerPreferredRange(currentPhotoKey(scene.ownerDocument || document), slug)
     });
-    if (!tree.ok) return null;
-    result = tree.scale;
+    if (tree.ok) {
+      result = tree.scale;
+    } else {
+      const resolved = resolvePhysicalScaleEvidence({
+        canonicalSlug: slug,
+        visualForm: tree.visualForm || visualForm,
+        growthStage,
+        sizeScenario,
+        userConfirmed: options.userConfirmed
+      });
+      result = computePhysicalSceneScale({
+        ...scaleInput,
+        visualForm: tree.visualForm || visualForm,
+        resolvedEvidence: resolved
+      });
+    }
   } else {
     const resolved = resolvePhysicalScaleEvidence({
       canonicalSlug: slug,

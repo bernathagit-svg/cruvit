@@ -107,6 +107,15 @@ export {
   TREE_FORM_ACTIONS,
   TREE_VISUALFORM_INTEGRITY_VERSION
 } from './tree-visualform-integrity-v1.js';
+export {
+  lookupPlantArchitectureContract,
+  resolveArchitectureMode,
+  mayUseTreePhysicalScale,
+  candidateArchitectureVariantRequirements,
+  PAPAYA_FORM_DECISION,
+  MULTI_FORM_ARCHITECTURE_CONTRACTS,
+  MULTI_FORM_PLANT_ARCHITECTURE_VERSION
+} from './multi-form-plant-architecture-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

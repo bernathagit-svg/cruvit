@@ -17,6 +17,7 @@ import {
   SIZE_SCENARIOS,
   resolvePhysicalScaleEvidence
 } from './physical-scale-evidence-v1.js';
+import { mayUseTreePhysicalScale } from './multi-form-plant-architecture-v1.js';
 
 export const GENERIC_TREE_PHYSICAL_SCALE_VERSION = 'generic-tree-physical-scale-v1';
 export const OWNER_SIZE_PREFERENCE_STORAGE_KEY = 'cruvit:garden-design-owner-size-preference-v1';
@@ -109,17 +110,23 @@ export function classifyTreeSizePrecedence(evidence = {}) {
 }
 
 export function computeTreePhysicalScale(input = {}) {
-  const visualForm = asText(input.visualForm) || DESIGN_VISUAL_FORMS.TREE;
-  if (visualForm !== DESIGN_VISUAL_FORMS.TREE) {
+  const slug = asText(input.canonicalSlug).toLowerCase();
+  const gate = mayUseTreePhysicalScale({
+    canonicalSlug: slug,
+    visualForm: input.visualForm,
+    architectureMode: input.architectureMode
+  });
+  if (!gate.ok) {
     return {
       ok: false,
-      code: 'NOT_TREE_FORM',
-      visualForm,
+      code: gate.code,
+      visualForm: gate.visualForm,
+      architectureMode: gate.architectureMode || null,
       gardenDesignBlocked: false,
-      note: 'Tree physical-scale V1 does not copy tree rules to other visualForm values.'
+      note: gate.note
     };
   }
-  const slug = asText(input.canonicalSlug).toLowerCase();
+  const visualForm = DESIGN_VISUAL_FORMS.TREE;
   const resolved = resolvePhysicalScaleEvidence({
     canonicalSlug: slug,
     plant: input.plant || {},

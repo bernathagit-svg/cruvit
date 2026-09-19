@@ -1,0 +1,645 @@
+{
+  "contract": {
+    "version": "multi-form-plant-architecture-v1",
+    "canonicalIdentityRemainsOnePlant": true,
+    "architectureModeDoesNotCreateSecondIdentity": true,
+    "purposeDoesNotDefineForm": true,
+    "pruningDoesNotOverwriteBotanicalIdentity": true,
+    "gardenDesignBlockedWhenMultiForm": false,
+    "uiRedesignNow": false,
+    "productionCatalogMutated": false,
+    "sizeEnrichmentExecuted": false,
+    "applyMigrationNow": false,
+    "productionVisualFormEnumExtended": false
+  },
+  "papayaFormDecision": {
+    "canonicalSlug": "papaya",
+    "scientificName": "Carica papaya",
+    "class": "TRUE_DIFFERENT_PHYSICAL_FORM",
+    "currentCatalogVisualForm": "tree",
+    "mustNotUseTreeRenderer": true,
+    "productionEnumAdded": false,
+    "productionCatalogMutated": false,
+    "auditedPhysicalForm": "OTHER_SUPPORTED_FORM",
+    "proposedVisualForm": "herbaceous-tree-like",
+    "existingTaxonomy": {
+      "tree": "rejected: woody trunked-canopy renderer",
+      "palm": "rejected: frond/crownshaft architecture, not Caricaceae",
+      "herbaceous-clump": "rejected: typically solitary stem, not a clump of offsets/pups",
+      "herbaceous-upright": "rejected: wrong scale/anchor family for a giant pachycaul",
+      "succulent-form": "rejected: not a succulent-form renderer"
+    },
+    "smallestCompatibleExtension": "Keep DESIGN_VISUAL_FORMS unchanged. Propose herbaceous-tree-like as a future enum. Until owner approval, treat papaya as OTHER_SUPPORTED_FORM and keep it out of the tree engine.",
+    "gardenDesignBlocked": false,
+    "note": "Giant herbaceous / pachycaul with a soft unbranched stem and a leaf crown. Tree-like silhouette is not woody tree architecture."
+  },
+  "multiFormPlants": [
+    {
+      "canonicalSlug": "fig",
+      "scientificName": "Ficus carica",
+      "class": "MULTI_FORM_TRAINING_DEPENDENT",
+      "currentCatalogVisualForm": "tree",
+      "supportedVisualForms": [
+        "tree",
+        "shrub"
+      ],
+      "defaultArchitectureMode": null,
+      "botanicalDefaultExists": false,
+      "runtimeFallbackArchitectureMode": "tree",
+      "runtimeFallbackIsBotanicalTruth": false,
+      "userSelectable": true,
+      "futureUxLabels": {
+        "tree": "Tree form",
+        "shrub": "Shrub form"
+      },
+      "deciduous": true,
+      "mustNotUseTreeRenderer": false,
+      "mustNotShareOneSizeRange": true,
+      "productionCatalogMutated": false,
+      "reason": "Woody plant that is legitimately a short multi-trunk tree or a large shrub depending on training, not a second species identity."
+    },
+    {
+      "canonicalSlug": "plumeria",
+      "scientificName": "Plumeria rubra",
+      "class": "MULTI_FORM_TRAINING_DEPENDENT",
+      "currentCatalogVisualForm": "tree",
+      "supportedVisualForms": [
+        "tree",
+        "shrub"
+      ],
+      "defaultArchitectureMode": null,
+      "botanicalDefaultExists": false,
+      "runtimeFallbackArchitectureMode": "tree",
+      "runtimeFallbackIsBotanicalTruth": false,
+      "userSelectable": true,
+      "futureUxLabels": {
+        "tree": "Tree form",
+        "shrub": "Shrub form"
+      },
+      "deciduous": true,
+      "mustNotUseTreeRenderer": false,
+      "mustNotShareOneSizeRange": true,
+      "productionCatalogMutated": false,
+      "reason": "Pachycaul woody plant grown as a small tree or a branching shrub. Training-dependent, not a unique identity."
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "scientificName": "Punica granatum",
+      "class": "MULTI_FORM_TRAINING_DEPENDENT",
+      "currentCatalogVisualForm": "tree",
+      "supportedVisualForms": [
+        "tree",
+        "shrub"
+      ],
+      "defaultArchitectureMode": null,
+      "botanicalDefaultExists": false,
+      "runtimeFallbackArchitectureMode": "tree",
+      "runtimeFallbackIsBotanicalTruth": false,
+      "userSelectable": true,
+      "futureUxLabels": {
+        "tree": "Tree form",
+        "shrub": "Shrub form"
+      },
+      "deciduous": true,
+      "mustNotUseTreeRenderer": false,
+      "mustNotShareOneSizeRange": true,
+      "productionCatalogMutated": false,
+      "reason": "Typically multi-stemmed large shrub to small tree. Architecture mode is training/habit, not a second catalog plant."
+    },
+    {
+      "canonicalSlug": "quince",
+      "scientificName": "Cydonia oblonga",
+      "class": "MULTI_FORM_TRAINING_DEPENDENT",
+      "currentCatalogVisualForm": "tree",
+      "supportedVisualForms": [
+        "tree",
+        "shrub"
+      ],
+      "defaultArchitectureMode": null,
+      "botanicalDefaultExists": false,
+      "runtimeFallbackArchitectureMode": "tree",
+      "runtimeFallbackIsBotanicalTruth": false,
+      "userSelectable": true,
+      "futureUxLabels": {
+        "tree": "Tree form",
+        "shrub": "Shrub form"
+      },
+      "deciduous": true,
+      "mustNotUseTreeRenderer": false,
+      "mustNotShareOneSizeRange": true,
+      "productionCatalogMutated": false,
+      "reason": "Large shrub or small multi-stemmed tree. Both architectures are valid for the same species."
+    },
+    {
+      "canonicalSlug": "strawberry-guava",
+      "scientificName": "Psidium cattleyanum",
+      "class": "MULTI_FORM_TRAINING_DEPENDENT",
+      "currentCatalogVisualForm": "tree",
+      "supportedVisualForms": [
+        "tree",
+        "shrub"
+      ],
+      "defaultArchitectureMode": null,
+      "botanicalDefaultExists": false,
+      "runtimeFallbackArchitectureMode": "tree",
+      "runtimeFallbackIsBotanicalTruth": false,
+      "userSelectable": true,
+      "futureUxLabels": {
+        "tree": "Tree form",
+        "shrub": "Shrub form"
+      },
+      "deciduous": false,
+      "mustNotUseTreeRenderer": false,
+      "mustNotShareOneSizeRange": true,
+      "productionCatalogMutated": false,
+      "reason": "Evergreen shrub or small tree. Both architectures are valid for the same species."
+    }
+  ],
+  "runtimeArchitectureMode": {
+    "sameCanonicalSlugDifferentArchitectureMode": true,
+    "affectsDesignAssetSelection": true,
+    "affectsPhysicalScaleEngine": true,
+    "affectsGroundAnchor": true,
+    "affectsMatureSizeScenario": true,
+    "affectsFutureVariantRequirements": true,
+    "createsSecondCatalogIdentity": false
+  },
+  "defaultBehavior": {
+    "evidenceBackedDefaultOnlyWhenClear": true,
+    "multiFormDefault": null,
+    "runtimeFallback": "tree",
+    "runtimeFallbackIsBotanicalTruth": false,
+    "gardenDesignBlocked": false,
+    "uiRedesignNow": false
+  },
+  "formAwareSizeEvidence": {
+    "papaya": {
+      "canonicalSlug": "papaya",
+      "sharedRangeForbidden": true,
+      "scenarios": {
+        "herbaceous-tree-like": {
+          "matureHeight": "UNKNOWN",
+          "matureSpread": "UNKNOWN",
+          "mayInventMeters": false
+        }
+      }
+    },
+    "multiForm": [
+      {
+        "canonicalSlug": "fig",
+        "sharedRangeForbidden": true,
+        "scenarios": {
+          "tree": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          },
+          "shrub": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          }
+        },
+        "note": "Do not store one mature size range as if it applies equally to tree and shrub architecture."
+      },
+      {
+        "canonicalSlug": "plumeria",
+        "sharedRangeForbidden": true,
+        "scenarios": {
+          "tree": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          },
+          "shrub": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          }
+        },
+        "note": "Do not store one mature size range as if it applies equally to tree and shrub architecture."
+      },
+      {
+        "canonicalSlug": "pomegranate",
+        "sharedRangeForbidden": true,
+        "scenarios": {
+          "tree": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          },
+          "shrub": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          }
+        },
+        "note": "Do not store one mature size range as if it applies equally to tree and shrub architecture."
+      },
+      {
+        "canonicalSlug": "quince",
+        "sharedRangeForbidden": true,
+        "scenarios": {
+          "tree": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          },
+          "shrub": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          }
+        },
+        "note": "Do not store one mature size range as if it applies equally to tree and shrub architecture."
+      },
+      {
+        "canonicalSlug": "strawberry-guava",
+        "sharedRangeForbidden": true,
+        "scenarios": {
+          "tree": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          },
+          "shrub": {
+            "matureHeight": "UNKNOWN",
+            "matureSpread": "UNKNOWN",
+            "mayInventMeters": false
+          }
+        },
+        "note": "Do not store one mature size range as if it applies equally to tree and shrub architecture."
+      }
+    ]
+  },
+  "designAssetImpact": {
+    "currentDerivationUsesSingleVisualForm": true,
+    "generateNow": false,
+    "candidateRequirements": [
+      {
+        "canonicalSlug": "papaya",
+        "generateNow": false,
+        "productionEnumRequiredFirst": true,
+        "proposedVisualForm": "herbaceous-tree-like",
+        "required": [
+          {
+            "assetName": "papaya-young-vegetative-v1",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "architectureMode": null
+          },
+          {
+            "assetName": "papaya-mature-vegetative-v1",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "architectureMode": null
+          }
+        ]
+      },
+      {
+        "canonicalSlug": "fig",
+        "generateNow": false,
+        "secondCatalogIdentity": false,
+        "required": [
+          {
+            "assetName": "fig-tree-young-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "tree establishment form"
+          },
+          {
+            "assetName": "fig-tree-mature-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "leafy",
+            "reason": "tree mature architecture"
+          },
+          {
+            "assetName": "fig-tree-mature-dormant-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          },
+          {
+            "assetName": "fig-shrub-young-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "compact",
+            "reason": "shrub establishment form"
+          },
+          {
+            "assetName": "fig-shrub-mature-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "shrub mature architecture"
+          },
+          {
+            "assetName": "fig-shrub-mature-dormant-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          }
+        ]
+      },
+      {
+        "canonicalSlug": "plumeria",
+        "generateNow": false,
+        "secondCatalogIdentity": false,
+        "required": [
+          {
+            "assetName": "plumeria-tree-young-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "tree establishment form"
+          },
+          {
+            "assetName": "plumeria-tree-mature-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "leafy",
+            "reason": "tree mature architecture"
+          },
+          {
+            "assetName": "plumeria-tree-mature-dormant-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          },
+          {
+            "assetName": "plumeria-shrub-young-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "compact",
+            "reason": "shrub establishment form"
+          },
+          {
+            "assetName": "plumeria-shrub-mature-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "shrub mature architecture"
+          },
+          {
+            "assetName": "plumeria-shrub-mature-dormant-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          }
+        ]
+      },
+      {
+        "canonicalSlug": "pomegranate",
+        "generateNow": false,
+        "secondCatalogIdentity": false,
+        "required": [
+          {
+            "assetName": "pomegranate-tree-young-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "tree establishment form"
+          },
+          {
+            "assetName": "pomegranate-tree-mature-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "leafy",
+            "reason": "tree mature architecture"
+          },
+          {
+            "assetName": "pomegranate-tree-mature-dormant-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          },
+          {
+            "assetName": "pomegranate-shrub-young-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "compact",
+            "reason": "shrub establishment form"
+          },
+          {
+            "assetName": "pomegranate-shrub-mature-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "shrub mature architecture"
+          },
+          {
+            "assetName": "pomegranate-shrub-mature-dormant-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          }
+        ]
+      },
+      {
+        "canonicalSlug": "quince",
+        "generateNow": false,
+        "secondCatalogIdentity": false,
+        "required": [
+          {
+            "assetName": "quince-tree-young-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "tree establishment form"
+          },
+          {
+            "assetName": "quince-tree-mature-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "leafy",
+            "reason": "tree mature architecture"
+          },
+          {
+            "assetName": "quince-tree-mature-dormant-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          },
+          {
+            "assetName": "quince-shrub-young-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "compact",
+            "reason": "shrub establishment form"
+          },
+          {
+            "assetName": "quince-shrub-mature-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "shrub mature architecture"
+          },
+          {
+            "assetName": "quince-shrub-mature-dormant-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "season": "winter",
+            "phenology": "dormant",
+            "required": true,
+            "reason": "deciduous habit: winter dormant asset"
+          }
+        ]
+      },
+      {
+        "canonicalSlug": "strawberry-guava",
+        "generateNow": false,
+        "secondCatalogIdentity": false,
+        "required": [
+          {
+            "assetName": "strawberry-guava-tree-young-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "tree establishment form"
+          },
+          {
+            "assetName": "strawberry-guava-tree-mature-vegetative-v1",
+            "architectureMode": "tree",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "leafy",
+            "reason": "tree mature architecture"
+          },
+          {
+            "assetName": "strawberry-guava-shrub-young-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "young",
+            "phenology": "vegetative",
+            "formView": "compact",
+            "reason": "shrub establishment form"
+          },
+          {
+            "assetName": "strawberry-guava-shrub-mature-vegetative-v1",
+            "architectureMode": "shrub",
+            "growthStage": "mature",
+            "phenology": "vegetative",
+            "formView": "default",
+            "reason": "shrub mature architecture"
+          }
+        ]
+      }
+    ]
+  },
+  "treeSizeEvidenceEligible": [
+    "almond",
+    "apple",
+    "apricot",
+    "avocado",
+    "blue-gum",
+    "breadfruit",
+    "cacao",
+    "carob",
+    "cedar",
+    "cherimoya",
+    "cypress",
+    "durian",
+    "english-walnut",
+    "ficus-benjamina",
+    "fiddle-leaf-fig",
+    "ginkgo",
+    "grapefruit",
+    "guava",
+    "jaboticaba",
+    "jackfruit",
+    "japanese-maple",
+    "lemon",
+    "longan",
+    "loquat",
+    "lychee",
+    "mandarin",
+    "mango",
+    "mangosteen",
+    "moringa",
+    "olive",
+    "orange",
+    "peach",
+    "pear",
+    "persimmon",
+    "pistachio",
+    "rambutan",
+    "silver-birch",
+    "southern-magnolia",
+    "starfruit",
+    "sweet-cherry",
+    "sweet-orange",
+    "white-sapote"
+  ],
+  "multiFormSizeEvidenceRequired": [
+    "fig",
+    "plumeria",
+    "pomegranate",
+    "quince",
+    "strawberry-guava"
+  ],
+  "nonTreeFormSizeEvidenceRequired": [
+    "papaya"
+  ],
+  "identityGaps": [
+    "melaleuca",
+    "oak-tree",
+    "pine-tree",
+    "plum"
+  ],
+  "mangoState": {
+    "scale": "PHYSICAL_SCALE_DIRECTION_VALIDATED",
+    "architecture": "ARCHITECTURE_REGEN_CANDIDATE",
+    "ownerPreferredRangePosition": "LOW",
+    "botanicalTruthModified": false
+  },
+  "genericTreeScaleContract": {
+    "universalTreeSize": false,
+    "gardenDesignWorksWithUnknown": true
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "productionCatalogMutated": false,
+  "sizeEnrichmentExecuted": false
+}
