@@ -4,7 +4,7 @@
  */
 export const CALIBRATION_REVIEW_ONLY = true;
 export const CALIBRATION_BATCH_1_RUN_ID = 'design-asset-calibration-batch-1';
-export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919e';
+export const CALIBRATION_BATCH_1_CACHE_BUST = '20260919f';
 export const CALIBRATION_BATCH_1_DIR = 'modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1';
 export const CALIBRATION_BATCH_1_LIVE_BASE = 'assets/plants/batch-1-candidates/calibration-batch-1/';
 
@@ -49,6 +49,7 @@ export function emptyOwnerVisualRecord(slug) {
     BOTANICAL_IDENTITY_QA: 'UNKNOWN',
     ASSET_QA: 'UNKNOWN',
     approvalStatus: 'candidate',
+    ROUND_1_CLASS: null,
     fields: {
       PERSPECTIVE: false,
       GROUND_CONTACT: false,
@@ -181,6 +182,7 @@ export function buildOwnerFeedbackSummary(state = {}, options = {}) {
       candidateAssetId: row.file.replace(/\.png$/i, ''),
       OWNER_VISUAL_QA: verdict,
       checkedFields: checkedIssueFields(record),
+      ROUND_1_CLASS: (record && record.ROUND_1_CLASS) || null,
       BOTANICAL_IDENTITY_QA: 'UNKNOWN',
       ASSET_QA: 'UNKNOWN',
       IN_GARDEN_QA: inGardenQa,
@@ -211,9 +213,147 @@ export function buildOwnerFeedbackSummary(state = {}, options = {}) {
 }
 
 export function applyLearningClass(state, slug, klass) {
+  return applyRound1Class(state, slug, klass);
+}
+
+export function applyRound1Class(state, slug, klass) {
   const next = { ...(state || {}) };
-  next[slug] = LEARNING_CLASSES.includes(klass) ? klass : null;
+  const row = { ...(next[slug] || emptyOwnerVisualRecord(slug)) };
+  row.ROUND_1_CLASS = LEARNING_CLASSES.includes(klass) ? klass : null;
+  row.BOTANICAL_IDENTITY_QA = 'UNKNOWN';
+  row.ASSET_QA = 'UNKNOWN';
+  row.approvalStatus = 'candidate';
+  next[slug] = row;
   return next;
+}
+
+export function computeIssueFrequencies(state = {}) {
+  const jobs = CALIBRATION_BATCH_1_CANDIDATES.map((row) => {
+    const record = state && state[row.canonicalSlug] ? state[row.canonicalSlug] : null;
+    return {
+      canonicalSlug: row.canonicalSlug,
+      checkedFields: checkedIssueFields(record)
+    };
+  });
+  const counts = {};
+  for (const field of OWNER_VISUAL_QA_FIELDS) {
+    counts[field] = jobs.filter((job) => job.checkedFields.includes(field)).length;
+  }
+  const frequencies = {};
+  for (const field of OWNER_VISUAL_QA_FIELDS) {
+    frequencies[field] = counts[field] + '/8';
+  }
+  return { counts, frequencies, jobs };
+}
+
+export function reconcileOwnerFeedbackIntegrity(state = {}) {
+  const summaryJobs = buildOwnerFeedbackSummary(state, { uiStatus: null }).jobs;
+  const reviewed = summaryJobs.filter((job) => job.OWNER_VISUAL_QA !== 'UNREVIEWED');
+  const computed = computeIssueFrequencies(state);
+  const mismatches = [];
+  for (const field of OWNER_VISUAL_QA_FIELDS) {
+    const fromJobs = summaryJobs.filter((job) => job.checkedFields.includes(field)).length;
+    if (fromJobs !== computed.counts[field]) {
+      mismatches.push({ field, fromJobs, computed: computed.counts[field] });
+    }
+  }
+  const missing = CALIBRATION_BATCH_1_CANDIDATES.filter((row) => {
+    const rec = state && state[row.canonicalSlug];
+    return !rec || !OWNER_VISUAL_VERDICTS.includes(rec.OWNER_VISUAL_QA);
+  }).map((row) => row.canonicalSlug);
+  const ok = missing.length === 0 && mismatches.length === 0 && reviewed.length === 8;
+  return {
+    ok,
+    code: ok ? 'OWNER_FEEDBACK_INTEGRITY_OK' : 'OWNER_FEEDBACK_INTEGRITY_FAILED',
+    missing,
+    mismatches,
+    reviewedCount: reviewed.length,
+    frequencies: computed.frequencies,
+    counts: computed.counts,
+    jobs: summaryJobs.map((job) => ({
+      canonicalSlug: job.canonicalSlug,
+      candidateAssetId: job.candidateAssetId,
+      OWNER_VISUAL_QA: job.OWNER_VISUAL_QA,
+      checkedFields: job.checkedFields,
+      ROUND_1_CLASS: (state[job.canonicalSlug] && state[job.canonicalSlug].ROUND_1_CLASS) || null
+    }))
+  };
+}
+
+export function buildRound1FinalSnapshot(state = {}, options = {}) {
+  const integrity = reconcileOwnerFeedbackIntegrity(state);
+  const capturedAt = options.capturedAt || new Date().toISOString();
+  const inGardenQa = inGardenQaForSession(options.uiStatus);
+  return {
+    contract: 'owner-feedback-round-1-final',
+    runId: CALIBRATION_BATCH_1_RUN_ID,
+    storageKey: OWNER_VISUAL_QA_STORAGE_KEY,
+    capturedFrom: 'sessionStorage',
+    capturedAt,
+    integrity: integrity.code,
+    integrityOk: integrity.ok,
+    frequencies: integrity.frequencies,
+    approvedAssets: 0,
+    writeProductionRegistry: false,
+    regenerate: false,
+    promptFactoryV2Finalized: false,
+    jobs: CALIBRATION_BATCH_1_CANDIDATES.map((row) => {
+      const record = state && state[row.canonicalSlug] ? state[row.canonicalSlug] : null;
+      const summary = integrity.jobs.find((job) => job.canonicalSlug === row.canonicalSlug);
+      return {
+        runId: CALIBRATION_BATCH_1_RUN_ID,
+        assetId: row.file.replace(/\.png$/i, ''),
+        canonicalSlug: row.canonicalSlug,
+        ownerVerdict: (summary && summary.OWNER_VISUAL_QA) || 'UNREVIEWED',
+        checkedIssues: (summary && summary.checkedFields) || [],
+        timestamp: capturedAt,
+        botanicalQaStatus: 'UNKNOWN',
+        assetQaStatus: 'UNKNOWN',
+        inGardenQaStatus: inGardenQa,
+        ROUND_1_CLASS: (record && record.ROUND_1_CLASS) || null,
+        approvalStatus: 'candidate'
+      };
+    })
+  };
+}
+
+export function derivePromptFactoryV2Learning(state = {}) {
+  const integrity = reconcileOwnerFeedbackIntegrity(state);
+  if (!integrity.ok) {
+    return {
+      finalized: false,
+      code: 'OWNER_FEEDBACK_INTEGRITY_FAILED',
+      regenerate: false,
+      generationCorrections: [],
+      runtimeIntegration: [],
+      identityGates: []
+    };
+  }
+  const classified = integrity.jobs.filter((job) => LEARNING_CLASSES.includes(job.ROUND_1_CLASS));
+  if (classified.length !== 8) {
+    return {
+      finalized: false,
+      code: 'OWNER_CLASSIFICATION_PENDING',
+      regenerate: false,
+      generationCorrections: [],
+      runtimeIntegration: [],
+      identityGates: []
+    };
+  }
+  return {
+    finalized: true,
+    code: 'PROMPT_FACTORY_V2_LEARNING_READY',
+    regenerate: false,
+    generationCorrections: integrity.jobs
+      .filter((job) => job.ROUND_1_CLASS === 'REGEN_REQUIRED')
+      .map((job) => ({ canonicalSlug: job.canonicalSlug, checkedFields: job.checkedFields })),
+    runtimeIntegration: integrity.jobs
+      .filter((job) => job.ROUND_1_CLASS === 'BLEND_SOLVABLE')
+      .map((job) => ({ canonicalSlug: job.canonicalSlug, checkedFields: job.checkedFields })),
+    identityGates: integrity.jobs
+      .filter((job) => job.ROUND_1_CLASS === 'REJECT_IDENTITY')
+      .map((job) => ({ canonicalSlug: job.canonicalSlug, checkedFields: job.checkedFields }))
+  };
 }
 
 export const ROUND_1_OWNER_FREQUENCIES = Object.freeze({
@@ -229,29 +369,33 @@ export const ROUND_1_OWNER_FREQUENCIES = Object.freeze({
 
 export function exportCalibrationRound1Learning(state = {}, options = {}) {
   const summary = buildOwnerFeedbackSummary(state, options);
+  const integrity = reconcileOwnerFeedbackIntegrity(state);
   return {
     contract: 'calibration-round-1-learning-v1',
     runId: CALIBRATION_BATCH_1_RUN_ID,
-    source: 'owner-completed-visual-review',
+    source: 'sessionStorage',
     storageKey: OWNER_VISUAL_QA_STORAGE_KEY,
     capturedFrom: 'sessionStorage',
     capturedAt: options.capturedAt || null,
     approvedAssets: 0,
+    integrity: integrity.code,
     everyAssetVerdict: summary.jobs.every((job) => job.OWNER_VISUAL_QA === 'NEEDS_BLEND')
       ? 'NEEDS_BLEND'
       : null,
-    frequencies: { ...ROUND_1_OWNER_FREQUENCIES },
+    frequencies: integrity.frequencies,
     IN_GARDEN_QA: summary.IN_GARDEN_QA,
     IN_GARDEN_QA_ALIAS: summary.IN_GARDEN_QA === 'INVALID_FOR_THIS_SESSION' ? 'NOT_RUN' : summary.IN_GARDEN_QA,
     BOTANICAL_IDENTITY_QA: 'UNKNOWN',
     ASSET_QA: 'UNKNOWN',
     writeProductionRegistry: false,
     regenerate: false,
+    promptFactoryV2Finalized: false,
     jobs: summary.jobs.map((job) => ({
       canonicalSlug: job.canonicalSlug,
       candidateAssetId: job.candidateAssetId,
       OWNER_VISUAL_QA: job.OWNER_VISUAL_QA,
       checkedFields: job.checkedFields,
+      ROUND_1_CLASS: job.ROUND_1_CLASS,
       IN_GARDEN_QA: job.IN_GARDEN_QA,
       approvalStatus: 'candidate'
     }))

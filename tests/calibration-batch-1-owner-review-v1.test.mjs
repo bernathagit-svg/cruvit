@@ -12,19 +12,27 @@ import {
   CALIBRATION_BATCH_1_CACHE_BUST,
   OWNER_VISUAL_VERDICTS,
   applyOwnerVisualVerdict,
+  applyRound1Class,
   botanicalIdentityQaForCalibrationCandidate,
   assetQaForCalibrationCandidate,
   isCalibrationReviewOnlyPath,
   OWNER_VISUAL_QA_STORAGE_KEY,
   buildOwnerFeedbackSummary,
+  buildRound1FinalSnapshot,
+  derivePromptFactoryV2Learning,
   exportCalibrationRound1Learning,
   loadOwnerVisualQa,
+  reconcileOwnerFeedbackIntegrity,
   inGardenQaForSession
 } from '../modules/garden-design/asset-factory-v1/calibration-review-candidates-v1.js';
 import { buildCalibrationReviewHtml } from '../modules/garden-design/asset-factory-v1/calibration-review-v1.js';
 import { isUsableDesignVariant } from '../modules/garden-design/garden-design-asset-registry-v1.js';
 import { RUNTIME_BLEND_V1 } from '../modules/garden-design/asset-factory-v1/in-garden-qa-v1.js';
-import { buildPromptRecordV2, PROMPT_TEMPLATE_VERSION_V2 } from '../modules/garden-design/asset-factory-v1/prompt-factory-v2.js';
+import {
+  buildPromptRecordV2,
+  PROMPT_TEMPLATE_VERSION_V2,
+  PROMPT_FACTORY_V2_LEARNING_STATUS
+} from '../modules/garden-design/asset-factory-v1/prompt-factory-v2.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -69,6 +77,10 @@ test('live calibration review wires actual cutouts, not placeholders', () => {
   assert.match(review, /data-review-role="calibration-candidate"/);
   assert.match(review, /calibration-owner-visual-qa-v1\.js/);
   assert.match(review, /Copy review summary/);
+  assert.match(review, /download-round-1-final/);
+  assert.match(review, /owner-feedback-integrity/);
+  assert.match(review, /data-blend-scale="medium"/);
+  assert.match(review, /raw-blend-pair/);
   assert.match(review, /owner-feedback-table-body/);
   assert.match(review, /RAW vs BLEND V1/);
   assert.match(review, /data-learning-class="REGEN_REQUIRED"/);
@@ -189,10 +201,13 @@ test('round 1 learning export preserves session jobs and does not approve', () =
   assert.equal(learning.jobs[0].candidateAssetId, 'mango-mature-vegetative-v1');
   assert.equal(learning.jobs[0].IN_GARDEN_QA, 'INVALID_FOR_THIS_SESSION');
   assert.equal(learning.IN_GARDEN_QA_ALIAS, 'NOT_RUN');
-  assert.equal(learning.frequencies.STICKER_LOOK, '8/8');
+  assert.equal(learning.integrity, 'OWNER_FEEDBACK_INTEGRITY_FAILED');
+  assert.equal(learning.frequencies.STICKER_LOOK, '1/8');
+  assert.equal(learning.promptFactoryV2Finalized, false);
   const disk = JSON.parse(read('data/garden-design/calibration-batch-1/owner-learning-v1.json'));
   assert.equal(disk.approvedAssets, 0);
-  assert.equal(disk.everyAssetVerdict, 'NEEDS_BLEND');
+  assert.equal(disk.integrity, 'OWNER_FEEDBACK_INTEGRITY_FAILED');
+  assert.equal(disk.authoritative, false);
   assert.equal(disk.productionRegistryChanged, undefined);
   assert.equal(disk.jobs.length, 8);
 });
@@ -213,7 +228,9 @@ test('RAW vs BLEND V1 is runtime CSS only and cannot claim to fix architecture',
     }
   ]);
   assert.match(html, /RAW vs BLEND V1/);
-  assert.match(html, /cutout medium blend-v1/);
+  assert.match(html, /data-blend-scale="medium"/);
+  assert.match(html, /raw-blend-pair/);
+  assert.match(html, /data-learning-class="BLEND_SOLVABLE" disabled/);
   assert.match(html, /data-learning-class="BLEND_SOLVABLE"/);
   assert.match(html, /data-learning-class="REGEN_REQUIRED"/);
   assert.match(html, /data-learning-class="REJECT_IDENTITY"/);
@@ -238,6 +255,7 @@ test('Prompt Factory V2 is generic and does not spend', () => {
   });
   assert.equal(record.promptTemplateVersion, PROMPT_TEMPLATE_VERSION_V2);
   assert.equal(record.regenerate, false);
+  assert.equal(PROMPT_FACTORY_V2_LEARNING_STATUS, 'NOT_FINALIZED_PENDING_OWNER_CLASSIFICATION');
   assert.match(record.prompt, /ground-level three-quarter/);
   assert.match(record.prompt, /forbid catalog elevation/);
   assert.match(record.prompt, /irregular organic/);
@@ -249,4 +267,72 @@ test('Prompt Factory V2 is generic and does not spend', () => {
   const app = read('app.html');
   assert.match(app, /getCruvitTrustedGardenLocation/);
   assert.match(app, /const loc=ensureGardenLocation\(\);/);
+});
+
+function eightNeedsBlend(extraFieldsBySlug = {}) {
+  const state = {};
+  for (const row of CALIBRATION_BATCH_1_CANDIDATES) {
+    const extra = extraFieldsBySlug[row.canonicalSlug] || {};
+    state[row.canonicalSlug] = {
+      canonicalSlug: row.canonicalSlug,
+      OWNER_VISUAL_QA: 'NEEDS_BLEND',
+      fields: {
+        PERSPECTIVE: extra.PERSPECTIVE === true,
+        GROUND_CONTACT: extra.GROUND_CONTACT === true,
+        STICKER_LOOK: extra.STICKER_LOOK !== false,
+        HALO: extra.HALO === true,
+        SHARPNESS_MATCH: extra.SHARPNESS_MATCH === true,
+        COLOR_TONAL_MATCH: extra.COLOR_TONAL_MATCH === true,
+        SCALE_REALISM: extra.SCALE_REALISM === true,
+        SILHOUETTE: extra.SILHOUETTE !== false
+      }
+    };
+  }
+  return state;
+}
+
+test('sessionStorage frequencies are sums of checked fields and do not invent plants', () => {
+  const incomplete = {
+    mango: {
+      OWNER_VISUAL_QA: 'NEEDS_BLEND',
+      fields: { STICKER_LOOK: true, SILHOUETTE: true, PERSPECTIVE: true }
+    }
+  };
+  const failed = reconcileOwnerFeedbackIntegrity(incomplete);
+  assert.equal(failed.code, 'OWNER_FEEDBACK_INTEGRITY_FAILED');
+  assert.equal(failed.frequencies.STICKER_LOOK, '1/8');
+  assert.equal(failed.frequencies.PERSPECTIVE, '1/8');
+  assert.equal(derivePromptFactoryV2Learning(incomplete).code, 'OWNER_FEEDBACK_INTEGRITY_FAILED');
+  assert.equal(derivePromptFactoryV2Learning(incomplete).finalized, false);
+
+  const okState = eightNeedsBlend({
+    mango: { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true, GROUND_CONTACT: true, HALO: true, COLOR_TONAL_MATCH: true },
+    lavender: { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true },
+    pineapple: { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true },
+    banana: { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true },
+    'areca-palm': { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true },
+    bougainvillea: { PERSPECTIVE: true, SCALE_REALISM: true, SHARPNESS_MATCH: true },
+    'aloe-vera': { PERSPECTIVE: true, SCALE_REALISM: true },
+    eggplant: {}
+  });
+  const ok = reconcileOwnerFeedbackIntegrity(okState);
+  assert.equal(ok.code, 'OWNER_FEEDBACK_INTEGRITY_OK');
+  assert.equal(ok.frequencies.STICKER_LOOK, '8/8');
+  assert.equal(ok.frequencies.SILHOUETTE, '8/8');
+  assert.equal(ok.frequencies.PERSPECTIVE, '7/8');
+  assert.equal(ok.frequencies.SCALE_REALISM, '7/8');
+  assert.equal(ok.frequencies.SHARPNESS_MATCH, '6/8');
+  assert.equal(ok.frequencies.GROUND_CONTACT, '1/8');
+  assert.equal(ok.frequencies.HALO, '1/8');
+  assert.equal(ok.frequencies.COLOR_TONAL_MATCH, '1/8');
+  assert.deepEqual(ok.jobs.find((j) => j.canonicalSlug === 'eggplant').checkedFields, ['STICKER_LOOK', 'SILHOUETTE']);
+  const classified = applyRound1Class(okState, 'mango', 'REGEN_REQUIRED');
+  assert.equal(classified.mango.OWNER_VISUAL_QA, 'NEEDS_BLEND');
+  assert.equal(classified.mango.ROUND_1_CLASS, 'REGEN_REQUIRED');
+  assert.equal(classified.mango.fields.STICKER_LOOK, true);
+  assert.equal(derivePromptFactoryV2Learning(classified).code, 'OWNER_CLASSIFICATION_PENDING');
+  const snapshot = buildRound1FinalSnapshot(okState, { uiStatus: 'NO_ACTIVE_GARDEN', capturedAt: '2026-09-19T00:00:00.000Z' });
+  assert.equal(snapshot.integrity, 'OWNER_FEEDBACK_INTEGRITY_OK');
+  assert.equal(snapshot.jobs[0].assetId, 'mango-mature-vegetative-v1');
+  assert.equal(snapshot.promptFactoryV2Finalized, false);
 });

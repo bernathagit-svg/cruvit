@@ -6,6 +6,7 @@
 import { DEFAULT_GENERATION_SETTINGS } from './prompt-factory-v1.js';
 
 export const PROMPT_TEMPLATE_VERSION_V2 = 'design-cutout-v2';
+export const PROMPT_FACTORY_V2_LEARNING_STATUS = 'NOT_FINALIZED_PENDING_OWNER_CLASSIFICATION';
 
 function asText(value) {
   return String(value == null ? '' : value).trim();

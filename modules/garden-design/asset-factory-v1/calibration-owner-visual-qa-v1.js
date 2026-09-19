@@ -6,13 +6,14 @@
 import {
   OWNER_VISUAL_QA_STORAGE_KEY,
   LEARNING_CLASS_STORAGE_KEY,
-  LEARNING_EXPORT_STORAGE_KEY,
   applyOwnerVisualField,
   applyOwnerVisualVerdict,
-  applyLearningClass,
+  applyRound1Class,
   buildOwnerFeedbackSummary,
-  exportCalibrationRound1Learning,
+  buildRound1FinalSnapshot,
+  derivePromptFactoryV2Learning,
   loadOwnerVisualQa,
+  reconcileOwnerFeedbackIntegrity,
   saveOwnerVisualQa
 } from './calibration-review-candidates-v1.js';
 
@@ -29,7 +30,21 @@ function currentUiStatus(doc) {
   return (root && root.getAttribute('data-calibration-ui-status')) || '';
 }
 
-function paint(root, record) {
+function gardenPhotoLoaded(doc) {
+  return currentUiStatus(doc) === 'REAL_GARDEN_SOURCE_LOADED';
+}
+
+function syncClassificationGate(doc) {
+  const ready = gardenPhotoLoaded(doc);
+  doc.querySelectorAll('[data-learning-class]').forEach((btn) => {
+    btn.disabled = !ready;
+    btn.title = ready
+      ? 'Round-1 class. Not production approval.'
+      : 'Wait for REAL_GARDEN_SOURCE_LOADED. Do not classify on black B/C/D panels.';
+  });
+}
+
+function paint(root, record, doc) {
   if (!root) return;
   const verdict = record && record.OWNER_VISUAL_QA;
   root.querySelectorAll('[data-verdict]').forEach((btn) => {
@@ -44,19 +59,21 @@ function paint(root, record) {
     status.textContent =
       'OWNER_VISUAL_QA = ' +
       (verdict || 'UNREVIEWED') +
+      '. ROUND_1_CLASS = ' +
+      ((record && record.ROUND_1_CLASS) || 'UNCLASSIFIED') +
       '. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. IN_GARDEN_QA = INVALID_FOR_THIS_SESSION until a signed Garden photo loads. approvalStatus = candidate. Session-only.';
   }
-  const klass = root.getAttribute('data-learning-class-value');
+  const klass = (record && record.ROUND_1_CLASS) || '';
   root.querySelectorAll('[data-learning-class]').forEach((btn) => {
     btn.setAttribute('aria-pressed', btn.getAttribute('data-learning-class') === klass ? 'true' : 'false');
   });
+  syncClassificationGate(doc || root.ownerDocument);
 }
 
 function renderSummary(doc, state) {
-  const summary = buildOwnerFeedbackSummary(state, {
-    uiStatus: currentUiStatus(doc) || 'NO_ACTIVE_GARDEN',
-    capturedAt: null
-  });
+  const uiStatus = currentUiStatus(doc);
+  const summary = buildOwnerFeedbackSummary(state, { uiStatus });
+  const integrity = reconcileOwnerFeedbackIntegrity(state);
   const table = doc.getElementById('owner-feedback-table-body');
   if (table) {
     table.innerHTML = summary.jobs
@@ -73,6 +90,9 @@ function renderSummary(doc, state) {
           '<td>' +
           fields +
           '</td>' +
+          '<td>' +
+          (job.ROUND_1_CLASS || 'UNCLASSIFIED') +
+          '</td>' +
           '<td>UNKNOWN</td>' +
           '<td>UNKNOWN</td>' +
           '<td>' +
@@ -83,22 +103,36 @@ function renderSummary(doc, state) {
       })
       .join('');
   }
+  const integrityEl = doc.getElementById('owner-feedback-integrity');
+  if (integrityEl) {
+    integrityEl.textContent =
+      integrity.code +
+      '. Frequencies from sessionStorage only: ' +
+      Object.entries(integrity.frequencies)
+        .map(([field, value]) => field + ' ' + value)
+        .join('; ') +
+      (integrity.missing.length ? '. Missing: ' + integrity.missing.join(', ') : '');
+    integrityEl.className = integrity.ok ? 'ok' : 'warn';
+  }
+  const freqEl = doc.getElementById('owner-feedback-frequencies');
+  if (freqEl) {
+    freqEl.textContent = JSON.stringify(integrity.frequencies, null, 2);
+  }
   const jsonEl = doc.getElementById('owner-feedback-json');
-  if (jsonEl) jsonEl.textContent = JSON.stringify(summary, null, 2);
+  if (jsonEl) jsonEl.textContent = JSON.stringify(state || {}, null, 2);
   const mapEl = doc.getElementById('owner-feedback-prompt-map');
   if (mapEl) {
-    const entries = Object.values(summary.promptCorrectionMap.byField || {});
-    mapEl.textContent = entries.length
-      ? entries
-          .map((row) => row.field + ' (' + row.slugs.join(', ') + '): ' + row.guidance)
-          .join('\n')
-      : 'No checked issue fields yet. Prompt corrections are derived only from actual owner checks.';
+    const learning = derivePromptFactoryV2Learning(state);
+    mapEl.textContent = learning.finalized
+      ? JSON.stringify(learning, null, 2)
+      : learning.code +
+        '. Prompt Factory V2 learning is not finalized. Generation corrections wait for REGEN_REQUIRED classes after integrity OK.';
   }
-  return summary;
+  syncClassificationGate(doc);
+  return { summary, integrity };
 }
 
-async function copySummary(summary) {
-  const text = JSON.stringify(summary, null, 2);
+async function copyText(text) {
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
     await navigator.clipboard.writeText(text);
     return true;
@@ -106,38 +140,61 @@ async function copySummary(summary) {
   return false;
 }
 
+function downloadSnapshot(snapshot) {
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'owner-feedback-round-1-final.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function wireScaleToggles(doc) {
+  doc.querySelectorAll('[data-blend-scale]').forEach((btn) => {
+    if (btn.dataset.wired) return;
+    btn.dataset.wired = '1';
+    btn.addEventListener('click', () => {
+      const article = btn.closest('article.job');
+      if (!article) return;
+      const scale = btn.getAttribute('data-blend-scale');
+      article.querySelectorAll('[data-blend-scale]').forEach((other) => {
+        other.setAttribute('aria-pressed', other === btn ? 'true' : 'false');
+      });
+      article.querySelectorAll('.raw-blend-pair img.cutout').forEach((img) => {
+        img.classList.remove('small', 'medium', 'large');
+        img.classList.add(scale);
+      });
+    });
+  });
+}
+
 export function initOwnerVisualQa(doc) {
   const documentRef = doc || (typeof document !== 'undefined' ? document : null);
   if (!documentRef) return { storageKey: OWNER_VISUAL_QA_STORAGE_KEY, wired: 0 };
   const store = storage();
   let state = loadOwnerVisualQa(store);
-  try {
-    if (store && typeof store.setItem === 'function') {
-      store.setItem(
-        LEARNING_EXPORT_STORAGE_KEY,
-        JSON.stringify(exportCalibrationRound1Learning(state, { uiStatus: currentUiStatus(documentRef) }))
-      );
-    }
-  } catch {
-    /* ignore */
-  }
-  let learning = {};
+  let legacyClass = {};
   try {
     const raw = store && store.getItem(LEARNING_CLASS_STORAGE_KEY);
-    learning = raw ? JSON.parse(raw) : {};
+    legacyClass = raw ? JSON.parse(raw) : {};
   } catch {
-    learning = {};
+    legacyClass = {};
   }
   const panels = documentRef.querySelectorAll('.owner-visual-qa[data-slug]');
   panels.forEach((root) => {
     const slug = root.getAttribute('data-slug');
-    if (learning[slug]) root.setAttribute('data-learning-class-value', learning[slug]);
-    paint(root, state[slug]);
+    if ((!state[slug] || !state[slug].ROUND_1_CLASS) && legacyClass[slug]) {
+      const row = { ...(state[slug] || {}) };
+      row.ROUND_1_CLASS = legacyClass[slug];
+      state = { ...state, [slug]: row };
+    }
+    paint(root, state[slug], documentRef);
     root.querySelectorAll('[data-verdict]').forEach((btn) => {
       btn.addEventListener('click', () => {
         state = applyOwnerVisualVerdict(state, slug, btn.getAttribute('data-verdict'));
         saveOwnerVisualQa(store, state);
-        paint(root, state[slug]);
+        paint(root, state[slug], documentRef);
         renderSummary(documentRef, state);
       });
     });
@@ -145,46 +202,65 @@ export function initOwnerVisualQa(doc) {
       input.addEventListener('change', () => {
         state = applyOwnerVisualField(state, slug, input.getAttribute('data-field'), input.checked);
         saveOwnerVisualQa(store, state);
-        paint(root, state[slug]);
+        paint(root, state[slug], documentRef);
         renderSummary(documentRef, state);
       });
     });
     root.querySelectorAll('[data-learning-class]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        learning = applyLearningClass(learning, slug, btn.getAttribute('data-learning-class'));
-        try {
-          if (store) store.setItem(LEARNING_CLASS_STORAGE_KEY, JSON.stringify(learning));
-        } catch {
-          /* ignore */
-        }
-        root.setAttribute('data-learning-class-value', learning[slug] || '');
-        paint(root, state[slug]);
+        if (!gardenPhotoLoaded(documentRef)) return;
+        state = applyRound1Class(state, slug, btn.getAttribute('data-learning-class'));
+        saveOwnerVisualQa(store, state);
+        paint(root, state[slug], documentRef);
+        renderSummary(documentRef, state);
       });
     });
   });
   renderSummary(documentRef, state);
+  wireScaleToggles(documentRef);
   const copyBtn = documentRef.getElementById('copy-owner-feedback-summary');
   if (copyBtn && !copyBtn.dataset.wired) {
     copyBtn.dataset.wired = '1';
     copyBtn.addEventListener('click', async () => {
       const current = loadOwnerVisualQa(store);
-      const summary = buildOwnerFeedbackSummary(current, {
+      const snapshot = buildRound1FinalSnapshot(current, {
         uiStatus: currentUiStatus(documentRef) || 'NO_ACTIVE_GARDEN',
         capturedAt: new Date().toISOString()
       });
       renderSummary(documentRef, current);
       const jsonEl = documentRef.getElementById('owner-feedback-json');
-      if (jsonEl) jsonEl.textContent = JSON.stringify(summary, null, 2);
+      if (jsonEl) jsonEl.textContent = JSON.stringify(current || {}, null, 2);
       const note = documentRef.getElementById('owner-feedback-copy-status');
       try {
-        const ok = await copySummary(summary);
-        if (note) note.textContent = ok ? 'Copied current sessionStorage summary.' : 'Copy failed. Select the JSON below.';
+        const ok = await copyText(JSON.stringify(snapshot, null, 2));
+        if (note) note.textContent = ok ? 'Copied exact session snapshot.' : 'Copy failed. Select the JSON below.';
       } catch {
         if (note) note.textContent = 'Copy failed. Select the JSON below.';
       }
     });
   }
-  return { storageKey: OWNER_VISUAL_QA_STORAGE_KEY, wired: panels.length, preserved: true };
+  const downloadBtn = documentRef.getElementById('download-round-1-final');
+  if (downloadBtn && !downloadBtn.dataset.wired) {
+    downloadBtn.dataset.wired = '1';
+    downloadBtn.addEventListener('click', () => {
+      const current = loadOwnerVisualQa(store);
+      const snapshot = buildRound1FinalSnapshot(current, {
+        uiStatus: currentUiStatus(documentRef) || 'NO_ACTIVE_GARDEN',
+        capturedAt: new Date().toISOString()
+      });
+      const note = documentRef.getElementById('owner-feedback-copy-status');
+      if (!snapshot.integrityOk) {
+        if (note) note.textContent = 'OWNER_FEEDBACK_INTEGRITY_FAILED. Snapshot not written.';
+        return;
+      }
+      downloadSnapshot(snapshot);
+      if (note) note.textContent = 'Downloaded owner-feedback-round-1-final.json from sessionStorage.';
+    });
+  }
+  documentRef.addEventListener('calibration-ui-status', () => {
+    renderSummary(documentRef, loadOwnerVisualQa(store));
+  });
+  return { storageKey: OWNER_VISUAL_QA_STORAGE_KEY, wired: panels.length, preserved: true, wroteOnLoad: false };
 }
 
 if (typeof document !== 'undefined') {

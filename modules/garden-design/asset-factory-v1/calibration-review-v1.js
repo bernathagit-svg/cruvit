@@ -73,7 +73,7 @@ function ownerVisualQaPanel(job) {
       `<label class="field"><input type="checkbox" data-field="${esc(field)}"/> ${esc(field.toLowerCase().replace(/_/g, ' '))}</label>`
   ).join('');
   return `<aside class="owner-visual-qa" data-slug="${slug}" data-botanical-identity-qa="UNKNOWN" data-asset-qa="UNKNOWN">
-  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
+  <p class="qa-split"><strong>OWNER_VISUAL_QA</strong> session-only · <strong>ROUND_1_CLASS</strong> separate · <strong>BOTANICAL_IDENTITY_QA</strong> UNKNOWN · <strong>ASSET_QA</strong> UNKNOWN</p>
   <p class="note">Visual verdict is not botanical identity and does not write the production registry. approvalStatus stays candidate.</p>
   <p class="note" data-owner-visual-status>OWNER_VISUAL_QA = UNREVIEWED. BOTANICAL_IDENTITY_QA = UNKNOWN. ASSET_QA = UNKNOWN. approvalStatus = candidate. Session-only.</p>
   <div class="verdicts" role="group" aria-label="Visual verdict">
@@ -82,11 +82,12 @@ function ownerVisualQaPanel(job) {
     <button type="button" data-verdict="REJECT">REJECT</button>
   </div>
   <div class="fields">${fields}</div>
-  <p class="note">After RAW vs BLEND V1 on the real Garden photo, classify. This is not approval.</p>
-  <div class="verdicts" role="group" aria-label="Learning class">
-    <button type="button" data-learning-class="BLEND_SOLVABLE">BLEND_SOLVABLE</button>
-    <button type="button" data-learning-class="REGEN_REQUIRED">REGEN_REQUIRED</button>
-    <button type="button" data-learning-class="REJECT_IDENTITY">REJECT_IDENTITY</button>
+  <p class="note">ROUND_1_CLASS is not GOOD / NEEDS_BLEND / REJECT. Classify only after RAW vs BLEND V1 on the real Garden photo. Not production approval.</p>
+  <p class="note">BLEND_SOLVABLE: structure, perspective, silhouette, and scale are acceptable; Blend V1 fixes integration. REGEN_REQUIRED: perspective, silhouette/architecture, or inherent scale/framing is wrong. REJECT_IDENTITY: wrong botanical identity / genus.</p>
+  <div class="verdicts" role="group" aria-label="Round 1 class">
+    <button type="button" data-learning-class="BLEND_SOLVABLE" disabled>BLEND_SOLVABLE</button>
+    <button type="button" data-learning-class="REGEN_REQUIRED" disabled>REGEN_REQUIRED</button>
+    <button type="button" data-learning-class="REJECT_IDENTITY" disabled>REJECT_IDENTITY</button>
   </div>
 </aside>`;
 }
@@ -135,8 +136,13 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     ${sceneBlock('D', 'REAL Garden photo — large plausible', 'real', 'large', job.canonicalSlug, '', true, cutout, 'large')}
   </div>
   <h3>RAW vs BLEND V1 (existing binary, runtime only)</h3>
-  <p class="note">BLEND V1 may help STICKER_LOOK, SHARPNESS_MATCH, COLOR_TONAL_MATCH, GROUND_CONTACT, HALO. It cannot fix PERSPECTIVE, SILHOUETTE, SCALE_REALISM, or plant architecture. No AI. Garden photo is not altered. Binary is not baked.</p>
-  <div class="scenes">
+  <p class="note">Default scale: medium. Blend V1 may help STICKER_LOOK, SHARPNESS_MATCH, COLOR_TONAL_MATCH, GROUND_CONTACT, HALO. It cannot fix PERSPECTIVE, SILHOUETTE, SCALE_REALISM, or plant architecture. No AI. Garden photo is not altered. Binary is not baked.</p>
+  <div class="verdicts" role="group" aria-label="RAW vs BLEND scale">
+    <button type="button" data-blend-scale="small">small</button>
+    <button type="button" data-blend-scale="medium" aria-pressed="true">medium</button>
+    <button type="button" data-blend-scale="large">large</button>
+  </div>
+  <div class="scenes raw-blend-pair">
     ${sceneBlock('RAW', 'RAW — real Garden photo', 'real', 'medium', job.canonicalSlug, '', true, cutout, 'medium')}
     ${sceneBlock('BLEND V1', 'BLEND V1 — real Garden photo', 'real blend-v1-scene', 'medium', job.canonicalSlug, '', true, cutout, 'medium blend-v1')}
   </div>
@@ -202,7 +208,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
     .owner-feedback table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .owner-feedback th, .owner-feedback td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
     .owner-feedback pre { white-space: pre-wrap; background: #111; color: #f4f1ea; padding: 12px; font-size: 12px; }
-    #copy-owner-feedback-summary { margin: 8px 8px 8px 0; padding: 8px 12px; }
+    #copy-owner-feedback-summary, #download-round-1-final { margin: 8px 8px 8px 0; padding: 8px 12px; }
   </style>
 </head>
 <body>
@@ -215,9 +221,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   )}.</p>
   <section class="job owner-feedback" id="owner-feedback-summary">
     <h2>Owner review summary</h2>
-    <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. OWNER_VISUAL_QA from this session is valid. IN_GARDEN_QA is INVALID_FOR_THIS_SESSION unless a signed Garden photo loaded.</p>
+    <p class="note">Reads the current <code>cruvit:calibration-batch-1-owner-visual-qa</code> sessionStorage record. Does not clear it. Does not write the production registry. Frequencies are sums of checked fields in that record. Flattened reports are not used.</p>
+    <p id="owner-feedback-integrity" class="warn">OWNER_FEEDBACK_INTEGRITY_FAILED until exact sessionStorage records for all 8 jobs are present.</p>
     <p>
       <button type="button" id="copy-owner-feedback-summary">Copy review summary</button>
+      <button type="button" id="download-round-1-final">Download round-1 final snapshot</button>
       <span id="owner-feedback-copy-status"></span>
     </p>
     <table>
@@ -226,6 +234,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
           <th>canonicalSlug</th>
           <th>OWNER_VISUAL_QA</th>
           <th>checked fields</th>
+          <th>ROUND_1_CLASS</th>
           <th>BOTANICAL_IDENTITY_QA</th>
           <th>ASSET_QA</th>
           <th>IN_GARDEN_QA</th>
@@ -233,9 +242,11 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       </thead>
       <tbody id="owner-feedback-table-body"></tbody>
     </table>
-    <h3>Proposed prompt correction map</h3>
-    <p id="owner-feedback-prompt-map" class="note">Derived only from actual checked fields. Do not regenerate yet.</p>
-    <h3>Machine-readable summary</h3>
+    <h3>Frequencies from sessionStorage</h3>
+    <pre id="owner-feedback-frequencies">{}</pre>
+    <h3>Prompt Factory V2 learning</h3>
+    <p id="owner-feedback-prompt-map" class="note">Not finalized until integrity OK and all 8 ROUND_1_CLASS values exist. REGEN_REQUIRED fields only feed generation corrections.</p>
+    <h3>Exact sessionStorage JSON</h3>
     <pre id="owner-feedback-json">{}</pre>
   </section>
   ${cards}
@@ -259,6 +270,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       function applySignedUrl(url) {
         if (!url || !/^https:\\/\\//i.test(url)) return false;
         document.documentElement.setAttribute('data-calibration-ui-status', 'REAL_GARDEN_SOURCE_LOADED');
+        try { document.dispatchEvent(new CustomEvent('calibration-ui-status', { detail: { uiStatus: 'REAL_GARDEN_SOURCE_LOADED' } })); } catch (e) {}
         document.querySelectorAll('.scene.real').forEach(function (el) {
           el.style.backgroundImage = 'url(' + JSON.stringify(url) + ')';
           el.classList.remove('is-blocked');
@@ -282,7 +294,10 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
       }
       function applyUiStatus(d) {
         var status = (d && (d.uiStatus || d.code)) || '';
-        if (status) document.documentElement.setAttribute('data-calibration-ui-status', status);
+        if (status) {
+          document.documentElement.setAttribute('data-calibration-ui-status', status);
+          try { document.dispatchEvent(new CustomEvent('calibration-ui-status', { detail: { uiStatus: status } })); } catch (e) {}
+        }
         if (d && d.sourceMediaUrl && applySignedUrl(d.sourceMediaUrl)) return;
         var banner = document.getElementById('realGardenBanner');
         if (!banner) return;
