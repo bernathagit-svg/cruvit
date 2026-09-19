@@ -100,6 +100,13 @@ export {
   writeGenericTreePhysicalScaleReports,
   TREE_CATALOG_AUDIT_VERSION
 } from './tree-catalog-size-audit-v1.js';
+export {
+  auditTreeVisualFormIntegrity,
+  writeTreeVisualFormIntegrityReports,
+  AUDITED_PHYSICAL_FORMS,
+  TREE_FORM_ACTIONS,
+  TREE_VISUALFORM_INTEGRITY_VERSION
+} from './tree-visualform-integrity-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
