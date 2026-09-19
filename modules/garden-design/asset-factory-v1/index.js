@@ -123,6 +123,14 @@ export {
   ROLE_BASED_PILOT_SET,
   BOTANICAL_SIZE_EVIDENCE_CONTRACT_VERSION
 } from './botanical-size-evidence-contract-v2.js';
+export {
+  PILOT_EVIDENCE_RECORDS,
+  PILOT_CONFLICTS,
+  RUNTIME_MAPPING_PROPOSAL,
+  buildPilotSummary,
+  writeBotanicalSizeEvidencePilotReports,
+  BOTANICAL_SIZE_EVIDENCE_PILOT_VERSION
+} from './botanical-size-evidence-pilot-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

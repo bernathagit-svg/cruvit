@@ -1,0 +1,103 @@
+{
+  "contract": "botanical-size-evidence-pilot-v1",
+  "applyRuntimeDefaultNow": false,
+  "mappings": [
+    {
+      "canonicalSlug": "blue-gum",
+      "bestAvailableScenarioForGenericPreview": "NATURAL_MATURE",
+      "physicalScaleSafeToUse": true,
+      "personalGardenNeedsCultivarOrRootstockInput": false,
+      "unknownFields": [
+        "spread"
+      ],
+      "warnings": [
+        "Do not substitute the 80 ft landscape maximum for the 30–55 m natural range.",
+        "Spread UNKNOWN; do not infer from height."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "cypress",
+      "bestAvailableScenarioForGenericPreview": "LANDSCAPE_MATURE",
+      "physicalScaleSafeToUse": true,
+      "personalGardenNeedsCultivarOrRootstockInput": false,
+      "unknownFields": [],
+      "warnings": [
+        "Use independent height and spread. Narrow crown is valid architecture.",
+        "Height maxima 60 vs 70 ft remain a source conflict; do not average."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "olive",
+      "bestAvailableScenarioForGenericPreview": "LANDSCAPE_MATURE",
+      "physicalScaleSafeToUse": true,
+      "personalGardenNeedsCultivarOrRootstockInput": false,
+      "unknownFields": [
+        "MAINTAINED_GARDEN numeric height/spread"
+      ],
+      "warnings": [
+        "Pruning/hedge maintenance is source-supported as a practice, but no numeric maintained size was found.",
+        "Do not invent a 3 m garden olive."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "lemon",
+      "bestAvailableScenarioForGenericPreview": "LANDSCAPE_MATURE",
+      "physicalScaleSafeToUse": false,
+      "personalGardenNeedsCultivarOrRootstockInput": true,
+      "unknownFields": [
+        "named lemon-on-rootstock height/spread"
+      ],
+      "warnings": [
+        "NOT_FINAL_PERSONAL_GARDEN_SIZE.",
+        "Species 10–20 ft “may reach” is not the 7–10 ft maintained home-landscape target.",
+        "Citrus rootstock classes exist but are not lemon-scion-specific records."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "apple",
+      "bestAvailableScenarioForGenericPreview": null,
+      "physicalScaleSafeToUse": false,
+      "personalGardenNeedsCultivarOrRootstockInput": true,
+      "unknownFields": [
+        "spread for dwarf/semi-dwarf/named rootstocks",
+        "universal species height"
+      ],
+      "warnings": [
+        "No single mature size. Standard, semi-dwarf, dwarf, M.9, and M.26 remain separate.",
+        "NOT_FINAL_PERSONAL_GARDEN_SIZE until rootstock is known."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "japanese-maple",
+      "bestAvailableScenarioForGenericPreview": "LANDSCAPE_MATURE",
+      "physicalScaleSafeToUse": false,
+      "personalGardenNeedsCultivarOrRootstockInput": true,
+      "unknownFields": [
+        "cultivar-specific dimensions"
+      ],
+      "warnings": [
+        "Species range is not guaranteed for every cultivar.",
+        "Do not invent cultivar records. Flag cultivar sensitivity."
+      ],
+      "applyRuntimeDefaultNow": false
+    },
+    {
+      "canonicalSlug": "mango",
+      "bestAvailableScenarioForGenericPreview": "LANDSCAPE_MATURE",
+      "physicalScaleSafeToUse": true,
+      "personalGardenNeedsCultivarOrRootstockInput": false,
+      "unknownFields": [],
+      "warnings": [
+        "Species-general landscape range, not a cultivar guarantee.",
+        "Owner LOW remains design state only and is not this botanical range."
+      ],
+      "applyRuntimeDefaultNow": false,
+      "ownerPreferredRangePositionUnchanged": "LOW"
+    }
+  ]
+}
