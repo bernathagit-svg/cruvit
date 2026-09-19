@@ -1,0 +1,25 @@
+{
+  "contract": "tree-size-production-authority-gate-v1",
+  "applyNow": false,
+  "gardenDesignBlockedWithoutAuthority": false,
+  "lookup": [
+    "placement.canonicalSlug",
+    "botanicalTaxonId",
+    "architectureMode",
+    "growthStage",
+    "user cultivar/rootstock context if available",
+    "best valid evidence scenario for that taxon",
+    "physical scale engine"
+  ],
+  "fallback": {
+    "noRuntimeAuthority": "Estimated size + tree form heuristic + manual resize",
+    "meterTruthDisplayed": false
+  },
+  "partial": {
+    "HEIGHT_ANCHORED_ESTIMATE": "vertical scale may use supported height; canopy/spread estimated from visual architecture; UI must not imply spread is source-supported",
+    "SPREAD_ANCHORED_ESTIMATE": "spread may use supported width; height estimated from visual architecture; UI must not imply height is source-supported"
+  },
+  "userContextRequired": "Keep Garden Design usable. Do not use species range as exact personal-garden physical default.",
+  "conflictHold": "Do not silently select one source. Estimated heuristic + manual resize until resolved.",
+  "evidenceGap": "Estimated size + tree heuristic + manual resize. No meters as truth. No new sourcing in this gate."
+}

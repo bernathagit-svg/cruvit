@@ -144,6 +144,12 @@ export {
   buildWaveSummary,
   TREE_SIZE_EVIDENCE_WAVE_VERSION
 } from './tree-size-evidence-wave-v1.js';
+export {
+  writeTreeSizeProductionAuthorityGateReports,
+  buildAuthorityGateSummary,
+  RUNTIME_AUTHORITY,
+  TREE_SIZE_PRODUCTION_AUTHORITY_GATE_VERSION
+} from './tree-size-production-authority-gate-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
