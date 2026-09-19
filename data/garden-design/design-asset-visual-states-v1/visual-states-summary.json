@@ -1,0 +1,63 @@
+{
+  "contract": "design-asset-visual-states-v1",
+  "verdict": "DESIGN_ASSET_VISUAL_STATES_V1_READY",
+  "treePhysicalScaleReopened": false,
+  "productionAssetRegistryChanged": false,
+  "axes": {
+    "growthStage": [
+      "young",
+      "mature"
+    ],
+    "phenologyState": [
+      "vegetative",
+      "flowering",
+      "fruiting",
+      "dormant"
+    ],
+    "architectureMode": [
+      "tree",
+      "shrub",
+      "default"
+    ],
+    "visualForm": "existing DESIGN_VISUAL_FORMS",
+    "seasonIsIdentity": false,
+    "seasonIsContextOnly": true
+  },
+  "seasonPolicy": "context-not-identity",
+  "fallback": {
+    "generateOnRender": false,
+    "silentIncompatibleArchitectureSubstitution": false,
+    "order": [
+      "exact-growthStage-architectureMode-phenologyState",
+      "same-architectureMode-growthStage-VEGETATIVE",
+      "mature-same-architectureMode-VEGETATIVE",
+      "honest-silhouette-placeholder"
+    ]
+  },
+  "physicalScaleLink": {
+    "matureVisualUsesMatureAuthority": true,
+    "youngMustNotUseMatureSizeAuthority": true,
+    "youngMetersFromMaturePercentForbidden": true,
+    "youngScaleWhenEvidenceUnknown": "Estimated"
+  },
+  "counts": {
+    "canonicalPlantsAudited": 122,
+    "totalRequiredVariants": 261,
+    "baselineMatureVegetative": 127,
+    "youngVariantsRequired": 69,
+    "floweringVariantsRequired": 5,
+    "fruitingVariantsRequired": 42,
+    "dormantVariantsRequired": 18,
+    "multiFormArchitectureVariants": 10,
+    "unknownOrBlocked": 80,
+    "currentlyApprovedCoverage": 1,
+    "currentCalibrationCandidateCoverage": 8,
+    "missingRequiredVariants": 260
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "newBotanicalSourcing": 0,
+    "additionalSpendUsd": 0
+  }
+}

@@ -4,7 +4,6 @@
  * Does not generate assets. Optional variants do not enter production by default.
  */
 import { isUsableDesignVariant } from '../garden-design-asset-registry-v1.js';
-import { seasonMatchesRole } from '../garden-design-variant-policy-v1.js';
 import { deriveVariantDemand, slugify, variantKeyFromRole } from './variant-demand-v1.js';
 import { FACTORY_PRIORITY_BANDS } from './design-asset-factory-v1.js';
 import { classifySpendBlock } from './spend-block-v1.js';
@@ -12,8 +11,19 @@ import { classifySpendBlock } from './spend-block-v1.js';
 export function variantMatchesRole(variant, role) {
   if (!variant) return false;
   if (String(variant.growthStage || '') !== String(role.growthStage || '')) return false;
-  if (String(variant.phenology || 'vegetative') !== String(role.phenology || 'vegetative')) return false;
-  if (!seasonMatchesRole(role.season, variant.season)) return false;
+  const rolePhenology = String(role.phenologyState || role.phenology || 'vegetative');
+  if (String(variant.phenology || 'vegetative') !== rolePhenology) return false;
+  if (role.architectureMode && variant.architectureMode && String(variant.architectureMode) !== String(role.architectureMode)) {
+    return false;
+  }
+  if (
+    role.architectureMode
+    && !variant.architectureMode
+    && role.architectureMode !== 'tree'
+    && role.architectureMode !== 'default'
+  ) {
+    return false;
+  }
   if (role.formView && variant.formView && String(variant.formView) !== String(role.formView)) {
     return false;
   }

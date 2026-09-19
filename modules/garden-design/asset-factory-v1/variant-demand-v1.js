@@ -4,8 +4,9 @@
  */
 import {
   DESIGN_MORPHOLOGY_AUTHORITY,
-  requiredDesignVariantRoles
+  DESIGN_SEASON_NEUTRAL
 } from '../garden-design-variant-policy-v1.js';
+import { deriveVisualStateDemand, visualStateKey } from './design-asset-visual-states-v1.js';
 
 export function slugify(value) {
   return String(value == null ? '' : value)
@@ -18,6 +19,8 @@ export function slugify(value) {
 }
 
 export function variantKeyFromRole(role = {}) {
+  if (role.variantKey) return role.variantKey;
+  if (role.architectureMode || role.phenologyState) return visualStateKey(role);
   const stage = String(role.growthStage || 'unspecified').trim().toLowerCase() || 'unspecified';
   const season = String(role.season || 'season-neutral').trim().toLowerCase() || 'season-neutral';
   const phenology = String(role.phenology || 'vegetative').trim().toLowerCase() || 'vegetative';
@@ -40,43 +43,38 @@ export function jobIdentity(canonicalSlug, role, assetVersion = DEFAULT_ASSET_VE
 }
 
 export function deriveVariantDemand(plant = {}, options = {}) {
-  const canonicalSlug = slugify(plant.canonicalSlug || plant.slug);
-  const plan = requiredDesignVariantRoles(plant);
-  const roles = Array.isArray(plan.roles) ? plan.roles : [];
-  const requiredVariants = [];
-  const optionalVariants = [];
-  for (const role of roles) {
-    const identity = jobIdentity(canonicalSlug, role, options.assetVersion);
-    const record = {
-      ...identity,
-      visualForm: plan.visualForm,
-      growthStage: role.growthStage,
-      phenology: role.phenology,
-      season: role.season,
-      formView: role.formView || null,
-      required: role.required !== false,
-      reason: role.reason || '',
-      morphologyAuthority: plan.morphologyAuthority,
-      habitModifiers: plan.habitModifiers || [],
-      lifecycle: plan.lifecycle,
-      purposeCapabilities: plan.purposeCapabilities || []
-    };
-    if (record.required) requiredVariants.push(record);
-    else optionalVariants.push(record);
-  }
-  const morphologyUnknown =
-    plan.visualForm === 'unknown' ||
-    plan.morphologyAuthority === DESIGN_MORPHOLOGY_AUTHORITY.UNKNOWN;
+  const demand = deriveVisualStateDemand(plant, options);
+  const requiredVariants = demand.requiredVariants.map((role) => ({
+    ...jobIdentity(demand.canonicalSlug, role, options.assetVersion),
+    visualForm: demand.visualForm,
+    growthStage: role.growthStage,
+    phenology: role.phenology || role.phenologyState,
+    phenologyState: role.phenologyState || role.phenology,
+    architectureMode: role.architectureMode || null,
+    season: role.season || DESIGN_SEASON_NEUTRAL,
+    formView: role.formView || null,
+    required: true,
+    reason: role.reason || '',
+    reasonCodes: role.reasonCodes || [],
+    morphologyAuthority: demand.morphologyAuthority,
+    habitModifiers: demand.habitModifiers || [],
+    lifecycle: demand.lifecycle,
+    purposeCapabilities: demand.purposeCapabilities || []
+  }));
   return {
-    canonicalSlug,
-    visualForm: plan.visualForm,
-    habitModifiers: plan.habitModifiers || [],
-    lifecycle: plan.lifecycle,
-    purposeCapabilities: plan.purposeCapabilities || [],
-    morphologyAuthority: plan.morphologyAuthority,
-    morphologyUnknown,
-    scientific: plant.scientific || plant.scientificName || plant.latin || null,
+    canonicalSlug: demand.canonicalSlug,
+    visualForm: demand.visualForm,
+    habitModifiers: demand.habitModifiers || [],
+    lifecycle: demand.lifecycle,
+    purposeCapabilities: demand.purposeCapabilities || [],
+    morphologyAuthority: demand.morphologyAuthority,
+    morphologyUnknown:
+      demand.morphologyUnknown
+      || demand.visualForm === 'unknown'
+      || demand.morphologyAuthority === DESIGN_MORPHOLOGY_AUTHORITY.UNKNOWN,
+    scientific: demand.scientific,
     requiredVariants,
-    optionalVariants
+    optionalVariants: [],
+    visualState: demand.visualState
   };
 }

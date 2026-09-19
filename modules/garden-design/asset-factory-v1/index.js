@@ -6,7 +6,19 @@ export {
   FACTORY_PRIORITY_BANDS,
   AUTO_APPROVAL_ELIGIBLE_CRITERIA
 } from './design-asset-factory-v1.js';
-export { deriveVariantDemand, variantKeyFromRole, jobIdentity } from './variant-demand-v1.js';
+export {
+  deriveVariantDemand,
+  variantKeyFromRole,
+  jobIdentity
+} from './variant-demand-v1.js';
+export {
+  DESIGN_ASSET_VISUAL_STATES_VERSION,
+  deriveVisualStateRequirements,
+  writeDesignAssetVisualStatesReports,
+  VISUAL_STATE_CALIBRATION_ROLES,
+  VISUAL_STATE_FALLBACK,
+  selectVisualStateFallback
+} from './design-asset-visual-states-v1.js';
 export { detectDesignAssetGaps, approvedCovers, priorityForPlant } from './gap-detector-v1.js';
 export {
   createJobStore,

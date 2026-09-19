@@ -22,9 +22,9 @@ export const DESIGN_ASSET_FACTORY = Object.freeze({
 
 export const FACTORY_PIPELINE_STEPS = Object.freeze([
   'catalog-canonical',
-  'derive-required-optional-variants',
-  'detect-required-gaps',
-  'enqueue-idempotent-jobs',
+  'visual-state-requirements',
+  'existing-approved-asset-coverage',
+  'missing-required-variants',
   'prioritize',
   'owner-spend-envelope',
   'prompt-factory',
