@@ -99,13 +99,26 @@ export function pickRangeValue(range, band) {
 
 export function lookupCalibrationSizeEvidence(canonicalSlug, options = {}) {
   const slug = asText(canonicalSlug).toLowerCase();
-  const row = CALIBRATION_BOTANICAL_SIZE_EVIDENCE[slug];
   const stage = asText(options.growthStage) === 'young' ? 'young' : 'mature';
   const scenario = SIZE_SCENARIOS[options.sizeScenario] || SIZE_SCENARIOS.NATURAL_MATURE;
+  const rows = Object.values(CALIBRATION_BOTANICAL_SIZE_EVIDENCE).filter((row) => {
+    if (!row) return false;
+    if (asText(row.canonicalSlug).toLowerCase() !== slug) return false;
+    if (row.growthStage !== stage) return false;
+    if (row.sizeScenario !== scenario) return false;
+    return true;
+  });
+  const cultivar = rows.find((row) => row.evidenceScope === EVIDENCE_SCOPE.CULTIVAR_SPECIFIC);
+  const species = rows.find((row) => row.evidenceScope === EVIDENCE_SCOPE.SPECIES_GENERAL);
+  const row = cultivar || species || rows[0] || null;
   if (!row) return null;
-  if (row.growthStage !== stage) return null;
-  if (row.sizeScenario !== scenario) return null;
-  return { ...row, resolvedFrom: 'CALIBRATION_SOURCE_SUPPORTED_RANGE' };
+  return {
+    ...row,
+    resolvedFrom:
+      row.evidenceScope === EVIDENCE_SCOPE.CULTIVAR_SPECIFIC
+        ? 'CULTIVAR_SPECIFIC_SOURCE'
+        : 'SPECIES_SOURCE_SUPPORTED_RANGE'
+  };
 }
 
 export function resolvePhysicalScaleEvidence(input = {}) {

@@ -1,0 +1,93 @@
+{
+  "contract": "generic-tree-physical-scale-v1",
+  "genericTreeScaleContract": {
+    "version": "generic-tree-physical-scale-v1",
+    "visualFormDeterminesHowRendered": true,
+    "botanicalEvidenceDeterminesHowLarge": true,
+    "universalTreeSize": false,
+    "mangoLowCopiedToOtherTrees": false,
+    "speciesSpecificDimensionsRequired": true,
+    "gardenDesignWorksWithUnknown": true,
+    "otherFormsInheritTreeRules": false,
+    "firstValidatedForm": "tree",
+    "sizeEvidencePrecedence": [
+      "CULTIVAR_SPECIFIC_SOURCE",
+      "SPECIES_SOURCE_SUPPORTED_RANGE",
+      "USER_CONFIRMED",
+      "UNKNOWN"
+    ],
+    "rendering": {
+      "visibleAlphaBboxOnly": true,
+      "transparentMarginAffectsBotanicalScale": false,
+      "autoFitToFrame": false,
+      "clippingAllowed": true,
+      "botanicalScaleTakesPrecedenceOverFullAssetVisibility": true,
+      "groundAnchorFixed": true,
+      "ownerRequiredToCalibrate": false
+    },
+    "mangoBotanicalTruthImmutable": true,
+    "inferDimensionsFromVisualForm": false
+  },
+  "mangoValidation": {
+    "ownerPreferredRangePosition": "LOW",
+    "physicalScaleDirectionValidated": true,
+    "botanicalHeightRangeM": {
+      "min": 9.144,
+      "max": 18.288
+    },
+    "botanicalSpreadRangeM": {
+      "min": 9.144,
+      "max": 15.24
+    },
+    "botanicalTruthModified": false,
+    "assetStatus": {
+      "scale": "PHYSICAL_SCALE_DIRECTION_VALIDATED",
+      "architecture": "ARCHITECTURE_REGEN_CANDIDATE",
+      "regenerateNow": false,
+      "reason": "LOW was the best-looking size in this Garden photo. At LOW height the current canopy may still be narrower than source-supported mature spread. Do not regenerate now. Do not treat this as a scale-engine failure."
+    }
+  },
+  "ownerDesignPreference": {
+    "contract": "garden-design-owner-size-preference-v1",
+    "scope": "specific-garden-design",
+    "canonicalSlug": "mango",
+    "visualForm": "tree",
+    "ownerPreferredRangePosition": "LOW",
+    "physicalScaleDirectionValidated": true,
+    "architectureRegenCandidate": true,
+    "modifiesSourceMatureHeightRange": false,
+    "modifiesSourceMatureSpreadRange": false,
+    "writesProductionCatalog": false,
+    "appliesToOtherTrees": false,
+    "appliesToOtherUsers": false,
+    "appliesToOtherGardenDesigns": false,
+    "applyMigrationNow": false,
+    "note": "Owner preferred LOW for this Garden Design context. Not a universal Mango default. Not botanical source truth."
+  },
+  "treeCatalogAudit": {
+    "treeCount": 52,
+    "physicalScaleReadyCount": 0,
+    "sizeEvidenceGapCount": 48,
+    "identityGapCount": 4,
+    "engineReadyCalibrationOnly": [
+      "mango"
+    ],
+    "mangoDimensionLeaks": []
+  },
+  "nextDataStep": "Add species-specific SOURCE_SUPPORTED_RANGE mature height/spread for SIZE_EVIDENCE_GAP trees. Do not copy Mango LOW. Do not pay for botanical acquisition until the owner approves a separate evidence task. Cultivar evidence may later override species range.",
+  "otherForms": {
+    "palm": "not inherited",
+    "shrub": "not inherited",
+    "climber": "not inherited",
+    "herbaceous-clump": "not inherited",
+    "rosette": "not inherited",
+    "succulent-form": "not inherited",
+    "crop/subshrub": "not inherited"
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "productionRegistryChanged": false
+}

@@ -38,6 +38,7 @@ import {
   resolvePhysicalScaleEvidence,
   evaluateMangoSourceSizeCalibration
 } from './physical-scale-evidence-v1.js';
+import { writeGenericTreePhysicalScaleReports } from './tree-catalog-size-audit-v1.js';
 import {
   classifyCalibrationReviewReadiness,
   LOCAL_SUPPLEMENTARY_BACKGROUNDS,
@@ -327,6 +328,7 @@ export function buildCalibrationReviewHtml(batch = [], options = {}) {
   <div class="scenes">
     ${sceneBlock('CAL MID', 'Optional calibrated suggested size — MID', 'real blend-v2-scene physical-v1-scene', 'middle', job.canonicalSlug, '', true, cutout, 'blend-v2', { placement: true, attrs: physicalSceneAttrs(job, { depthId: 'middle', lockDepth: 'middle', rangeBand: RANGE_BANDS.MID, sizeScenario: SIZE_SCENARIOS.NATURAL_MATURE, lockScaleMode: 'CALIBRATED' }), inner: '<div class="physical-blocked" data-physical-blocked hidden>Estimated mature size</div>' })}
   </div>
+  <p class="note">Owner visual validation: PHYSICAL SCALE LOW is the best-looking result in this Garden photo. Recorded as <strong>ownerPreferredRangePosition = LOW</strong> for this Garden Design only. Not a universal Mango default. Source matureHeightRange / matureSpreadRange unchanged. Scale direction: PHYSICAL_SCALE_DIRECTION_VALIDATED. At LOW, current canopy may still be narrower than source-supported mature spread — ARCHITECTURE_REGEN_CANDIDATE. Do not regenerate now.</p>
   <p class="note">Owner question: Does this now read as a genuinely large mature Mango tree, even if part of the canopy extends outside the photo?</p>
   <details>
     <summary>USER_CONFIRMED fallback (not the default workflow)</summary>
@@ -728,6 +730,7 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
     schemaPath,
     `${JSON.stringify({ ...PHYSICAL_SCALE_PERSISTENCE_PROPOSAL, applyMigrationNow: false }, null, 2)}\n`
   );
+  const genericTree = writeGenericTreePhysicalScaleReports(root);
   return {
     htmlPath,
     livePath,
@@ -737,6 +740,9 @@ export function writeCalibrationReviewSheet(root, batch, options = {}) {
     mangoSourcePath,
     invariantsPath,
     schemaPath,
+    genericTreePath: genericTree.summaryPath,
+    treeCatalogAuditPath: genericTree.auditPath,
+    mangoGardenPreferencePath: genericTree.preferencePath,
     treeScale: report.treeScale.result,
     treeScaleV3: v3Report.invariant.result,
     sizeEvidenceUnknown: report.assets.every(
@@ -758,7 +764,12 @@ function attachTechnicalQaFromResults(root, batch) {
   const bySlug = Object.fromEntries((results.jobs || []).map((job) => [job.canonicalSlug, job]));
   return (Array.isArray(batch) ? batch : []).map((job) => {
     const row = bySlug[job.canonicalSlug];
-    if (!row || !row.technicalQa) return job;
-    return { ...job, technicalQa: job.technicalQa || row.technicalQa };
+    if (!row) return job;
+    return {
+      ...job,
+      visualForm: job.visualForm || row.visualForm,
+      growthStage: job.growthStage || row.growthStage || 'mature',
+      technicalQa: job.technicalQa || row.technicalQa
+    };
   });
 }

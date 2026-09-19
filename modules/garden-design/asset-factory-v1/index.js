@@ -83,6 +83,23 @@ export {
   PHYSICAL_SCALE_EVIDENCE_VERSION,
   MANGO_SOURCE_SIZE_CALIBRATION_VERSION
 } from './physical-scale-evidence-v1.js';
+export {
+  computeTreePhysicalScale,
+  classifyTreeSizePrecedence,
+  mangoDimensionLeak,
+  GENERIC_TREE_SCALE_CONTRACT,
+  TREE_SIZE_EVIDENCE_PRECEDENCE,
+  TREE_PHYSICAL_SCALE_CLASSES,
+  MANGO_GARDEN_DESIGN_PREFERENCE,
+  MANGO_ASSET_STATUS,
+  OWNER_SIZE_PREFERENCE_STORAGE_KEY,
+  GENERIC_TREE_PHYSICAL_SCALE_VERSION
+} from './generic-tree-physical-scale-v1.js';
+export {
+  auditCatalogTrees,
+  writeGenericTreePhysicalScaleReports,
+  TREE_CATALOG_AUDIT_VERSION
+} from './tree-catalog-size-audit-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

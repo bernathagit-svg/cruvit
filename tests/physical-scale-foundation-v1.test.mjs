@@ -417,13 +417,14 @@ test('review harness wires physical scale V1 without generation endpoints', () =
   assert.match(html, /Estimated mature size/);
   assert.match(html, /No fit-to-frame/);
   assert.match(html, /genuinely large mature Mango tree/);
+  assert.match(html, /ownerPreferredRangePosition = LOW/);
   assert.match(html, /physical-v1-scene \{ overflow: hidden/);
   assert.match(html, /max-height: none !important/);
   assert.match(html, /photo-cal-scene/);
   assert.match(html, /physical-scale-foundation-v1-runtime\.js/);
   assert.doesNotMatch(runtime, /maxWidth = result\.scaleMode === PHOTO_SCALE_MODE\.CALIBRATED \? 'none' : '100%'/);
   assert.match(app, new RegExp(`calibration-review\\.html\\?v=${CALIBRATION_BATCH_1_CACHE_BUST}`));
-  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919m');
+  assert.equal(CALIBRATION_BATCH_1_CACHE_BUST, '20260919n');
   assert.doesNotMatch(html, /api\.openai\.com/);
   assert.doesNotMatch(html, /images\/generations/);
   assert.ok(ESTIMATED_VIEWPORT_VERTICAL_SPAN_M.middle > 0);

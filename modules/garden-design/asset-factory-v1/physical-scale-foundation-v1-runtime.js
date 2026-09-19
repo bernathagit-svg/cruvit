@@ -28,6 +28,11 @@ import {
   SIZE_SCENARIO_STORAGE_KEY,
   resolvePhysicalScaleEvidence
 } from './physical-scale-evidence-v1.js';
+import {
+  computeTreePhysicalScale,
+  OWNER_SIZE_PREFERENCE_STORAGE_KEY,
+  MANGO_GARDEN_DESIGN_PREFERENCE
+} from './generic-tree-physical-scale-v1.js';
 
 function finitePositive(value) {
   const n = Number(value);
@@ -107,6 +112,29 @@ function saveUserConfirmed(slug, growthStage, payload) {
   if (!payload) delete store[slug][growthStage];
   else store[slug][growthStage] = payload;
   writeJson(USER_CONFIRMED_SIZE_STORAGE_KEY, store);
+}
+
+function ownerPreferenceKey(photoKey, slug) {
+  return `${photoKey || 'review-session-photo'}::${slug || ''}`;
+}
+
+function seedMangoGardenDesignPreference(photoKey) {
+  const store = readJson(OWNER_SIZE_PREFERENCE_STORAGE_KEY, {});
+  const key = ownerPreferenceKey(photoKey, MANGO_GARDEN_DESIGN_PREFERENCE.canonicalSlug);
+  if (store[key]) return store[key];
+  store[key] = {
+    ...MANGO_GARDEN_DESIGN_PREFERENCE,
+    photoKey,
+    botanicalTruthModified: false
+  };
+  writeJson(OWNER_SIZE_PREFERENCE_STORAGE_KEY, store);
+  return store[key];
+}
+
+function loadOwnerPreferredRange(photoKey, slug) {
+  const store = readJson(OWNER_SIZE_PREFERENCE_STORAGE_KEY, {});
+  const row = store[ownerPreferenceKey(photoKey, slug)];
+  return row && row.ownerPreferredRangePosition ? row.ownerPreferredRangePosition : null;
 }
 
 function loadRangeBand() {
@@ -225,29 +253,46 @@ function applyPhysicalScene(scene, options) {
     'mango';
   const rangeBand = scene.getAttribute('data-lock-range-band') || options.rangeBand || RANGE_BANDS.MID;
   const sizeScenario = scene.getAttribute('data-size-scenario') || options.sizeScenario || SIZE_SCENARIOS.NATURAL_MATURE;
-  const resolved = resolvePhysicalScaleEvidence({
+  const scaleInput = {
     canonicalSlug: slug,
-    visualForm,
-    growthStage,
-    sizeScenario,
-    userConfirmed: options.userConfirmed
-  });
-  const result = computePhysicalSceneScale({
     growthStage,
     visualForm,
     sizeScenario,
     rangeBand,
-    resolvedEvidence: resolved,
+    userConfirmed: options.userConfirmed,
     photoCalibration: options.calibration,
     lockScaleMode: scene.getAttribute('data-lock-scale-mode') || options.lockScaleMode || null,
-    userOverride: sizeScenario === SIZE_SCENARIOS.USER_OVERRIDE ? options.userOverride : options.userOverride,
+    userOverride: options.userOverride,
     bbox,
     canvasHeight: canvas.height,
     canvasWidth: canvas.width,
     sceneWidthPx: scene.clientWidth || 480,
     sceneHeightPx: scene.clientHeight || 360,
     depthId
-  });
+  };
+  let result;
+  if (visualForm === 'tree') {
+    const tree = computeTreePhysicalScale({
+      ...scaleInput,
+      ownerPreferredRangePosition: scene.getAttribute('data-lock-range-band')
+        ? null
+        : loadOwnerPreferredRange(currentPhotoKey(scene.ownerDocument || document), slug)
+    });
+    if (!tree.ok) return null;
+    result = tree.scale;
+  } else {
+    const resolved = resolvePhysicalScaleEvidence({
+      canonicalSlug: slug,
+      visualForm,
+      growthStage,
+      sizeScenario,
+      userConfirmed: options.userConfirmed
+    });
+    result = computePhysicalSceneScale({
+      ...scaleInput,
+      resolvedEvidence: resolved
+    });
+  }
   const depth = PHYSICAL_PLACEMENT[depthId] || PHYSICAL_PLACEMENT.middle;
   placement.style.left = '50%';
   placement.style.bottom = `${result.yBottomPct != null ? result.yBottomPct : depth.yBottomPct}%`;
@@ -577,6 +622,7 @@ function wirePhotoScaleChoice(doc) {
 export function initPhysicalScaleFoundationV1(doc) {
   const documentRef = doc || (typeof document !== 'undefined' ? document : null);
   if (!documentRef) return { wired: false };
+  seedMangoGardenDesignPreference(currentPhotoKey(documentRef));
   wirePhotoCalibration(documentRef);
   wirePhotoScaleChoice(documentRef);
   wireConfirmedAndOverride(documentRef);
