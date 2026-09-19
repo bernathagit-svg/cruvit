@@ -172,6 +172,9 @@ export {
 export {
   writeTreeSizeAuthorityGlobalActivationGateReports
 } from './tree-size-authority-global-activation-gate-v1.js';
+export {
+  writeTreeSizeAuthorityProductionActivationReports
+} from './tree-size-authority-production-activation-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,

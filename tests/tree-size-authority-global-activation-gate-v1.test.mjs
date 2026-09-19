@@ -25,9 +25,9 @@ test('all 41 taxa resolve through the adapter with global activation off', () =>
   const matrix = JSON.parse(fs.readFileSync(written.matrixPath, 'utf8'));
   assert.equal(written.verdict, 'TREE_SIZE_AUTHORITY_GLOBAL_ACTIVATION_READY');
   assert.equal(summary.GLOBAL_ACTIVATION_READY, true);
-  assert.equal(summary.globalAuthorityRuntimeEnabled, false);
+  assert.equal(summary.globalAuthorityRuntimeEnabled, true);
   assert.equal(summary.canaryAuthorityRuntimeEnabled, true);
-  assert.equal(summary.applyInProductionGardenDesign, false);
+  assert.equal(summary.applyInProductionGardenDesign, true);
   assert.equal(summary.uniqueTaxa, 41);
   assert.equal(summary.accounting.RUNTIME_AUTHORITY_READY, 9);
   assert.equal(summary.accounting.RUNTIME_AUTHORITY_PARTIAL, 9);
@@ -47,14 +47,14 @@ test('all 41 taxa resolve through the adapter with global activation off', () =>
     userScaleOverride: { kind: 'multiplier', value: 1.4 }
   });
   assert.equal(JSON.stringify(loadBotanicalSizeAuthority(ROOT)), before);
-  assert.equal(productionGardenSizeAuthorityEnabled(), false);
-  assert.equal(GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled, false);
+  assert.equal(productionGardenSizeAuthorityEnabled(), true);
+  assert.equal(GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled, true);
 
   const cedarGate = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar', activationGateContext: true });
   assert.equal(cedarGate.applied, true);
   assert.equal(cedarGate.runtimeAuthorityState, 'RUNTIME_AUTHORITY_READY');
   const cedarProd = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar' });
-  assert.equal(cedarProd.applied, false);
+  assert.equal(cedarProd.applied, true);
 
   const youngMango = resolveGardenSizeAuthority(registry, {
     canonicalSlug: 'mango',

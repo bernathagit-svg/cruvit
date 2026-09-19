@@ -1,11 +1,11 @@
 {
-  "globalAuthorityRuntimeEnabled": false,
+  "globalAuthorityRuntimeEnabled": true,
   "canaryAuthorityRuntimeEnabled": true,
-  "applyInProductionGardenDesign": false,
+  "applyInProductionGardenDesign": true,
   "productionPathWired": true,
   "uniqueTaxaWired": 41,
   "GLOBAL_ACTIVATION_READY": true,
-  "doNotFlipGlobalFlagInThisTask": true,
+  "rollback": "set globalAuthorityRuntimeEnabled = false without mutating registry or evidence",
   "keepConflictHoldAndGapsOnHeuristic": true,
-  "next": "OWNER ACTIVATION DECISION"
+  "next": "Garden Design Design Assets / visual states"
 }

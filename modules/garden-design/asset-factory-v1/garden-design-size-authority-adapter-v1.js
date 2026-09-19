@@ -2,8 +2,8 @@
  * Garden Design size authority adapter V1.
  * Single lookup path: placement slug → botanicalTaxonId → authority → scale behavior.
  * Browser-safe. Does not import research overlays or Node fs.
- * Activation flags keep production Garden Design off this path until the owner flips global.
- * Canary/gate context may resolve all 41 unique taxa without flipping the global flag.
+ * Production activation is controlled by globalAuthorityRuntimeEnabled.
+ * Rollback: set that flag false. Do not mutate the botanical registry.
  */
 import {
   DIMENSION_EVIDENCE,
@@ -20,17 +20,15 @@ export const TREE_SIZE_AUTHORITY_GLOBAL_ACTIVATION_GATE_VERSION = 'tree-size-aut
 export const BOTANICAL_SIZE_AUTHORITY_FETCH_PATH = 'data/catalog/botanical-size-authority-v1.json';
 
 export const GARDEN_SIZE_AUTHORITY_ACTIVATION = Object.freeze({
-  globalAuthorityRuntimeEnabled: false,
+  globalAuthorityRuntimeEnabled: true,
   canaryAuthorityRuntimeEnabled: true,
-  applyInProductionGardenDesign: false,
-  gardenDesignBlocked: false
+  applyInProductionGardenDesign: true,
+  gardenDesignBlocked: false,
+  rollback: 'set globalAuthorityRuntimeEnabled = false'
 });
 
 export function productionGardenSizeAuthorityEnabled() {
-  return Boolean(
-    GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled
-      && GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign
-  );
+  return GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled === true;
 }
 
 export const SIZE_AUTHORITY_CANARY_SLUGS = Object.freeze([
@@ -276,14 +274,18 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
   };
 }
 
+export function mangoOwnerPreferredRangePosition(canonicalSlug) {
+  return slugOf(canonicalSlug) === 'mango' ? RANGE_BANDS.LOW : null;
+}
+
 export const GLOBAL_ACTIVATION_PROPOSAL = Object.freeze({
-  globalAuthorityRuntimeEnabled: false,
+  globalAuthorityRuntimeEnabled: true,
   canaryAuthorityRuntimeEnabled: true,
-  applyInProductionGardenDesign: false,
+  applyInProductionGardenDesign: true,
   productionPathWired: true,
   uniqueTaxaWired: 41,
   GLOBAL_ACTIVATION_READY: true,
-  doNotFlipGlobalFlagInThisTask: true,
+  rollback: 'set globalAuthorityRuntimeEnabled = false without mutating registry or evidence',
   keepConflictHoldAndGapsOnHeuristic: true,
-  next: 'OWNER ACTIVATION DECISION'
+  next: 'Garden Design Design Assets / visual states'
 });

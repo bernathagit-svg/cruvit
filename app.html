@@ -8723,7 +8723,7 @@ function openGardenDesign(){
     frame.className='gd-frame';
     frame.title='Garden Design Studio';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
-    frame.src='modules/garden-design/index.html?v=20260917d';
+        frame.src='modules/garden-design/index.html?v=20260919q';
     root.appendChild(frame);
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
@@ -8857,7 +8857,7 @@ function openGardenDesignSizeAuthorityCanary(){
   frame.onload=function(){
     if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   };
-  const reviewSrc='modules/garden-design/size-authority-canary.html?v=20260919p';
+  const reviewSrc='modules/garden-design/size-authority-canary.html?v=20260919q';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(ctrl) ctrl.open();

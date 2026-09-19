@@ -12,9 +12,9 @@
     "cypressHold": true,
     "breadfruitGap": true,
     "noGardenBlock": true,
-    "globalOff": true,
-    "productionGardenOff": true,
-    "inactiveWithoutCanary": true,
+    "globalOn": true,
+    "productionGardenOn": true,
+    "productionAppliesWithoutCanary": true,
     "mangoScaleOk": true,
     "oliveScaleOk": true,
     "blueSpreadNotBotanical": true
@@ -261,21 +261,22 @@
     "breadfruit"
   ],
   "activation": {
-    "globalAuthorityRuntimeEnabled": false,
+    "globalAuthorityRuntimeEnabled": true,
     "canaryAuthorityRuntimeEnabled": true,
-    "applyInProductionGardenDesign": false,
-    "gardenDesignBlocked": false
+    "applyInProductionGardenDesign": true,
+    "gardenDesignBlocked": false,
+    "rollback": "set globalAuthorityRuntimeEnabled = false"
   },
   "globalActivationProposal": {
-    "globalAuthorityRuntimeEnabled": false,
+    "globalAuthorityRuntimeEnabled": true,
     "canaryAuthorityRuntimeEnabled": true,
-    "applyInProductionGardenDesign": false,
+    "applyInProductionGardenDesign": true,
     "productionPathWired": true,
     "uniqueTaxaWired": 41,
     "GLOBAL_ACTIVATION_READY": true,
-    "doNotFlipGlobalFlagInThisTask": true,
+    "rollback": "set globalAuthorityRuntimeEnabled = false without mutating registry or evidence",
     "keepConflictHoldAndGapsOnHeuristic": true,
-    "next": "OWNER ACTIVATION DECISION"
+    "next": "Garden Design Design Assets / visual states"
   },
   "spend": {
     "openaiCalls": 0,

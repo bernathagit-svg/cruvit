@@ -58,9 +58,9 @@ export function evaluateSizeAuthorityCanary(registry) {
     cypressHold: cypress.conflictHold === true && cypress.usedAuthoritativeMeters === false,
     breadfruitGap: breadfruit.evidenceGap === true && breadfruit.usedAuthoritativeMeters === false,
     noGardenBlock: [mango, olive, blueGum, lemon, cypress, breadfruit].every((row) => row.gardenDesignBlocked === false),
-    globalOff: GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled === false,
-    productionGardenOff: GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign === false,
-    inactiveWithoutCanary: resolveGardenSizeAuthority(registry, { canonicalSlug: 'mango' }).applied === false,
+    globalOn: GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled === true,
+    productionGardenOn: GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign === true,
+    productionAppliesWithoutCanary: resolveGardenSizeAuthority(registry, { canonicalSlug: 'mango' }).applied === true,
     mangoScaleOk: mangoScale.ok === true,
     oliveScaleOk: oliveScale.ok === true && oliveScale.mangoLowCopied === false,
     blueSpreadNotBotanical: blueScale.spreadSourceSupported === false
@@ -91,10 +91,10 @@ export function writeGardenDesignSizeAuthorityIntegrationReports(root) {
   fs.writeFileSync(files.summaryPath, `${JSON.stringify({
     contract: GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION,
     verdict: evaluation.verdict,
-    runtimeWired: false,
-    globalAuthorityRuntimeEnabled: false,
-    canaryAuthorityRuntimeEnabled: true,
-    applyInProductionGardenDesign: false,
+    runtimeWired: GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled,
+    globalAuthorityRuntimeEnabled: GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled,
+    canaryAuthorityRuntimeEnabled: GARDEN_SIZE_AUTHORITY_ACTIVATION.canaryAuthorityRuntimeEnabled,
+    applyInProductionGardenDesign: GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign,
     gardenDesignBlocked: false,
     photoCalibrationMandatory: false,
     spend: evaluation.spend

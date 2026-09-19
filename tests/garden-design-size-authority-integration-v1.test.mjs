@@ -22,9 +22,9 @@ test('size authority canary covers six states without global activation', () => 
   const summary = JSON.parse(fs.readFileSync(written.summaryPath, 'utf8'));
   const canary = JSON.parse(fs.readFileSync(written.canaryPath, 'utf8'));
   assert.equal(written.verdict, 'GARDEN_DESIGN_SIZE_AUTHORITY_CANARY_PASS');
-  assert.equal(summary.globalAuthorityRuntimeEnabled, false);
+  assert.equal(summary.globalAuthorityRuntimeEnabled, true);
   assert.equal(summary.canaryAuthorityRuntimeEnabled, true);
-  assert.equal(summary.applyInProductionGardenDesign, false);
+  assert.equal(summary.applyInProductionGardenDesign, true);
   assert.equal(summary.gardenDesignBlocked, false);
   assert.equal(summary.photoCalibrationMandatory, false);
   const registry = loadBotanicalSizeAuthority(ROOT);
@@ -47,10 +47,10 @@ test('size authority canary covers six states without global activation', () => 
   assert.equal(canary.cases.lemon.fallbackReason, 'PERSONAL_CONTEXT_REQUIRED');
   assert.equal(canary.cases.cypress.conflictHold, true);
   assert.equal(canary.cases.breadfruit.evidenceGap, true);
-  assert.equal(GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled, false);
+  assert.equal(GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled, true);
   const cedar = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar', canaryContext: true });
   assert.equal(cedar.applied, true);
   assert.equal(cedar.runtimeAuthorityState, 'RUNTIME_AUTHORITY_READY');
-  const cedarOff = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar' });
-  assert.equal(cedarOff.applied, false);
+  const cedarProd = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar' });
+  assert.equal(cedarProd.applied, true);
 });
