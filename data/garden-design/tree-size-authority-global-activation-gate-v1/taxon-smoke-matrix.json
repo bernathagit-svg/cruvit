@@ -1,0 +1,867 @@
+{
+  "contract": "tree-size-authority-global-activation-gate-v1",
+  "taxa": [
+    {
+      "botanicalTaxonId": "taxon:eucalyptus-globulus",
+      "canonicalSlugAliases": [
+        "blue-gum"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "NATURAL_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:cupressus-sempervirens",
+      "canonicalSlugAliases": [
+        "cypress"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "HOLD",
+      "spreadAuthority": "HOLD",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "CONFLICT_HOLD",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:olea-europaea",
+      "canonicalSlugAliases": [
+        "olive"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-limon",
+      "canonicalSlugAliases": [
+        "lemon"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:malus-domestica",
+      "canonicalSlugAliases": [
+        "apple"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:acer-palmatum",
+      "canonicalSlugAliases": [
+        "japanese-maple"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:mangifera-indica",
+      "canonicalSlugAliases": [
+        "mango"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-dulcis",
+      "canonicalSlugAliases": [
+        "almond"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "HOLD",
+      "spreadAuthority": "HOLD",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "CONFLICT_HOLD",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-armeniaca",
+      "canonicalSlugAliases": [
+        "apricot"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:persea-americana",
+      "canonicalSlugAliases": [
+        "avocado"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:artocarpus-altilis",
+      "canonicalSlugAliases": [
+        "breadfruit"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:theobroma-cacao",
+      "canonicalSlugAliases": [
+        "cacao"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:ceratonia-siliqua",
+      "canonicalSlugAliases": [
+        "carob"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "NATURAL_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:cedrus-libani",
+      "canonicalSlugAliases": [
+        "cedar"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:annona-cherimola",
+      "canonicalSlugAliases": [
+        "cherimoya"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:durio-zibethinus",
+      "canonicalSlugAliases": [
+        "durian"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:juglans-regia",
+      "canonicalSlugAliases": [
+        "english-walnut"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:ficus-benjamina",
+      "canonicalSlugAliases": [
+        "ficus-benjamina"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:ficus-lyrata",
+      "canonicalSlugAliases": [
+        "fiddle-leaf-fig"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "NATURAL_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:ginkgo-biloba",
+      "canonicalSlugAliases": [
+        "ginkgo"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-paradisi",
+      "canonicalSlugAliases": [
+        "grapefruit"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:psidium-guajava",
+      "canonicalSlugAliases": [
+        "guava"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:plinia-cauliflora",
+      "canonicalSlugAliases": [
+        "jaboticaba"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:artocarpus-heterophyllus",
+      "canonicalSlugAliases": [
+        "jackfruit"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:dimocarpus-longan",
+      "canonicalSlugAliases": [
+        "longan"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:eriobotrya-japonica",
+      "canonicalSlugAliases": [
+        "loquat"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:litchi-chinensis",
+      "canonicalSlugAliases": [
+        "lychee"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-reticulata",
+      "canonicalSlugAliases": [
+        "mandarin"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:garcinia-mangostana",
+      "canonicalSlugAliases": [
+        "mangosteen"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:moringa-oleifera",
+      "canonicalSlugAliases": [
+        "moringa"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-persica",
+      "canonicalSlugAliases": [
+        "peach"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:pyrus-communis",
+      "canonicalSlugAliases": [
+        "pear"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:diospyros-kaki",
+      "canonicalSlugAliases": [
+        "persimmon"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:pistacia-vera",
+      "canonicalSlugAliases": [
+        "pistachio"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:nephelium-lappaceum",
+      "canonicalSlugAliases": [
+        "rambutan"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_EVIDENCE_GAP",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "UNKNOWN",
+      "spreadAuthority": "UNKNOWN",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "EVIDENCE_GAP",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:betula-pendula",
+      "canonicalSlugAliases": [
+        "silver-birch"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_READY",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "SOURCE_SUPPORTED",
+      "runtimeBehavior": "AUTHORITY_PHYSICAL_SCALE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:magnolia-grandiflora",
+      "canonicalSlugAliases": [
+        "southern-magnolia"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_CONFLICT_HOLD",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "HOLD",
+      "spreadAuthority": "HOLD",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "CONFLICT_HOLD",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:averrhoa-carambola",
+      "canonicalSlugAliases": [
+        "starfruit"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:prunus-avium",
+      "canonicalSlugAliases": [
+        "sweet-cherry"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:casimiroa-edulis",
+      "canonicalSlugAliases": [
+        "white-sapote"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_PARTIAL",
+      "selectedPreviewScenario": "LANDSCAPE_MATURE",
+      "heightAuthority": "SOURCE_SUPPORTED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "HEIGHT_ANCHORED_ESTIMATE",
+      "fallbackReason": null,
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    },
+    {
+      "botanicalTaxonId": "taxon:citrus-sinensis",
+      "canonicalSlugAliases": [
+        "orange",
+        "sweet-orange"
+      ],
+      "runtimeAuthorityState": "RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED",
+      "selectedPreviewScenario": null,
+      "heightAuthority": "ESTIMATED",
+      "spreadAuthority": "ESTIMATED",
+      "runtimeBehavior": "ESTIMATED_HEURISTIC",
+      "fallbackReason": "PERSONAL_CONTEXT_REQUIRED",
+      "photoCalibrationCompatibility": "OPTIONAL",
+      "manualOverrideCompatibility": "ALWAYS",
+      "growthStageBehavior": {
+        "mature": "MATURE",
+        "young": "STAGE_AUTHORITY_UNKNOWN",
+        "youngFallback": "STAGE_AUTHORITY_UNKNOWN",
+        "youngUsesAuthoritativeMeters": false
+      },
+      "rawResearchImportedByRuntime": "NO"
+    }
+  ]
+}

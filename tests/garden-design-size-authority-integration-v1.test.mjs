@@ -49,5 +49,8 @@ test('size authority canary covers six states without global activation', () => 
   assert.equal(canary.cases.breadfruit.evidenceGap, true);
   assert.equal(GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled, false);
   const cedar = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar', canaryContext: true });
-  assert.equal(cedar.applied, false);
+  assert.equal(cedar.applied, true);
+  assert.equal(cedar.runtimeAuthorityState, 'RUNTIME_AUTHORITY_READY');
+  const cedarOff = resolveGardenSizeAuthority(registry, { canonicalSlug: 'cedar' });
+  assert.equal(cedarOff.applied, false);
 });

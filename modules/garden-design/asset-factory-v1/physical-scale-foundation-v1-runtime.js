@@ -33,6 +33,11 @@ import {
   OWNER_SIZE_PREFERENCE_STORAGE_KEY,
   MANGO_GARDEN_DESIGN_PREFERENCE
 } from './generic-tree-physical-scale-v1.js';
+import {
+  productionGardenSizeAuthorityEnabled,
+  resolveGardenSizeAuthority,
+  scaleFromGardenSizeAuthority
+} from './garden-design-size-authority-adapter-v1.js';
 
 function finitePositive(value) {
   const n = Number(value);
@@ -271,7 +276,25 @@ function applyPhysicalScene(scene, options) {
     depthId
   };
   let result;
-  if (visualForm === 'tree') {
+  if (visualForm === 'tree' && productionGardenSizeAuthorityEnabled() && options.authorityRegistry) {
+    const authority = resolveGardenSizeAuthority(options.authorityRegistry, {
+      canonicalSlug: slug,
+      growthStage,
+      architectureMode: scene.getAttribute('data-architecture-mode') || options.architectureMode || null,
+      ownerPreferredRangePosition: scene.getAttribute('data-lock-range-band')
+        ? null
+        : loadOwnerPreferredRange(currentPhotoKey(scene.ownerDocument || document), slug),
+      userScaleOverride: options.userOverride,
+      photoScaleState: options.photoScaleState
+    });
+    const scaled = scaleFromGardenSizeAuthority(authority, {
+      ...scaleInput,
+      rangeBand,
+      userScaleOverride: options.userOverride
+    });
+    if (scaled.ok) result = scaled.scale;
+  }
+  if (!result && visualForm === 'tree') {
     const tree = computeTreePhysicalScale({
       ...scaleInput,
       architectureMode: scene.getAttribute('data-architecture-mode') || options.architectureMode || null,
@@ -295,7 +318,7 @@ function applyPhysicalScene(scene, options) {
         resolvedEvidence: resolved
       });
     }
-  } else {
+  } else if (visualForm !== 'tree') {
     const resolved = resolvePhysicalScaleEvidence({
       canonicalSlug: slug,
       visualForm,

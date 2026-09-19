@@ -2,18 +2,21 @@
  * Garden Design size authority adapter V1.
  * Single lookup path: placement slug → botanicalTaxonId → authority → scale behavior.
  * Browser-safe. Does not import research overlays or Node fs.
- * Activation flags keep production Garden Design off this path until an explicit canary context.
+ * Activation flags keep production Garden Design off this path until the owner flips global.
+ * Canary/gate context may resolve all 41 unique taxa without flipping the global flag.
  */
 import {
   DIMENSION_EVIDENCE,
   PHOTO_SCALE_PRODUCT_CONTRACT,
   PHOTO_SCALE_STATE,
+  PHYSICAL_SCALE_RENDERING_INVARIANTS,
   computePhysicalSceneScale
 } from './physical-scale-foundation-v1.js';
 import { RANGE_BANDS } from './physical-scale-evidence-v1.js';
 import { mangoDimensionLeak } from './generic-tree-physical-scale-v1.js';
 
 export const GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION = 'garden-design-size-authority-integration-v1';
+export const TREE_SIZE_AUTHORITY_GLOBAL_ACTIVATION_GATE_VERSION = 'tree-size-authority-global-activation-gate-v1';
 export const BOTANICAL_SIZE_AUTHORITY_FETCH_PATH = 'data/catalog/botanical-size-authority-v1.json';
 
 export const GARDEN_SIZE_AUTHORITY_ACTIVATION = Object.freeze({
@@ -22,6 +25,13 @@ export const GARDEN_SIZE_AUTHORITY_ACTIVATION = Object.freeze({
   applyInProductionGardenDesign: false,
   gardenDesignBlocked: false
 });
+
+export function productionGardenSizeAuthorityEnabled() {
+  return Boolean(
+    GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled
+      && GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign
+  );
+}
 
 export const SIZE_AUTHORITY_CANARY_SLUGS = Object.freeze([
   'mango',
@@ -63,14 +73,10 @@ export function getAuthorityRecordBySlug(registry, canonicalSlug) {
 }
 
 export function authorityRuntimeActive(input = {}) {
-  const slug = slugOf(input.canonicalSlug);
-  if (GARDEN_SIZE_AUTHORITY_ACTIVATION.applyInProductionGardenDesign && GARDEN_SIZE_AUTHORITY_ACTIVATION.globalAuthorityRuntimeEnabled) {
-    return true;
-  }
+  if (productionGardenSizeAuthorityEnabled()) return true;
   return Boolean(
-    input.canaryContext === true
-      && GARDEN_SIZE_AUTHORITY_ACTIVATION.canaryAuthorityRuntimeEnabled
-      && SIZE_AUTHORITY_CANARY_SLUGS.includes(slug)
+    GARDEN_SIZE_AUTHORITY_ACTIVATION.canaryAuthorityRuntimeEnabled
+      && (input.canaryContext === true || input.activationGateContext === true)
   );
 }
 
@@ -96,7 +102,10 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     conflictHold: false,
     evidenceGap: false,
     provenanceVersion: registry?.authorityVersion || 'botanical-size-authority-v1',
-    stageAuthority: growthStage === 'mature' ? 'MATURE' : 'UNKNOWN',
+    stageAuthority: growthStage === 'mature' ? 'MATURE' : 'STAGE_AUTHORITY_UNKNOWN',
+    photoCalibrationCompatibility: 'OPTIONAL',
+    manualOverrideCompatibility: 'ALWAYS',
+    rawResearchImportedByRuntime: false,
     selectedRuntimeBehavior: RUNTIME_SCALE_BEHAVIOR.INACTIVE,
     usedAuthoritativeMeters: false,
     gardenDesignBlocked: false,
@@ -116,7 +125,7 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     return Object.freeze({
       ...base,
       fallbackReason: 'AUTHORITY_RUNTIME_INACTIVE',
-      note: 'Production Garden Design remains on the prior scale path. Canary only.'
+      note: 'Production Garden Design remains on the prior scale path until global activation.'
     });
   }
 
@@ -143,7 +152,7 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
 
   if (!stageSupported) {
     behavior = RUNTIME_SCALE_BEHAVIOR.ESTIMATED_HEURISTIC;
-    fallbackReason = 'GROWTH_STAGE_AUTHORITY_UNKNOWN';
+    fallbackReason = 'STAGE_AUTHORITY_UNKNOWN';
     note = 'Do not derive young size as a percentage of mature evidence. Estimated mode.';
   } else if (state === 'RUNTIME_AUTHORITY_READY') {
     heightAuthority = HEIGHT_SPREAD_AUTHORITY.SOURCE_SUPPORTED;
@@ -194,11 +203,14 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     usedAuthoritativeMeters: Boolean(usedAuthoritativeMeters && heightRange),
     heightRangeM: heightRange,
     spreadRangeM: spreadRange,
-    spreadSourceSupported: state === 'RUNTIME_AUTHORITY_READY' ? true : false,
+    spreadSourceSupported: Boolean(stageSupported && state === 'RUNTIME_AUTHORITY_READY' && spreadRange),
     applied: true,
     fallbackReason,
     note,
-    stageAuthority: stageSupported ? 'MATURE' : 'UNKNOWN',
+    stageAuthority: stageSupported ? 'MATURE' : 'STAGE_AUTHORITY_UNKNOWN',
+    photoCalibrationCompatibility: 'OPTIONAL',
+    manualOverrideCompatibility: 'ALWAYS',
+    rawResearchImportedByRuntime: false,
     scientificName: record.scientificName || null,
     architectureMode: record.architectureMode || 'tree'
   });
@@ -227,7 +239,12 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
       spreadM: null,
       mayDrivePhysicalMeterPreview: false
     };
-  if (mangoDimensionLeak(slug, resolvedEvidence)) {
+  const ownNonMangoAuthority = Boolean(
+    authorityResult?.botanicalTaxonId
+      && authorityResult.botanicalTaxonId !== 'taxon:mangifera-indica'
+      && slug !== 'mango'
+  );
+  if (!ownNonMangoAuthority && mangoDimensionLeak(slug, resolvedEvidence)) {
     return {
       ok: false,
       code: 'MANGO_DIMENSION_LEAK',
@@ -252,6 +269,9 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
     calibrationMandatory: false,
     gardenDesignBlocked: false,
     mangoLowCopied: slug !== 'mango' && rangeBand === 'LOW',
+    fitToFrame: PHYSICAL_SCALE_RENDERING_INVARIANTS.autoFitToFrame === true,
+    clippingAllowed: PHYSICAL_SCALE_RENDERING_INVARIANTS.clippingAllowed,
+    usedVisibleAlphaBbox: PHYSICAL_SCALE_RENDERING_INVARIANTS.visibleAlphaBboxOnly,
     scale
   };
 }
@@ -260,7 +280,10 @@ export const GLOBAL_ACTIVATION_PROPOSAL = Object.freeze({
   globalAuthorityRuntimeEnabled: false,
   canaryAuthorityRuntimeEnabled: true,
   applyInProductionGardenDesign: false,
-  next: 'GARDEN DESIGN SIZE AUTHORITY GLOBAL ACTIVATION GATE',
-  doNotEnableAll41InThisTask: true,
-  keepConflictHoldAndGapsOnHeuristic: true
+  productionPathWired: true,
+  uniqueTaxaWired: 41,
+  GLOBAL_ACTIVATION_READY: true,
+  doNotFlipGlobalFlagInThisTask: true,
+  keepConflictHoldAndGapsOnHeuristic: true,
+  next: 'OWNER ACTIVATION DECISION'
 });

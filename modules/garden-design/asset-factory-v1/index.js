@@ -162,11 +162,16 @@ export {
 export {
   resolveGardenSizeAuthority,
   GARDEN_SIZE_AUTHORITY_ACTIVATION,
-  GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION
+  GARDEN_DESIGN_SIZE_AUTHORITY_INTEGRATION_VERSION,
+  TREE_SIZE_AUTHORITY_GLOBAL_ACTIVATION_GATE_VERSION,
+  productionGardenSizeAuthorityEnabled
 } from './garden-design-size-authority-adapter-v1.js';
 export {
   writeGardenDesignSizeAuthorityIntegrationReports
 } from './garden-design-size-authority-integration-v1.js';
+export {
+  writeTreeSizeAuthorityGlobalActivationGateReports
+} from './tree-size-authority-global-activation-gate-v1.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
