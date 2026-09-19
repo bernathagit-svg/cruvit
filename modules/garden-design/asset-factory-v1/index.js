@@ -150,6 +150,15 @@ export {
   RUNTIME_AUTHORITY,
   TREE_SIZE_PRODUCTION_AUTHORITY_GATE_VERSION
 } from './tree-size-production-authority-gate-v1.js';
+export {
+  loadBotanicalSizeAuthority,
+  validateBotanicalSizeAuthority,
+  getAuthorityBySlug,
+  BOTANICAL_SIZE_AUTHORITY_VERSION
+} from './botanical-size-authority-v1.js';
+export {
+  writeBotanicalSizeAuthorityRegistry
+} from './botanical-size-authority-v1-build.js';
 export { STORAGE_PUBLISH_CONTRACT } from './storage-publish-contract-v1.js';
 export {
   resolveSavedGardenDesignSourcePhoto,
