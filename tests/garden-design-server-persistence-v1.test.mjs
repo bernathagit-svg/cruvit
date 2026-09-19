@@ -144,6 +144,8 @@ test('A: iframe contains no direct Supabase write path', () => {
   assert.match(app, /garden-design-server-persistence-v1\.js/);
   assert.match(app, /openDesignAssetCalibrationReview/);
   assert.match(app, /calibration-garden-source-host-v1/);
+  assert.match(app, /calibration-review-host-v1/);
+  assert.match(app, /cruvit:garden-context-ready/);
   assert.match(gd, /cruvit:garden-design-load-design/);
   assert.match(gd, /cruvit:garden-design-save-placement/);
   assert.match(gd, /Not saved — retry/);

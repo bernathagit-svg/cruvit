@@ -107,11 +107,12 @@ export async function loadCalibrationGardenSourcePhoto(loadDesignFn, payload = {
   return resolveCalibrationGardenSourceFromLoad(loaded);
 }
 
-export function buildCalibrationSourceInjectMessage(resolved = {}) {
+export function buildCalibrationSourceInjectMessage(resolved = {}, uiStatus = null) {
   return {
     type: CALIBRATION_SOURCE_MESSAGE_TYPE,
     ok: resolved.ok === true,
     code: resolved.code || null,
+    uiStatus: uiStatus || resolved.uiStatus || null,
     designId: resolved.designId || null,
     sourceMediaId: resolved.sourceMediaId || null,
     sourceMediaUrl: resolved.ok === true ? resolved.sourceMediaUrl || null : null,

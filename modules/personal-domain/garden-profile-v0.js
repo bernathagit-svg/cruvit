@@ -47,6 +47,11 @@ import {
   validateAreaName
 } from './garden-areas-v1-contract.js';
 import { presentAuthSessionIndicatorFromDocument } from './global-auth-session-indicator-v1.js';
+import {
+  GARDEN_CONTEXT_READY_EVENT,
+  buildGardenContextReadyDetail,
+  classifyPersonalDomainGardenReadiness
+} from './garden-context-ready-v1.js';
 import './garden-closed-loop-care-v1-browser.js';
 import {
   onActiveGardenChanged as onSpecificSuitabilityGardenChanged,
@@ -138,6 +143,8 @@ let plantClientToServerId = new Map();
 let activeGardenPlantCount = 0;
 /** @type {Array<{name:string, scientific?:string|null, profileSlug?:string|null}>} */
 let activeGardenPlantSummaries = [];
+/** Owned garden profiles have been resolved for the current session (or signed-out is authoritative). */
+let gardenProfilesHydrated = false;
 
 function setStatus(text, kind) {
   const el = document.getElementById('pdV0Status');
@@ -173,6 +180,30 @@ function emitAuthSessionChanged() {
   } catch {
     /* ignore */
   }
+}
+
+function getGardenContextReadiness() {
+  return classifyPersonalDomainGardenReadiness({
+    profilesHydrated: gardenProfilesHydrated,
+    authenticated: !!(currentSession && currentSession.user),
+    gardenProfileId: getActiveGardenId() || null,
+    gardenCount: ownedGardensCache.length
+  });
+}
+
+function emitGardenContextReady() {
+  gardenProfilesHydrated = true;
+  const detail = buildGardenContextReadyDetail({
+    authenticated: !!(currentSession && currentSession.user),
+    gardenProfileId: getActiveGardenId() || null,
+    gardenCount: ownedGardensCache.length
+  });
+  try {
+    window.dispatchEvent(new CustomEvent(GARDEN_CONTEXT_READY_EVENT, { detail }));
+  } catch {
+    /* ignore */
+  }
+  return detail;
 }
 
 function setSignedOutUi() {
@@ -308,13 +339,16 @@ async function ensureClient() {
     }
   });
   supabase.auth.onAuthStateChange((_event, session) => {
+    const hadUser = !!(currentSession && currentSession.user);
     currentSession = session;
     if (session?.user) {
+      if (!hadUser) gardenProfilesHydrated = false;
       setSignedInUi(session.user.email || session.user.id);
       // Capture anonymous/local location before any server hydrate overwrites working cache.
       captureLocalSnapshotIfNeeded();
       refreshOwnedGardenProfiles().catch((err) => {
         setStatus(err.message || 'Could not load garden profiles.', 'error');
+        emitGardenContextReady();
       });
     } else {
       ownedGardensCache = [];
@@ -324,6 +358,7 @@ async function ensureClient() {
       clearAuthenticatedHydratedLocation();
       clearAuthenticatedHydratedPlants();
       clearAuthenticatedHydratedTasks();
+      emitGardenContextReady();
     }
   });
   return supabase;
@@ -335,6 +370,7 @@ async function restoreSession() {
   if (error) throw error;
   currentSession = data.session;
   if (data.session?.user) {
+    gardenProfilesHydrated = false;
     setSignedInUi(data.session.user.email || data.session.user.id);
     captureLocalSnapshotIfNeeded();
     await refreshOwnedGardenProfiles();
@@ -342,6 +378,7 @@ async function restoreSession() {
     ownedGardensCache = [];
     setSignedOutUi();
     renderGardenProfileList([]);
+    emitGardenContextReady();
   }
 }
 
@@ -1042,68 +1079,75 @@ async function refreshOwnedGardenProfiles() {
   if (!supabase || !currentSession?.user) {
     ownedGardensCache = [];
     renderGardenProfileList([]);
+    emitGardenContextReady();
     return [];
   }
-  const requestUserId = currentSession.user.id;
-  const { data, error } = await supabase
-    .from('garden_profiles')
-    .select(GARDEN_SELECT)
-    .order('updated_at', { ascending: false });
-  if (error) throw error;
-  if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) {
-    return [];
-  }
-  const rows = Array.isArray(data) ? data : [];
-  ownedGardensCache = rows;
-
-  const activeId = resolveActiveGardenId(rows, getStoredActiveGardenId());
-  if (rows.length === 1) {
-    setStoredActiveGardenId(rows[0].id);
-  } else if (!activeId) {
-    // Multiple gardens and no valid explicit selection: do not guess.
-    setStoredActiveGardenId(getStoredActiveGardenId());
-  } else {
-    setStoredActiveGardenId(activeId);
-  }
-
-  renderGardenProfileList(rows);
-
-  const resolvedActive = getActiveGardenId();
-  if (resolvedActive) {
-    const garden = rows.find((r) => String(r.id) === String(resolvedActive));
-    if (garden) {
-      // Isolate hydrate steps: weather/network noise must not block plants.
-      try {
-        await hydrateActiveGardenLocation(garden);
-      } catch (err) {
-        console.warn('Garden location hydrate failed:', err?.message || err);
-        setStatus(err?.message || 'Location hydrate had a network issue.', 'error');
-      }
-      try {
-        await hydrateActiveGardenPlants(garden);
-      } catch (err) {
-        console.warn('Garden plants hydrate failed:', err?.message || err);
-        setStatus(err?.message || 'Could not load garden plants.', 'error');
-      }
-      try {
-        await hydrateActiveGardenTasks(garden);
-      } catch (err) {
-        console.warn('Garden tasks hydrate failed:', err?.message || err);
-      }
-      try {
-        if (typeof window.cruvitGardenDashboardV1?.refresh === 'function') {
-          window.cruvitGardenDashboardV1.refresh();
-        }
-      } catch (_) {}
+  try {
+    const requestUserId = currentSession.user.id;
+    const { data, error } = await supabase
+      .from('garden_profiles')
+      .select(GARDEN_SELECT)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    if (!shouldAcceptGardenProfileRefresh(requestUserId, currentSession)) {
+      return [];
     }
-  } else if (rows.length !== 1) {
-    // No active garden (0 gardens, or many with no explicit selection):
-    // untrust in-memory only — do NOT release/consume the pre-auth local snapshot.
-    suspendHydrationForGardenWithoutServerLocation();
-    suspendAuthenticatedPlantsInMemory();
-    suspendAuthenticatedTasksInMemory();
+    const rows = Array.isArray(data) ? data : [];
+    ownedGardensCache = rows;
+
+    const activeId = resolveActiveGardenId(rows, getStoredActiveGardenId());
+    if (rows.length === 1) {
+      setStoredActiveGardenId(rows[0].id);
+    } else if (!activeId) {
+      // Multiple gardens and no valid explicit selection: do not guess.
+      setStoredActiveGardenId(getStoredActiveGardenId());
+    } else {
+      setStoredActiveGardenId(activeId);
+    }
+
+    renderGardenProfileList(rows);
+
+    const resolvedActive = getActiveGardenId();
+    if (resolvedActive) {
+      const garden = rows.find((r) => String(r.id) === String(resolvedActive));
+      if (garden) {
+        // Isolate hydrate steps: weather/network noise must not block plants.
+        try {
+          await hydrateActiveGardenLocation(garden);
+        } catch (err) {
+          console.warn('Garden location hydrate failed:', err?.message || err);
+          setStatus(err?.message || 'Location hydrate had a network issue.', 'error');
+        }
+        try {
+          await hydrateActiveGardenPlants(garden);
+        } catch (err) {
+          console.warn('Garden plants hydrate failed:', err?.message || err);
+          setStatus(err?.message || 'Could not load garden plants.', 'error');
+        }
+        try {
+          await hydrateActiveGardenTasks(garden);
+        } catch (err) {
+          console.warn('Garden tasks hydrate failed:', err?.message || err);
+        }
+        try {
+          if (typeof window.cruvitGardenDashboardV1?.refresh === 'function') {
+            window.cruvitGardenDashboardV1.refresh();
+          }
+        } catch (_) {}
+      }
+    } else if (rows.length !== 1) {
+      // No active garden (0 gardens, or many with no explicit selection):
+      // untrust in-memory only — do NOT release/consume the pre-auth local snapshot.
+      suspendHydrationForGardenWithoutServerLocation();
+      suspendAuthenticatedPlantsInMemory();
+      suspendAuthenticatedTasksInMemory();
+    }
+    emitGardenContextReady();
+    return rows;
+  } catch (err) {
+    emitGardenContextReady();
+    throw err;
   }
-  return rows;
 }
 
 async function selectActiveGarden(gardenId) {
@@ -1148,6 +1192,7 @@ async function selectActiveGarden(gardenId) {
       window.cruvitGardenDashboardV1.refresh();
     }
   } catch (_) {}
+  emitGardenContextReady();
   return row;
 }
 
@@ -1166,6 +1211,7 @@ async function signInWithPassword() {
     return;
   }
   currentSession = data.session;
+  gardenProfilesHydrated = false;
   setSignedInUi(data.user?.email || data.user?.id || email);
   setStatus('Signed in. Loading your Garden Profiles…', 'ok');
   captureLocalSnapshotIfNeeded();
@@ -1191,6 +1237,7 @@ async function signUpWithPassword() {
     return;
   }
   currentSession = data.session;
+  gardenProfilesHydrated = false;
   setSignedInUi(data.user?.email || email);
   setStatus('Signed up and signed in.', 'ok');
   captureLocalSnapshotIfNeeded();
@@ -1212,6 +1259,7 @@ async function signOut() {
     setSignedOutUi();
     renderGardenProfileList([]);
     setStatus('Signed out.', 'ok');
+    emitGardenContextReady();
     return;
   }
   await supabase.auth.signOut();
@@ -1219,6 +1267,7 @@ async function signOut() {
   setSignedOutUi();
   renderGardenProfileList([]);
   setStatus('Signed out.', 'ok');
+  emitGardenContextReady();
 }
 
 async function createGardenProfile() {
@@ -1875,6 +1924,7 @@ export async function initPersonalDomainV0() {
     await restoreSession();
   } catch (err) {
     setStatus(err.message || 'Personal domain auth unavailable.', 'error');
+    emitGardenContextReady();
   }
 }
 
@@ -1942,7 +1992,9 @@ window.cruvitPersonalDomainV0 = {
   getActiveGardenPlantSummaries: () => activeGardenPlantSummaries.slice(),
   getSupabaseClient: () => supabase,
   getSession: () => currentSession,
-  getOwnedGardensCache: () => ownedGardensCache.slice()
+  getOwnedGardensCache: () => ownedGardensCache.slice(),
+  getGardenContextReadiness,
+  gardenContextReadyEvent: GARDEN_CONTEXT_READY_EVENT
 };
 
 initPersonalDomainV0();

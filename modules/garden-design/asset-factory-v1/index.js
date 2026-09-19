@@ -58,6 +58,12 @@ export {
   summarizeCalibrationSourceForLog,
   CALIBRATION_GARDEN_DESIGN_SELECTION_REQUIRED
 } from './calibration-garden-source-host-v1.js';
+export {
+  CALIBRATION_REVIEW_UI_STATUS,
+  CALIBRATION_REVIEW_STATUS_LABEL,
+  mapCalibrationReviewUiStatus,
+  createCalibrationReviewHostController
+} from './calibration-review-host-v1.js';
 export { proposeSafeCalibrationEnvelope, KEY_BILLING_OWNER_ACTIONS } from './spend-envelope-v1.js';
 export { estimateCalibrationApiSpend } from './total-api-cost-v1.js';
 

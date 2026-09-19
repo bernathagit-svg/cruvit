@@ -31,7 +31,7 @@
 </head>
 <body>
   <h1>Calibration review — 8 jobs, no generation</h1>
-  <p id="realGardenBanner" class="warn">Waiting for authenticated host to inject the temporary Garden Design source signed URL. Path: garden_designs.source_media_id → garden_media → private user-garden-media. Local stand-ins are supplementary only. Do not copy the private photo into the repo. No Storage credentials in this page.</p>
+  <p id="realGardenBanner" class="warn">Loading Garden context… Path: garden_designs.source_media_id → garden_media → private user-garden-media. Local stand-ins are supplementary only. Do not copy the private photo into the repo. No Storage credentials in this page.</p>
   <p>Owner question: does this actually look like the plant is in my garden? Fields: PERSPECTIVE, GROUND_CONTACT, STICKER_LOOK, HALO, SHARPNESS_MATCH, COLOR_TONAL_MATCH, SCALE_REALISM, SILHOUETTE.</p>
   <article class="job" id="job-mango">
   <header>
@@ -435,11 +435,30 @@
         });
         return true;
       }
+      function applyUiStatus(d) {
+        if (d && d.sourceMediaUrl && applySignedUrl(d.sourceMediaUrl)) return;
+        var banner = document.getElementById('realGardenBanner');
+        if (!banner) return;
+        var status = (d && (d.uiStatus || d.code)) || '';
+        var labels = {
+          LOADING_GARDEN_CONTEXT: 'Loading Garden context…',
+          LOADING_GARDEN_PHOTO: 'Loading Garden photo…',
+          REAL_GARDEN_SOURCE_LOADED: 'Real Garden photo loaded.',
+          AUTH_REQUIRED: 'AUTH_REQUIRED — sign in to load the saved Garden photo.',
+          NO_ACTIVE_GARDEN: 'NO_ACTIVE_GARDEN — select an active garden.',
+          DESIGN_SELECTION_REQUIRED: 'DESIGN_SELECTION_REQUIRED — select the active Garden Design. Latest is not chosen automatically.',
+          SOURCE_PHOTO_UNAVAILABLE: 'SOURCE_PHOTO_UNAVAILABLE — saved Garden Design source photo was not found.',
+          SIGNED_URL_FAILED: 'SIGNED_URL_FAILED — could not create a temporary signed URL.'
+        };
+        if (!status || !labels[status]) return;
+        banner.className = status === 'REAL_GARDEN_SOURCE_LOADED' ? 'ok' : 'warn';
+        banner.textContent = labels[status];
+      }
       window.addEventListener('message', function (ev) {
         if (ev.origin && ev.origin !== 'null' && ev.origin !== window.location.origin) return;
         var d = ev.data;
         if (!d || d.type !== MESSAGE_TYPE) return;
-        if (d.sourceMediaUrl) applySignedUrl(d.sourceMediaUrl);
+        applyUiStatus(d);
       });
       if (window.__CRUVIT_GARDEN_SOURCE_SIGNED_URL__) applySignedUrl(window.__CRUVIT_GARDEN_SOURCE_SIGNED_URL__);
       var toggle = document.getElementById('blendToggle');

@@ -635,6 +635,9 @@ test('host calibration source uses selected design and never logs the signed URL
   assert.match(reviewHtml, /data-panel="A"/);
   assert.match(reviewHtml, /data-panel="B"/);
   assert.match(reviewHtml, /cruvit:calibration-garden-source/);
+  assert.match(reviewHtml, /Loading Garden context/);
+  assert.match(reviewHtml, /applyUiStatus/);
+  assert.doesNotMatch(reviewHtml, /Waiting for authenticated host/);
   assert.doesNotMatch(reviewHtml, /supabase/i);
   assert.doesNotMatch(reviewHtml, /signed\.example/);
   assert.doesNotMatch(reviewHtml, /sk-/);
