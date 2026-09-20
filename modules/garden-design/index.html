@@ -3033,6 +3033,15 @@ function resolvePlantLayerAsset(layer, manifest) {
     license: null
   };
   const registryApi = window.CruvitGardenDesignAssetRegistry;
+  if (
+    registryApi &&
+    !gdDesignAssetIndex &&
+    gdOwnedGardenContext &&
+    gdOwnedGardenContext.designAssetRegistry &&
+    typeof registryApi.indexDesignAssetRegistry === 'function'
+  ) {
+    gdDesignAssetIndex = registryApi.indexDesignAssetRegistry(gdOwnedGardenContext.designAssetRegistry);
+  }
   if (registryApi && gdDesignAssetIndex) {
     const slug = (layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug || '').toLowerCase();
     if (slug) {
