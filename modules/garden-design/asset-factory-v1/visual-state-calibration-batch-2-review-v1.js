@@ -8,6 +8,12 @@ import { CALIBRATION_SOURCE_MESSAGE_TYPE } from './calibration-garden-source-hos
 import { RUNTIME_BLEND_V2 } from './in-garden-qa-v1.js';
 import { MANGO_GARDEN_DESIGN_PREFERENCE } from './generic-tree-physical-scale-v1.js';
 import { groundAnchorFromBbox } from './composition-calibration-v2.js';
+import {
+  BATCH_2_OWNER_DETAIL_STATE_STORAGE_KEY,
+  LOCKED_MANGO_JOB_IDS,
+  NATIVE_DETAIL_MARKS,
+  STATE_FAMILY_MARKS
+} from './batch-2-review-marks-v1.js';
 
 export const BATCH_2_REVIEW_LIVE_REL = 'modules/garden-design/visual-state-calibration-batch-2.html';
 export const BATCH_2_REVIEW_QUESTIONS = Object.freeze([
@@ -86,16 +92,50 @@ function sceneAttrs(job) {
   return parts.filter(Boolean).join(' ');
 }
 
+function markButtons(jobId, marks, group) {
+  const locked = LOCKED_MANGO_JOB_IDS.includes(jobId) && group === 'detail';
+  return `<div class="marks" data-mark-group="${esc(group)}" data-job-id="${esc(jobId || '')}">
+    ${marks
+      .map((mark) => {
+        const mangoSoftLock = locked && mark === 'DETAIL_SOFT';
+        const mangoOkBlocked = locked && mark === 'DETAIL_OK';
+        return `<button type="button" data-mark="${esc(mark)}"${mangoSoftLock ? ' data-locked="true" aria-pressed="true"' : ''}${mangoOkBlocked ? ' data-blocked="true"' : ''}>${esc(mark)}</button>`;
+      })
+      .join('')}
+  </div>`;
+}
+
 function inspectSlot(job, src) {
   const inner = src
     ? `<div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="${esc(job.label)}" src="${esc(src)}" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p>`
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      ${markButtons(job.jobId, NATIVE_DETAIL_MARKS, 'detail')}`
     : `<div class="ghost blocked">${esc(job.empty || 'ASSET NOT GENERATED')}</div>`;
+  const mangoLock = LOCKED_MANGO_JOB_IDS.includes(job.jobId)
+    ? '<p class="warn-mini">LOCKED owner finding: DETAIL_SOFT. Do not overwrite.</p>'
+    : '';
   return `<div class="slot inspect-slot" data-job-id="${esc(job.jobId)}" data-review-mode="ASSET_INSPECTION">
     <p class="cap">${esc(job.label)}</p>
-    <div class="inspect-scene checkerboard">${inner}</div>
+    <div class="inspect-scene inspect-100 checkerboard">${inner}</div>
+    ${mangoLock}
+  </div>`;
+}
+
+function compareSlot(job, src) {
+  const inner = src
+    ? `<img class="compare-cutout" alt="${esc(job.label)}" src="${esc(src)}" draggable="false"/>`
+    : `<div class="ghost blocked">${esc(job.empty || 'ASSET NOT GENERATED')}</div>`;
+  return `<div class="slot compare-slot" data-job-id="${esc(job.jobId)}" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">${esc(job.label)}</p>
+    <div class="compare-scene checkerboard">${inner}</div>
   </div>`;
 }
 
@@ -127,15 +167,20 @@ function gardenSlot(job, src) {
 
 function familySection(id, title, jobs, note) {
   const inspect = jobs.map((job) => inspectSlot(job, job.src)).join('');
+  const compare = jobs.map((job) => compareSlot(job, job.src)).join('');
   const garden = jobs.map((job) => gardenSlot(job, job.src)).join('');
   return `<section class="family" data-family="${esc(id)}">
     <h2>Family ${esc(id)} — ${esc(title)}</h2>
     <p class="note">${esc(note)}</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row">${inspect}</div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row">${compare}</div>
+    ${markButtons('', STATE_FAMILY_MARKS, 'state')}
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row">${garden}</div>
     <ol class="questions">
       ${BATCH_2_REVIEW_QUESTIONS.map((q) => `<li>${esc(q)}</li>`).join('')}
@@ -169,7 +214,7 @@ export function buildVisualStateCalibrationBatch2ReviewHtml(options = {}) {
     ? `Visual State Calibration Batch 2 — ${generatedCount}/11 candidates, production-scale review`
     : 'Visual State Calibration Batch 2 — 11 jobs, five pair-complete families, 0 generated';
   const banner = generatedCount
-    ? 'Candidates only. Not approved. ASSET INSPECTION is native/unfiltered. IN-GARDEN uses production Tree Physical Scale V1 (Mango LOW) and form-appropriate runtime scale. Blend V2 is garden-only.'
+    ? 'Candidates only. Not approved. A = NATIVE ASSET INSPECTION (100% / zoom, filter:none). B = STATE / FAMILY COMPARISON. C = IN-GARDEN production scale. Mango DETAIL_SOFT is locked from owner review.'
     : 'No assets yet. Signed Garden photo is injected by the host when available.';
   return `<!doctype html>
 <html lang="en">
@@ -186,25 +231,38 @@ export function buildVisualStateCalibrationBatch2ReviewHtml(options = {}) {
     .slots { display: flex; gap: 12px; flex-wrap: wrap; }
     h3 { margin: 18px 0 8px; font-size: 16px; }
     .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
-    .inspect-scene { width: 340px; height: 480px; border: 1px solid #ccc; position: relative; overflow: auto; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; position: relative; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
     .inspect-scene.inspect-100 { width: min(1024px, 100%); height: 720px; }
+    .inspect-scene.inspect-150 { width: min(100%, 1536px); height: 780px; }
+    .inspect-scene.inspect-200 { width: min(100%, 2048px); height: 840px; }
     .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
-    .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: bottom center; image-rendering: auto; filter: none !important; opacity: 1 !important; }
-    .inspect-100 .inspect-cutout { max-width: none; max-height: none; width: 1024px; height: auto; }
+    .inspect-cutout { max-width: none; max-height: none; width: 1024px; height: auto; object-fit: contain; object-position: bottom center; image-rendering: auto; filter: none !important; opacity: 1 !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-100 .inspect-cutout { width: 1024px; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-200 .inspect-cutout { width: 2048px; }
+    .compare-scene { width: 280px; height: 400px; border: 1px solid #ccc; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+    .compare-cutout { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: bottom center; filter: none !important; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+    .marks button[aria-pressed="true"] { background: #1d4; color: #fff; }
+    .marks button[data-locked="true"] { background: #a33; color: #fff; }
+    .marks button[data-blocked="true"] { opacity: .45; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real, .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 6px 8px; font-size: 11px; width: 80%; text-align: center; }
     .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: auto; max-width: none; pointer-events: none; overflow: visible; }
     .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; object-fit: contain; object-position: bottom center; }
     .scene.blend-v2-scene img.cutout { filter: ${blendFilter}; }
-    .inspect-cutout, [data-review-mode="ASSET_INSPECTION"] img { filter: none !important; }
+    .inspect-cutout, .compare-cutout, [data-review-mode="ASSET_INSPECTION"] img, [data-review-mode="STATE_FAMILY_COMPARISON"] img { filter: none !important; }
     .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
     .cap { font-size: 13px; color: #444; }
     .questions { font-size: 14px; }
     button { padding: 6px 10px; cursor: pointer; }
   </style>
 </head>
-<body>
+<body data-owner-qa-storage="${esc(BATCH_2_OWNER_DETAIL_STATE_STORAGE_KEY)}">
   <h1>${esc(title)}</h1>
   <p id="realGardenBanner" class="${generatedCount ? 'ok' : 'warn'}">${esc(banner)}</p>
   <p class="note">Spend gate DENIED. Production registry unchanged. Candidate PNGs are not modified. Mango mature IN-GARDEN uses botanical-size-authority-v1 + Tree Physical Scale V1 + ownerPreferredRangePosition=${esc(MANGO_GARDEN_DESIGN_PREFERENCE.ownerPreferredRangePosition)}. Young never uses mature meter authority. Photo calibration remains optional.</p>

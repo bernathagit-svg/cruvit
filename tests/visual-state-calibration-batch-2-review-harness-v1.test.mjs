@@ -32,8 +32,12 @@ test('batch-2 review harness uses production scale and dual modes without mutati
   assert.equal(written.mangoOwnerPreferredRangePosition, 'LOW');
   assert.equal(MANGO_GARDEN_DESIGN_PREFERENCE.ownerPreferredRangePosition, 'LOW');
   assert.equal(BATCH_2_SPEND_GATE.state, 'DENIED');
-  assert.match(html, /ASSET INSPECTION/);
+  assert.match(html, /NATIVE ASSET INSPECTION/);
+  assert.match(html, /STATE \/ FAMILY COMPARISON/);
   assert.match(html, /IN-GARDEN REVIEW/);
+  assert.match(html, /DETAIL_SOFT/);
+  assert.match(html, /STATE_GOOD/);
+  assert.match(html, /data-locked="true"/);
   assert.match(html, /data-lock-range-band="LOW"/);
   assert.match(html, /data-canonical-slug="mango"/);
   assert.match(html, /data-growth-stage="young"/);
@@ -47,5 +51,5 @@ test('batch-2 review harness uses production scale and dual modes without mutati
   assert.equal((html.match(/data-lock-range-band="LOW"/g) || []).length, 2);
   assert.ok(!html.includes('data:image'));
   const app = fs.readFileSync(path.join(ROOT, 'app.html'), 'utf8');
-  assert.match(app, /visual-state-calibration-batch-2\.html\?v=20260919u/);
+  assert.match(app, /visual-state-calibration-batch-2\.html\?v=20260919v/);
 });

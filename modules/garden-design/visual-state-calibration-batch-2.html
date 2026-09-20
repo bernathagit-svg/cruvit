@@ -13,54 +13,112 @@
     .slots { display: flex; gap: 12px; flex-wrap: wrap; }
     h3 { margin: 18px 0 8px; font-size: 16px; }
     .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
-    .inspect-scene { width: 340px; height: 480px; border: 1px solid #ccc; position: relative; overflow: auto; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; position: relative; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
     .inspect-scene.inspect-100 { width: min(1024px, 100%); height: 720px; }
+    .inspect-scene.inspect-150 { width: min(100%, 1536px); height: 780px; }
+    .inspect-scene.inspect-200 { width: min(100%, 2048px); height: 840px; }
     .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
-    .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: bottom center; image-rendering: auto; filter: none !important; opacity: 1 !important; }
-    .inspect-100 .inspect-cutout { max-width: none; max-height: none; width: 1024px; height: auto; }
+    .inspect-cutout { max-width: none; max-height: none; width: 1024px; height: auto; object-fit: contain; object-position: bottom center; image-rendering: auto; filter: none !important; opacity: 1 !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-100 .inspect-cutout { width: 1024px; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-200 .inspect-cutout { width: 2048px; }
+    .compare-scene { width: 280px; height: 400px; border: 1px solid #ccc; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+    .compare-cutout { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: bottom center; filter: none !important; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+    .marks button[aria-pressed="true"] { background: #1d4; color: #fff; }
+    .marks button[data-locked="true"] { background: #a33; color: #fff; }
+    .marks button[data-blocked="true"] { opacity: .45; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real, .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 6px 8px; font-size: 11px; width: 80%; text-align: center; }
     .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: auto; max-width: none; pointer-events: none; overflow: visible; }
     .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; object-fit: contain; object-position: bottom center; }
     .scene.blend-v2-scene img.cutout { filter: brightness(0.94) contrast(0.92) saturate(0.9) blur(0.4px); }
-    .inspect-cutout, [data-review-mode="ASSET_INSPECTION"] img { filter: none !important; }
+    .inspect-cutout, .compare-cutout, [data-review-mode="ASSET_INSPECTION"] img, [data-review-mode="STATE_FAMILY_COMPARISON"] img { filter: none !important; }
     .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
     .cap { font-size: 13px; color: #444; }
     .questions { font-size: 14px; }
     button { padding: 6px 10px; cursor: pointer; }
   </style>
 </head>
-<body>
+<body data-owner-qa-storage="cruvit:batch-2-native-detail-state-qa-v1">
   <h1>Visual State Calibration Batch 2 — 11/11 candidates, production-scale review</h1>
-  <p id="realGardenBanner" class="ok">Candidates only. Not approved. ASSET INSPECTION is native/unfiltered. IN-GARDEN uses production Tree Physical Scale V1 (Mango LOW) and form-appropriate runtime scale. Blend V2 is garden-only.</p>
+  <p id="realGardenBanner" class="ok">Candidates only. Not approved. A = NATIVE ASSET INSPECTION (100% / zoom, filter:none). B = STATE / FAMILY COMPARISON. C = IN-GARDEN production scale. Mango DETAIL_SOFT is locked from owner review.</p>
   <p class="note">Spend gate DENIED. Production registry unchanged. Candidate PNGs are not modified. Mango mature IN-GARDEN uses botanical-size-authority-v1 + Tree Physical Scale V1 + ownerPreferredRangePosition=LOW. Young never uses mature meter authority. Photo calibration remains optional.</p>
 <section class="family" data-family="A">
     <h2>Family A — Mango — 3-way</h2>
     <p class="note">OWNER_VISUAL_QA = NEEDS_IMPROVEMENT. ASSET_DETAIL_SOFT = TRUE. Not production-approved. IDENTITY_CONTINUITY / YOUNG_STATE / FRUITING_STATE / FAMILY_CONSISTENCY remain OWNER_REVIEW_PENDING and are not failed for softness. ASSET INSPECTION vs IN-GARDEN stay separate. Mature vegetative and fruiting share Mango LOW production scale. Young is Estimated young scale.</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="mango__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">1. TREE MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="1. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="mango__mature__tree__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK" data-blocked="true">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT" data-locked="true" aria-pressed="true">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">LOCKED owner finding: DETAIL_SOFT. Do not overwrite.</p>
   </div><div class="slot inspect-slot" data-job-id="mango__young__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">2. TREE YOUNG VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="mango__young__tree__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK" data-blocked="true">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT" data-locked="true" aria-pressed="true">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">LOCKED owner finding: DETAIL_SOFT. Do not overwrite.</p>
   </div><div class="slot inspect-slot" data-job-id="mango__mature__tree__fruiting__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">3. TREE MATURE FRUITING</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="mango__mature__tree__fruiting__v1">
+    <button type="button" data-mark="DETAIL_OK" data-blocked="true">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT" data-locked="true" aria-pressed="true">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <p class="warn-mini">LOCKED owner finding: DETAIL_SOFT. Do not overwrite.</p>
+  </div></div>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row"><div class="slot compare-slot" data-job-id="mango__mature__tree__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">1. TREE MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="1. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="mango__young__tree__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">2. TREE YOUNG VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="mango__mature__tree__fruiting__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">3. TREE MATURE FRUITING</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png" draggable="false"/></div>
+  </div></div>
+    <div class="marks" data-mark-group="state" data-job-id="">
+    <button type="button" data-mark="STATE_GOOD">STATE_GOOD</button><button type="button" data-mark="STATE_TOO_WEAK">STATE_TOO_WEAK</button><button type="button" data-mark="STATE_OVERSTATED">STATE_OVERSTATED</button><button type="button" data-mark="IDENTITY_DRIFT">IDENTITY_DRIFT</button><button type="button" data-mark="ARCHITECTURE_DRIFT">ARCHITECTURE_DRIFT</button>
+  </div>
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row"><div class="slot garden-slot" data-job-id="mango__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
     <p class="cap">1. TREE MATURE VEGETATIVE</p>
     <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
@@ -96,23 +154,55 @@
 <section class="family" data-family="B">
     <h2>Family B — Banana — 2-way</h2>
     <p class="note">Large-herbaceous runtime. Not tree physical-scale rules.</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="banana__mature__default__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">4. herbaceous-clump MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="4. herbaceous-clump MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="banana__mature__default__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
   </div><div class="slot inspect-slot" data-job-id="banana__young__default__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="banana__young__default__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    
+  </div></div>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row"><div class="slot compare-slot" data-job-id="banana__mature__default__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">4. herbaceous-clump MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="4. herbaceous-clump MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="banana__young__default__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png" draggable="false"/></div>
+  </div></div>
+    <div class="marks" data-mark-group="state" data-job-id="">
+    <button type="button" data-mark="STATE_GOOD">STATE_GOOD</button><button type="button" data-mark="STATE_TOO_WEAK">STATE_TOO_WEAK</button><button type="button" data-mark="STATE_OVERSTATED">STATE_OVERSTATED</button><button type="button" data-mark="IDENTITY_DRIFT">IDENTITY_DRIFT</button><button type="button" data-mark="ARCHITECTURE_DRIFT">ARCHITECTURE_DRIFT</button>
+  </div>
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row"><div class="slot garden-slot" data-job-id="banana__mature__default__vegetative__v1" data-review-mode="IN_GARDEN">
     <p class="cap">4. herbaceous-clump MATURE VEGETATIVE</p>
     <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="banana" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="18,42,988,1497" data-ground-anchor="0.4912109375,0.974609375" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
@@ -139,23 +229,55 @@
 <section class="family" data-family="C">
     <h2>Family C — Apple — 2-way</h2>
     <p class="note">Apple tree authority/fallback. Same mature physical-scale context for vegetative and dormant. Not Mango LOW.</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="apple__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">6. TREE MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="apple__mature__tree__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
   </div><div class="slot inspect-slot" data-job-id="apple__mature__tree__dormant__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">7. TREE MATURE DORMANT</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="apple__mature__tree__dormant__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    
+  </div></div>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row"><div class="slot compare-slot" data-job-id="apple__mature__tree__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">6. TREE MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="apple__mature__tree__dormant__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">7. TREE MATURE DORMANT</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" draggable="false"/></div>
+  </div></div>
+    <div class="marks" data-mark-group="state" data-job-id="">
+    <button type="button" data-mark="STATE_GOOD">STATE_GOOD</button><button type="button" data-mark="STATE_TOO_WEAK">STATE_TOO_WEAK</button><button type="button" data-mark="STATE_OVERSTATED">STATE_OVERSTATED</button><button type="button" data-mark="IDENTITY_DRIFT">IDENTITY_DRIFT</button><button type="button" data-mark="ARCHITECTURE_DRIFT">ARCHITECTURE_DRIFT</button>
+  </div>
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row"><div class="slot garden-slot" data-job-id="apple__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
     <p class="cap">6. TREE MATURE VEGETATIVE</p>
     <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="apple" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="20,92,995,1501" data-ground-anchor="0.49560546875,0.9772135416666666" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
@@ -182,23 +304,55 @@
 <section class="family" data-family="D">
     <h2>Family D — Pomegranate — 2-way</h2>
     <p class="note">TREE vs SHRUB architectureMode. Shrub does not use tree physical-scale rules.</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="pomegranate__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">8. TREE MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="pomegranate__mature__tree__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
   </div><div class="slot inspect-slot" data-job-id="pomegranate__mature__shrub__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="pomegranate__mature__shrub__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    
+  </div></div>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row"><div class="slot compare-slot" data-job-id="pomegranate__mature__tree__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">8. TREE MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="pomegranate__mature__shrub__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png" draggable="false"/></div>
+  </div></div>
+    <div class="marks" data-mark-group="state" data-job-id="">
+    <button type="button" data-mark="STATE_GOOD">STATE_GOOD</button><button type="button" data-mark="STATE_TOO_WEAK">STATE_TOO_WEAK</button><button type="button" data-mark="STATE_OVERSTATED">STATE_OVERSTATED</button><button type="button" data-mark="IDENTITY_DRIFT">IDENTITY_DRIFT</button><button type="button" data-mark="ARCHITECTURE_DRIFT">ARCHITECTURE_DRIFT</button>
+  </div>
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row"><div class="slot garden-slot" data-job-id="pomegranate__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
     <p class="cap">8. TREE MATURE VEGETATIVE</p>
     <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="pomegranate" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="33,88,1011,1464" data-ground-anchor="0.509765625,0.953125" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
@@ -225,23 +379,55 @@
 <section class="family" data-family="E">
     <h2>Family E — Lavender — 2-way</h2>
     <p class="note">Shrub scale. Flowering must keep vegetative habit; compare native flowers in ASSET INSPECTION.</p>
-    <h3>A. ASSET INSPECTION</h3>
-    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <h3>A. NATIVE ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself at true native pixels. Checkerboard. filter:none. No blend, blur, opacity, or scene tonal adaptation. Default 100% view. Zoom does not resample the PNG file.</p>
     <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="lavender__mature__shrub__vegetative__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">10. SHRUB MATURE VEGETATIVE</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="10. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="lavender__mature__shrub__vegetative__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
   </div><div class="slot inspect-slot" data-job-id="lavender__mature__shrub__flowering__v1" data-review-mode="ASSET_INSPECTION">
     <p class="cap">11. SHRUB MATURE FLOWERING</p>
-    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame" data-inspect-frame>
         <img class="inspect-cutout" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" draggable="false"/>
       </div>
-      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        Native PNG. filter:none. No Garden blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-job-id="lavender__mature__shrub__flowering__v1">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
-    <h3>B. IN-GARDEN REVIEW</h3>
-    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    
+  </div></div>
+    <h3>B. STATE / FAMILY COMPARISON</h3>
+    <p class="note">Judge identity continuity and the intended state delta only. Softness must not automatically fail continuity. No Garden blend.</p>
+    <div class="slots compare-row"><div class="slot compare-slot" data-job-id="lavender__mature__shrub__vegetative__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">10. SHRUB MATURE VEGETATIVE</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="10. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" draggable="false"/></div>
+  </div><div class="slot compare-slot" data-job-id="lavender__mature__shrub__flowering__v1" data-review-mode="STATE_FAMILY_COMPARISON">
+    <p class="cap">11. SHRUB MATURE FLOWERING</p>
+    <div class="compare-scene checkerboard"><img class="compare-cutout" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" draggable="false"/></div>
+  </div></div>
+    <div class="marks" data-mark-group="state" data-job-id="">
+    <button type="button" data-mark="STATE_GOOD">STATE_GOOD</button><button type="button" data-mark="STATE_TOO_WEAK">STATE_TOO_WEAK</button><button type="button" data-mark="STATE_OVERSTATED">STATE_OVERSTATED</button><button type="button" data-mark="IDENTITY_DRIFT">IDENTITY_DRIFT</button><button type="button" data-mark="ARCHITECTURE_DRIFT">ARCHITECTURE_DRIFT</button>
+  </div>
+    <h3>C. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority. Blend V2 is garden-only.</p>
     <div class="slots garden-row"><div class="slot garden-slot" data-job-id="lavender__mature__shrub__vegetative__v1" data-review-mode="IN_GARDEN">
     <p class="cap">10. SHRUB MATURE VEGETATIVE</p>
     <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="34,202,988,1408" data-ground-anchor="0.4990234375,0.9166666666666666" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">

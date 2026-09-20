@@ -67,7 +67,8 @@ test('batch-2 prep locks 11 jobs, denies spend, and does not generate', () => {
   assert.equal(EGGPLANT_DEFERRED.generatedInBatch2, false);
   assert.equal(LAVENDER_BATCH1_HISTORICAL.historicalEvidenceOnly, true);
   assert.equal(summary.everyTestedStateHasValidFamilyAnchor, true);
-  assert.match(html, /ASSET INSPECTION/);
+  assert.match(html, /NATIVE ASSET INSPECTION/);
+  assert.match(html, /STATE \/ FAMILY COMPARISON/);
   assert.match(html, /IN-GARDEN REVIEW/);
   assert.match(html, /data-lock-range-band="LOW"/);
   assert.match(html, /STAGE_AUTHORITY_UNKNOWN/);
