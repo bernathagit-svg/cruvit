@@ -87,11 +87,16 @@ function controlMetrics(diag) {
   </ul>`;
 }
 
-export function buildBranchStructureCalibrationReviewHtml(job, controlDiag) {
+export function buildBranchStructureCalibrationReviewHtml(job, controlDiag, candidateDiag = null) {
   const controlSrc = liveCutoutSrc(job.historicalControl.file);
   const candidateRel = job.candidateFile;
-  const candidateExists = false;
+  const candidateExists = Boolean(candidateDiag && candidateDiag.generated);
+  const candidateSrc = candidateExists ? liveCutoutSrc(candidateRel) : '';
+  const generated = candidateExists;
   const questions = OWNER_QUESTIONS.map((q, i) => `<li>${i + 1}. ${esc(q)}</li>`).join('');
+  const banner = generated
+    ? `<p class="ok" id="prepBanner">1/1 generated as CALIBRATION_CANDIDATE. Spend gate DENIED after this run. HIGH calls = 0. Native inspection is primary. Do not auto-approve.</p>`
+    : `<p class="warn" id="prepBanner">PREP ONLY. NEW candidate is not generated. Spend gate DENIED. HIGH jobs = 0. Do not execute without explicit owner approval of this exact runId.</p>`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -125,8 +130,8 @@ export function buildBranchStructureCalibrationReviewHtml(job, controlDiag) {
 </head>
 <body data-run-id="${esc(RUN_ID)}" data-owner-qa-storage="cruvit:branch-structure-calibration-1">
   <h1>BRANCH_STRUCTURE calibration V1 — Apple TREE MATURE DORMANT</h1>
-  <p class="warn" id="prepBanner">PREP ONLY. NEW candidate is not generated. Spend gate DENIED. HIGH jobs = 0. Do not execute without explicit owner approval of this exact runId.</p>
-  <p class="note">runId ${esc(RUN_ID)}. Prompt design-cutout-branch-structure-v2-experiment. Quality medium only. This is not a sharpness A/B. Native 100/150/200, filter:none, checkerboard.</p>
+  ${banner}
+  <p class="note">runId ${esc(RUN_ID)}. Prompt design-cutout-branch-structure-v2-experiment. Quality medium only. This is not a sharpness A/B. Native 100/150/200, filter:none, checkerboard. No Blend.</p>
   <h3>NATIVE ASSET INSPECTION (primary)</h3>
   <div class="slots inspect-row">
     ${inspectSlot(
@@ -139,13 +144,17 @@ export function buildBranchStructureCalibrationReviewHtml(job, controlDiag) {
     ${inspectSlot(
       'NEW',
       'NEW — Branch Structure V2 + medium',
-      candidateExists ? liveCutoutSrc(candidateRel) : '',
-      'design-cutout-branch-structure-v2-experiment · quality=medium · not generated yet',
+      candidateSrc,
+      generated
+        ? 'design-cutout-branch-structure-v2-experiment · quality=medium · CALIBRATION_CANDIDATE · not production-approved'
+        : 'design-cutout-branch-structure-v2-experiment · quality=medium · not generated yet',
       false
     )}
   </div>
   <h3>CONTROL technical diagnostics</h3>
   ${controlMetrics(controlDiag)}
+  <h3>NEW technical diagnostics</h3>
+  ${candidateExists ? controlMetrics(candidateDiag) : '<p class="note">NEW not generated yet.</p>'}
   <p class="note">No universal magic threshold. Owner visual review remains authoritative. Compare a future candidate against this failed control.</p>
   <h3>Owner questions</h3>
   <ol class="questions">${questions}</ol>
@@ -156,8 +165,15 @@ export function buildBranchStructureCalibrationReviewHtml(job, controlDiag) {
 `;
 }
 
-export function writeBranchStructureCalibrationReview(root, job, controlDiag) {
-  const html = buildBranchStructureCalibrationReviewHtml(job, controlDiag);
+export function writeBranchStructureCalibrationReview(root, job, controlDiag, candidateDiag = null) {
+  let resolvedCandidate = candidateDiag;
+  if (!resolvedCandidate && job && job.candidateFile) {
+    const abs = path.join(root, job.candidateFile);
+    resolvedCandidate = fs.existsSync(abs)
+      ? { arm: 'NEW', generated: true, file: job.candidateFile }
+      : { arm: 'NEW', generated: false };
+  }
+  const html = buildBranchStructureCalibrationReviewHtml(job, controlDiag, resolvedCandidate);
   const out = path.join(root, BRANCH_STRUCTURE_CALIBRATION_REVIEW_LIVE_REL);
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, html);

@@ -31,8 +31,8 @@
 </head>
 <body data-run-id="design-asset-branch-structure-calibration-1" data-owner-qa-storage="cruvit:branch-structure-calibration-1">
   <h1>BRANCH_STRUCTURE calibration V1 — Apple TREE MATURE DORMANT</h1>
-  <p class="warn" id="prepBanner">PREP ONLY. NEW candidate is not generated. Spend gate DENIED. HIGH jobs = 0. Do not execute without explicit owner approval of this exact runId.</p>
-  <p class="note">runId design-asset-branch-structure-calibration-1. Prompt design-cutout-branch-structure-v2-experiment. Quality medium only. This is not a sharpness A/B. Native 100/150/200, filter:none, checkerboard.</p>
+  <p class="ok" id="prepBanner">1/1 generated as CALIBRATION_CANDIDATE. Spend gate DENIED after this run. HIGH calls = 0. Native inspection is primary. Do not auto-approve.</p>
+  <p class="note">runId design-asset-branch-structure-calibration-1. Prompt design-cutout-branch-structure-v2-experiment. Quality medium only. This is not a sharpness A/B. Native 100/150/200, filter:none, checkerboard. No Blend.</p>
   <h3>NATIVE ASSET INSPECTION (primary)</h3>
   <div class="slots inspect-row">
     <div class="slot inspect-slot" data-arm="CONTROL" data-review-mode="NATIVE_DETAIL">
@@ -55,8 +55,17 @@
   </div>
     <div class="slot inspect-slot" data-arm="NEW" data-review-mode="NATIVE_DETAIL">
     <p class="cap">NEW — Branch Structure V2 + medium</p>
-    <p class="note">design-cutout-branch-structure-v2-experiment · quality=medium · not generated yet</p>
-    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — NEW prepared only</div>
+    <p class="note">design-cutout-branch-structure-v2-experiment · quality=medium · CALIBRATION_CANDIDATE · not production-approved</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW — Branch Structure V2 + medium" src="assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
       <div class="marks" data-mark-group="detail" data-arm="NEW">
     <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="BRANCH_STRUCTURE_OK">BRANCH_STRUCTURE_OK</button><button type="button" data-mark="BROWN_HAZE">BROWN_HAZE</button><button type="button" data-mark="GHOST_BRANCHES">GHOST_BRANCHES</button><button type="button" data-mark="ALPHA_FAILURE">ALPHA_FAILURE</button><button type="button" data-mark="TOO_DENSE">TOO_DENSE</button><button type="button" data-mark="TOO_SPARSE">TOO_SPARSE</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
   </div></div>
@@ -71,6 +80,16 @@
     <li>alpha 192–254 edge: 125998</li>
     <li>alpha 255 opaque: 0</li>
     <li>brown semi-transparent ratio of visible: 0.992361</li>
+    <li>connected opaque wood: NO_OPAQUE_WOOD</li>
+  </ul>
+  <h3>NEW technical diagnostics</h3>
+  <ul class="metrics">
+    <li>fully opaque pixel %: 0</li>
+    <li>alpha 1–64 ghost: 432963</li>
+    <li>alpha 65–191 partial: 91742</li>
+    <li>alpha 192–254 edge: 114767</li>
+    <li>alpha 255 opaque: 0</li>
+    <li>brown semi-transparent ratio of visible: 0.981876</li>
     <li>connected opaque wood: NO_OPAQUE_WOOD</li>
   </ul>
   <p class="note">No universal magic threshold. Owner visual review remains authoritative. Compare a future candidate against this failed control.</p>

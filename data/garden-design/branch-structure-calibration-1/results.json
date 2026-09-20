@@ -1,0 +1,202 @@
+{
+  "blocked": false,
+  "executed": true,
+  "reason": null,
+  "failFast": null,
+  "runId": "design-asset-branch-structure-calibration-1",
+  "model": "gpt-image-2.5-flare-2026-09-08",
+  "ownerApprovedThisRunOnly": true,
+  "approvalState": "APPROVED_THIS_RUN_ONLY_EXHAUSTED",
+  "spendGateFinal": "DENIED",
+  "attemptedCalls": 1,
+  "successfulCalls": 1,
+  "failedCalls": 0,
+  "retries": 0,
+  "maxCalls": 1,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.03,
+  "actualSpendUsd": 0.014605,
+  "actualUsage": [
+    {
+      "rank": 1,
+      "jobId": "apple__mature__tree__dormant__branch-structure-v2__medium",
+      "canonicalSlug": "apple",
+      "quality": "medium",
+      "usage": {
+        "input_tokens": 863,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 863
+        },
+        "output_tokens": 343,
+        "output_tokens_details": {
+          "image_tokens": 343,
+          "text_tokens": 0
+        },
+        "total_tokens": 1206
+      },
+      "spendUsd": 0.014605,
+      "spendSource": "provider_usage"
+    }
+  ],
+  "jobs": [
+    {
+      "rank": 1,
+      "jobId": "apple__mature__tree__dormant__branch-structure-v2__medium",
+      "runId": "design-asset-branch-structure-calibration-1",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "family": "BRANCH_STRUCTURE",
+      "quality": "medium",
+      "highQuality": false,
+      "model": "gpt-image-2.5-flare-2026-09-08",
+      "size": "1024x1536",
+      "background": "transparent",
+      "outputFormat": "png",
+      "retries": 0,
+      "promptTemplateVersion": "design-cutout-branch-structure-v2-experiment",
+      "prompt": "FAMILY LOCK for Malus domestica (canonical identity apple). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. BRANCH STRUCTURE REQUIREMENTS: mature dormant apple tree; completely leafless; clearly readable primary branch hierarchy; clearly readable secondary branches; restrained natural fine twigs; realistic dormant apple branching; opaque realistic wood where branches exist; clean transparent negative space between branches; crisp separation between branch edges and transparency; natural bark texture; natural branch taper; realistic branch junctions; coherent single-tree architecture; healthy dormant tree not dead or damaged; full specimen; true transparent background; natural three-quarter garden perspective. Prefer a clean botanically plausible hierarchy over filling every crown area with tiny twigs. The tree must read clearly at native 100%. ALPHA / TRANSPARENCY CONTRACT: transparency is empty space. Where no branch exists, alpha must be fully transparent. Where wood exists, branch pixels must be substantially opaque, except normal anti-aliased edge pixels. Do not intentionally represent branches through translucent brown mist. Do not solve thin twigs by filling the crown with semi-transparent texture. COMPLEXITY CONTROL: prefer clean primary and secondary architecture over excessive internal twig density. Do not request a cloud of interior twigs. BRANCH STRUCTURE FORBIDDEN: translucent brown clouds; semi-transparent branch masses; ghost branches; duplicated faded twigs; residual foliage silhouettes; brown haze; fuzzy alpha around branch clusters; painterly branch masses; specimen-wide soft focus; excessive twig density; branch-like atmospheric texture; fake shadow or background residue; dead-tree appearance; leaves; green foliage; buds or leaves used as filler unless botanically necessary and visually minimal. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Do not apply leafy foliage-detail requirements to this leafless dormant variant. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=dormant. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. DORMANT: completely leafless mature apple tree. Preserve trunk identity. Clean primary / secondary hierarchy. Restrained natural fine twigs. Opaque wood where branches exist. True transparent negative space between branches. No residual foliage silhouettes, no leaves, no green filler, no brown haze, no ghost branches. Living dormant tree, not dead or damaged. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+      "alphaContract": {
+        "emptySpaceIsTransparent": true,
+        "woodIsSubstantiallyOpaque": true,
+        "antiAliasedEdgesAllowed": true,
+        "doNotRepresentBranchesAsTranslucentBrownMist": true,
+        "doNotFillCrownWithSemiTransparentTexture": true
+      },
+      "inheritFoliageDetailV2": false,
+      "generateNow": false,
+      "generated": true,
+      "approvalStatus": "candidate",
+      "historicalControl": {
+        "arm": "CONTROL",
+        "label": "HISTORICAL CONTROL — NOT APPROVED",
+        "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "failure": "brown ghosting / fully opaque pixels = 0",
+        "approved": false,
+        "modify": false,
+        "reencode": false
+      },
+      "candidateFile": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png",
+      "factoryDefaultQuality": "medium",
+      "status": "GENERATED",
+      "httpStatus": 200,
+      "error": null,
+      "file": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png",
+      "bytes": 2094269,
+      "TECHNICAL_QA": "PASS",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2094269,
+          "cornerAlpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 35,
+            "minY": 62,
+            "maxX": 987,
+            "maxY": 1480,
+            "opaque": 413855
+          },
+          "alphaCoverage": 0.2631219228108724,
+          "haloPartialPixels": 0
+        }
+      },
+      "BOTANICAL_IDENTITY_QA": "UNKNOWN",
+      "DETAIL_QA": "UNKNOWN",
+      "STATE_QA": "UNKNOWN",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "familyPolicy": null,
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "approvalEligible": false,
+      "autoApproved": false,
+      "actualModel": "gpt-image-2.5-flare-2026-09-08",
+      "actualQuality": "medium",
+      "actualSpendUsd": 0.014605
+    }
+  ],
+  "imagesGenerated": 1,
+  "extraJobs": 0,
+  "autoApprovedAssets": 0,
+  "highCalls": 0,
+  "productionRegistryChanged": false,
+  "oliveAssetChanged": false,
+  "controlChanged": false,
+  "massGenerationStarted": false,
+  "familyPolicyAutoChanged": false,
+  "candidateDir": "modules/garden-design/assets/plants/branch-structure-calibration-1",
+  "liveReviewHash": "#design-asset-branch-structure-calibration-1",
+  "alphaComparison": {
+    "CONTROL": {
+      "arm": "CONTROL",
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png",
+      "generated": true,
+      "historicalControlNotApproved": true,
+      "width": 1024,
+      "height": 1536,
+      "totalPixels": 1572864,
+      "fullyTransparent": 918220,
+      "ghostAlpha1to64": 379152,
+      "partialAlpha65to191": 149494,
+      "edgeAlpha192to254": 125998,
+      "opaqueAlpha255": 0,
+      "fullyOpaquePixelPercent": 0,
+      "brownSemiTransparent": 649643,
+      "brownSemiTransparentRatioOfVisible": 0.992361,
+      "connectedBranchStructureVisibility": {
+        "connectedOpaqueComponents": 0,
+        "largestOpaqueComponentPx": 0,
+        "label": "NO_OPAQUE_WOOD",
+        "universalThresholdDefined": false
+      },
+      "universalMagicThreshold": null,
+      "ownerVisualReviewAuthoritative": true
+    },
+    "NEW": {
+      "arm": "NEW",
+      "file": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png",
+      "generated": true,
+      "width": 1024,
+      "height": 1536,
+      "totalPixels": 1572864,
+      "fullyTransparent": 933392,
+      "ghostAlpha1to64": 432963,
+      "partialAlpha65to191": 91742,
+      "edgeAlpha192to254": 114767,
+      "opaqueAlpha255": 0,
+      "fullyOpaquePixelPercent": 0,
+      "brownSemiTransparent": 627882,
+      "brownSemiTransparentRatioOfVisible": 0.981876,
+      "connectedBranchStructureVisibility": {
+        "connectedOpaqueComponents": 0,
+        "largestOpaqueComponentPx": 0,
+        "label": "NO_OPAQUE_WOOD",
+        "universalThresholdDefined": false
+      },
+      "universalMagicThreshold": null,
+      "ownerVisualReviewAuthoritative": true
+    },
+    "universalMagicThreshold": null,
+    "ownerVisualReviewAuthoritative": true
+  },
+  "branchStructureStatus": "OWNER_REVIEW_REQUIRED",
+  "keyPresence": "PRESENT"
+}
