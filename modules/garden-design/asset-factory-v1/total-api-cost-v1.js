@@ -1,8 +1,11 @@
 /**
- * Total expected API spend for gpt-image-2 (image output + text input).
+ * Total expected API spend for the locked factory image model (image output + text input).
  * Published rates, not a live quote. Exact per-run tokens are unknown until usage returns.
  */
-import { PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536 } from '../../runtime-guards/paid-image-spend-gate-v1.js';
+import {
+  PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536,
+  PAID_IMAGE_MODEL
+} from '../../runtime-guards/paid-image-spend-gate-v1.js';
 
 export const GPT_IMAGE_2_PUBLISHED_RATES = Object.freeze({
   source: 'openai-published-token-rates',
@@ -33,6 +36,21 @@ export function textInputAllowanceUsdPerCall(
   return +((Number(tokens) * Number(usdPer1M)) / 1_000_000).toFixed(6);
 }
 
+export function actualSpendUsdFromUsage(usage) {
+  if (!usage || typeof usage !== 'object') return null;
+  const details = usage.input_tokens_details || {};
+  const text = Number(details.text_tokens ?? 0);
+  const imageIn = Number(details.image_tokens ?? 0);
+  const imageOut = Number(usage.output_tokens ?? 0);
+  if (!Number.isFinite(text + imageIn + imageOut) || text + imageIn + imageOut <= 0) return null;
+  const usd =
+    (text * GPT_IMAGE_2_PUBLISHED_RATES.textInputUsdPer1MTokens +
+      imageIn * GPT_IMAGE_2_PUBLISHED_RATES.imageInputUsdPer1MTokens +
+      imageOut * GPT_IMAGE_2_PUBLISHED_RATES.imageOutputUsdPer1MTokens) /
+    1_000_000;
+  return +usd.toFixed(6);
+}
+
 export function totalExpectedUsdPerCall(options = {}) {
   const imageOutput = Number(
     options.imageOutputUsd ?? GPT_IMAGE_2_PUBLISHED_RATES.knownImageOutputUsdMedium1024x1536
@@ -58,7 +76,7 @@ export function estimateCalibrationApiSpend(options = {}) {
   const maxSpendUsd = 1.5;
   return {
     provider: 'openai-images-api',
-    model: 'gpt-image-2',
+    model: PAID_IMAGE_MODEL,
     initialCalls,
     proposedRetries: CALIBRATION_CALL_PLAN.proposedRetries,
     maximumTotalCalls: maxCalls,

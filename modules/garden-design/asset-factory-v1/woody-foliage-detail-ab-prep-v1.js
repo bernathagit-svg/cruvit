@@ -24,7 +24,7 @@ const DEFAULT_ROOT = path.resolve(HERE, '..', '..', '..');
 
 export const WOODY_FOLIAGE_DETAIL_AB_VERSION = 'woody-foliage-detail-ab-prep-v1';
 export const WOODY_FOLIAGE_DETAIL_AB_RUN_ID = 'design-asset-woody-foliage-detail-ab-1';
-export const WOODY_FOLIAGE_DETAIL_AB_CACHE_BUST = '20260919w';
+export const WOODY_FOLIAGE_DETAIL_AB_CACHE_BUST = '20260919x';
 
 export const CONTROL_JOB = Object.freeze({
   arm: 'CONTROL',
@@ -54,6 +54,14 @@ const BASE_JOB = Object.freeze({
   variantKey: 'mature__tree__vegetative'
 });
 
+export const WOODY_FOLIAGE_DETAIL_AB_HARD_CAP_USD = 0.3;
+export const PAID_IMAGE_OUTPUT_USD_HIGH_1024x1536 = 0.165;
+export const WOODY_FOLIAGE_DETAIL_AB_FORBIDDEN_QUALITY = Object.freeze([
+  'xhigh',
+  'max',
+  'auto'
+]);
+
 export const WOODY_FOLIAGE_DETAIL_AB_SPEND_GATE = Object.freeze({
   state: 'DENIED',
   execute: false,
@@ -63,12 +71,20 @@ export const WOODY_FOLIAGE_DETAIL_AB_SPEND_GATE = Object.freeze({
   maxJobs: 2,
   maxCalls: 2,
   maxRetries: 0,
+  maxSpendUsd: WOODY_FOLIAGE_DETAIL_AB_HARD_CAP_USD,
   model: PAID_IMAGE_MODEL,
   provider: 'openai-images-api',
   size: PAID_IMAGE_SIZE,
+  candidateAQuality: 'medium',
+  candidateBQuality: 'high',
+  forbiddenQuality: WOODY_FOLIAGE_DETAIL_AB_FORBIDDEN_QUALITY,
+  extraJobs: false,
+  fallbackGeneration: false,
+  modelChange: false,
+  qualityEscalationBeyondHigh: false,
   background: DEFAULT_GENERATION_SETTINGS.background,
   outputFormat: DEFAULT_GENERATION_SETTINGS.outputFormat,
-  note: 'Owner must explicitly approve this exact runId and cost ceiling. Batch-2 approval does not apply. Do not globally switch quality to high.'
+  note: 'Owner must explicitly approve this exact runId and $0.30 hard cap. Batch-2 approval does not apply. Do not globally switch quality to high.'
 });
 
 export const DECISION_RULES = Object.freeze({
@@ -153,34 +169,44 @@ export function costPreflightWoodyFoliageDetailAb() {
   const jobs = buildWoodyFoliageDetailAbJobs();
   const promptChars = String(jobs[0].prompt || '').length;
   const estimatedTextTokens = Math.max(1, Math.ceil(promptChars / 4));
-  const mediumImageOutputUsd = PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536;
   const textUsd = textInputAllowanceUsdPerCall(estimatedTextTokens);
+  const mediumImageOutputUsd = PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536;
+  const highImageOutputUsd = PAID_IMAGE_OUTPUT_USD_HIGH_1024x1536;
   const mediumProjected = +(mediumImageOutputUsd + textUsd).toFixed(6);
-  const highImageOutputUsd = null;
-  const unresolved =
-    highImageOutputUsd == null
-      ? 'COST_PREFLIGHT_UNRESOLVED'
-      : null;
+  const highProjected = +(highImageOutputUsd + textUsd).toFixed(6);
+  const projectedTotal = +(mediumProjected + highProjected).toFixed(6);
   return {
+    status: 'WOODY_FOLIAGE_DETAIL_AB_COST_PREFLIGHT_READY',
     model: PAID_IMAGE_MODEL,
     size: PAID_IMAGE_SIZE,
     paidProbe: false,
+    officialPricingBasis: {
+      textInputUsdPer1MTokens: GPT_IMAGE_2_PUBLISHED_RATES.textInputUsdPer1MTokens,
+      imageOutputUsdPer1MTokens: GPT_IMAGE_2_PUBLISHED_RATES.imageOutputUsdPer1MTokens,
+      comparableGptImageTokenSchedule1024x1536: {
+        mediumOutputUsd: mediumImageOutputUsd,
+        highOutputUsd: highImageOutputUsd
+      },
+      source: 'official-openai-token-rates-owner-confirmed-for-this-run'
+    },
     mediumArm: {
       quality: 'medium',
-      imageOutputUsdKnown: mediumImageOutputUsd,
+      imageOutputUsd: mediumImageOutputUsd,
       estimatedTextTokens,
       estimatedTextUsd: textUsd,
-      projectedUsd: mediumProjected,
-      source: 'local PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536 + published text-input rate'
+      projectedUsd: mediumProjected
     },
     highArm: {
       quality: 'high',
-      imageOutputUsdKnown: null,
-      reason: 'No PAID_IMAGE_OUTPUT_USD_HIGH_1024x1536 (or high image-output token count) is configured on the runner. Do not invent a high rate. Do not probe.'
+      imageOutputUsd: highImageOutputUsd,
+      estimatedTextTokens,
+      estimatedTextUsd: textUsd,
+      projectedUsd: highProjected
     },
-    imageOutputUsdPer1MTokens: GPT_IMAGE_2_PUBLISHED_RATES.imageOutputUsdPer1MTokens,
-    projectedMaxSpend: unresolved,
-    costPreflight: unresolved,
+    projectedTotalUsd: projectedTotal,
+    projectedMaxSpend: projectedTotal,
+    hardRunCapUsd: WOODY_FOLIAGE_DETAIL_AB_HARD_CAP_USD,
+    costPreflight: 'READY',
     doNotExecute: true
   };
 }
@@ -210,7 +236,7 @@ export function writeWoodyFoliageDetailAbReports(root = DEFAULT_ROOT) {
   fs.mkdirSync(dir, { recursive: true });
   const summary = {
     contract: WOODY_FOLIAGE_DETAIL_AB_VERSION,
-    verdict: 'WOODY_FOLIAGE_DETAIL_AB_PREPARED',
+    verdict: 'WOODY_FOLIAGE_DETAIL_AB_COST_PREFLIGHT_READY',
     runId: WOODY_FOLIAGE_DETAIL_AB_RUN_ID,
     control: CONTROL_JOB,
     jobs,
@@ -241,7 +267,10 @@ export function writeWoodyFoliageDetailAbReports(root = DEFAULT_ROOT) {
       `--model=${PAID_IMAGE_MODEL}`,
       '--max-jobs=2',
       '--max-calls=2',
-      '--max-retries=0'
+      '--max-retries=0',
+      '--max-spend-usd=0.30',
+      '--quality-a=medium',
+      '--quality-b=high'
     ],
     authorizedNow: false,
     spend: { openaiCalls: 0, imageGeneration: 0, additionalSpendUsd: 0 }
@@ -271,6 +300,15 @@ export function writeWoodyFoliageDetailAbReports(root = DEFAULT_ROOT) {
       2
     )}\n`
   );
+  let lastRun = null;
+  if (fs.existsSync(files.spendPath)) {
+    try {
+      const prior = JSON.parse(fs.readFileSync(files.spendPath, 'utf8'));
+      if (prior && prior.lastRun) lastRun = prior.lastRun;
+    } catch {
+      lastRun = null;
+    }
+  }
   fs.writeFileSync(
     files.spendPath,
     `${JSON.stringify(
@@ -279,6 +317,7 @@ export function writeWoodyFoliageDetailAbReports(root = DEFAULT_ROOT) {
         gate: WOODY_FOLIAGE_DETAIL_AB_SPEND_GATE,
         executeResult: executeWoodyFoliageDetailAb(),
         costPreflight: cost,
+        lastRun,
         authorizedNow: false
       },
       null,
@@ -289,9 +328,10 @@ export function writeWoodyFoliageDetailAbReports(root = DEFAULT_ROOT) {
   return {
     ...files,
     reviewHtml: review.htmlPath,
-    verdict: 'WOODY_FOLIAGE_DETAIL_AB_PREPARED',
+    verdict: cost.status,
     jobsPrepared: 2,
     costPreflight: cost.costPreflight,
-    projectedMaxSpend: cost.projectedMaxSpend
+    projectedMaxSpend: cost.projectedMaxSpend,
+    hardRunCapUsd: cost.hardRunCapUsd
   };
 }

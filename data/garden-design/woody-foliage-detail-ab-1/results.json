@@ -1,23 +1,63 @@
 {
-  "contract": "woody-foliage-detail-ab-prep-v1",
-  "verdict": "WOODY_FOLIAGE_DETAIL_AB_COST_PREFLIGHT_READY",
+  "blocked": false,
+  "executed": true,
+  "reason": null,
+  "failFast": null,
   "runId": "design-asset-woody-foliage-detail-ab-1",
-  "control": {
-    "arm": "CONTROL",
-    "jobId": "mango__mature__tree__vegetative__v1",
-    "canonicalSlug": "mango",
-    "scientific": "Mangifera indica",
-    "visualForm": "tree",
-    "architectureMode": "tree",
-    "growthStage": "mature",
-    "phenologyState": "vegetative",
-    "quality": "medium",
-    "promptTemplateVersion": "design-cutout-visual-state-family-v1",
-    "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png",
-    "regenerate": false,
-    "ASSET_DETAIL_SOFT": true,
-    "OWNER_VISUAL_QA": "NEEDS_IMPROVEMENT"
-  },
+  "model": "gpt-image-2.5-flare-2026-09-08",
+  "ownerApprovedThisRunOnly": true,
+  "approvalState": "APPROVED_THIS_RUN_ONLY_EXHAUSTED",
+  "spendGateFinal": "DENIED",
+  "attemptedCalls": 2,
+  "successfulCalls": 2,
+  "failedCalls": 0,
+  "retries": 0,
+  "maxCalls": 2,
+  "maxRetries": 0,
+  "maxSpendUsd": 0.3,
+  "actualSpendUsd": 0.05722,
+  "actualUsage": [
+    {
+      "arm": "A",
+      "jobId": "mango__mature__tree__vegetative__detail-v2__medium",
+      "quality": "medium",
+      "usage": {
+        "input_tokens": 577,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 577
+        },
+        "output_tokens": 343,
+        "output_tokens_details": {
+          "image_tokens": 343,
+          "text_tokens": 0
+        },
+        "total_tokens": 920
+      },
+      "spendUsd": 0.013175,
+      "spendSource": "provider_usage"
+    },
+    {
+      "arm": "B",
+      "jobId": "mango__mature__tree__vegetative__detail-v2__high",
+      "quality": "high",
+      "usage": {
+        "input_tokens": 577,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 577
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1949
+      },
+      "spendUsd": 0.044045,
+      "spendSource": "provider_usage"
+    }
+  ],
   "jobs": [
     {
       "canonicalSlug": "mango",
@@ -34,7 +74,53 @@
       "quality": "medium",
       "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
       "prompt": "FAMILY LOCK for Mangifera indica (canonical identity mango). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural mango leaves; clear leaflet and leaf boundaries throughout the canopy; realistic fine botanical foliage texture; visible separation between overlapping leaf clusters; crisp photographic leaf and branch definition; natural variation between foreground and interior foliage; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; oversharpened cutout edges. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
-      "generateNow": false
+      "generateNow": false,
+      "generated": true,
+      "status": "GENERATED",
+      "httpStatus": 200,
+      "error": null,
+      "file": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__medium.png",
+      "bytes": 2753744,
+      "TECHNICAL_QA": "PASS",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2753744,
+          "cornerAlpha": [
+            0,
+            0,
+            1,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 24,
+            "minY": 118,
+            "maxX": 1009,
+            "maxY": 1471,
+            "opaque": 792480
+          },
+          "alphaCoverage": 0.50384521484375,
+          "haloPartialPixels": 58
+        }
+      },
+      "actualModel": "gpt-image-2.5-flare-2026-09-08",
+      "actualQuality": "medium",
+      "actualSpendUsd": 0.013175,
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "approvalStatus": "candidate",
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "autoApproved": false,
+      "approvalEligible": false,
+      "retries": 0
     },
     {
       "canonicalSlug": "mango",
@@ -51,143 +137,64 @@
       "quality": "high",
       "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
       "prompt": "FAMILY LOCK for Mangifera indica (canonical identity mango). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural mango leaves; clear leaflet and leaf boundaries throughout the canopy; realistic fine botanical foliage texture; visible separation between overlapping leaf clusters; crisp photographic leaf and branch definition; natural variation between foreground and interior foliage; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; oversharpened cutout edges. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
-      "generateNow": false
+      "generateNow": false,
+      "generated": true,
+      "status": "GENERATED",
+      "httpStatus": 200,
+      "error": null,
+      "file": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+      "bytes": 2877655,
+      "TECHNICAL_QA": "PASS",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2877655,
+          "cornerAlpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 35,
+            "minY": 63,
+            "maxX": 1006,
+            "maxY": 1499,
+            "opaque": 805985
+          },
+          "alphaCoverage": 0.5124314626057943,
+          "haloPartialPixels": 116
+        }
+      },
+      "actualModel": "gpt-image-2.5-flare-2026-09-08",
+      "actualQuality": "high",
+      "actualSpendUsd": 0.044045,
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "approvalStatus": "candidate",
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "autoApproved": false,
+      "approvalEligible": false,
+      "retries": 0
     }
   ],
-  "jobsPrepared": 2,
-  "apiCallsPrepared": 2,
-  "retriesAuthorized": 0,
-  "generateNow": false,
-  "executed": false,
-  "productionPromptChanged": false,
-  "productionFactoryQuality": "medium",
+  "imagesGenerated": 2,
+  "extraJobs": 0,
+  "autoApprovedAssets": 0,
   "productionRegistryChanged": false,
-  "visualStateContractReopened": false,
-  "globalQualitySwitchToHigh": false,
-  "decisionRules": {
-    "appliedToFactory": false,
-    "rules": [
-      {
-        "when": "CONTROL soft + A acceptable + B not materially better",
-        "futureCandidate": "DETAIL_PROMPT_V2 + MEDIUM"
-      },
-      {
-        "when": "CONTROL soft + A still soft + B acceptable",
-        "futureCandidate": "HIGH may be justified for woody/dense foliage only"
-      },
-      {
-        "when": "A acceptable + B visibly superior enough to matter",
-        "futureCandidate": "owner decides whether quality gain justifies cost for affected morphology classes"
-      },
-      {
-        "when": "A soft + B soft",
-        "futureCandidate": "STOP. Do not scale generation. Quality alone does not solve the problem."
-      }
-    ]
-  },
-  "morphologyPolicy": {
-    "formalized": false,
-    "status": "NOT_FORMALIZED_UNTIL_AB_REVIEWED",
-    "bananaEvidence": "CRISP_ENOUGH at medium; HIGH is not universally required",
-    "possibleFutureClasses": [
-      "WOODY_DENSE_SMALL_LEAF",
-      "LARGE_LEAF_HERBACEOUS",
-      "ROSETTE",
-      "SUCCULENT"
-    ]
-  },
-  "costPreflight": {
-    "status": "WOODY_FOLIAGE_DETAIL_AB_COST_PREFLIGHT_READY",
-    "model": "gpt-image-2.5-flare-2026-09-08",
-    "size": "1024x1536",
-    "paidProbe": false,
-    "officialPricingBasis": {
-      "textInputUsdPer1MTokens": 5,
-      "imageOutputUsdPer1MTokens": 30,
-      "comparableGptImageTokenSchedule1024x1536": {
-        "mediumOutputUsd": 0.041,
-        "highOutputUsd": 0.165
-      },
-      "source": "official-openai-token-rates-owner-confirmed-for-this-run"
-    },
-    "mediumArm": {
-      "quality": "medium",
-      "imageOutputUsd": 0.041,
-      "estimatedTextTokens": 753,
-      "estimatedTextUsd": 0.003765,
-      "projectedUsd": 0.044765
-    },
-    "highArm": {
-      "quality": "high",
-      "imageOutputUsd": 0.165,
-      "estimatedTextTokens": 753,
-      "estimatedTextUsd": 0.003765,
-      "projectedUsd": 0.168765
-    },
-    "projectedTotalUsd": 0.21353,
-    "projectedMaxSpend": 0.21353,
-    "hardRunCapUsd": 0.3,
-    "costPreflight": "READY",
-    "doNotExecute": true
-  },
-  "spendGate": {
-    "state": "DENIED",
-    "execute": false,
-    "previousApprovalCarryForward": false,
-    "batch2ApprovalCarryForward": false,
-    "retriesAuthorized": 0,
-    "maxJobs": 2,
-    "maxCalls": 2,
-    "maxRetries": 0,
-    "maxSpendUsd": 0.3,
-    "model": "gpt-image-2.5-flare-2026-09-08",
-    "provider": "openai-images-api",
-    "size": "1024x1536",
-    "candidateAQuality": "medium",
-    "candidateBQuality": "high",
-    "forbiddenQuality": [
-      "xhigh",
-      "max",
-      "auto"
-    ],
-    "extraJobs": false,
-    "fallbackGeneration": false,
-    "modelChange": false,
-    "qualityEscalationBeyondHigh": false,
-    "background": "transparent",
-    "outputFormat": "png",
-    "note": "Owner must explicitly approve this exact runId and $0.30 hard cap. Batch-2 approval does not apply. Do not globally switch quality to high."
-  },
-  "ownerMarks": [
-    "DETAIL_OK",
-    "DETAIL_SOFT",
-    "PAINTERLY",
-    "HALO",
-    "OVER_SHARP",
-    "CGI_TEXTURE",
-    "OTHER"
-  ],
-  "questions": [
-    "Q1: Does A materially improve detail over CONTROL? If YES, prompt correction has value.",
-    "Q2: Does B materially improve detail over A? If YES, HIGH quality adds meaningful value."
-  ],
-  "proposedFutureCommand": [
-    "--run-id=design-asset-woody-foliage-detail-ab-1",
-    "--approve-envelope=design-asset-woody-foliage-detail-ab-1",
-    "--owner-approve-run=design-asset-woody-foliage-detail-ab-1",
-    "--provider=openai-images-api",
-    "--model=gpt-image-2.5-flare-2026-09-08",
-    "--max-jobs=2",
-    "--max-calls=2",
-    "--max-retries=0",
-    "--max-spend-usd=0.30",
-    "--quality-a=medium",
-    "--quality-b=high"
-  ],
-  "authorizedNow": false,
-  "spend": {
-    "openaiCalls": 0,
-    "imageGeneration": 0,
-    "additionalSpendUsd": 0
-  }
+  "oliveAssetChanged": false,
+  "controlChanged": false,
+  "productionFactoryQualityChanged": false,
+  "productionFactoryPromptChanged": false,
+  "candidateDir": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1",
+  "liveReviewHash": "#design-asset-woody-foliage-detail-ab-1",
+  "keyPresence": "PRESENT"
 }

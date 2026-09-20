@@ -4,11 +4,14 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { RUNTIME_BLEND_V2 } from './in-garden-qa-v1.js';
 import { groundAnchorFromBbox } from './composition-calibration-v2.js';
 
 export const WOODY_FOLIAGE_DETAIL_AB_REVIEW_LIVE_REL =
   'modules/garden-design/woody-foliage-detail-ab-1.html';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
 
 const CONTROL_FILE =
   'modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png';
@@ -70,15 +73,22 @@ function inspectSlot(arm, label, src, note, lockedSoft) {
   </div>`;
 }
 
-function gardenSlot(arm, label, src) {
+function gardenSlot(arm, label, src, metrics) {
   const inner = src
     ? `<div class="placement" data-role="placement">
         <img class="cutout blend-v2" alt="${esc(label)}" src="${esc(src)}" data-approval-status="candidate"/>
         <span class="ground-shadow" aria-hidden="true"></span>
       </div>`
     : `<div class="ghost blocked">ASSET NOT GENERATED — ${esc(arm)}</div>`;
-  const bbox = { exists: true, minX: 7, minY: 92, maxX: 1016, maxY: 1459 };
-  const anchor = groundAnchorFromBbox(bbox, { width: 1024, height: 1536 });
+  const bbox = metrics && metrics.bbox && metrics.bbox.exists !== false
+    ? metrics.bbox
+    : { exists: true, minX: 7, minY: 92, maxX: 1016, maxY: 1459 };
+  const width = Number(metrics && metrics.width) || 1024;
+  const height = Number(metrics && metrics.height) || 1536;
+  const anchor = groundAnchorFromBbox(
+    { exists: true, minX: bbox.minX, minY: bbox.minY, maxX: bbox.maxX, maxY: bbox.maxY },
+    { width, height }
+  );
   const attrs = [
     'data-visual-form="tree"',
     'data-architecture-mode="tree"',
@@ -87,7 +97,7 @@ function gardenSlot(arm, label, src) {
     'data-phenology="vegetative"',
     'data-lock-depth="middle"',
     'data-scale-model="physical-v1"',
-    'data-canvas="1024,1536"',
+    `data-canvas="${width},${height}"`,
     `data-bbox="${bbox.minX},${bbox.minY},${bbox.maxX},${bbox.maxY}"`,
     `data-ground-anchor="${anchor.nx},${anchor.ny}"`,
     'data-size-scenario="NATURAL_MATURE"',
@@ -103,10 +113,45 @@ function gardenSlot(arm, label, src) {
   </div>`;
 }
 
-export function buildWoodyFoliageDetailAbReviewHtml() {
+const GENERATED_A_FILE =
+  'modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__medium.png';
+const GENERATED_B_FILE =
+  'modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png';
+const RESULTS_REL = path.join('data', 'garden-design', 'woody-foliage-detail-ab-1', 'results.json');
+
+function existingRel(root, rel) {
+  if (!rel) return '';
+  const abs = path.join(root, rel);
+  return fs.existsSync(abs) ? String(rel).replace(/\\/g, '/') : '';
+}
+
+function metricsFromResults(root, arm) {
+  const resultsPath = path.join(root, RESULTS_REL);
+  if (!fs.existsSync(resultsPath)) return null;
+  try {
+    const parsed = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
+    const row = Array.isArray(parsed.jobs) ? parsed.jobs.find((j) => j && j.arm === arm) : null;
+    return row && row.technicalQa && row.technicalQa.metrics ? row.technicalQa.metrics : null;
+  } catch {
+    return null;
+  }
+}
+
+export function buildWoodyFoliageDetailAbReviewHtml(options = {}) {
+  const root = options.root || path.resolve(HERE, '..', '..', '..');
+  const aFile = options.aFile || existingRel(root, GENERATED_A_FILE);
+  const bFile = options.bFile || existingRel(root, GENERATED_B_FILE);
   const controlSrc = liveCutoutSrc(CONTROL_FILE);
+  const aSrc = liveCutoutSrc(aFile);
+  const bSrc = liveCutoutSrc(bFile);
+  const aMetrics = options.aMetrics || metricsFromResults(root, 'A');
+  const bMetrics = options.bMetrics || metricsFromResults(root, 'B');
+  const generatedCount = [aSrc, bSrc].filter(Boolean).length;
   const v2 = RUNTIME_BLEND_V2.defaults || {};
   const blendFilter = `brightness(${v2.brightness || 0.94}) contrast(${v2.contrast || 0.92}) saturate(${v2.saturate || 0.9}) blur(${v2.blurPx || 0.4}px)`;
+  const banner = generatedCount
+    ? `Candidates only. CONTROL unchanged. ${generatedCount}/2 A/B generated. Native detail is the primary gate. Spend gate DENIED after this run.`
+    : 'Spend gate DENIED. CONTROL is the existing Batch-2 PNG. A and B are prepared, not generated. Native detail is the primary gate. In-Garden is secondary.';
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -146,20 +191,20 @@ export function buildWoodyFoliageDetailAbReviewHtml() {
 </head>
 <body data-run-id="design-asset-woody-foliage-detail-ab-1" data-owner-qa-storage="cruvit:woody-foliage-detail-ab-1">
   <h1>Woody foliage detail A/B — mango TREE MATURE VEGETATIVE</h1>
-  <p id="realGardenBanner" class="ok">Spend gate DENIED. CONTROL is the existing Batch-2 PNG. A and B are prepared, not generated. Native detail is the primary gate. In-Garden is secondary.</p>
+  <p id="realGardenBanner" class="${generatedCount ? 'ok' : 'warn'}">${esc(banner)}</p>
   <p class="note">runId design-asset-woody-foliage-detail-ab-1. Production factory prompt unchanged. Quality globally remains medium. No Batch-2 approval carry-forward.</p>
   <h3>A. NATIVE ASSET INSPECTION (primary)</h3>
   <div class="slots inspect-row">
     ${inspectSlot('CONTROL', 'CONTROL — old prompt / medium', controlSrc, 'design-cutout-visual-state-family-v1 · quality=medium · ASSET_DETAIL_SOFT', true)}
-    ${inspectSlot('A', 'A — detail prompt V2 / medium', '', 'experimental V2 · quality=medium · not generated', false)}
-    ${inspectSlot('B', 'B — detail prompt V2 / high', '', 'same V2 prompt as A · quality=high · not generated', false)}
+    ${inspectSlot('A', 'A — detail prompt V2 / medium', aSrc, aSrc ? 'experimental V2 · quality=medium · CALIBRATION_CANDIDATE' : 'experimental V2 · quality=medium · not generated', false)}
+    ${inspectSlot('B', 'B — detail prompt V2 / high', bSrc, bSrc ? 'same V2 prompt as A · quality=high · CALIBRATION_CANDIDATE' : 'same V2 prompt as A · quality=high · not generated', false)}
   </div>
   <h3>B. IN-GARDEN COMPARISON (secondary)</h3>
   <p class="note">Production Tree Physical Scale V1 · Mango LOW. Blend V2 garden-only. Do not judge native leaf detail here.</p>
   <div class="slots garden-row">
     ${gardenSlot('CONTROL', 'CONTROL', controlSrc)}
-    ${gardenSlot('A', 'A', '')}
-    ${gardenSlot('B', 'B', '')}
+    ${gardenSlot('A', 'A', aSrc, aMetrics)}
+    ${gardenSlot('B', 'B', bSrc, bMetrics)}
   </div>
   <ol class="questions">
     <li>Q1. Does A materially improve detail over CONTROL? If YES, prompt correction has value.</li>
@@ -171,9 +216,9 @@ export function buildWoodyFoliageDetailAbReviewHtml() {
 `;
 }
 
-export function writeWoodyFoliageDetailAbReview(root) {
+export function writeWoodyFoliageDetailAbReview(root, options = {}) {
   const htmlPath = path.join(root, WOODY_FOLIAGE_DETAIL_AB_REVIEW_LIVE_REL);
-  fs.writeFileSync(htmlPath, `${buildWoodyFoliageDetailAbReviewHtml()}`);
+  fs.writeFileSync(htmlPath, `${buildWoodyFoliageDetailAbReviewHtml({ ...options, root })}`);
   return { htmlPath, liveRel: WOODY_FOLIAGE_DETAIL_AB_REVIEW_LIVE_REL, generateOnRender: false };
 }
 

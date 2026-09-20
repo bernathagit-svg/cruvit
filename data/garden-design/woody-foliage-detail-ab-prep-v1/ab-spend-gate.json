@@ -9,12 +9,24 @@
     "maxJobs": 2,
     "maxCalls": 2,
     "maxRetries": 0,
+    "maxSpendUsd": 0.3,
     "model": "gpt-image-2.5-flare-2026-09-08",
     "provider": "openai-images-api",
     "size": "1024x1536",
+    "candidateAQuality": "medium",
+    "candidateBQuality": "high",
+    "forbiddenQuality": [
+      "xhigh",
+      "max",
+      "auto"
+    ],
+    "extraJobs": false,
+    "fallbackGeneration": false,
+    "modelChange": false,
+    "qualityEscalationBeyondHigh": false,
     "background": "transparent",
     "outputFormat": "png",
-    "note": "Owner must explicitly approve this exact runId and cost ceiling. Batch-2 approval does not apply. Do not globally switch quality to high."
+    "note": "Owner must explicitly approve this exact runId and $0.30 hard cap. Batch-2 approval does not apply. Do not globally switch quality to high."
   },
   "executeResult": {
     "executed": false,
@@ -29,26 +41,45 @@
     "productionRegistryChanged": false
   },
   "costPreflight": {
+    "status": "WOODY_FOLIAGE_DETAIL_AB_COST_PREFLIGHT_READY",
     "model": "gpt-image-2.5-flare-2026-09-08",
     "size": "1024x1536",
     "paidProbe": false,
+    "officialPricingBasis": {
+      "textInputUsdPer1MTokens": 5,
+      "imageOutputUsdPer1MTokens": 30,
+      "comparableGptImageTokenSchedule1024x1536": {
+        "mediumOutputUsd": 0.041,
+        "highOutputUsd": 0.165
+      },
+      "source": "official-openai-token-rates-owner-confirmed-for-this-run"
+    },
     "mediumArm": {
       "quality": "medium",
-      "imageOutputUsdKnown": 0.041,
+      "imageOutputUsd": 0.041,
       "estimatedTextTokens": 753,
       "estimatedTextUsd": 0.003765,
-      "projectedUsd": 0.044765,
-      "source": "local PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536 + published text-input rate"
+      "projectedUsd": 0.044765
     },
     "highArm": {
       "quality": "high",
-      "imageOutputUsdKnown": null,
-      "reason": "No PAID_IMAGE_OUTPUT_USD_HIGH_1024x1536 (or high image-output token count) is configured on the runner. Do not invent a high rate. Do not probe."
+      "imageOutputUsd": 0.165,
+      "estimatedTextTokens": 753,
+      "estimatedTextUsd": 0.003765,
+      "projectedUsd": 0.168765
     },
-    "imageOutputUsdPer1MTokens": 30,
-    "projectedMaxSpend": "COST_PREFLIGHT_UNRESOLVED",
-    "costPreflight": "COST_PREFLIGHT_UNRESOLVED",
+    "projectedTotalUsd": 0.21353,
+    "projectedMaxSpend": 0.21353,
+    "hardRunCapUsd": 0.3,
+    "costPreflight": "READY",
     "doNotExecute": true
+  },
+  "lastRun": {
+    "runId": "design-asset-woody-foliage-detail-ab-1",
+    "attemptedCalls": 2,
+    "actualSpendUsd": 0.05722,
+    "spendGateFinal": "DENIED",
+    "approvalExhausted": true
   },
   "authorizedNow": false
 }
