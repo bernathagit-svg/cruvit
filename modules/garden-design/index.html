@@ -3035,16 +3035,9 @@ function resolvePlantLayerAsset(layer, manifest) {
   const registryApi = window.CruvitGardenDesignAssetRegistry;
   const requestedRegistrySlug = (layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug || '').toLowerCase();
   const contextRegistry = gdOwnedGardenContext && gdOwnedGardenContext.designAssetRegistry;
-  const indexMissingRequestedSlug = !!(
-    requestedRegistrySlug &&
-    gdDesignAssetIndex &&
-    gdDesignAssetIndex.bySlug &&
-    !gdDesignAssetIndex.bySlug.has(requestedRegistrySlug)
-  );
   if (
     registryApi &&
     contextRegistry &&
-    (!gdDesignAssetIndex || indexMissingRequestedSlug) &&
     typeof registryApi.indexDesignAssetRegistry === 'function'
   ) {
     gdDesignAssetIndex = registryApi.indexDesignAssetRegistry(contextRegistry);

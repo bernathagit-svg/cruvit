@@ -94,7 +94,7 @@ test('iframe no longer claims Saved on hydrate when local is ahead, and create f
   assert.match(schedule, /op\.action === 'create'/);
   const persistResult = gd.slice(gd.indexOf('function gdOnPersistResult'), gd.indexOf('function gdRerenderPlantLayersAfterRegistryArrival'));
   assert.match(persistResult, /msg\.noop === true/);
-  assert.match(app, /index\.html\?v=20260920reg2/);
+  assert.match(app, /index\.html\?v=20260920freshreg1/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /gardenProfileId: \(gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId\)/);
   assert.match(gd, /cachedDesignId: designId/);
