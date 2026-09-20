@@ -216,9 +216,9 @@ test('production host/iframe load the versioned registry and re-index both arriv
   assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260920reg1');
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
   assert.match(app, /const token='20260920reg1'/);
-  assert.match(app, /index\.html\?v=20260920reg1/);
+  assert.match(app, /index\.html\?v=20260920dur1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
-  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920save1/);
+  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920dur1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
   assert.match(gd, /if \(ctx\.designAssetRegistry\) gdIndexDesignAssetRegistry\(ctx\.designAssetRegistry\)/);
   assert.match(gd, /if \(d\.type === 'cruvit:garden-design-asset-registry'\) gdIndexDesignAssetRegistry\(d\.designAssetRegistry\)/);

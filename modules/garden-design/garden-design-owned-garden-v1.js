@@ -69,6 +69,12 @@ export const EMPTY_SERVER_DESIGN = 'EMPTY_SERVER_DESIGN';
 export const MULTIPLE_DESIGNS_REQUIRE_SELECTION = 'MULTIPLE_DESIGNS_REQUIRE_SELECTION';
 export const LOCAL_DESIGN_RESTORE_AVAILABLE = 'LOCAL_DESIGN_RESTORE_AVAILABLE';
 export const IDENTITY_INCONSISTENT = 'IDENTITY_INCONSISTENT';
+export const DESIGN_PERSIST_SYNC = Object.freeze({
+  SERVER_SAVED: 'SERVER_SAVED',
+  LOCAL_DIRTY: 'LOCAL_DIRTY',
+  SERVER_SAVE_FAILED: 'SERVER_SAVE_FAILED',
+  LOCAL_AHEAD_OF_SERVER: 'LOCAL_AHEAD_OF_SERVER'
+});
 
 const GD_BRIDGE_TYPES = new Set([
   ...Object.values(GD_HOST_TO_DESIGN),
@@ -746,6 +752,64 @@ export function shouldWriteOnPointerPhase(phase) {
   return p === 'pointerup' || p === 'pointercancel' || p === 'change' || p === 'create' || p === 'delete' || p === 'commit';
 }
 
+export function persistablePlacementGrowthStage(value) {
+  const t = asText(value).toLowerCase();
+  if (t === 'young' || t === 'intermediate' || t === 'mature') return t;
+  return null;
+}
+
+export function classifyDesignPersistSync(input = {}) {
+  const serverPlacements = Array.isArray(input.serverPlacements) ? input.serverPlacements : [];
+  const localSnap = input.localSnapshot && typeof input.localSnapshot === 'object' ? input.localSnapshot : null;
+  const localPlacements = localSnap && Array.isArray(localSnap.placements) ? localSnap.placements : [];
+  const designId = asText(input.designId);
+  const localDesignId = asText(localSnap && localSnap.designId);
+  const gardenProfileId = asText(input.gardenProfileId);
+  const localGarden = asText(localSnap && localSnap.gardenProfileId);
+  const sameDesign = !designId || !localDesignId || localDesignId === designId;
+  const sameGarden = !gardenProfileId || !localGarden || localGarden === gardenProfileId;
+  if (sameDesign && sameGarden && localPlacements.length > serverPlacements.length) {
+    return {
+      state: DESIGN_PERSIST_SYNC.LOCAL_AHEAD_OF_SERVER,
+      ui: DESIGN_PERSIST_SYNC.LOCAL_DIRTY,
+      savedLabelForbidden: true,
+      autoImport: false,
+      shouldKeepLocalLayers: true,
+      shouldPersistVisibleLayers: true,
+      shouldOverwriteLocalCacheDurable: false,
+      serverCount: serverPlacements.length,
+      localCount: localPlacements.length
+    };
+  }
+  if (input.writeFailed === true) {
+    return {
+      state: DESIGN_PERSIST_SYNC.SERVER_SAVE_FAILED,
+      ui: DESIGN_PERSIST_SYNC.SERVER_SAVE_FAILED,
+      savedLabelForbidden: true,
+      autoImport: false,
+      shouldOverwriteLocalCacheDurable: false
+    };
+  }
+  if (input.pendingWrites === true || (input.noop === true && input.localDirty === true)) {
+    return {
+      state: DESIGN_PERSIST_SYNC.LOCAL_DIRTY,
+      ui: DESIGN_PERSIST_SYNC.LOCAL_DIRTY,
+      savedLabelForbidden: true,
+      autoImport: false,
+      shouldOverwriteLocalCacheDurable: false
+    };
+  }
+  return {
+    state: DESIGN_PERSIST_SYNC.SERVER_SAVED,
+    ui: DESIGN_PERSIST_SYNC.SERVER_SAVED,
+    savedLabelForbidden: false,
+    autoImport: false,
+    shouldOverwriteLocalCacheDurable: true,
+    serverCount: serverPlacements.length,
+    localCount: localPlacements.length
+  };
+}
+
 export function collapseAutosaveOps(ops) {
   const byId = new Map();
   for (const op of Array.isArray(ops) ? ops : []) {
@@ -957,6 +1021,7 @@ const api = {
   MULTIPLE_DESIGNS_REQUIRE_SELECTION,
   LOCAL_DESIGN_RESTORE_AVAILABLE,
   IDENTITY_INCONSISTENT,
+  DESIGN_PERSIST_SYNC,
   isGardenDesignBridgeType,
   gardenDesignPostTargetOrigin,
   acceptGardenDesignMessage,
@@ -992,6 +1057,8 @@ const api = {
   createDesignClientInstanceId,
   designServerRefKey,
   shouldWriteOnPointerPhase,
+  persistablePlacementGrowthStage,
+  classifyDesignPersistSync,
   collapseAutosaveOps,
   classifyLegacyLocalSnapshotImport,
   mapLayerToHostPlacementPayload,

@@ -21,7 +21,8 @@ import {
   classifyLegacyLocalSnapshotImport,
   createDesignClientInstanceId,
   designPaidAiForAction,
-  mapServerPlacementToLayer
+  mapServerPlacementToLayer,
+  persistablePlacementGrowthStage
 } from './garden-design-owned-garden-v1.js';
 
 export const GARDEN_DESIGN_SERVER_PERSISTENCE_VERSION = '1.0.0';
@@ -154,6 +155,9 @@ function sanitizePersistMessage(error) {
 function persistFailFields(error, stage, operation, extra = {}) {
   const supabaseCode = asText(error && error.code) || null;
   const message = sanitizePersistMessage(error) || 'write_failed';
+  const httpStatus = extra.httpStatus
+    || (error && (error.status || error.statusCode || error.httpStatus))
+    || null;
   return Object.assign({
     ok: false,
     keepLocalCanvas: true,
@@ -161,6 +165,7 @@ function persistFailFields(error, stage, operation, extra = {}) {
     stage,
     operation,
     supabaseCode,
+    httpStatus,
     error: message
   }, extra);
 }
@@ -172,6 +177,7 @@ function logPersistConsole(info) {
       operation: info && info.operation,
       code: info && info.code,
       supabaseCode: info && info.supabaseCode,
+      httpStatus: info && info.httpStatus || null,
       message: sanitizePersistMessage(info && (info.error || info.message))
     });
   } catch (_) {}
@@ -198,7 +204,7 @@ function placementMutablePatch(row) {
     garden_plant_id: row.garden_plant_id,
     canonical_slug: row.canonical_slug,
     garden_area_id: row.garden_area_id,
-    growth_stage: row.growth_stage,
+    growth_stage: persistablePlacementGrowthStage(row.growth_stage),
     target_growth_stage: row.target_growth_stage,
     season: row.season,
     phenology: row.phenology,
@@ -680,7 +686,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
     if (listOwnedPlantRows) {
       try {
         const fetched = await listOwnedPlantRows();
-        if (Array.isArray(fetched)) rows = fetched;
+        if (Array.isArray(fetched) && (fetched.length || !rows.length)) rows = fetched;
       } catch (_) {}
     }
     const mapped = rows.map(mapOwnedPlant).filter((p) => p && p.gardenPlantId);
@@ -852,7 +858,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
   }
 
   async function findExistingDesign(payload = {}) {
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED' };
     const gardenAreaId = asNull(payload.gardenAreaId);
     const explicitId = asNull(payload.explicitDesignId || payload.designId || payload.cachedDesignId);
@@ -899,7 +905,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
   }
 
   async function ensureDesign(payload = {}) {
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED' };
     const gardenAreaId = asNull(payload.gardenAreaId);
     const found = await findExistingDesign(payload);
@@ -1075,7 +1081,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   async function savePlacement(payload = {}, mode = 'create') {
     designPaidAiForAction(mode === 'update' ? 'update-placement' : 'save-placement');
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) {
       const fail = persistFailFields({ message: 'auth_or_garden_required' }, 'savePlacement', 'auth', {
         code: 'AUTH_OR_GARDEN_REQUIRED'
@@ -1126,7 +1132,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
       garden_plant_id: gardenPlantId,
       canonical_slug: canonicalSlug,
       garden_area_id: gardenAreaId,
-      growth_stage: asNull(placement.growthStage),
+      growth_stage: persistablePlacementGrowthStage(placement.growthStage),
       target_growth_stage: asNull(placement.targetGrowthStage),
       season: asNull(placement.season),
       phenology: asNull(placement.phenology),

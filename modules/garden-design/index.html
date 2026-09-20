@@ -1265,6 +1265,9 @@ let gdLastPersistOps = [];
 let gdLastSourceMediaPost = null;
 let gdPersistStatusKind = 'save';
 let gdPersistStatusState = '';
+let gdPersistSyncState = 'SERVER_SAVED';
+let gdOutstandingPlacementWrites = 0;
+let gdPlacementWriteHadFailure = false;
 let gdDesignClientInstanceId = null;
 let gdServerDesignMeta = null;
 let gdPersistDebounceMs = 600;
@@ -1745,6 +1748,10 @@ function gdRetryLastPersist() {
     gdPostToHost(payload);
     return;
   }
+  if (plantLayers.length && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER')) {
+    gdPersistAllVisiblePlacements();
+    return;
+  }
   if (!gdLastPersistOps.length) return;
   gdPendingHostOps = gdLastPersistOps.slice();
   gdSetPersistStatus('saving');
@@ -1799,7 +1806,8 @@ function gdPersistDesignRefFields() {
     designClientInstanceId: gdEnsureDesignClientInstanceId(),
     cachedDesignId: designId,
     designId: designId,
-    gardenAreaId: gdSelectedAreaId
+    gardenAreaId: gdSelectedAreaId,
+    gardenProfileId: (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || null
   };
 }
 
@@ -1877,11 +1885,17 @@ function gdFlushHostPersist() {
     ? api.collapseAutosaveOps(gdPendingHostOps)
     : gdPendingHostOps.slice();
   gdPendingHostOps = [];
-  if (!ops.length || gdHydratingFromServer) return;
+  if (!ops.length) return;
+  if (gdHydratingFromServer) {
+    gdPendingHostOps = ops.concat(gdPendingHostOps);
+    return;
+  }
   gdLastPersistOps = ops.slice();
+  gdPersistSyncState = 'LOCAL_DIRTY';
   gdSetPersistStatus('saving');
   ops.forEach(function(op) {
     if (op.action === 'delete') {
+      gdOutstandingPlacementWrites += 1;
       gdPostToHost(Object.assign({
         type: 'cruvit:garden-design-delete-placement',
         clientInstanceId: op.clientInstanceId
@@ -1890,6 +1904,7 @@ function gdFlushHostPersist() {
     }
     const layer = plantLayers.find(function(l) { return l.id === op.clientInstanceId; });
     if (!layer) return;
+    gdOutstandingPlacementWrites += 1;
     const type = op.action === 'update' ? 'cruvit:garden-design-update-placement' : 'cruvit:garden-design-save-placement';
     gdPostToHost(Object.assign({
       type: type,
@@ -1898,8 +1913,20 @@ function gdFlushHostPersist() {
   });
 }
 
+function gdPersistAllVisiblePlacements() {
+  if (!plantLayers.length) return;
+  gdPlacementWriteHadFailure = false;
+  plantLayers.forEach(function(l) {
+    gdPendingHostOps.push({
+      action: 'create',
+      clientInstanceId: l.id,
+      phase: 'create'
+    });
+  });
+  gdFlushHostPersist();
+}
+
 function gdScheduleHostPersist(op) {
-  if (gdHydratingFromServer) return;
   const api = gdOwnedGardenApi();
   const phase = op && op.phase;
   if (api && typeof api.shouldWriteOnPointerPhase === 'function' && phase && !api.shouldWriteOnPointerPhase(phase)) {
@@ -1907,8 +1934,9 @@ function gdScheduleHostPersist(op) {
   }
   if (phase === 'pointermove') return;
   gdPendingHostOps.push(op);
+  if (gdHydratingFromServer) return;
   const wait = (api && api.GD_AUTOSAVE_DEBOUNCE_MS) || gdPersistDebounceMs;
-  if (op && op.action === 'delete') {
+  if (op && (op.action === 'delete' || op.action === 'create' || op.phase === 'create')) {
     if (gdHostPersistTimer) {
       clearTimeout(gdHostPersistTimer);
       gdHostPersistTimer = null;
@@ -1926,6 +1954,7 @@ function gdPersistDesignSnapshot(options) {
   if (!api || !gdOwnedGardenContext) return;
   if (api.designPaidAiForAction) api.designPaidAiForAction(opts.hostAction === 'create' ? 'place-owned' : 'autosave');
   gdWriteLocalCache(false);
+  gdPersistSyncState = 'LOCAL_DIRTY';
   if (opts.skipHost === true || gdHydratingFromServer) return;
   if (opts.phase === 'pointermove') return;
   if (opts.deletedClientInstanceId) {
@@ -1972,6 +2001,7 @@ function gdRequestLoadDesign(force) {
   gdPostToHost({
     type: 'cruvit:garden-design-load-design',
     gardenAreaId: gdSelectedAreaId,
+    gardenProfileId: gdOwnedGardenContext.gardenProfileId,
     cachedDesignId: ref && ref.designId,
     designClientInstanceId: (ref && ref.clientInstanceId) || gdDesignClientInstanceId,
     localSnapshot: localSnapshot
@@ -2000,21 +2030,56 @@ function gdHydrateServerDesign(msg) {
       });
     }
     const ownedPlants = gdOwnedPlantsFromContext();
-    const layers = [];
     const placements = Array.isArray(msg.placements) ? msg.placements : [];
-    for (let i = 0; i < placements.length; i++) {
-      const mapped = (api && typeof api.mapServerPlacementToLayer === 'function')
-        ? api.mapServerPlacementToLayer(placements[i], ownedPlants)
-        : { ok: true, layer: Object.assign({ id: placements[i].clientInstanceId }, placements[i]) };
-      if (!mapped.ok) {
-        gdSetPersistNote('This design could not be restored: plant identity on the server does not match My Garden. Nothing was guessed.');
-        return;
+    const localSnap = gdDesignPersistStore
+      ? gdDesignPersistStore.load({
+        userId: gdOwnedGardenContext.userId,
+        gardenProfileId: gdOwnedGardenContext.gardenProfileId,
+        areaId: gdSelectedAreaId
+      })
+      : null;
+    const inMemoryOwned = plantLayers.filter(function(l) { return l.kind === 'owned' || l.gardenPlantId; });
+    const localForSync = (localSnap && Array.isArray(localSnap.placements) && localSnap.placements.length)
+      ? localSnap
+      : {
+        placements: inMemoryOwned,
+        designId: msg.designId,
+        gardenProfileId: gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId
+      };
+    const sync = (api && typeof api.classifyDesignPersistSync === 'function')
+      ? api.classifyDesignPersistSync({
+        serverPlacements: placements,
+        localSnapshot: localForSync,
+        designId: msg.designId,
+        gardenProfileId: gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId
+      })
+      : { state: 'SERVER_SAVED', shouldKeepLocalLayers: false, shouldOverwriteLocalCacheDurable: true };
+    let layers = [];
+    if (sync.shouldKeepLocalLayers) {
+      const source = inMemoryOwned.length ? inMemoryOwned : ((localSnap && localSnap.placements) || []);
+      layers = source.map(function(layer) {
+        const next = Object.assign({}, layer);
+        next.spriteType = getPlantSpriteType(next);
+        next.isTree = next.spriteType === 'tree';
+        next.emoji = next.emoji || '🌿';
+        return next;
+      });
+      gdPersistSyncState = 'LOCAL_AHEAD_OF_SERVER';
+    } else {
+      for (let i = 0; i < placements.length; i++) {
+        const mapped = (api && typeof api.mapServerPlacementToLayer === 'function')
+          ? api.mapServerPlacementToLayer(placements[i], ownedPlants)
+          : { ok: true, layer: Object.assign({ id: placements[i].clientInstanceId }, placements[i]) };
+        if (!mapped.ok) {
+          gdSetPersistNote('This design could not be restored: plant identity on the server does not match My Garden. Nothing was guessed.');
+          return;
+        }
+        const layer = mapped.layer;
+        layer.spriteType = getPlantSpriteType(layer);
+        layer.isTree = layer.spriteType === 'tree';
+        layer.emoji = layer.emoji || '🌿';
+        layers.push(layer);
       }
-      const layer = mapped.layer;
-      layer.spriteType = getPlantSpriteType(layer);
-      layer.isTree = layer.spriteType === 'tree';
-      layer.emoji = layer.emoji || '🌿';
-      layers.push(layer);
     }
     plantLayers = layers;
     currentPlants = [];
@@ -2059,12 +2124,23 @@ function gdHydrateServerDesign(msg) {
     });
     renderPlantLayers();
     renderPlantsDrawer();
-    gdWriteLocalCache(true);
-    gdSetPersistStatus('saved');
+    if (sync.shouldKeepLocalLayers) {
+      gdWriteLocalCache(false);
+      gdSetPersistStatus('error', 'Not saved — retry');
+      gdSetPersistNote('LOCAL_AHEAD_OF_SERVER: these placements are on this device only until server save succeeds.');
+    } else {
+      gdWriteLocalCache(true);
+      gdPersistSyncState = 'SERVER_SAVED';
+      gdSetPersistStatus('saved');
+      gdSetPersistNote('');
+    }
     gdRefreshOwnedGardenOption();
     ensureDesignPlantsPanelVisible();
   } finally {
     gdHydratingFromServer = false;
+    if (gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER' && plantLayers.length) {
+      gdPersistAllVisiblePlacements();
+    }
   }
 }
 
@@ -2096,6 +2172,11 @@ function gdOnLoadResult(msg) {
 function gdOnPersistResult(msg) {
   if (!msg) return;
   const isPhoto = msg.type === 'cruvit:garden-design-save-source-media-result' || msg.purpose === 'design_source';
+  const isPlacement = msg.type === 'cruvit:garden-design-save-placement-result'
+    || msg.type === 'cruvit:garden-design-update-placement-result'
+    || msg.type === 'cruvit:garden-design-delete-placement-result';
+    if (isPlacement && gdOutstandingPlacementWrites > 0) gdOutstandingPlacementWrites -= 1;
+  if (isPlacement && msg.ok === false) gdPlacementWriteHadFailure = true;
   if (msg.ok) {
     gdServerDesignMeta = Object.assign({}, gdServerDesignMeta || {}, {
       designId: msg.designId || (gdServerDesignMeta && gdServerDesignMeta.designId),
@@ -2113,7 +2194,36 @@ function gdOnPersistResult(msg) {
         clientInstanceId: gdDesignClientInstanceId
       });
     }
+    if (msg.noop === true && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER' || gdOutstandingPlacementWrites > 0)) {
+      return;
+    }
+    if (isPhoto && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER' || gdOutstandingPlacementWrites > 0)) {
+      if (msg.sourceMediaUrl) {
+        photoDataUrl = msg.sourceMediaUrl;
+        photoB64 = null;
+        const preview = document.getElementById('photoPreview');
+        if (preview) {
+          preview.src = msg.sourceMediaUrl;
+          preview.classList.add('show');
+        }
+        const img = document.getElementById('imgAfter');
+        if (img) img.src = msg.sourceMediaUrl;
+      }
+      gdLastSourceMediaPost = null;
+      return;
+    }
+    if (isPlacement && gdOutstandingPlacementWrites > 0) {
+      return;
+    }
+    if (isPlacement && gdPlacementWriteHadFailure) {
+      gdWriteLocalCache(false);
+      gdPersistSyncState = 'SERVER_SAVE_FAILED';
+      gdSetPersistStatus('error', 'Not saved — retry');
+      return;
+    }
+    if (isPlacement) gdPlacementWriteHadFailure = false;
     gdWriteLocalCache(true);
+    gdPersistSyncState = 'SERVER_SAVED';
     gdSetPersistStatus('saved', null, isPhoto ? 'photo' : 'save');
     gdSetPersistNote('');
     if (isPhoto) gdLastSourceMediaPost = null;
@@ -2131,12 +2241,14 @@ function gdOnPersistResult(msg) {
     return;
   }
   gdWriteLocalCache(false);
+  gdPersistSyncState = 'SERVER_SAVE_FAILED';
   try {
     console.warn('[garden-design-persist]', {
       stage: msg.stage || 'iframe-result',
       operation: msg.operation || msg.type,
       code: msg.code || null,
       supabaseCode: msg.supabaseCode || null,
+      httpStatus: msg.httpStatus || null,
       message: msg.error || msg.code || 'not_saved'
     });
   } catch (e) {}
@@ -2358,11 +2470,6 @@ function placeOwnedGardenPlant(idx) {
   });
   renderPlantsDrawer();
   ensureDesignPlantsPanelVisible();
-  gdPersistDesignSnapshot({
-    clientInstanceId: plantLayers[plantLayers.length - 1] && plantLayers[plantLayers.length - 1].id,
-    hostAction: 'create',
-    phase: 'create'
-  });
   closeAddPlantModal();
 }
 
@@ -5603,7 +5710,7 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-asset-registry-v1.js?v=20260920reg1';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
-    import './garden-design-owned-garden-v1.js?v=20260917b';
+    import './garden-design-owned-garden-v1.js?v=20260920dur1';
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       mangoOwnerPreferredRangePosition,
