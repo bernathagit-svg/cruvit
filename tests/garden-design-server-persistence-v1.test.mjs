@@ -336,14 +336,14 @@ test('M: server reload reconstructs the same placement after refresh', async () 
   assert.equal(layer.layer.createsGardenPlant, false);
 });
 
-test('N/O: mango stays honest placeholder; olive still resolves approved Design Asset', () => {
+test('N/O: approved mango and olive resolve from the Design Asset registry', () => {
   const registry = JSON.parse(
     fs.readFileSync(path.join(ROOT, 'modules/garden-design/assets/plants/design-asset-registry-v1.json'), 'utf8')
   );
   const index = indexDesignAssetRegistry(registry);
   const mango = resolveDesignAsset({ canonicalSlug: 'mango', growthStage: 'mature' }, index);
-  assert.equal(mango.visualReady, false);
-  assert.equal(mango.fallback, DESIGN_ASSET_FALLBACK.HONEST_PLACEHOLDER);
+  assert.equal(mango.visualReady, true);
+  assert.ok(mango.url);
   const olive = resolveDesignAsset({ canonicalSlug: 'olive', growthStage: 'mature' }, index);
   assert.equal(olive.visualReady, true);
   assert.ok(olive.url);
@@ -1007,6 +1007,97 @@ test('AJ: source upload failure and attach failure stay Not saved; retry does no
   assert.equal(mem.db.garden_media.length, 1);
   assert.equal(mem.db.garden_designs.length, 1);
   assert.equal(mem.db.garden_designs[0].source_media_id, 'media-orphan-keep');
+});
+
+test('live save: existing sourced design is reused; source re-attach and registry slug do not fail', async () => {
+  const preexisting = {
+    id: 'design-mojstrana-live',
+    garden_profile_id: GARDEN,
+    user_id: USER,
+    client_instance_id: 'gd_d_patio_live',
+    garden_area_id: PATIO,
+    status: 'active',
+    title: 'Garden Design',
+    revision: 6,
+    source_media_id: 'media-existing-photo'
+  };
+  const { mem, host } = makeHost({
+    garden_designs: [preexisting],
+    garden_media: [{
+      id: 'media-existing-photo',
+      garden_profile_id: GARDEN,
+      storage_path: `${USER}/${GARDEN}/media-existing-photo/garden-source.jpg`,
+      storage_bucket: 'user-garden-media',
+      purpose: 'design_source',
+      source_module: 'garden_design',
+      metadata: {},
+      validation_state: 'validated'
+    }],
+    getSignedUrl: async ({ storagePath }) => ({ signedUrl: 'https://signed.example/user-garden-media/' + storagePath })
+  });
+  const loaded = await host.loadDesign({ cachedDesignId: 'design-mojstrana-live', gardenAreaId: null });
+  assert.equal(loaded.ok, true);
+  assert.equal(loaded.designId, 'design-mojstrana-live');
+  assert.equal(loaded.sourceMediaId, 'media-existing-photo');
+  assert.equal(loaded.code === MULTIPLE_DESIGNS_REQUIRE_SELECTION, false);
+
+  const retried = await host.handle('cruvit:garden-design-save-source-media', {
+    designClientInstanceId: 'gd_d_new_iframe',
+    gardenAreaId: null,
+    cachedDesignId: 'design-mojstrana-live',
+    fileBytes: await jpegFile().arrayBuffer(),
+    fileName: 'garden-source.jpg',
+    fileType: 'image/jpeg'
+  });
+  assert.equal(retried.ok, true);
+  assert.equal(retried.designId, 'design-mojstrana-live');
+  assert.equal(retried.sourceMediaId, 'media-existing-photo');
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_designs[0].id, 'design-mojstrana-live');
+  assert.equal(mem.db.garden_designs[0].source_media_id, 'media-existing-photo');
+  assert.equal(mem.db.garden_media.length, 1);
+  assert.equal(mem.db.garden_plants.length, 3);
+
+  const placed = await host.savePlacement({
+    designClientInstanceId: 'gd_d_new_iframe',
+    gardenAreaId: null,
+    cachedDesignId: 'design-mojstrana-live',
+    placement: {
+      clientInstanceId: 'pl_mango_live',
+      kind: 'owned',
+      gardenPlantId: MANGO,
+      designAssetId: 'mango__mature__tree__vegetative__detail-v2__high',
+      x: 0.42,
+      y: 0.78,
+      scale: 1
+    }
+  });
+  assert.equal(placed.ok, true);
+  assert.equal(placed.designId, 'design-mojstrana-live');
+  assert.equal(placed.createsGardenPlant, false);
+  assert.equal(placed.gardenPlantId, MANGO);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  assert.equal(mem.db.garden_design_placements[0].design_asset_id == null, true);
+  assert.equal(mem.db.garden_plants.length, 3);
+  assert.equal(designPaidAiForAction('save-source-media').paidAiCalls, 0);
+});
+
+test('live save: iframe binds persist to loaded design and ignores unchanged area re-render', () => {
+  const gd = src('modules/garden-design/index.html');
+  const app = src('app.html');
+  const persist = src('modules/garden-design/garden-design-server-persistence-v1.js');
+  assert.match(gd, /function gdPersistDesignRefFields/);
+  assert.match(gd, /cachedDesignId: designId/);
+  assert.match(gd, /sourceMediaId: msg.sourceMediaId/);
+  assert.match(gd, /gdSetPersistStatus\('saved'\)/);
+  const area = gd.slice(gd.indexOf('function gdOnAreaSelect'), gd.indexOf('function gdOwnedPlantsFromContext'));
+  assert.match(area, /String\(next \|\| ''\) === String\(gdSelectedAreaId \|\| ''\)/);
+  assert.match(area, /return;/);
+  assert.match(app, /index\.html\?v=20260920save1/);
+  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920save1/);
+  assert.match(persist, /persistableDesignAssetId/);
+  assert.match(persist, /payload\.cachedDesignId/);
 });
 
 test('loadDesign uses payload gardenProfileId when session active garden is empty', async () => {

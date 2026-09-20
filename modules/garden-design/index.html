@@ -1491,15 +1491,13 @@ function gdPostSourcePhotoBytes(blob, fileName) {
   }
   gdSetPersistStatus('saving', null, 'photo');
   blob.arrayBuffer().then(function(buf) {
-    const payload = {
+    const payload = Object.assign({
       type: 'cruvit:garden-design-save-source-media',
-      designClientInstanceId: gdEnsureDesignClientInstanceId(),
-      gardenAreaId: gdSelectedAreaId,
       fileName: fileName || 'garden-source.jpg',
       fileType: blob.type || 'image/jpeg',
       fileSize: blob.size,
       fileBytes: buf
-    };
+    }, gdPersistDesignRefFields());
     delete payload.file;
     delete payload.userId;
     gdLastSourceMediaPost = payload;
@@ -1742,7 +1740,7 @@ function gdSetPersistStatus(state, detail, kind) {
 
 function gdRetryLastPersist() {
   if (gdLastSourceMediaPost && gdPersistStatusKind === 'photo') {
-    const payload = Object.assign({}, gdLastSourceMediaPost);
+    const payload = Object.assign({}, gdLastSourceMediaPost, gdPersistDesignRefFields());
     gdSetPersistStatus('saving', null, 'photo');
     gdPostToHost(payload);
     return;
@@ -1793,6 +1791,16 @@ function gdEnsureDesignClientInstanceId() {
     });
   }
   return gdDesignClientInstanceId;
+}
+
+function gdPersistDesignRefFields() {
+  const designId = (gdServerDesignMeta && gdServerDesignMeta.designId) || null;
+  return {
+    designClientInstanceId: gdEnsureDesignClientInstanceId(),
+    cachedDesignId: designId,
+    designId: designId,
+    gardenAreaId: gdSelectedAreaId
+  };
 }
 
 function gdLayerSnapshotList() {
@@ -1874,23 +1882,19 @@ function gdFlushHostPersist() {
   gdSetPersistStatus('saving');
   ops.forEach(function(op) {
     if (op.action === 'delete') {
-      gdPostToHost({
+      gdPostToHost(Object.assign({
         type: 'cruvit:garden-design-delete-placement',
-        clientInstanceId: op.clientInstanceId,
-        designClientInstanceId: gdEnsureDesignClientInstanceId(),
-        gardenAreaId: gdSelectedAreaId
-      });
+        clientInstanceId: op.clientInstanceId
+      }, gdPersistDesignRefFields()));
       return;
     }
     const layer = plantLayers.find(function(l) { return l.id === op.clientInstanceId; });
     if (!layer) return;
     const type = op.action === 'update' ? 'cruvit:garden-design-update-placement' : 'cruvit:garden-design-save-placement';
-    gdPostToHost({
+    gdPostToHost(Object.assign({
       type: type,
-      designClientInstanceId: gdEnsureDesignClientInstanceId(),
-      gardenAreaId: gdSelectedAreaId,
       placement: gdHostPlacementPayload(layer)
-    });
+    }, gdPersistDesignRefFields()));
   });
 }
 
@@ -1982,7 +1986,8 @@ function gdHydrateServerDesign(msg) {
       designId: msg.designId,
       designClientInstanceId: msg.designClientInstanceId,
       revision: msg.revision,
-      gardenAreaId: msg.gardenAreaId || null
+      gardenAreaId: msg.gardenAreaId || null,
+      sourceMediaId: msg.sourceMediaId || msg.editorBaseMediaId || null
     };
     gdDesignClientInstanceId = msg.designClientInstanceId || gdDesignClientInstanceId;
     if (gdServerRefStore && gdOwnedGardenContext) {
@@ -2055,6 +2060,7 @@ function gdHydrateServerDesign(msg) {
     renderPlantLayers();
     renderPlantsDrawer();
     gdWriteLocalCache(true);
+    gdSetPersistStatus('saved');
   } finally {
     gdHydratingFromServer = false;
   }
@@ -2133,12 +2139,10 @@ function gdOnPersistResult(msg) {
     });
   } catch (e) {}
   if (isPhoto && msg.sourceMediaId) {
-    gdLastSourceMediaPost = {
+    gdLastSourceMediaPost = Object.assign({
       type: 'cruvit:garden-design-save-source-media',
-      designClientInstanceId: msg.designClientInstanceId || gdEnsureDesignClientInstanceId(),
-      gardenAreaId: gdSelectedAreaId,
       sourceMediaId: msg.sourceMediaId
-    };
+    }, gdPersistDesignRefFields());
   }
   gdSetPersistStatus('error', 'Not saved — retry', isPhoto ? 'photo' : 'save');
   if (msg.keepLocalCanvas) {
@@ -2191,16 +2195,16 @@ function gdRenderAreaSelect() {
 }
 
 function gdOnAreaSelect(id) {
-  gdSelectedAreaId = id || null;
+  const next = id || null;
+  if (String(next || '') === String(gdSelectedAreaId || '')) return;
+  gdSelectedAreaId = next;
   plantLayers.forEach(function(l) {
     if (l.kind === 'proposed') l.areaId = gdSelectedAreaId;
   });
   gdPersistDesignSnapshot({ phase: 'change', hostAction: 'update' });
-  gdPostToHost({
-    type: 'cruvit:garden-design-save-design',
-    designClientInstanceId: gdEnsureDesignClientInstanceId(),
-    gardenAreaId: gdSelectedAreaId
-  });
+  gdPostToHost(Object.assign({
+    type: 'cruvit:garden-design-save-design'
+  }, gdPersistDesignRefFields()));
   gdLastLoadKey = null;
   gdRequestLoadDesign(true);
 }

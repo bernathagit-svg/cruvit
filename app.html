@@ -8741,17 +8741,23 @@ window.addEventListener('message',function(ev){
 function openGardenDesign(){
   const root=document.getElementById('garden-design-root');
   if(!root) return;
+  const src='modules/garden-design/index.html?v=20260920save1';
   let frame=root.querySelector('iframe.gd-frame');
   if(!frame){
     frame=document.createElement('iframe');
     frame.className='gd-frame';
     frame.title='Garden Design Studio';
     frame.setAttribute('allow','camera; microphone; clipboard-read; clipboard-write; fullscreen; geolocation');
-        frame.src='modules/garden-design/index.html?v=20260920e2e';
+    frame.src=src;
     root.appendChild(frame);
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
-    loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });
+    const current=frame.getAttribute('src')||frame.src||'';
+    if(current.indexOf('index.html?v=20260920save1')===-1){
+      frame.src=src;
+    }else{
+      loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });
+    }
   }
   dismissEntryScreen();
   setGardenDesignShellOpen(true);
@@ -10518,7 +10524,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260916d"></script>
 <script type="module" src="modules/garden-design/garden-design-variant-selection-policy-v1.js?v=20260917a"></script>
 <script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260917d"></script>
-<script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260919f"></script>
+<script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260920save1"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-garden-source-host-v1.js?v=20260919f"></script>
 <script type="module" src="modules/garden-design/asset-factory-v1/calibration-review-host-v1.js?v=20260919f"></script>
 </body>

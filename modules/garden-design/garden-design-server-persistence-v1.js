@@ -76,6 +76,12 @@ function asNull(v) {
   return t ? t : null;
 }
 
+function persistableDesignAssetId(value) {
+  const t = asText(value);
+  if (!t) return null;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t) ? t : null;
+}
+
 function clamp01(n, fallback) {
   const x = Number(n);
   if (!Number.isFinite(x)) return fallback;
@@ -187,12 +193,11 @@ function privilegeDeniedForColumns(table, cols) {
 }
 
 function placementMutablePatch(row) {
-  return {
+  const patch = {
     kind: row.kind,
     garden_plant_id: row.garden_plant_id,
     canonical_slug: row.canonical_slug,
     garden_area_id: row.garden_area_id,
-    design_asset_id: row.design_asset_id,
     growth_stage: row.growth_stage,
     target_growth_stage: row.target_growth_stage,
     season: row.season,
@@ -205,6 +210,9 @@ function placementMutablePatch(row) {
     label: row.label,
     scientific: row.scientific
   };
+  const assetId = persistableDesignAssetId(row.design_asset_id);
+  if (assetId) patch.design_asset_id = assetId;
+  return patch;
 }
 
 function isDataUrlValue(value) {
@@ -638,6 +646,14 @@ export function createGardenDesignHostPersistence(deps = {}) {
     });
   }
 
+  function rememberDesign(gardenProfileId, requestAreaId, design) {
+    if (!design) return;
+    remember(gardenProfileId, design.garden_area_id, design);
+    const req = asNull(requestAreaId);
+    const actual = asNull(design.garden_area_id);
+    if (req !== actual) remember(gardenProfileId, requestAreaId, design);
+  }
+
   function remembered(gardenProfileId, gardenAreaId) {
     return cache.get(contextKey(gardenProfileId, gardenAreaId)) || null;
   }
@@ -692,14 +708,16 @@ export function createGardenDesignHostPersistence(deps = {}) {
     }
   }
 
-  async function listActiveDesigns(supabase, gardenProfileId, gardenAreaId) {
+  async function listActiveDesigns(supabase, gardenProfileId, gardenAreaId, opts = {}) {
     let q = supabase
       .from('garden_designs')
       .select(DESIGN_SELECT)
       .eq('garden_profile_id', gardenProfileId)
       .eq('status', 'active');
-    if (asNull(gardenAreaId)) q = q.eq('garden_area_id', gardenAreaId);
-    else q = q.is('garden_area_id', null);
+    if (!opts.anyArea) {
+      if (asNull(gardenAreaId)) q = q.eq('garden_area_id', gardenAreaId);
+      else q = q.is('garden_area_id', null);
+    }
     const { data, error } = await q;
     if (error) throw error;
     return Array.isArray(data) ? data : [];
@@ -719,7 +737,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
     const source = await signedMediaUrl(supabase, design.source_media_id, design.garden_profile_id);
     const derived = await signedMediaUrl(supabase, design.derived_base_media_id, design.garden_profile_id);
     const editorBase = derived.signedUrl ? derived : source;
-    remember(design.garden_profile_id, design.garden_area_id, design);
+    rememberDesign(design.garden_profile_id, extra.gardenAreaId, design);
     const identityErrors = [];
     placements.forEach((p) => {
       const mapped = mapServerPlacementToLayer(p, ownedPlants);
@@ -837,6 +855,19 @@ export function createGardenDesignHostPersistence(deps = {}) {
     const auth = authContext();
     if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED' };
     const gardenAreaId = asNull(payload.gardenAreaId);
+    const explicitId = asNull(payload.explicitDesignId || payload.designId || payload.cachedDesignId);
+    if (explicitId) {
+      const { data } = await auth.supabase
+        .from('garden_designs')
+        .select(DESIGN_SELECT)
+        .eq('id', explicitId)
+        .eq('garden_profile_id', auth.gardenProfileId)
+        .maybeSingle();
+      if (data) {
+        rememberDesign(auth.gardenProfileId, gardenAreaId, data);
+        return { ok: true, design: data, created: false };
+      }
+    }
     let clientInstanceId = asNull(payload.designClientInstanceId);
     const cached = remembered(auth.gardenProfileId, gardenAreaId);
     if (cached && cached.designId) {
@@ -844,8 +875,12 @@ export function createGardenDesignHostPersistence(deps = {}) {
         .from('garden_designs')
         .select(DESIGN_SELECT)
         .eq('id', cached.designId)
+        .eq('garden_profile_id', auth.gardenProfileId)
         .maybeSingle();
-      if (data) return { ok: true, design: data, created: false };
+      if (data) {
+        rememberDesign(auth.gardenProfileId, gardenAreaId, data);
+        return { ok: true, design: data, created: false };
+      }
     }
     if (!clientInstanceId && cached) clientInstanceId = cached.clientInstanceId;
     if (clientInstanceId) {
@@ -856,7 +891,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
         .eq('client_instance_id', clientInstanceId)
         .maybeSingle();
       if (existing) {
-        remember(auth.gardenProfileId, existing.garden_area_id, existing);
+        rememberDesign(auth.gardenProfileId, gardenAreaId, existing);
         return { ok: true, design: existing, created: false };
       }
     }
@@ -879,7 +914,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
       return fail;
     }
     if (Array.isArray(singles) && singles.length === 1) {
-      remember(auth.gardenProfileId, singles[0].garden_area_id, singles[0]);
+      rememberDesign(auth.gardenProfileId, gardenAreaId, singles[0]);
       return { ok: true, design: singles[0], created: false };
     }
     if (Array.isArray(singles) && singles.length > 1) {
@@ -891,6 +926,30 @@ export function createGardenDesignHostPersistence(deps = {}) {
         gardenProfileId: auth.gardenProfileId,
         gardenAreaId,
         designIds: singles.map((r) => r.id),
+        silentLatestForbidden: true
+      };
+    }
+    let gardenWide;
+    try {
+      gardenWide = await listActiveDesigns(auth.supabase, auth.gardenProfileId, gardenAreaId, { anyArea: true });
+    } catch (err) {
+      const fail = persistFailFields(err, 'ensureDesign', 'list-active-garden', { code: 'LOAD_FAILED' });
+      logPersistConsole(fail);
+      return fail;
+    }
+    if (Array.isArray(gardenWide) && gardenWide.length === 1) {
+      rememberDesign(auth.gardenProfileId, gardenAreaId, gardenWide[0]);
+      return { ok: true, design: gardenWide[0], created: false };
+    }
+    if (Array.isArray(gardenWide) && gardenWide.length > 1) {
+      return {
+        ok: false,
+        code: MULTIPLE_DESIGNS_REQUIRE_SELECTION,
+        keepLocalCanvas: true,
+        paidAiCalls: 0,
+        gardenProfileId: auth.gardenProfileId,
+        gardenAreaId,
+        designIds: gardenWide.map((r) => r.id),
         silentLatestForbidden: true
       };
     }
@@ -909,7 +968,10 @@ export function createGardenDesignHostPersistence(deps = {}) {
       .insert(insertRow)
       .select(DESIGN_SELECT)
       .single();
-    if (!error && data) return { ok: true, design: data, created: true };
+    if (!error && data) {
+      rememberDesign(auth.gardenProfileId, gardenAreaId, data);
+      return { ok: true, design: data, created: true };
+    }
     if (isUniqueViolation(error)) {
       const { data: existing, error: lookupError } = await auth.supabase
         .from('garden_designs')
@@ -918,8 +980,33 @@ export function createGardenDesignHostPersistence(deps = {}) {
         .eq('client_instance_id', clientInstanceId)
         .maybeSingle();
       if (existing) {
-        remember(auth.gardenProfileId, existing.garden_area_id, existing);
+        rememberDesign(auth.gardenProfileId, gardenAreaId, existing);
         return { ok: true, design: existing, created: false };
+      }
+      try {
+        const gardenWide = await listActiveDesigns(auth.supabase, auth.gardenProfileId, gardenAreaId, { anyArea: true });
+        if (Array.isArray(gardenWide) && gardenWide.length === 1) {
+          rememberDesign(auth.gardenProfileId, gardenAreaId, gardenWide[0]);
+          return { ok: true, design: gardenWide[0], created: false };
+        }
+        if (Array.isArray(gardenWide) && gardenWide.length > 1) {
+          return {
+            ok: false,
+            code: MULTIPLE_DESIGNS_REQUIRE_SELECTION,
+            keepLocalCanvas: true,
+            paidAiCalls: 0,
+            gardenProfileId: auth.gardenProfileId,
+            gardenAreaId,
+            designIds: gardenWide.map((r) => r.id),
+            silentLatestForbidden: true
+          };
+        }
+      } catch (wideErr) {
+        const failWide = persistFailFields(wideErr, 'ensureDesign', 'insert-duplicate-resolve', {
+          code: 'DESIGN_WRITE_FAILED'
+        });
+        logPersistConsole(failWide);
+        return failWide;
       }
       const fail = persistFailFields(lookupError || error, 'ensureDesign', 'insert-duplicate-resolve', {
         code: 'DESIGN_WRITE_FAILED'
@@ -1039,7 +1126,6 @@ export function createGardenDesignHostPersistence(deps = {}) {
       garden_plant_id: gardenPlantId,
       canonical_slug: canonicalSlug,
       garden_area_id: gardenAreaId,
-      design_asset_id: asNull(placement.designAssetId),
       growth_stage: asNull(placement.growthStage),
       target_growth_stage: asNull(placement.targetGrowthStage),
       season: asNull(placement.season),
@@ -1052,6 +1138,8 @@ export function createGardenDesignHostPersistence(deps = {}) {
       label: asNull(placement.label),
       scientific: asNull(placement.scientific)
     };
+    const persistableAssetId = persistableDesignAssetId(placement.designAssetId);
+    if (persistableAssetId) row.design_asset_id = persistableAssetId;
 
     const patch = placementMutablePatch(row);
     let written = null;
@@ -1116,7 +1204,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
       .select(DESIGN_SELECT)
       .eq('id', design.id)
       .maybeSingle();
-    if (fresh) remember(auth.gardenProfileId, fresh.garden_area_id, fresh);
+    if (fresh) rememberDesign(auth.gardenProfileId, payload.gardenAreaId, fresh);
 
     return {
       ok: true,
@@ -1158,7 +1246,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
       .select(DESIGN_SELECT)
       .eq('id', found.design.id)
       .maybeSingle();
-    if (fresh) remember(auth.gardenProfileId, fresh.garden_area_id, fresh);
+    if (fresh) rememberDesign(auth.gardenProfileId, payload.gardenAreaId, fresh);
     return {
       ok: true,
       durableDatabase: true,
@@ -1176,22 +1264,51 @@ export function createGardenDesignHostPersistence(deps = {}) {
     designPaidAiForAction('save-design');
     const auth = authContext();
     if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
-    const patch = {};
-    if (payload.title != null) patch.title = asText(payload.title) || null;
-    if (Object.prototype.hasOwnProperty.call(payload, 'gardenAreaId') && payload.attachArea === true) {
-      patch.garden_area_id = asNull(payload.gardenAreaId);
-    }
-    if (payload.sourceMediaId) patch.source_media_id = payload.sourceMediaId;
-    if (Object.prototype.hasOwnProperty.call(payload, 'derivedBaseMediaId')) {
-      patch.derived_base_media_id = asNull(payload.derivedBaseMediaId);
-    }
-    delete patch.revision;
-    if (!Object.keys(patch).length) {
+    const wantsTitle = payload.title != null;
+    const wantsArea = Object.prototype.hasOwnProperty.call(payload, 'gardenAreaId') && payload.attachArea === true;
+    const wantsSource = !!asNull(payload.sourceMediaId);
+    const wantsDerived = Object.prototype.hasOwnProperty.call(payload, 'derivedBaseMediaId');
+    if (!wantsTitle && !wantsArea && !wantsSource && !wantsDerived) {
+      const found = await findExistingDesign(payload);
+      const design = found && found.design;
       const cached = remembered(auth.gardenProfileId, payload.gardenAreaId);
-      return { ok: true, noop: true, revision: cached && cached.revision, paidAiCalls: 0 };
+      return {
+        ok: true,
+        noop: true,
+        paidAiCalls: 0,
+        designId: (design && design.id) || (cached && cached.designId) || null,
+        designClientInstanceId: (design && design.client_instance_id) || (cached && cached.clientInstanceId) || null,
+        revision: (design && design.revision) || (cached && cached.revision) || null,
+        sourceMediaId: design && design.source_media_id || null
+      };
     }
     const ensured = await ensureDesign(payload);
     if (!ensured.ok) return Object.assign({ keepLocalCanvas: true, paidAiCalls: 0 }, ensured);
+    const patch = {};
+    if (wantsTitle) patch.title = asText(payload.title) || null;
+    if (wantsArea) patch.garden_area_id = asNull(payload.gardenAreaId);
+    if (wantsSource) {
+      const existingSource = asNull(ensured.design.source_media_id);
+      const nextSource = asNull(payload.sourceMediaId);
+      if (!existingSource && nextSource) patch.source_media_id = nextSource;
+    }
+    if (wantsDerived) patch.derived_base_media_id = asNull(payload.derivedBaseMediaId);
+    delete patch.revision;
+    if (!Object.keys(patch).length) {
+      rememberDesign(auth.gardenProfileId, payload.gardenAreaId, ensured.design);
+      return {
+        ok: true,
+        noop: true,
+        durableDatabase: true,
+        paidAiCalls: 0,
+        createdDesign: !!ensured.created,
+        designId: ensured.design.id,
+        designClientInstanceId: ensured.design.client_instance_id,
+        revision: ensured.design.revision,
+        sourceMediaId: ensured.design.source_media_id,
+        derivedBaseMediaId: ensured.design.derived_base_media_id
+      };
+    }
     const { data, error } = await auth.supabase
       .from('garden_designs')
       .update(patch)
@@ -1210,11 +1327,12 @@ export function createGardenDesignHostPersistence(deps = {}) {
       logPersistConsole(fail);
       return fail;
     }
-    remember(auth.gardenProfileId, data.garden_area_id, data);
+    rememberDesign(auth.gardenProfileId, payload.gardenAreaId, data);
     return {
       ok: true,
       durableDatabase: true,
       paidAiCalls: 0,
+      createdDesign: !!ensured.created,
       designId: data.id,
       designClientInstanceId: data.client_instance_id,
       revision: data.revision,
@@ -1232,6 +1350,39 @@ export function createGardenDesignHostPersistence(deps = {}) {
       });
       logPersistConsole(fail);
       return fail;
+    }
+    const foundExisting = await findExistingDesign(payload);
+    let existingDesign = foundExisting && foundExisting.ok ? foundExisting.design : null;
+    if (!existingDesign) {
+      try {
+        const gardenWide = await listActiveDesigns(auth.supabase, auth.gardenProfileId, asNull(payload.gardenAreaId), { anyArea: true });
+        if (Array.isArray(gardenWide) && gardenWide.length === 1) existingDesign = gardenWide[0];
+      } catch (_) {}
+    }
+    if (existingDesign && asNull(existingDesign.source_media_id)) {
+      const existingSourceId = existingDesign.source_media_id;
+      const signedExisting = await signedMediaUrl(auth.supabase, existingSourceId, auth.gardenProfileId);
+      rememberDesign(auth.gardenProfileId, payload.gardenAreaId, existingDesign);
+      return {
+        ok: true,
+        noop: true,
+        durableDatabase: true,
+        paidAiCalls: 0,
+        createdDesign: false,
+        designId: existingDesign.id,
+        designClientInstanceId: existingDesign.client_instance_id,
+        revision: existingDesign.revision,
+        sourceMediaId: existingSourceId,
+        sourceMediaUrl: signedExisting.signedUrl,
+        storagePath: signedExisting.storagePath,
+        purpose: 'design_source',
+        sourceModule: 'garden_design',
+        storedAsDataUrl: false,
+        mediaKept: true,
+        mediaDeleted: false,
+        mediaValidationState: 'validated',
+        designAuthority: true
+      };
     }
     let mediaRow = null;
     const existingMediaId = asNull(payload.sourceMediaId);
@@ -1301,6 +1452,8 @@ export function createGardenDesignHostPersistence(deps = {}) {
     const attached = await saveDesign({
       designClientInstanceId: payload.designClientInstanceId,
       gardenAreaId: payload.gardenAreaId,
+      cachedDesignId: payload.cachedDesignId,
+      designId: payload.designId || payload.cachedDesignId,
       sourceMediaId: mediaId
     });
     const signed = await signedMediaUrl(auth.supabase, mediaId, auth.gardenProfileId);
