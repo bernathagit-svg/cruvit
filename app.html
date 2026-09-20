@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
-<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260920f">
+<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260920h">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260915a">
 <link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913h">
@@ -720,6 +720,10 @@
 <div id="branch-alpha-salvage-1-root" aria-hidden="true">
   <button type="button" class="dac-back" onclick="closeBranchAlphaSalvageReview()"><span aria-hidden="true">←</span><span>Close alpha salvage</span></button>
   <p class="dac-status" id="branchAlphaSalvageStatus"></p>
+</div>
+<div id="owned-garden-design-asset-promotion-v1-root" aria-hidden="true">
+  <button type="button" class="dac-back" onclick="closeOwnedGardenDesignAssetPromotionReview()"><span aria-hidden="true">←</span><span>Close promotion</span></button>
+  <p class="dac-status" id="ownedGardenDesignAssetPromotionStatus"></p>
 </div>
 <div id="plant-doctor-root" aria-hidden="true">
   <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
@@ -9286,6 +9290,122 @@ function openBranchAlphaSalvageReview(){
 window.openBranchAlphaSalvageReview=openBranchAlphaSalvageReview;
 window.closeBranchAlphaSalvageReview=closeBranchAlphaSalvageReview;
 
+function closeOwnedGardenDesignAssetPromotionReview(){
+  const root=document.getElementById('owned-garden-design-asset-promotion-v1-root');
+  if(!root) return;
+  if(window.__cruvitOwnedGardenPromotionHostCtrl&&typeof window.__cruvitOwnedGardenPromotionHostCtrl.close==='function'){
+    window.__cruvitOwnedGardenPromotionHostCtrl.close();
+  }
+  root.classList.remove('dac-active');
+  root.setAttribute('aria-hidden','true');
+}
+
+function ensureOwnedGardenDesignAssetPromotionHost(){
+  if(window.__cruvitOwnedGardenPromotionHostCtrl) return window.__cruvitOwnedGardenPromotionHostCtrl;
+  const hostApi=window.CruvitCalibrationReviewHost;
+  if(!hostApi||typeof hostApi.createCalibrationReviewHostController!=='function') return null;
+  const origin=(!window.location.origin||window.location.origin==='null')?'*':window.location.origin;
+  const labels=hostApi.CALIBRATION_REVIEW_STATUS_LABEL||{};
+  const ctrl=hostApi.createCalibrationReviewHostController({
+    getReadiness:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getGardenContextReadiness==='function') return pd.getGardenContextReadiness();
+      return { status:'RESTORING', authenticated:false, gardenProfileId:null, gardenCount:0, profilesHydrated:false };
+    },
+    getOwnedGardens:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getOwnedGardensCache==='function') return pd.getOwnedGardensCache();
+      return [];
+    },
+    getTrustedLocation:function(){
+      if(typeof window.getCruvitTrustedGardenLocation==='function') return window.getCruvitTrustedGardenLocation();
+      return null;
+    },
+    loadSource:async function(readiness){
+      const persist=getGardenDesignHostPersistence();
+      const helper=window.CruvitCalibrationGardenSource;
+      const owned=window.CruvitGardenDesignOwnedGarden;
+      const pd=window.cruvitPersonalDomainV0;
+      if(!persist||!helper||typeof helper.loadCalibrationGardenSourcePhoto!=='function'||!pd){
+        return { ok:false, code:'SOURCE_PHOTO_UNAVAILABLE', paidAiCalls:0, imageGenerationCalls:0 };
+      }
+      const session=pd.getSession?pd.getSession():null;
+      const userId=session&&session.user&&session.user.id?session.user.id:null;
+      const gardenId=(readiness&&readiness.gardenProfileId)||(pd.getActiveGardenId?pd.getActiveGardenId():null);
+      let cachedDesignId=null;
+      if(owned&&typeof owned.createServerDesignRefPersistence==='function'&&userId&&gardenId){
+        const ref=owned.createServerDesignRefPersistence(window.localStorage).load({
+          userId:userId,
+          gardenProfileId:gardenId,
+          areaId:null
+        });
+        cachedDesignId=ref&&ref.designId?ref.designId:null;
+      }
+      return helper.loadCalibrationGardenSourcePhoto(function(payload){
+        return persist.loadDesign(payload);
+      },{
+        gardenAreaId:null,
+        cachedDesignId:cachedDesignId,
+        gardenProfileId:gardenId
+      });
+    },
+    setStatus:function(code, text){
+      const status=document.getElementById('ownedGardenDesignAssetPromotionStatus');
+      if(status) status.textContent=text||labels[code]||code||'';
+    },
+    injectResolved:function(resolved, uiStatus){
+      const root=document.getElementById('owned-garden-design-asset-promotion-v1-root');
+      const frame=root?root.querySelector('iframe.dac-frame'):null;
+      const helper=window.CruvitCalibrationGardenSource;
+      if(!frame||!helper||typeof helper.buildCalibrationSourceInjectMessage!=='function') return;
+      try{
+        if(frame.contentWindow){
+          frame.contentWindow.postMessage(helper.buildCalibrationSourceInjectMessage(resolved||{}, uiStatus), origin);
+        }
+      }catch(_){}
+    }
+  });
+  window.addEventListener('cruvit:auth-session-changed', function(ev){
+    if(window.__cruvitOwnedGardenPromotionHostCtrl){
+      window.__cruvitOwnedGardenPromotionHostCtrl.onAuthSessionChanged(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.addEventListener('cruvit:garden-context-ready', function(ev){
+    if(window.__cruvitOwnedGardenPromotionHostCtrl){
+      window.__cruvitOwnedGardenPromotionHostCtrl.onGardenContextReady(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.__cruvitOwnedGardenPromotionHostCtrl=ctrl;
+  return ctrl;
+}
+
+function openOwnedGardenDesignAssetPromotionReview(){
+  const root=document.getElementById('owned-garden-design-asset-promotion-v1-root');
+  if(!root) return;
+  const status=document.getElementById('ownedGardenDesignAssetPromotionStatus');
+  if(status) status.textContent='Owned Garden production asset review. Spend DENIED.';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='Owned Garden production asset review';
+    root.appendChild(frame);
+  }
+  const ctrl=ensureOwnedGardenDesignAssetPromotionHost();
+  frame.onload=function(){
+    if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  };
+  const reviewSrc='modules/garden-design/owned-garden-design-asset-promotion-v1.html?v=20260920h';
+  if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
+  else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  if(ctrl) ctrl.open();
+}
+
+window.openOwnedGardenDesignAssetPromotionReview=openOwnedGardenDesignAssetPromotionReview;
+window.closeOwnedGardenDesignAssetPromotionReview=closeOwnedGardenDesignAssetPromotionReview;
+
 function ensureDesignAssetCalibrationReviewHost(){
   if(window.__cruvitCalibrationReviewHostCtrl) return window.__cruvitCalibrationReviewHostCtrl;
   const hostApi=window.CruvitCalibrationReviewHost;
@@ -9405,6 +9525,7 @@ window.addEventListener('DOMContentLoaded',function(){
   ensureVisualStateCalibrationBatch2Host();
   ensureWoodyFoliageDetailAbHost();
   ensureQualityFamilyCalibrationFinalHost();
+  ensureOwnedGardenDesignAssetPromotionHost();
 });
 window.addEventListener('load',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
@@ -9414,6 +9535,7 @@ window.addEventListener('load',function(){
   if(location.hash==='#design-asset-quality-family-calibration-final-1') openQualityFamilyCalibrationFinalReview();
   if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
   if(location.hash==='#design-asset-branch-alpha-salvage-1') openBranchAlphaSalvageReview();
+  if(location.hash==='#owned-garden-design-asset-promotion-v1') openOwnedGardenDesignAssetPromotionReview();
 });
 window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
@@ -9423,6 +9545,7 @@ window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-quality-family-calibration-final-1') openQualityFamilyCalibrationFinalReview();
   if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
   if(location.hash==='#design-asset-branch-alpha-salvage-1') openBranchAlphaSalvageReview();
+  if(location.hash==='#owned-garden-design-asset-promotion-v1') openOwnedGardenDesignAssetPromotionReview();
 });
 
 /* ── Plant Doctor (isolated iframe module) ── */

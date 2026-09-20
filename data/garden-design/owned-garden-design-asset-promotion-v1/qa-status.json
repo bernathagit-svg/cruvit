@@ -1,0 +1,51 @@
+{
+  "mango": {
+    "TECHNICAL_QA": "PASS",
+    "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+    "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+    "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+    "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+    "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+    "OWNER_VISUAL_QA": "PENDING",
+    "DETAIL_HISTORY": "Owner A/B: A medium ACCEPTABLE, B high PREFERRED. DETAIL family only. Not asset approval.",
+    "PROMOTION_READY": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO",
+    "notes": [
+      "Do not infer APPROVE_FOR_PRODUCTION_REGISTRY from earlier detail-quality reviews.",
+      "Selective HIGH is already validated for this morphology. Do not regenerate Mango in this gate."
+    ]
+  },
+  "banana": {
+    "TECHNICAL_QA": "PASS",
+    "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+    "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+    "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+    "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+    "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+    "OWNER_VISUAL_QA": "PENDING",
+    "DETAIL_HISTORY": "Batch-2 vegetative CRISP_ENOUGH at family-v1 medium. Not Detail V2. Not the later fruiting candidate.",
+    "PROMOTION_READY": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO",
+    "notes": [
+      "identityPrecision=GENUS_BLOCKED. Catalog identity blockers: GENUS_OR_BROAD_IDENTITY, IDENTITY_NEEDS_REVIEW.",
+      "Fruiting V2+medium exists but is the wrong phenology for this production baseline.",
+      "DETAIL_OK / CRISP_ENOUGH is not botanical identity or architecture approval."
+    ]
+  },
+  "pineapple": {
+    "TECHNICAL_QA": "PASS",
+    "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+    "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+    "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+    "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+    "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+    "OWNER_VISUAL_QA": "PENDING",
+    "DETAIL_HISTORY": "Quality-family final owner judged native DETAIL_OK for ROSETTE V2+medium. Not asset approval.",
+    "PROMOTION_READY": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO",
+    "notes": [
+      "Do not use historical pineapple fruiting/control as the mature-vegetative baseline.",
+      "BOTANICAL_IDENTITY_QA and IN_GARDEN_QA remain owner gates."
+    ]
+  }
+}

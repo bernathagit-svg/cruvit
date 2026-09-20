@@ -1,0 +1,62 @@
+{
+  "execute": false,
+  "generateNow": false,
+  "spendAuthorized": false,
+  "arbitraryBatchCount": false,
+  "broad240Plan": false,
+  "afterOwnedHarvest": true,
+  "tiers": [
+    {
+      "rank": 1,
+      "name": "owned-plants",
+      "note": "Remaining required variants of currently owned plants after this mature-vegetative harvest. Reuse already-paid candidates first."
+    },
+    {
+      "rank": 2,
+      "name": "frequently-recommended",
+      "note": "High-frequency recommended plants still missing a production Design Asset."
+    },
+    {
+      "rank": 3,
+      "name": "garden-design-surfaced",
+      "note": "Plants the Garden Design surface already presents without an approved asset."
+    },
+    {
+      "rank": 4,
+      "name": "launch-critical",
+      "note": "Launch-critical morphology/state gaps not already covered by owned plants."
+    },
+    {
+      "rank": 5,
+      "name": "remainder",
+      "note": "Catalog remainder only after owned, recommended, surfaced, and launch-critical coverage."
+    }
+  ],
+  "ownedRemainingIfBaselinesPass": [
+    {
+      "canonicalSlug": "mango",
+      "variant": "young__tree__vegetative",
+      "reuseFirst": "batch-2 mango young; currently QUALITY_CALIBRATION_REQUIRED"
+    },
+    {
+      "canonicalSlug": "mango",
+      "variant": "mature__tree__fruiting",
+      "reuseFirst": "batch-2 mango fruiting candidate"
+    },
+    {
+      "canonicalSlug": "banana",
+      "variant": "young__default__vegetative",
+      "reuseFirst": "batch-2 banana young candidate"
+    },
+    {
+      "canonicalSlug": "banana",
+      "variant": "mature__default__fruiting",
+      "reuseFirst": "quality-family banana fruiting V2+medium; not this baseline"
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "variant": "mature__default__fruiting",
+      "reuseFirst": "no V2 fruiting candidate selected in this gate"
+    }
+  ]
+}

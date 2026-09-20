@@ -1,0 +1,445 @@
+{
+  "contract": "OWNED_GARDEN_DESIGN_ASSET_PROMOTION_GATE_V1",
+  "verdict": "OWNED_GARDEN_DESIGN_ASSET_PROMOTION_V1_READY",
+  "runId": "owned-garden-design-asset-promotion-v1",
+  "generatedAt": "2026-09-20T15:33:17.797Z",
+  "plantsInGate": [
+    "mango",
+    "banana",
+    "pineapple"
+  ],
+  "excludedFromThisGate": [
+    "apple",
+    "lavender",
+    "avocado",
+    "aloe-vera",
+    "pomegranate"
+  ],
+  "oliveUnchanged": true,
+  "candidates": [
+    {
+      "canonicalSlug": "mango",
+      "scientific": "Mangifera indica",
+      "architectureMode": "tree",
+      "visualForm": "tree",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "variantKey": "mature__tree__vegetative",
+      "runId": "design-asset-woody-foliage-detail-ab-1",
+      "arm": "B",
+      "candidateLabel": "B",
+      "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
+      "prompt": "Detail V2",
+      "quality": "high",
+      "jobId": "mango__mature__tree__vegetative__detail-v2__high",
+      "file": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+      "scaleNote": "Production Tree Physical Scale V1 · Mango authority · this Garden LOW preference. No fit-to-frame.",
+      "lockRangeBand": "LOW",
+      "selectionReason": "Owner reviewed A medium = acceptable, B high = preferred. Dense woody foliage is the validated selective-HIGH case.",
+      "excludedAlternates": [
+        "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__medium.png",
+        "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png"
+      ],
+      "bytes": 2877655,
+      "sha256": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2877655,
+          "cornerAlpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 35,
+            "minY": 63,
+            "maxX": 1006,
+            "maxY": 1499,
+            "opaque": 805985
+          },
+          "alphaCoverage": 0.5124314626057943,
+          "haloPartialPixels": 116
+        }
+      },
+      "TECHNICAL_QA": "PASS",
+      "identityPrecision": "SPECIES_SUPPORTED",
+      "metrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2877655,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 35,
+          "minY": 63,
+          "maxX": 1006,
+          "maxY": 1499,
+          "opaque": 805985
+        },
+        "alphaCoverage": 0.5124314626057943,
+        "haloPartialPixels": 116
+      },
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "approvalStatus": "candidate",
+      "autoApproved": false,
+      "approvalEligible": false
+    },
+    {
+      "canonicalSlug": "banana",
+      "scientific": "Musa spp.",
+      "architectureMode": "default",
+      "visualForm": "herbaceous-clump",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "variantKey": "mature__default__vegetative",
+      "runId": "design-asset-visual-state-calibration-batch-2",
+      "arm": null,
+      "candidateLabel": "BATCH_2_MATURE_VEGETATIVE",
+      "promptTemplateVersion": "design-cutout-visual-state-family-v1",
+      "prompt": "Visual State Family V1",
+      "quality": "medium",
+      "jobId": "banana__mature__default__vegetative__v1",
+      "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+      "scaleNote": "Herbaceous-clump runtime scale. Not tree physical-scale rules. No fit-to-frame.",
+      "lockRangeBand": null,
+      "selectionReason": "Best already-paid mature-vegetative Banana. Do not use the later FRUITING V2 candidate as the production baseline.",
+      "excludedAlternates": [
+        "modules/garden-design/assets/plants/quality-family-calibration-final-1/banana__mature__default__fruiting__detail-v2__medium.png",
+        "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png",
+        "modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/banana-mature-vegetative-v1.png"
+      ],
+      "bytes": 2252800,
+      "sha256": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2252800,
+          "cornerAlpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 18,
+            "minY": 42,
+            "maxX": 988,
+            "maxY": 1497,
+            "opaque": 659709
+          },
+          "alphaCoverage": 0.4194316864013672,
+          "haloPartialPixels": 18
+        }
+      },
+      "TECHNICAL_QA": "PASS",
+      "identityPrecision": "GENUS_BLOCKED",
+      "metrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2252800,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 18,
+          "minY": 42,
+          "maxX": 988,
+          "maxY": 1497,
+          "opaque": 659709
+        },
+        "alphaCoverage": 0.4194316864013672,
+        "haloPartialPixels": 18
+      },
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "approvalStatus": "candidate",
+      "autoApproved": false,
+      "approvalEligible": false
+    },
+    {
+      "canonicalSlug": "pineapple",
+      "scientific": "Ananas comosus",
+      "architectureMode": "default",
+      "visualForm": "rosette",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "variantKey": "mature__default__vegetative",
+      "runId": "design-asset-quality-family-calibration-final-1",
+      "arm": null,
+      "candidateLabel": "QUALITY_FAMILY_V2_MEDIUM",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "Detail V2",
+      "quality": "medium",
+      "jobId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+      "scaleNote": "Rosette runtime scale. Not tree physical-scale rules. No fit-to-frame.",
+      "lockRangeBand": null,
+      "selectionReason": "Quality Family Final Calibration Prompt V2 + MEDIUM. Owner judged native detail DETAIL_OK. Do not use historical fruiting/control as the mature-vegetative baseline.",
+      "excludedAlternates": [
+        "modules/garden-design/assets/plants/batch-1-candidates/pineapple-mature-rosette-vegetative-v1.png",
+        "modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png"
+      ],
+      "bytes": 2021685,
+      "sha256": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+      "technicalQa": {
+        "result": "PASS",
+        "reasons": [],
+        "metrics": {
+          "format": "png",
+          "decodes": true,
+          "width": 1024,
+          "height": 1536,
+          "colorType": 6,
+          "hasAlphaChannel": true,
+          "bytes": 2021685,
+          "cornerAlpha": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "edgeOpaqueRatio": 0,
+          "bbox": {
+            "exists": true,
+            "minX": 26,
+            "minY": 248,
+            "maxX": 997,
+            "maxY": 1400,
+            "opaque": 447546
+          },
+          "alphaCoverage": 0.2845420837402344,
+          "haloPartialPixels": 2
+        }
+      },
+      "TECHNICAL_QA": "PASS",
+      "identityPrecision": null,
+      "metrics": {
+        "format": "png",
+        "decodes": true,
+        "width": 1024,
+        "height": 1536,
+        "colorType": 6,
+        "hasAlphaChannel": true,
+        "bytes": 2021685,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "edgeOpaqueRatio": 0,
+        "bbox": {
+          "exists": true,
+          "minX": 26,
+          "minY": 248,
+          "maxX": 997,
+          "maxY": 1400,
+          "opaque": 447546
+        },
+        "alphaCoverage": 0.2845420837402344,
+        "haloPartialPixels": 2
+      },
+      "outputStatus": "CALIBRATION_CANDIDATE",
+      "approvalStatus": "candidate",
+      "autoApproved": false,
+      "approvalEligible": false
+    }
+  ],
+  "qa": {
+    "mango": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+      "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+      "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+      "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+      "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+      "OWNER_VISUAL_QA": "PENDING",
+      "DETAIL_HISTORY": "Owner A/B: A medium ACCEPTABLE, B high PREFERRED. DETAIL family only. Not asset approval.",
+      "PROMOTION_READY": false,
+      "ASSET_PRODUCTION_APPROVAL": "NO",
+      "notes": [
+        "Do not infer APPROVE_FOR_PRODUCTION_REGISTRY from earlier detail-quality reviews.",
+        "Selective HIGH is already validated for this morphology. Do not regenerate Mango in this gate."
+      ]
+    },
+    "banana": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+      "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+      "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+      "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+      "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+      "OWNER_VISUAL_QA": "PENDING",
+      "DETAIL_HISTORY": "Batch-2 vegetative CRISP_ENOUGH at family-v1 medium. Not Detail V2. Not the later fruiting candidate.",
+      "PROMOTION_READY": false,
+      "ASSET_PRODUCTION_APPROVAL": "NO",
+      "notes": [
+        "identityPrecision=GENUS_BLOCKED. Catalog identity blockers: GENUS_OR_BROAD_IDENTITY, IDENTITY_NEEDS_REVIEW.",
+        "Fruiting V2+medium exists but is the wrong phenology for this production baseline.",
+        "DETAIL_OK / CRISP_ENOUGH is not botanical identity or architecture approval."
+      ]
+    },
+    "pineapple": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "OWNER_REVIEW_REQUIRED",
+      "ARCHITECTURE_QA": "OWNER_REVIEW_REQUIRED",
+      "GROWTH_STAGE_QA": "OWNER_REVIEW_REQUIRED",
+      "PHENOLOGY_STATE_QA": "OWNER_REVIEW_REQUIRED",
+      "IN_GARDEN_QA": "OWNER_REVIEW_REQUIRED",
+      "OWNER_VISUAL_QA": "PENDING",
+      "DETAIL_HISTORY": "Quality-family final owner judged native DETAIL_OK for ROSETTE V2+medium. Not asset approval.",
+      "PROMOTION_READY": false,
+      "ASSET_PRODUCTION_APPROVAL": "NO",
+      "notes": [
+        "Do not use historical pineapple fruiting/control as the mature-vegetative baseline.",
+        "BOTANICAL_IDENTITY_QA and IN_GARDEN_QA remain owner gates."
+      ]
+    }
+  },
+  "ownerDecision": {
+    "contract": "OWNED_GARDEN_DESIGN_ASSET_PROMOTION_GATE_V1",
+    "runId": "owned-garden-design-asset-promotion-v1",
+    "pending": true,
+    "mango": null,
+    "banana": null,
+    "pineapple": null,
+    "note": "APPROVE_FOR_PRODUCTION_REGISTRY records owner intent only. Registry write is a separate owner-controlled gate."
+  },
+  "coverage": {
+    "current": {
+      "olive": "approved baseline already exists",
+      "mango": "candidate selected — not production-approved",
+      "banana": "candidate selected — not production-approved",
+      "pineapple": "candidate selected — not production-approved",
+      "productionApprovedOwnedBaselines": 1
+    },
+    "ifAllThreeLaterPass": {
+      "olive": "approved baseline unchanged",
+      "mango": "mature TREE VEGETATIVE would become a production Design Asset",
+      "banana": "mature herbaceous-clump VEGETATIVE would become a production Design Asset",
+      "pineapple": "mature ROSETTE VEGETATIVE would become a production Design Asset",
+      "productionApprovedOwnedBaselines": 4,
+      "note": "Coverage count is a later-pass proposal only. This task does not write the registry."
+    }
+  },
+  "nextPriorityWaveConcept": {
+    "execute": false,
+    "generateNow": false,
+    "spendAuthorized": false,
+    "arbitraryBatchCount": false,
+    "broad240Plan": false,
+    "afterOwnedHarvest": true,
+    "tiers": [
+      {
+        "rank": 1,
+        "name": "owned-plants",
+        "note": "Remaining required variants of currently owned plants after this mature-vegetative harvest. Reuse already-paid candidates first."
+      },
+      {
+        "rank": 2,
+        "name": "frequently-recommended",
+        "note": "High-frequency recommended plants still missing a production Design Asset."
+      },
+      {
+        "rank": 3,
+        "name": "garden-design-surfaced",
+        "note": "Plants the Garden Design surface already presents without an approved asset."
+      },
+      {
+        "rank": 4,
+        "name": "launch-critical",
+        "note": "Launch-critical morphology/state gaps not already covered by owned plants."
+      },
+      {
+        "rank": 5,
+        "name": "remainder",
+        "note": "Catalog remainder only after owned, recommended, surfaced, and launch-critical coverage."
+      }
+    ],
+    "ownedRemainingIfBaselinesPass": [
+      {
+        "canonicalSlug": "mango",
+        "variant": "young__tree__vegetative",
+        "reuseFirst": "batch-2 mango young; currently QUALITY_CALIBRATION_REQUIRED"
+      },
+      {
+        "canonicalSlug": "mango",
+        "variant": "mature__tree__fruiting",
+        "reuseFirst": "batch-2 mango fruiting candidate"
+      },
+      {
+        "canonicalSlug": "banana",
+        "variant": "young__default__vegetative",
+        "reuseFirst": "batch-2 banana young candidate"
+      },
+      {
+        "canonicalSlug": "banana",
+        "variant": "mature__default__fruiting",
+        "reuseFirst": "quality-family banana fruiting V2+medium; not this baseline"
+      },
+      {
+        "canonicalSlug": "pineapple",
+        "variant": "mature__default__fruiting",
+        "reuseFirst": "no V2 fruiting candidate selected in this gate"
+      }
+    ]
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "paidSourcing": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "productionRegistryChanged": false,
+    "assetsAutoApproved": 0,
+    "massGenerationStarted": false,
+    "plantsInGate": [
+      "mango",
+      "banana",
+      "pineapple"
+    ]
+  },
+  "productionRegistryChanged": false,
+  "productionRegistrySha256": "908ce5b2fecaf55d9c57b0213733b88e6833e860792cfed80a0e168daaff81b0",
+  "liveReviewHash": "#owned-garden-design-asset-promotion-v1",
+  "reviewHtml": "modules/garden-design/owned-garden-design-asset-promotion-v1.html",
+  "promotionWriteStatus": "NO_REGISTRY_WRITE"
+}

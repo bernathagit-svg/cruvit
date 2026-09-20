@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>OWNED GARDEN — PRODUCTION ASSET REVIEW</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note, .scale-note, .inspect-tools, .q { font-size: 13px; color: #444; }
+    .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    h1 { margin: 0 0 8px; font-size: 28px; }
+    h2 { margin: 28px 0 8px; font-size: 20px; border-top: 1px solid #ccc; padding-top: 16px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
+    .inspect-cutout { width: 1024px; height: auto; filter: none !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; }
+    .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; }
+    .scene.blend-v2-scene img.cutout { filter: brightness(0.94) contrast(0.92) saturate(0.9) blur(0.4px); }
+    .inspect-cutout, [data-review-mode="NATIVE_DETAIL"] img { filter: none !important; }
+    .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
+    .cap { font-size: 14px; font-weight: 600; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
+    .qa-list { font-size: 14px; }
+    .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+    .choice-row button { padding: 8px 12px; cursor: pointer; }
+    .choice-row button[aria-pressed="true"] { background: #0f3d2e; color: #fff; }
+    .plant { max-width: 1600px; }
+    button { padding: 6px 10px; cursor: pointer; }
+  </style>
+</head>
+<body data-run-id="owned-garden-design-asset-promotion-v1" data-owner-qa-storage="cruvit:owned-garden-design-asset-promotion-v1">
+  <h1>OWNED GARDEN — PRODUCTION ASSET REVIEW</h1>
+  <p id="realGardenBanner" class="warn">Exactly 3 plants: Mango, Banana, Pineapple. Olive unchanged. Spend DENIED. No generation. APPROVE does not write the production registry.</p>
+  <p class="note">Reuse already-paid candidates. Native 100/150 is unblended. Garden preview uses the real persisted Garden photo, ground anchor, Blend V2, and production runtime scale. Candidate binaries are not modified.</p>
+  <section class="plant" data-canonical-slug="mango" data-job-id="mango__mature__tree__vegetative__detail-v2__high">
+    <h2>1. MANGO</h2>
+    <p class="note">mango · tree · tree · mature · vegetative · run design-asset-woody-foliage-detail-ab-1</p>
+    <p class="note">Owner reviewed A medium = acceptable, B high = preferred. Dense woody foliage is the validated selective-HIGH case.</p>
+    <div class="slots"><div class="slot inspect-slot" data-slug="mango" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">A. NATIVE ASSET</p>
+    <p class="note">Detail V2 · quality=high · mango__mature__tree__vegetative__detail-v2__high · CALIBRATION_CANDIDATE · not production-approved</p>
+    <div class="inspect-scene inspect-100 checkerboard">
+      <div class="inspect-frame">
+        <img class="inspect-cutout" alt="mango native asset" src="assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png?v=20260920h" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        filter:none. No blend. Candidate binary unmodified.
+      </p>
+    </div>
+  </div><div class="slot garden-slot" data-slug="mango" data-review-mode="IN_GARDEN">
+    <p class="cap">B. REAL GARDEN PREVIEW</p>
+    <p class="q">Would this asset look natural when the user actually places this plant in Garden Design?</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="35,63,1006,1499" data-ground-anchor="0.50830078125,0.9759114583333334" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED" data-lock-range-band="LOW">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="mango garden preview" src="assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png?v=20260920h" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Production Tree Physical Scale V1 · Mango authority · this Garden LOW preference. No fit-to-frame.</p>
+  </div></div>
+    <div class="qa" data-slug="mango">
+    <p class="cap">C. QA SUMMARY</p>
+    <p class="note">Quality-family DETAIL_OK is not asset approval. PROMOTION_READY requires every axis plus explicit owner approval.</p>
+    <ul class="qa-list">
+      <li><strong>TECHNICAL_QA</strong>: PASS</li><li><strong>BOTANICAL_IDENTITY_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>ARCHITECTURE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>GROWTH_STAGE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>PHENOLOGY_STATE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>IN_GARDEN_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>OWNER_VISUAL_QA</strong>: PENDING</li>
+      <li><strong>DETAIL_HISTORY</strong>: Owner A/B: A medium ACCEPTABLE, B high PREFERRED. DETAIL family only. Not asset approval.</li>
+      <li><strong>PROMOTION_READY</strong>: NO</li>
+      <li><strong>ASSET_PRODUCTION_APPROVAL</strong>: NO</li>
+    </ul>
+    <ul class="note"><li>Do not infer APPROVE_FOR_PRODUCTION_REGISTRY from earlier detail-quality reviews.</li><li>Selective HIGH is already validated for this morphology. Do not regenerate Mango in this gate.</li></ul>
+  </div>
+    <div class="choices" data-slug="mango" data-owner-choice-group="mango">
+    <p class="cap">D. OWNER CHOICE</p>
+    <p class="warn-mini">APPROVE_FOR_PRODUCTION_REGISTRY records intent only. It does not write the catalog registry, Supabase, R2, or production catalog in this task.</p>
+    <div class="choice-row">
+      <button type="button" data-owner-choice="APPROVE_FOR_PRODUCTION_REGISTRY" data-slug="mango">APPROVE_FOR_PRODUCTION_REGISTRY</button><button type="button" data-owner-choice="NEEDS_REGENERATION" data-slug="mango">NEEDS_REGENERATION</button><button type="button" data-owner-choice="REJECT_IDENTITY" data-slug="mango">REJECT_IDENTITY</button><button type="button" data-owner-choice="NEEDS_ARCHITECTURE_FIX" data-slug="mango">NEEDS_ARCHITECTURE_FIX</button>
+    </div>
+    <p class="choice-status" data-choice-status="mango">No owner choice recorded.</p>
+  </div>
+  </section>
+  <section class="plant" data-canonical-slug="banana" data-job-id="banana__mature__default__vegetative__v1">
+    <h2>2. BANANA</h2>
+    <p class="note">banana · herbaceous-clump · default · mature · vegetative · run design-asset-visual-state-calibration-batch-2</p>
+    <p class="note">Best already-paid mature-vegetative Banana. Do not use the later FRUITING V2 candidate as the production baseline.</p>
+    <div class="slots"><div class="slot inspect-slot" data-slug="banana" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">A. NATIVE ASSET</p>
+    <p class="note">Visual State Family V1 · quality=medium · banana__mature__default__vegetative__v1 · CALIBRATION_CANDIDATE · not production-approved</p>
+    <div class="inspect-scene inspect-100 checkerboard">
+      <div class="inspect-frame">
+        <img class="inspect-cutout" alt="banana native asset" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png?v=20260920h" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        filter:none. No blend. Candidate binary unmodified.
+      </p>
+    </div>
+  </div><div class="slot garden-slot" data-slug="banana" data-review-mode="IN_GARDEN">
+    <p class="cap">B. REAL GARDEN PREVIEW</p>
+    <p class="q">Would this asset look natural when the user actually places this plant in Garden Design?</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="banana" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="18,42,988,1497" data-ground-anchor="0.4912109375,0.974609375" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="banana garden preview" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png?v=20260920h" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Herbaceous-clump runtime scale. Not tree physical-scale rules. No fit-to-frame.</p>
+  </div></div>
+    <div class="qa" data-slug="banana">
+    <p class="cap">C. QA SUMMARY</p>
+    <p class="note">Quality-family DETAIL_OK is not asset approval. PROMOTION_READY requires every axis plus explicit owner approval.</p>
+    <ul class="qa-list">
+      <li><strong>TECHNICAL_QA</strong>: PASS</li><li><strong>BOTANICAL_IDENTITY_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>ARCHITECTURE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>GROWTH_STAGE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>PHENOLOGY_STATE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>IN_GARDEN_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>OWNER_VISUAL_QA</strong>: PENDING</li>
+      <li><strong>DETAIL_HISTORY</strong>: Batch-2 vegetative CRISP_ENOUGH at family-v1 medium. Not Detail V2. Not the later fruiting candidate.</li>
+      <li><strong>PROMOTION_READY</strong>: NO</li>
+      <li><strong>ASSET_PRODUCTION_APPROVAL</strong>: NO</li>
+    </ul>
+    <ul class="note"><li>identityPrecision=GENUS_BLOCKED. Catalog identity blockers: GENUS_OR_BROAD_IDENTITY, IDENTITY_NEEDS_REVIEW.</li><li>Fruiting V2+medium exists but is the wrong phenology for this production baseline.</li><li>DETAIL_OK / CRISP_ENOUGH is not botanical identity or architecture approval.</li></ul>
+  </div>
+    <div class="choices" data-slug="banana" data-owner-choice-group="banana">
+    <p class="cap">D. OWNER CHOICE</p>
+    <p class="warn-mini">APPROVE_FOR_PRODUCTION_REGISTRY records intent only. It does not write the catalog registry, Supabase, R2, or production catalog in this task.</p>
+    <div class="choice-row">
+      <button type="button" data-owner-choice="APPROVE_FOR_PRODUCTION_REGISTRY" data-slug="banana">APPROVE_FOR_PRODUCTION_REGISTRY</button><button type="button" data-owner-choice="NEEDS_REGENERATION" data-slug="banana">NEEDS_REGENERATION</button><button type="button" data-owner-choice="REJECT_IDENTITY" data-slug="banana">REJECT_IDENTITY</button><button type="button" data-owner-choice="NEEDS_ARCHITECTURE_FIX" data-slug="banana">NEEDS_ARCHITECTURE_FIX</button>
+    </div>
+    <p class="choice-status" data-choice-status="banana">No owner choice recorded.</p>
+  </div>
+  </section>
+  <section class="plant" data-canonical-slug="pineapple" data-job-id="pineapple__mature__default__vegetative__detail-v2__medium">
+    <h2>3. PINEAPPLE</h2>
+    <p class="note">pineapple · rosette · default · mature · vegetative · run design-asset-quality-family-calibration-final-1</p>
+    <p class="note">Quality Family Final Calibration Prompt V2 + MEDIUM. Owner judged native detail DETAIL_OK. Do not use historical fruiting/control as the mature-vegetative baseline.</p>
+    <div class="slots"><div class="slot inspect-slot" data-slug="pineapple" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">A. NATIVE ASSET</p>
+    <p class="note">Detail V2 · quality=medium · pineapple__mature__default__vegetative__detail-v2__medium · CALIBRATION_CANDIDATE · not production-approved</p>
+    <div class="inspect-scene inspect-100 checkerboard">
+      <div class="inspect-frame">
+        <img class="inspect-cutout" alt="pineapple native asset" src="assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png?v=20260920h" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        filter:none. No blend. Candidate binary unmodified.
+      </p>
+    </div>
+  </div><div class="slot garden-slot" data-slug="pineapple" data-review-mode="IN_GARDEN">
+    <p class="cap">B. REAL GARDEN PREVIEW</p>
+    <p class="q">Would this asset look natural when the user actually places this plant in Garden Design?</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="rosette" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="pineapple" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="26,248,997,1400" data-ground-anchor="0.49951171875,0.9114583333333334" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="pineapple garden preview" src="assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png?v=20260920h" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Rosette runtime scale. Not tree physical-scale rules. No fit-to-frame.</p>
+  </div></div>
+    <div class="qa" data-slug="pineapple">
+    <p class="cap">C. QA SUMMARY</p>
+    <p class="note">Quality-family DETAIL_OK is not asset approval. PROMOTION_READY requires every axis plus explicit owner approval.</p>
+    <ul class="qa-list">
+      <li><strong>TECHNICAL_QA</strong>: PASS</li><li><strong>BOTANICAL_IDENTITY_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>ARCHITECTURE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>GROWTH_STAGE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>PHENOLOGY_STATE_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>IN_GARDEN_QA</strong>: OWNER_REVIEW_REQUIRED</li><li><strong>OWNER_VISUAL_QA</strong>: PENDING</li>
+      <li><strong>DETAIL_HISTORY</strong>: Quality-family final owner judged native DETAIL_OK for ROSETTE V2+medium. Not asset approval.</li>
+      <li><strong>PROMOTION_READY</strong>: NO</li>
+      <li><strong>ASSET_PRODUCTION_APPROVAL</strong>: NO</li>
+    </ul>
+    <ul class="note"><li>Do not use historical pineapple fruiting/control as the mature-vegetative baseline.</li><li>BOTANICAL_IDENTITY_QA and IN_GARDEN_QA remain owner gates.</li></ul>
+  </div>
+    <div class="choices" data-slug="pineapple" data-owner-choice-group="pineapple">
+    <p class="cap">D. OWNER CHOICE</p>
+    <p class="warn-mini">APPROVE_FOR_PRODUCTION_REGISTRY records intent only. It does not write the catalog registry, Supabase, R2, or production catalog in this task.</p>
+    <div class="choice-row">
+      <button type="button" data-owner-choice="APPROVE_FOR_PRODUCTION_REGISTRY" data-slug="pineapple">APPROVE_FOR_PRODUCTION_REGISTRY</button><button type="button" data-owner-choice="NEEDS_REGENERATION" data-slug="pineapple">NEEDS_REGENERATION</button><button type="button" data-owner-choice="REJECT_IDENTITY" data-slug="pineapple">REJECT_IDENTITY</button><button type="button" data-owner-choice="NEEDS_ARCHITECTURE_FIX" data-slug="pineapple">NEEDS_ARCHITECTURE_FIX</button>
+    </div>
+    <p class="choice-status" data-choice-status="pineapple">No owner choice recorded.</p>
+  </div>
+  </section>
+  <script type="module" src="./asset-factory-v1/owned-garden-design-asset-promotion-review-runtime.js?v=20260920h"></script>
+</body>
+</html>
