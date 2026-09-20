@@ -5784,7 +5784,7 @@ The plants array MUST match the exact counts specified above.`}]);
   </script>
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
-    import './garden-design-asset-registry-v1.js?v=20260920reg2';
+    import './garden-design-asset-registry-v1.js?v=20260920reg3';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import './garden-design-owned-garden-v1.js?v=20260920ins1';
     import {
@@ -5802,6 +5802,24 @@ The plants array MUST match the exact counts specified above.`}]);
       scaleFromGardenSizeAuthority,
       registry: null
     };
+    fetch('./assets/plants/design-asset-registry-v1.json?v=20260920reg3', { cache: 'no-store' })
+      .then(function(r) {
+        if (!r.ok) throw new Error('garden-design-registry-self-load-failed');
+        return r.json();
+      })
+      .then(function(registry) {
+        if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
+        gdOwnedGardenContext.designAssetRegistry = registry;
+        gdIndexDesignAssetRegistry(registry);
+        const modal = document.getElementById('apmStep2List');
+        if (modal && modal.style.display !== 'none') {
+          if (gdOwnedPlantsFromContext().length) showApmOwned();
+          else showApmList();
+        }
+      })
+      .catch(function(err) {
+        try { console.warn('[garden-design-assets] registry self-load failed', err && err.message ? err.message : err); } catch (_) {}
+      });
     fetch('../../data/catalog/botanical-size-authority-v1.json')
       .then(function(r) { return r.json(); })
       .then(function(registry) {
