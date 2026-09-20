@@ -1804,6 +1804,8 @@ function gdLayerSnapshotList() {
       canonicalSlug: l.canonicalSlug,
       gardenPlantId: l.gardenPlantId,
       areaId: l.areaId,
+      designAssetId: l.designAssetId || l.variantId || null,
+      architectureMode: l.architectureMode || null,
       growthStage: l.growthStage,
       targetGrowthStage: l.targetGrowthStage,
       season: l.season,
@@ -1845,6 +1847,7 @@ function gdHostPlacementPayload(layer) {
     gardenPlantId: layer.gardenPlantId || null,
     canonicalSlug: layer.canonicalSlug || null,
     gardenAreaId: layer.areaId || null,
+    designAssetId: layer.designAssetId || layer.variantId || null,
     x: layer.x,
     y: layer.y,
     scale: layer.scale,
@@ -2682,16 +2685,40 @@ function gdEscAttr(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
 
+function gdApprovedRegistryVariantForSlug(slug) {
+  const key = String(slug || '').toLowerCase();
+  if (!key || !gdDesignAssetIndex || !gdDesignAssetIndex.bySlug) return null;
+  const set = gdDesignAssetIndex.bySlug.get(key);
+  if (!set) return null;
+  const variants = set.variants || [];
+  return variants.find(function(v) {
+    return v.approvalStatus === 'approved' && v.transparencyReady === true;
+  }) || null;
+}
+
+function gdSpriteTypeFromRegistryVariant(variant, fallback) {
+  const form = String((variant && (variant.visualForm || variant.architectureMode)) || '').toLowerCase();
+  if (form === 'tree') return 'tree';
+  if (form === 'herbaceous-clump' || form === 'rosette' || form === 'shrub' || form === 'default') {
+    return fallback === 'tree' ? 'shrub' : (fallback || 'shrub');
+  }
+  return fallback;
+}
+
 function getPlantSpriteType(plantOrLayer) {
   const name = (plantOrLayer.name || '').toLowerCase();
   const latin = (plantOrLayer.species || plantOrLayer.latin || '').toLowerCase();
   const text = name + ' ' + latin;
-  if (isTreePlant(name) || isTreePlant(latin)) return 'tree';
+  let heuristic = 'shrub';
+  if (isTreePlant(name) || isTreePlant(latin)) heuristic = 'tree';
   const flowers = ['rose', 'lavender', 'jasmine', 'marigold', 'tulip', 'daisy', 'geranium', 'bougainvillea', 'hibiscus', 'petunia', 'poppy', 'orchid', 'sunflower', 'lily', 'iris', 'violet', 'cyclamen', 'anemone', 'flower', 'bloom', 'blossom', 'daffodil', 'narcissus', 'camellia', 'magnolia', 'wisteria', 'peony', 'zinnia', 'cosmos', 'begonia'];
-  if (flowers.some(w => text.includes(w))) return 'flower';
+  if (heuristic !== 'tree' && flowers.some(w => text.includes(w))) heuristic = 'flower';
   const herbs = ['rosemary', 'thyme', 'sage', 'mint', 'basil', 'oregano', 'parsley', 'chive', 'lemongrass', 'fennel', 'dill', 'herb', 'grass', 'lawn', 'wheat', 'bamboo', 'fern', 'hosta', 'monstera', 'pothos', 'sedge', 'catmint', 'catnip', 'coriander', 'cilantro', 'tarragon', 'marjoram', 'chamomile', 'santolina'];
-  if (herbs.some(w => text.includes(w))) return 'herb';
-  return 'shrub';
+  if (heuristic === 'shrub' && herbs.some(w => text.includes(w))) heuristic = 'herb';
+  const slug = String(plantOrLayer.canonicalSlug || plantOrLayer.slug || '').toLowerCase();
+  const variant = gdApprovedRegistryVariantForSlug(slug);
+  if (variant) return gdSpriteTypeFromRegistryVariant(variant, heuristic);
+  return heuristic;
 }
 
 function gdResolveLayerSpriteType(layer) {
@@ -2820,13 +2847,18 @@ function resolvePlantLayerAsset(layer, manifest) {
         formView: layer.formView
       }, gdDesignAssetIndex);
       if (resolved && resolved.visualReady && resolved.url) {
+        const variant = resolved.variant || {};
         return {
-          spriteType: spriteType,
+          spriteType: gdSpriteTypeFromRegistryVariant(variant, spriteType),
           assetKey: resolved.canonicalSlug,
           variantId: resolved.assetId,
+          designAssetId: resolved.assetId,
+          architectureMode: variant.architectureMode || null,
+          visualForm: variant.visualForm || null,
           urlCandidates: [resolved.url],
-          anchor: anchor,
-          baseWidthPx: (resolved.variant && resolved.variant.baseWidthPx) || null,
+          anchor: variant.groundAnchor || anchor,
+          groundAnchor: variant.groundAnchor || null,
+          baseWidthPx: variant.baseWidthPx || null,
           visualReady: true,
           status: resolved.approvalStatus,
           thumbUrl: null,
@@ -2837,7 +2869,8 @@ function resolvePlantLayerAsset(layer, manifest) {
           phenology: resolved.phenology,
           fallback: resolved.fallback,
           usedWebImage: false,
-          substitutedSpecies: false
+          substitutedSpecies: false,
+          placeholder: false
         };
       }
       return Object.assign({}, base, {
@@ -2935,7 +2968,13 @@ function gdBuildPlantLayerVisualInner(layer, resolved) {
     }
     if (resolved) {
       if (resolved.assetKey) layer.assetKey = resolved.assetKey;
-      if (resolved.variantId) layer.variantId = resolved.variantId;
+      if (resolved.variantId) {
+        layer.variantId = resolved.variantId;
+        layer.designAssetId = resolved.designAssetId || resolved.variantId;
+      }
+      if (resolved.architectureMode) layer.architectureMode = resolved.architectureMode;
+      if (resolved.visualForm) layer.visualForm = resolved.visualForm;
+      if (resolved.groundAnchor) layer.groundAnchor = resolved.groundAnchor;
       if (resolved.spriteType) {
         layer.spriteType = resolved.spriteType;
         layer.isTree = resolved.spriteType === 'tree';
@@ -2943,7 +2982,7 @@ function gdBuildPlantLayerVisualInner(layer, resolved) {
       layer.visualFallback = resolved.fallback || (resolved.visualReady ? null : 'honest-placeholder');
       if (resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
         const urlsJson = gdEscAttr(JSON.stringify(resolved.urlCandidates));
-        return '<img class="gd-plant-cutout" src="' + gdEscAttr(resolved.urlCandidates[0]) + '" alt="" style="visibility:hidden" data-gd-candidates="' + urlsJson + '" onload="this.style.visibility=\'visible\'" onerror="gdOnPlantCutoutError(this)"/>';
+        return '<img class="gd-plant-cutout" src="' + gdEscAttr(resolved.urlCandidates[0]) + '" alt="" style="visibility:hidden" data-gd-candidates="' + urlsJson + '" data-canonical-slug="' + gdEscAttr(layer.canonicalSlug || resolved.assetKey || '') + '" data-asset-id="' + gdEscAttr(resolved.variantId || '') + '" data-architecture-mode="' + gdEscAttr(resolved.architectureMode || '') + '" data-visual-form="' + gdEscAttr(resolved.visualForm || '') + '" data-approval-status="' + gdEscAttr(resolved.status || '') + '" onload="this.style.visibility=\'visible\'" onerror="gdOnPlantCutoutError(this)"/>';
       }
     }
     return gdBuildHonestPlaceholderHtml(layer);

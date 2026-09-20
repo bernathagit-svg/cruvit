@@ -1,0 +1,294 @@
+{
+  "contract": "approved-design-assets-production-e2e-v1",
+  "version": "1.0.0",
+  "verdict": "APPROVED_DESIGN_ASSETS_PRODUCTION_E2E_VALIDATED",
+  "spendGate": {
+    "state": "DENIED",
+    "execute": false,
+    "generateNow": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "paidSourcing": 0,
+    "additionalSpendUsd": 0,
+    "massGeneration": false,
+    "r2StorageCreated": false,
+    "productionDbSchemaChanged": false
+  },
+  "gardenProfileId": "fab7eec4-86b7-4b8a-838d-8aa4bba61657",
+  "authorityPath": {
+    "hostFetch": "app.html loadGardenDesignAssetRegistry → fetch('modules/garden-design/assets/plants/design-asset-registry-v1.json')",
+    "hostPost": "buildGardenDesignContextPayload.designAssetRegistry → cruvit:garden-design-context",
+    "iframeIndex": "index.html gdApplyOwnedGardenContext → gdIndexDesignAssetRegistry",
+    "lookup": "index.html resolvePlantLayerAsset → CruvitGardenDesignAssetRegistry.resolveDesignAsset(gdDesignAssetIndex)",
+    "renderer": "gdBuildPlantLayerVisualInner → img.gd-plant-cutout from resolved.url",
+    "authorityFile": "modules/garden-design/assets/plants/design-asset-registry-v1.json",
+    "iframeCacheBust": "20260920e2e",
+    "registryFirst": true,
+    "visualFormSpriteType": true
+  },
+  "manifest": {
+    "status": "MANIFEST_NON_AUTHORITATIVE_SAFE",
+    "usedByLiveAssetSelection": false,
+    "buildTimeOnly": false,
+    "legacyNonAuthoritative": true,
+    "oliveDirt": {
+      "width": 677,
+      "height": 369,
+      "note": "Local Olive 677×369 is wrap metadata only. Registry-first lookup never uses plants[\"olive-tree\"] when canonicalSlug=olive is in the approved registry."
+    },
+    "couldOverrideApprovedRegistryMatch": false,
+    "committedAutomatically": false
+  },
+  "lookups": {
+    "mango": {
+      "canonicalSlug": "mango",
+      "assetId": "mango__mature__tree__vegetative__detail-v2__high",
+      "architectureMode": "tree",
+      "visualForm": "tree",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "visualReady": true,
+      "placeholder": false,
+      "file": "woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+      "representationPolicy": null,
+      "scientific": "Mangifera indica",
+      "identityPrecision": "SPECIES_SUPPORTED",
+      "expectedAssetId": "mango__mature__tree__vegetative__detail-v2__high",
+      "match": true
+    },
+    "banana": {
+      "canonicalSlug": "banana",
+      "assetId": "banana__mature__default__vegetative__v1",
+      "architectureMode": "default",
+      "visualForm": "herbaceous-clump",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "visualReady": true,
+      "placeholder": false,
+      "file": "batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+      "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE",
+      "scientific": "Musa spp.",
+      "identityPrecision": "GENUS_VISUALLY_REPRESENTABLE",
+      "expectedAssetId": "banana__mature__default__vegetative__v1",
+      "match": true
+    },
+    "pineapple": {
+      "canonicalSlug": "pineapple",
+      "assetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "architectureMode": "default",
+      "visualForm": "rosette",
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "visualReady": true,
+      "placeholder": false,
+      "file": "quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+      "representationPolicy": null,
+      "scientific": "Ananas comosus",
+      "identityPrecision": "SPECIES_SUPPORTED",
+      "expectedAssetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "match": true
+    },
+    "olive": {
+      "canonicalSlug": "olive",
+      "assetId": "olive-mature-summer-vegetative-v1",
+      "architectureMode": null,
+      "visualForm": null,
+      "growthStage": "mature",
+      "phenology": "vegetative",
+      "visualReady": true,
+      "placeholder": false,
+      "file": "olive-tree/variants/summer-mature.png",
+      "representationPolicy": null,
+      "scientific": null,
+      "identityPrecision": null,
+      "expectedAssetId": "olive-mature-summer-vegetative-v1",
+      "match": true
+    }
+  },
+  "checksums": {
+    "mango": {
+      "file": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+      "expected": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+      "actual": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+      "match": true,
+      "modified": false
+    },
+    "banana": {
+      "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+      "expected": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+      "actual": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+      "match": true,
+      "modified": false
+    },
+    "pineapple": {
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+      "expected": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+      "actual": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+      "match": true,
+      "modified": false
+    },
+    "olive": {
+      "file": "modules/garden-design/assets/plants/olive-tree/variants/summer-mature.png",
+      "expected": "e749cdc7fe0c559d63333c98faf37277b65f77176cafce1469b5f58a4a57fae0",
+      "actual": "e749cdc7fe0c559d63333c98faf37277b65f77176cafce1469b5f58a4a57fae0",
+      "match": true,
+      "modified": false
+    }
+  },
+  "placements": [
+    {
+      "name": "Mango",
+      "createsGardenPlant": false,
+      "gardenPlantId": "gp-mango-prod-sim",
+      "gardenPlantIdUnchanged": true,
+      "areaId": "b394f661-0edd-4740-a04b-8bcc420590c9",
+      "visual": {
+        "source": "design-asset-registry-v1",
+        "spriteType": "tree",
+        "assetId": "mango__mature__tree__vegetative__detail-v2__high",
+        "canonicalSlug": "mango",
+        "architectureMode": "tree",
+        "visualForm": "tree",
+        "growthStage": "mature",
+        "phenology": "vegetative",
+        "url": "assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+        "visualReady": true,
+        "placeholder": false,
+        "usedManifest": false,
+        "groundAnchor": {
+          "nx": 0.50830078125,
+          "ny": 0.9759114583333334,
+          "source": "alpha-bbox-base-center"
+        }
+      },
+      "payloadHasPng": false,
+      "restoredAssetId": "mango__mature__tree__vegetative__detail-v2__high",
+      "reloadMatch": true,
+      "placeholder": false
+    },
+    {
+      "name": "Banana",
+      "createsGardenPlant": false,
+      "gardenPlantId": "gp-banana-prod-sim",
+      "gardenPlantIdUnchanged": true,
+      "areaId": "area-banana",
+      "visual": {
+        "source": "design-asset-registry-v1",
+        "spriteType": "shrub",
+        "assetId": "banana__mature__default__vegetative__v1",
+        "canonicalSlug": "banana",
+        "architectureMode": "default",
+        "visualForm": "herbaceous-clump",
+        "growthStage": "mature",
+        "phenology": "vegetative",
+        "url": "assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+        "visualReady": true,
+        "placeholder": false,
+        "usedManifest": false,
+        "groundAnchor": {
+          "nx": 0.4912109375,
+          "ny": 0.974609375,
+          "source": "alpha-bbox-base-center"
+        }
+      },
+      "payloadHasPng": false,
+      "restoredAssetId": "banana__mature__default__vegetative__v1",
+      "reloadMatch": true,
+      "placeholder": false
+    },
+    {
+      "name": "Pineapple",
+      "createsGardenPlant": false,
+      "gardenPlantId": "gp-pineapple-prod-sim",
+      "gardenPlantIdUnchanged": true,
+      "areaId": "area-pineapple",
+      "visual": {
+        "source": "design-asset-registry-v1",
+        "spriteType": "shrub",
+        "assetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+        "canonicalSlug": "pineapple",
+        "architectureMode": "default",
+        "visualForm": "rosette",
+        "growthStage": "mature",
+        "phenology": "vegetative",
+        "url": "assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+        "visualReady": true,
+        "placeholder": false,
+        "usedManifest": false,
+        "groundAnchor": {
+          "nx": 0.49951171875,
+          "ny": 0.9114583333333334,
+          "source": "alpha-bbox-base-center"
+        }
+      },
+      "payloadHasPng": false,
+      "restoredAssetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "reloadMatch": true,
+      "placeholder": false
+    }
+  ],
+  "physicalScale": {
+    "mango": {
+      "spriteTypeFromRegistry": "tree",
+      "usesTreePhysicalScaleV1": true,
+      "botanicalTaxonId": "taxon:mangifera-indica",
+      "ownerPreferredRangePosition": "LOW",
+      "fitToFrame": false,
+      "gardenDesignBlocked": false,
+      "applied": true
+    },
+    "banana": {
+      "spriteTypeFromRegistry": "shrub",
+      "usesTreePhysicalScaleV1": false,
+      "visualForm": "herbaceous-clump",
+      "formRelativeScale": 0.78,
+      "note": "Production overlay applies Tree Physical Scale V1 only when registry visualForm/architectureMode is tree. Banana stays on herbaceous-clump / non-tree overlay scale."
+    },
+    "pineapple": {
+      "spriteTypeFromRegistry": "shrub",
+      "usesTreePhysicalScaleV1": false,
+      "visualForm": "rosette",
+      "formRelativeScale": 0.32,
+      "note": "Pineapple stays on rosette / non-tree overlay scale. Heights are not forced equal."
+    },
+    "equalVisualHeightForced": false,
+    "photoScaleOptional": true
+  },
+  "mangoArea": {
+    "ownedAreaId": "b394f661-0edd-4740-a04b-8bcc420590c9",
+    "ownedAreaName": "Sunny Patio",
+    "placementAreaId": "b394f661-0edd-4740-a04b-8bcc420590c9",
+    "myGardenAreaUnchanged": true,
+    "gardenPlantsRowNotUpdated": true
+  },
+  "saveReload": {
+    "pngStoredInPlacement": false,
+    "designAssetIdPreserved": true,
+    "gardenPlantIdMutated": 0,
+    "persistColumnsOk": true
+  },
+  "deletePlacement": {
+    "deletesGardenDesignPlacementOnly": true,
+    "gardenPlantsTableWritten": false,
+    "deletePlacementTouchesGardenPlants": false
+  },
+  "proposedPlantSafety": {
+    "proposedKind": "proposed",
+    "proposedGardenPlantId": null,
+    "createsGardenPlant": false,
+    "approvedAssetStillProposed": true,
+    "autoOwnOnLookup": false,
+    "explicitAddToMyGardenRequired": true
+  },
+  "ownedCoverage": {
+    "mango": "APPROVED BASELINE READY",
+    "banana": "APPROVED BASELINE READY",
+    "pineapple": "APPROVED BASELINE READY",
+    "ownedMojstrana": "3 / 3",
+    "olive": "approved catalog baseline remains ready"
+  },
+  "binariesModified": false,
+  "newImageGeneration": 0,
+  "productionDbSchemaChanged": false,
+  "liveRegistryUrl": "https://friendly-taiyaki-64aacb.netlify.app/modules/garden-design/assets/plants/design-asset-registry-v1.json"
+}
