@@ -92,6 +92,8 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .gd-persist-status.is-visible{display:flex}
 .gd-persist-status.is-error{border-color:rgba(176,70,70,.45);background:rgba(255,244,244,.92);color:#7a2e2e}
 .gd-persist-retry{border:1px solid rgba(176,70,70,.4);background:#fff;color:#7a2e2e;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.gd-asset-diag{display:block;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(180,120,30,.35);border-radius:10px;background:#fff8e8;color:#4b3a1d;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.gd-asset-diag strong{font-family:'DM Sans',sans-serif;font-size:12px;color:#7a4d00}
 
 /* UPLOAD */
 .upload-area{border:2px dashed var(--border);border-radius:14px;padding:60px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;background:rgba(255,255,255,0.5)}
@@ -1184,6 +1186,8 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
         <button type="button" id="gdPersistRetryBtn" class="gd-persist-retry" hidden onclick="gdRetryLastPersist()">Retry</button>
       </div>
       <div id="gdPersistNote" class="gd-persist-note" style="display:none;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(61,138,80,.28);border-radius:10px;background:rgba(255,255,255,.72);color:#1b4332;font-size:13px"></div>
+      <div id="gdAssetDiag" class="gd-asset-diag"><strong>Asset diagnostic</strong>
+waiting for runtime…</div>
       <div class="pc-plants-section" id="plantsSection">
         <div class="pc-left-panel">
           <div class="pc-left-logo">
@@ -1277,6 +1281,8 @@ let gdLastLoadKey = null;
 let gdSuitabilityWaiters = {};
 let gdOpenPlantPopupIdx = null;
 let gdDesignAssetIndex = null;
+let gdAssetDiagLastError = null;
+let gdAssetDiagLastReason = 'init';
 let smartInclude1 = true, smartInclude2 = true;
 // styleData[group][styleName] = {trees, shrubs, flowers, herbs}
 let styleData = {'1':{}, '2':{}};
@@ -2296,6 +2302,64 @@ function gdOnPersistResult(msg) {
   }
 }
 
+function gdAssetDiagSnapshot(reason) {
+  const ctx = gdOwnedGardenContext || {};
+  const owned = Array.isArray(ctx.ownedPlants) ? ctx.ownedPlants : [];
+  const mangoOwned = owned.find(function(p) { return String((p && p.canonicalSlug) || '').toLowerCase() === 'mango'; }) || owned[0] || null;
+  const mangoLayer = (Array.isArray(plantLayers) ? plantLayers : []).find(function(l) {
+    return String((l && l.canonicalSlug) || '').toLowerCase() === 'mango';
+  }) || (plantLayers && plantLayers[0]) || null;
+  const probe = mangoLayer || (mangoOwned ? {
+    name: mangoOwned.name,
+    species: mangoOwned.scientific,
+    canonicalSlug: mangoOwned.canonicalSlug,
+    growthStage: mangoOwned.growthStage || 'mature',
+    season: 'unknown',
+    phenology: 'vegetative'
+  } : { canonicalSlug: 'mango', growthStage: 'mature', phenology: 'vegetative' });
+  let resolved = null;
+  try { resolved = resolvePlantLayerAsset(probe, gdPlantAssetsManifest); } catch (e) { resolved = { diagException: e && e.message ? e.message : String(e) }; }
+  const registrySets = ctx.designAssetRegistry && Array.isArray(ctx.designAssetRegistry.sets) ? ctx.designAssetRegistry.sets.length : 0;
+  const indexHasMango = !!(gdDesignAssetIndex && gdDesignAssetIndex.bySlug && gdDesignAssetIndex.bySlug.has('mango'));
+  const img = document.querySelector('.gd-plant-cutout[data-canonical-slug="mango"], .gd-registry-thumb[data-asset-id*="mango"]');
+  return {
+    reason: reason || gdAssetDiagLastReason,
+    registrySets: registrySets,
+    indexHasMango: indexHasMango,
+    ownedCanonicalSlug: mangoOwned && mangoOwned.canonicalSlug || null,
+    ownedGardenPlantId: mangoOwned && mangoOwned.gardenPlantId || null,
+    layerCanonicalSlug: mangoLayer && mangoLayer.canonicalSlug || null,
+    layerGardenPlantId: mangoLayer && mangoLayer.gardenPlantId || null,
+    resolvedVisualReady: !!(resolved && resolved.visualReady),
+    resolvedAssetId: resolved && (resolved.variantId || resolved.designAssetId) || null,
+    resolvedUrl: resolved && resolved.urlCandidates && resolved.urlCandidates[0] || null,
+    imagePresent: !!img,
+    imageNaturalWidth: img && typeof img.naturalWidth === 'number' ? img.naturalWidth : null,
+    imageCurrentSrc: img ? (img.currentSrc || img.getAttribute('src') || null) : null,
+    lastImageError: gdAssetDiagLastError
+  };
+}
+
+function gdRenderAssetDiag(reason) {
+  gdAssetDiagLastReason = reason || gdAssetDiagLastReason;
+  const el = document.getElementById('gdAssetDiag');
+  if (!el) return;
+  const s = gdAssetDiagSnapshot(gdAssetDiagLastReason);
+  el.innerHTML = '<strong>Asset diagnostic</strong>\n' +
+    'reason: ' + String(s.reason) + '\n' +
+    'registrySets: ' + String(s.registrySets) + ' · indexHasMango: ' + String(s.indexHasMango) + '\n' +
+    'ownedSlug: ' + String(s.ownedCanonicalSlug) + '\n' +
+    'ownedId: ' + String(s.ownedGardenPlantId) + '\n' +
+    'layerSlug: ' + String(s.layerCanonicalSlug) + '\n' +
+    'layerId: ' + String(s.layerGardenPlantId) + '\n' +
+    'visualReady: ' + String(s.resolvedVisualReady) + '\n' +
+    'assetId: ' + String(s.resolvedAssetId) + '\n' +
+    'url: ' + String(s.resolvedUrl) + '\n' +
+    'img: ' + String(s.imagePresent) + ' · naturalWidth: ' + String(s.imageNaturalWidth) + '\n' +
+    'currentSrc: ' + String(s.imageCurrentSrc) + '\n' +
+    'lastError: ' + String(s.lastImageError);
+}
+
 function gdRerenderPlantLayersAfterRegistryArrival() {
   if (gdHydratingFromServer) return;
   if (!overlayPlacementActive || !plantLayers.length) return;
@@ -2315,6 +2379,7 @@ function gdIndexDesignAssetRegistry(registry) {
     gdDesignAssetIndex = api.indexDesignAssetRegistry(registry);
   }
   gdRerenderPlantLayersAfterRegistryArrival();
+  gdRenderAssetDiag('registry-indexed');
 }
 
 function gdApplyOwnedGardenContext(ctx) {
@@ -2404,6 +2469,8 @@ function gdApmRegistryThumbHtml(plant, hostId) {
 }
 
 function gdOnApmRegistryThumbError(img) {
+  gdAssetDiagLastError = 'modal-image-error:' + String((img && (img.getAttribute('src') || img.src)) || '');
+  gdRenderAssetDiag('modal-image-error');
   const host = img && img.parentElement;
   if (!host) return;
   host.textContent = '🌿';
@@ -2455,6 +2522,7 @@ function showApmOwned() {
   }).join('');
   const btn = document.getElementById('apmConfirmBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Tap a plant to place it'; }
+  setTimeout(function(){ gdRenderAssetDiag('owned-modal-rendered'); }, 0);
 }
 
 function gdAreaLabel(areaId) {
@@ -3198,6 +3266,8 @@ function gdBuildPlantLayerVisualInner(layer, resolved) {
 
 function gdOnPlantCutoutError(img) {
   if (!img) return;
+  gdAssetDiagLastError = 'canvas-image-error:' + String(img.getAttribute('src') || img.src || '');
+  gdRenderAssetDiag('canvas-image-error');
   let candidates = [];
   try {
     candidates = JSON.parse(img.getAttribute('data-gd-candidates') || '[]');
@@ -3260,6 +3330,7 @@ function renderPlantLayers() {
   });
   gdUpdatePlacementNote();
   updateLayerToolbar();
+  setTimeout(function(){ gdRenderAssetDiag('layers-rendered'); }, 0);
 }
 
 function gdSafeSetPointerCapture(el, pointerId) {

@@ -257,6 +257,18 @@ test('Add plants modal uses approved Design Asset Registry thumbnails and no Wik
   assert.doesNotMatch(list, /wikipedia/i);
 });
 
+test('Garden Design exposes visible asset runtime diagnostics without persistence writes', () => {
+  const gd = read('modules/garden-design/index.html');
+  const diag = gd.slice(gd.indexOf('function gdAssetDiagSnapshot'), gd.indexOf('function gdRerenderPlantLayersAfterRegistryArrival'));
+  assert.match(gd, /id="gdAssetDiag"/);
+  assert.match(diag, /registrySets/);
+  assert.match(diag, /indexHasMango/);
+  assert.match(diag, /resolvedAssetId/);
+  assert.match(diag, /resolvedUrl/);
+  assert.match(diag, /imageNaturalWidth/);
+  assert.doesNotMatch(diag, /gdPersistDesignSnapshot|gdFlushHostPersist|garden_plants/);
+});
+
 test('Garden Design iframe self-loads the same authoritative registry without host dependency', () => {
   const gd = read('modules/garden-design/index.html');
   const moduleTail = gd.slice(gd.lastIndexOf('<script type="module">'));
@@ -273,7 +285,7 @@ test('production host/iframe load the versioned registry and re-index both arriv
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
   assert.match(app, /const token='20260920reg3'/);
   assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
-  assert.match(app, /index\.html\?v=20260920selfreg1/);
+  assert.match(app, /index\.html\?v=20260920diag1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260920reg3/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260920reg3/);
