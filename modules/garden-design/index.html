@@ -2065,16 +2065,25 @@ function gdHydrateServerDesign(msg) {
       })
       : { state: 'SERVER_SAVED', shouldKeepLocalLayers: false, shouldOverwriteLocalCacheDurable: true };
     let layers = [];
+    let localIdentityFailure = false;
     if (sync.shouldKeepLocalLayers) {
       const source = inMemoryOwned.length ? inMemoryOwned : ((localSnap && localSnap.placements) || []);
       layers = source.map(function(layer) {
-        const next = Object.assign({}, layer);
+        const reconciled = (api && typeof api.reconcileOwnedLocalPlacementIdentity === 'function')
+          ? api.reconcileOwnedLocalPlacementIdentity(
+              layer,
+              ownedPlants,
+              gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId
+            )
+          : { ok: true, layer: Object.assign({}, layer) };
+        if (!reconciled.ok) localIdentityFailure = true;
+        const next = reconciled.ok ? reconciled.layer : Object.assign({}, layer);
         next.spriteType = getPlantSpriteType(next);
         next.isTree = next.spriteType === 'tree';
         next.emoji = next.emoji || '🌿';
         return next;
       });
-      gdPersistSyncState = 'LOCAL_AHEAD_OF_SERVER';
+      gdPersistSyncState = localIdentityFailure ? 'SAVE_FAILED' : 'LOCAL_AHEAD_OF_SERVER';
     } else {
       for (let i = 0; i < placements.length; i++) {
         const mapped = (api && typeof api.mapServerPlacementToLayer === 'function')
@@ -2137,7 +2146,11 @@ function gdHydrateServerDesign(msg) {
     if (sync.shouldKeepLocalLayers) {
       gdWriteLocalCache(false);
       gdSetPersistStatus('error', 'Not saved — retry');
-      gdSetPersistNote('LOCAL_AHEAD_OF_SERVER: these placements are on this device only until server save succeeds.');
+      if (localIdentityFailure) {
+        gdSetPersistNote('Local placement identity could not be matched safely to My Garden. Nothing was guessed.');
+      } else {
+        gdSetPersistNote('LOCAL_AHEAD_OF_SERVER: these placements are on this device only until server save succeeds.');
+      }
     } else if (!placements.length) {
       gdWriteLocalCache(false);
       gdPersistSyncState = 'LOCAL_DIRTY';

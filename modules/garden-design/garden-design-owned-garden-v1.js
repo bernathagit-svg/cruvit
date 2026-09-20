@@ -577,6 +577,88 @@ export function resolveDesignOwnedPlantsFromGardenOs(input = {}) {
   });
 }
 
+export function reconcileOwnedLocalPlacementIdentity(layerInput = {}, ownedPlantsInput = [], gardenProfileIdInput) {
+  const layer = layerInput && typeof layerInput === 'object' ? Object.assign({}, layerInput) : {};
+  const gardenProfileId = asText(gardenProfileIdInput || layer.gardenProfileId);
+  const ownedPlants = (Array.isArray(ownedPlantsInput) ? ownedPlantsInput : []).filter((p) => {
+    if (!p || !asText(p.gardenPlantId)) return false;
+    const plantGarden = asText(p.gardenProfileId);
+    return !gardenProfileId || !plantGarden || plantGarden === gardenProfileId;
+  });
+
+  const requestedId = asText(layer.gardenPlantId);
+  const layerKind = asText(layer.kind).toLowerCase();
+  const layerStatus = asText(layer.status).toLowerCase();
+  const looksOwned = layerKind === DESIGN_PLANT_KIND.OWNED || layerStatus === DESIGN_PLACEMENT_STATUS.OWNED || !!requestedId;
+  if (!looksOwned) {
+    return { ok: true, reconciled: false, resolution: 'not-owned', layer };
+  }
+
+  let matches = [];
+  let resolution = null;
+  if (requestedId) {
+    matches = ownedPlants.filter((p) => asText(p.gardenPlantId) === requestedId);
+    if (matches.length === 1) {
+      resolution = 'server-id';
+    } else if (matches.length === 0) {
+      matches = ownedPlants.filter((p) => asText(p.clientInstanceId) === requestedId);
+      if (matches.length === 1) resolution = 'legacy-client-id';
+    }
+  } else {
+    const canonicalSlug = slugify(layer.canonicalSlug || layer.slug);
+    const scientific = asText(layer.scientific || layer.species).toLowerCase().replace(/\s+/g, ' ');
+    if (canonicalSlug) {
+      matches = ownedPlants.filter((p) => slugify(p.canonicalSlug) === canonicalSlug);
+      if (scientific) {
+        matches = matches.filter((p) => {
+          const ps = asText(p.scientific).toLowerCase().replace(/\s+/g, ' ');
+          return !ps || ps === scientific;
+        });
+      }
+      if (matches.length === 1) resolution = 'unique-canonical';
+    } else if (scientific) {
+      matches = ownedPlants.filter((p) => asText(p.scientific).toLowerCase().replace(/\s+/g, ' ') === scientific);
+      if (matches.length === 1) resolution = 'unique-scientific';
+    }
+  }
+
+  if (matches.length !== 1) {
+    return {
+      ok: false,
+      code: IDENTITY_INCONSISTENT,
+      detail: matches.length > 1 ? 'local-owned-identity-ambiguous' : 'local-owned-identity-unresolved',
+      layer
+    };
+  }
+
+  const plant = matches[0];
+  const next = Object.assign({}, layer, {
+    kind: DESIGN_PLANT_KIND.OWNED,
+    status: DESIGN_PLACEMENT_STATUS.OWNED,
+    gardenPlantId: asText(plant.gardenPlantId),
+    canonicalSlug: asText(plant.canonicalSlug) || null,
+    slug: asText(plant.canonicalSlug) || asText(layer.slug) || null,
+    gardenProfileId: asText(plant.gardenProfileId) || gardenProfileId || asText(layer.gardenProfileId) || null,
+    areaId: asText(plant.areaId) || asText(layer.areaId) || null,
+    species: asText(plant.scientific) || asText(layer.species || layer.scientific),
+    scientific: asText(plant.scientific) || asText(layer.scientific || layer.species),
+    name: asText(layer.name) || asText(plant.name)
+  });
+
+  return {
+    ok: true,
+    reconciled:
+      requestedId !== next.gardenPlantId ||
+      slugify(layer.canonicalSlug || layer.slug) !== slugify(next.canonicalSlug) ||
+      asText(layer.areaId) !== asText(next.areaId),
+    resolution,
+    gardenPlantId: next.gardenPlantId,
+    canonicalSlug: next.canonicalSlug,
+    areaId: next.areaId,
+    layer: next
+  };
+}
+
 export function ownedPlacementMustNotInsertGardenPlant(beforeCount, afterCount, action) {
   if (asText(action).toLowerCase() !== 'place-owned') return false;
   return Number(beforeCount) === Number(afterCount);
@@ -1053,6 +1135,7 @@ const api = {
   designMemoryEventForAction,
   designPaidAiForAction,
   resolveDesignOwnedPlantsFromGardenOs,
+  reconcileOwnedLocalPlacementIdentity,
   ownedPlacementMustNotInsertGardenPlant,
   resolveOwnedPlacementAreaId,
   resolveOwnedPlacementVisual,

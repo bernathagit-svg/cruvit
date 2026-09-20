@@ -23,6 +23,7 @@ import {
   shouldInventSecondLocation,
   createOwnedDesignPlacement,
   resolveDesignOwnedPlantsFromGardenOs,
+  reconcileOwnedLocalPlacementIdentity,
   ownedPlacementMustNotInsertGardenPlant,
   resolveOwnedPlacementAreaId,
   resolveOwnedPlacementVisual,
@@ -680,6 +681,68 @@ test('manual owned-plant path: no paid AI, server garden_plants only, placement 
   assert.equal(failed.ownedPlants.length, 0);
   assert.equal(failed.usedLocalFallback, false);
   assert.equal(failed.fromMyGardenVisible, false);
+});
+
+test('legacy/local owned placement identity reconciles to authoritative My Garden instance without name guessing', () => {
+  const ownedPlants = [
+    {
+      gardenPlantId: '5fdd5d4c-adbf-4451-a784-2e2a7d271662',
+      clientInstanceId: 'catalog:mango',
+      canonicalSlug: 'mango',
+      scientific: 'Mangifera indica',
+      name: 'Mango Tree',
+      areaId: 'area-sunny',
+      gardenProfileId: 'garden-moj'
+    }
+  ];
+
+  const byLegacyId = reconcileOwnedLocalPlacementIdentity({
+    id: 'pl-local',
+    kind: 'owned',
+    gardenPlantId: 'catalog:mango',
+    canonicalSlug: null,
+    species: 'Mangifera indica',
+    x: 0.22,
+    y: 0.78,
+    scale: 1.3
+  }, ownedPlants, 'garden-moj');
+  assert.equal(byLegacyId.ok, true);
+  assert.equal(byLegacyId.resolution, 'legacy-client-id');
+  assert.equal(byLegacyId.layer.gardenPlantId, '5fdd5d4c-adbf-4451-a784-2e2a7d271662');
+  assert.equal(byLegacyId.layer.canonicalSlug, 'mango');
+  assert.equal(byLegacyId.layer.areaId, 'area-sunny');
+  assert.equal(byLegacyId.layer.x, 0.22);
+  assert.equal(byLegacyId.layer.y, 0.78);
+  assert.equal(byLegacyId.layer.scale, 1.3);
+
+  const byCanonical = reconcileOwnedLocalPlacementIdentity({
+    id: 'pl-local-2',
+    kind: 'owned',
+    gardenPlantId: null,
+    canonicalSlug: 'mango',
+    species: 'Mangifera indica',
+    x: 0.4,
+    y: 0.7,
+    scale: 1
+  }, ownedPlants, 'garden-moj');
+  assert.equal(byCanonical.ok, true);
+  assert.equal(byCanonical.resolution, 'unique-canonical');
+  assert.equal(byCanonical.layer.gardenPlantId, '5fdd5d4c-adbf-4451-a784-2e2a7d271662');
+
+  const unknownExplicitId = reconcileOwnedLocalPlacementIdentity({
+    kind: 'owned',
+    gardenPlantId: 'unknown-client-id',
+    canonicalSlug: 'mango',
+    species: 'Mangifera indica'
+  }, ownedPlants, 'garden-moj');
+  assert.equal(unknownExplicitId.ok, false);
+  assert.equal(unknownExplicitId.code, 'IDENTITY_INCONSISTENT');
+
+  const noNameGuess = reconcileOwnedLocalPlacementIdentity({
+    kind: 'owned',
+    name: 'Mango Tree'
+  }, ownedPlants, 'garden-moj');
+  assert.equal(noNameGuess.ok, false);
 });
 
 test('empty manual canvas always shows Add plants; owned list stays server Garden OS', () => {
