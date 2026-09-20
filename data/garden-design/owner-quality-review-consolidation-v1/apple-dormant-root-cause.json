@@ -1,0 +1,80 @@
+{
+  "contract": "apple-dormant-root-cause-v1",
+  "candidate": {
+    "jobId": "apple__mature__tree__dormant__detail-v2__medium",
+    "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png",
+    "bytes": 2194091,
+    "sha256": "b36346dd502ff13826e32dba640a34a59ebef8913f3ade974bfb283db5a429e5",
+    "pixelDimensions": "1024x1536",
+    "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+    "quality": "medium"
+  },
+  "owner": {
+    "DETAIL_QA": "NOT_ACCEPTABLE",
+    "issues": [
+      "HALO",
+      "DETAIL_SOFT",
+      "OTHER"
+    ],
+    "other": "semi-transparent branch ghosting / brown haze",
+    "familyResult": "QUALITY_POLICY_NOT_VALIDATED",
+    "automaticHighEscalation": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO"
+  },
+  "unmodified": {
+    "candidateBinariesModified": false,
+    "sha256": "b36346dd502ff13826e32dba640a34a59ebef8913f3ade974bfb283db5a429e5",
+    "bytes": 2194091
+  },
+  "providerFingerprintChunkRetained": true,
+  "technicalQa": {
+    "result": "PASS",
+    "haloPartialPixels": 0,
+    "note": "PASS is not a brown-ghosting pass. Halo counter is near-white only."
+  },
+  "pixels": {
+    "width": 1024,
+    "height": 1536,
+    "totalPixels": 1572864,
+    "fullyTransparent": 918220,
+    "ghostAlpha1to64": 379152,
+    "hazeAlpha65to192": 150154,
+    "softEdgeAlpha193to254": 125338,
+    "fullyOpaque": 0,
+    "partial": 654644,
+    "brownPartial": 649643,
+    "brownHaze": 266037,
+    "greenPartial": 0,
+    "whitePartial": 0,
+    "brownShareOfPartial": 0.992361,
+    "fullyOpaqueCount": 0,
+    "specimenHasNoFullyOpaqueWood": true
+  },
+  "promptAudit": {
+    "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+    "dormantDeltaPresent": true,
+    "dormantDeltaText": "DORMANT: preserve branch/trunk identity and architecture. Remove foliage only where biologically appropriate for deciduous leaf-off. Do not create a dead, snapped, diseased, or damaged plant.",
+    "foliageDetailRequirementsAppliedToDormant": true,
+    "foliageDetailStillRequests": "individually legible natural foliage; clear leaf and leaflet boundaries; overlapping leaf clusters",
+    "missingNegativeSpaceRule": true,
+    "missingOpaqueWoodRule": true,
+    "missingRestrainedTwigDensityRule": true,
+    "tooManyFineInteriorTwigsLikely": true
+  },
+  "classification": {
+    "rootCause": "MIXED",
+    "REVIEW_RENDER_ARTIFACT": false,
+    "PROVIDER_BRANCH_GHOSTING": true,
+    "ALPHA_FINE_STRUCTURE_FAILURE": true,
+    "PROMPT_OVERCOMPLEX_BRANCH_STRUCTURE": true,
+    "HIGH_WOULD_NOT_AUTOMATICALLY_SOLVE": true,
+    "note": "Brown canopy fill and zero fully-opaque wood exist in the provider PNG. Technical QA halo metric only counts near-white partials, so it can PASS while brown ghosting remains. Inspection uses filter:none; this is not a review-CSS artifact."
+  },
+  "rootCause": "MIXED",
+  "regenerateNow": false,
+  "escalateToHighNow": false,
+  "openaiCalls": 0,
+  "imageGeneration": 0,
+  "additionalSpendUsd": 0,
+  "spendGate": "DENIED"
+}

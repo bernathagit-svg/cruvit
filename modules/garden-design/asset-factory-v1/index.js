@@ -56,7 +56,7 @@ export {
   formatEnvelopePreflight,
   assertSpendEnvelope
 } from './spend-envelope-v1.js';
-export { inspectTechnicalQa } from './technical-qa-v1.js';
+export { inspectTechnicalQa, decodePngRgba } from './technical-qa-v1.js';
 export { assessIdentityQa } from './identity-qa-v1.js';
 export { estimateScale, ownerWorkloadModel } from './cost-model-v1.js';
 export { buildProposedRegistryRecord, STORAGE_PLAN, PROPOSED_DB_CHANGES } from './registry-proposal-v1.js';
@@ -263,4 +263,14 @@ export {
   OWNER_APPROVED_QUALITY_FAMILY_FINAL,
   executeQualityFamilyCalibrationFinalPaid
 } from './quality-family-calibration-final-execute-v1.js';
+export {
+  OWNER_QUALITY_REVIEW_CONSOLIDATION_VERSION,
+  writeOwnerQualityReviewConsolidationReports,
+  executeOwnerQualityReviewConsolidation
+} from './owner-quality-review-consolidation-v1.js';
+export { auditAppleDormantRootCause } from './apple-dormant-root-cause-v1.js';
+export {
+  APPLE_BRANCH_STRUCTURE_NEXT_EXPERIMENT,
+  buildBranchStructureV2ExperimentPromptRecord
+} from './prompt-factory-branch-structure-v2-experiment-v1.js';
 

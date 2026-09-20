@@ -1,0 +1,121 @@
+{
+  "contract": "owner-quality-review-consolidation-v1",
+  "round": "design-asset-quality-family-calibration-final-1",
+  "authoritative": true,
+  "QA_DIMENSIONS": {
+    "IMAGE_DETAIL_QUALITY": "IMAGE_DETAIL_QUALITY",
+    "BOTANICAL_IDENTITY_ARCHITECTURE": "BOTANICAL_IDENTITY_ARCHITECTURE",
+    "STATE_CORRECTNESS": "STATE_CORRECTNESS",
+    "neverCollapse": true
+  },
+  "families": {
+    "WOODY_DENSE_SMALL_LEAF": {
+      "source": "mango A/B design-asset-woody-foliage-detail-ab-1",
+      "CONTROL": {
+        "prompt": "old",
+        "quality": "medium",
+        "owner": "DETAIL_SOFT"
+      },
+      "A": {
+        "prompt": "V2",
+        "quality": "medium",
+        "owner": "ACCEPTABLE"
+      },
+      "B": {
+        "prompt": "V2",
+        "quality": "high",
+        "owner": "PREFERRED"
+      },
+      "promptV2ImprovesFoliageDetail": true,
+      "mediumAcceptable": true,
+      "highVisiblyBetter": true,
+      "HIGH_selectiveNotUniversal": true,
+      "planned": {
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "qualityWhenFoliageDense": "high",
+        "mediumFallback": true
+      }
+    },
+    "WOODY_OPEN_OR_LARGE_LEAF": {
+      "sample": "avocado TREE MATURE VEGETATIVE V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "painterlySoftness": false,
+      "strongHalo": false,
+      "cgiCrunchySharpening": false,
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "BRANCH_STRUCTURE": {
+      "sample": "apple TREE MATURE DORMANT V2+medium",
+      "DETAIL_QA": "NOT_ACCEPTABLE",
+      "observed": [
+        "main branches readable",
+        "semi-transparent brown branch ghosting / haze",
+        "residual branch-like artifacts around crown",
+        "halo-like / dirty transparent structure"
+      ],
+      "issues": [
+        "HALO",
+        "DETAIL_SOFT",
+        "OTHER"
+      ],
+      "other": "semi-transparent branch ghosting / brown haze",
+      "familyResult": "QUALITY_POLICY_NOT_VALIDATED",
+      "automaticHighEscalation": false,
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "SHRUB_FINE_FOLIAGE": {
+      "sample": "lavender SHRUB MATURE VEGETATIVE V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "DETAIL_POLICY": "PASS",
+      "BOTANICAL_IDENTITY_QA": "REVIEW_REQUIRED",
+      "identityNote": "architecture too upright/woody, somewhat rosemary-like rather than convincing Lavender habit",
+      "doNotFailMediumPolicyBecauseOfIdentity": true,
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "FLOWER_FINE_DETAIL": {
+      "sample": "lavender SHRUB MATURE FLOWERING V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "STATE_QA": "FLOWERING_DISTINCTION_CLEAR",
+      "painterlySoftness": false,
+      "meaningfulHalo": false,
+      "highRequired": false,
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "LARGE_LEAF_HERBACEOUS": {
+      "sample": "banana herbaceous-clump MATURE FRUITING V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "note": "Leaves, veins and natural leaf damage readable.",
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "FRUIT_VISIBLE_DETAIL": {
+      "sample": "same banana fruiting asset",
+      "DETAIL_QA": "DETAIL_OK",
+      "STATE_QA": "FRUITING_DISTINCTION_CLEAR",
+      "note": "fruit cluster clearly readable; fruiting state visually useful and plausible",
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "ROSETTE": {
+      "sample": "pineapple MATURE VEGETATIVE V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "historicalControlNotLikeForLike": true,
+      "historicalControlNote": "Historical Pineapple control is a different phenology/state and is NOT a like-for-like state comparison.",
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    },
+    "SUCCULENT": {
+      "sample": "aloe-vera MATURE VEGETATIVE V2+medium",
+      "DETAIL_QA": "DETAIL_OK",
+      "familyResult": "MEDIUM_POLICY_VALIDATED",
+      "BOTANICAL_IDENTITY_QA": "ARCHITECTURE_REVIEW_REQUIRED",
+      "architectureNote": "large clump / offsets / pups may require later BOTANICAL_IDENTITY / ARCHITECTURE review",
+      "doNotTreatArchitectureAsQualityFailure": true,
+      "ASSET_PRODUCTION_APPROVAL": "NO"
+    }
+  },
+  "productionApprovedThisRound": []
+}

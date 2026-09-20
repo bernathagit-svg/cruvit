@@ -62,6 +62,25 @@ test('quality policy is morphology-aware, default medium, and does not spend', (
   assert.match(mango.promptRecord.prompt, /individually legible natural foliage/);
   assert.doesNotMatch(mango.promptRecord.prompt, /individually legible natural mango leaves/);
 
+  const appleDormantPlan = planDesignAssetGeneration({
+    canonicalSlug: 'apple',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenologyState: 'dormant'
+  });
+  assert.equal(appleDormantPlan.quality, 'medium');
+
+  const avocadoPlan = planDesignAssetGeneration({
+    canonicalSlug: 'avocado',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenologyState: 'vegetative'
+  });
+  assert.equal(avocadoPlan.detailClass, DETAIL_CLASS.WOODY_OPEN_OR_LARGE_LEAF);
+  assert.equal(avocadoPlan.quality, 'medium');
+
   const banana = planDesignAssetGeneration({
     canonicalSlug: 'banana',
     visualForm: 'herbaceous-clump',

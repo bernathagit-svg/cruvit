@@ -139,8 +139,17 @@ export const EVIDENCE_LOCKED_DETAIL_CLASS = Object.freeze([
     canonicalSlug: 'lavender',
     architectureMode: 'shrub',
     detailClass: DETAIL_CLASS.SHRUB_FINE_FOLIAGE,
-    evidence: 'batch-2 native audit BORDERLINE; keep medium until HIGH evidence exists',
-    confidence: 'MEDIUM'
+    evidence:
+      'owner quality-family-calibration-final-1 DETAIL_OK at V2+medium; identity QA remains separate',
+    confidence: 'HIGH'
+  },
+  {
+    canonicalSlug: 'avocado',
+    architectureMode: 'tree',
+    detailClass: DETAIL_CLASS.WOODY_OPEN_OR_LARGE_LEAF,
+    evidence:
+      'owner quality-family-calibration-final-1 DETAIL_OK at V2+medium; does not inherit mango HIGH',
+    confidence: 'HIGH'
   }
 ]);
 
@@ -222,7 +231,13 @@ export function resolveDetailClass(input = {}) {
 
 export function planDesignAssetGeneration(input = {}) {
   const resolved = resolveDetailClass(input);
-  const quality = qualityForDetailClass(resolved.detailClass);
+  const phenology = asText(input.phenologyState || input.phenology);
+  const stage = asText(input.growthStage);
+  const foliageDense =
+    resolved.detailClass === DETAIL_CLASS.WOODY_DENSE_SMALL_LEAF &&
+    stage !== 'young' &&
+    (phenology === 'vegetative' || !phenology);
+  const quality = foliageDense ? SELECTIVE_HIGH_QUALITY : DEFAULT_QUALITY;
   const promptRecord = buildVisualStateDetailV2PromptRecord(input, {
     settings: { quality }
   });

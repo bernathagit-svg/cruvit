@@ -49,6 +49,16 @@ test('quality planning integrity is state-specific and does not spend', () => {
   assert.equal(appleDormant.qualityPlanningState, QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED);
   assert.notEqual(appleDormant.plannedQuality, 'high');
 
+  const avocado = planVariantQuality({
+    canonicalSlug: 'avocado',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenologyState: 'vegetative'
+  });
+  assert.equal(avocado.baseDetailClass, DETAIL_CLASS.WOODY_OPEN_OR_LARGE_LEAF);
+  assert.equal(avocado.qualityPlanningState, QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED);
+
   const mangoFruit = planVariantQuality({
     canonicalSlug: 'mango',
     visualForm: 'tree',

@@ -1,30 +1,52 @@
 {
   "contract": "design-asset-quality-planning-integrity-v1",
   "unitEvidenceUsd": {
-    "medium": 0.013175,
-    "high": 0.044045,
-    "ratioGuaranteedForever": false
+    "medium": 0.013,
+    "high": 0.044,
+    "observedAbActuals": {
+      "medium": 0.013175,
+      "high": 0.044045
+    },
+    "ratioGuaranteedForever": false,
+    "notSpendAuthorization": true
+  },
+  "evidenceSupportedProduction": {
+    "label": "EVIDENCE-SUPPORTED PRODUCTION PROJECTION",
+    "mediumEvidenceSupported": 69,
+    "highEvidenceSupported": 3,
+    "PROJECTED_SUPPORTED_ASSET_COST": 1.029,
+    "notSpendAuthorization": true
   },
   "knownEvidence": {
     "label": "KNOWN-EVIDENCE COST",
     "highEvidenceSupported": 3,
-    "mediumEvidenceSupported": 2,
-    "projectedUsd": 0.158485
+    "mediumEvidenceSupported": 69,
+    "projectedUsd": 1.029
+  },
+  "mediumDefaultUnprovenProjection": {
+    "label": "MEDIUM_DEFAULT_UNPROVEN projection",
+    "mediumDefaultUnproven": 154,
+    "PROJECTED_UNPROVEN_USD": 2.002,
+    "separateFromEvidenceSupported": true,
+    "notSpendAuthorization": true
   },
   "fallbackProjection": {
     "label": "FALLBACK_MEDIUM_PROJECTION_ONLY",
     "not": "PRODUCTION_BUDGET",
     "notAFinalProductionBudget": true,
-    "mediumDefaultUnproven": 160,
+    "mediumDefaultUnproven": 154,
     "highEvidenceSupportedChargedHigh": 3,
     "remainingPlannableChargedMedium": 244,
     "unknownBlockedExcluded": 26,
-    "projectedUsd": 3.346835
+    "PROJECTED_FALLBACK_COST": 3.304,
+    "projectedUsd": 3.304
   },
   "calibrationRequired": {
-    "label": "CALIBRATION-REQUIRED COUNT",
-    "qualityCalibrationRequired": 82,
+    "label": "BLOCKED / CALIBRATION REQUIRED",
+    "qualityCalibrationRequired": 21,
     "unknownBlocked": 26,
-    "totalNotReadyToCommit": 108
+    "UNRESOLVED_COST_COUNT": 47,
+    "totalNotReadyToCommit": 47,
+    "notIncludedAsCommittedProductionSpend": true
   }
 }

@@ -52,12 +52,26 @@ export const CURRENT_AUDIT_LIMITATION = Object.freeze({
   reason: '251/273 variants had UNKNOWN detailClass, so the $3.94 figure cannot be a production spend estimate.'
 });
 
-export const STATE_SPECIFIC_HIGH_RULE_PROPOSED = Object.freeze({
+export const STATE_SPECIFIC_HIGH_RULE_LOCKED = Object.freeze({
   paidExecutionChanged: false,
   universalHigh: false,
+  appleDormantAutoEscalatedToHigh: false,
   dormantAutomaticallyInheritsFoliageHigh: false,
-  rule: 'HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.',
-  evidence: 'Owner A/B on mango mature vegetative (FOLIAGE_DENSE). Apple dormant is BRANCH_STRUCTURE, not dense foliage.'
+  youngAutomaticallyInheritsFoliageHigh: false,
+  fruitingAutomaticallyInheritsFoliageHigh: false,
+  rule: 'HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE and no contradictory evidence exists. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.',
+  evidence:
+    'Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED and must not auto-escalate to HIGH.'
+});
+
+export const STATE_SPECIFIC_HIGH_RULE_PROPOSED = STATE_SPECIFIC_HIGH_RULE_LOCKED;
+
+export const PLANNING_COST_ESTIMATE_USD = Object.freeze({
+  medium: 0.013,
+  high: 0.044,
+  guaranteed: false,
+  notSpendAuthorization: true,
+  source: 'recent observed planning costs only as estimates'
 });
 
 const MEDIUM_USD = WOODY_FOLIAGE_DETAIL_AB_OWNER_RESULT.actualCostUsd.A_medium;
@@ -161,9 +175,41 @@ export function resolveVariantDetailDemand(input = {}, baseDetailClass) {
   return VARIANT_DETAIL_DEMAND.UNKNOWN;
 }
 
+function botanicalIdentityBlockerFor(input = {}) {
+  const slug = asText(input.canonicalSlug).toLowerCase();
+  const phenology = asText(input.phenologyState || input.phenology);
+  if (slug === 'lavender' && (phenology === 'vegetative' || !phenology)) {
+    return 'REVIEW_REQUIRED';
+  }
+  if (slug === 'aloe-vera') return 'ARCHITECTURE_REVIEW_REQUIRED';
+  return null;
+}
+
+function reviewedCandidateApproval(input = {}) {
+  const slug = asText(input.canonicalSlug).toLowerCase();
+  const phenology = asText(input.phenologyState || input.phenology);
+  const stage = asText(input.growthStage);
+  const architecture = asText(input.architectureMode);
+  const reviewed = [
+    ['avocado', 'tree', 'mature', 'vegetative'],
+    ['apple', 'tree', 'mature', 'dormant'],
+    ['lavender', 'shrub', 'mature', 'vegetative'],
+    ['lavender', 'shrub', 'mature', 'flowering'],
+    ['banana', 'default', 'mature', 'fruiting'],
+    ['pineapple', 'default', 'mature', 'vegetative'],
+    ['aloe-vera', 'default', 'mature', 'vegetative']
+  ];
+  const hit = reviewed.some(
+    (row) => row[0] === slug && row[1] === architecture && row[2] === stage && row[3] === phenology
+  );
+  return hit ? 'NO' : null;
+}
+
 export function planVariantQuality(input = {}) {
   const base = resolveBaseDetailClass(input);
   const demand = resolveVariantDetailDemand(input, base.baseDetailClass);
+  const botanicalIdentityBlocker = botanicalIdentityBlockerFor(input);
+  const assetProductionApproval = reviewedCandidateApproval(input);
   if (base.blocked) {
     return {
       canonicalSlug: input.canonicalSlug || null,
@@ -175,6 +221,8 @@ export function planVariantQuality(input = {}) {
       qualityPlanningState: QUALITY_PLANNING_STATE.UNKNOWN_BLOCKED,
       plannedQuality: null,
       evidenceBasis: 'visualForm or identity is unresolved; quality cannot be planned',
+      botanicalIdentityBlocker,
+      assetProductionApproval,
       confidence: 'LOW',
       calibrationNeeded: 'YES'
     };
@@ -190,13 +238,44 @@ export function planVariantQuality(input = {}) {
   let confidence = 'LOW';
   let calibrationNeeded = 'NO';
 
-  if (foliageHigh) {
+  if (demand === VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
+    plannedQuality = DEFAULT_QUALITY;
+    evidenceBasis =
+      'Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.';
+    confidence = 'HIGH';
+    calibrationNeeded = 'YES';
+  } else if (foliageHigh) {
     qualityPlanningState = QUALITY_PLANNING_STATE.HIGH_EVIDENCE_SUPPORTED;
     plannedQuality = 'high';
     evidenceBasis =
-      'Owner A/B design-asset-woody-foliage-detail-ab-1: V2+medium ACCEPTABLE, V2+high PREFERRED for FOLIAGE_DENSE on WOODY_DENSE_SMALL_LEAF. Generic class+demand transfer; not a species hard-code. Old-prompt softness is not treated as V2 proof.';
+      'Owner A/B design-asset-woody-foliage-detail-ab-1: CONTROL old-prompt+medium DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED for FOLIAGE_DENSE on WOODY_DENSE_SMALL_LEAF. HIGH remains selective. Medium is an acceptable fallback, not a universal HIGH policy.';
     confidence = asText(input.canonicalSlug).toLowerCase() === 'mango' ? 'HIGH' : 'MEDIUM';
-    calibrationNeeded = asText(input.canonicalSlug).toLowerCase() === 'mango' ? 'NO' : 'NO';
+    calibrationNeeded = 'NO';
+  } else if (demand === VARIANT_DETAIL_DEMAND.FLOWER_FINE_DETAIL) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
+    plannedQuality = DEFAULT_QUALITY;
+    evidenceBasis =
+      'Owner quality-family-calibration-final-1 Lavender MATURE FLOWERING V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. FLOWER_FINE_DETAIL family is MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.';
+    confidence = asText(input.canonicalSlug).toLowerCase() === 'lavender' ? 'HIGH' : 'MEDIUM';
+    calibrationNeeded = 'NO';
+  } else if (demand === VARIANT_DETAIL_DEMAND.FRUIT_VISIBLE_DETAIL) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
+    plannedQuality = DEFAULT_QUALITY;
+    evidenceBasis =
+      'Owner quality-family-calibration-final-1 Banana MATURE FRUITING V2+medium DETAIL_OK with readable fruit cluster. FRUIT_VISIBLE_DETAIL family is MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.';
+    confidence = asText(input.canonicalSlug).toLowerCase() === 'banana' ? 'HIGH' : 'MEDIUM';
+    calibrationNeeded = 'NO';
+  } else if (
+    base.baseDetailClass === DETAIL_CLASS.WOODY_OPEN_OR_LARGE_LEAF &&
+    demand === VARIANT_DETAIL_DEMAND.FOLIAGE_OPEN
+  ) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
+    plannedQuality = DEFAULT_QUALITY;
+    evidenceBasis =
+      'Owner quality-family-calibration-final-1 Avocado TREE MATURE VEGETATIVE V2+medium DETAIL_OK. WOODY_OPEN_OR_LARGE_LEAF does not inherit mango HIGH.';
+    confidence = asText(input.canonicalSlug).toLowerCase() === 'avocado' ? 'HIGH' : 'MEDIUM';
+    calibrationNeeded = 'NO';
   } else if (
     base.baseDetailClass === DETAIL_CLASS.LARGE_LEAF_HERBACEOUS &&
     demand === VARIANT_DETAIL_DEMAND.LARGE_LEAF_STRUCTURE
@@ -204,48 +283,45 @@ export function planVariantQuality(input = {}) {
     qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
     plannedQuality = DEFAULT_QUALITY;
     evidenceBasis =
-      'Batch-2 banana large-leaf herbaceous was CRISP_ENOUGH at medium. Do not promote Banana-like morphology to HIGH.';
+      'Banana large-leaf herbaceous: Batch-2 vegetative CRISP_ENOUGH at medium and owner quality-family-calibration-final-1 fruiting DETAIL_OK at V2+medium. Do not promote this morphology to HIGH.';
     confidence = 'HIGH';
-  } else if (demand === VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE) {
-    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
+    calibrationNeeded = 'NO';
+  } else if (
+    base.baseDetailClass === DETAIL_CLASS.SHRUB_FINE_FOLIAGE &&
+    demand === VARIANT_DETAIL_DEMAND.FOLIAGE_DENSE
+  ) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
     plannedQuality = DEFAULT_QUALITY;
     evidenceBasis =
-      'Dormant/branch structure must not inherit foliage HIGH. Apple dormant was BORDERLINE on the old prompt; Prompt V2 is unvalidated for BRANCH_STRUCTURE.';
-    confidence = 'MEDIUM';
-    calibrationNeeded = 'YES';
-  } else if (demand === VARIANT_DETAIL_DEMAND.FLOWER_FINE_DETAIL) {
-    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
+      'Owner quality-family-calibration-final-1 Lavender MATURE VEGETATIVE V2+medium DETAIL_OK. SHRUB_FINE_FOLIAGE detail policy is MEDIUM_POLICY_VALIDATED. Botanical identity QA remains a separate dimension and does not fail the medium quality policy.';
+    confidence = asText(input.canonicalSlug).toLowerCase() === 'lavender' ? 'HIGH' : 'MEDIUM';
+    calibrationNeeded = 'NO';
+  } else if (
+    (base.baseDetailClass === DETAIL_CLASS.ROSETTE || base.baseDetailClass === DETAIL_CLASS.SUCCULENT) &&
+    demand === VARIANT_DETAIL_DEMAND.COARSE_FORM
+  ) {
+    qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
     plannedQuality = DEFAULT_QUALITY;
     evidenceBasis =
-      'Flowering is evaluated as FLOWER_FINE_DETAIL. Lavender flowering was BORDERLINE on the old prompt; not V2 evidence.';
-    confidence = 'MEDIUM';
-    calibrationNeeded = 'YES';
-  } else if (demand === VARIANT_DETAIL_DEMAND.FRUIT_VISIBLE_DETAIL) {
-    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
-    plannedQuality = DEFAULT_QUALITY;
-    evidenceBasis =
-      'Fruiting is evaluated as FRUIT_VISIBLE_DETAIL and does not inherit dense-foliage HIGH. Existing fruiting assets used the old prompt family.';
-    confidence = 'MEDIUM';
-    calibrationNeeded = 'YES';
+      base.baseDetailClass === DETAIL_CLASS.ROSETTE
+        ? 'Owner quality-family-calibration-final-1 Pineapple MATURE VEGETATIVE V2+medium DETAIL_OK. ROSETTE family is MEDIUM_POLICY_VALIDATED. Historical pineapple control is a different phenology/state and is not like-for-like evidence.'
+        : 'Owner quality-family-calibration-final-1 Aloe Vera MATURE VEGETATIVE V2+medium DETAIL_OK. SUCCULENT family is MEDIUM_POLICY_VALIDATED. Architecture/pups remain a separate identity review, not a quality failure.';
+    confidence = 'HIGH';
+    calibrationNeeded = 'NO';
   } else if (demand === VARIANT_DETAIL_DEMAND.FOLIAGE_OPEN && WOODY_BASES.has(base.baseDetailClass)) {
     qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
     plannedQuality = DEFAULT_QUALITY;
     evidenceBasis =
-      'Young/open woody architecture is not dense small-leaf foliage. It does not inherit foliage HIGH.';
-    confidence = 'MEDIUM';
-    calibrationNeeded = 'YES';
-  } else if (base.baseDetailClass === DETAIL_CLASS.SHRUB_FINE_FOLIAGE) {
-    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
-    plannedQuality = DEFAULT_QUALITY;
-    evidenceBasis =
-      'Lavender/pomegranate shrub were BORDERLINE on the old prompt. No Prompt V2 HIGH/medium calibration for SHRUB_FINE_FOLIAGE.';
+      'Young/open woody architecture on dense-small-leaf or fine-shrub classes is not the Avocado open/large-leaf family and does not inherit foliage HIGH.';
     confidence = 'MEDIUM';
     calibrationNeeded = 'YES';
   } else if (base.baseDetailClass === DETAIL_CLASS.UNKNOWN || demand === VARIANT_DETAIL_DEMAND.UNKNOWN) {
     qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_DEFAULT_UNPROVEN;
     plannedQuality = DEFAULT_QUALITY;
-    evidenceBasis = 'Insufficient existing data for a proven quality choice. Medium is a cost-safe default, not evidence-supported.';
+    evidenceBasis =
+      'Insufficient existing data for a proven quality choice. Medium is a cost-safe default, not evidence-supported. visualForm name alone is not family evidence.';
     confidence = 'LOW';
+    calibrationNeeded = 'NO';
   }
 
   return {
@@ -258,6 +334,8 @@ export function planVariantQuality(input = {}) {
     qualityPlanningState,
     plannedQuality,
     evidenceBasis,
+    botanicalIdentityBlocker,
+    assetProductionApproval,
     confidence,
     calibrationNeeded
   };
@@ -305,47 +383,52 @@ export function auditRequiredVariantQualityIntegrity(root = DEFAULT_ROOT) {
 }
 
 export function calibrationCoverageFromAudit(audit) {
-  const has = (pred) => (audit.variants || []).some(pred);
   const family = (id, status, note) => ({ family: id, status, note });
   return [
     family(
       'WOODY_DENSE_SMALL_LEAF',
       'CALIBRATED',
-      'Owner A/B V2 medium ACCEPTABLE / high PREFERRED for FOLIAGE_DENSE. Not repeated.'
+      'Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE.'
     ),
     family(
       'WOODY_OPEN_OR_LARGE_LEAF',
-      'UNVALIDATED',
-      has((row) => row.baseDetailClass === DETAIL_CLASS.WOODY_OPEN_OR_LARGE_LEAF)
-        ? 'Class present without V2 quality evidence'
-        : 'No REQUIRED variant currently classified into this class from existing data'
+      'CALIBRATED',
+      'Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH.'
     ),
     family(
       'LARGE_LEAF_HERBACEOUS',
-      'PARTIALLY_CALIBRATED',
-      'Banana medium CRISP_ENOUGH under previous prompt family. Not a Prompt V2 A/B.'
+      'CALIBRATED',
+      'Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED.'
     ),
     family(
       'SHRUB_FINE_FOLIAGE',
-      'PARTIALLY_CALIBRATED',
-      'Lavender/pomegranate shrub BORDERLINE on old prompt. No V2 quality calibration.'
+      'CALIBRATED',
+      'Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension.'
     ),
-    family('ROSETTE', 'UNVALIDATED', 'Pineapple Batch-1 exists; no native quality calibration under Prompt V2.'),
-    family('SUCCULENT', 'UNVALIDATED', 'Form-known succulents have no quality A/B.'),
+    family(
+      'ROSETTE',
+      'CALIBRATED',
+      'Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence.'
+    ),
+    family(
+      'SUCCULENT',
+      'CALIBRATED',
+      'Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review.'
+    ),
     family(
       'BRANCH_STRUCTURE',
-      'PARTIALLY_CALIBRATED',
-      'Apple dormant BORDERLINE on old prompt. Must not inherit foliage HIGH.'
+      'NOT_VALIDATED',
+      'Owner Apple dormant V2+medium NOT ACCEPTABLE. Do not auto-escalate to HIGH. Required for deciduous launch coverage.'
     ),
     family(
       'FLOWER_FINE_DETAIL',
-      'PARTIALLY_CALIBRATED',
-      'Lavender flowering BORDERLINE on old prompt. Individual florets not V2-calibrated.'
+      'CALIBRATED',
+      'Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED.'
     ),
     family(
       'FRUIT_VISIBLE_DETAIL',
-      'PARTIALLY_CALIBRATED',
-      'Mango fruiting existed under old prompt and was SOFT; that is not V2 fruit calibration and must not reuse the woody-foliage A/B.'
+      'CALIBRATED',
+      'Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.'
     )
   ];
 }
@@ -451,17 +534,41 @@ export function costViewsFromAudit(audit) {
     (row) => row.qualityPlanningState === QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED
   );
   const blocked = rows.filter((row) => row.qualityPlanningState === QUALITY_PLANNING_STATE.UNKNOWN_BLOCKED);
-  const knownEvidenceUsd = +(usd(highEvidence.length, HIGH_USD) + usd(mediumEvidence.length, MEDIUM_USD)).toFixed(6);
+  const estimateMedium = PLANNING_COST_ESTIMATE_USD.medium;
+  const estimateHigh = PLANNING_COST_ESTIMATE_USD.high;
+  const knownEvidenceUsd = +(usd(highEvidence.length, estimateHigh) + usd(mediumEvidence.length, estimateMedium)).toFixed(6);
+  const unprovenUsd = usd(unproven.length, estimateMedium);
   const fallbackUsd = +(
-    usd(highEvidence.length, HIGH_USD) + usd(rows.length - highEvidence.length - blocked.length, MEDIUM_USD)
+    usd(highEvidence.length, estimateHigh) + usd(rows.length - highEvidence.length - blocked.length, estimateMedium)
   ).toFixed(6);
+  const unresolvedCount = calibrationRequired.length + blocked.length;
   return {
-    unitEvidenceUsd: { medium: MEDIUM_USD, high: HIGH_USD, ratioGuaranteedForever: false },
+    unitEvidenceUsd: {
+      medium: estimateMedium,
+      high: estimateHigh,
+      observedAbActuals: { medium: MEDIUM_USD, high: HIGH_USD },
+      ratioGuaranteedForever: false,
+      notSpendAuthorization: true
+    },
+    evidenceSupportedProduction: {
+      label: 'EVIDENCE-SUPPORTED PRODUCTION PROJECTION',
+      mediumEvidenceSupported: mediumEvidence.length,
+      highEvidenceSupported: highEvidence.length,
+      PROJECTED_SUPPORTED_ASSET_COST: knownEvidenceUsd,
+      notSpendAuthorization: true
+    },
     knownEvidence: {
       label: 'KNOWN-EVIDENCE COST',
       highEvidenceSupported: highEvidence.length,
       mediumEvidenceSupported: mediumEvidence.length,
       projectedUsd: knownEvidenceUsd
+    },
+    mediumDefaultUnprovenProjection: {
+      label: 'MEDIUM_DEFAULT_UNPROVEN projection',
+      mediumDefaultUnproven: unproven.length,
+      PROJECTED_UNPROVEN_USD: unprovenUsd,
+      separateFromEvidenceSupported: true,
+      notSpendAuthorization: true
     },
     fallbackProjection: {
       label: 'FALLBACK_MEDIUM_PROJECTION_ONLY',
@@ -471,33 +578,42 @@ export function costViewsFromAudit(audit) {
       highEvidenceSupportedChargedHigh: highEvidence.length,
       remainingPlannableChargedMedium: rows.length - highEvidence.length - blocked.length,
       unknownBlockedExcluded: blocked.length,
+      PROJECTED_FALLBACK_COST: fallbackUsd,
       projectedUsd: fallbackUsd
     },
     calibrationRequired: {
-      label: 'CALIBRATION-REQUIRED COUNT',
+      label: 'BLOCKED / CALIBRATION REQUIRED',
       qualityCalibrationRequired: calibrationRequired.length,
       unknownBlocked: blocked.length,
-      totalNotReadyToCommit: calibrationRequired.length + blocked.length
+      UNRESOLVED_COST_COUNT: unresolvedCount,
+      totalNotReadyToCommit: unresolvedCount,
+      notIncludedAsCommittedProductionSpend: true
     }
   };
 }
 
 export function massGenerationReady(audit, coverage, costs) {
   const states = audit.planningStates || {};
+  const branch = (coverage || []).find((row) => row.family === 'BRANCH_STRUCTURE');
+  const branchUnresolved = !branch || branch.status !== 'CALIBRATED';
   const incompleteFamilies = (coverage || [])
     .filter((row) => row.status !== 'CALIBRATED')
     .map((row) => row.family);
   return {
     QUALITY_POLICY_MASS_GENERATION_READY: 'NO',
     reasons: [
-      'Launch-critical quality families are not fully CALIBRATED',
+      branchUnresolved
+        ? 'BRANCH_STRUCTURE remains QUALITY_POLICY_NOT_VALIDATED and is required for deciduous launch coverage'
+        : 'Launch-critical quality families are not fully CALIBRATED',
       `${states.QUALITY_CALIBRATION_REQUIRED || 0} variants are QUALITY_CALIBRATION_REQUIRED`,
       `${states.UNKNOWN_BLOCKED || 0} variants are UNKNOWN_BLOCKED`,
       `${states.MEDIUM_DEFAULT_UNPROVEN || 0} variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported`,
+      'Quality-policy validation does not equal asset approval',
       'Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget',
-      'State-specific HIGH rule is proposed only; paid execution policy is unchanged'
+      'Paid execution / mass generation remains DENIED'
     ],
     incompleteFamilies,
+    branchStructureUnresolved: branchUnresolved,
     fallbackIsNotProductionBudget: costs?.fallbackProjection?.notAFinalProductionBudget === true,
     generateNow: false
   };
@@ -557,6 +673,7 @@ export function buildQualityPlanningIntegritySummary(root = DEFAULT_ROOT) {
       massGenerationStarted: 'NO',
       universalHigh: 'NO',
       dormantAutomaticallyInheritsFoliageHigh: 'NO',
+      appleDormantAutoEscalatedToHigh: 'NO',
       productionRegistryChanged: 'NO',
       spendGate: 'DENIED',
       additionalSpendUsd: 0

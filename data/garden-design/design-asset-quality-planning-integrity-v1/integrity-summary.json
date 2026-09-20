@@ -47,20 +47,23 @@
   "stateSpecificHighPolicy": {
     "paidExecutionChanged": false,
     "universalHigh": false,
+    "appleDormantAutoEscalatedToHigh": false,
     "dormantAutomaticallyInheritsFoliageHigh": false,
-    "rule": "HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.",
-    "evidence": "Owner A/B on mango mature vegetative (FOLIAGE_DENSE). Apple dormant is BRANCH_STRUCTURE, not dense foliage."
+    "youngAutomaticallyInheritsFoliageHigh": false,
+    "fruitingAutomaticallyInheritsFoliageHigh": false,
+    "rule": "HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE and no contradictory evidence exists. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.",
+    "evidence": "Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED and must not auto-escalate to HIGH."
   },
   "audit273": {
     "requiredVariantsTotal": 273,
-    "unknownBaseDetailClass": 236,
-    "unknownReduction": 15,
+    "unknownBaseDetailClass": 233,
+    "unknownReduction": 18,
     "forcedClassification": false,
     "planningStates": {
-      "MEDIUM_EVIDENCE_SUPPORTED": 2,
+      "MEDIUM_EVIDENCE_SUPPORTED": 69,
       "HIGH_EVIDENCE_SUPPORTED": 3,
-      "MEDIUM_DEFAULT_UNPROVEN": 160,
-      "QUALITY_CALIBRATION_REQUIRED": 82,
+      "MEDIUM_DEFAULT_UNPROVEN": 154,
+      "QUALITY_CALIBRATION_REQUIRED": 21,
       "UNKNOWN_BLOCKED": 26
     },
     "plannedQuality": {
@@ -73,47 +76,47 @@
     {
       "family": "WOODY_DENSE_SMALL_LEAF",
       "status": "CALIBRATED",
-      "note": "Owner A/B V2 medium ACCEPTABLE / high PREFERRED for FOLIAGE_DENSE. Not repeated."
+      "note": "Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE."
     },
     {
       "family": "WOODY_OPEN_OR_LARGE_LEAF",
-      "status": "UNVALIDATED",
-      "note": "No REQUIRED variant currently classified into this class from existing data"
+      "status": "CALIBRATED",
+      "note": "Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH."
     },
     {
       "family": "LARGE_LEAF_HERBACEOUS",
-      "status": "PARTIALLY_CALIBRATED",
-      "note": "Banana medium CRISP_ENOUGH under previous prompt family. Not a Prompt V2 A/B."
+      "status": "CALIBRATED",
+      "note": "Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED."
     },
     {
       "family": "SHRUB_FINE_FOLIAGE",
-      "status": "PARTIALLY_CALIBRATED",
-      "note": "Lavender/pomegranate shrub BORDERLINE on old prompt. No V2 quality calibration."
+      "status": "CALIBRATED",
+      "note": "Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension."
     },
     {
       "family": "ROSETTE",
-      "status": "UNVALIDATED",
-      "note": "Pineapple Batch-1 exists; no native quality calibration under Prompt V2."
+      "status": "CALIBRATED",
+      "note": "Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence."
     },
     {
       "family": "SUCCULENT",
-      "status": "UNVALIDATED",
-      "note": "Form-known succulents have no quality A/B."
+      "status": "CALIBRATED",
+      "note": "Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review."
     },
     {
       "family": "BRANCH_STRUCTURE",
-      "status": "PARTIALLY_CALIBRATED",
-      "note": "Apple dormant BORDERLINE on old prompt. Must not inherit foliage HIGH."
+      "status": "NOT_VALIDATED",
+      "note": "Owner Apple dormant V2+medium NOT ACCEPTABLE. Do not auto-escalate to HIGH. Required for deciduous launch coverage."
     },
     {
       "family": "FLOWER_FINE_DETAIL",
-      "status": "PARTIALLY_CALIBRATED",
-      "note": "Lavender flowering BORDERLINE on old prompt. Individual florets not V2-calibrated."
+      "status": "CALIBRATED",
+      "note": "Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED."
     },
     {
       "family": "FRUIT_VISIBLE_DETAIL",
-      "status": "PARTIALLY_CALIBRATED",
-      "note": "Mango fruiting existed under old prompt and was SOFT; that is not V2 fruit calibration and must not reuse the woody-foliage A/B."
+      "status": "CALIBRATED",
+      "note": "Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH."
     }
   ],
   "nextCalibrationSet": {
@@ -203,53 +206,70 @@
   },
   "costs": {
     "unitEvidenceUsd": {
-      "medium": 0.013175,
-      "high": 0.044045,
-      "ratioGuaranteedForever": false
+      "medium": 0.013,
+      "high": 0.044,
+      "observedAbActuals": {
+        "medium": 0.013175,
+        "high": 0.044045
+      },
+      "ratioGuaranteedForever": false,
+      "notSpendAuthorization": true
+    },
+    "evidenceSupportedProduction": {
+      "label": "EVIDENCE-SUPPORTED PRODUCTION PROJECTION",
+      "mediumEvidenceSupported": 69,
+      "highEvidenceSupported": 3,
+      "PROJECTED_SUPPORTED_ASSET_COST": 1.029,
+      "notSpendAuthorization": true
     },
     "knownEvidence": {
       "label": "KNOWN-EVIDENCE COST",
       "highEvidenceSupported": 3,
-      "mediumEvidenceSupported": 2,
-      "projectedUsd": 0.158485
+      "mediumEvidenceSupported": 69,
+      "projectedUsd": 1.029
+    },
+    "mediumDefaultUnprovenProjection": {
+      "label": "MEDIUM_DEFAULT_UNPROVEN projection",
+      "mediumDefaultUnproven": 154,
+      "PROJECTED_UNPROVEN_USD": 2.002,
+      "separateFromEvidenceSupported": true,
+      "notSpendAuthorization": true
     },
     "fallbackProjection": {
       "label": "FALLBACK_MEDIUM_PROJECTION_ONLY",
       "not": "PRODUCTION_BUDGET",
       "notAFinalProductionBudget": true,
-      "mediumDefaultUnproven": 160,
+      "mediumDefaultUnproven": 154,
       "highEvidenceSupportedChargedHigh": 3,
       "remainingPlannableChargedMedium": 244,
       "unknownBlockedExcluded": 26,
-      "projectedUsd": 3.346835
+      "PROJECTED_FALLBACK_COST": 3.304,
+      "projectedUsd": 3.304
     },
     "calibrationRequired": {
-      "label": "CALIBRATION-REQUIRED COUNT",
-      "qualityCalibrationRequired": 82,
+      "label": "BLOCKED / CALIBRATION REQUIRED",
+      "qualityCalibrationRequired": 21,
       "unknownBlocked": 26,
-      "totalNotReadyToCommit": 108
+      "UNRESOLVED_COST_COUNT": 47,
+      "totalNotReadyToCommit": 47,
+      "notIncludedAsCommittedProductionSpend": true
     }
   },
   "massGeneration": {
     "QUALITY_POLICY_MASS_GENERATION_READY": "NO",
     "reasons": [
-      "Launch-critical quality families are not fully CALIBRATED",
-      "82 variants are QUALITY_CALIBRATION_REQUIRED",
+      "BRANCH_STRUCTURE remains QUALITY_POLICY_NOT_VALIDATED and is required for deciduous launch coverage",
+      "21 variants are QUALITY_CALIBRATION_REQUIRED",
       "26 variants are UNKNOWN_BLOCKED",
-      "160 variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported",
+      "154 variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported",
+      "Quality-policy validation does not equal asset approval",
       "Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget",
-      "State-specific HIGH rule is proposed only; paid execution policy is unchanged"
+      "Paid execution / mass generation remains DENIED"
     ],
     "incompleteFamilies": [
-      "WOODY_OPEN_OR_LARGE_LEAF",
-      "LARGE_LEAF_HERBACEOUS",
-      "SHRUB_FINE_FOLIAGE",
-      "ROSETTE",
-      "SUCCULENT",
-      "BRANCH_STRUCTURE",
-      "FLOWER_FINE_DETAIL",
-      "FRUIT_VISIBLE_DETAIL"
+      "BRANCH_STRUCTURE"
     ],
+    "branchStructureUnresolved": true,
     "fallbackIsNotProductionBudget": true,
     "generateNow": false
   },
@@ -271,6 +291,7 @@
     "massGenerationStarted": "NO",
     "universalHigh": "NO",
     "dormantAutomaticallyInheritsFoliageHigh": "NO",
+    "appleDormantAutoEscalatedToHigh": "NO",
     "productionRegistryChanged": "NO",
     "spendGate": "DENIED",
     "additionalSpendUsd": 0

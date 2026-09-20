@@ -1,0 +1,936 @@
+{
+  "contract": "owner-quality-review-consolidation-v1",
+  "verdict": "OWNER_QUALITY_REVIEW_CONSOLIDATED_V1_READY",
+  "ownerReviewRecord": {
+    "round": "design-asset-quality-family-calibration-final-1",
+    "authoritative": true,
+    "QA_DIMENSIONS": {
+      "IMAGE_DETAIL_QUALITY": "IMAGE_DETAIL_QUALITY",
+      "BOTANICAL_IDENTITY_ARCHITECTURE": "BOTANICAL_IDENTITY_ARCHITECTURE",
+      "STATE_CORRECTNESS": "STATE_CORRECTNESS",
+      "neverCollapse": true
+    },
+    "families": {
+      "WOODY_DENSE_SMALL_LEAF": {
+        "source": "mango A/B design-asset-woody-foliage-detail-ab-1",
+        "CONTROL": {
+          "prompt": "old",
+          "quality": "medium",
+          "owner": "DETAIL_SOFT"
+        },
+        "A": {
+          "prompt": "V2",
+          "quality": "medium",
+          "owner": "ACCEPTABLE"
+        },
+        "B": {
+          "prompt": "V2",
+          "quality": "high",
+          "owner": "PREFERRED"
+        },
+        "promptV2ImprovesFoliageDetail": true,
+        "mediumAcceptable": true,
+        "highVisiblyBetter": true,
+        "HIGH_selectiveNotUniversal": true,
+        "planned": {
+          "prompt": "design-cutout-visual-state-detail-v2",
+          "qualityWhenFoliageDense": "high",
+          "mediumFallback": true
+        }
+      },
+      "WOODY_OPEN_OR_LARGE_LEAF": {
+        "sample": "avocado TREE MATURE VEGETATIVE V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "painterlySoftness": false,
+        "strongHalo": false,
+        "cgiCrunchySharpening": false,
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "BRANCH_STRUCTURE": {
+        "sample": "apple TREE MATURE DORMANT V2+medium",
+        "DETAIL_QA": "NOT_ACCEPTABLE",
+        "observed": [
+          "main branches readable",
+          "semi-transparent brown branch ghosting / haze",
+          "residual branch-like artifacts around crown",
+          "halo-like / dirty transparent structure"
+        ],
+        "issues": [
+          "HALO",
+          "DETAIL_SOFT",
+          "OTHER"
+        ],
+        "other": "semi-transparent branch ghosting / brown haze",
+        "familyResult": "QUALITY_POLICY_NOT_VALIDATED",
+        "automaticHighEscalation": false,
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "SHRUB_FINE_FOLIAGE": {
+        "sample": "lavender SHRUB MATURE VEGETATIVE V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "DETAIL_POLICY": "PASS",
+        "BOTANICAL_IDENTITY_QA": "REVIEW_REQUIRED",
+        "identityNote": "architecture too upright/woody, somewhat rosemary-like rather than convincing Lavender habit",
+        "doNotFailMediumPolicyBecauseOfIdentity": true,
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "FLOWER_FINE_DETAIL": {
+        "sample": "lavender SHRUB MATURE FLOWERING V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "STATE_QA": "FLOWERING_DISTINCTION_CLEAR",
+        "painterlySoftness": false,
+        "meaningfulHalo": false,
+        "highRequired": false,
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "LARGE_LEAF_HERBACEOUS": {
+        "sample": "banana herbaceous-clump MATURE FRUITING V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "note": "Leaves, veins and natural leaf damage readable.",
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "FRUIT_VISIBLE_DETAIL": {
+        "sample": "same banana fruiting asset",
+        "DETAIL_QA": "DETAIL_OK",
+        "STATE_QA": "FRUITING_DISTINCTION_CLEAR",
+        "note": "fruit cluster clearly readable; fruiting state visually useful and plausible",
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "ROSETTE": {
+        "sample": "pineapple MATURE VEGETATIVE V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "historicalControlNotLikeForLike": true,
+        "historicalControlNote": "Historical Pineapple control is a different phenology/state and is NOT a like-for-like state comparison.",
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      },
+      "SUCCULENT": {
+        "sample": "aloe-vera MATURE VEGETATIVE V2+medium",
+        "DETAIL_QA": "DETAIL_OK",
+        "familyResult": "MEDIUM_POLICY_VALIDATED",
+        "BOTANICAL_IDENTITY_QA": "ARCHITECTURE_REVIEW_REQUIRED",
+        "architectureNote": "large clump / offsets / pups may require later BOTANICAL_IDENTITY / ARCHITECTURE review",
+        "doNotTreatArchitectureAsQualityFailure": true,
+        "ASSET_PRODUCTION_APPROVAL": "NO"
+      }
+    },
+    "productionApprovedThisRound": []
+  },
+  "validatedQualityFamilies": [
+    {
+      "family": "WOODY_DENSE_SMALL_LEAF",
+      "result": "HIGH_SELECTIVE_PREFERRED",
+      "detailPolicy": null
+    },
+    {
+      "family": "WOODY_OPEN_OR_LARGE_LEAF",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    },
+    {
+      "family": "SHRUB_FINE_FOLIAGE",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "PASS"
+    },
+    {
+      "family": "FLOWER_FINE_DETAIL",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    },
+    {
+      "family": "LARGE_LEAF_HERBACEOUS",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    },
+    {
+      "family": "FRUIT_VISIBLE_DETAIL",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    },
+    {
+      "family": "ROSETTE",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    },
+    {
+      "family": "SUCCULENT",
+      "result": "MEDIUM_POLICY_VALIDATED",
+      "detailPolicy": "DETAIL_OK"
+    }
+  ],
+  "branchStructureStatus": "QUALITY_POLICY_NOT_VALIDATED",
+  "appleDormantRootCause": {
+    "rootCause": "MIXED",
+    "classification": {
+      "rootCause": "MIXED",
+      "REVIEW_RENDER_ARTIFACT": false,
+      "PROVIDER_BRANCH_GHOSTING": true,
+      "ALPHA_FINE_STRUCTURE_FAILURE": true,
+      "PROMPT_OVERCOMPLEX_BRANCH_STRUCTURE": true,
+      "HIGH_WOULD_NOT_AUTOMATICALLY_SOLVE": true,
+      "note": "Brown canopy fill and zero fully-opaque wood exist in the provider PNG. Technical QA halo metric only counts near-white partials, so it can PASS while brown ghosting remains. Inspection uses filter:none; this is not a review-CSS artifact."
+    },
+    "fullyOpaquePixels": 0,
+    "brownShareOfPartial": 0.992361,
+    "escalateToHighNow": false
+  },
+  "botanicalIdentityHolds": [
+    {
+      "canonicalSlug": "aloe-vera",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "botanicalIdentityBlocker": "ARCHITECTURE_REVIEW_REQUIRED",
+      "qualityPlanningState": "MEDIUM_EVIDENCE_SUPPORTED",
+      "DETAIL_POLICY_SEPARATE": true
+    },
+    {
+      "canonicalSlug": "lavender",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "botanicalIdentityBlocker": "REVIEW_REQUIRED",
+      "qualityPlanningState": "MEDIUM_EVIDENCE_SUPPORTED",
+      "DETAIL_POLICY_SEPARATE": true
+    }
+  ],
+  "audit273": {
+    "requiredVariantsTotal": 273,
+    "planningStates": {
+      "MEDIUM_EVIDENCE_SUPPORTED": 69,
+      "HIGH_EVIDENCE_SUPPORTED": 3,
+      "MEDIUM_DEFAULT_UNPROVEN": 154,
+      "QUALITY_CALIBRATION_REQUIRED": 21,
+      "UNKNOWN_BLOCKED": 26
+    },
+    "plannedQuality": {
+      "medium": 244,
+      "high": 3,
+      "unplanned": 26
+    },
+    "unknownBaseDetailClass": 233
+  },
+  "costs": {
+    "unitEstimateUsd": {
+      "medium": 0.013,
+      "high": 0.044,
+      "guaranteed": false,
+      "notSpendAuthorization": true,
+      "source": "recent observed planning costs only as estimates"
+    },
+    "PROJECTED_SUPPORTED_ASSET_COST": 1.029,
+    "PROJECTED_FALLBACK_COST": 3.304,
+    "UNRESOLVED_COST_COUNT": 47,
+    "evidenceSupportedProduction": {
+      "label": "EVIDENCE-SUPPORTED PRODUCTION PROJECTION",
+      "mediumEvidenceSupported": 69,
+      "highEvidenceSupported": 3,
+      "PROJECTED_SUPPORTED_ASSET_COST": 1.029,
+      "notSpendAuthorization": true
+    },
+    "mediumDefaultUnprovenProjection": {
+      "label": "MEDIUM_DEFAULT_UNPROVEN projection",
+      "mediumDefaultUnproven": 154,
+      "PROJECTED_UNPROVEN_USD": 2.002,
+      "separateFromEvidenceSupported": true,
+      "notSpendAuthorization": true
+    },
+    "blockedOrCalibrationRequired": {
+      "label": "BLOCKED / CALIBRATION REQUIRED",
+      "qualityCalibrationRequired": 21,
+      "unknownBlocked": 26,
+      "UNRESOLVED_COST_COUNT": 47,
+      "totalNotReadyToCommit": 47,
+      "notIncludedAsCommittedProductionSpend": true
+    },
+    "notSpendAuthorization": true
+  },
+  "unresolvedVariants": [
+    {
+      "canonicalSlug": "agapanthus",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "almond",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "apple",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+      "variantDetailDemand": "FOLIAGE_OPEN",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Young/open woody architecture on dense-small-leaf or fine-shrub classes is not the Avocado open/large-leaf family and does not inherit foliage HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "apple",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "apricot",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "basil",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "borage",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "broccoli",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "carrot",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "cherimoya",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "cyclamen",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "english-walnut",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "fig",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "french-marigold",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "garden-pea",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "garden-peony",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "ginger",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "grapevine",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "green-bean",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "hydrangea",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "kiwi",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "lettuce",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "mango",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+      "variantDetailDemand": "FOLIAGE_OPEN",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Young/open woody architecture on dense-small-leaf or fine-shrub classes is not the Avocado open/large-leaf family and does not inherit foliage HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "mint",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "nasturtium",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "oleander",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "orchid",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "peach",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "pear",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "persimmon",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "pistachio",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "plum",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "plumeria",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+      "variantDetailDemand": "FOLIAGE_OPEN",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Young/open woody architecture on dense-small-leaf or fine-shrub classes is not the Avocado open/large-leaf family and does not inherit foliage HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "quince",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "raspberry",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "spinach",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "strawberry",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "strelitzia",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "succulent",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "sunflower",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "sweet-pepper",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "turmeric",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "BRANCH_STRUCTURE",
+      "plannedQuality": "medium",
+      "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED",
+      "evidenceBasis": "Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "watermelon",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "zinnia",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    },
+    {
+      "canonicalSlug": "zucchini",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "baseDetailClass": "UNKNOWN",
+      "variantDetailDemand": "UNKNOWN",
+      "plannedQuality": null,
+      "qualityPlanningState": "UNKNOWN_BLOCKED",
+      "evidenceBasis": "visualForm or identity is unresolved; quality cannot be planned",
+      "botanicalIdentityBlocker": null,
+      "calibrationNeeded": "YES"
+    }
+  ],
+  "massGeneration": {
+    "QUALITY_POLICY_MASS_GENERATION_READY": "NO",
+    "reasons": [
+      "BRANCH_STRUCTURE remains QUALITY_POLICY_NOT_VALIDATED and is required for deciduous launch coverage",
+      "21 variants are QUALITY_CALIBRATION_REQUIRED",
+      "26 variants are UNKNOWN_BLOCKED",
+      "154 variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported",
+      "Quality-policy validation does not equal asset approval",
+      "Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget",
+      "Paid execution / mass generation remains DENIED"
+    ],
+    "incompleteFamilies": [
+      "BRANCH_STRUCTURE"
+    ],
+    "branchStructureUnresolved": true,
+    "fallbackIsNotProductionBudget": true,
+    "generateNow": false
+  },
+  "nextMinimalCalibration": {
+    "execute": false,
+    "generateNow": false,
+    "spendGate": "DENIED",
+    "purpose": "Correct BRANCH_STRUCTURE prompt after MIXED provider-ghosting + overcomplex foliage-on-dormant prompt. Do not assume HIGH.",
+    "jobs": [
+      {
+        "rank": 1,
+        "family": "BRANCH_STRUCTURE",
+        "canonicalSlug": "apple",
+        "scientific": "Malus domestica",
+        "architectureMode": "tree",
+        "growthStage": "mature",
+        "phenologyState": "dormant",
+        "prompt": "design-cutout-branch-structure-v2-experiment",
+        "quality": "medium",
+        "highQuality": false,
+        "control": "apple__mature__tree__dormant__detail-v2__medium.png",
+        "generateNow": false,
+        "separateHighAbRequiresOwnerApproval": true
+      }
+    ],
+    "promptTemplateVersion": "design-cutout-branch-structure-v2-experiment",
+    "promptPreviewLength": 3351
+  },
+  "oliveRemainsOnlyApprovedDesignAssetUnlessPriorExplicitApproval": true,
+  "spend": {
+    "executedPaid": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "retries": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "qualityFamilySpendGate": "DENIED",
+    "qualityPolicySpendGate": "DENIED",
+    "massGenerationStarted": false,
+    "productionRegistryChanged": false,
+    "assetsAutoApproved": 0,
+    "universalHigh": false,
+    "appleDormantAutoEscalatedToHigh": false,
+    "factoryGenerateOnRender": false
+  },
+  "confirms": {
+    "imageGeneration": 0,
+    "openaiCalls": 0,
+    "productionRegistryChanged": "NO",
+    "assetsAutoApproved": 0,
+    "universalHigh": "NO",
+    "appleDormantAutoEscalatedToHigh": "NO",
+    "spendGate": "DENIED",
+    "additionalSpendUsd": 0
+  }
+}

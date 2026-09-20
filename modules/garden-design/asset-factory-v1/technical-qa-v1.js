@@ -27,7 +27,7 @@ function paeth(a, b, c) {
   return c;
 }
 
-function decodePngRgba(buf) {
+export function decodePngRgba(buf) {
   if (buf.length < 8 || !buf.subarray(0, 8).equals(PNG_SIG)) {
     const err = new Error('not-png');
     err.code = 'not-png';

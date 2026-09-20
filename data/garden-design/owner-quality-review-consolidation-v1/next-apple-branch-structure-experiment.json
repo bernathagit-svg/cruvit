@@ -1,0 +1,105 @@
+{
+  "contract": "owner-quality-review-consolidation-v1",
+  "execute": false,
+  "generateNow": false,
+  "spendGate": "DENIED",
+  "purpose": "Correct BRANCH_STRUCTURE prompt after MIXED provider-ghosting + overcomplex foliage-on-dormant prompt. Do not assume HIGH.",
+  "jobs": [
+    {
+      "rank": 1,
+      "family": "BRANCH_STRUCTURE",
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "prompt": "design-cutout-branch-structure-v2-experiment",
+      "quality": "medium",
+      "highQuality": false,
+      "control": "apple__mature__tree__dormant__detail-v2__medium.png",
+      "generateNow": false,
+      "separateHighAbRequiresOwnerApproval": true
+    }
+  ],
+  "promptRecord": {
+    "promptTemplateVersion": "design-cutout-branch-structure-v2-experiment",
+    "experimental": true,
+    "replacesProductionDetailV2": false,
+    "generateNow": false,
+    "appliedToPaidExecute": false,
+    "qualityAssumedToSolveGhosting": false,
+    "highQualityNotSelected": true,
+    "round1LearningInherited": [
+      "natural garden-grown architecture",
+      "ground-level planted-bed three-quarter perspective",
+      "avoid catalog-isolate composition",
+      "avoid perfect stock-photo symmetry",
+      "natural irregular silhouette",
+      "realistic botanical architecture",
+      "natural photographic sharpness",
+      "sufficient transparent margin",
+      "full visible specimen",
+      "no baked scene shadow",
+      "no runtime blend baked into PNG"
+    ],
+    "runtimeNotInPng": [
+      "scene tonal adaptation",
+      "contact shadow",
+      "mild sharpness normalization",
+      "edge integration",
+      "physical scale"
+    ],
+    "require": [
+      "clean deciduous branch hierarchy",
+      "clearly separated primary and secondary branches",
+      "restrained twig density",
+      "true transparent negative space between branches",
+      "solid opaque bark on real wood",
+      "no residual leaf masses",
+      "no translucent brown clouds",
+      "no duplicated or faded ghost branches",
+      "living dormant architecture, not dead or damaged"
+    ],
+    "forbid": [
+      "semi-transparent brown canopy fill",
+      "ghost branches",
+      "dirty matte haze in negative space",
+      "residual leafy masses on a leafless dormant tree",
+      "specimen-wide translucent wood",
+      "dead, snapped, diseased, or damaged appearance",
+      "crunchy HDR sharpening",
+      "CGI microtexture"
+    ],
+    "provider": "openai-images-api",
+    "model": "unspecified",
+    "settings": {
+      "size": "1024x1536",
+      "quality": "medium",
+      "background": "transparent",
+      "outputFormat": "png",
+      "n": 1
+    },
+    "prompt": "FAMILY LOCK for Malus domestica (canonical identity apple). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. BRANCH STRUCTURE REQUIREMENTS: leafless deciduous tree. Clean primary scaffold with clearly separated secondary branches. Restrained twig density — do not fill the crown with a cloud of interior twigs. True empty transparent negative space between branches. Real wood is solid and opaque. Photographic branch bark at 100% pixel inspection. BRANCH STRUCTURE FORBIDDEN: residual leaf masses; translucent brown clouds or dirty matte fill in the crown; duplicated or faded ghost branches; semi-transparent specimen-wide wood; painterly branch haze; dead, snapped, diseased, or damaged trees. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Do not apply leafy foliage-detail requirements to this leafless dormant variant. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=dormant. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. DORMANT: leafless deciduous architecture only. Preserve trunk identity. Clean primary / secondary hierarchy. Restrained twig density. True transparent negative space between branches. No residual foliage. No translucent brown clouds. No duplicated or faded ghost branches. Not dead or damaged. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+    "familyLockFields": [
+      "canonicalSlug",
+      "scientific",
+      "visualForm",
+      "cameraTreatment",
+      "gardenGrownNaturalArchitecture",
+      "naturalPhotographicDetail",
+      "transparentCutout"
+    ],
+    "stateDeltaFields": [
+      "growthStage",
+      "phenologyState",
+      "architectureMode"
+    ],
+    "canonicalSlug": "apple",
+    "jobId": null,
+    "growthStage": "mature",
+    "architectureMode": "tree",
+    "phenologyState": "dormant",
+    "visualForm": "tree",
+    "encodesPhysicalMeters": false
+  }
+}
