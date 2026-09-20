@@ -15,7 +15,7 @@ import { CALIBRATION_BATCH_1_CANDIDATES } from './calibration-review-candidates-
 
 export const VISUAL_STATE_CALIBRATION_BATCH_2_VERSION = 'visual-state-calibration-batch-2-prep-v1';
 export const VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID = 'design-asset-visual-state-calibration-batch-2';
-export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919s';
+export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919t';
 
 export const BATCH_2_SPEND_GATE = Object.freeze({
   state: 'DENIED',

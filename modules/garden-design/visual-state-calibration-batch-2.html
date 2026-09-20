@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Visual State Calibration Batch 2 — review harness (no assets)</title>
+  <title>Visual State Calibration Batch 2 — 11/11 candidates, owner review only</title>
   <style>
     :root { font-family: "DM Sans", sans-serif; color: #122; }
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
@@ -14,32 +14,33 @@
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
     .scene.real { width: 420px; height: 300px; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 6px 8px; font-size: 11px; width: 80%; text-align: center; }
+    .scene img.cutout { position: absolute; left: 50%; bottom: 8%; transform: translateX(-50%); max-height: 82%; max-width: 72%; object-fit: contain; pointer-events: none; }
     .scene.blend-v1-scene img.cutout { filter: brightness(0.93) contrast(0.9) saturate(0.86) blur(0.55px) drop-shadow(0 12px 18px rgba(0,0,0,0.32)); }
     .cap { font-size: 13px; color: #444; }
     .questions { font-size: 14px; }
   </style>
 </head>
 <body>
-  <h1>Visual State Calibration Batch 2 — 11 jobs, five pair-complete families, 0 generated</h1>
-  <p id="realGardenBanner" class="warn">No assets yet. Signed Garden photo is injected by the host when available. Do not bake scene integration into PNGs. Blend/ground-contact is runtime CSS only. Physical size remains runtime authority; families are not forced to one scale.</p>
-  <p class="note">Spend gate DENIED. Production registry unchanged. Family review is side-by-side on the same Garden source. QA later: TECHNICAL_QA, BOTANICAL_IDENTITY_QA, STATE_QA, FAMILY_CONSISTENCY_QA, IN_GARDEN_QA, OWNER_VISUAL_QA.</p>
+  <h1>Visual State Calibration Batch 2 — 11/11 candidates, owner review only</h1>
+  <p id="realGardenBanner" class="ok">Candidates only. Not approved. Signed Garden photo is injected by the host. Blend V1 CSS is runtime-only. Physical size remains runtime authority; families are not forced to one scale.</p>
+  <p class="note">Spend gate DENIED after this run. Production registry unchanged. Auto-approval disabled. QA: TECHNICAL_QA, BOTANICAL_IDENTITY_QA, STATE_QA, FAMILY_CONSISTENCY_QA, IN_GARDEN_QA, OWNER_VISUAL_QA. STATE / FAMILY / OWNER visual judgments stay UNKNOWN until owner review.</p>
 <section class="family" data-family="A">
     <h2>Family A — Mango — 3-way</h2>
     <p class="note">Proves YOUNG vs MATURE and VEGETATIVE vs FRUITING. Batch-1 mango is not the family anchor. Physical size is runtime authority.</p>
     <div class="slots"><div class="slot" data-job-id="mango__mature__tree__vegetative__v1">
         <p class="cap">1. TREE MATURE VEGETATIVE (new family anchor)</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="1. TREE MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="mango__young__tree__vegetative__v1">
         <p class="cap">2. TREE YOUNG VEGETATIVE</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="mango__mature__tree__fruiting__v1">
         <p class="cap">3. TREE MATURE FRUITING</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png"/>
         </div>
       </div></div>
     <ol class="questions">
@@ -52,12 +53,12 @@
     <div class="slots"><div class="slot" data-job-id="banana__mature__default__vegetative__v1">
         <p class="cap">4. herbaceous-clump MATURE VEGETATIVE (new family anchor)</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="4. herbaceous-clump MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="banana__young__default__vegetative__v1">
         <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png"/>
         </div>
       </div></div>
     <ol class="questions">
@@ -70,12 +71,12 @@
     <div class="slots"><div class="slot" data-job-id="apple__mature__tree__vegetative__v1">
         <p class="cap">6. TREE MATURE VEGETATIVE</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="apple__mature__tree__dormant__v1">
         <p class="cap">7. TREE MATURE DORMANT</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png"/>
         </div>
       </div></div>
     <ol class="questions">
@@ -88,12 +89,12 @@
     <div class="slots"><div class="slot" data-job-id="pomegranate__mature__tree__vegetative__v1">
         <p class="cap">8. TREE MATURE VEGETATIVE</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="pomegranate__mature__shrub__vegetative__v1">
         <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png"/>
         </div>
       </div></div>
     <ol class="questions">
@@ -106,12 +107,12 @@
     <div class="slots"><div class="slot" data-job-id="lavender__mature__shrub__vegetative__v1">
         <p class="cap">10. SHRUB MATURE VEGETATIVE (new family anchor)</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="10. SHRUB MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png"/>
         </div>
       </div><div class="slot" data-job-id="lavender__mature__shrub__flowering__v1">
         <p class="cap">11. SHRUB MATURE FLOWERING</p>
         <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <div class="ghost blocked">ASSET NOT GENERATED</div>
+          <img class="cutout" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png"/>
         </div>
       </div></div>
     <ol class="questions">
@@ -129,7 +130,7 @@
       const banner = document.getElementById('realGardenBanner');
       if (banner) {
         banner.className = 'ok';
-        banner.textContent = 'Real Garden photo loaded. Assets are not generated. Blend V1 CSS will apply when cutouts exist. No bake-in.';
+        banner.textContent = "Real Garden photo loaded. Candidates only — not approved. Blend V1 CSS is runtime-only. No bake-in.";
       }
       return true;
     }

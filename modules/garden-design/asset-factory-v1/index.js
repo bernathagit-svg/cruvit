@@ -48,6 +48,14 @@ export {
   EGGPLANT_DEFERRED
 } from './visual-state-calibration-batch-2-prep-v1.js';
 export { buildVisualStateFamilyPromptRecord } from './prompt-factory-visual-state-family-v1.js';
+export {
+  executeVisualStateCalibrationBatch2Paid,
+  parseOwnerApprovedVisualStateCalibrationBatch2,
+  OWNER_APPROVED_VISUAL_STATE_CALIBRATION_BATCH_2,
+  OWNER_APPROVED_VISUAL_STATE_CALIBRATION_BATCH_2_COMMAND,
+  BATCH_2_HARD_SPEND_USD,
+  APPROVED_BATCH_2_IDENTITY
+} from './visual-state-calibration-batch-2-execute-v1.js';
 export { generateAsset, listFactoryProviders } from './provider-adapter-v1.js';
 export {
   parseSpendEnvelope,
