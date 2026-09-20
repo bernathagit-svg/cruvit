@@ -1,11 +1,4 @@
-export {
-  DESIGN_ASSET_FACTORY_VERSION,
-  DESIGN_ASSET_FACTORY,
-  FACTORY_PIPELINE_STEPS,
-  FACTORY_JOB_STATES,
-  FACTORY_PRIORITY_BANDS,
-  AUTO_APPROVAL_ELIGIBLE_CRITERIA
-} from './design-asset-factory-v1.js';
+export { DESIGN_ASSET_FACTORY_VERSION, DESIGN_ASSET_FACTORY, FACTORY_PIPELINE_STEPS, FACTORY_PLANNING_PATH_QUALITY_V1, FACTORY_JOB_STATES, FACTORY_PRIORITY_BANDS, AUTO_APPROVAL_ELIGIBLE_CRITERIA } from './design-asset-factory-v1.js';
 export {
   deriveVariantDemand,
   variantKeyFromRole,
@@ -233,4 +226,20 @@ export {
 } from './calibration-review-host-v1.js';
 export { proposeSafeCalibrationEnvelope, KEY_BILLING_OWNER_ACTIONS } from './spend-envelope-v1.js';
 export { estimateCalibrationApiSpend } from './total-api-cost-v1.js';
+export {
+  DESIGN_ASSET_QUALITY_POLICY_VERSION,
+  DETAIL_CLASS,
+  DEFAULT_QUALITY,
+  planDesignAssetGeneration,
+  resolveDetailClass,
+  qualityForDetailClass,
+  mayAutoEscalateQuality,
+  writeDesignAssetQualityPolicyReports,
+  executeDesignAssetQualityPolicyV1,
+  WOODY_FOLIAGE_DETAIL_AB_OWNER_RESULT
+} from './design-asset-quality-policy-v1.js';
+export {
+  PROMPT_TEMPLATE_VERSION_VISUAL_STATE_DETAIL_V2,
+  buildVisualStateDetailV2PromptRecord
+} from './prompt-factory-visual-state-detail-v2.js';
 

@@ -1,0 +1,62 @@
+{
+  "contract": "design-asset-quality-policy-v1",
+  "detailClass": {
+    "WOODY_DENSE_SMALL_LEAF": "WOODY_DENSE_SMALL_LEAF",
+    "WOODY_OPEN_OR_LARGE_LEAF": "WOODY_OPEN_OR_LARGE_LEAF",
+    "LARGE_LEAF_HERBACEOUS": "LARGE_LEAF_HERBACEOUS",
+    "SHRUB_FINE_FOLIAGE": "SHRUB_FINE_FOLIAGE",
+    "ROSETTE": "ROSETTE",
+    "SUCCULENT": "SUCCULENT",
+    "OTHER_STANDARD_DETAIL": "OTHER_STANDARD_DETAIL",
+    "UNKNOWN": "UNKNOWN"
+  },
+  "evidenceLocked": [
+    {
+      "canonicalSlug": "mango",
+      "architectureMode": "tree",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "evidence": "owner-ab-1 woody foliage detail; dense small-leaf canopy",
+      "confidence": "HIGH"
+    },
+    {
+      "canonicalSlug": "apple",
+      "architectureMode": "tree",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "evidence": "batch-2 native audit ASSET_DETAIL=SOFT on woody small-leaf canopy",
+      "confidence": "MEDIUM"
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "architectureMode": "tree",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "evidence": "batch-2 native audit BORDERLINE woody foliage on tree architecture",
+      "confidence": "MEDIUM"
+    },
+    {
+      "canonicalSlug": "pomegranate",
+      "architectureMode": "shrub",
+      "detailClass": "SHRUB_FINE_FOLIAGE",
+      "evidence": "batch-2 native audit BORDERLINE shrub canopy; HIGH not evidenced for shrub form",
+      "confidence": "MEDIUM"
+    },
+    {
+      "canonicalSlug": "banana",
+      "architectureMode": "default",
+      "detailClass": "LARGE_LEAF_HERBACEOUS",
+      "evidence": "batch-2 native audit CRISP_ENOUGH at medium",
+      "confidence": "HIGH"
+    },
+    {
+      "canonicalSlug": "lavender",
+      "architectureMode": "shrub",
+      "detailClass": "SHRUB_FINE_FOLIAGE",
+      "evidence": "batch-2 native audit BORDERLINE; keep medium until HIGH evidence exists",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "highClasses": [
+    "WOODY_DENSE_SMALL_LEAF"
+  ],
+  "defaultQuality": "medium",
+  "notBotanicalIdentity": true
+}

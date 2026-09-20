@@ -1,0 +1,110 @@
+{
+  "contract": "design-asset-quality-policy-v1",
+  "verdict": "DESIGN_ASSET_QUALITY_POLICY_V1_READY",
+  "ownerResult": {
+    "runId": "design-asset-woody-foliage-detail-ab-1",
+    "CONTROL": {
+      "prompt": "design-cutout-visual-state-family-v1",
+      "quality": "medium",
+      "owner": "DETAIL_SOFT",
+      "verdict": "TOO_SOFT"
+    },
+    "A": {
+      "prompt": "design-cutout-woody-foliage-detail-v2-experiment",
+      "quality": "medium",
+      "owner": "ACCEPTABLE",
+      "verdict": "ACCEPTABLE_GOOD"
+    },
+    "B": {
+      "prompt": "design-cutout-woody-foliage-detail-v2-experiment",
+      "quality": "high",
+      "owner": "PREFERRED",
+      "verdict": "BETTER_THAN_A"
+    },
+    "PROMPT_V2_VALIDATED": true,
+    "HIGH_UNIVERSAL": false,
+    "HIGH_FOR_WOODY_DENSE_SMALL_LEAF": "candidate policy accepted",
+    "mangoCandidatesRemainCalibrationOnly": true,
+    "actualCostUsd": {
+      "A_medium": 0.013175,
+      "B_high": 0.044045,
+      "highOverMediumRatio": 3.343,
+      "ratioGuaranteedForever": false
+    }
+  },
+  "nextProductionPrompt": {
+    "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+    "supersedes": "design-cutout-visual-state-family-v1",
+    "historicalBatch2Prompt": "design-cutout-visual-state-family-v1",
+    "generateNow": false,
+    "appliedToPaidExecute": false
+  },
+  "detailClassTaxonomy": [
+    "WOODY_DENSE_SMALL_LEAF",
+    "WOODY_OPEN_OR_LARGE_LEAF",
+    "LARGE_LEAF_HERBACEOUS",
+    "SHRUB_FINE_FOLIAGE",
+    "ROSETTE",
+    "SUCCULENT",
+    "OTHER_STANDARD_DETAIL",
+    "UNKNOWN"
+  ],
+  "defaultQuality": "medium",
+  "factoryDefaultQualityConstant": "medium",
+  "settingsDefaultQuality": "medium",
+  "highSelectivePolicy": {
+    "classes": [
+      "WOODY_DENSE_SMALL_LEAF"
+    ],
+    "treeVisualFormAloneIsNotEnough": true,
+    "bananaLargeLeafHerbaceousStaysMedium": true
+  },
+  "unknownPolicy": {
+    "detailClass": "UNKNOWN",
+    "quality": "medium",
+    "doNotSpendHighBecauseMetadataMissing": true
+  },
+  "automaticQualityRetry": {
+    "mediumThenHigh": false,
+    "inspectThenRegenerateHigh": false,
+    "note": "Quality is chosen from detailClass before any paid call. Genuine QA exceptions need a separate owner-approved retry envelope. No automatic paid retry."
+  },
+  "factoryPlanningPath": [
+    "canonical-plant",
+    "required-visual-state",
+    "visualForm-architectureMode",
+    "detailClass",
+    "generation-quality",
+    "spend-gate",
+    "generation"
+  ],
+  "requiredVariantQualityAuditProposal": {
+    "requiredVariantsTotal": 273,
+    "mediumCount": 262,
+    "highCount": 11,
+    "unknownDetailClassCount": 251,
+    "projectedUsdFromAbActuals": 3.936345,
+    "execute273": false
+  },
+  "spend": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "productionRegistryChanged": false,
+    "mangoCandidatesProductionApproved": false,
+    "universalHighEnabled": false,
+    "automaticMediumThenHighRetry": false,
+    "woodyFoliageAbSpendGate": "DENIED"
+  },
+  "confirms": {
+    "universalHighEnabled": false,
+    "defaultQuality": "medium",
+    "highSelective": true,
+    "automaticMediumThenHighRetry": false,
+    "imageGeneration": 0,
+    "productionRegistryChanged": false,
+    "additionalSpendUsd": 0
+  }
+}

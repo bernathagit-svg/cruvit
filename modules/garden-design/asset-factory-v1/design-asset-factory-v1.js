@@ -20,6 +20,16 @@ export const DESIGN_ASSET_FACTORY = Object.freeze({
   paidNetworkDefault: 'DENY'
 });
 
+export const FACTORY_PLANNING_PATH_QUALITY_V1 = Object.freeze([
+  'canonical-plant',
+  'required-visual-state',
+  'visualForm-architectureMode',
+  'detailClass',
+  'generation-quality',
+  'spend-gate',
+  'generation'
+]);
+
 export const FACTORY_PIPELINE_STEPS = Object.freeze([
   'catalog-canonical',
   'visual-state-requirements',

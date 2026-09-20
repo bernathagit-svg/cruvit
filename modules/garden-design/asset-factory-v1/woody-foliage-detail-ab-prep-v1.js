@@ -110,10 +110,11 @@ export const DECISION_RULES = Object.freeze({
 });
 
 export const MORPHOLOGY_POLICY_STATUS = Object.freeze({
-  formalized: false,
-  status: 'NOT_FORMALIZED_UNTIL_AB_REVIEWED',
+  formalized: true,
+  status: 'FORMALIZED_IN_DESIGN_ASSET_QUALITY_POLICY_V1',
   bananaEvidence: 'CRISP_ENOUGH at medium; HIGH is not universally required',
-  possibleFutureClasses: ['WOODY_DENSE_SMALL_LEAF', 'LARGE_LEAF_HERBACEOUS', 'ROSETTE', 'SUCCULENT']
+  highOnlyFor: 'WOODY_DENSE_SMALL_LEAF',
+  see: 'design-asset-quality-policy-v1'
 });
 
 export const OWNER_DETAIL_MARKS = Object.freeze([

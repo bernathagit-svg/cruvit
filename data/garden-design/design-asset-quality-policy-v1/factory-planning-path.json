@@ -1,0 +1,30 @@
+{
+  "contract": "design-asset-quality-policy-v1",
+  "path": [
+    "canonical-plant",
+    "required-visual-state",
+    "visualForm-architectureMode",
+    "detailClass",
+    "generation-quality",
+    "spend-gate",
+    "generation"
+  ],
+  "generateOnRender": false,
+  "automaticQualityRetry": {
+    "mediumThenHigh": false,
+    "inspectThenRegenerateHigh": false,
+    "note": "Quality is chosen from detailClass before any paid call. Genuine QA exceptions need a separate owner-approved retry envelope. No automatic paid retry."
+  },
+  "spendGate": {
+    "state": "DENIED",
+    "execute": false,
+    "generateNow": false,
+    "generateOnRender": false,
+    "automaticMediumThenHighRetry": false,
+    "universalHigh": false,
+    "defaultQuality": "medium",
+    "highSelective": true,
+    "mangoCandidatesProductionApproved": false,
+    "productionRegistryWrite": false
+  }
+}
