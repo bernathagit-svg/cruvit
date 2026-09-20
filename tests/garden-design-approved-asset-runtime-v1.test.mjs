@@ -210,15 +210,38 @@ test('canonicalSlug mango wins over display name Mango Tree; no cross-species fa
   assert.equal(pineapple.canonicalSlug, 'pineapple');
 });
 
+test('Add plants modal uses approved Design Asset Registry thumbnails and no Wikipedia runtime image fetch', () => {
+  const gd = read('modules/garden-design/index.html');
+  const helper = gd.slice(
+    gd.indexOf('function gdApmRegistryThumbHtml'),
+    gd.indexOf('function gdRetryOwnedPlants')
+  );
+  const owned = gd.slice(
+    gd.indexOf('function showApmOwned'),
+    gd.indexOf('function gdAreaLabel')
+  );
+  const list = gd.slice(
+    gd.indexOf('function showApmList'),
+    gd.indexOf('function showApmWrite')
+  );
+  assert.match(helper, /resolvePlantLayerAsset/);
+  assert.match(helper, /visualReady/);
+  assert.match(helper, /data-asset-id/);
+  assert.match(owned, /gdApmRegistryThumbHtml\(p\)/);
+  assert.match(list, /gdApmRegistryThumbHtml/);
+  assert.doesNotMatch(list, /fetchPlantImg/);
+  assert.doesNotMatch(list, /wikipedia/i);
+});
+
 test('production host/iframe load the versioned registry and re-index both arrival paths', () => {
   const app = read('app.html');
   const gd = read('modules/garden-design/index.html');
   assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260920reg1');
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
   assert.match(app, /const token='20260920reg1'/);
-  assert.match(app, /index\.html\?v=20260920ins1/);
+  assert.match(app, /index\.html\?v=20260920thumb1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
-  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920ins1/);
+  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
   assert.match(gd, /if \(ctx\.designAssetRegistry\) gdIndexDesignAssetRegistry\(ctx\.designAssetRegistry\)/);
   assert.match(gd, /if \(d\.type === 'cruvit:garden-design-asset-registry'\) gdIndexDesignAssetRegistry\(d\.designAssetRegistry\)/);

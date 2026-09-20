@@ -8753,7 +8753,7 @@ window.addEventListener('message',function(ev){
 function openGardenDesign(){
   const root=document.getElementById('garden-design-root');
   if(!root) return;
-  const src='modules/garden-design/index.html?v=20260920ins1';
+  const src='modules/garden-design/index.html?v=20260920thumb1';
   let frame=root.querySelector('iframe.gd-frame');
   if(!frame){
     frame=document.createElement('iframe');
@@ -8765,7 +8765,7 @@ function openGardenDesign(){
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
     const current=frame.getAttribute('src')||frame.src||'';
-    if(current.indexOf('index.html?v=20260920ins1')===-1){
+    if(current.indexOf('index.html?v=20260920thumb1')===-1){
       frame.src=src;
     }else{
       loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });

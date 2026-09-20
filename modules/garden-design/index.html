@@ -304,8 +304,10 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .apm-plant-chip:hover{border-color:#3d8a50;box-shadow:0 2px 8px rgba(109,204,136,.2)}
 .apm-plant-chip.selected{border-color:#3d8a50;box-shadow:0 0 0 2px rgba(61,138,80,.3)}
 .apm-plant-chip.selected::after{content:'✓';position:absolute;top:4px;right:6px;font-size:13px;color:#fff;font-weight:700;background:#3d8a50;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
-.apm-chip-img{width:100%;height:70px;object-fit:cover;display:block}
+.apm-chip-img{width:100%;height:70px;object-fit:contain;display:block}
 .apm-chip-img-ph{width:100%;height:70px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:26px}
+.gd-registry-thumb-host{padding:4px;box-sizing:border-box;background:linear-gradient(180deg,#f3faf2 0%,#e8f5e9 100%)}
+.gd-registry-thumb-host .apm-chip-img{height:62px;object-fit:contain;background:transparent}
 .apm-chip-lbl{font-size:11px;font-weight:500;color:var(--text);padding:5px 7px;text-align:center;line-height:1.3}
 .apm-back{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:4px}
 .apm-back:hover{color:var(--text)}
@@ -2360,6 +2362,41 @@ function gdOwnedPlantsFromContext() {
   return Array.isArray(ctx.ownedPlants) ? ctx.ownedPlants : [];
 }
 
+function gdApmRegistryThumbHtml(plant, hostId) {
+  const p = plant || {};
+  const name = String(p.name || '').trim();
+  const scientific = String(p.scientific || p.latin || p.species || '').trim();
+  const ident = gdResolveLayerIdentity({
+    name: name,
+    latin: scientific,
+    species: scientific,
+    canonicalSlug: p.canonicalSlug || p.profileSlug || null
+  });
+  const canonicalSlug = p.canonicalSlug || p.profileSlug || ident.canonicalSlug || null;
+  const resolved = resolvePlantLayerAsset({
+    name: name,
+    species: scientific,
+    canonicalSlug: canonicalSlug,
+    growthStage: p.growthStage && p.growthStage !== 'unspecified' ? p.growthStage : 'mature',
+    season: p.season || 'unknown',
+    phenology: p.phenology || 'vegetative'
+  }, gdPlantAssetsManifest);
+  const idAttr = hostId ? ' id="' + gdEscAttr(hostId) + '"' : '';
+  if (resolved && resolved.visualReady && resolved.urlCandidates && resolved.urlCandidates.length) {
+    return '<div class="apm-chip-img-ph gd-registry-thumb-host"' + idAttr + '>' +
+      '<img class="apm-chip-img gd-registry-thumb" src="' + gdEscAttr(resolved.urlCandidates[0]) + '" alt="' + gdEscAttr(name || canonicalSlug || 'Plant') + '" data-asset-id="' + gdEscAttr(resolved.variantId || '') + '" onerror="gdOnApmRegistryThumbError(this)"/>' +
+    '</div>';
+  }
+  return '<div class="apm-chip-img-ph"' + idAttr + '>🌿</div>';
+}
+
+function gdOnApmRegistryThumbError(img) {
+  const host = img && img.parentElement;
+  if (!host) return;
+  host.textContent = '🌿';
+  host.classList.remove('gd-registry-thumb-host');
+}
+
 function gdRetryOwnedPlants() {
   try { gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' }); } catch (e) {}
 }
@@ -2400,7 +2437,8 @@ function showApmOwned() {
   list.innerHTML = owned.map(function(p, i) {
     const already = plantLayers.some(function(l) { return l.gardenPlantId && l.gardenPlantId === p.gardenPlantId; });
     const slug = p.canonicalSlug || '';
-    return '<div class="apm-plant-chip' + (already ? ' selected' : '') + '" onclick="placeOwnedGardenPlant(' + i + ')"><div class="apm-chip-img-ph">🌿</div><span class="apm-chip-lbl">' + gdEscAttr(p.name || slug) + (already ? ' (placed)' : '') + '</span></div>';
+    const thumb = gdApmRegistryThumbHtml(p);
+    return '<div class="apm-plant-chip' + (already ? ' selected' : '') + '" onclick="placeOwnedGardenPlant(' + i + ')">' + thumb + '<span class="apm-chip-lbl">' + gdEscAttr(p.name || slug) + (already ? ' (placed)' : '') + '</span></div>';
   }).join('');
   const btn = document.getElementById('apmConfirmBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Tap a plant to place it'; }
@@ -3803,20 +3841,19 @@ function showApmList() {
   } else {
     list.innerHTML = available.map(p => {
       const name = p.split(' (')[0];
-      const chipId = 'apmchip_' + name.replace(/[^a-z0-9]/gi,'_');
-      return `<div class="apm-plant-chip" id="${chipId}" onclick="toggleApmChip(this,'${name.replace(/'/g,"\'")}')"><div class="apm-chip-img-ph" id="${chipId}_ph">🌿</div><span class="apm-chip-lbl">${name}</span></div>`;
-    }).join('');
-    // Load Wikipedia images async
-    available.forEach(p => {
-      const name = p.split(' (')[0];
       const latin = (p.match(/\(([^)]+)\)/) || [])[1] || '';
+      const ident = gdResolveLayerIdentity({ name: name, latin: latin, species: latin });
       const chipId = 'apmchip_' + name.replace(/[^a-z0-9]/gi,'_');
-      fetchPlantImg(latin, name).then(url => {
-        if (!url) return;
-        const ph = document.getElementById(chipId + '_ph');
-        if (ph) { const img = document.createElement('img'); img.className='apm-chip-img'; img.src=url; img.alt=name; img.onerror=function(){this.outerHTML='<div class="apm-chip-img-ph">🌿</div>'}; ph.replaceWith(img); }
-      }).catch(()=>{});
-    });
+      const thumb = gdApmRegistryThumbHtml({
+        name: name,
+        latin: latin,
+        scientific: latin,
+        canonicalSlug: ident.canonicalSlug || null,
+        growthStage: 'mature',
+        phenology: 'vegetative'
+      }, chipId + '_ph');
+      return `<div class="apm-plant-chip" id="${chipId}" onclick="toggleApmChip(this,'${name.replace(/'/g,"\'")}')">${thumb}<span class="apm-chip-lbl">${name}</span></div>`;
+    }).join('');
   }
   updateApmConfirm();
 }
