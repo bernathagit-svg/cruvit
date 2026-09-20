@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>BRANCH alpha salvage feasibility</title>
+  <style>
+    body { margin: 0; font: 16px/1.45 Inter, system-ui, sans-serif; background: #f4f1ea; color: #222; }
+    h1, h2, h3 { margin: 16px 20px 8px; }
+    p, ul { margin: 8px 20px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 10px 12px; }
+    .ok { background: #e7f6ea; border: 1px solid #2a6; padding: 10px 12px; }
+    .note { color: #555; font-size: 13px; }
+    .slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 12px 20px 28px; }
+    .slot { background: #fff; border: 1px solid #ddd; padding: 10px; }
+    .checkerboard { background-image: linear-gradient(45deg, #d0d0d0 25%, transparent 25%), linear-gradient(-45deg, #d0d0d0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #d0d0d0 75%), linear-gradient(-45deg, transparent 75%, #d0d0d0 75%); background-size: 24px 24px; background-position: 0 0, 0 12px, 12px -12px, -12px 0; overflow: auto; min-height: 420px; }
+    .inspect-100 img { width: auto; height: auto; image-rendering: auto; }
+    .inspect-150 img { width: auto; transform: scale(1.5); transform-origin: bottom center; }
+    .inspect-200 img { width: auto; transform: scale(2); transform-origin: bottom center; }
+    .inspect-fit img { max-width: 100%; max-height: 520px; }
+    .inspect-cutout, [data-review-mode="NATIVE_DETAIL"] img { filter: none !important; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .marks button[aria-pressed="true"] { background: #a33; color: #fff; }
+    .metrics { font-size: 13px; }
+    button { padding: 6px 10px; cursor: pointer; }
+    .cap { font-size: 14px; font-weight: 600; }
+  </style>
+</head>
+<body data-run-id="design-asset-branch-alpha-salvage-1" data-owner-qa-storage="cruvit:branch-alpha-salvage-1">
+  <h1>BRANCH alpha salvage feasibility V1</h1>
+  <p class="warn">Zero spend. Originals locked. Derived diagnostics only. Do not production-approve. Spend gate DENIED.</p>
+  <p class="note">runId design-asset-branch-alpha-salvage-1. RGB result RGB_STRUCTURE_PARTIAL. Salvage verdict ALPHA_SALVAGE_PROMISING. HIGH not executed.</p>
+  <h2>Owner question</h2>
+  <p>Can deterministic alpha cleanup make the dormant tree look clean and natural without destroying real branches?</p>
+  <h3>NATIVE ORIGINALS + CLEANUPS</h3>
+  <div class="slots inspect-row">
+    <div class="slot inspect-slot" data-arm="CONTROL" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL ORIGINAL — NOT APPROVED</p>
+    <p class="note">Detail V2 + medium. Historical control. Do not modify.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL ORIGINAL — NOT APPROVED" src="assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW ORIGINAL</p>
+    <p class="note">Branch Structure V2 + medium. Provider failure unchanged.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW ORIGINAL" src="assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CLEANUP_A" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW CLEANUP A</p>
+    <p class="note">conservative alpha remap</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW CLEANUP A" src="assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-a.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CLEANUP_A">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CLEANUP_B" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW CLEANUP B</p>
+    <p class="note">stronger alpha remap</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW CLEANUP B" src="assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-b.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CLEANUP_B">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CLEANUP_C" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW CLEANUP C</p>
+    <p class="note">haze suppression + edge-preserving alpha remap</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW CLEANUP C" src="assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-c.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CLEANUP_C">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+  </div>
+  <h3>Cleanup metrics</h3>
+  <h4>A. conservative alpha remap</h4><ul class="metrics">
+    <li>opaque pixel %: 9.17263</li>
+    <li>alpha 1–64: 10420</li>
+    <li>alpha 65–191: 31629</li>
+    <li>alpha 192–254: 0</li>
+    <li>alpha 255: 144273</li>
+    <li>connected: OPAQUE_WOOD_PRESENT</li>
+    <li>thin-twig retention: 1</li>
+    <li>haze reduction: 0.9475</li>
+    <li>branch width: STABLE</li>
+    <li>edge halo introduced: NO</li>
+  </ul><h4>B. stronger alpha remap</h4><ul class="metrics">
+    <li>opaque pixel %: 9.234492</li>
+    <li>alpha 1–64: 3145</li>
+    <li>alpha 65–191: 0</li>
+    <li>alpha 192–254: 0</li>
+    <li>alpha 255: 145246</li>
+    <li>connected: OPAQUE_WOOD_PRESENT</li>
+    <li>thin-twig retention: 1</li>
+    <li>haze reduction: 1</li>
+    <li>branch width: STABLE</li>
+    <li>edge halo introduced: NO</li>
+  </ul><h4>C. haze suppression + edge-preserving alpha remap</h4><ul class="metrics">
+    <li>opaque pixel %: 9.788767</li>
+    <li>alpha 1–64: 5278</li>
+    <li>alpha 65–191: 10549</li>
+    <li>alpha 192–254: 0</li>
+    <li>alpha 255: 153964</li>
+    <li>connected: OPAQUE_WOOD_PRESENT</li>
+    <li>thin-twig retention: 0.9802</li>
+    <li>haze reduction: 0.9696</li>
+    <li>branch width: STABLE</li>
+    <li>edge halo introduced: NO</li>
+  </ul>
+  <h3>RGB without alpha</h3>
+  <div class="slots">
+    <div class="slot inspect-slot" data-arm="CONTROL_RGB" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL RGB (alpha ignored)</p>
+    <p class="note">Shows provider RGB including leftover transparent samples.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL RGB (alpha ignored)" src="assets/plants/branch-alpha-salvage-feasibility-1/control__rgb-no-alpha.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL_RGB">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW_RGB" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW RGB (alpha ignored)</p>
+    <p class="note">If the crown is a brown smear here, RGB is not clean.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW RGB (alpha ignored)" src="assets/plants/branch-alpha-salvage-feasibility-1/new__rgb-no-alpha.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW_RGB">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+  </div>
+  <h3>Solid-background composites (diagnostics only)</h3>
+  <div class="slots">
+    <div class="slot inspect-slot" data-arm="NEW_WHITE" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW over white</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW over white" src="assets/plants/branch-alpha-salvage-feasibility-1/new__over-white.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW_WHITE">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW_BLACK" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW over black</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW over black" src="assets/plants/branch-alpha-salvage-feasibility-1/new__over-black.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW_BLACK">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW_GRAY" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW over gray</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW over gray" src="assets/plants/branch-alpha-salvage-feasibility-1/new__over-gray.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW_GRAY">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW_CHECK" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW over checker</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="NEW over checker" src="assets/plants/branch-alpha-salvage-feasibility-1/new__over-checker.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="NEW_CHECK">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CONTROL_WHITE" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL over white</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL over white" src="assets/plants/branch-alpha-salvage-feasibility-1/control__over-white.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL_WHITE">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CONTROL_BLACK" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL over black</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL over black" src="assets/plants/branch-alpha-salvage-feasibility-1/control__over-black.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL_BLACK">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CONTROL_GRAY" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL over gray</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL over gray" src="assets/plants/branch-alpha-salvage-feasibility-1/control__over-gray.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL_GRAY">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+    <div class="slot inspect-slot" data-arm="CONTROL_CHECK" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL over checker</p>
+    <p class="note">diagnostic</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL over checker" src="assets/plants/branch-alpha-salvage-feasibility-1/control__over-checker.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL_CHECK">
+    <button type="button" data-mark="SALVAGE_LOOKS_CLEAN">SALVAGE_LOOKS_CLEAN</button><button type="button" data-mark="TWIGS_DESTROYED">TWIGS_DESTROYED</button><button type="button" data-mark="HAZE_REMAINS">HAZE_REMAINS</button><button type="button" data-mark="BRANCHES_THICKENED">BRANCHES_THICKENED</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+  </div>
+  </div>
+  <p class="note">Do not treat derived previews as Design Assets. Do not auto-run HIGH. Do not change production registry.</p>
+  <script type="module" src="./asset-factory-v1/branch-alpha-salvage-review-runtime.js"></script>
+</body>
+</html>

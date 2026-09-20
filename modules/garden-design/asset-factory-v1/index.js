@@ -284,4 +284,9 @@ export {
   OWNER_APPROVED_BRANCH_STRUCTURE_CALIBRATION,
   executeBranchStructureCalibrationPaid
 } from './branch-structure-calibration-execute-v1.js';
+export {
+  BRANCH_ALPHA_SALVAGE_RUN_ID,
+  writeBranchAlphaSalvageReports,
+  executeBranchAlphaSalvageFeasibility
+} from './branch-alpha-salvage-feasibility-v1.js';
 

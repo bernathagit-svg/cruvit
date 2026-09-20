@@ -1,0 +1,466 @@
+{
+  "contract": "branch-alpha-salvage-feasibility-v1",
+  "runId": "design-asset-branch-alpha-salvage-1",
+  "rgbStructureResult": "RGB_STRUCTURE_PARTIAL",
+  "controlRgbStructureResult": "RGB_STRUCTURE_PARTIAL",
+  "salvageVerdict": "ALPHA_SALVAGE_PROMISING",
+  "ownerVisualReviewAuthoritative": true,
+  "originals": {
+    "CONTROL": {
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png",
+      "sha256": "b36346dd502ff13826e32dba640a34a59ebef8913f3ade974bfb283db5a429e5",
+      "unmodified": true
+    },
+    "NEW": {
+      "file": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png",
+      "sha256": "24f4d0ccc56675d3ec009cfc85173217d51c508507af2a25e81241516c21c53d",
+      "unmodified": true
+    }
+  },
+  "alphaFailureAnalysis": {
+    "CONTROL": {
+      "width": 1024,
+      "height": 1536,
+      "totalPixels": 1572864,
+      "fullyTransparent": 918220,
+      "ghostAlpha1to64": 379152,
+      "partialAlpha65to191": 149494,
+      "edgeAlpha192to254": 125998,
+      "opaqueAlpha255": 0,
+      "fullyOpaquePixelPercent": 0,
+      "brownSemiTransparent": 649643,
+      "brownSemiTransparentRatioOfVisible": 0.992361,
+      "connectedBranchStructureVisibility": {
+        "connectedOpaqueComponents": 0,
+        "largestOpaqueComponentPx": 0,
+        "label": "NO_OPAQUE_WOOD",
+        "universalThresholdDefined": false
+      },
+      "universalMagicThreshold": null,
+      "ownerVisualReviewAuthoritative": true
+    },
+    "NEW": {
+      "width": 1024,
+      "height": 1536,
+      "totalPixels": 1572864,
+      "fullyTransparent": 933392,
+      "ghostAlpha1to64": 432963,
+      "partialAlpha65to191": 91742,
+      "edgeAlpha192to254": 114767,
+      "opaqueAlpha255": 0,
+      "fullyOpaquePixelPercent": 0,
+      "brownSemiTransparent": 627882,
+      "brownSemiTransparentRatioOfVisible": 0.981876,
+      "connectedBranchStructureVisibility": {
+        "connectedOpaqueComponents": 0,
+        "largestOpaqueComponentPx": 0,
+        "label": "NO_OPAQUE_WOOD",
+        "universalThresholdDefined": false
+      },
+      "universalMagicThreshold": null,
+      "ownerVisualReviewAuthoritative": true
+    },
+    "note": "Provider output itself contains the failure. Fully opaque wood is absent in both originals."
+  },
+  "rgbAudits": {
+    "CONTROL": {
+      "width": 1024,
+      "height": 1536,
+      "alphaHistogram": {
+        "alpha0": 918220,
+        "alpha1to24": 263120,
+        "alpha25to64": 116032,
+        "alpha65to127": 96394,
+        "alpha128to191": 53100,
+        "alpha192to254": 125998,
+        "alpha255": 0
+      },
+      "rgbMeansIgnoringAlphaWeight": {
+        "transparentPixels": {
+          "n": 918220,
+          "r": 26.4,
+          "g": 22.2,
+          "b": 18.4,
+          "luma": 22.8
+        },
+        "visiblePixels": {
+          "n": 654644,
+          "r": 90.7,
+          "g": 77.1,
+          "b": 63.5,
+          "luma": 79
+        },
+        "highAlpha192to255": {
+          "n": 125998,
+          "r": 91.8,
+          "g": 80.4,
+          "b": 63.6,
+          "luma": 81.6
+        },
+        "ghostAlpha1to64": {
+          "n": 379152,
+          "r": 89.3,
+          "g": 75.3,
+          "b": 62.6,
+          "luma": 77.4
+        },
+        "highRgbGradient": {
+          "n": 149139,
+          "r": 94.8,
+          "g": 82,
+          "b": 66.9,
+          "luma": 83.6
+        },
+        "lowRgbGradientVisible": {
+          "n": 505505,
+          "r": 89.5,
+          "g": 75.7,
+          "b": 62.6,
+          "luma": 77.7
+        }
+      },
+      "maxRgbGradient": 179.96,
+      "rgbGradientThreshold": 21.59,
+      "brownVisibleRatio": 0.992361,
+      "brownLowGradientShareOfVisible": 0.767523,
+      "highGradientShareOfVisible": 0.227817,
+      "darkHighGradientPx": 93957,
+      "interiorHighAlphaPx": 44566,
+      "twigCandidatePx": 53674,
+      "hazeCandidatePx": 450765,
+      "backgroundResidueNonDarkTransparentPx": 244919,
+      "colorSeparationHighGradVsHaze": 9.36
+    },
+    "NEW": {
+      "width": 1024,
+      "height": 1536,
+      "alphaHistogram": {
+        "alpha0": 933392,
+        "alpha1to24": 330772,
+        "alpha25to64": 102191,
+        "alpha65to127": 59357,
+        "alpha128to191": 32385,
+        "alpha192to254": 114767,
+        "alpha255": 0
+      },
+      "rgbMeansIgnoringAlphaWeight": {
+        "transparentPixels": {
+          "n": 933392,
+          "r": 23.5,
+          "g": 19.8,
+          "b": 15.9,
+          "luma": 20.3
+        },
+        "visiblePixels": {
+          "n": 639472,
+          "r": 82.5,
+          "g": 69.8,
+          "b": 56.6,
+          "luma": 71.6
+        },
+        "highAlpha192to255": {
+          "n": 114767,
+          "r": 91.9,
+          "g": 78,
+          "b": 61.1,
+          "luma": 79.7
+        },
+        "ghostAlpha1to64": {
+          "n": 432963,
+          "r": 79.9,
+          "g": 67.5,
+          "b": 55.1,
+          "luma": 69.3
+        },
+        "highRgbGradient": {
+          "n": 110182,
+          "r": 91.8,
+          "g": 78.2,
+          "b": 62.6,
+          "luma": 79.9
+        },
+        "lowRgbGradientVisible": {
+          "n": 529290,
+          "r": 80.6,
+          "g": 68.1,
+          "b": 55.3,
+          "luma": 69.8
+        }
+      },
+      "maxRgbGradient": 218.68,
+      "rgbGradientThreshold": 26.24,
+      "brownVisibleRatio": 0.981876,
+      "brownLowGradientShareOfVisible": 0.814461,
+      "highGradientShareOfVisible": 0.172302,
+      "darkHighGradientPx": 73553,
+      "interiorHighAlphaPx": 40281,
+      "twigCandidatePx": 26925,
+      "hazeCandidatePx": 477934,
+      "backgroundResidueNonDarkTransparentPx": 209602,
+      "colorSeparationHighGradVsHaze": 16.7
+    }
+  },
+  "solidBackgroundDiagnostics": {
+    "control": {
+      "rgbNoAlpha": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/control__rgb-no-alpha.png",
+      "overWhite": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/control__over-white.png",
+      "overBlack": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/control__over-black.png",
+      "overGray": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/control__over-gray.png",
+      "overChecker": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/control__over-checker.png"
+    },
+    "new": {
+      "rgbNoAlpha": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new__rgb-no-alpha.png",
+      "overWhite": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new__over-white.png",
+      "overBlack": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new__over-black.png",
+      "overGray": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new__over-gray.png",
+      "overChecker": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new__over-checker.png"
+    }
+  },
+  "cleanupJustified": true,
+  "experiments": [
+    {
+      "id": "A",
+      "label": "conservative alpha remap",
+      "file": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-a.png",
+      "metrics": {
+        "before": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 933392,
+          "ghostAlpha1to64": 432963,
+          "partialAlpha65to191": 91742,
+          "edgeAlpha192to254": 114767,
+          "opaqueAlpha255": 0,
+          "fullyOpaquePixelPercent": 0,
+          "brownSemiTransparent": 627882,
+          "brownSemiTransparentRatioOfVisible": 0.981876,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 0,
+            "largestOpaqueComponentPx": 0,
+            "label": "NO_OPAQUE_WOOD",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "after": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 1386542,
+          "ghostAlpha1to64": 10420,
+          "partialAlpha65to191": 31629,
+          "edgeAlpha192to254": 0,
+          "opaqueAlpha255": 144273,
+          "fullyOpaquePixelPercent": 9.17263,
+          "brownSemiTransparent": 37156,
+          "brownSemiTransparentRatioOfVisible": 0.199418,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 3464,
+            "largestOpaqueComponentPx": 130058,
+            "label": "OPAQUE_WOOD_PRESENT",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "opaquePixelPercent": 9.17263,
+        "ghostAlpha1to64": 10420,
+        "partialAlpha65to191": 31629,
+        "edgeAlpha192to254": 0,
+        "opaqueAlpha255": 144273,
+        "connectedBranchComponentRetention": {
+          "connectedOpaqueComponents": 3464,
+          "largestOpaqueComponentPx": 130058,
+          "label": "OPAQUE_WOOD_PRESENT",
+          "universalThresholdDefined": false
+        },
+        "thinTwigRetentionEstimate": 1,
+        "hazeReduction": 0.9475,
+        "branchWidthDistortion": "STABLE",
+        "thickenRatio": 0.0538,
+        "keepWoodRatio": 1.2571,
+        "lostWoodPx": 0,
+        "inventedFromTransparent": 0,
+        "edgeHaloIntroduced": "NO"
+      }
+    },
+    {
+      "id": "B",
+      "label": "stronger alpha remap",
+      "file": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-b.png",
+      "metrics": {
+        "before": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 933392,
+          "ghostAlpha1to64": 432963,
+          "partialAlpha65to191": 91742,
+          "edgeAlpha192to254": 114767,
+          "opaqueAlpha255": 0,
+          "fullyOpaquePixelPercent": 0,
+          "brownSemiTransparent": 627882,
+          "brownSemiTransparentRatioOfVisible": 0.981876,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 0,
+            "largestOpaqueComponentPx": 0,
+            "label": "NO_OPAQUE_WOOD",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "after": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 1424473,
+          "ghostAlpha1to64": 3145,
+          "partialAlpha65to191": 0,
+          "edgeAlpha192to254": 0,
+          "opaqueAlpha255": 145246,
+          "fullyOpaquePixelPercent": 9.234492,
+          "brownSemiTransparent": 3122,
+          "brownSemiTransparentRatioOfVisible": 0.021039,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 3865,
+            "largestOpaqueComponentPx": 127668,
+            "label": "OPAQUE_WOOD_PRESENT",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "opaquePixelPercent": 9.234492,
+        "ghostAlpha1to64": 3145,
+        "partialAlpha65to191": 0,
+        "edgeAlpha192to254": 0,
+        "opaqueAlpha255": 145246,
+        "connectedBranchComponentRetention": {
+          "connectedOpaqueComponents": 3865,
+          "largestOpaqueComponentPx": 127668,
+          "label": "OPAQUE_WOOD_PRESENT",
+          "universalThresholdDefined": false
+        },
+        "thinTwigRetentionEstimate": 1,
+        "hazeReduction": 1,
+        "branchWidthDistortion": "STABLE",
+        "thickenRatio": 0.0755,
+        "keepWoodRatio": 1.2656,
+        "lostWoodPx": 1520,
+        "inventedFromTransparent": 0,
+        "edgeHaloIntroduced": "NO"
+      }
+    },
+    {
+      "id": "C",
+      "label": "haze suppression + edge-preserving alpha remap",
+      "file": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-c.png",
+      "metrics": {
+        "before": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 933392,
+          "ghostAlpha1to64": 432963,
+          "partialAlpha65to191": 91742,
+          "edgeAlpha192to254": 114767,
+          "opaqueAlpha255": 0,
+          "fullyOpaquePixelPercent": 0,
+          "brownSemiTransparent": 627882,
+          "brownSemiTransparentRatioOfVisible": 0.981876,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 0,
+            "largestOpaqueComponentPx": 0,
+            "label": "NO_OPAQUE_WOOD",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "after": {
+          "width": 1024,
+          "height": 1536,
+          "totalPixels": 1572864,
+          "fullyTransparent": 1403073,
+          "ghostAlpha1to64": 5278,
+          "partialAlpha65to191": 10549,
+          "edgeAlpha192to254": 0,
+          "opaqueAlpha255": 153964,
+          "fullyOpaquePixelPercent": 9.788767,
+          "brownSemiTransparent": 15774,
+          "brownSemiTransparentRatioOfVisible": 0.092902,
+          "connectedBranchStructureVisibility": {
+            "connectedOpaqueComponents": 1595,
+            "largestOpaqueComponentPx": 145711,
+            "label": "OPAQUE_WOOD_PRESENT",
+            "universalThresholdDefined": false
+          },
+          "universalMagicThreshold": null,
+          "ownerVisualReviewAuthoritative": true
+        },
+        "opaquePixelPercent": 9.788767,
+        "ghostAlpha1to64": 5278,
+        "partialAlpha65to191": 10549,
+        "edgeAlpha192to254": 0,
+        "opaqueAlpha255": 153964,
+        "connectedBranchComponentRetention": {
+          "connectedOpaqueComponents": 1595,
+          "largestOpaqueComponentPx": 145711,
+          "label": "OPAQUE_WOOD_PRESENT",
+          "universalThresholdDefined": false
+        },
+        "thinTwigRetentionEstimate": 0.9802,
+        "hazeReduction": 0.9696,
+        "branchWidthDistortion": "STABLE",
+        "thickenRatio": 0.0285,
+        "keepWoodRatio": 1.3415,
+        "lostWoodPx": 0,
+        "inventedFromTransparent": 0,
+        "edgeHaloIntroduced": "NO"
+      }
+    }
+  ],
+  "proposedCleanupContract": {
+    "productionizeNow": false,
+    "name": "BRANCH_STRUCTURE_ALPHA_CLEANUP_CONTRACT_V1",
+    "rules": [
+      "Never overwrite the provider original PNG.",
+      "Operate only on a derived calibration/preview variant.",
+      "Do not use a global alpha < X delete.",
+      "Keep RGB-gradient branch edges and already-high-alpha interiors.",
+      "Do not invent pixels from fully transparent samples.",
+      "Do not dilate structure more than 1px.",
+      "No sharpening, no background fill, no AI matting.",
+      "Owner visual review required before any production use."
+    ]
+  },
+  "productionImpact": {
+    "originalPngsModified": false,
+    "productionRegistryChanged": false,
+    "promptV2PolicyChanged": false,
+    "qualityPolicyChanged": false,
+    "massGenerationPlanChanged": false
+  },
+  "spendGate": {
+    "state": "DENIED",
+    "branchStructureGateUnchanged": true,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "highExecuted": false,
+    "additionalSpendUsd": 0
+  },
+  "execute": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "highExecuted": false,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "productionRegistryChanged": false,
+    "originalsModified": false,
+    "reason": "FEASIBILITY_AUDIT_ONLY_ZERO_SPEND"
+  }
+}
