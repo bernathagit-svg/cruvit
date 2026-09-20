@@ -2,143 +2,270 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Visual State Calibration Batch 2 — 11/11 candidates, owner review only</title>
+  <title>Visual State Calibration Batch 2 — 11/11 candidates, production-scale review</title>
   <style>
     :root { font-family: "DM Sans", sans-serif; color: #122; }
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
     .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
     .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
-    .note { font-size: 13px; color: #444; }
+    .note, .scale-note, .inspect-tools { font-size: 13px; color: #444; }
     .family { background: #fff; border: 1px solid #ddd; margin: 24px 0; padding: 16px; }
     .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    h3 { margin: 18px 0 8px; font-size: 16px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .inspect-scene { width: 340px; height: 480px; border: 1px solid #ccc; position: relative; overflow: auto; }
+    .inspect-scene.inspect-100 { width: min(1024px, 100%); height: 720px; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; object-position: bottom center; image-rendering: auto; filter: none !important; opacity: 1 !important; }
+    .inspect-100 .inspect-cutout { max-width: none; max-height: none; width: 1024px; height: auto; }
     .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
-    .scene.real { width: 420px; height: 300px; }
+    .scene.real, .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; }
     .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 6px 8px; font-size: 11px; width: 80%; text-align: center; }
-    .scene img.cutout { position: absolute; left: 50%; bottom: 8%; transform: translateX(-50%); max-height: 82%; max-width: 72%; object-fit: contain; pointer-events: none; }
-    .scene.blend-v1-scene img.cutout { filter: brightness(0.93) contrast(0.9) saturate(0.86) blur(0.55px) drop-shadow(0 12px 18px rgba(0,0,0,0.32)); }
+    .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: auto; max-width: none; pointer-events: none; overflow: visible; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; object-fit: contain; object-position: bottom center; }
+    .scene.blend-v2-scene img.cutout { filter: brightness(0.94) contrast(0.92) saturate(0.9) blur(0.4px); }
+    .inspect-cutout, [data-review-mode="ASSET_INSPECTION"] img { filter: none !important; }
+    .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
     .cap { font-size: 13px; color: #444; }
     .questions { font-size: 14px; }
+    button { padding: 6px 10px; cursor: pointer; }
   </style>
 </head>
 <body>
-  <h1>Visual State Calibration Batch 2 — 11/11 candidates, owner review only</h1>
-  <p id="realGardenBanner" class="ok">Candidates only. Not approved. Signed Garden photo is injected by the host. Blend V1 CSS is runtime-only. Physical size remains runtime authority; families are not forced to one scale.</p>
-  <p class="note">Spend gate DENIED after this run. Production registry unchanged. Auto-approval disabled. QA: TECHNICAL_QA, BOTANICAL_IDENTITY_QA, STATE_QA, FAMILY_CONSISTENCY_QA, IN_GARDEN_QA, OWNER_VISUAL_QA. STATE / FAMILY / OWNER visual judgments stay UNKNOWN until owner review.</p>
+  <h1>Visual State Calibration Batch 2 — 11/11 candidates, production-scale review</h1>
+  <p id="realGardenBanner" class="ok">Candidates only. Not approved. ASSET INSPECTION is native/unfiltered. IN-GARDEN uses production Tree Physical Scale V1 (Mango LOW) and form-appropriate runtime scale. Blend V2 is garden-only.</p>
+  <p class="note">Spend gate DENIED. Production registry unchanged. Candidate PNGs are not modified. Mango mature IN-GARDEN uses botanical-size-authority-v1 + Tree Physical Scale V1 + ownerPreferredRangePosition=LOW. Young never uses mature meter authority. Photo calibration remains optional.</p>
 <section class="family" data-family="A">
     <h2>Family A — Mango — 3-way</h2>
-    <p class="note">Proves YOUNG vs MATURE and VEGETATIVE vs FRUITING. Batch-1 mango is not the family anchor. Physical size is runtime authority.</p>
-    <div class="slots"><div class="slot" data-job-id="mango__mature__tree__vegetative__v1">
-        <p class="cap">1. TREE MATURE VEGETATIVE (new family anchor)</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="1. TREE MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="mango__young__tree__vegetative__v1">
-        <p class="cap">2. TREE YOUNG VEGETATIVE</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="mango__mature__tree__fruiting__v1">
-        <p class="cap">3. TREE MATURE FRUITING</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png"/>
-        </div>
-      </div></div>
+    <p class="note">ASSET INSPECTION vs IN-GARDEN are separate questions. Mature vegetative and fruiting share Mango LOW production scale. Young is Estimated young scale.</p>
+    <h3>A. ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="mango__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">1. TREE MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="1. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="mango__young__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">2. TREE YOUNG VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="mango__mature__tree__fruiting__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">3. TREE MATURE FRUITING</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div></div>
+    <h3>B. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <div class="slots garden-row"><div class="slot garden-slot" data-job-id="mango__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">1. TREE MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="1. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Production Tree Physical Scale V1 · ownerPreferredRangePosition = LOW</p>
+  </div><div class="slot garden-slot" data-job-id="mango__young__tree__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">2. TREE YOUNG VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="young" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="70,109,949,1468" data-ground-anchor="0.49755859375,0.9557291666666666" data-size-scenario="NATURAL_MATURE" data-stage-authority="STAGE_AUTHORITY_UNKNOWN" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="2. TREE YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__young__tree__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>STAGE_AUTHORITY_UNKNOWN · Estimated young scale · not a % of mature meters</p>
+  </div><div class="slot garden-slot" data-job-id="mango__mature__tree__fruiting__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">3. TREE MATURE FRUITING</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="fruiting" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="25,90,1002,1503" data-ground-anchor="0.50146484375,0.978515625" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="3. TREE MATURE FRUITING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__fruiting__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Production Tree Physical Scale V1 · ownerPreferredRangePosition = LOW</p>
+  </div></div>
     <ol class="questions">
-      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+      <li>1. Do these look like the same plant identity?</li><li>2. Is Young genuinely younger architecture? (where present)</li><li>3. Is the intended state visibly plausible (fruiting / dormant / flowering / architectureMode)?</li><li>4. Is native asset detail acceptable? (ASSET INSPECTION only)</li><li>5. Does each integrate naturally in the Garden? (IN-GARDEN only)</li><li>6. Does mature size follow production Garden Design scale rather than a miniature thumbnail?</li>
     </ol>
   </section>
 <section class="family" data-family="B">
     <h2>Family B — Banana — 2-way</h2>
-    <p class="note">Proves YOUNG vs MATURE in large-herbaceous architecture. Batch-1 banana is not the family anchor.</p>
-    <div class="slots"><div class="slot" data-job-id="banana__mature__default__vegetative__v1">
-        <p class="cap">4. herbaceous-clump MATURE VEGETATIVE (new family anchor)</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="4. herbaceous-clump MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="banana__young__default__vegetative__v1">
-        <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png"/>
-        </div>
-      </div></div>
+    <p class="note">Large-herbaceous runtime. Not tree physical-scale rules.</p>
+    <h3>A. ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="banana__mature__default__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">4. herbaceous-clump MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="4. herbaceous-clump MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="banana__young__default__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div></div>
+    <h3>B. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <div class="slots garden-row"><div class="slot garden-slot" data-job-id="banana__mature__default__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">4. herbaceous-clump MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="banana" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="18,42,988,1497" data-ground-anchor="0.4912109375,0.974609375" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="4. herbaceous-clump MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Large-herbaceous runtime · not tree rules</p>
+  </div><div class="slot garden-slot" data-job-id="banana__young__default__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">5. herbaceous-clump YOUNG VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="young" data-canonical-slug="banana" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="47,175,975,1351" data-ground-anchor="0.4990234375,0.8795572916666666" data-size-scenario="NATURAL_MATURE" data-stage-authority="STAGE_AUTHORITY_UNKNOWN" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="5. herbaceous-clump YOUNG VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__young__default__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>STAGE_AUTHORITY_UNKNOWN · Estimated young scale · not a % of mature meters</p>
+  </div></div>
     <ol class="questions">
-      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+      <li>1. Do these look like the same plant identity?</li><li>2. Is Young genuinely younger architecture? (where present)</li><li>3. Is the intended state visibly plausible (fruiting / dormant / flowering / architectureMode)?</li><li>4. Is native asset detail acceptable? (ASSET INSPECTION only)</li><li>5. Does each integrate naturally in the Garden? (IN-GARDEN only)</li><li>6. Does mature size follow production Garden Design scale rather than a miniature thumbnail?</li>
     </ol>
   </section>
 <section class="family" data-family="C">
     <h2>Family C — Apple — 2-way</h2>
-    <p class="note">Proves VEGETATIVE vs DORMANT. Young Apple is not in this batch.</p>
-    <div class="slots"><div class="slot" data-job-id="apple__mature__tree__vegetative__v1">
-        <p class="cap">6. TREE MATURE VEGETATIVE</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="apple__mature__tree__dormant__v1">
-        <p class="cap">7. TREE MATURE DORMANT</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png"/>
-        </div>
-      </div></div>
+    <p class="note">Apple tree authority/fallback. Same mature physical-scale context for vegetative and dormant. Not Mango LOW.</p>
+    <h3>A. ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="apple__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">6. TREE MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="apple__mature__tree__dormant__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">7. TREE MATURE DORMANT</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div></div>
+    <h3>B. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <div class="slots garden-row"><div class="slot garden-slot" data-job-id="apple__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">6. TREE MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="apple" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="20,92,995,1501" data-ground-anchor="0.49560546875,0.9772135416666666" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="6. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Tree physical-scale / estimated authority for this identity</p>
+  </div><div class="slot garden-slot" data-job-id="apple__mature__tree__dormant__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">7. TREE MATURE DORMANT</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="apple" data-phenology="dormant" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="32,73,990,1469" data-ground-anchor="0.4990234375,0.9563802083333334" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="7. TREE MATURE DORMANT" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Tree physical-scale / estimated authority for this identity</p>
+  </div></div>
     <ol class="questions">
-      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+      <li>1. Do these look like the same plant identity?</li><li>2. Is Young genuinely younger architecture? (where present)</li><li>3. Is the intended state visibly plausible (fruiting / dormant / flowering / architectureMode)?</li><li>4. Is native asset detail acceptable? (ASSET INSPECTION only)</li><li>5. Does each integrate naturally in the Garden? (IN-GARDEN only)</li><li>6. Does mature size follow production Garden Design scale rather than a miniature thumbnail?</li>
     </ol>
   </section>
 <section class="family" data-family="D">
     <h2>Family D — Pomegranate — 2-way</h2>
-    <p class="note">Proves TREE vs SHRUB architectureMode. One canonical identity.</p>
-    <div class="slots"><div class="slot" data-job-id="pomegranate__mature__tree__vegetative__v1">
-        <p class="cap">8. TREE MATURE VEGETATIVE</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="pomegranate__mature__shrub__vegetative__v1">
-        <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png"/>
-        </div>
-      </div></div>
+    <p class="note">TREE vs SHRUB architectureMode. Shrub does not use tree physical-scale rules.</p>
+    <h3>A. ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="pomegranate__mature__tree__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">8. TREE MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="pomegranate__mature__shrub__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div></div>
+    <h3>B. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <div class="slots garden-row"><div class="slot garden-slot" data-job-id="pomegranate__mature__tree__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">8. TREE MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="pomegranate" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="33,88,1011,1464" data-ground-anchor="0.509765625,0.953125" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="8. TREE MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__tree__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Tree physical-scale / estimated authority for this identity</p>
+  </div><div class="slot garden-slot" data-job-id="pomegranate__mature__shrub__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="pomegranate" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="21,170,996,1392" data-ground-anchor="0.49658203125,0.90625" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="9. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/pomegranate__mature__shrub__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Shrub form-relative runtime · not tree physical scale</p>
+  </div></div>
     <ol class="questions">
-      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+      <li>1. Do these look like the same plant identity?</li><li>2. Is Young genuinely younger architecture? (where present)</li><li>3. Is the intended state visibly plausible (fruiting / dormant / flowering / architectureMode)?</li><li>4. Is native asset detail acceptable? (ASSET INSPECTION only)</li><li>5. Does each integrate naturally in the Garden? (IN-GARDEN only)</li><li>6. Does mature size follow production Garden Design scale rather than a miniature thumbnail?</li>
     </ol>
   </section>
 <section class="family" data-family="E">
     <h2>Family E — Lavender — 2-way</h2>
-    <p class="note">Proves VEGETATIVE vs FLOWERING. Batch-1 lavender may remain historical evidence only and is not the family anchor.</p>
-    <div class="slots"><div class="slot" data-job-id="lavender__mature__shrub__vegetative__v1">
-        <p class="cap">10. SHRUB MATURE VEGETATIVE (new family anchor)</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="10. SHRUB MATURE VEGETATIVE (new family anchor)" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png"/>
-        </div>
-      </div><div class="slot" data-job-id="lavender__mature__shrub__flowering__v1">
-        <p class="cap">11. SHRUB MATURE FLOWERING</p>
-        <div class="scene real blend-v1-scene" data-role="garden-scene">
-          <img class="cutout" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png"/>
-        </div>
-      </div></div>
+    <p class="note">Shrub scale. Flowering must keep vegetative habit; compare native flowers in ASSET INSPECTION.</p>
+    <h3>A. ASSET INSPECTION</h3>
+    <p class="note">Judge candidate quality itself. Native aspect. Checkerboard. No blend, blur, opacity, or scene tonal adaptation.</p>
+    <div class="slots inspect-row"><div class="slot inspect-slot" data-job-id="lavender__mature__shrub__vegetative__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">10. SHRUB MATURE VEGETATIVE</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="10. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div><div class="slot inspect-slot" data-job-id="lavender__mature__shrub__flowering__v1" data-review-mode="ASSET_INSPECTION">
+    <p class="cap">11. SHRUB MATURE FLOWERING</p>
+    <div class="inspect-scene checkerboard"><div class="inspect-frame" data-inspect-frame>
+        <img class="inspect-cutout" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools"><button type="button" data-inspect-zoom>View 100%</button> Native PNG. No Garden blend. No physical-scale shrink.</p></div>
+  </div></div>
+    <h3>B. IN-GARDEN REVIEW</h3>
+    <p class="note">Judge Garden integration using production scale authority. No fit-to-frame. Clipping is valid. Physical size is runtime authority.</p>
+    <div class="slots garden-row"><div class="slot garden-slot" data-job-id="lavender__mature__shrub__vegetative__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">10. SHRUB MATURE VEGETATIVE</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="34,202,988,1408" data-ground-anchor="0.4990234375,0.9166666666666666" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="10. SHRUB MATURE VEGETATIVE" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Shrub form-relative runtime · not tree physical scale</p>
+  </div><div class="slot garden-slot" data-job-id="lavender__mature__shrub__flowering__v1" data-review-mode="IN_GARDEN">
+    <p class="cap">11. SHRUB MATURE FLOWERING</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="flowering" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="21,376,1005,1327" data-ground-anchor="0.5009765625,0.8639322916666666" data-size-scenario="NATURAL_MATURE" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="11. SHRUB MATURE FLOWERING" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note" data-scale-readout>Shrub form-relative runtime · not tree physical scale</p>
+  </div></div>
     <ol class="questions">
-      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+      <li>1. Do these look like the same plant identity?</li><li>2. Is Young genuinely younger architecture? (where present)</li><li>3. Is the intended state visibly plausible (fruiting / dormant / flowering / architectureMode)?</li><li>4. Is native asset detail acceptable? (ASSET INSPECTION only)</li><li>5. Does each integrate naturally in the Garden? (IN-GARDEN only)</li><li>6. Does mature size follow production Garden Design scale rather than a miniature thumbnail?</li>
     </ol>
   </section>
-  <p class="note">Eggplant visual-state calibration = DEFERRED_BASELINE_REQUIRED. Not generated in this batch. Fruiting-state behavior is represented by Mango.</p>
-  <script>
-    const TYPE = "cruvit:calibration-garden-source";
-    function applySignedUrl(url) {
-      if (!url) return false;
-      document.querySelectorAll('[data-role="garden-scene"]').forEach((el) => {
-        el.style.backgroundImage = "url('" + String(url).replace(/'/g, "\\'") + "')";
-      });
-      const banner = document.getElementById('realGardenBanner');
-      if (banner) {
-        banner.className = 'ok';
-        banner.textContent = "Real Garden photo loaded. Candidates only — not approved. Blend V1 CSS is runtime-only. No bake-in.";
-      }
-      return true;
-    }
-    window.addEventListener('message', (ev) => {
-      const d = ev && ev.data;
-      if (!d || d.type !== TYPE) return;
-      if (d.sourceMediaUrl) applySignedUrl(d.sourceMediaUrl);
-    });
-  </script>
+  <p class="note">Eggplant visual-state calibration = DEFERRED_BASELINE_REQUIRED. Not generated in this batch.</p>
+  <script type="module" src="./asset-factory-v1/visual-state-calibration-batch-2-review-runtime.js"></script>
 </body>
 </html>

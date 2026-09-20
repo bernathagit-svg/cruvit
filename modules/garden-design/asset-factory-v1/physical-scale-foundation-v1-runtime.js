@@ -123,7 +123,7 @@ function ownerPreferenceKey(photoKey, slug) {
   return `${photoKey || 'review-session-photo'}::${slug || ''}`;
 }
 
-function seedMangoGardenDesignPreference(photoKey) {
+export function seedMangoGardenDesignPreference(photoKey) {
   const store = readJson(OWNER_SIZE_PREFERENCE_STORAGE_KEY, {});
   const key = ownerPreferenceKey(photoKey, MANGO_GARDEN_DESIGN_PREFERENCE.canonicalSlug);
   if (store[key]) return store[key];
@@ -240,7 +240,7 @@ function listReferences(doc, calibration) {
     .join('');
 }
 
-function applyPhysicalScene(scene, options) {
+export function applyPhysicalScene(scene, options) {
   const placement = scene.querySelector('[data-role="placement"]');
   const img = scene.querySelector('img.cutout');
   const overlay = scene.querySelector('[data-physical-blocked]');
@@ -368,6 +368,29 @@ function applyPhysicalScene(scene, options) {
     if (overlay) overlay.hidden = true;
   }
   return result;
+}
+
+export function applyProductionPhysicalScenes(doc, options = {}) {
+  const documentRef = doc || (typeof document !== 'undefined' ? document : null);
+  if (!documentRef) return { applied: 0 };
+  let applied = 0;
+  documentRef.querySelectorAll('.physical-v1-scene').forEach((scene) => {
+    applyPhysicalScene(scene, {
+      authorityRegistry: options.authorityRegistry || null,
+      calibration: options.calibration || null,
+      photoScaleState: options.photoScaleState,
+      userOverride: options.userOverride,
+      rangeBand: scene.getAttribute('data-lock-range-band') || options.rangeBand,
+      sizeScenario: scene.getAttribute('data-size-scenario') || options.sizeScenario,
+      canonicalSlug: scene.getAttribute('data-canonical-slug'),
+      growthStage: scene.getAttribute('data-growth-stage'),
+      visualForm: scene.getAttribute('data-visual-form'),
+      architectureMode: scene.getAttribute('data-architecture-mode'),
+      depthId: scene.getAttribute('data-lock-depth') || 'middle'
+    });
+    applied += 1;
+  });
+  return { applied };
 }
 
 function currentSlug(doc) {

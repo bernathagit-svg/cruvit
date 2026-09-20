@@ -67,11 +67,14 @@ test('batch-2 prep locks 11 jobs, denies spend, and does not generate', () => {
   assert.equal(EGGPLANT_DEFERRED.generatedInBatch2, false);
   assert.equal(LAVENDER_BATCH1_HISTORICAL.historicalEvidenceOnly, true);
   assert.equal(summary.everyTestedStateHasValidFamilyAnchor, true);
+  assert.match(html, /ASSET INSPECTION/);
+  assert.match(html, /IN-GARDEN REVIEW/);
+  assert.match(html, /data-lock-range-band="LOW"/);
+  assert.match(html, /STAGE_AUTHORITY_UNKNOWN/);
   assert.match(html, /lavender__mature__shrub__vegetative__v1/);
   assert.match(html, /DEFERRED_BASELINE_REQUIRED/);
   assert.doesNotMatch(html, /eggplant__mature__shrub__fruiting/);
-  assert.match(html, /ASSET NOT GENERATED/);
-  assert.match(html, /Do these clearly look like the same plant identity/);
+  assert.match(html, /Do these look like the same plant identity/);
   const prompts = JSON.parse(fs.readFileSync(written.promptsPath, 'utf8'));
   assert.ok(prompts.prompts.every((row) => Array.isArray(row.round1LearningInherited) && row.round1LearningInherited.length === 11));
   assert.match(prompts.prompts[0].prompt, /no baked scene shadow/);

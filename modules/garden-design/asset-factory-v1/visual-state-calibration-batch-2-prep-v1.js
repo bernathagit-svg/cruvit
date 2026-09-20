@@ -15,7 +15,7 @@ import { CALIBRATION_BATCH_1_CANDIDATES } from './calibration-review-candidates-
 
 export const VISUAL_STATE_CALIBRATION_BATCH_2_VERSION = 'visual-state-calibration-batch-2-prep-v1';
 export const VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID = 'design-asset-visual-state-calibration-batch-2';
-export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919t';
+export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919u';
 
 export const BATCH_2_SPEND_GATE = Object.freeze({
   state: 'DENIED',
@@ -419,6 +419,14 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
     spendPath: path.join(dir, 'batch-2-spend-gate.json')
   };
   const review = writeVisualStateCalibrationBatch2Review(root);
+  let previousSpend = null;
+  if (fs.existsSync(files.spendPath)) {
+    try {
+      previousSpend = JSON.parse(fs.readFileSync(files.spendPath, 'utf8'));
+    } catch {
+      previousSpend = null;
+    }
+  }
   fs.writeFileSync(`${files.summaryPath}`, `${JSON.stringify({
     contract: VISUAL_STATE_CALIBRATION_BATCH_2_VERSION,
     verdict: 'VISUAL_STATE_CALIBRATION_BATCH_2_FINAL_PREP_READY',
@@ -474,6 +482,7 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
     contract: VISUAL_STATE_CALIBRATION_BATCH_2_VERSION,
     gate: BATCH_2_SPEND_GATE,
     executeResult: executeVisualStateCalibrationBatch2(),
+    lastRun: previousSpend && previousSpend.lastRun ? previousSpend.lastRun : undefined,
     proposedFutureCommand: [
       `--run-id=${VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID}`,
       `--approve-envelope=${VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID}`,
