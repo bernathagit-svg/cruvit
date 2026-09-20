@@ -259,4 +259,8 @@ export {
   writeQualityFamilyCalibrationFinalReports,
   executeQualityFamilyCalibrationFinal
 } from './quality-family-calibration-final-prep-v1.js';
+export {
+  OWNER_APPROVED_QUALITY_FAMILY_FINAL,
+  executeQualityFamilyCalibrationFinalPaid
+} from './quality-family-calibration-final-execute-v1.js';
 

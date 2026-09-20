@@ -94,16 +94,22 @@ test('quality-family final prep is 7 medium jobs, avocado included, spend DENIED
   const html = fs.readFileSync(written.reviewHtml, 'utf8');
   assert.match(html, /WOODY_OPEN_OR_LARGE_LEAF/);
   assert.match(html, /avocado/);
-  assert.match(html, /ASSET NOT GENERATED/);
   assert.match(html, /STATE_DETAIL_WEAK/);
   assert.match(html, /data-inspect-zoom="100"/);
   assert.match(html, /data-inspect-zoom="150"/);
   assert.match(html, /data-inspect-zoom="200"/);
   assert.match(html, /checkerboard/);
   assert.match(html, /filter:none/);
-  assert.match(html, /Not a production-approved/);
-  assert.match(html, /superseded because it omitted WOODY_OPEN_OR_LARGE_LEAF/);
+  assert.match(html, /HISTORICAL CONTROL — NOT APPROVED/);
   assert.doesNotMatch(html, /data:image/);
   const candidateDir = path.join(ROOT, 'modules/garden-design/assets/plants/quality-family-calibration-final-1');
-  assert.equal(fs.existsSync(candidateDir), false);
+  const generatedExists = fs.existsSync(candidateDir);
+  if (generatedExists) {
+    assert.match(html, /detail-v2__medium\.png/);
+    assert.doesNotMatch(html, /ASSET NOT GENERATED/);
+  } else {
+    assert.match(html, /ASSET NOT GENERATED/);
+    assert.match(html, /superseded because it omitted WOODY_OPEN_OR_LARGE_LEAF/);
+    assert.match(html, /Not a production-approved/);
+  }
 });

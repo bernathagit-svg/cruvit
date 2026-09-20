@@ -96,14 +96,23 @@ function gardenSlot(arm, label, src, job) {
   </div>`;
 }
 
+function discoverCandidate(root, jobId) {
+  const rel = `modules/garden-design/assets/plants/quality-family-calibration-final-1/${jobId}.png`;
+  return root && jobId && fs.existsSync(path.join(root, rel)) ? rel : '';
+}
+
 function jobBlock(job) {
   const families = (job.qualityFamilies || []).join(' + ');
   const controlSrc = liveCutoutSrc(job.historicalControl && job.historicalControl.file);
+  const candidateSrc = liveCutoutSrc(job.candidateFile);
   const candidateArm = job.jobId;
   const controlArm = `${job.jobId}__control`;
   const controlNote = job.historicalControl
-    ? `${job.historicalControl.source} historical control. ${job.historicalControl.note || ''}`.trim()
+    ? `HISTORICAL CONTROL. NOT APPROVED. ${job.historicalControl.note || ''}`.trim()
     : 'No historical control.';
+  const candidateNote = candidateSrc
+    ? 'design-cutout-visual-state-detail-v2 · quality=medium · CALIBRATION_CANDIDATE · not production-approved'
+    : 'design-cutout-visual-state-detail-v2 · quality=medium · not generated';
   return `<section class="job" data-job-id="${esc(job.jobId)}">
     <h2>${esc(job.rank)}. ${esc(job.canonicalSlug)} · ${esc(families)}</h2>
     <p class="note">${esc(job.purpose)}</p>
@@ -112,28 +121,33 @@ function jobBlock(job) {
     <div class="slots inspect-row">
       ${
         controlSrc
-          ? inspectSlot(controlArm, `HISTORICAL CONTROL — ${job.canonicalSlug}`, controlSrc, controlNote, true)
+          ? inspectSlot(controlArm, `HISTORICAL CONTROL — NOT APPROVED`, controlSrc, controlNote, true)
           : `<div class="slot inspect-slot"><p class="cap">No historical control</p><p class="note">Avocado is a new open/large-leaf woody sample. It does not inherit Mango HIGH.</p></div>`
       }
-      ${inspectSlot(candidateArm, `V2 + MEDIUM candidate`, '', 'design-cutout-visual-state-detail-v2 · quality=medium · not generated', false)}
+      ${inspectSlot(candidateArm, `V2 + MEDIUM candidate`, candidateSrc, candidateNote, false)}
     </div>
     <h3>D. IN-GARDEN (optional / secondary)</h3>
     <div class="slots garden-row">
-      ${controlSrc ? gardenSlot(controlArm, 'Historical control', controlSrc, job) : ''}
-      ${gardenSlot(candidateArm, 'V2 + MEDIUM candidate', '', job)}
+      ${controlSrc ? gardenSlot(controlArm, 'HISTORICAL CONTROL — NOT APPROVED', controlSrc, job) : ''}
+      ${gardenSlot(candidateArm, 'V2 + MEDIUM candidate', candidateSrc, job)}
     </div>
   </section>`;
 }
 
 export function buildQualityFamilyCalibrationFinalReviewHtml(options = {}) {
   const jobs = Array.isArray(options.jobs) ? options.jobs : [];
+  const generatedCount = Number(options.generatedCount || jobs.filter((job) => job.candidateFile).length);
   const v2 = RUNTIME_BLEND_V2.defaults || {};
   const blendFilter = `brightness(${v2.brightness || 0.94}) contrast(${v2.contrast || 0.92}) saturate(${v2.saturate || 0.9}) blur(${v2.blurPx || 0.4}px)`;
+  const banner =
+    generatedCount > 0
+      ? `${generatedCount} of 7 generated. Spend gate DENIED. Native 100/150/200 is the primary gate. No automatic family policy change.`
+      : 'Spend gate DENIED. Preparation only. 0 of 7 generated. Native 100/150/200 is the primary gate. Previous 6-job set is superseded because it omitted WOODY_OPEN_OR_LARGE_LEAF.';
   return `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>Quality-family final calibration — 7 jobs prepared</title>
+  <title>Quality-family final calibration — 7 jobs</title>
   <style>
     :root { font-family: "DM Sans", sans-serif; color: #122; }
     body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
@@ -167,8 +181,8 @@ export function buildQualityFamilyCalibrationFinalReviewHtml(options = {}) {
   </style>
 </head>
 <body data-run-id="design-asset-quality-family-calibration-final-1" data-owner-qa-storage="cruvit:quality-family-calibration-final-1">
-  <h1>Quality-family final calibration — 7 jobs prepared</h1>
-  <p id="realGardenBanner" class="warn">Spend gate DENIED. Preparation only. 0 of 7 generated. Native 100/150/200 is the primary gate. Previous 6-job set is superseded because it omitted WOODY_OPEN_OR_LARGE_LEAF.</p>
+  <h1>Quality-family final calibration — 7 jobs</h1>
+  <p id="realGardenBanner" class="warn">${esc(banner)}</p>
   <p class="note">runId design-asset-quality-family-calibration-final-1. Prompt V2 + medium only. HIGH jobs = 0. Avocado does not inherit Mango HIGH. UNKNOWN_BLOCKED 26 and the 82 calibration-required variants are not generated here.</p>
   <p class="note">After future owner review: MEDIUM_POLICY_VALIDATED / QUALITY_ESCALATION_REVIEW_REQUIRED / PROMPT_FAILURE. Do not auto-escalate to HIGH.</p>
   ${jobs.map(jobBlock).join('\n')}
@@ -179,7 +193,24 @@ export function buildQualityFamilyCalibrationFinalReviewHtml(options = {}) {
 }
 
 export function writeQualityFamilyCalibrationFinalReview(root, options = {}) {
+  const generatedById = new Map(
+    (options.generatedJobs || [])
+      .filter((row) => row && row.jobId && row.file)
+      .map((row) => [row.jobId, row.file])
+  );
+  const jobs = (options.jobs || []).map((job) => {
+    const candidateFile =
+      generatedById.get(job.jobId) || job.candidateFile || job.file || discoverCandidate(root, job.jobId);
+    return { ...job, candidateFile };
+  });
   const htmlPath = path.join(root, QUALITY_FAMILY_CALIBRATION_FINAL_REVIEW_LIVE_REL);
-  fs.writeFileSync(htmlPath, `${buildQualityFamilyCalibrationFinalReviewHtml(options)}`);
+  fs.writeFileSync(
+    htmlPath,
+    `${buildQualityFamilyCalibrationFinalReviewHtml({
+      ...options,
+      jobs,
+      generatedCount: jobs.filter((job) => job.candidateFile).length
+    })}`
+  );
   return { htmlPath, liveRel: QUALITY_FAMILY_CALIBRATION_FINAL_REVIEW_LIVE_REL, generateOnRender: false };
 }
