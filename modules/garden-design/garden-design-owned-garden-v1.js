@@ -10,11 +10,11 @@ import { GARDEN_SOURCE_MODULES, GARDEN_EVENT_TYPES } from '../personal-domain/ga
 import {
   DESIGN_ASSET_FALLBACK,
   resolveManifestKeyToCanonical
-} from './garden-design-asset-registry-v1.js';
+} from './garden-design-asset-registry-v1.js?v=20260920graph1';
 import {
   ownedPlacementVisualDefaults,
   proposedPlacementVisualDefaults
-} from './garden-design-variant-selection-policy-v1.js';
+} from './garden-design-variant-selection-policy-v1.js?v=20260920graph1';
 
 export const GARDEN_DESIGN_OWNED_GARDEN_VERSION = '1.0.0';
 
