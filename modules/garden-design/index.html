@@ -2061,6 +2061,8 @@ function gdHydrateServerDesign(msg) {
     renderPlantsDrawer();
     gdWriteLocalCache(true);
     gdSetPersistStatus('saved');
+    gdRefreshOwnedGardenOption();
+    ensureDesignPlantsPanelVisible();
   } finally {
     gdHydratingFromServer = false;
   }

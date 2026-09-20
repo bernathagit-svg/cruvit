@@ -628,6 +628,31 @@ export function manualCanvasAddPlantsPolicy(input = {}) {
   };
 }
 
+/** Existing sourced design with 0 placements must still show Add plants. */
+export function hydratedSourcedDesignAddPlantsEntrypoint(input = {}) {
+  const sourcePhotoLoaded = input.sourcePhotoLoaded === true
+    || !!asText(input.sourceMediaId || input.sourceMediaUrl || input.editorBaseMediaUrl);
+  const designHydrated = input.designHydrated === true || !!asText(input.designId);
+  const persistSaved = input.persistStatus === 'saved' || input.persistSaved === true;
+  const ready = sourcePhotoLoaded && designHydrated && (persistSaved || input.persistSaved !== false);
+  const placementCount = Array.isArray(input.placements)
+    ? input.placements.length
+    : Array.isArray(input.plantLayers)
+      ? input.plantLayers.length
+      : Number(input.designPlacementCount) || 0;
+  const owned = Array.isArray(input.ownedPlants) ? input.ownedPlants : [];
+  return {
+    plantsSectionVisible: ready,
+    addPlantsCard: ready,
+    plantCount: placementCount,
+    ownerCanOpenModal: ready,
+    fromMyGardenAvailable: ready && owned.length > 0,
+    hideWhenOwnedCountZero: false,
+    hideWhenPlacementCountZero: false,
+    paidAiCalls: 0
+  };
+}
+
 export function designPaidAiForAction(action) {
   const a = asText(action).toLowerCase();
   const automated = [
@@ -958,6 +983,7 @@ const api = {
   designPlacementCountFromLayers,
   ownedInventoryMustNotAutoPlace,
   manualCanvasAddPlantsPolicy,
+  hydratedSourcedDesignAddPlantsEntrypoint,
   assertSourcePhotoImmutable,
   designPersistenceKey,
   serializeDesignSnapshot,

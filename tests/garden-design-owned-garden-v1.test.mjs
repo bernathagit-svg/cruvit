@@ -29,6 +29,7 @@ import {
   designPlacementCountFromLayers,
   ownedInventoryMustNotAutoPlace,
   manualCanvasAddPlantsPolicy,
+  hydratedSourcedDesignAddPlantsEntrypoint,
   createProposedDesignPlacement,
   duplicateDesignPlacement,
   ownedPlacementOwnershipCount,
@@ -737,6 +738,79 @@ test('empty manual canvas always shows Add plants; owned list stays server Garde
   assert.match(gd, /gdRenderAreaSelect/);
   assert.doesNotMatch(gd, /create table/i);
   assert.doesNotMatch(appSrc(), /GARDEN_DESIGN_PERSISTENCE_MIGRATION applied/i);
+});
+
+test('zero-placement sourced design still shows Add plants and From My Garden', () => {
+  const session = { user: { id: 'owner-1' } };
+  const serverRows = [
+    { id: 'gp-mango', name: 'Mango', profile_slug: 'mango', garden_profile_id: 'garden-moj' },
+    { id: 'gp-banana', name: 'Banana', profile_slug: 'banana', garden_profile_id: 'garden-moj' },
+    { id: 'gp-pineapple', name: 'Pineapple', profile_slug: 'pineapple', garden_profile_id: 'garden-moj' }
+  ];
+  const owned = resolveDesignOwnedPlantsFromGardenOs({
+    session,
+    gardenProfileId: 'garden-moj',
+    serverPlantRows: serverRows,
+    localPlants: []
+  });
+  const entry = hydratedSourcedDesignAddPlantsEntrypoint({
+    sourcePhotoLoaded: true,
+    sourceMediaId: 'media-existing-photo',
+    designId: 'design-mojstrana-live',
+    designHydrated: true,
+    persistStatus: 'saved',
+    placements: [],
+    ownedPlants: owned.ownedPlants
+  });
+  assert.equal(entry.plantsSectionVisible, true);
+  assert.equal(entry.addPlantsCard, true);
+  assert.equal(entry.plantCount, 0);
+  assert.equal(entry.ownerCanOpenModal, true);
+  assert.equal(entry.fromMyGardenAvailable, true);
+  assert.equal(entry.hideWhenPlacementCountZero, false);
+  assert.equal(entry.hideWhenOwnedCountZero, false);
+  assert.equal(entry.paidAiCalls, 0);
+  assert.equal(owned.fromMyGardenVisible, true);
+  assert.deepEqual(owned.ownedPlants.map((p) => p.canonicalSlug), ['mango', 'banana', 'pineapple']);
+  assert.equal(owned.usedLocalFallback, false);
+  assert.equal(ownedInventoryMustNotAutoPlace(owned.ownedPlants.length, 0), true);
+
+  const emptyOwned = hydratedSourcedDesignAddPlantsEntrypoint({
+    sourcePhotoLoaded: true,
+    designId: 'design-empty-owned',
+    designHydrated: true,
+    persistStatus: 'saved',
+    placements: [],
+    ownedPlants: []
+  });
+  assert.equal(emptyOwned.plantsSectionVisible, true);
+  assert.equal(emptyOwned.addPlantsCard, true);
+  assert.equal(emptyOwned.plantCount, 0);
+  assert.equal(emptyOwned.ownerCanOpenModal, true);
+  assert.equal(emptyOwned.fromMyGardenAvailable, false);
+  assert.equal(emptyOwned.hideWhenOwnedCountZero, false);
+
+  const gd = gdSrc();
+  const hydrate = gd.slice(gd.indexOf('function gdHydrateServerDesign'), gd.indexOf('function gdOnLoadResult'));
+  assert.match(hydrate, /skipPersist:\s*true/);
+  assert.match(hydrate, /gdSetPersistStatus\('saved'\)/);
+  assert.match(hydrate, /ensureDesignPlantsPanelVisible\(\)/);
+  assert.match(hydrate, /gdRefreshOwnedGardenOption\(\)/);
+  assert.match(gd, /function openAddPlantModal/);
+  assert.match(gd, /From My Garden/);
+  assert.match(gd, /function showApmOwned/);
+  const persist = fs.readFileSync(path.join(ROOT, 'modules/garden-design/garden-design-server-persistence-v1.js'), 'utf8');
+  assert.match(persist, /payload\.cachedDesignId/);
+  assert.match(persist, /persistableDesignAssetId/);
+
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'modules/garden-design/assets/plants/design-asset-registry-v1.json'), 'utf8'));
+  const index = indexDesignAssetRegistry(registry);
+  for (const slug of ['mango', 'banana', 'pineapple']) {
+    const resolved = resolveDesignAsset({ canonicalSlug: slug, growthStage: 'mature', phenology: 'vegetative' }, index);
+    assert.equal(resolved.visualReady, true);
+    assert.equal(resolved.placeholder === true, false);
+    assert.ok(resolved.url);
+  }
 });
 
 test('owned placement missing cutout stays visible; count is plantLayers only', () => {
