@@ -210,6 +210,18 @@ test('canonicalSlug mango wins over display name Mango Tree; no cross-species fa
   assert.equal(pineapple.canonicalSlug, 'pineapple');
 });
 
+test('asset resolver self-heals stale runtime index when requested slug is absent', () => {
+  const gd = read('modules/garden-design/index.html');
+  const resolver = gd.slice(
+    gd.indexOf('function resolvePlantLayerAsset'),
+    gd.indexOf('function gdBuildSpriteSvgHtml')
+  );
+  assert.match(resolver, /requestedRegistrySlug/);
+  assert.match(resolver, /indexMissingRequestedSlug/);
+  assert.match(resolver, /!gdDesignAssetIndex\.bySlug\.has\(requestedRegistrySlug\)/);
+  assert.match(resolver, /gdDesignAssetIndex = registryApi\.indexDesignAssetRegistry\(contextRegistry\)/);
+});
+
 test('asset resolver self-heals missing runtime index from Garden Design context registry', () => {
   const gd = read('modules/garden-design/index.html');
   const resolver = gd.slice(
@@ -248,13 +260,14 @@ test('Add plants modal uses approved Design Asset Registry thumbnails and no Wik
 test('production host/iframe load the versioned registry and re-index both arrival paths', () => {
   const app = read('app.html');
   const gd = read('modules/garden-design/index.html');
-  assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260920reg1');
+  assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260920reg2');
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
-  assert.match(app, /const token='20260920reg1'/);
-  assert.match(app, /index\.html\?v=20260920lazyreg1/);
-  assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
+  assert.match(app, /const token='20260920reg2'/);
+  assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
+  assert.match(app, /index\.html\?v=20260920reg2/);
+  assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260920reg2/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
-  assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260920reg1/);
+  assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260920reg2/);
   assert.match(gd, /if \(ctx\.designAssetRegistry\) gdIndexDesignAssetRegistry\(ctx\.designAssetRegistry\)/);
   assert.match(gd, /if \(d\.type === 'cruvit:garden-design-asset-registry'\) gdIndexDesignAssetRegistry\(d\.designAssetRegistry\)/);
   assert.match(gd, /canonicalSlug: p\.canonicalSlug \|\| ident\.canonicalSlug/);

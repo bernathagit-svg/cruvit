@@ -3033,17 +3033,24 @@ function resolvePlantLayerAsset(layer, manifest) {
     license: null
   };
   const registryApi = window.CruvitGardenDesignAssetRegistry;
+  const requestedRegistrySlug = (layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug || '').toLowerCase();
+  const contextRegistry = gdOwnedGardenContext && gdOwnedGardenContext.designAssetRegistry;
+  const indexMissingRequestedSlug = !!(
+    requestedRegistrySlug &&
+    gdDesignAssetIndex &&
+    gdDesignAssetIndex.bySlug &&
+    !gdDesignAssetIndex.bySlug.has(requestedRegistrySlug)
+  );
   if (
     registryApi &&
-    !gdDesignAssetIndex &&
-    gdOwnedGardenContext &&
-    gdOwnedGardenContext.designAssetRegistry &&
+    contextRegistry &&
+    (!gdDesignAssetIndex || indexMissingRequestedSlug) &&
     typeof registryApi.indexDesignAssetRegistry === 'function'
   ) {
-    gdDesignAssetIndex = registryApi.indexDesignAssetRegistry(gdOwnedGardenContext.designAssetRegistry);
+    gdDesignAssetIndex = registryApi.indexDesignAssetRegistry(contextRegistry);
   }
   if (registryApi && gdDesignAssetIndex) {
-    const slug = (layer.canonicalSlug || gdResolveLayerIdentity(layer).canonicalSlug || '').toLowerCase();
+    const slug = requestedRegistrySlug;
     if (slug) {
       const resolved = registryApi.resolveDesignAsset({
         canonicalSlug: slug,
@@ -5784,7 +5791,7 @@ The plants array MUST match the exact counts specified above.`}]);
   </script>
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
-    import './garden-design-asset-registry-v1.js?v=20260920reg1';
+    import './garden-design-asset-registry-v1.js?v=20260920reg2';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import './garden-design-owned-garden-v1.js?v=20260920ins1';
     import {
