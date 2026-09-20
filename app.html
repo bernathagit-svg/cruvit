@@ -705,6 +705,10 @@
   <button type="button" class="dac-back" onclick="closeVisualStateCalibrationBatch2Review()"><span aria-hidden="true">←</span><span>Close Batch 2</span></button>
   <p class="dac-status" id="visualStateCalibrationBatch2Status"></p>
 </div>
+<div id="woody-foliage-detail-ab-1-root" aria-hidden="true">
+  <button type="button" class="dac-back" onclick="closeWoodyFoliageDetailAbReview()"><span aria-hidden="true">←</span><span>Close foliage A/B</span></button>
+  <p class="dac-status" id="woodyFoliageDetailAbStatus"></p>
+</div>
 <div id="plant-doctor-root" aria-hidden="true">
   <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
 </div>
@@ -8984,6 +8988,121 @@ function openVisualStateCalibrationBatch2Review(){
 
 window.openVisualStateCalibrationBatch2Review=openVisualStateCalibrationBatch2Review;
 
+function closeWoodyFoliageDetailAbReview(){
+  const root=document.getElementById('woody-foliage-detail-ab-1-root');
+  if(!root) return;
+  if(window.__cruvitWoodyFoliageAbHostCtrl&&typeof window.__cruvitWoodyFoliageAbHostCtrl.close==='function'){
+    window.__cruvitWoodyFoliageAbHostCtrl.close();
+  }
+  root.classList.remove('dac-active');
+  root.setAttribute('aria-hidden','true');
+}
+
+function ensureWoodyFoliageDetailAbHost(){
+  if(window.__cruvitWoodyFoliageAbHostCtrl) return window.__cruvitWoodyFoliageAbHostCtrl;
+  const hostApi=window.CruvitCalibrationReviewHost;
+  if(!hostApi||typeof hostApi.createCalibrationReviewHostController!=='function') return null;
+  const origin=(!window.location.origin||window.location.origin==='null')?'*':window.location.origin;
+  const labels=hostApi.CALIBRATION_REVIEW_STATUS_LABEL||{};
+  const ctrl=hostApi.createCalibrationReviewHostController({
+    getReadiness:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getGardenContextReadiness==='function') return pd.getGardenContextReadiness();
+      return { status:'RESTORING', authenticated:false, gardenProfileId:null, gardenCount:0, profilesHydrated:false };
+    },
+    getOwnedGardens:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getOwnedGardensCache==='function') return pd.getOwnedGardensCache();
+      return [];
+    },
+    getTrustedLocation:function(){
+      if(typeof window.getCruvitTrustedGardenLocation==='function') return window.getCruvitTrustedGardenLocation();
+      return null;
+    },
+    loadSource:async function(readiness){
+      const persist=getGardenDesignHostPersistence();
+      const helper=window.CruvitCalibrationGardenSource;
+      const owned=window.CruvitGardenDesignOwnedGarden;
+      const pd=window.cruvitPersonalDomainV0;
+      if(!persist||!helper||typeof helper.loadCalibrationGardenSourcePhoto!=='function'||!pd){
+        return { ok:false, code:'SOURCE_PHOTO_UNAVAILABLE', paidAiCalls:0, imageGenerationCalls:0 };
+      }
+      const session=pd.getSession?pd.getSession():null;
+      const userId=session&&session.user&&session.user.id?session.user.id:null;
+      const gardenId=(readiness&&readiness.gardenProfileId)||(pd.getActiveGardenId?pd.getActiveGardenId():null);
+      let cachedDesignId=null;
+      if(owned&&typeof owned.createServerDesignRefPersistence==='function'&&userId&&gardenId){
+        const ref=owned.createServerDesignRefPersistence(window.localStorage).load({
+          userId:userId,
+          gardenProfileId:gardenId,
+          areaId:null
+        });
+        cachedDesignId=ref&&ref.designId?ref.designId:null;
+      }
+      return helper.loadCalibrationGardenSourcePhoto(function(payload){
+        return persist.loadDesign(payload);
+      },{
+        gardenAreaId:null,
+        cachedDesignId:cachedDesignId,
+        gardenProfileId:gardenId
+      });
+    },
+    setStatus:function(code, text){
+      const status=document.getElementById('woodyFoliageDetailAbStatus');
+      if(status) status.textContent=text||labels[code]||code||'';
+    },
+    injectResolved:function(resolved, uiStatus){
+      const root=document.getElementById('woody-foliage-detail-ab-1-root');
+      const frame=root?root.querySelector('iframe.dac-frame'):null;
+      const helper=window.CruvitCalibrationGardenSource;
+      if(!frame||!helper||typeof helper.buildCalibrationSourceInjectMessage!=='function') return;
+      try{
+        if(frame.contentWindow){
+          frame.contentWindow.postMessage(helper.buildCalibrationSourceInjectMessage(resolved||{}, uiStatus), origin);
+        }
+      }catch(_){}
+    }
+  });
+  window.addEventListener('cruvit:auth-session-changed', function(ev){
+    if(window.__cruvitWoodyFoliageAbHostCtrl){
+      window.__cruvitWoodyFoliageAbHostCtrl.onAuthSessionChanged(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.addEventListener('cruvit:garden-context-ready', function(ev){
+    if(window.__cruvitWoodyFoliageAbHostCtrl){
+      window.__cruvitWoodyFoliageAbHostCtrl.onGardenContextReady(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.__cruvitWoodyFoliageAbHostCtrl=ctrl;
+  return ctrl;
+}
+
+function openWoodyFoliageDetailAbReview(){
+  const root=document.getElementById('woody-foliage-detail-ab-1-root');
+  if(!root) return;
+  const status=document.getElementById('woodyFoliageDetailAbStatus');
+  if(status) status.textContent='Loading Garden context…';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='Woody foliage detail A/B review';
+    root.appendChild(frame);
+  }
+  const ctrl=ensureWoodyFoliageDetailAbHost();
+  frame.onload=function(){
+    if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  };
+  const reviewSrc='modules/garden-design/woody-foliage-detail-ab-1.html?v=20260919w';
+  if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
+  else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  if(ctrl) ctrl.open();
+}
+
+window.openWoodyFoliageDetailAbReview=openWoodyFoliageDetailAbReview;
+
 function ensureDesignAssetCalibrationReviewHost(){
   if(window.__cruvitCalibrationReviewHostCtrl) return window.__cruvitCalibrationReviewHostCtrl;
   const hostApi=window.CruvitCalibrationReviewHost;
@@ -9101,16 +9220,19 @@ window.addEventListener('DOMContentLoaded',function(){
   ensureDesignAssetCalibrationReviewHost();
   ensureGardenDesignSizeAuthorityCanaryHost();
   ensureVisualStateCalibrationBatch2Host();
+  ensureWoodyFoliageDetailAbHost();
 });
 window.addEventListener('load',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
   if(location.hash==='#garden-design-size-authority-canary') openGardenDesignSizeAuthorityCanary();
   if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
+  if(location.hash==='#design-asset-woody-foliage-detail-ab-1') openWoodyFoliageDetailAbReview();
 });
 window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
   if(location.hash==='#garden-design-size-authority-canary') openGardenDesignSizeAuthorityCanary();
   if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
+  if(location.hash==='#design-asset-woody-foliage-detail-ab-1') openWoodyFoliageDetailAbReview();
 });
 
 /* ── Plant Doctor (isolated iframe module) ── */

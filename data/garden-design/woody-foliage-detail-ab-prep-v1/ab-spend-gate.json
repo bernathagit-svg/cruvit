@@ -1,0 +1,54 @@
+{
+  "contract": "woody-foliage-detail-ab-prep-v1",
+  "gate": {
+    "state": "DENIED",
+    "execute": false,
+    "previousApprovalCarryForward": false,
+    "batch2ApprovalCarryForward": false,
+    "retriesAuthorized": 0,
+    "maxJobs": 2,
+    "maxCalls": 2,
+    "maxRetries": 0,
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "provider": "openai-images-api",
+    "size": "1024x1536",
+    "background": "transparent",
+    "outputFormat": "png",
+    "note": "Owner must explicitly approve this exact runId and cost ceiling. Batch-2 approval does not apply. Do not globally switch quality to high."
+  },
+  "executeResult": {
+    "executed": false,
+    "imageGeneration": 0,
+    "openaiCalls": 0,
+    "retries": 0,
+    "spendGate": "DENIED",
+    "reason": "PREPARATION_ONLY_OWNER_MUST_APPROVE_THIS_EXACT_RUN",
+    "runId": "design-asset-woody-foliage-detail-ab-1",
+    "jobsPrepared": 2,
+    "productionPromptChanged": false,
+    "productionRegistryChanged": false
+  },
+  "costPreflight": {
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "size": "1024x1536",
+    "paidProbe": false,
+    "mediumArm": {
+      "quality": "medium",
+      "imageOutputUsdKnown": 0.041,
+      "estimatedTextTokens": 753,
+      "estimatedTextUsd": 0.003765,
+      "projectedUsd": 0.044765,
+      "source": "local PAID_IMAGE_OUTPUT_USD_MEDIUM_1024x1536 + published text-input rate"
+    },
+    "highArm": {
+      "quality": "high",
+      "imageOutputUsdKnown": null,
+      "reason": "No PAID_IMAGE_OUTPUT_USD_HIGH_1024x1536 (or high image-output token count) is configured on the runner. Do not invent a high rate. Do not probe."
+    },
+    "imageOutputUsdPer1MTokens": 30,
+    "projectedMaxSpend": "COST_PREFLIGHT_UNRESOLVED",
+    "costPreflight": "COST_PREFLIGHT_UNRESOLVED",
+    "doNotExecute": true
+  },
+  "authorizedNow": false
+}

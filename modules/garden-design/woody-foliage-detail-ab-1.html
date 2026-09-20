@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Woody foliage detail A/B — CONTROL / A / B</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note, .scale-note, .inspect-tools { font-size: 13px; color: #444; }
+    .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    h3 { margin: 18px 0 8px; font-size: 16px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
+    .inspect-cutout { width: 1024px; height: auto; filter: none !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-200 .inspect-cutout { width: 2048px; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; }
+    .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; }
+    .scene.blend-v2-scene img.cutout { filter: brightness(0.94) contrast(0.92) saturate(0.9) blur(0.4px); }
+    .inspect-cutout, [data-review-mode="NATIVE_DETAIL"] img { filter: none !important; }
+    .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
+    .ghost { padding: 24px; background: rgba(255,255,255,.7); }
+    .cap { font-size: 14px; font-weight: 600; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .marks button[aria-pressed="true"], .marks button[data-locked="true"] { background: #a33; color: #fff; }
+    .marks button[data-blocked="true"] { opacity: .45; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
+    .questions { font-size: 14px; }
+    button { padding: 6px 10px; cursor: pointer; }
+  </style>
+</head>
+<body data-run-id="design-asset-woody-foliage-detail-ab-1" data-owner-qa-storage="cruvit:woody-foliage-detail-ab-1">
+  <h1>Woody foliage detail A/B — mango TREE MATURE VEGETATIVE</h1>
+  <p id="realGardenBanner" class="ok">Spend gate DENIED. CONTROL is the existing Batch-2 PNG. A and B are prepared, not generated. Native detail is the primary gate. In-Garden is secondary.</p>
+  <p class="note">runId design-asset-woody-foliage-detail-ab-1. Production factory prompt unchanged. Quality globally remains medium. No Batch-2 approval carry-forward.</p>
+  <h3>A. NATIVE ASSET INSPECTION (primary)</h3>
+  <div class="slots inspect-row">
+    <div class="slot inspect-slot" data-arm="CONTROL" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL — old prompt / medium</p>
+    <p class="note">design-cutout-visual-state-family-v1 · quality=medium · ASSET_DETAIL_SOFT</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL — old prompt / medium" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL">
+    <button type="button" data-mark="DETAIL_OK" data-blocked="true">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT" data-locked="true" aria-pressed="true">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">CONTROL locked: DETAIL_SOFT / ASSET_DETAIL_SOFT. Do not regenerate.</p>
+  </div>
+    <div class="slot inspect-slot" data-arm="A" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">A — detail prompt V2 / medium</p>
+    <p class="note">experimental V2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — A prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="A">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    <div class="slot inspect-slot" data-arm="B" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">B — detail prompt V2 / high</p>
+    <p class="note">same V2 prompt as A · quality=high · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — B prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="B">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+  </div>
+  <h3>B. IN-GARDEN COMPARISON (secondary)</h3>
+  <p class="note">Production Tree Physical Scale V1 · Mango LOW. Blend V2 garden-only. Do not judge native leaf detail here.</p>
+  <div class="slots garden-row">
+    <div class="slot garden-slot" data-arm="CONTROL" data-review-mode="IN_GARDEN">
+    <p class="cap">CONTROL</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="CONTROL" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Production Tree Physical Scale V1 · Mango LOW · secondary to native detail</p>
+  </div>
+    <div class="slot garden-slot" data-arm="A" data-review-mode="IN_GARDEN">
+    <p class="cap">A</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
+      <div class="ghost blocked">ASSET NOT GENERATED — A</div>
+    </div>
+    <p class="scale-note">Production Tree Physical Scale V1 · Mango LOW · secondary to native detail</p>
+  </div>
+    <div class="slot garden-slot" data-arm="B" data-review-mode="IN_GARDEN">
+    <p class="cap">B</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="mango" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666" data-size-scenario="NATURAL_MATURE" data-lock-range-band="LOW" data-lock-scale-mode="ESTIMATED">
+      <div class="ghost blocked">ASSET NOT GENERATED — B</div>
+    </div>
+    <p class="scale-note">Production Tree Physical Scale V1 · Mango LOW · secondary to native detail</p>
+  </div>
+  </div>
+  <ol class="questions">
+    <li>Q1. Does A materially improve detail over CONTROL? If YES, prompt correction has value.</li>
+    <li>Q2. Does B materially improve detail over A? If YES, HIGH quality adds meaningful value.</li>
+  </ol>
+  <script type="module" src="./asset-factory-v1/woody-foliage-detail-ab-review-runtime.js"></script>
+</body>
+</html>
