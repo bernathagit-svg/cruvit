@@ -1,63 +1,70 @@
 /**
  * BRANCH alpha salvage review runtime. Native inspection only. No spend.
  */
-const ZOOM_CLASSES = ['inspect-fit', 'inspect-100', 'inspect-150', 'inspect-200'];
+const ZOOM_CLASSES = ['inspect-100', 'inspect-150', 'inspect-200'];
 const STORAGE_KEY = 'cruvit:branch-alpha-salvage-1';
 
 function loadQa() {
   try {
     const parsed = JSON.parse(window.sessionStorage.getItem(STORAGE_KEY) || '{}');
     parsed.arms = parsed.arms && typeof parsed.arms === 'object' ? parsed.arms : {};
+    parsed.preferredVersion = parsed.preferredVersion || null;
+    parsed.productionApproved = false;
     return parsed;
   } catch {
-    return { arms: {} };
+    return { arms: {}, preferredVersion: null, productionApproved: false };
   }
 }
 
 function saveQa(state) {
+  state.productionApproved = false;
   window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function paint(state) {
-  document.querySelectorAll('[data-mark-group="detail"]').forEach((group) => {
-    const arm = group.getAttribute('data-arm');
-    const row = (state.arms && state.arms[arm]) || {};
-    group.querySelectorAll('[data-mark]').forEach((btn) => {
-      const mark = btn.getAttribute('data-mark');
-      btn.setAttribute('aria-pressed', row[mark] === true ? 'true' : 'false');
-    });
+function paintChoice(state) {
+  document.querySelectorAll('[data-owner-choice] [data-choice]').forEach((btn) => {
+    const choice = btn.getAttribute('data-choice');
+    btn.setAttribute('aria-pressed', state.preferredVersion === choice ? 'true' : 'false');
   });
+}
+
+function paintZoom(zoom) {
+  document.querySelectorAll('[data-compare-zoom] [data-inspect-zoom]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', btn.getAttribute('data-inspect-zoom') === zoom ? 'true' : 'false');
+  });
+}
+
+function applyZoom(zoom) {
+  document.querySelectorAll('#alphaCleanupComparison .inspect-scene').forEach((scene) => {
+    ZOOM_CLASSES.forEach((cls) => scene.classList.remove(cls));
+    scene.classList.add('inspect-' + zoom);
+  });
+  paintZoom(zoom);
 }
 
 function wireZoom() {
-  document.querySelectorAll('[data-inspect-zoom]').forEach((btn) => {
+  applyZoom('100');
+  document.querySelectorAll('[data-compare-zoom] [data-inspect-zoom]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const scene = btn.closest('.inspect-slot') && btn.closest('.inspect-slot').querySelector('.inspect-scene');
-      if (!scene) return;
-      ZOOM_CLASSES.forEach((cls) => scene.classList.remove(cls));
-      scene.classList.add('inspect-' + (btn.getAttribute('data-inspect-zoom') || '100'));
+      applyZoom(btn.getAttribute('data-inspect-zoom') || '100');
     });
   });
 }
 
-function wireMarks() {
+function wireChoice() {
   let state = loadQa();
-  paint(state);
-  document.querySelectorAll('[data-mark-group="detail"] [data-mark]').forEach((btn) => {
+  paintChoice(state);
+  document.querySelectorAll('[data-owner-choice] [data-choice]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const group = btn.closest('[data-mark-group="detail"]');
-      const arm = group && group.getAttribute('data-arm');
-      const mark = btn.getAttribute('data-mark');
-      if (!arm || !mark) return;
+      const choice = btn.getAttribute('data-choice');
       state = loadQa();
-      const row = { ...(state.arms[arm] || {}) };
-      row[mark] = !row[mark];
-      state.arms[arm] = row;
+      state.preferredVersion = choice;
+      state.productionApproved = false;
       saveQa(state);
-      paint(state);
+      paintChoice(state);
     });
   });
 }
 
 wireZoom();
-wireMarks();
+wireChoice();

@@ -9269,7 +9269,7 @@ function openBranchAlphaSalvageReview(){
   const root=document.getElementById('branch-alpha-salvage-1-root');
   if(!root) return;
   const status=document.getElementById('branchAlphaSalvageStatus');
-  if(status) status.textContent='Native alpha salvage diagnostics. Spend DENIED. Originals locked.';
+  if(status) status.textContent='ORIGINAL vs CLEANUP A/B/C. Spend DENIED. Originals locked.';
   root.classList.add('dac-active');
   root.setAttribute('aria-hidden','false');
   let frame=root.querySelector('iframe.dac-frame');
@@ -9279,7 +9279,7 @@ function openBranchAlphaSalvageReview(){
     frame.title='BRANCH alpha salvage feasibility review';
     root.appendChild(frame);
   }
-  const reviewSrc='modules/garden-design/branch-alpha-salvage-feasibility-1.html?v=20260920f';
+  const reviewSrc='modules/garden-design/branch-alpha-salvage-feasibility-1.html?v=20260920g';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
 }
 
