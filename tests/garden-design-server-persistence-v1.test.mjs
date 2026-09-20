@@ -1094,7 +1094,7 @@ test('live save: iframe binds persist to loaded design and ignores unchanged are
   const area = gd.slice(gd.indexOf('function gdOnAreaSelect'), gd.indexOf('function gdOwnedPlantsFromContext'));
   assert.match(area, /String\(next \|\| ''\) === String\(gdSelectedAreaId \|\| ''\)/);
   assert.match(area, /return;/);
-  assert.match(app, /index\.html\?v=20260920add1/);
+  assert.match(app, /index\.html\?v=20260920reg1/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920save1/);
   assert.match(persist, /persistableDesignAssetId/);
   assert.match(persist, /payload\.cachedDesignId/);

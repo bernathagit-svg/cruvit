@@ -2152,10 +2152,25 @@ function gdOnPersistResult(msg) {
   }
 }
 
+function gdRerenderPlantLayersAfterRegistryArrival() {
+  if (gdHydratingFromServer) return;
+  if (!overlayPlacementActive || !plantLayers.length) return;
+  renderPlantLayers();
+}
+
 function gdIndexDesignAssetRegistry(registry) {
   const api = window.CruvitGardenDesignAssetRegistry;
   if (!api || !registry) return;
-  gdDesignAssetIndex = api.indexDesignAssetRegistry(registry);
+  if (typeof api.applyDesignAssetRegistryArrival === 'function') {
+    const arrival = api.applyDesignAssetRegistryArrival(registry, {
+      overlayPlacementActive: overlayPlacementActive,
+      plantLayers: plantLayers
+    });
+    gdDesignAssetIndex = arrival.index;
+  } else {
+    gdDesignAssetIndex = api.indexDesignAssetRegistry(registry);
+  }
+  gdRerenderPlantLayersAfterRegistryArrival();
 }
 
 function gdApplyOwnedGardenContext(ctx) {
@@ -2323,11 +2338,12 @@ function placeOwnedGardenPlant(idx) {
   addPlantLayerAt(p.name, pos.x, pos.y, {
     name: p.name,
     latin: p.scientific,
-    canonicalSlug: ident.canonicalSlug,
+    canonicalSlug: p.canonicalSlug || ident.canonicalSlug,
     kind: 'owned',
     gardenPlantId: p.gardenPlantId,
     gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId),
     areaId: areaId,
+    growthStage: p.growthStage || 'unspecified',
     emoji: '🌿'
   }, true);
   gdUpsertPlacedPlantCard({
@@ -2337,7 +2353,7 @@ function placeOwnedGardenPlant(idx) {
     kind: 'owned',
     gardenPlantId: p.gardenPlantId,
     gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId),
-    canonicalSlug: ident.canonicalSlug,
+    canonicalSlug: p.canonicalSlug || ident.canonicalSlug,
     areaId: areaId
   });
   renderPlantsDrawer();
@@ -3346,7 +3362,7 @@ function addPlantLayerAt(name, x, y, plantMeta, clampGround) {
     areaId: areaId,
     source: 'garden-design',
     status: (plantMeta?.gardenPlantId || template?.gardenPlantId) ? 'owned' : 'proposed',
-    growthStage: plantMeta?.growthStage || template?.growthStage || 'mature',
+    growthStage: plantMeta?.growthStage || template?.growthStage || (ownedLayer ? 'unspecified' : 'mature'),
     targetGrowthStage: plantMeta?.targetGrowthStage || template?.targetGrowthStage || 'mature',
     season: plantMeta?.season || template?.season || 'unknown',
     phenology: plantMeta?.phenology || template?.phenology || 'vegetative',
@@ -5585,7 +5601,7 @@ The plants array MUST match the exact counts specified above.`}]);
   </script>
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
-    import './garden-design-asset-registry-v1.js?v=20260916d';
+    import './garden-design-asset-registry-v1.js?v=20260920reg1';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import './garden-design-owned-garden-v1.js?v=20260917b';
     import {

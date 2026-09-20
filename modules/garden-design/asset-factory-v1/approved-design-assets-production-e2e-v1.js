@@ -240,7 +240,7 @@ function auditManifest(root, indexHtml) {
 
 function auditRegistryAuthorityPath(indexHtml, appHtml) {
   return {
-    hostFetch: "app.html loadGardenDesignAssetRegistry → fetch('modules/garden-design/assets/plants/design-asset-registry-v1.json')",
+    hostFetch: "app.html loadGardenDesignAssetRegistry → fetch('modules/garden-design/assets/plants/design-asset-registry-v1.json?v=20260920reg1')",
     hostPost: 'buildGardenDesignContextPayload.designAssetRegistry → cruvit:garden-design-context',
     iframeIndex: 'index.html gdApplyOwnedGardenContext → gdIndexDesignAssetRegistry',
     lookup: 'index.html resolvePlantLayerAsset → CruvitGardenDesignAssetRegistry.resolveDesignAsset(gdDesignAssetIndex)',

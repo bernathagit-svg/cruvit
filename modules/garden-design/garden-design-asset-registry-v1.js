@@ -10,13 +10,16 @@
 
 import {
   isBroadPlantIdentity,
-  requiredDesignVariantRoles
+  requiredDesignVariantRoles,
+  seasonMatchesRole
 } from './garden-design-variant-policy-v1.js';
 
 export const GARDEN_DESIGN_ASSET_REGISTRY_VERSION = '1.0.0';
+export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260920reg1';
 
 export const DESIGN_ASSET_APPROVAL = Object.freeze({
   APPROVED: 'approved',
+  CANDIDATE: 'candidate',
   MISSING: 'missing',
   UNVERIFIED: 'unverified',
   REJECTED: 'rejected'
@@ -59,7 +62,16 @@ export function isUsableDesignVariant(variant) {
   if (!variant || typeof variant !== 'object') return false;
   if (variant.comingSoon === true) return false;
   const status = lower(variant.status || variant.approvalStatus);
-  if (status === 'missing' || status === 'rejected') return false;
+  const approval = lower(variant.approvalStatus || variant.status);
+  if (
+    status === 'missing' ||
+    status === 'rejected' ||
+    status === 'candidate' ||
+    approval === DESIGN_ASSET_APPROVAL.REJECTED ||
+    approval === DESIGN_ASSET_APPROVAL.CANDIDATE
+  ) {
+    return false;
+  }
   if (variant.approvalStatus === DESIGN_ASSET_APPROVAL.APPROVED && variant.transparencyReady === true) {
     return true;
   }
@@ -96,12 +108,24 @@ export function assertDesignAssetSetIdentity(set) {
   return { ok: true, canonicalSlug: slug };
 }
 
+function requestedStageKnown(stage) {
+  const value = lower(stage);
+  return Boolean(value) && value !== 'unknown' && value !== 'unspecified';
+}
+
 function variantScore(requested, candidate) {
   if (!isUsableDesignVariant(candidate)) return 1000;
   let score = 0;
-  if (requested.growthStage && candidate.growthStage !== requested.growthStage) score += 4;
+  if (requestedStageKnown(requested.growthStage) && candidate.growthStage !== requested.growthStage) score += 4;
   if (requested.phenology && candidate.phenology !== requested.phenology) score += 3;
-  if (requested.season && requested.season !== 'unknown' && candidate.season !== requested.season) score += 2;
+  if (
+    requested.season &&
+    requested.season !== 'unknown' &&
+    requested.season !== 'season-neutral' &&
+    candidate.season !== requested.season
+  ) {
+    score += 2;
+  }
   if (requested.formView && candidate.formView !== requested.formView) score += 1;
   return score;
 }
@@ -142,7 +166,7 @@ export function getDesignAssetSet(canonicalSlug, index) {
 export function resolveDesignAsset(input = {}, index) {
   const canonicalSlug = slugify(input.canonicalSlug || input.slug);
   const requested = {
-    growthStage: input.growthStage || 'mature',
+    growthStage: requestedStageKnown(input.growthStage) ? input.growthStage : null,
     season: input.season || 'unknown',
     phenology: input.phenology || 'vegetative',
     formView: input.formView || null
@@ -275,12 +299,80 @@ export function requiredRolesVersusCoverage(plant, index) {
     if (role.required === false) return false;
     return !usable.some(
       (v) =>
-        v.growthStage === role.growthStage &&
-        (role.season === 'unknown' || v.season === role.season || v.season === 'unknown') &&
+        (role.growthStage === 'unspecified' ||
+          role.growthStage === 'unknown' ||
+          v.growthStage === role.growthStage) &&
+        seasonMatchesRole(role.season, v.season) &&
         v.phenology === role.phenology
     );
   });
   return { plan, usableCount: usable.length, missingRequired: missing };
+}
+
+/**
+ * Registry arrival is idempotent. Current payload always replaces the index.
+ * Re-render is a DOM-only plan: never persist, never duplicate placements.
+ */
+export function applyDesignAssetRegistryArrival(registry, state = {}) {
+  const index = indexDesignAssetRegistry(registry || {});
+  const overlayPlacementActive = state.overlayPlacementActive === true;
+  const plantLayers = Array.isArray(state.plantLayers) ? state.plantLayers : [];
+  return {
+    index,
+    shouldRenderPlantLayers: overlayPlacementActive && plantLayers.length > 0,
+    persistWrites: 0,
+    placementRowsCreated: 0,
+    gardenPlantsWrites: 0,
+    duplicatePlacements: false
+  };
+}
+
+export function resolveOwnedLayerPresentation(layer = {}, index) {
+  const ownedGrowthStage = layer.growthStage == null ? null : layer.growthStage;
+  const resolved = resolveDesignAsset(
+    {
+      canonicalSlug: layer.canonicalSlug || layer.slug,
+      growthStage: ownedGrowthStage,
+      phenology: layer.phenology,
+      season: layer.season
+    },
+    index
+  );
+  return {
+    canonicalSlug: resolved.canonicalSlug,
+    visualReady: resolved.visualReady === true,
+    assetId: resolved.assetId || null,
+    url: resolved.url || null,
+    fallback: resolved.fallback,
+    architectureMode: (resolved.variant && resolved.variant.architectureMode) || null,
+    visualForm: (resolved.variant && resolved.variant.visualForm) || null,
+    ownedGrowthStage,
+    ownedGrowthStageUnchanged: true,
+    presentationDidNotMutateOwnedStage: true
+  };
+}
+
+export function renderLayersFromDesignAssetIndex(layers, index) {
+  return (Array.isArray(layers) ? layers : []).map((layer) => {
+    const presentation = resolveOwnedLayerPresentation(layer, index);
+    return {
+      id: layer.id,
+      gardenPlantId: layer.gardenPlantId,
+      x: layer.x,
+      y: layer.y,
+      scale: layer.scale,
+      areaId: layer.areaId,
+      canonicalSlug: layer.canonicalSlug,
+      growthStage: layer.growthStage,
+      visualReady: presentation.visualReady,
+      assetId: presentation.assetId,
+      url: presentation.url,
+      architectureMode: presentation.architectureMode,
+      visualForm: presentation.visualForm,
+      placeholder: !presentation.visualReady,
+      fallback: presentation.fallback
+    };
+  });
 }
 
 export function lookupMustNotGenerate(canonicalSlug, index) {
@@ -296,6 +388,7 @@ export function lookupMustNotGenerate(canonicalSlug, index) {
 
 const api = {
   GARDEN_DESIGN_ASSET_REGISTRY_VERSION,
+  GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN,
   DESIGN_ASSET_APPROVAL,
   DESIGN_ASSET_FALLBACK,
   resolveManifestKeyToCanonical,
@@ -305,6 +398,9 @@ const api = {
   indexDesignAssetRegistry,
   getDesignAssetSet,
   resolveDesignAsset,
+  applyDesignAssetRegistryArrival,
+  resolveOwnedLayerPresentation,
+  renderLayersFromDesignAssetIndex,
   auditDesignAssetCoverage,
   requiredRolesVersusCoverage,
   lookupMustNotGenerate
