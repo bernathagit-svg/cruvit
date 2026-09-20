@@ -1741,6 +1741,14 @@ function gdSetPersistStatus(state, detail, kind) {
   });
 }
 
+function gdPersistIsUnsynced() {
+  return gdPersistSyncState === 'LOCAL_DIRTY'
+    || gdPersistSyncState === 'SAVING'
+    || gdPersistSyncState === 'SAVE_FAILED'
+    || gdPersistSyncState === 'SERVER_SAVE_FAILED'
+    || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER';
+}
+
 function gdRetryLastPersist() {
   if (gdLastSourceMediaPost && gdPersistStatusKind === 'photo') {
     const payload = Object.assign({}, gdLastSourceMediaPost, gdPersistDesignRefFields());
@@ -1748,7 +1756,7 @@ function gdRetryLastPersist() {
     gdPostToHost(payload);
     return;
   }
-  if (plantLayers.length && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER')) {
+  if (plantLayers.length && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SAVE_FAILED' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER')) {
     gdPersistAllVisiblePlacements();
     return;
   }
@@ -1891,7 +1899,7 @@ function gdFlushHostPersist() {
     return;
   }
   gdLastPersistOps = ops.slice();
-  gdPersistSyncState = 'LOCAL_DIRTY';
+  gdPersistSyncState = 'SAVING';
   gdSetPersistStatus('saving');
   ops.forEach(function(op) {
     if (op.action === 'delete') {
@@ -2128,6 +2136,11 @@ function gdHydrateServerDesign(msg) {
       gdWriteLocalCache(false);
       gdSetPersistStatus('error', 'Not saved — retry');
       gdSetPersistNote('LOCAL_AHEAD_OF_SERVER: these placements are on this device only until server save succeeds.');
+    } else if (!placements.length) {
+      gdWriteLocalCache(false);
+      gdPersistSyncState = 'LOCAL_DIRTY';
+      gdSetPersistStatus('');
+      gdSetPersistNote('');
     } else {
       gdWriteLocalCache(true);
       gdPersistSyncState = 'SERVER_SAVED';
@@ -2194,10 +2207,10 @@ function gdOnPersistResult(msg) {
         clientInstanceId: gdDesignClientInstanceId
       });
     }
-    if (msg.noop === true && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER' || gdOutstandingPlacementWrites > 0)) {
+    if (msg.noop === true && (gdPersistIsUnsynced() || gdOutstandingPlacementWrites > 0)) {
       return;
     }
-    if (isPhoto && (gdPersistSyncState === 'LOCAL_DIRTY' || gdPersistSyncState === 'SERVER_SAVE_FAILED' || gdPersistSyncState === 'LOCAL_AHEAD_OF_SERVER' || gdOutstandingPlacementWrites > 0)) {
+    if (isPhoto && (gdPersistIsUnsynced() || gdOutstandingPlacementWrites > 0)) {
       if (msg.sourceMediaUrl) {
         photoDataUrl = msg.sourceMediaUrl;
         photoB64 = null;
@@ -2215,10 +2228,13 @@ function gdOnPersistResult(msg) {
     if (isPlacement && gdOutstandingPlacementWrites > 0) {
       return;
     }
-    if (isPlacement && gdPlacementWriteHadFailure) {
+    if (isPlacement && (gdPlacementWriteHadFailure || msg.readBackConfirmed !== true)) {
       gdWriteLocalCache(false);
-      gdPersistSyncState = 'SERVER_SAVE_FAILED';
+      gdPersistSyncState = 'SAVE_FAILED';
       gdSetPersistStatus('error', 'Not saved — retry');
+      return;
+    }
+    if (!isPlacement && gdPersistIsUnsynced()) {
       return;
     }
     if (isPlacement) gdPlacementWriteHadFailure = false;
@@ -2241,7 +2257,7 @@ function gdOnPersistResult(msg) {
     return;
   }
   gdWriteLocalCache(false);
-  gdPersistSyncState = 'SERVER_SAVE_FAILED';
+  gdPersistSyncState = 'SAVE_FAILED';
   try {
     console.warn('[garden-design-persist]', {
       stage: msg.stage || 'iframe-result',
@@ -2249,6 +2265,7 @@ function gdOnPersistResult(msg) {
       code: msg.code || null,
       supabaseCode: msg.supabaseCode || null,
       httpStatus: msg.httpStatus || null,
+      integrityFailureClass: msg.integrityFailureClass || null,
       message: msg.error || msg.code || 'not_saved'
     });
   } catch (e) {}
@@ -5710,7 +5727,7 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-asset-registry-v1.js?v=20260920reg1';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
-    import './garden-design-owned-garden-v1.js?v=20260920dur1';
+    import './garden-design-owned-garden-v1.js?v=20260920ins1';
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       mangoOwnerPreferredRangePosition,

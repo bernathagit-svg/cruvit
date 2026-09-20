@@ -24,6 +24,7 @@ import {
   mapServerPlacementToLayer,
   persistablePlacementGrowthStage
 } from './garden-design-owned-garden-v1.js';
+import { mapPersistFailureClass } from '../runtime-guards/runtime-integrity-gate-v1.js';
 
 export const GARDEN_DESIGN_SERVER_PERSISTENCE_VERSION = '1.0.0';
 export {
@@ -36,7 +37,7 @@ export {
 const DESIGN_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,garden_area_id,status,title,revision,source_media_id,derived_base_media_id,created_at,updated_at';
 const PLACEMENT_SELECT =
-  'id,garden_design_id,user_id,client_instance_id,kind,garden_plant_id,canonical_slug,garden_area_id,design_asset_id,growth_stage,target_growth_stage,season,phenology,x,y,scale,rotation,z_order,label,scientific,created_at,updated_at';
+  'id,garden_design_id,garden_profile_id,user_id,client_instance_id,kind,garden_plant_id,canonical_slug,garden_area_id,design_asset_id,growth_stage,target_growth_stage,season,phenology,x,y,scale,rotation,z_order,label,scientific,created_at,updated_at';
 const MEDIA_SELECT = 'id,garden_profile_id,storage_path,storage_bucket,purpose,source_module,mime_type,validation_state,metadata';
 const DEFAULT_DESIGN_TITLE = 'Garden Design';
 
@@ -61,6 +62,7 @@ const DESIGN_PROTECTED_UPDATE_COLUMNS = Object.freeze([
 const PLACEMENT_PROTECTED_UPDATE_COLUMNS = Object.freeze([
   'user_id',
   'garden_design_id',
+  'garden_profile_id',
   'client_instance_id',
   'id',
   'created_at'
@@ -158,7 +160,7 @@ function persistFailFields(error, stage, operation, extra = {}) {
   const httpStatus = extra.httpStatus
     || (error && (error.status || error.statusCode || error.httpStatus))
     || null;
-  return Object.assign({
+  const base = Object.assign({
     ok: false,
     keepLocalCanvas: true,
     paidAiCalls: 0,
@@ -168,6 +170,10 @@ function persistFailFields(error, stage, operation, extra = {}) {
     httpStatus,
     error: message
   }, extra);
+  if (!base.integrityFailureClass) {
+    base.integrityFailureClass = mapPersistFailureClass(base);
+  }
+  return base;
 }
 
 function logPersistConsole(info) {
@@ -178,6 +184,7 @@ function logPersistConsole(info) {
       code: info && info.code,
       supabaseCode: info && info.supabaseCode,
       httpStatus: info && info.httpStatus || null,
+      integrityFailureClass: info && info.integrityFailureClass || null,
       message: sanitizePersistMessage(info && (info.error || info.message))
     });
   } catch (_) {}
@@ -355,6 +362,16 @@ export function createGardenDesignMemorySupabase(seed = {}) {
             row.status = row.status || 'active';
           }
           if (table === 'garden_design_placements') {
+            if (!asNull(row.garden_profile_id)) {
+              return {
+                data: null,
+                error: {
+                  message: 'null value in column "garden_profile_id" of relation "garden_design_placements" violates not-null constraint',
+                  code: '23502',
+                  status: 400
+                }
+              };
+            }
             const truth = applyOwnedPlacementTruth(row);
             if (!truth.ok) return { data: null, error: truth.error };
             const dup = rows.find(
@@ -577,6 +594,7 @@ function mapPlacementRow(row) {
     id: row.id,
     serverId: row.id,
     clientInstanceId: row.client_instance_id,
+    gardenProfileId: row.garden_profile_id || null,
     kind: row.kind,
     gardenPlantId: row.garden_plant_id || null,
     canonicalSlug: row.canonical_slug || null,
@@ -632,11 +650,13 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   function authContext(payload = {}) {
     const sessionUserId = asText(getSessionUserId());
-    const gardenProfileId = asText(payload.gardenProfileId) || asText(getActiveGardenId());
+    const hostGardenId = asText(getActiveGardenId());
+    const gardenProfileId = hostGardenId || asText(payload.gardenProfileId);
     const supabase = getSupabase();
     return {
       sessionUserId,
       gardenProfileId,
+      hostGardenProfileId: hostGardenId || null,
       supabase,
       ok: !!(sessionUserId && gardenProfileId && supabase)
     };
@@ -1082,13 +1102,15 @@ export function createGardenDesignHostPersistence(deps = {}) {
   async function savePlacement(payload = {}, mode = 'create') {
     designPaidAiForAction(mode === 'update' ? 'update-placement' : 'save-placement');
     const auth = authContext(payload);
-    if (!auth.ok) {
+    const hostGardenId = asText(auth.hostGardenProfileId);
+    if (!auth.ok || !hostGardenId) {
       const fail = persistFailFields({ message: 'auth_or_garden_required' }, 'savePlacement', 'auth', {
         code: 'AUTH_OR_GARDEN_REQUIRED'
       });
       logPersistConsole(fail);
       return fail;
     }
+    auth.gardenProfileId = hostGardenId;
     const placement = payload.placement || payload;
     const clientInstanceId = asNull(placement.clientInstanceId || payload.clientInstanceId);
     if (!clientInstanceId) {
@@ -1126,6 +1148,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
     const row = {
       garden_design_id: design.id,
+      garden_profile_id: hostGardenId,
       user_id: auth.sessionUserId,
       client_instance_id: clientInstanceId,
       kind,
@@ -1212,28 +1235,44 @@ export function createGardenDesignHostPersistence(deps = {}) {
       .maybeSingle();
     if (fresh) rememberDesign(auth.gardenProfileId, payload.gardenAreaId, fresh);
 
+    const { data: confirmed, error: confirmError } = await auth.supabase
+      .from('garden_design_placements')
+      .select(PLACEMENT_SELECT)
+      .eq('garden_design_id', design.id)
+      .eq('client_instance_id', clientInstanceId)
+      .maybeSingle();
+    if (confirmError || !confirmed || asText(confirmed.garden_profile_id) !== hostGardenId) {
+      const fail = persistFailFields(confirmError || { message: 'placement_readback_missing' }, 'savePlacement', 'readback', {
+        code: 'SERVER_READBACK_MISMATCH'
+      });
+      logPersistConsole(fail);
+      return fail;
+    }
+
     return {
       ok: true,
       durableDatabase: true,
+      readBackConfirmed: true,
       paidAiCalls: 0,
       createdDesign: !!ensured.created,
       createsGardenPlant: false,
       designId: design.id,
       designClientInstanceId: design.client_instance_id,
       revision: fresh ? fresh.revision : design.revision,
-      placement: mapPlacementRow(written),
+      placement: mapPlacementRow(confirmed),
       gardenPlantId,
       gardenAreaId,
+      gardenProfileId: hostGardenId,
       canonicalSlug
     };
   }
 
   async function deletePlacement(payload = {}) {
     designPaidAiForAction('delete-placement');
-    const auth = authContext();
-    if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
+    const auth = authContext(payload);
+    if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0, integrityFailureClass: 'AUTH_CONTEXT_FAILURE' };
     const clientInstanceId = asNull(payload.clientInstanceId);
-    if (!clientInstanceId) return { ok: false, code: 'CLIENT_INSTANCE_ID_REQUIRED', paidAiCalls: 0 };
+    if (!clientInstanceId) return { ok: false, code: 'CLIENT_INSTANCE_ID_REQUIRED', paidAiCalls: 0, integrityFailureClass: 'INVALID_PERSIST_PAYLOAD' };
     const found = await findExistingDesign(payload);
     if (!found.ok) return Object.assign({ keepLocalCanvas: true, paidAiCalls: 0 }, found);
     if (!found.design) {
@@ -1246,7 +1285,18 @@ export function createGardenDesignHostPersistence(deps = {}) {
       .eq('garden_design_id', found.design.id)
       .eq('client_instance_id', clientInstanceId)
       .select(PLACEMENT_SELECT);
-    if (error) return { ok: false, code: 'PLACEMENT_DELETE_FAILED', error: error.message, keepLocalCanvas: true, paidAiCalls: 0 };
+    if (error) return persistFailFields(error, 'deletePlacement', 'delete', { code: 'PLACEMENT_DELETE_FAILED' });
+    const { data: leftover } = await auth.supabase
+      .from('garden_design_placements')
+      .select('id')
+      .eq('garden_design_id', found.design.id)
+      .eq('client_instance_id', clientInstanceId)
+      .maybeSingle();
+    if (leftover) {
+      return persistFailFields({ message: 'placement_still_present' }, 'deletePlacement', 'readback', {
+        code: 'SERVER_READBACK_MISMATCH'
+      });
+    }
     const { data: fresh } = await auth.supabase
       .from('garden_designs')
       .select(DESIGN_SELECT)
@@ -1256,6 +1306,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
     return {
       ok: true,
       durableDatabase: true,
+      readBackConfirmed: true,
       paidAiCalls: 0,
       deleted: Array.isArray(data) ? data.length > 0 : !!data,
       deletedGardenPlant: false,
@@ -1268,7 +1319,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   async function saveDesign(payload = {}) {
     designPaidAiForAction('save-design');
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) return { ok: false, code: 'AUTH_OR_GARDEN_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
     const wantsTitle = payload.title != null;
     const wantsArea = Object.prototype.hasOwnProperty.call(payload, 'gardenAreaId') && payload.attachArea === true;
@@ -1349,7 +1400,7 @@ export function createGardenDesignHostPersistence(deps = {}) {
 
   async function saveSourceMedia(payload = {}) {
     designPaidAiForAction('save-source-media');
-    const auth = authContext();
+    const auth = authContext(payload);
     if (!auth.ok) {
       const fail = persistFailFields({ message: 'auth_or_garden_required' }, 'saveSourceMedia', 'auth', {
         code: 'AUTH_OR_GARDEN_REQUIRED'

@@ -70,9 +70,11 @@ export const MULTIPLE_DESIGNS_REQUIRE_SELECTION = 'MULTIPLE_DESIGNS_REQUIRE_SELE
 export const LOCAL_DESIGN_RESTORE_AVAILABLE = 'LOCAL_DESIGN_RESTORE_AVAILABLE';
 export const IDENTITY_INCONSISTENT = 'IDENTITY_INCONSISTENT';
 export const DESIGN_PERSIST_SYNC = Object.freeze({
-  SERVER_SAVED: 'SERVER_SAVED',
   LOCAL_DIRTY: 'LOCAL_DIRTY',
-  SERVER_SAVE_FAILED: 'SERVER_SAVE_FAILED',
+  SAVING: 'SAVING',
+  SERVER_SAVED: 'SERVER_SAVED',
+  SAVE_FAILED: 'SAVE_FAILED',
+  SERVER_SAVE_FAILED: 'SAVE_FAILED',
   LOCAL_AHEAD_OF_SERVER: 'LOCAL_AHEAD_OF_SERVER'
 });
 
@@ -783,8 +785,17 @@ export function classifyDesignPersistSync(input = {}) {
   }
   if (input.writeFailed === true) {
     return {
-      state: DESIGN_PERSIST_SYNC.SERVER_SAVE_FAILED,
-      ui: DESIGN_PERSIST_SYNC.SERVER_SAVE_FAILED,
+      state: DESIGN_PERSIST_SYNC.SAVE_FAILED,
+      ui: DESIGN_PERSIST_SYNC.SAVE_FAILED,
+      savedLabelForbidden: true,
+      autoImport: false,
+      shouldOverwriteLocalCacheDurable: false
+    };
+  }
+  if (input.saving === true) {
+    return {
+      state: DESIGN_PERSIST_SYNC.SAVING,
+      ui: DESIGN_PERSIST_SYNC.SAVING,
       savedLabelForbidden: true,
       autoImport: false,
       shouldOverwriteLocalCacheDurable: false

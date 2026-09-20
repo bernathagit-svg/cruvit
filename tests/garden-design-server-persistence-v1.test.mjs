@@ -1096,10 +1096,12 @@ test('live save: iframe binds persist to loaded design and ignores unchanged are
   const area = gd.slice(gd.indexOf('function gdOnAreaSelect'), gd.indexOf('function gdOwnedPlantsFromContext'));
   assert.match(area, /String\(next \|\| ''\) === String\(gdSelectedAreaId \|\| ''\)/);
   assert.match(area, /return;/);
-  assert.match(app, /index\.html\?v=20260920dur1/);
-  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920dur1/);
+  assert.match(app, /index\.html\?v=20260920ins1/);
+  assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920ins1/);
   assert.match(persist, /persistableDesignAssetId/);
   assert.match(persist, /payload\.cachedDesignId/);
+  assert.match(persist, /garden_profile_id: hostGardenId/);
+  assert.match(gd, /msg\.readBackConfirmed !== true/);
 });
 
 test('loadDesign uses payload gardenProfileId when session active garden is empty', async () => {
@@ -1262,6 +1264,107 @@ test('three existing owned plants persist onto existing design without creating 
   assert.equal(bySlug.mango.design_asset_id == null, true);
   assert.equal(bySlug.banana.garden_plant_id, bananaId);
   assert.equal(bySlug.pineapple.garden_plant_id, pineappleId);
+});
+
+test('placement INSERT requires host garden_profile_id; iframe cannot override; missing column is 23502', async () => {
+  const designId = 'a1a34009-a0b6-4e4a-a141-8926dd60334e';
+  const gardenId = 'fab7eec4-86b7-4b8a-838d-8aa4bba61657';
+  const mangoId = '5fdd5d4c-adbf-4451-a784-2e2a7d271662';
+  const patioId = 'b394f661-0edd-4740-a04b-8bcc420590c9';
+  const plants = [{
+    id: mangoId,
+    garden_profile_id: gardenId,
+    profile_slug: 'mango',
+    garden_area_id: patioId,
+    name: 'Mango Tree',
+    scientific: 'Mangifera indica'
+  }];
+  const { mem, host } = makeHost({
+    plants,
+    activeGardenId: gardenId,
+    garden_designs: [{
+      id: designId,
+      garden_profile_id: gardenId,
+      user_id: USER,
+      client_instance_id: 'gd_d_21be315d-49c8-4be9-a8a1-04de4a573b41',
+      garden_area_id: null,
+      status: 'active',
+      title: 'Garden Design',
+      revision: 8,
+      source_media_id: '08bc3085-9d6c-4c7e-a67a-dba324f00e70'
+    }]
+  });
+  const plantsBefore = mem.db.garden_plants.length;
+  const omitted = await mem.from('garden_design_placements').insert({
+    garden_design_id: designId,
+    user_id: USER,
+    client_instance_id: 'pl_mango_old_payload',
+    kind: 'owned',
+    garden_plant_id: mangoId,
+    canonical_slug: 'mango',
+    garden_area_id: patioId,
+    x: 0.22,
+    y: 0.74,
+    scale: 1
+  }).select('id').single();
+  assert.equal(omitted.error && omitted.error.code, '23502');
+  assert.match(String(omitted.error && omitted.error.message), /garden_profile_id/);
+  assert.equal(mem.db.garden_design_placements.length, 0);
+
+  const placed = await host.savePlacement({
+    cachedDesignId: designId,
+    designId,
+    designClientInstanceId: 'gd_d_21be315d-49c8-4be9-a8a1-04de4a573b41',
+    gardenProfileId: 'iframe-spoof-garden',
+    placement: {
+      clientInstanceId: 'pl_mango_owner',
+      kind: 'owned',
+      gardenPlantId: mangoId,
+      canonicalSlug: 'mango',
+      gardenProfileId: 'iframe-spoof-garden',
+      designAssetId: 'mango__mature__tree__vegetative__detail-v2__high',
+      x: 0.22,
+      y: 0.74,
+      scale: 1,
+      growthStage: 'unspecified'
+    }
+  });
+  assert.equal(placed.ok, true);
+  assert.equal(placed.readBackConfirmed, true);
+  assert.equal(placed.createdDesign, false);
+  assert.equal(placed.createsGardenPlant, false);
+  assert.equal(placed.designId, designId);
+  assert.equal(placed.gardenProfileId, gardenId);
+  assert.equal(mem.db.garden_designs.length, 1);
+  assert.equal(mem.db.garden_plants.length, plantsBefore);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  const row = mem.db.garden_design_placements[0];
+  assert.equal(row.garden_profile_id, gardenId);
+  assert.notEqual(row.garden_profile_id, 'iframe-spoof-garden');
+  assert.equal(row.garden_design_id, designId);
+  assert.equal(row.garden_plant_id, mangoId);
+  assert.equal(row.canonical_slug, 'mango');
+  assert.equal(row.garden_area_id, patioId);
+  assert.equal(row.kind, 'owned');
+  assert.equal(row.design_asset_id == null, true);
+
+  const moved = await host.savePlacement({
+    cachedDesignId: designId,
+    designId,
+    gardenProfileId: 'iframe-spoof-garden',
+    placement: {
+      clientInstanceId: 'pl_mango_owner',
+      kind: 'owned',
+      gardenPlantId: mangoId,
+      x: 0.41,
+      y: 0.81,
+      scale: 1.2
+    }
+  }, 'update');
+  assert.equal(moved.ok, true);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  assert.equal(mem.db.garden_design_placements[0].garden_profile_id, gardenId);
+  assert.equal(mem.db.garden_design_placements[0].garden_plant_id, mangoId);
 });
 
 function looksLikePostgresDataUrl(row) {
