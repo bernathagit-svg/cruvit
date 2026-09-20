@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>BRANCH_STRUCTURE calibration — Apple dormant CONTROL vs NEW</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note, .inspect-tools, .metrics { font-size: 13px; color: #444; }
+    .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    h3 { margin: 18px 0 8px; font-size: 16px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
+    .inspect-cutout { width: 1024px; height: auto; filter: none !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-200 .inspect-cutout { width: 2048px; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .inspect-cutout, [data-review-mode="NATIVE_DETAIL"] img { filter: none !important; }
+    .ghost { padding: 24px; background: rgba(255,255,255,.7); }
+    .cap { font-size: 14px; font-weight: 600; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .marks button[aria-pressed="true"] { background: #a33; color: #fff; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
+    .questions { font-size: 14px; }
+    button { padding: 6px 10px; cursor: pointer; }
+  </style>
+</head>
+<body data-run-id="design-asset-branch-structure-calibration-1" data-owner-qa-storage="cruvit:branch-structure-calibration-1">
+  <h1>BRANCH_STRUCTURE calibration V1 — Apple TREE MATURE DORMANT</h1>
+  <p class="warn" id="prepBanner">PREP ONLY. NEW candidate is not generated. Spend gate DENIED. HIGH jobs = 0. Do not execute without explicit owner approval of this exact runId.</p>
+  <p class="note">runId design-asset-branch-structure-calibration-1. Prompt design-cutout-branch-structure-v2-experiment. Quality medium only. This is not a sharpness A/B. Native 100/150/200, filter:none, checkerboard.</p>
+  <h3>NATIVE ASSET INSPECTION (primary)</h3>
+  <div class="slots inspect-row">
+    <div class="slot inspect-slot" data-arm="CONTROL" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">CONTROL — old Detail V2 + medium</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · brown ghosting failure · HISTORICAL CONTROL — NOT APPROVED</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="CONTROL — old Detail V2 + medium" src="assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="CONTROL">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="BRANCH_STRUCTURE_OK">BRANCH_STRUCTURE_OK</button><button type="button" data-mark="BROWN_HAZE">BROWN_HAZE</button><button type="button" data-mark="GHOST_BRANCHES">GHOST_BRANCHES</button><button type="button" data-mark="ALPHA_FAILURE">ALPHA_FAILURE</button><button type="button" data-mark="TOO_DENSE">TOO_DENSE</button><button type="button" data-mark="TOO_SPARSE">TOO_SPARSE</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">HISTORICAL CONTROL — NOT APPROVED. Do not modify, re-encode, or overwrite. Brown ghosting failure.</p>
+  </div>
+    <div class="slot inspect-slot" data-arm="NEW" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">NEW — Branch Structure V2 + medium</p>
+    <p class="note">design-cutout-branch-structure-v2-experiment · quality=medium · not generated yet</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — NEW prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="NEW">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="BRANCH_STRUCTURE_OK">BRANCH_STRUCTURE_OK</button><button type="button" data-mark="BROWN_HAZE">BROWN_HAZE</button><button type="button" data-mark="GHOST_BRANCHES">GHOST_BRANCHES</button><button type="button" data-mark="ALPHA_FAILURE">ALPHA_FAILURE</button><button type="button" data-mark="TOO_DENSE">TOO_DENSE</button><button type="button" data-mark="TOO_SPARSE">TOO_SPARSE</button><button type="button" data-mark="DEAD_APPEARANCE">DEAD_APPEARANCE</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+  </div>
+  <h3>CONTROL technical diagnostics</h3>
+  <ul class="metrics">
+    <li>fully opaque pixel %: 0</li>
+    <li>alpha 1–64 ghost: 379152</li>
+    <li>alpha 65–191 partial: 149494</li>
+    <li>alpha 192–254 edge: 125998</li>
+    <li>alpha 255 opaque: 0</li>
+    <li>brown semi-transparent ratio of visible: 0.992361</li>
+    <li>connected opaque wood: NO_OPAQUE_WOOD</li>
+  </ul>
+  <p class="note">No universal magic threshold. Owner visual review remains authoritative. Compare a future candidate against this failed control.</p>
+  <h3>Owner questions</h3>
+  <ol class="questions"><li>1. Does this look like a clean dormant apple tree?</li><li>2. Are main and secondary branches clearly readable?</li><li>3. Is negative space truly transparent?</li><li>4. Is the brown haze gone?</li><li>5. Are there ghost branches?</li><li>6. Does the tree look dormant rather than dead?</li><li>7. Is medium quality sufficient for BRANCH_STRUCTURE?</li></ol>
+  <p class="note">If NEW medium is clean, readable, and alpha-ghosting is materially fixed: BRANCH_STRUCTURE → MEDIUM_POLICY_VALIDATED. Do not require HIGH. If haze/alpha failure persists: STOP, BRANCH_ALPHA_PROBLEM_PERSISTS, do not auto-run HIGH.</p>
+  <script type="module" src="./asset-factory-v1/branch-structure-calibration-review-runtime.js"></script>
+</body>
+</html>

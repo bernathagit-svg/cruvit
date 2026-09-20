@@ -273,4 +273,11 @@ export {
   APPLE_BRANCH_STRUCTURE_NEXT_EXPERIMENT,
   buildBranchStructureV2ExperimentPromptRecord
 } from './prompt-factory-branch-structure-v2-experiment-v1.js';
+export {
+  BRANCH_STRUCTURE_CALIBRATION_RUN_ID,
+  BRANCH_STRUCTURE_CALIBRATION_SPEND_GATE,
+  buildBranchStructureCalibrationJob,
+  writeBranchStructureCalibrationReports,
+  executeBranchStructureCalibration
+} from './branch-structure-calibration-prep-v1.js';
 

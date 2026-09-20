@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
-<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260920c">
+<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260920d">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260915a">
 <link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913h">
@@ -712,6 +712,10 @@
 <div id="quality-family-calibration-final-1-root" aria-hidden="true">
   <button type="button" class="dac-back" onclick="closeQualityFamilyCalibrationFinalReview()"><span aria-hidden="true">←</span><span>Close family calibration</span></button>
   <p class="dac-status" id="qualityFamilyCalibrationFinalStatus"></p>
+</div>
+<div id="branch-structure-calibration-1-root" aria-hidden="true">
+  <button type="button" class="dac-back" onclick="closeBranchStructureCalibrationReview()"><span aria-hidden="true">←</span><span>Close branch calibration</span></button>
+  <p class="dac-status" id="branchStructureCalibrationStatus"></p>
 </div>
 <div id="plant-doctor-root" aria-hidden="true">
   <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
@@ -9222,6 +9226,34 @@ function openQualityFamilyCalibrationFinalReview(){
 
 window.openQualityFamilyCalibrationFinalReview=openQualityFamilyCalibrationFinalReview;
 
+function closeBranchStructureCalibrationReview(){
+  const root=document.getElementById('branch-structure-calibration-1-root');
+  if(!root) return;
+  root.classList.remove('dac-active');
+  root.setAttribute('aria-hidden','true');
+}
+
+function openBranchStructureCalibrationReview(){
+  const root=document.getElementById('branch-structure-calibration-1-root');
+  if(!root) return;
+  const status=document.getElementById('branchStructureCalibrationStatus');
+  if(status) status.textContent='Native BRANCH_STRUCTURE comparison. Spend DENIED.';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='BRANCH_STRUCTURE calibration review';
+    root.appendChild(frame);
+  }
+  const reviewSrc='modules/garden-design/branch-structure-calibration-1.html?v=20260920d';
+  if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
+}
+
+window.openBranchStructureCalibrationReview=openBranchStructureCalibrationReview;
+window.closeBranchStructureCalibrationReview=closeBranchStructureCalibrationReview;
+
 function ensureDesignAssetCalibrationReviewHost(){
   if(window.__cruvitCalibrationReviewHostCtrl) return window.__cruvitCalibrationReviewHostCtrl;
   const hostApi=window.CruvitCalibrationReviewHost;
@@ -9348,6 +9380,7 @@ window.addEventListener('load',function(){
   if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
   if(location.hash==='#design-asset-woody-foliage-detail-ab-1') openWoodyFoliageDetailAbReview();
   if(location.hash==='#design-asset-quality-family-calibration-final-1') openQualityFamilyCalibrationFinalReview();
+  if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
 });
 window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
@@ -9355,6 +9388,7 @@ window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
   if(location.hash==='#design-asset-woody-foliage-detail-ab-1') openWoodyFoliageDetailAbReview();
   if(location.hash==='#design-asset-quality-family-calibration-final-1') openQualityFamilyCalibrationFinalReview();
+  if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
 });
 
 /* ── Plant Doctor (isolated iframe module) ── */
