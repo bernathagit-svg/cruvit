@@ -12,10 +12,10 @@ import {
   isBroadPlantIdentity,
   requiredDesignVariantRoles,
   seasonMatchesRole
-} from './garden-design-variant-policy-v1.js';
+} from './garden-design-variant-policy-v1.js?v=20260920graph1';
 
 export const GARDEN_DESIGN_ASSET_REGISTRY_VERSION = '1.0.0';
-export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260920reg3';
+export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260920graph1';
 
 export const DESIGN_ASSET_APPROVAL = Object.freeze({
   APPROVED: 'approved',
