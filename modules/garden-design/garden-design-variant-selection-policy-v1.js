@@ -20,14 +20,14 @@ import {
   seasonPolicyForRole,
   phenologyPolicyForRole,
   assertNoFakeSeasonalVariants
-} from './garden-design-variant-policy-v1.js';
+} from './garden-design-variant-policy-v1.js?v=20260920graph1';
 import {
   DESIGN_ASSET_FALLBACK,
   getDesignAssetSet,
   isUsableDesignVariant,
   requiredRolesVersusCoverage,
   resolveDesignAsset
-} from './garden-design-asset-registry-v1.js';
+} from './garden-design-asset-registry-v1.js?v=20260920graph1';
 
 export const DESIGN_VARIANT_SELECTION_POLICY_VERSION = '1.2.0';
 
