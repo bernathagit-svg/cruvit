@@ -24,7 +24,7 @@
       "NEW_FAMILY_ANCHOR_REQUIRED"
     ]
   },
-  "lavender": {
+  "lavenderBatch1Historical": {
     "canonicalSlug": "lavender",
     "file": "lavender-mature-vegetative-v1.png",
     "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
@@ -33,28 +33,43 @@
     "notProductionApproval": true,
     "identityRejected": false,
     "stickerLookAloneWouldInvalidate": false,
+    "historicalEvidenceOnly": true,
+    "overwriteBatch1Candidate": false,
     "reasons": [
       "SILHOUETTE_FLAGGED_ON_BATCH_1",
       "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
       "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
     ],
-    "note": "Do not silently add a paid vegetative job. Flowering/fruiting jobs remain in the 11-job manifest."
+    "note": "Batch-1 lavender remains historical evidence only. Batch 2 generates a new mature vegetative family anchor."
   },
+  "lavenderBatch2FamilyAnchor": "lavender shrub mature vegetative (new Batch-2 job 10)",
   "eggplant": {
     "canonicalSlug": "eggplant",
-    "file": "eggplant-mature-vegetative-v1.png",
-    "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
-    "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
-    "productionApproval": false,
-    "notProductionApproval": true,
-    "identityRejected": false,
-    "stickerLookAloneWouldInvalidate": false,
-    "reasons": [
-      "SILHOUETTE_FLAGGED_ON_BATCH_1",
-      "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
-      "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
-    ],
-    "note": "Do not silently add a paid vegetative job. Flowering/fruiting jobs remain in the 11-job manifest."
+    "visualStateCalibration": "DEFERRED_BASELINE_REQUIRED",
+    "generatedInBatch2": false,
+    "reason": "existing vegetative candidate is not a valid family anchor",
+    "fruitingCoveredBy": "mango mature fruiting",
+    "batch1Candidate": {
+      "canonicalSlug": "eggplant",
+      "file": "eggplant-mature-vegetative-v1.png",
+      "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
+      "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
+      "productionApproval": false,
+      "notProductionApproval": true,
+      "identityRejected": false,
+      "stickerLookAloneWouldInvalidate": false,
+      "historicalEvidenceOnly": true,
+      "overwriteBatch1Candidate": false,
+      "reasons": [
+        "SILHOUETTE_FLAGGED_ON_BATCH_1",
+        "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
+        "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
+      ],
+      "note": "Eggplant is deferred. Existing vegetative candidate is not a valid family anchor. No Batch-2 generation demand."
+    },
+    "overwriteBatch1Candidate": false,
+    "rejected": false,
+    "deleted": false
   },
   "silentlyAddedPaidJobs": 0
 }

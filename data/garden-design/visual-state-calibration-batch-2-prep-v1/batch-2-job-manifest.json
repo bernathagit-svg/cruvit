@@ -9,6 +9,7 @@
       "oneCanonicalIdentity": true,
       "reuseBatch1MatureAsAnchor": false,
       "includeYoung": true,
+      "proves": "YOUNG vs MATURE; VEGETATIVE vs FRUITING",
       "jobs": [
         1,
         2,
@@ -22,6 +23,7 @@
       "oneCanonicalIdentity": true,
       "reuseBatch1MatureAsAnchor": false,
       "includeYoung": true,
+      "proves": "YOUNG vs MATURE in large-herbaceous architecture",
       "jobs": [
         4,
         5
@@ -33,6 +35,7 @@
       "canonicalSlug": "apple",
       "oneCanonicalIdentity": true,
       "includeYoung": false,
+      "proves": "VEGETATIVE vs DORMANT",
       "jobs": [
         6,
         7
@@ -44,6 +47,7 @@
       "canonicalSlug": "pomegranate",
       "oneCanonicalIdentity": true,
       "secondCatalogIdentityForbidden": true,
+      "proves": "TREE vs SHRUB architectureMode",
       "jobs": [
         8,
         9
@@ -54,18 +58,11 @@
       "role": "flowering-shrub",
       "canonicalSlug": "lavender",
       "oneCanonicalIdentity": true,
-      "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
+      "reuseBatch1MatureAsAnchor": false,
+      "familyAnchor": "new Batch-2 mature vegetative",
+      "proves": "VEGETATIVE vs FLOWERING",
       "jobs": [
-        10
-      ]
-    },
-    {
-      "id": "F",
-      "role": "fruiting-crop",
-      "canonicalSlug": "eggplant",
-      "oneCanonicalIdentity": true,
-      "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
-      "jobs": [
+        10,
         11
       ]
     }
@@ -313,6 +310,32 @@
       "visualForm": "shrub",
       "architectureMode": "shrub",
       "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "phenology": "vegetative",
+      "season": "season-neutral",
+      "requirementState": "REQUIRED",
+      "variantKey": "mature__shrub__vegetative",
+      "visualStateKey": "mature__shrub__vegetative",
+      "jobId": "lavender__mature__shrub__vegetative__v1",
+      "assetVersion": "v1",
+      "purpose": "new clean family anchor; do not use Batch-1 lavender candidate",
+      "generated": false,
+      "candidateRelPath": null,
+      "encodePhysicalMeters": false,
+      "youngMustNotUseMatureSizeAuthority": false,
+      "youngPhysicalScale": null,
+      "secondCanonicalIdentityForbidden": false,
+      "comparisonAnchor": null,
+      "addPaidJobIfAnchorUnusable": false
+    },
+    {
+      "rank": 11,
+      "family": "lavender",
+      "familyId": "E",
+      "canonicalSlug": "lavender",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
       "phenologyState": "flowering",
       "phenology": "flowering",
       "season": "season-neutral",
@@ -321,70 +344,14 @@
       "visualStateKey": "mature__shrub__flowering",
       "jobId": "lavender__mature__shrub__flowering__v1",
       "assetVersion": "v1",
-      "purpose": "flowering phenology; do not silently add a vegetative paid job",
+      "purpose": "flowering phenology against the new Batch-2 mature vegetative family anchor",
       "generated": false,
       "candidateRelPath": null,
       "encodePhysicalMeters": false,
       "youngMustNotUseMatureSizeAuthority": false,
       "youngPhysicalScale": null,
       "secondCanonicalIdentityForbidden": false,
-      "comparisonAnchor": {
-        "canonicalSlug": "lavender",
-        "file": "lavender-mature-vegetative-v1.png",
-        "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
-        "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
-        "productionApproval": false,
-        "notProductionApproval": true,
-        "identityRejected": false,
-        "stickerLookAloneWouldInvalidate": false,
-        "reasons": [
-          "SILHOUETTE_FLAGGED_ON_BATCH_1",
-          "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
-          "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
-        ],
-        "note": "Do not silently add a paid vegetative job. Flowering/fruiting jobs remain in the 11-job manifest."
-      },
-      "addPaidJobIfAnchorUnusable": false
-    },
-    {
-      "rank": 11,
-      "family": "eggplant",
-      "familyId": "F",
-      "canonicalSlug": "eggplant",
-      "visualForm": "subshrub",
-      "architectureMode": "shrub",
-      "growthStage": "mature",
-      "phenologyState": "fruiting",
-      "phenology": "fruiting",
-      "season": "season-neutral",
-      "requirementState": "REQUIRED",
-      "variantKey": "mature__shrub__fruiting",
-      "visualStateKey": "mature__shrub__fruiting",
-      "jobId": "eggplant__mature__shrub__fruiting__v1",
-      "assetVersion": "v1",
-      "purpose": "fruiting phenology on supported subshrub architecture; do not silently add a vegetative paid job",
-      "generated": false,
-      "candidateRelPath": null,
-      "encodePhysicalMeters": false,
-      "youngMustNotUseMatureSizeAuthority": false,
-      "youngPhysicalScale": null,
-      "secondCanonicalIdentityForbidden": false,
-      "comparisonAnchor": {
-        "canonicalSlug": "eggplant",
-        "file": "eggplant-mature-vegetative-v1.png",
-        "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
-        "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
-        "productionApproval": false,
-        "notProductionApproval": true,
-        "identityRejected": false,
-        "stickerLookAloneWouldInvalidate": false,
-        "reasons": [
-          "SILHOUETTE_FLAGGED_ON_BATCH_1",
-          "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
-          "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
-        ],
-        "note": "Do not silently add a paid vegetative job. Flowering/fruiting jobs remain in the 11-job manifest."
-      },
+      "comparisonAnchor": null,
       "addPaidJobIfAnchorUnusable": false
     }
   ]

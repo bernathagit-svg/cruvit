@@ -12,8 +12,8 @@ import { FACTORY_GENERATION_RULE, REQUIREMENT_STATE } from '../modules/garden-de
 import {
   BATCH_2_JOBS,
   BATCH_2_SPEND_GATE,
-  LAVENDER_ANCHOR,
-  EGGPLANT_ANCHOR,
+  EGGPLANT_DEFERRED,
+  LAVENDER_BATCH1_HISTORICAL,
   VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID,
   executeVisualStateCalibrationBatch2,
   writeVisualStateCalibrationBatch2Reports
@@ -31,7 +31,7 @@ test('batch-2 prep locks 11 jobs, denies spend, and does not generate', () => {
   const html = fs.readFileSync(written.reviewHtml, 'utf8');
   const app = fs.readFileSync(path.join(ROOT, 'app.html'), 'utf8');
 
-  assert.equal(written.verdict, 'VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED');
+  assert.equal(written.verdict, 'VISUAL_STATE_CALIBRATION_BATCH_2_FINAL_PREP_READY');
   assert.equal(BATCH_2_JOBS.length, 11);
   assert.equal(manifest.jobs.length, 11);
   assert.equal(VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID, 'design-asset-visual-state-calibration-batch-2');
@@ -45,16 +45,36 @@ test('batch-2 prep locks 11 jobs, denies spend, and does not generate', () => {
   assert.equal(FACTORY_GENERATION_RULE.generateUnknown, false);
   assert.equal(REQUIREMENT_STATE.REQUIRED, 'REQUIRED');
   assert.deepEqual(
-    manifest.jobs.map((job) => job.canonicalSlug),
-    ['mango', 'mango', 'mango', 'banana', 'banana', 'apple', 'apple', 'pomegranate', 'pomegranate', 'lavender', 'eggplant']
+    manifest.jobs.map((job) => `${job.canonicalSlug}:${job.growthStage}:${job.architectureMode}:${job.phenologyState}`),
+    [
+      'mango:mature:tree:vegetative',
+      'mango:young:tree:vegetative',
+      'mango:mature:tree:fruiting',
+      'banana:mature:default:vegetative',
+      'banana:young:default:vegetative',
+      'apple:mature:tree:vegetative',
+      'apple:mature:tree:dormant',
+      'pomegranate:mature:tree:vegetative',
+      'pomegranate:mature:shrub:vegetative',
+      'lavender:mature:shrub:vegetative',
+      'lavender:mature:shrub:flowering'
+    ]
   );
+  assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'eggplant').length, 0);
   assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'apple' && job.growthStage === 'young').length, 0);
-  assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'pomegranate').length, 2);
-  assert.equal(LAVENDER_ANCHOR.baselineAnchor, 'BASELINE_ANCHOR_NOT_USABLE');
-  assert.equal(EGGPLANT_ANCHOR.baselineAnchor, 'BASELINE_ANCHOR_NOT_USABLE');
-  assert.match(html, /BASELINE_ANCHOR_NOT_USABLE/);
+  assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'lavender').length, 2);
+  assert.equal(EGGPLANT_DEFERRED.visualStateCalibration, 'DEFERRED_BASELINE_REQUIRED');
+  assert.equal(EGGPLANT_DEFERRED.generatedInBatch2, false);
+  assert.equal(LAVENDER_BATCH1_HISTORICAL.historicalEvidenceOnly, true);
+  assert.equal(summary.everyTestedStateHasValidFamilyAnchor, true);
+  assert.match(html, /lavender__mature__shrub__vegetative__v1/);
+  assert.match(html, /DEFERRED_BASELINE_REQUIRED/);
+  assert.doesNotMatch(html, /eggplant__mature__shrub__fruiting/);
   assert.match(html, /ASSET NOT GENERATED/);
   assert.match(html, /Do these clearly look like the same plant identity/);
+  const prompts = JSON.parse(fs.readFileSync(written.promptsPath, 'utf8'));
+  assert.ok(prompts.prompts.every((row) => Array.isArray(row.round1LearningInherited) && row.round1LearningInherited.length === 11));
+  assert.match(prompts.prompts[0].prompt, /no baked scene shadow/);
   assert.match(app, /#design-asset-visual-state-calibration-batch-2/);
   const executed = executeVisualStateCalibrationBatch2();
   assert.equal(executed.executed, false);

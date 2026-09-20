@@ -44,8 +44,8 @@ export {
   BATCH_2_SPEND_GATE,
   writeVisualStateCalibrationBatch2Reports,
   executeVisualStateCalibrationBatch2,
-  LAVENDER_ANCHOR,
-  EGGPLANT_ANCHOR
+  LAVENDER_BATCH1_HISTORICAL,
+  EGGPLANT_DEFERRED
 } from './visual-state-calibration-batch-2-prep-v1.js';
 export { buildVisualStateFamilyPromptRecord } from './prompt-factory-visual-state-family-v1.js';
 export { generateAsset, listFactoryProviders } from './provider-adapter-v1.js';

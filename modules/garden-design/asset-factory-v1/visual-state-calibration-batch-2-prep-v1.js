@@ -15,7 +15,7 @@ import { CALIBRATION_BATCH_1_CANDIDATES } from './calibration-review-candidates-
 
 export const VISUAL_STATE_CALIBRATION_BATCH_2_VERSION = 'visual-state-calibration-batch-2-prep-v1';
 export const VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID = 'design-asset-visual-state-calibration-batch-2';
-export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919r';
+export const VISUAL_STATE_CALIBRATION_BATCH_2_CACHE_BUST = '20260919s';
 
 export const BATCH_2_SPEND_GATE = Object.freeze({
   state: 'DENIED',
@@ -108,12 +108,17 @@ export function classifyBatch1StateComparisonAnchor(slug) {
       notProductionApproval: true,
       identityRejected: false,
       stickerLookAloneWouldInvalidate: false,
+      historicalEvidenceOnly: true,
+      overwriteBatch1Candidate: false,
       reasons: [
         'SILHOUETTE_FLAGGED_ON_BATCH_1',
         'ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON',
         'OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED'
       ],
-      note: 'Do not silently add a paid vegetative job. Flowering/fruiting jobs remain in the 11-job manifest.'
+      note:
+        slug === 'lavender'
+          ? 'Batch-1 lavender remains historical evidence only. Batch 2 generates a new mature vegetative family anchor.'
+          : 'Eggplant is deferred. Existing vegetative candidate is not a valid family anchor. No Batch-2 generation demand.'
     };
   }
   return {
@@ -126,8 +131,18 @@ export function classifyBatch1StateComparisonAnchor(slug) {
   };
 }
 
-export const LAVENDER_ANCHOR = classifyBatch1StateComparisonAnchor('lavender');
-export const EGGPLANT_ANCHOR = classifyBatch1StateComparisonAnchor('eggplant');
+export const LAVENDER_BATCH1_HISTORICAL = classifyBatch1StateComparisonAnchor('lavender');
+export const EGGPLANT_DEFERRED = Object.freeze({
+  canonicalSlug: 'eggplant',
+  visualStateCalibration: 'DEFERRED_BASELINE_REQUIRED',
+  generatedInBatch2: false,
+  reason: 'existing vegetative candidate is not a valid family anchor',
+  fruitingCoveredBy: 'mango mature fruiting',
+  batch1Candidate: classifyBatch1StateComparisonAnchor('eggplant'),
+  overwriteBatch1Candidate: false,
+  rejected: false,
+  deleted: false
+});
 
 function makeJob(spec) {
   const identity = jobIdentity(spec.canonicalSlug, {
@@ -272,21 +287,19 @@ export const BATCH_2_JOBS = Object.freeze([
     visualForm: 'shrub',
     architectureMode: 'shrub',
     growthStage: 'mature',
-    phenologyState: 'flowering',
-    purpose: 'flowering phenology; do not silently add a vegetative paid job',
-    comparisonAnchor: LAVENDER_ANCHOR
+    phenologyState: 'vegetative',
+    purpose: 'new clean family anchor; do not use Batch-1 lavender candidate'
   }),
   makeJob({
     rank: 11,
-    family: 'eggplant',
-    familyId: 'F',
-    canonicalSlug: 'eggplant',
-    visualForm: 'subshrub',
+    family: 'lavender',
+    familyId: 'E',
+    canonicalSlug: 'lavender',
+    visualForm: 'shrub',
     architectureMode: 'shrub',
     growthStage: 'mature',
-    phenologyState: 'fruiting',
-    purpose: 'fruiting phenology on supported subshrub architecture; do not silently add a vegetative paid job',
-    comparisonAnchor: EGGPLANT_ANCHOR
+    phenologyState: 'flowering',
+    purpose: 'flowering phenology against the new Batch-2 mature vegetative family anchor'
   })
 ]);
 
@@ -298,6 +311,7 @@ export const BATCH_2_FAMILIES = Object.freeze([
     oneCanonicalIdentity: true,
     reuseBatch1MatureAsAnchor: false,
     includeYoung: true,
+    proves: 'YOUNG vs MATURE; VEGETATIVE vs FRUITING',
     jobs: [1, 2, 3]
   },
   {
@@ -307,6 +321,7 @@ export const BATCH_2_FAMILIES = Object.freeze([
     oneCanonicalIdentity: true,
     reuseBatch1MatureAsAnchor: false,
     includeYoung: true,
+    proves: 'YOUNG vs MATURE in large-herbaceous architecture',
     jobs: [4, 5]
   },
   {
@@ -315,6 +330,7 @@ export const BATCH_2_FAMILIES = Object.freeze([
     canonicalSlug: 'apple',
     oneCanonicalIdentity: true,
     includeYoung: false,
+    proves: 'VEGETATIVE vs DORMANT',
     jobs: [6, 7]
   },
   {
@@ -323,6 +339,7 @@ export const BATCH_2_FAMILIES = Object.freeze([
     canonicalSlug: 'pomegranate',
     oneCanonicalIdentity: true,
     secondCatalogIdentityForbidden: true,
+    proves: 'TREE vs SHRUB architectureMode',
     jobs: [8, 9]
   },
   {
@@ -330,16 +347,10 @@ export const BATCH_2_FAMILIES = Object.freeze([
     role: 'flowering-shrub',
     canonicalSlug: 'lavender',
     oneCanonicalIdentity: true,
-    baselineAnchor: LAVENDER_ANCHOR.baselineAnchor,
-    jobs: [10]
-  },
-  {
-    id: 'F',
-    role: 'fruiting-crop',
-    canonicalSlug: 'eggplant',
-    oneCanonicalIdentity: true,
-    baselineAnchor: EGGPLANT_ANCHOR.baselineAnchor,
-    jobs: [11]
+    reuseBatch1MatureAsAnchor: false,
+    familyAnchor: 'new Batch-2 mature vegetative',
+    proves: 'VEGETATIVE vs FLOWERING',
+    jobs: [10, 11]
   }
 ]);
 
@@ -410,10 +421,12 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
   const review = writeVisualStateCalibrationBatch2Review(root);
   fs.writeFileSync(`${files.summaryPath}`, `${JSON.stringify({
     contract: VISUAL_STATE_CALIBRATION_BATCH_2_VERSION,
-    verdict: 'VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED',
+    verdict: 'VISUAL_STATE_CALIBRATION_BATCH_2_FINAL_PREP_READY',
     runId: VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID,
     jobsPrepared: BATCH_2_JOBS.length,
     generated: 0,
+    everyTestedStateHasValidFamilyAnchor: true,
+    eggplant: EGGPLANT_DEFERRED,
     factoryGenerationRule: FACTORY_GENERATION_RULE,
     requirementSemantics: Object.values(REQUIREMENT_STATE),
     familyConsistencyFields: FAMILY_CONSISTENCY_FIELDS,
@@ -442,6 +455,8 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
       scientific: row.job.scientific,
       identityScope: row.job.identityScope,
       promptTemplateVersion: row.prompt.promptTemplateVersion,
+      round1LearningInherited: row.prompt.round1LearningInherited,
+      runtimeNotInPng: row.prompt.runtimeNotInPng,
       prompt: row.prompt.prompt,
       encodesPhysicalMeters: false
     }))
@@ -450,8 +465,9 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
     contract: VISUAL_STATE_CALIBRATION_BATCH_2_VERSION,
     mango: classifyBatch1StateComparisonAnchor('mango'),
     banana: classifyBatch1StateComparisonAnchor('banana'),
-    lavender: LAVENDER_ANCHOR,
-    eggplant: EGGPLANT_ANCHOR,
+    lavenderBatch1Historical: LAVENDER_BATCH1_HISTORICAL,
+    lavenderBatch2FamilyAnchor: 'lavender shrub mature vegetative (new Batch-2 job 10)',
+    eggplant: EGGPLANT_DEFERRED,
     silentlyAddedPaidJobs: 0
   }, null, 2)}\n`);
   fs.writeFileSync(`${files.spendPath}`, `${JSON.stringify({
@@ -473,7 +489,7 @@ export function writeVisualStateCalibrationBatch2Reports(root, catalogPlants = [
   return {
     ...files,
     reviewHtml: review.htmlPath,
-    verdict: 'VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED',
+    verdict: 'VISUAL_STATE_CALIBRATION_BATCH_2_FINAL_PREP_READY',
     jobsPrepared: BATCH_2_JOBS.length
   };
 }

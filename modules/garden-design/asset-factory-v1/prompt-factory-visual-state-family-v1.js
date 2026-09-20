@@ -23,6 +23,28 @@ export const STATE_DELTA_FIELDS = Object.freeze([
   'architectureMode'
 ]);
 
+export const ROUND_1_LEARNING_INHERITED = Object.freeze([
+  'natural garden-grown architecture',
+  'ground-level planted-bed three-quarter perspective',
+  'avoid catalog-isolate composition',
+  'avoid perfect stock-photo symmetry',
+  'natural irregular silhouette',
+  'realistic botanical architecture',
+  'natural photographic sharpness',
+  'sufficient transparent margin',
+  'full visible specimen',
+  'no baked scene shadow',
+  'no runtime blend baked into PNG'
+]);
+
+export const RUNTIME_NOT_IN_PNG = Object.freeze([
+  'scene tonal adaptation',
+  'contact shadow',
+  'mild sharpness normalization',
+  'edge integration',
+  'physical scale'
+]);
+
 function asText(value) {
   return String(value == null ? '' : value).trim();
 }
@@ -46,16 +68,16 @@ export function familyLockLines(job = {}) {
     `FAMILY LOCK for ${scientificIdentity(job)}.`,
     identityNote,
     `Visual form class: ${form}.`,
-    'Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation.',
-    'Garden-grown natural architecture with irregular organic branching or leaf arrangement. Avoid perfect stock-photo symmetry and lollipop shapes.',
+    'Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation.',
+    'Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes.',
     form === 'tree' ? treePromptV2Lines().join(' ') : '',
-    'Natural photographic outdoor detail. Avoid hyper-detailed studio-render microtexture, plastic smoothness, and oversharpened CGI look.',
-    'Isolated whole plant, true transparent background, no backdrop.',
+    'Natural photographic outdoor sharpness and detail. Avoid hyper-detailed studio-render microtexture, plastic smoothness, and oversharpened CGI look.',
+    'Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen.',
     'Clean ground-contact at the base, generous empty transparent margin so nothing is cropped.',
-    'No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no checkerboard, no text, no watermark, no labels.',
+    'No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels.',
     'Natural daylight, not dramatic studio lighting.',
     'Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale.',
-    'Do not try to solve sticker-look, halo, or garden-photo color match in this generation. Those are runtime integration responsibilities.'
+    'Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities.'
   ].filter(Boolean);
 }
 
@@ -80,7 +102,7 @@ export function stateDeltaLines(job = {}) {
   }
   if (phenology === 'flowering') {
     lines.push(
-      'FLOWERING: keep the same underlying plant architecture. Flowers must be materially visible. No impossible flower density. No replacing the plant with a bouquet.'
+      'FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet.'
     );
   }
   if (phenology === 'fruiting') {
@@ -111,6 +133,8 @@ export function buildVisualStateFamilyPromptRecord(job = {}, options = {}) {
   const prompt = [...familyLockLines(job), ...stateDeltaLines(job)].join(' ');
   return {
     promptTemplateVersion: PROMPT_TEMPLATE_VERSION_VISUAL_STATE_FAMILY,
+    round1LearningInherited: ROUND_1_LEARNING_INHERITED,
+    runtimeNotInPng: RUNTIME_NOT_IN_PNG,
     provider: asText(options.provider || 'unspecified'),
     model: asText(options.model || 'unspecified'),
     settings,

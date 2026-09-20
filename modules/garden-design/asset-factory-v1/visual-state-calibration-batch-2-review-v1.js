@@ -70,34 +70,31 @@ export function buildVisualStateCalibrationBatch2ReviewHtml() {
   </style>
 </head>
 <body>
-  <h1>Visual State Calibration Batch 2 — 11 jobs prepared, 0 generated</h1>
-  <p id="realGardenBanner" class="warn">No assets yet. Signed Garden photo is injected by the host when available. Do not bake scene integration into PNGs. Blend/ground-contact is runtime CSS only.</p>
+  <h1>Visual State Calibration Batch 2 — 11 jobs, five pair-complete families, 0 generated</h1>
+  <p id="realGardenBanner" class="warn">No assets yet. Signed Garden photo is injected by the host when available. Do not bake scene integration into PNGs. Blend/ground-contact is runtime CSS only. Physical size remains runtime authority; families are not forced to one scale.</p>
   <p class="note">Spend gate DENIED. Production registry unchanged. Family review is side-by-side on the same Garden source. QA later: TECHNICAL_QA, BOTANICAL_IDENTITY_QA, STATE_QA, FAMILY_CONSISTENCY_QA, IN_GARDEN_QA, OWNER_VISUAL_QA.</p>
-${familySection('A', 'Mango TREE', [
+${familySection('A', 'Mango — 3-way', [
     { jobId: 'mango__mature__tree__vegetative__v1', label: '1. TREE MATURE VEGETATIVE (new family anchor)', empty: 'ASSET NOT GENERATED' },
     { jobId: 'mango__young__tree__vegetative__v1', label: '2. TREE YOUNG VEGETATIVE', empty: 'ASSET NOT GENERATED' },
     { jobId: 'mango__mature__tree__fruiting__v1', label: '3. TREE MATURE FRUITING', empty: 'ASSET NOT GENERATED' }
-  ], 'Batch-1 mango mature candidate is NOT the family anchor.')}
-${familySection('B', 'Banana large herbaceous', [
-    { jobId: 'banana__mature__default__vegetative__v1', label: '4. MATURE VEGETATIVE (new family anchor)', empty: 'ASSET NOT GENERATED' },
-    { jobId: 'banana__young__default__vegetative__v1', label: '5. YOUNG VEGETATIVE', empty: 'ASSET NOT GENERATED' }
-  ], 'Batch-1 banana mature candidate is NOT the family anchor.')}
-${familySection('C', 'Apple TREE leafy vs dormant', [
+  ], 'Proves YOUNG vs MATURE and VEGETATIVE vs FRUITING. Batch-1 mango is not the family anchor. Physical size is runtime authority.')}
+${familySection('B', 'Banana — 2-way', [
+    { jobId: 'banana__mature__default__vegetative__v1', label: '4. herbaceous-clump MATURE VEGETATIVE (new family anchor)', empty: 'ASSET NOT GENERATED' },
+    { jobId: 'banana__young__default__vegetative__v1', label: '5. herbaceous-clump YOUNG VEGETATIVE', empty: 'ASSET NOT GENERATED' }
+  ], 'Proves YOUNG vs MATURE in large-herbaceous architecture. Batch-1 banana is not the family anchor.')}
+${familySection('C', 'Apple — 2-way', [
     { jobId: 'apple__mature__tree__vegetative__v1', label: '6. TREE MATURE VEGETATIVE', empty: 'ASSET NOT GENERATED' },
     { jobId: 'apple__mature__tree__dormant__v1', label: '7. TREE MATURE DORMANT', empty: 'ASSET NOT GENERATED' }
-  ], 'Young Apple is not in this batch.')}
-${familySection('D', 'Pomegranate TREE vs SHRUB', [
+  ], 'Proves VEGETATIVE vs DORMANT. Young Apple is not in this batch.')}
+${familySection('D', 'Pomegranate — 2-way', [
     { jobId: 'pomegranate__mature__tree__vegetative__v1', label: '8. TREE MATURE VEGETATIVE', empty: 'ASSET NOT GENERATED' },
     { jobId: 'pomegranate__mature__shrub__vegetative__v1', label: '9. SHRUB MATURE VEGETATIVE', empty: 'ASSET NOT GENERATED' }
-  ], 'One canonical identity. Do not create two catalog plants.')}
-${familySection('E', 'Lavender flowering', [
-    { jobId: 'lavender__mature__shrub__flowering__v1', label: '10. SHRUB MATURE FLOWERING', empty: 'ASSET NOT GENERATED' },
-    { jobId: 'lavender-anchor', label: 'Batch-1 mature vegetative comparison', empty: 'BASELINE_ANCHOR_NOT_USABLE' }
-  ], 'Existing lavender candidate is BASELINE_ANCHOR_NOT_USABLE. No extra paid vegetative job.')}
-${familySection('F', 'Eggplant fruiting', [
-    { jobId: 'eggplant__mature__shrub__fruiting__v1', label: '11. SUBSHRUB MATURE FRUITING', empty: 'ASSET NOT GENERATED' },
-    { jobId: 'eggplant-anchor', label: 'Batch-1 mature vegetative comparison', empty: 'BASELINE_ANCHOR_NOT_USABLE' }
-  ], 'Existing eggplant candidate is BASELINE_ANCHOR_NOT_USABLE. No extra paid vegetative job.')}
+  ], 'Proves TREE vs SHRUB architectureMode. One canonical identity.')}
+${familySection('E', 'Lavender — 2-way', [
+    { jobId: 'lavender__mature__shrub__vegetative__v1', label: '10. SHRUB MATURE VEGETATIVE (new family anchor)', empty: 'ASSET NOT GENERATED' },
+    { jobId: 'lavender__mature__shrub__flowering__v1', label: '11. SHRUB MATURE FLOWERING', empty: 'ASSET NOT GENERATED' }
+  ], 'Proves VEGETATIVE vs FLOWERING. Batch-1 lavender may remain historical evidence only and is not the family anchor.')}
+  <p class="note">Eggplant visual-state calibration = DEFERRED_BASELINE_REQUIRED. Not generated in this batch. Fruiting-state behavior is represented by Mango.</p>
   <script>
     const TYPE = ${JSON.stringify(CALIBRATION_SOURCE_MESSAGE_TYPE)};
     function applySignedUrl(url) {

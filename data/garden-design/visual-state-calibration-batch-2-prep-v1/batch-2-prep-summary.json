@@ -1,9 +1,38 @@
 {
   "contract": "visual-state-calibration-batch-2-prep-v1",
-  "verdict": "VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED",
+  "verdict": "VISUAL_STATE_CALIBRATION_BATCH_2_FINAL_PREP_READY",
   "runId": "design-asset-visual-state-calibration-batch-2",
   "jobsPrepared": 11,
   "generated": 0,
+  "everyTestedStateHasValidFamilyAnchor": true,
+  "eggplant": {
+    "canonicalSlug": "eggplant",
+    "visualStateCalibration": "DEFERRED_BASELINE_REQUIRED",
+    "generatedInBatch2": false,
+    "reason": "existing vegetative candidate is not a valid family anchor",
+    "fruitingCoveredBy": "mango mature fruiting",
+    "batch1Candidate": {
+      "canonicalSlug": "eggplant",
+      "file": "eggplant-mature-vegetative-v1.png",
+      "status": "STATE_COMPARISON_ANCHOR_NOT_USABLE",
+      "baselineAnchor": "BASELINE_ANCHOR_NOT_USABLE",
+      "productionApproval": false,
+      "notProductionApproval": true,
+      "identityRejected": false,
+      "stickerLookAloneWouldInvalidate": false,
+      "historicalEvidenceOnly": true,
+      "overwriteBatch1Candidate": false,
+      "reasons": [
+        "SILHOUETTE_FLAGGED_ON_BATCH_1",
+        "ARCHITECTURE_NOT_RELIABLE_FOR_STATE_COMPARISON",
+        "OWNER_VISUAL_QA_NEEDS_BLEND_NOT_APPROVED"
+      ],
+      "note": "Eggplant is deferred. Existing vegetative candidate is not a valid family anchor. No Batch-2 generation demand."
+    },
+    "overwriteBatch1Candidate": false,
+    "rejected": false,
+    "deleted": false
+  },
   "factoryGenerationRule": {
     "generateRequired": true,
     "generateOptional": false,
