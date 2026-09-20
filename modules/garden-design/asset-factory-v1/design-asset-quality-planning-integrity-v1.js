@@ -354,8 +354,11 @@ export const NEXT_QUALITY_CALIBRATION_SET = Object.freeze({
   execute: false,
   generateNow: false,
   spendGate: 'DENIED',
+  superseded: true,
+  supersededBy: 'design-asset-quality-family-calibration-final-1',
+  supersededReason: 'Omitted WOODY_OPEN_OR_LARGE_LEAF. Do not execute this 6-job set.',
   doNotRepeatMangoWoodyFoliage: true,
-  purpose: 'Close morphology/detail quality-policy gaps before any 273-variant production',
+  purpose: 'HISTORICAL_PROPOSAL_ONLY_SUPERSEDED',
   jobs: Object.freeze([
     {
       rank: 1,

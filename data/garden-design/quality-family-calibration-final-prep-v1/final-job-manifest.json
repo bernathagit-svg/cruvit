@@ -1,0 +1,211 @@
+{
+  "contract": "quality-family-calibration-final-prep-v1",
+  "jobs": [
+    {
+      "rank": 1,
+      "canonicalSlug": "avocado",
+      "scientific": "Persea americana",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "qualityFamilies": [
+        "WOODY_OPEN_OR_LARGE_LEAF"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate V2 + MEDIUM for a woody specimen with larger/open foliage",
+      "historicalControl": null,
+      "jobId": "avocado__mature__tree__vegetative__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Persea americana (canonical identity avocado). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 2,
+      "canonicalSlug": "apple",
+      "scientific": "Malus domestica",
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "dormant",
+      "qualityFamilies": [
+        "BRANCH_STRUCTURE"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate fine branch/twig rendering without foliage",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png",
+        "source": "batch-2",
+        "approved": false,
+        "note": "Historical control only. Architecture/quality limitations remain visible."
+      },
+      "jobId": "apple__mature__tree__dormant__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Malus domestica (canonical identity apple). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: tree. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. Tree form: naturally grown garden specimen, not a nursery catalog isolate. Irregular asymmetrical branching. Realistic trunk taper. Crown width appropriate to mature form. Avoid perfect stock-photo symmetry and isolated catalog specimen aesthetic. Planted-bed eye-level camera. Natural three-quarter garden perspective. Realistic crown-to-trunk ratio. Full specimen with useful transparent margin. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=tree, phenologyState=dormant. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. DORMANT: preserve branch/trunk identity and architecture. Remove foliage only where biologically appropriate for deciduous leaf-off. Do not create a dead, snapped, diseased, or damaged plant. TREE architectureMode: single dominant woody trunk and canopy tree structure, not a multi-stem shrub scaled up.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 3,
+      "canonicalSlug": "lavender",
+      "scientific": "Lavandula angustifolia",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "qualityFamilies": [
+        "SHRUB_FINE_FOLIAGE"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate fine shrub foliage under Prompt V2",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png",
+        "source": "batch-2",
+        "approved": false,
+        "note": "Historical control only. Not a production-approved asset."
+      },
+      "jobId": "lavender__mature__shrub__vegetative__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Lavandula angustifolia (canonical identity lavender). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: shrub. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=shrub, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit. SHRUB architectureMode: multi-stem shrub structure from the base. Structural change, not merely resizing a tree cutout.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 4,
+      "canonicalSlug": "lavender",
+      "scientific": "Lavandula angustifolia",
+      "visualForm": "shrub",
+      "architectureMode": "shrub",
+      "growthStage": "mature",
+      "phenologyState": "flowering",
+      "qualityFamilies": [
+        "FLOWER_FINE_DETAIL"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate flowers + fine foliage under Prompt V2",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png",
+        "source": "batch-2",
+        "approved": false,
+        "note": "Historical control only. Not a production-approved asset."
+      },
+      "jobId": "lavender__mature__shrub__flowering__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Lavandula angustifolia (canonical identity lavender). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: shrub. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=shrub, phenologyState=flowering. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FLOWERING: keep the same underlying vegetative plant habit and architecture. Add plausible flowers that are materially visible. No impossible flower density. No replacing the plant with a bouquet. SHRUB architectureMode: multi-stem shrub structure from the base. Structural change, not merely resizing a tree cutout.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 5,
+      "canonicalSlug": "banana",
+      "scientific": "Musa spp.",
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "fruiting",
+      "qualityFamilies": [
+        "LARGE_LEAF_HERBACEOUS",
+        "FRUIT_VISIBLE_DETAIL"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate large-leaf detail and visible fruit in one job",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+        "source": "batch-2",
+        "approved": false,
+        "note": "Family anchor only (mature vegetative). Not a production-approved asset."
+      },
+      "jobId": "banana__mature__default__fruiting__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Musa spp. (canonical identity banana). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: herbaceous-clump. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=fruiting. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. FRUITING: keep the same underlying architecture. Fruit must be materially visible with plausible distribution/load. No decorative overloading. No fruit hovering in empty space.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 6,
+      "canonicalSlug": "pineapple",
+      "scientific": "Ananas comosus",
+      "visualForm": "rosette",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "qualityFamilies": [
+        "ROSETTE"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate rosette leaf-edge/detail quality with V2 + MEDIUM",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png",
+        "source": "batch-1",
+        "approved": false,
+        "note": "Historical comparison only. Not a production-approved anchor."
+      },
+      "jobId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Ananas comosus (canonical identity pineapple). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: rosette. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    },
+    {
+      "rank": 7,
+      "canonicalSlug": "aloe-vera",
+      "scientific": "Aloe vera",
+      "visualForm": "succulent-form",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "qualityFamilies": [
+        "SUCCULENT"
+      ],
+      "inheritMangoHighPolicy": false,
+      "purpose": "validate succulent surface/edge detail with V2 + MEDIUM",
+      "historicalControl": {
+        "file": "modules/garden-design/assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png",
+        "source": "batch-1",
+        "approved": false,
+        "note": "Historical comparison only. Not a production-approved anchor."
+      },
+      "jobId": "aloe-vera__mature__default__vegetative__detail-v2__medium",
+      "quality": "medium",
+      "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+      "prompt": "FAMILY LOCK for Aloe vera (canonical identity aloe-vera). Keep this exact canonical botanical identity. Do not drift into a different species, cultivar, or specimen style. Visual form class: succulent-form. Camera: planted-bed eye level, ground-level three-quarter garden view of a real planted specimen. Forbid catalog elevation, catalog-isolate product shot, herbarium sheet, top-down plan, isometric product render, and flattened nursery-tag presentation. Garden-grown natural architecture with a natural irregular silhouette and realistic botanical branching or clump structure. Avoid perfect stock-photo symmetry and lollipop shapes. DETAIL REQUIREMENTS: individually legible natural foliage; clear leaf and leaflet boundaries; realistic fine botanical texture; natural branch and leaf separation; visible separation between overlapping leaf clusters; foliage must remain photographic at 100% pixel inspection. Do not request fake hyper-detail. DETAIL FORBIDDEN: painterly foliage masses; watercolor or smeared leaf clusters; green glow around foliage; specimen-wide soft focus; artificial depth-of-field blur; fused leafy blobs. STILL FORBIDDEN: HDR or crunchy sharpening; artificial edge halos; synthetic CGI microtexture; synthetic leaf patterns; oversharpened cutout edges; studio-isolate aesthetic; baked scene shadow; baked runtime blend. Isolated whole plant, true transparent background, no backdrop. Preserve the full visible specimen. Clean ground-contact at the base, generous empty transparent margin so nothing is cropped. No pot, no planter, no scenery, no grass patch, no soil rectangle, no fake ground plane, no studio sweep, no baked scene shadow, no checkerboard, no text, no watermark, no labels. Natural daylight, not dramatic studio lighting. Do not encode physical meters, height labels, or mature size ranges into the image. Architecture and state only. Runtime owns physical scale. Do not bake runtime blend, contact shadow, scene tonal match, halo fix, or garden-photo color match into the PNG. Those are runtime integration responsibilities. STATE DELTA only: growthStage=mature, architectureMode=default, phenologyState=vegetative. This variant must look like the same plant identity as other family members. Change only the requested state. Do not invent a different specimen, lighting style, or camera. MATURE: fully developed architecture for this identity and architectureMode. VEGETATIVE: foliage/architecture only. No conspicuous flowers. No conspicuous fruit.",
+      "encodePhysicalMeters": false,
+      "generateNow": false,
+      "generated": false,
+      "approvalStatus": "candidate",
+      "OWNER_VISUAL_QA": "UNKNOWN",
+      "primaryQuestion": "Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?"
+    }
+  ]
+}

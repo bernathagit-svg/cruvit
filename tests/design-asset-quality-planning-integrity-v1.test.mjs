@@ -82,6 +82,8 @@ test('quality planning integrity is state-specific and does not spend', () => {
   assert.equal(CURRENT_AUDIT_LIMITATION.label, 'FALLBACK_MEDIUM_PROJECTION_ONLY');
   assert.equal(CURRENT_AUDIT_LIMITATION.not, 'PRODUCTION_BUDGET');
   assert.equal(NEXT_QUALITY_CALIBRATION_SET.execute, false);
+  assert.equal(NEXT_QUALITY_CALIBRATION_SET.superseded, true);
+  assert.equal(NEXT_QUALITY_CALIBRATION_SET.supersededBy, 'design-asset-quality-family-calibration-final-1');
   assert.equal(NEXT_QUALITY_CALIBRATION_SET.jobs.length, 6);
   assert.ok(NEXT_QUALITY_CALIBRATION_SET.jobs.every((job) => job.generateNow === false));
   assert.ok(!NEXT_QUALITY_CALIBRATION_SET.jobs.some((job) => job.canonicalSlug === 'mango'));

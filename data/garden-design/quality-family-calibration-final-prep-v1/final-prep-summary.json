@@ -1,0 +1,87 @@
+{
+  "contract": "quality-family-calibration-final-prep-v1",
+  "verdict": "DESIGN_ASSET_QUALITY_FINAL_CALIBRATION_PREPARED",
+  "runId": "design-asset-quality-family-calibration-final-1",
+  "supersededSixJobSet": true,
+  "jobsPrepared": 7,
+  "highJobs": 0,
+  "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+  "factoryDefaultQuality": "medium",
+  "unknownBlockedStatus": {
+    "count": 26,
+    "generate": false,
+    "note": "Remain outside production demand until identity/architecture/state blockers are resolved."
+  },
+  "qualityCalibrationRequiredStatus": {
+    "count": 82,
+    "generateIndividually": false,
+    "note": "After owner review of this 7-job set, re-run the 273-variant audit. Promote to MEDIUM_EVIDENCE_SUPPORTED only where the calibrated family rule genuinely applies."
+  },
+  "familyPassRules": {
+    "outcomes": [
+      "MEDIUM_POLICY_VALIDATED",
+      "QUALITY_ESCALATION_REVIEW_REQUIRED",
+      "PROMPT_FAILURE"
+    ],
+    "automaticHighEscalation": false,
+    "oneSampleDoesNotMarkAllUnknown": true,
+    "ifMediumFails": "record why; separate owner-approved A/B required before any new HIGH policy"
+  },
+  "spendGate": {
+    "state": "DENIED",
+    "execute": false,
+    "previousApprovalCarryForward": false,
+    "batch2ApprovalCarryForward": false,
+    "woodyFoliageAbApprovalCarryForward": false,
+    "sixJobProposalCarryForward": false,
+    "retriesAuthorized": 0,
+    "maxJobs": 7,
+    "maxCalls": 7,
+    "maxRetries": 0,
+    "quality": "medium",
+    "highJobs": 0,
+    "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "provider": "openai-images-api",
+    "size": "1024x1536",
+    "background": "transparent",
+    "outputFormat": "png",
+    "forbiddenQuality": [
+      "high",
+      "xhigh",
+      "max",
+      "auto"
+    ],
+    "unknownBlockedGeneration": false,
+    "generateThe82Individually": false,
+    "massGeneration": false,
+    "note": "Owner must explicitly approve this exact runId. Previous run approvals do not apply."
+  },
+  "massGeneration": "BLOCKED",
+  "executeResult": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "retries": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "reason": "PREPARATION_ONLY_OWNER_MUST_APPROVE_THIS_EXACT_RUN",
+    "runId": "design-asset-quality-family-calibration-final-1",
+    "jobsPrepared": 7,
+    "highJobs": 0,
+    "productionRegistryChanged": false,
+    "massGenerationStarted": false
+  },
+  "proposedFutureCommand": [
+    "--run-id=design-asset-quality-family-calibration-final-1",
+    "--approve-envelope=design-asset-quality-family-calibration-final-1",
+    "--owner-approve-run=design-asset-quality-family-calibration-final-1",
+    "--provider=openai-images-api",
+    "--model=gpt-image-2.5-flare-2026-09-08",
+    "--max-jobs=7",
+    "--max-calls=7",
+    "--max-retries=0",
+    "--quality=medium"
+  ],
+  "liveReviewHash": "#design-asset-quality-family-calibration-final-1"
+}

@@ -1,0 +1,48 @@
+{
+  "contract": "quality-family-calibration-final-prep-v1",
+  "gate": {
+    "state": "DENIED",
+    "execute": false,
+    "previousApprovalCarryForward": false,
+    "batch2ApprovalCarryForward": false,
+    "woodyFoliageAbApprovalCarryForward": false,
+    "sixJobProposalCarryForward": false,
+    "retriesAuthorized": 0,
+    "maxJobs": 7,
+    "maxCalls": 7,
+    "maxRetries": 0,
+    "quality": "medium",
+    "highJobs": 0,
+    "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "provider": "openai-images-api",
+    "size": "1024x1536",
+    "background": "transparent",
+    "outputFormat": "png",
+    "forbiddenQuality": [
+      "high",
+      "xhigh",
+      "max",
+      "auto"
+    ],
+    "unknownBlockedGeneration": false,
+    "generateThe82Individually": false,
+    "massGeneration": false,
+    "note": "Owner must explicitly approve this exact runId. Previous run approvals do not apply."
+  },
+  "executeResult": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "retries": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "reason": "PREPARATION_ONLY_OWNER_MUST_APPROVE_THIS_EXACT_RUN",
+    "runId": "design-asset-quality-family-calibration-final-1",
+    "jobsPrepared": 7,
+    "highJobs": 0,
+    "productionRegistryChanged": false,
+    "massGenerationStarted": false
+  },
+  "authorizedNow": false
+}

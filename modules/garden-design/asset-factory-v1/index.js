@@ -251,4 +251,12 @@ export {
   executeQualityPlanningIntegrity,
   NEXT_QUALITY_CALIBRATION_SET
 } from './design-asset-quality-planning-integrity-v1.js';
+export {
+  QUALITY_FAMILY_CALIBRATION_FINAL_RUN_ID,
+  QUALITY_FAMILY_CALIBRATION_FINAL_SPEND_GATE,
+  FAMILY_PASS_RULES,
+  buildQualityFamilyCalibrationFinalJobs,
+  writeQualityFamilyCalibrationFinalReports,
+  executeQualityFamilyCalibrationFinal
+} from './quality-family-calibration-final-prep-v1.js';
 

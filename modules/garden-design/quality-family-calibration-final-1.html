@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Quality-family final calibration — 7 jobs prepared</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note, .scale-note, .inspect-tools, .q { font-size: 13px; color: #444; }
+    .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    h2 { margin: 28px 0 8px; font-size: 18px; }
+    h3 { margin: 14px 0 8px; font-size: 14px; }
+    .checkerboard { background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 16px 16px; }
+    .inspect-scene { width: min(1024px, 100%); height: 720px; border: 1px solid #ccc; overflow: auto; }
+    .inspect-scene.inspect-fit { width: 340px; height: 480px; }
+    .inspect-cutout { width: 1024px; height: auto; filter: none !important; }
+    .inspect-fit .inspect-cutout { max-width: 100%; max-height: 100%; width: auto; }
+    .inspect-150 .inspect-cutout { width: 1536px; }
+    .inspect-200 .inspect-cutout { width: 2048px; }
+    .inspect-frame { min-height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .scene.physical-v1-scene { width: 720px; height: 540px; overflow: hidden; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; }
+    .scene .placement { position: absolute; left: 50%; bottom: 20%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+    .scene.physical-v1-scene .placement img.cutout { max-width: none !important; max-height: none !important; width: auto; height: auto; }
+    .scene.blend-v2-scene img.cutout { filter: brightness(0.94) contrast(0.92) saturate(0.9) blur(0.4px); }
+    .inspect-cutout, [data-review-mode="NATIVE_DETAIL"] img { filter: none !important; }
+    .ground-shadow { width: 55%; height: 8px; margin-top: -4px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 72%); }
+    .ghost { padding: 24px; background: rgba(255,255,255,.7); }
+    .cap { font-size: 14px; font-weight: 600; }
+    .marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .marks button[aria-pressed="true"] { background: #a33; color: #fff; }
+    .warn-mini { background: #fde8e8; border: 1px solid #c44; padding: 6px 8px; font-size: 12px; }
+    button { padding: 6px 10px; cursor: pointer; }
+    .job { border-top: 1px solid #ccc; padding-top: 8px; }
+  </style>
+</head>
+<body data-run-id="design-asset-quality-family-calibration-final-1" data-owner-qa-storage="cruvit:quality-family-calibration-final-1">
+  <h1>Quality-family final calibration — 7 jobs prepared</h1>
+  <p id="realGardenBanner" class="warn">Spend gate DENIED. Preparation only. 0 of 7 generated. Native 100/150/200 is the primary gate. Previous 6-job set is superseded because it omitted WOODY_OPEN_OR_LARGE_LEAF.</p>
+  <p class="note">runId design-asset-quality-family-calibration-final-1. Prompt V2 + medium only. HIGH jobs = 0. Avocado does not inherit Mango HIGH. UNKNOWN_BLOCKED 26 and the 82 calibration-required variants are not generated here.</p>
+  <p class="note">After future owner review: MEDIUM_POLICY_VALIDATED / QUALITY_ESCALATION_REVIEW_REQUIRED / PROMPT_FAILURE. Do not auto-escalate to HIGH.</p>
+  <section class="job" data-job-id="avocado__mature__tree__vegetative__detail-v2__medium">
+    <h2>1. avocado · WOODY_OPEN_OR_LARGE_LEAF</h2>
+    <p class="note">validate V2 + MEDIUM for a woody specimen with larger/open foliage</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot"><p class="cap">No historical control</p><p class="note">Avocado is a new open/large-leaf woody sample. It does not inherit Mango HIGH.</p></div>
+      <div class="slot inspect-slot" data-arm="avocado__mature__tree__vegetative__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — avocado__mature__tree__vegetative__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="avocado__mature__tree__vegetative__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      
+      <div class="slot garden-slot" data-arm="avocado__mature__tree__vegetative__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="avocado" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — avocado__mature__tree__vegetative__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="apple__mature__tree__dormant__detail-v2__medium">
+    <h2>2. apple · BRANCH_STRUCTURE</h2>
+    <p class="note">validate fine branch/twig rendering without foliage</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="apple__mature__tree__dormant__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — apple</p>
+    <p class="note">batch-2 historical control. Historical control only. Architecture/quality limitations remain visible.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — apple" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="apple__mature__tree__dormant__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="apple__mature__tree__dormant__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — apple__mature__tree__dormant__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="apple__mature__tree__dormant__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="apple__mature__tree__dormant__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="apple" data-phenology="dormant" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/apple__mature__tree__dormant__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="apple__mature__tree__dormant__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="tree" data-architecture-mode="tree" data-growth-stage="mature" data-canonical-slug="apple" data-phenology="dormant" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — apple__mature__tree__dormant__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="lavender__mature__shrub__vegetative__detail-v2__medium">
+    <h2>3. lavender · SHRUB_FINE_FOLIAGE</h2>
+    <p class="note">validate fine shrub foliage under Prompt V2</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — lavender</p>
+    <p class="note">batch-2 historical control. Historical control only. Not a production-approved asset.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — lavender" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — lavender__mature__shrub__vegetative__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="lavender__mature__shrub__vegetative__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — lavender__mature__shrub__vegetative__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="lavender__mature__shrub__flowering__detail-v2__medium">
+    <h2>4. lavender · FLOWER_FINE_DETAIL</h2>
+    <p class="note">validate flowers + fine foliage under Prompt V2</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="lavender__mature__shrub__flowering__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — lavender</p>
+    <p class="note">batch-2 historical control. Historical control only. Not a production-approved asset.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — lavender" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="lavender__mature__shrub__flowering__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="lavender__mature__shrub__flowering__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — lavender__mature__shrub__flowering__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="lavender__mature__shrub__flowering__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="lavender__mature__shrub__flowering__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="flowering" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/lavender__mature__shrub__flowering__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="lavender__mature__shrub__flowering__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="shrub" data-architecture-mode="shrub" data-growth-stage="mature" data-canonical-slug="lavender" data-phenology="flowering" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — lavender__mature__shrub__flowering__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="banana__mature__default__fruiting__detail-v2__medium">
+    <h2>5. banana · LARGE_LEAF_HERBACEOUS + FRUIT_VISIBLE_DETAIL</h2>
+    <p class="note">validate large-leaf detail and visible fruit in one job</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="banana__mature__default__fruiting__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — banana</p>
+    <p class="note">batch-2 historical control. Family anchor only (mature vegetative). Not a production-approved asset.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — banana" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="banana__mature__default__fruiting__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="banana__mature__default__fruiting__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — banana__mature__default__fruiting__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="banana__mature__default__fruiting__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="banana__mature__default__fruiting__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="banana" data-phenology="fruiting" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="banana__mature__default__fruiting__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="herbaceous-clump" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="banana" data-phenology="fruiting" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — banana__mature__default__fruiting__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="pineapple__mature__default__vegetative__detail-v2__medium">
+    <h2>6. pineapple · ROSETTE</h2>
+    <p class="note">validate rosette leaf-edge/detail quality with V2 + MEDIUM</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="pineapple__mature__default__vegetative__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — pineapple</p>
+    <p class="note">batch-1 historical control. Historical comparison only. Not a production-approved anchor.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — pineapple" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="pineapple__mature__default__vegetative__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="pineapple__mature__default__vegetative__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — pineapple__mature__default__vegetative__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="pineapple__mature__default__vegetative__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="pineapple__mature__default__vegetative__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="rosette" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="pineapple" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-1-candidates/calibration-batch-1/pineapple-mature-vegetative-v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="pineapple__mature__default__vegetative__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="rosette" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="pineapple" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — pineapple__mature__default__vegetative__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+<section class="job" data-job-id="aloe-vera__mature__default__vegetative__detail-v2__medium">
+    <h2>7. aloe-vera · SUCCULENT</h2>
+    <p class="note">validate succulent surface/edge detail with V2 + MEDIUM</p>
+    <p class="q">Primary question: Is medium quality with Prompt V2 sufficient for production-level native asset detail for this detail family?</p>
+    <h3>A–C. NATIVE ASSET INSPECTION (primary)</h3>
+    <div class="slots inspect-row">
+      <div class="slot inspect-slot" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium__control" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">HISTORICAL CONTROL — aloe-vera</p>
+    <p class="note">batch-1 historical control. Historical comparison only. Not a production-approved anchor.</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="inspect-frame">
+        <img class="inspect-cutout" alt="HISTORICAL CONTROL — aloe-vera" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png" draggable="false"/>
+      </div>
+      <p class="inspect-tools">
+        <button type="button" data-inspect-zoom="fit">Fit</button>
+        <button type="button" data-inspect-zoom="100">100%</button>
+        <button type="button" data-inspect-zoom="150">150%</button>
+        <button type="button" data-inspect-zoom="200">200%</button>
+        filter:none. No blend.
+      </p>
+      <div class="marks" data-mark-group="detail" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium__control">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    <p class="warn-mini">Historical control only. Not production-approved. Do not regenerate or overwrite.</p>
+  </div>
+      <div class="slot inspect-slot" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium" data-review-mode="NATIVE_DETAIL">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <p class="note">design-cutout-visual-state-detail-v2 · quality=medium · not generated</p>
+    <div class="inspect-scene inspect-100 checkerboard"><div class="ghost blocked">ASSET NOT GENERATED — aloe-vera__mature__default__vegetative__detail-v2__medium prepared only</div>
+      <div class="marks" data-mark-group="detail" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium">
+    <button type="button" data-mark="DETAIL_OK">DETAIL_OK</button><button type="button" data-mark="DETAIL_SOFT">DETAIL_SOFT</button><button type="button" data-mark="PAINTERLY">PAINTERLY</button><button type="button" data-mark="HALO">HALO</button><button type="button" data-mark="OVER_SHARP">OVER_SHARP</button><button type="button" data-mark="CGI_TEXTURE">CGI_TEXTURE</button><button type="button" data-mark="STATE_DETAIL_WEAK">STATE_DETAIL_WEAK</button><button type="button" data-mark="OTHER">OTHER</button>
+  </div></div>
+    
+  </div>
+    </div>
+    <h3>D. IN-GARDEN (optional / secondary)</h3>
+    <div class="slots garden-row">
+      <div class="slot garden-slot" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium__control" data-review-mode="IN_GARDEN">
+    <p class="cap">Historical control</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="succulent-form" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="aloe-vera" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="placement" data-role="placement">
+        <img class="cutout blend-v2" alt="Historical control" src="assets/plants/batch-1-candidates/calibration-batch-1/aloe-vera-mature-vegetative-v1.png" data-approval-status="candidate"/>
+        <span class="ground-shadow" aria-hidden="true"></span>
+      </div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+      <div class="slot garden-slot" data-arm="aloe-vera__mature__default__vegetative__detail-v2__medium" data-review-mode="IN_GARDEN">
+    <p class="cap">V2 + MEDIUM candidate</p>
+    <div class="scene real blend-v2-scene physical-v1-scene" data-role="garden-scene" data-visual-form="succulent-form" data-architecture-mode="default" data-growth-stage="mature" data-canonical-slug="aloe-vera" data-phenology="vegetative" data-lock-depth="middle" data-scale-model="physical-v1" data-canvas="1024,1536" data-bbox="7,92,1016,1459" data-ground-anchor="0.49951171875,0.9498697916666666">
+      <div class="ghost blocked">ASSET NOT GENERATED — aloe-vera__mature__default__vegetative__detail-v2__medium</div>
+    </div>
+    <p class="scale-note">Optional in-Garden. Native detail is the primary quality gate. Runtime owns physical scale.</p>
+  </div>
+    </div>
+  </section>
+  <script type="module" src="./asset-factory-v1/quality-family-calibration-final-review-runtime.js"></script>
+</body>
+</html>
