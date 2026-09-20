@@ -1,0 +1,250 @@
+{
+  "contract": "branch-structure-alpha-cleanup-v1",
+  "verdict": "BRANCH_STRUCTURE_ALPHA_CLEANUP_V1_READY",
+  "ownerDecision": {
+    "runId": "design-asset-branch-alpha-salvage-1",
+    "ownerPreferredCleanup": "C",
+    "BRANCH_STRUCTURE_ALPHA_SALVAGE": "PASS",
+    "selectedCleanup": "EDGE_PRESERVING_C",
+    "BRANCH_STRUCTURE_OK": true,
+    "DETAIL_OK": true,
+    "familyPolicy": "MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP",
+    "highRequired": false,
+    "rawProviderPassed": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO",
+    "BOTANICAL_IDENTITY_QA": "UNKNOWN",
+    "STATE_QA": "UNKNOWN",
+    "IN_GARDEN_QA": "UNKNOWN",
+    "OWNER_ASSET_APPROVAL": "NO",
+    "notSelected": [
+      "ORIGINAL",
+      "A",
+      "B"
+    ]
+  },
+  "cleanupContract": {
+    "name": "BRANCH_STRUCTURE_ALPHA_CLEANUP_CONTRACT_V1",
+    "productionizeNow": false,
+    "applyToArbitraryPlantAssets": false,
+    "rules": [
+      "provider original remains immutable",
+      "cleanup produces a DERIVED asset",
+      "no AI",
+      "no sharpening",
+      "no background fill",
+      "no invented pixels from alpha=0",
+      "preserve connected branch structure",
+      "preserve thin twigs where supported",
+      "strengthen real wood opacity",
+      "suppress unconnected brown haze",
+      "preserve anti-aliased branch edges",
+      "dilation <= 1px",
+      "no visible halo",
+      "no major branch-width distortion"
+    ],
+    "scope": {
+      "requiredVariantDetailDemand": "BRANCH_STRUCTURE",
+      "requiredPhenologyState": "dormant",
+      "requiredVisualForm": "tree",
+      "requireKnownAlphaFailurePattern": true,
+      "forbiddenUnlessSeparatelyValidated": [
+        "leafy trees",
+        "flowering assets",
+        "fruiting assets",
+        "shrubs",
+        "rosettes",
+        "succulents",
+        "large-leaf herbaceous plants"
+      ]
+    },
+    "parameters": {
+      "mode": "C",
+      "dilationPasses": 1,
+      "dilationNeighborAlphaMin": 96,
+      "woodSeedHighGradAlphaMin": 12,
+      "woodSeedHighAlphaMin": 192,
+      "remap": {
+        "woodAndAlphaAtLeast128": 255,
+        "highGradAndAlphaAtLeast80": 255,
+        "highGradAndAlphaAtLeast24KeepOriginal": true,
+        "woodAndAlphaAtLeast40KeepOriginal": true,
+        "otherwise": 0
+      },
+      "neverInventFromFullyTransparent": true,
+      "sharpening": false,
+      "backgroundFill": false,
+      "ai": false
+    }
+  },
+  "originalVsDerived": {
+    "providerOriginalAsset": {
+      "assetId": "apple__mature__tree__dormant__branch-structure-v2__medium",
+      "file": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium.png",
+      "sha256": "24f4d0ccc56675d3ec009cfc85173217d51c508507af2a25e81241516c21c53d",
+      "immutable": true
+    },
+    "derivedCleanupAsset": {
+      "assetId": "apple__mature__tree__dormant__branch-structure-v2__medium__cleanup-c",
+      "file": "modules/garden-design/assets/plants/branch-structure-calibration-1/apple__mature__tree__dormant__branch-structure-v2__medium__cleanup-c.png",
+      "sha256": "9d1578725677e8906db30171d96ecfb9b25fa5c6171a6b095a285d25f9f7d667",
+      "sourceCandidateAssetId": "apple__mature__tree__dormant__branch-structure-v2__medium",
+      "cleanupContractVersion": "BRANCH_STRUCTURE_ALPHA_CLEANUP_CONTRACT_V1",
+      "selectedCleanup": "EDGE_PRESERVING_C",
+      "deterministicParameters": {
+        "mode": "C",
+        "dilationPasses": 1,
+        "dilationNeighborAlphaMin": 96,
+        "woodSeedHighGradAlphaMin": 12,
+        "woodSeedHighAlphaMin": 192,
+        "remap": {
+          "woodAndAlphaAtLeast128": 255,
+          "highGradAndAlphaAtLeast80": 255,
+          "highGradAndAlphaAtLeast24KeepOriginal": true,
+          "woodAndAlphaAtLeast40KeepOriginal": true,
+          "otherwise": 0
+        },
+        "neverInventFromFullyTransparent": true,
+        "sharpening": false,
+        "backgroundFill": false,
+        "ai": false
+      },
+      "checksum": "9d1578725677e8906db30171d96ecfb9b25fa5c6171a6b095a285d25f9f7d667",
+      "derivedTimestamp": "2026-09-20T15:11:23.309Z",
+      "aiTransformation": false,
+      "copiedFrom": "modules/garden-design/assets/plants/branch-alpha-salvage-feasibility-1/new-cleanup-c.png"
+    },
+    "historicalControlUnchanged": {
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/apple__mature__tree__dormant__detail-v2__medium.png",
+      "sha256": "b36346dd502ff13826e32dba640a34a59ebef8913f3ade974bfb283db5a429e5",
+      "notApproved": true
+    }
+  },
+  "branchStructureQualityResult": {
+    "IMAGE_DETAIL_QUALITY": "BRANCH_STRUCTURE_OK + DETAIL_OK",
+    "familyPolicy": "MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP",
+    "pipeline": "MEDIUM generation → branch-specific deterministic cleanup C → owner/QA review",
+    "highRequired": false,
+    "rawProviderPasses": false,
+    "ASSET_PRODUCTION_APPROVAL": "NO"
+  },
+  "audit273": {
+    "requiredVariantsTotal": 273,
+    "MEDIUM_EVIDENCE_SUPPORTED": 83,
+    "HIGH_EVIDENCE_SUPPORTED": 3,
+    "MEDIUM_DEFAULT_UNPROVEN": 154,
+    "QUALITY_CALIBRATION_REQUIRED": 7,
+    "UNKNOWN_BLOCKED": 26,
+    "BRANCH_CLEANUP_REQUIRED_VARIANTS": 14
+  },
+  "youngWoody": {
+    "remaining": [
+      {
+        "canonicalSlug": "apple",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      },
+      {
+        "canonicalSlug": "mango",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      },
+      {
+        "canonicalSlug": "pomegranate",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      }
+    ],
+    "avocadoOpenLargeLeafMedium": {
+      "applicable": false,
+      "reason": "Avocado is WOODY_OPEN_OR_LARGE_LEAF mature vegetative. Not the same morphology as young dense-small-leaf mango/apple/pomegranate."
+    },
+    "batch2YoungMango": {
+      "applicable": false,
+      "reason": "Batch-2 mango young was ASSET_DETAIL_SOFT. Softness evidence is not sufficient to validate young woody FOLIAGE_OPEN quality policy."
+    },
+    "promoted": false,
+    "keepQualityCalibrationRequired": true,
+    "doNotForceClosure": true
+  },
+  "factoryPath": {
+    "generateOnRender": false,
+    "automaticRegeneration": false,
+    "automaticHighEscalation": false,
+    "steps": [
+      "generation (owner-approved envelope only)",
+      "technical QA",
+      "detect branch-alpha failure pattern",
+      "deterministic Cleanup C contract",
+      "derived candidate with provenance",
+      "QA",
+      "owner/review policy"
+    ],
+    "ifCleanupCannotPreserveStructure": "BRANCH_ALPHA_CLEANUP_FAILED",
+    "doNotSilentlyAcceptProviderOriginal": true
+  },
+  "massGeneration": {
+    "QUALITY_POLICY_MASS_GENERATION_READY": "YES",
+    "startMassGeneration": false,
+    "generateNow": false,
+    "reasons": [
+      "Launch-critical quality families are CALIBRATED, including BRANCH_STRUCTURE via medium + Cleanup C",
+      "7 non-launch-critical variants remain QUALITY_CALIBRATION_REQUIRED and are excluded from committed generation demand",
+      "26 UNKNOWN_BLOCKED variants remain excluded from generation demand",
+      "Quality-policy validation does not equal asset approval",
+      "Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget",
+      "Do not start mass generation. generateNow remains false. Spend gate DENIED"
+    ]
+  },
+  "costProjection": {
+    "mediumGenerationCount": 237,
+    "highGenerationCount": 3,
+    "deterministicCleanupCount": 14,
+    "unresolvedGenerationCount": 7,
+    "blockedVariants": 26,
+    "unitEstimateUsd": {
+      "medium": 0.013,
+      "high": 0.044,
+      "guaranteed": false,
+      "notSpendAuthorization": true,
+      "source": "recent observed planning costs only as estimates"
+    },
+    "PROJECTED_GENERATION_COST": 3.081,
+    "PROJECTED_HIGH_COST": 0.132,
+    "BRANCH_CLEANUP_AI_COST": 0,
+    "TOTAL_PROJECTED_AI_COST": 3.213,
+    "notSpendAuthorization": true
+  },
+  "productionImpact": {
+    "originalPngsModified": false,
+    "productionRegistryChanged": false,
+    "oliveAssetChanged": false,
+    "botanicalSizeAuthorityChanged": false,
+    "treePhysicalScaleChanged": false,
+    "massGenerationStarted": false
+  },
+  "spend": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "highExecuted": false,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "massGenerationStarted": false,
+    "productionRegistryChanged": false,
+    "originalsOverwritten": false,
+    "factoryGenerateOnRender": false,
+    "qualityPolicySpendGate": "DENIED"
+  }
+}

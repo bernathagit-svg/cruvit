@@ -52,8 +52,9 @@ test('owner quality review consolidation records findings and does not spend', (
     phenologyState: 'dormant'
   });
   assert.equal(appleDormant.variantDetailDemand, VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE);
-  assert.equal(appleDormant.qualityPlanningState, QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED);
+  assert.equal(appleDormant.qualityPlanningState, QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED);
   assert.equal(appleDormant.plannedQuality, 'medium');
+  assert.equal(appleDormant.alphaCleanupRequired, true);
   assert.equal(
     planDesignAssetGeneration({
       canonicalSlug: 'apple',
@@ -94,7 +95,7 @@ test('owner quality review consolidation records findings and does not spend', (
 
   const written = writeOwnerQualityReviewConsolidationReports(ROOT);
   assert.equal(written.verdict, 'OWNER_QUALITY_REVIEW_CONSOLIDATED_V1_READY');
-  assert.equal(written.massReady, 'NO');
+  assert.equal(written.massReady, 'YES');
   assert.equal(written.appleRootCause, 'MIXED');
   const spend = executeOwnerQualityReviewConsolidation();
   assert.equal(spend.openaiCalls, 0);
@@ -107,7 +108,7 @@ test('owner quality review consolidation records findings and does not spend', (
   const summary = JSON.parse(fs.readFileSync(written.summaryPath, 'utf8'));
   assert.equal(summary.audit273.requiredVariantsTotal, 273);
   assert.ok(summary.audit273.planningStates.QUALITY_CALIBRATION_REQUIRED < 82);
-  assert.equal(summary.massGeneration.QUALITY_POLICY_MASS_GENERATION_READY, 'NO');
+  assert.equal(summary.massGeneration.QUALITY_POLICY_MASS_GENERATION_READY, 'YES');
   assert.equal(summary.confirms.universalHigh, 'NO');
   assert.equal(summary.costs.notSpendAuthorization, true);
 

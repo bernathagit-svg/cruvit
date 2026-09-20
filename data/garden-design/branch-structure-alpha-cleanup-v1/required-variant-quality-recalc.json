@@ -1,0 +1,52 @@
+{
+  "contract": "branch-structure-alpha-cleanup-v1",
+  "requiredVariantsTotal": 273,
+  "MEDIUM_EVIDENCE_SUPPORTED": 83,
+  "HIGH_EVIDENCE_SUPPORTED": 3,
+  "MEDIUM_DEFAULT_UNPROVEN": 154,
+  "QUALITY_CALIBRATION_REQUIRED": 7,
+  "UNKNOWN_BLOCKED": 26,
+  "BRANCH_CLEANUP_REQUIRED_VARIANTS": 14,
+  "youngWoody": {
+    "remaining": [
+      {
+        "canonicalSlug": "apple",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      },
+      {
+        "canonicalSlug": "mango",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      },
+      {
+        "canonicalSlug": "pomegranate",
+        "architectureMode": "tree",
+        "growthStage": "young",
+        "phenologyState": "vegetative",
+        "baseDetailClass": "WOODY_DENSE_SMALL_LEAF",
+        "variantDetailDemand": "FOLIAGE_OPEN",
+        "qualityPlanningState": "QUALITY_CALIBRATION_REQUIRED"
+      }
+    ],
+    "avocadoOpenLargeLeafMedium": {
+      "applicable": false,
+      "reason": "Avocado is WOODY_OPEN_OR_LARGE_LEAF mature vegetative. Not the same morphology as young dense-small-leaf mango/apple/pomegranate."
+    },
+    "batch2YoungMango": {
+      "applicable": false,
+      "reason": "Batch-2 mango young was ASSET_DETAIL_SOFT. Softness evidence is not sufficient to validate young woody FOLIAGE_OPEN quality policy."
+    },
+    "promoted": false,
+    "keepQualityCalibrationRequired": true,
+    "doNotForceClosure": true
+  }
+}

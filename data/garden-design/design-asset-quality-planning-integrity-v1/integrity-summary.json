@@ -52,7 +52,7 @@
     "youngAutomaticallyInheritsFoliageHigh": false,
     "fruitingAutomaticallyInheritsFoliageHigh": false,
     "rule": "HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE and no contradictory evidence exists. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.",
-    "evidence": "Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED and must not auto-escalate to HIGH."
+    "evidence": "Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP (Cleanup C). Do not auto-escalate BRANCH_STRUCTURE to HIGH."
   },
   "audit273": {
     "requiredVariantsTotal": 273,
@@ -60,63 +60,79 @@
     "unknownReduction": 18,
     "forcedClassification": false,
     "planningStates": {
-      "MEDIUM_EVIDENCE_SUPPORTED": 69,
+      "MEDIUM_EVIDENCE_SUPPORTED": 83,
       "HIGH_EVIDENCE_SUPPORTED": 3,
       "MEDIUM_DEFAULT_UNPROVEN": 154,
-      "QUALITY_CALIBRATION_REQUIRED": 21,
+      "QUALITY_CALIBRATION_REQUIRED": 7,
       "UNKNOWN_BLOCKED": 26
     },
     "plannedQuality": {
       "medium": 244,
       "high": 3,
       "unplanned": 26
-    }
+    },
+    "BRANCH_CLEANUP_REQUIRED_VARIANTS": 14
   },
   "calibrationCoverage": [
     {
       "family": "WOODY_DENSE_SMALL_LEAF",
       "status": "CALIBRATED",
-      "note": "Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE."
+      "note": "Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE.",
+      "launchCritical": true
     },
     {
       "family": "WOODY_OPEN_OR_LARGE_LEAF",
       "status": "CALIBRATED",
-      "note": "Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH."
+      "note": "Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH.",
+      "launchCritical": true
     },
     {
       "family": "LARGE_LEAF_HERBACEOUS",
       "status": "CALIBRATED",
-      "note": "Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED."
+      "note": "Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED.",
+      "launchCritical": true
     },
     {
       "family": "SHRUB_FINE_FOLIAGE",
       "status": "CALIBRATED",
-      "note": "Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension."
+      "note": "Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension.",
+      "launchCritical": true
     },
     {
       "family": "ROSETTE",
       "status": "CALIBRATED",
-      "note": "Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence."
+      "note": "Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence.",
+      "launchCritical": true
     },
     {
       "family": "SUCCULENT",
       "status": "CALIBRATED",
-      "note": "Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review."
+      "note": "Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review.",
+      "launchCritical": true
     },
     {
       "family": "BRANCH_STRUCTURE",
-      "status": "NOT_VALIDATED",
-      "note": "Owner Apple dormant V2+medium NOT ACCEPTABLE. Do not auto-escalate to HIGH. Required for deciduous launch coverage."
+      "status": "CALIBRATED",
+      "note": "Owner selected CLEANUP C on Apple TREE MATURE DORMANT. MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP. Raw provider PNG did not pass. HIGH not required. Launch-critical for deciduous coverage.",
+      "launchCritical": true
     },
     {
       "family": "FLOWER_FINE_DETAIL",
       "status": "CALIBRATED",
-      "note": "Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED."
+      "note": "Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED.",
+      "launchCritical": true
     },
     {
       "family": "FRUIT_VISIBLE_DETAIL",
       "status": "CALIBRATED",
-      "note": "Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH."
+      "note": "Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.",
+      "launchCritical": true
+    },
+    {
+      "family": "YOUNG_WOODY_FOLIAGE_OPEN",
+      "status": "NOT_VALIDATED",
+      "note": "Mango/Apple/Pomegranate young FOLIAGE_OPEN remain QUALITY_CALIBRATION_REQUIRED. Avocado WOODY_OPEN_OR_LARGE_LEAF medium evidence is a different morphology. Batch-2 mango young was ASSET_DETAIL_SOFT. Not launch-critical. Do not force closure.",
+      "launchCritical": false
     }
   ],
   "nextCalibrationSet": {
@@ -217,16 +233,16 @@
     },
     "evidenceSupportedProduction": {
       "label": "EVIDENCE-SUPPORTED PRODUCTION PROJECTION",
-      "mediumEvidenceSupported": 69,
+      "mediumEvidenceSupported": 83,
       "highEvidenceSupported": 3,
-      "PROJECTED_SUPPORTED_ASSET_COST": 1.029,
+      "PROJECTED_SUPPORTED_ASSET_COST": 1.211,
       "notSpendAuthorization": true
     },
     "knownEvidence": {
       "label": "KNOWN-EVIDENCE COST",
       "highEvidenceSupported": 3,
-      "mediumEvidenceSupported": 69,
-      "projectedUsd": 1.029
+      "mediumEvidenceSupported": 83,
+      "projectedUsd": 1.211
     },
     "mediumDefaultUnprovenProjection": {
       "label": "MEDIUM_DEFAULT_UNPROVEN projection",
@@ -248,30 +264,31 @@
     },
     "calibrationRequired": {
       "label": "BLOCKED / CALIBRATION REQUIRED",
-      "qualityCalibrationRequired": 21,
+      "qualityCalibrationRequired": 7,
       "unknownBlocked": 26,
-      "UNRESOLVED_COST_COUNT": 47,
-      "totalNotReadyToCommit": 47,
+      "UNRESOLVED_COST_COUNT": 33,
+      "totalNotReadyToCommit": 33,
       "notIncludedAsCommittedProductionSpend": true
     }
   },
   "massGeneration": {
-    "QUALITY_POLICY_MASS_GENERATION_READY": "NO",
+    "QUALITY_POLICY_MASS_GENERATION_READY": "YES",
     "reasons": [
-      "BRANCH_STRUCTURE remains QUALITY_POLICY_NOT_VALIDATED and is required for deciduous launch coverage",
-      "21 variants are QUALITY_CALIBRATION_REQUIRED",
-      "26 variants are UNKNOWN_BLOCKED",
-      "154 variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported",
+      "Launch-critical quality families are CALIBRATED, including BRANCH_STRUCTURE via medium + Cleanup C",
+      "7 non-launch-critical variants remain QUALITY_CALIBRATION_REQUIRED and are excluded from committed generation demand",
+      "26 UNKNOWN_BLOCKED variants remain excluded from generation demand",
       "Quality-policy validation does not equal asset approval",
       "Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget",
-      "Paid execution / mass generation remains DENIED"
+      "Do not start mass generation. generateNow remains false. Spend gate DENIED"
     ],
     "incompleteFamilies": [
-      "BRANCH_STRUCTURE"
+      "YOUNG_WOODY_FOLIAGE_OPEN"
     ],
-    "branchStructureUnresolved": true,
+    "incompleteLaunchCriticalFamilies": [],
+    "branchStructureUnresolved": false,
     "fallbackIsNotProductionBudget": true,
-    "generateNow": false
+    "generateNow": false,
+    "startMassGeneration": false
   },
   "spend": {
     "executed": false,

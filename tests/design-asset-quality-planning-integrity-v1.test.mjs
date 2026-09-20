@@ -46,7 +46,8 @@ test('quality planning integrity is state-specific and does not spend', () => {
   });
   assert.equal(appleDormant.variantDetailDemand, VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE);
   assert.equal(appleDormant.plannedQuality, 'medium');
-  assert.equal(appleDormant.qualityPlanningState, QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED);
+  assert.equal(appleDormant.qualityPlanningState, QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED);
+  assert.equal(appleDormant.alphaCleanupRequired, true);
   assert.notEqual(appleDormant.plannedQuality, 'high');
 
   const avocado = planVariantQuality({
@@ -100,7 +101,7 @@ test('quality planning integrity is state-specific and does not spend', () => {
 
   const written = writeQualityPlanningIntegrityReports(ROOT);
   assert.equal(written.verdict, 'DESIGN_ASSET_QUALITY_PLANNING_INTEGRITY_V1_READY');
-  assert.equal(written.massReady, 'NO');
+  assert.equal(written.massReady, 'YES');
   assert.equal(written.spend.openaiCalls, 0);
   assert.equal(written.spend.imageGeneration, 0);
   assert.equal(executeQualityPlanningIntegrity().additionalSpendUsd, 0);

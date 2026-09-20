@@ -1,0 +1,54 @@
+{
+  "name": "BRANCH_STRUCTURE_ALPHA_CLEANUP_CONTRACT_V1",
+  "productionizeNow": false,
+  "applyToArbitraryPlantAssets": false,
+  "rules": [
+    "provider original remains immutable",
+    "cleanup produces a DERIVED asset",
+    "no AI",
+    "no sharpening",
+    "no background fill",
+    "no invented pixels from alpha=0",
+    "preserve connected branch structure",
+    "preserve thin twigs where supported",
+    "strengthen real wood opacity",
+    "suppress unconnected brown haze",
+    "preserve anti-aliased branch edges",
+    "dilation <= 1px",
+    "no visible halo",
+    "no major branch-width distortion"
+  ],
+  "scope": {
+    "requiredVariantDetailDemand": "BRANCH_STRUCTURE",
+    "requiredPhenologyState": "dormant",
+    "requiredVisualForm": "tree",
+    "requireKnownAlphaFailurePattern": true,
+    "forbiddenUnlessSeparatelyValidated": [
+      "leafy trees",
+      "flowering assets",
+      "fruiting assets",
+      "shrubs",
+      "rosettes",
+      "succulents",
+      "large-leaf herbaceous plants"
+    ]
+  },
+  "parameters": {
+    "mode": "C",
+    "dilationPasses": 1,
+    "dilationNeighborAlphaMin": 96,
+    "woodSeedHighGradAlphaMin": 12,
+    "woodSeedHighAlphaMin": 192,
+    "remap": {
+      "woodAndAlphaAtLeast128": 255,
+      "highGradAndAlphaAtLeast80": 255,
+      "highGradAndAlphaAtLeast24KeepOriginal": true,
+      "woodAndAlphaAtLeast40KeepOriginal": true,
+      "otherwise": 0
+    },
+    "neverInventFromFullyTransparent": true,
+    "sharpening": false,
+    "backgroundFill": false,
+    "ai": false
+  }
+}

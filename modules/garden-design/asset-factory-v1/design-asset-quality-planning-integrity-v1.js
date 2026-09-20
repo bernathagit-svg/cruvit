@@ -61,7 +61,7 @@ export const STATE_SPECIFIC_HIGH_RULE_LOCKED = Object.freeze({
   fruitingAutomaticallyInheritsFoliageHigh: false,
   rule: 'HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE and no contradictory evidence exists. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.',
   evidence:
-    'Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED and must not auto-escalate to HIGH.'
+    'Owner A/B on mango mature vegetative (FOLIAGE_DENSE): V2+medium ACCEPTABLE, V2+high PREFERRED, HIGH selective. Apple dormant BRANCH_STRUCTURE is MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP (Cleanup C). Do not auto-escalate BRANCH_STRUCTURE to HIGH.'
 });
 
 export const STATE_SPECIFIC_HIGH_RULE_PROPOSED = STATE_SPECIFIC_HIGH_RULE_LOCKED;
@@ -224,7 +224,11 @@ export function planVariantQuality(input = {}) {
       botanicalIdentityBlocker,
       assetProductionApproval,
       confidence: 'LOW',
-      calibrationNeeded: 'YES'
+      calibrationNeeded: 'YES',
+      alphaCleanupRequired: false,
+      alphaCleanupContract: null,
+      highRequired: false,
+      rawProviderPasses: null
     };
   }
 
@@ -239,12 +243,23 @@ export function planVariantQuality(input = {}) {
   let calibrationNeeded = 'NO';
 
   if (demand === VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE) {
-    qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
-    plannedQuality = DEFAULT_QUALITY;
-    evidenceBasis =
-      'Owner quality-family-calibration-final-1 Apple MATURE DORMANT V2+medium NOT ACCEPTABLE (HALO, DETAIL_SOFT, semi-transparent branch ghosting / brown haze). BRANCH_STRUCTURE is QUALITY_POLICY_NOT_VALIDATED. Do not inherit foliage HIGH. Do not auto-escalate to HIGH.';
-    confidence = 'HIGH';
-    calibrationNeeded = 'YES';
+    const treeDormant =
+      asText(input.visualForm).toLowerCase() === 'tree' && asText(input.architectureMode).toLowerCase() !== 'shrub';
+    if (treeDormant) {
+      qualityPlanningState = QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
+      plannedQuality = DEFAULT_QUALITY;
+      evidenceBasis =
+        'Owner design-asset-branch-alpha-salvage-1 selected CLEANUP C (EDGE_PRESERVING_C). BRANCH_STRUCTURE medium generation + deterministic alpha cleanup C is MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP. Raw provider PNG did not pass. HIGH is not required. Do not inherit foliage HIGH.';
+      confidence = asText(input.canonicalSlug).toLowerCase() === 'apple' ? 'HIGH' : 'MEDIUM';
+      calibrationNeeded = 'NO';
+    } else {
+      qualityPlanningState = QUALITY_PLANNING_STATE.QUALITY_CALIBRATION_REQUIRED;
+      plannedQuality = DEFAULT_QUALITY;
+      evidenceBasis =
+        'BRANCH_STRUCTURE cleanup C is validated only for tree dormant variants. This form is out of scope until separately reviewed.';
+      confidence = 'MEDIUM';
+      calibrationNeeded = 'YES';
+    }
   } else if (foliageHigh) {
     qualityPlanningState = QUALITY_PLANNING_STATE.HIGH_EVIDENCE_SUPPORTED;
     plannedQuality = 'high';
@@ -324,6 +339,10 @@ export function planVariantQuality(input = {}) {
     calibrationNeeded = 'NO';
   }
 
+  const alphaCleanupRequired =
+    demand === VARIANT_DETAIL_DEMAND.BRANCH_STRUCTURE &&
+    qualityPlanningState === QUALITY_PLANNING_STATE.MEDIUM_EVIDENCE_SUPPORTED;
+
   return {
     canonicalSlug: input.canonicalSlug || null,
     architectureMode: input.architectureMode || null,
@@ -337,7 +356,12 @@ export function planVariantQuality(input = {}) {
     botanicalIdentityBlocker,
     assetProductionApproval,
     confidence,
-    calibrationNeeded
+    calibrationNeeded,
+    alphaCleanupRequired,
+    alphaCleanupContract: alphaCleanupRequired ? 'BRANCH_STRUCTURE_ALPHA_CLEANUP_CONTRACT_V1' : null,
+    familyPolicy: alphaCleanupRequired ? 'MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP' : null,
+    highRequired: foliageHigh,
+    rawProviderPasses: alphaCleanupRequired ? false : null
   };
 }
 
@@ -378,12 +402,13 @@ export function auditRequiredVariantQualityIntegrity(root = DEFAULT_ROOT) {
       high: variants.filter((row) => row.plannedQuality === 'high').length,
       unplanned: variants.filter((row) => row.plannedQuality == null).length
     },
+    BRANCH_CLEANUP_REQUIRED_VARIANTS: variants.filter((row) => row.alphaCleanupRequired === true).length,
     variants
   };
 }
 
 export function calibrationCoverageFromAudit(audit) {
-  const family = (id, status, note) => ({ family: id, status, note });
+  const family = (id, status, note, launchCritical = true) => ({ family: id, status, note, launchCritical });
   return [
     family(
       'WOODY_DENSE_SMALL_LEAF',
@@ -417,8 +442,8 @@ export function calibrationCoverageFromAudit(audit) {
     ),
     family(
       'BRANCH_STRUCTURE',
-      'NOT_VALIDATED',
-      'Owner Apple dormant V2+medium NOT ACCEPTABLE. Do not auto-escalate to HIGH. Required for deciduous launch coverage.'
+      'CALIBRATED',
+      'Owner selected CLEANUP C on Apple TREE MATURE DORMANT. MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP. Raw provider PNG did not pass. HIGH not required. Launch-critical for deciduous coverage.'
     ),
     family(
       'FLOWER_FINE_DETAIL',
@@ -429,6 +454,12 @@ export function calibrationCoverageFromAudit(audit) {
       'FRUIT_VISIBLE_DETAIL',
       'CALIBRATED',
       'Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.'
+    ),
+    family(
+      'YOUNG_WOODY_FOLIAGE_OPEN',
+      'NOT_VALIDATED',
+      'Mango/Apple/Pomegranate young FOLIAGE_OPEN remain QUALITY_CALIBRATION_REQUIRED. Avocado WOODY_OPEN_OR_LARGE_LEAF medium evidence is a different morphology. Batch-2 mango young was ASSET_DETAIL_SOFT. Not launch-critical. Do not force closure.',
+      false
     )
   ];
 }
@@ -594,28 +625,31 @@ export function costViewsFromAudit(audit) {
 
 export function massGenerationReady(audit, coverage, costs) {
   const states = audit.planningStates || {};
-  const branch = (coverage || []).find((row) => row.family === 'BRANCH_STRUCTURE');
-  const branchUnresolved = !branch || branch.status !== 'CALIBRATED';
-  const incompleteFamilies = (coverage || [])
-    .filter((row) => row.status !== 'CALIBRATED')
-    .map((row) => row.family);
+  const launchCritical = (coverage || []).filter((row) => row.launchCritical !== false);
+  const incompleteLaunch = launchCritical.filter((row) => row.status !== 'CALIBRATED');
+  const ready = incompleteLaunch.length === 0;
+  const reasons = ready
+    ? [
+        'Launch-critical quality families are CALIBRATED, including BRANCH_STRUCTURE via medium + Cleanup C',
+        `${states.QUALITY_CALIBRATION_REQUIRED || 0} non-launch-critical variants remain QUALITY_CALIBRATION_REQUIRED and are excluded from committed generation demand`,
+        `${states.UNKNOWN_BLOCKED || 0} UNKNOWN_BLOCKED variants remain excluded from generation demand`,
+        'Quality-policy validation does not equal asset approval',
+        'Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget',
+        'Do not start mass generation. generateNow remains false. Spend gate DENIED'
+      ]
+    : [
+        'Launch-critical quality families are not fully CALIBRATED',
+        ...incompleteLaunch.map((row) => `${row.family} is ${row.status}`)
+      ];
   return {
-    QUALITY_POLICY_MASS_GENERATION_READY: 'NO',
-    reasons: [
-      branchUnresolved
-        ? 'BRANCH_STRUCTURE remains QUALITY_POLICY_NOT_VALIDATED and is required for deciduous launch coverage'
-        : 'Launch-critical quality families are not fully CALIBRATED',
-      `${states.QUALITY_CALIBRATION_REQUIRED || 0} variants are QUALITY_CALIBRATION_REQUIRED`,
-      `${states.UNKNOWN_BLOCKED || 0} variants are UNKNOWN_BLOCKED`,
-      `${states.MEDIUM_DEFAULT_UNPROVEN || 0} variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported`,
-      'Quality-policy validation does not equal asset approval',
-      'Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget',
-      'Paid execution / mass generation remains DENIED'
-    ],
-    incompleteFamilies,
-    branchStructureUnresolved: branchUnresolved,
+    QUALITY_POLICY_MASS_GENERATION_READY: ready ? 'YES' : 'NO',
+    reasons,
+    incompleteFamilies: (coverage || []).filter((row) => row.status !== 'CALIBRATED').map((row) => row.family),
+    incompleteLaunchCriticalFamilies: incompleteLaunch.map((row) => row.family),
+    branchStructureUnresolved: incompleteLaunch.some((row) => row.family === 'BRANCH_STRUCTURE'),
     fallbackIsNotProductionBudget: costs?.fallbackProjection?.notAFinalProductionBudget === true,
-    generateNow: false
+    generateNow: false,
+    startMassGeneration: false
   };
 }
 
@@ -660,7 +694,8 @@ export function buildQualityPlanningIntegritySummary(root = DEFAULT_ROOT) {
       unknownReduction: audit.unknownReduction,
       forcedClassification: false,
       planningStates: audit.planningStates,
-      plannedQuality: audit.plannedQuality
+      plannedQuality: audit.plannedQuality,
+      BRANCH_CLEANUP_REQUIRED_VARIANTS: audit.BRANCH_CLEANUP_REQUIRED_VARIANTS
     },
     calibrationCoverage: coverage,
     nextCalibrationSet: NEXT_QUALITY_CALIBRATION_SET,

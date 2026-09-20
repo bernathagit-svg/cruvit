@@ -4,47 +4,62 @@
     {
       "family": "WOODY_DENSE_SMALL_LEAF",
       "status": "CALIBRATED",
-      "note": "Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE."
+      "note": "Owner A/B: CONTROL DETAIL_SOFT; V2+medium ACCEPTABLE; V2+high PREFERRED. HIGH selective only for FOLIAGE_DENSE.",
+      "launchCritical": true
     },
     {
       "family": "WOODY_OPEN_OR_LARGE_LEAF",
       "status": "CALIBRATED",
-      "note": "Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH."
+      "note": "Owner Avocado V2+medium DETAIL_OK. MEDIUM_POLICY_VALIDATED. Does not inherit mango HIGH.",
+      "launchCritical": true
     },
     {
       "family": "LARGE_LEAF_HERBACEOUS",
       "status": "CALIBRATED",
-      "note": "Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED."
+      "note": "Owner Banana fruiting V2+medium DETAIL_OK plus prior banana vegetative CRISP_ENOUGH. MEDIUM_POLICY_VALIDATED.",
+      "launchCritical": true
     },
     {
       "family": "SHRUB_FINE_FOLIAGE",
       "status": "CALIBRATED",
-      "note": "Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension."
+      "note": "Owner Lavender vegetative V2+medium DETAIL_OK. Detail policy PASS. Botanical identity remains REVIEW_REQUIRED on that asset and is a separate QA dimension.",
+      "launchCritical": true
     },
     {
       "family": "ROSETTE",
       "status": "CALIBRATED",
-      "note": "Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence."
+      "note": "Owner Pineapple vegetative V2+medium DETAIL_OK. Historical pineapple control is a different phenology/state and is not like-for-like evidence.",
+      "launchCritical": true
     },
     {
       "family": "SUCCULENT",
       "status": "CALIBRATED",
-      "note": "Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review."
+      "note": "Owner Aloe Vera vegetative V2+medium DETAIL_OK. Architecture/pups remain a separate identity review.",
+      "launchCritical": true
     },
     {
       "family": "BRANCH_STRUCTURE",
-      "status": "NOT_VALIDATED",
-      "note": "Owner Apple dormant V2+medium NOT ACCEPTABLE. Do not auto-escalate to HIGH. Required for deciduous launch coverage."
+      "status": "CALIBRATED",
+      "note": "Owner selected CLEANUP C on Apple TREE MATURE DORMANT. MEDIUM_POLICY_VALIDATED_WITH_ALPHA_CLEANUP. Raw provider PNG did not pass. HIGH not required. Launch-critical for deciduous coverage.",
+      "launchCritical": true
     },
     {
       "family": "FLOWER_FINE_DETAIL",
       "status": "CALIBRATED",
-      "note": "Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED."
+      "note": "Owner Lavender flowering V2+medium DETAIL_OK and FLOWERING_DISTINCTION_CLEAR. MEDIUM_POLICY_VALIDATED.",
+      "launchCritical": true
     },
     {
       "family": "FRUIT_VISIBLE_DETAIL",
       "status": "CALIBRATED",
-      "note": "Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH."
+      "note": "Owner Banana fruiting fruit cluster readable and plausible. MEDIUM_POLICY_VALIDATED. Does not inherit foliage HIGH.",
+      "launchCritical": true
+    },
+    {
+      "family": "YOUNG_WOODY_FOLIAGE_OPEN",
+      "status": "NOT_VALIDATED",
+      "note": "Mango/Apple/Pomegranate young FOLIAGE_OPEN remain QUALITY_CALIBRATION_REQUIRED. Avocado WOODY_OPEN_OR_LARGE_LEAF medium evidence is a different morphology. Batch-2 mango young was ASSET_DETAIL_SOFT. Not launch-critical. Do not force closure.",
+      "launchCritical": false
     }
   ]
 }
