@@ -618,6 +618,7 @@ function mapOwnedPlant(row) {
   if (!row) return null;
   return {
     gardenPlantId: asText(row.id || row.gardenPlantId),
+    clientInstanceId: asText(row.client_instance_id || row.clientInstanceId),
     canonicalSlug: asText(row.profile_slug || row.canonicalSlug || row.profileSlug),
     gardenAreaId: asNull(row.garden_area_id || row.areaId || row.gardenAreaId),
     gardenProfileId: asText(row.garden_profile_id || row.gardenProfileId),
@@ -1083,7 +1084,21 @@ export function createGardenDesignHostPersistence(deps = {}) {
     if (!gardenPlantId) {
       return { ok: false, code: IDENTITY_INCONSISTENT, detail: 'owned-requires-garden-plant-id' };
     }
-    const plant = ownedPlants.find((p) => p.gardenPlantId === gardenPlantId);
+
+    let plant = ownedPlants.find((p) => p.gardenPlantId === gardenPlantId);
+    let identityAliasResolved = false;
+    if (!plant) {
+      const aliasMatches = ownedPlants.filter(
+        (p) => p.clientInstanceId && p.clientInstanceId === gardenPlantId
+      );
+      if (aliasMatches.length > 1) {
+        return { ok: false, code: IDENTITY_INCONSISTENT, detail: 'owned-client-instance-id-ambiguous' };
+      }
+      if (aliasMatches.length === 1) {
+        plant = aliasMatches[0];
+        identityAliasResolved = true;
+      }
+    }
     if (!plant) {
       return { ok: false, code: IDENTITY_INCONSISTENT, detail: 'garden-plant-not-in-active-garden' };
     }
@@ -1092,10 +1107,11 @@ export function createGardenDesignHostPersistence(deps = {}) {
     }
     return {
       ok: true,
-      gardenPlantId,
+      gardenPlantId: plant.gardenPlantId,
       canonicalSlug: plant.canonicalSlug,
       gardenAreaId: plant.gardenAreaId,
-      createsGardenPlant: false
+      createsGardenPlant: false,
+      identityAliasResolved
     };
   }
 
@@ -1123,12 +1139,14 @@ export function createGardenDesignHostPersistence(deps = {}) {
     let gardenPlantId = null;
     let canonicalSlug = asNull(placement.canonicalSlug);
     let gardenAreaId = asNull(placement.gardenAreaId);
+    let identityAliasResolved = false;
     if (kind === DESIGN_PLANT_KIND.OWNED) {
       const owned = validateOwnedPlacement(placement, ownedPlants, auth.gardenProfileId);
       if (!owned.ok) return Object.assign({ keepLocalCanvas: true, paidAiCalls: 0, createsGardenPlant: false }, owned);
       gardenPlantId = owned.gardenPlantId;
       canonicalSlug = owned.canonicalSlug;
       gardenAreaId = owned.gardenAreaId;
+      identityAliasResolved = owned.identityAliasResolved === true;
     } else {
       if (!canonicalSlug) {
         return { ok: false, code: 'PROPOSED_CANONICAL_SLUG_REQUIRED', keepLocalCanvas: true, paidAiCalls: 0 };
@@ -1263,7 +1281,8 @@ export function createGardenDesignHostPersistence(deps = {}) {
       gardenPlantId,
       gardenAreaId,
       gardenProfileId: hostGardenId,
-      canonicalSlug
+      canonicalSlug,
+      identityAliasResolved
     };
   }
 

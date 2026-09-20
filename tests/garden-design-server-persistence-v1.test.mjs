@@ -69,6 +69,7 @@ function seedPlants() {
   return [
     {
       id: MANGO,
+      client_instance_id: 'catalog:mango',
       garden_profile_id: GARDEN,
       profile_slug: 'mango',
       garden_area_id: PATIO,
@@ -97,6 +98,7 @@ function seedPlants() {
 function ownedFromSeed(plants) {
   return plants.map((p) => ({
     gardenPlantId: p.id,
+    clientInstanceId: p.client_instance_id || null,
     canonicalSlug: p.profile_slug,
     gardenAreaId: p.garden_area_id,
     gardenProfileId: p.garden_profile_id,
@@ -248,6 +250,30 @@ test('F/G/H: owned Mango save keeps gardenPlantId, does not create garden_plants
   assert.equal(saved.gardenAreaId, PATIO);
   assert.equal(mem.db.garden_design_placements[0].garden_area_id, PATIO);
   assert.equal(mem.writes.some((w) => w.table === 'garden_plants' && String(w.op).includes('insert')), false);
+});
+
+test('legacy owned client_instance_id resolves exactly to server garden_plants UUID before insert', async () => {
+  const { mem, host } = makeHost();
+  const saved = await host.savePlacement({
+    designClientInstanceId: 'gd_d_legacy_owned_alias',
+    placement: {
+      clientInstanceId: 'pl_legacy_owned_alias',
+      kind: 'owned',
+      gardenPlantId: 'catalog:mango',
+      canonicalSlug: 'stale-local-value-must-not-win',
+      x: 0.47,
+      y: 0.79,
+      scale: 1
+    }
+  });
+  assert.equal(saved.ok, true);
+  assert.equal(saved.identityAliasResolved, true);
+  assert.equal(saved.gardenPlantId, MANGO);
+  assert.equal(saved.canonicalSlug, 'mango');
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  assert.equal(mem.db.garden_design_placements[0].garden_plant_id, MANGO);
+  assert.equal(mem.db.garden_design_placements[0].canonical_slug, 'mango');
+  assert.equal(mem.db.garden_plants.length, 3);
 });
 
 test('I/J/K: drag END and scale END persist; pointermove does not write', async () => {
