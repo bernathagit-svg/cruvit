@@ -1,0 +1,412 @@
+{
+  "contract": "OWNED_GARDEN_ASSET_PROMOTION_FINAL_GATE_V1",
+  "verdict": "OWNED_GARDEN_ASSET_PROMOTION_FINAL_GATE_READY",
+  "runId": "owned-garden-asset-promotion-final-gate-v1",
+  "ownerApprovals": {
+    "mango": {
+      "canonicalSlug": "mango",
+      "ownerChoice": "APPROVE_FOR_PRODUCTION_REGISTRY",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS"
+    },
+    "banana": {
+      "canonicalSlug": "banana",
+      "ownerChoice": "APPROVE_FOR_PRODUCTION_REGISTRY",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS"
+    },
+    "pineapple": {
+      "canonicalSlug": "pineapple",
+      "ownerChoice": "APPROVE_FOR_PRODUCTION_REGISTRY",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS"
+    }
+  },
+  "bananaIdentity": {
+    "canonicalSlug": "banana",
+    "scientific": "Musa spp.",
+    "batch2Stamp": "GENUS_BLOCKED",
+    "batch2StampMeaning": "stale generation/spend stamp; conflicts with accepted genus-neutral vegetative architecture policy",
+    "identityScope": "genus",
+    "identityPrecision": "GENUS_VISUALLY_REPRESENTABLE",
+    "identityPrecisionEnum": "GENUS_VISUALLY_REPRESENTABLE",
+    "generationEligible": true,
+    "reason": "genus-morphology-neutral-vegetative",
+    "speciesInvented": false,
+    "cultivarSpecific": false,
+    "fruitCultivarClaim": false,
+    "registryCanEncodeGenus": true,
+    "registryGenusExample": "bougainvillea identityScope=genus already exists in production registry",
+    "BANANA_IDENTITY_SCOPE_GATE_REQUIRED": false,
+    "acceptableUse": "generic Musa / banana visual representation for neutral mature vegetative Garden Design"
+  },
+  "promotionReady": {
+    "mango": true,
+    "banana": true,
+    "pineapple": true
+  },
+  "qa": {
+    "mango": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "PASS",
+      "ARCHITECTURE_QA": "PASS",
+      "GROWTH_STAGE_QA": "PASS",
+      "PHENOLOGY_STATE_QA": "PASS",
+      "IN_GARDEN_QA": "PASS",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "PROMOTION_READY": true
+    },
+    "banana": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "PASS_GENUS_VISUALLY_REPRESENTABLE",
+      "ARCHITECTURE_QA": "PASS",
+      "GROWTH_STAGE_QA": "PASS",
+      "PHENOLOGY_STATE_QA": "PASS",
+      "IN_GARDEN_QA": "PASS",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "PROMOTION_READY": true
+    },
+    "pineapple": {
+      "TECHNICAL_QA": "PASS",
+      "BOTANICAL_IDENTITY_QA": "PASS",
+      "ARCHITECTURE_QA": "PASS",
+      "GROWTH_STAGE_QA": "PASS",
+      "PHENOLOGY_STATE_QA": "PASS",
+      "IN_GARDEN_QA": "PASS",
+      "OWNER_VISUAL_QA": "PASS",
+      "DETAIL_QA": "PASS",
+      "ownerVisualResult": "LOOKS_EXCELLENT",
+      "PROMOTION_READY": true
+    }
+  },
+  "registryRecords": {
+    "mango": {
+      "assetId": "mango__mature__tree__vegetative__detail-v2__high",
+      "canonicalSlug": "mango",
+      "botanicalTaxonId": "taxon:mangifera-indica",
+      "scientific": "Mangifera indica",
+      "identityScope": "species",
+      "identityPrecision": "SPECIES_SUPPORTED",
+      "identityConfidence": "species",
+      "cultivarSpecific": false,
+      "visualForm": "tree",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "seasonIsIdentity": false,
+      "groundAnchor": {
+        "nx": 0.50830078125,
+        "ny": 0.9759114583333334,
+        "source": "alpha-bbox-base-center"
+      },
+      "alphaBBox": {
+        "exists": true,
+        "minX": 35,
+        "minY": 63,
+        "maxX": 1006,
+        "maxY": 1499
+      },
+      "width": 1024,
+      "height": 1536,
+      "file": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+      "checksum": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+      "sha256": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+      "bytes": 2877655,
+      "binaryImmutable": true,
+      "generationProvenance": {
+        "sourceRunId": "design-asset-woody-foliage-detail-ab-1",
+        "prompt": "Detail V2",
+        "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
+        "quality": "high",
+        "arm": "B",
+        "aiTransformation": false,
+        "regeneratedForPromotion": false
+      },
+      "promptVersion": "design-cutout-woody-foliage-detail-v2-experiment",
+      "quality": "high",
+      "technicalQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "ownerVisualQA": "PASS",
+      "approvalState": "PROMOTION_READY",
+      "approvalStatusProposed": "approved",
+      "version": "v1",
+      "mangoLowCopiedAsBotanicalTruth": false,
+      "identityConsistencyOk": true,
+      "identityGate": null
+    },
+    "banana": {
+      "assetId": "banana__mature__default__vegetative__v1",
+      "canonicalSlug": "banana",
+      "botanicalTaxonId": null,
+      "scientific": "Musa spp.",
+      "identityScope": "genus",
+      "identityPrecision": "GENUS_VISUALLY_REPRESENTABLE",
+      "identityConfidence": "genus",
+      "cultivarSpecific": false,
+      "visualForm": "herbaceous-clump",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "seasonIsIdentity": false,
+      "groundAnchor": {
+        "nx": 0.4912109375,
+        "ny": 0.974609375,
+        "source": "alpha-bbox-base-center"
+      },
+      "alphaBBox": {
+        "exists": true,
+        "minX": 18,
+        "minY": 42,
+        "maxX": 988,
+        "maxY": 1497
+      },
+      "width": 1024,
+      "height": 1536,
+      "file": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+      "checksum": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+      "sha256": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+      "bytes": 2252800,
+      "binaryImmutable": true,
+      "generationProvenance": {
+        "sourceRunId": "design-asset-visual-state-calibration-batch-2",
+        "prompt": "Visual State Family V1",
+        "promptTemplateVersion": "design-cutout-visual-state-family-v1",
+        "quality": "medium",
+        "arm": null,
+        "aiTransformation": false,
+        "regeneratedForPromotion": false
+      },
+      "promptVersion": "design-cutout-visual-state-family-v1",
+      "quality": "medium",
+      "technicalQA": "PASS",
+      "botanicalIdentityQA": "PASS_GENUS_VISUALLY_REPRESENTABLE",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "ownerVisualQA": "PASS",
+      "approvalState": "PROMOTION_READY",
+      "approvalStatusProposed": "approved",
+      "version": "v1",
+      "mangoLowCopiedAsBotanicalTruth": false,
+      "identityConsistencyOk": true,
+      "identityGate": {
+        "canonicalSlug": "banana",
+        "scientific": "Musa spp.",
+        "batch2Stamp": "GENUS_BLOCKED",
+        "batch2StampMeaning": "stale generation/spend stamp; conflicts with accepted genus-neutral vegetative architecture policy",
+        "identityScope": "genus",
+        "identityPrecision": "GENUS_VISUALLY_REPRESENTABLE",
+        "identityPrecisionEnum": "GENUS_VISUALLY_REPRESENTABLE",
+        "generationEligible": true,
+        "reason": "genus-morphology-neutral-vegetative",
+        "speciesInvented": false,
+        "cultivarSpecific": false,
+        "fruitCultivarClaim": false,
+        "registryCanEncodeGenus": true,
+        "registryGenusExample": "bougainvillea identityScope=genus already exists in production registry",
+        "BANANA_IDENTITY_SCOPE_GATE_REQUIRED": false,
+        "acceptableUse": "generic Musa / banana visual representation for neutral mature vegetative Garden Design"
+      }
+    },
+    "pineapple": {
+      "assetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+      "canonicalSlug": "pineapple",
+      "botanicalTaxonId": null,
+      "scientific": "Ananas comosus",
+      "identityScope": "species",
+      "identityPrecision": "SPECIES_SUPPORTED",
+      "identityConfidence": "species",
+      "cultivarSpecific": false,
+      "visualForm": "rosette",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenologyState": "vegetative",
+      "seasonIsIdentity": false,
+      "groundAnchor": {
+        "nx": 0.49951171875,
+        "ny": 0.9114583333333334,
+        "source": "alpha-bbox-base-center"
+      },
+      "alphaBBox": {
+        "exists": true,
+        "minX": 26,
+        "minY": 248,
+        "maxX": 997,
+        "maxY": 1400
+      },
+      "width": 1024,
+      "height": 1536,
+      "file": "modules/garden-design/assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+      "checksum": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+      "sha256": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+      "bytes": 2021685,
+      "binaryImmutable": true,
+      "generationProvenance": {
+        "sourceRunId": "design-asset-quality-family-calibration-final-1",
+        "prompt": "Detail V2",
+        "promptTemplateVersion": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "arm": null,
+        "aiTransformation": false,
+        "regeneratedForPromotion": false
+      },
+      "promptVersion": "design-cutout-visual-state-detail-v2",
+      "quality": "medium",
+      "technicalQA": "PASS",
+      "botanicalIdentityQA": "PASS",
+      "architectureQA": "PASS",
+      "growthStageQA": "PASS",
+      "phenologyStateQA": "PASS",
+      "inGardenQA": "PASS",
+      "ownerVisualQA": "PASS",
+      "approvalState": "PROMOTION_READY",
+      "approvalStatusProposed": "approved",
+      "version": "v1",
+      "mangoLowCopiedAsBotanicalTruth": false,
+      "identityConsistencyOk": true,
+      "identityGate": null
+    }
+  },
+  "checksums": {
+    "mango": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+    "banana": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+    "pineapple": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc"
+  },
+  "storagePlan": {
+    "mutateInfrastructureNow": false,
+    "createBucketNow": false,
+    "uploadNow": false,
+    "alreadyAuthorizedProductionPathPresent": false,
+    "recommendedBucket": "cruvit-design-assets",
+    "pathConvention": "design-assets/{canonicalSlug}/{assetId}.png",
+    "operations": [
+      {
+        "action": "COPY_IMMUTABLE_REVIEWED_PNG",
+        "from": "modules/garden-design/assets/plants/woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+        "to": "design-assets/mango/mango__mature__tree__vegetative__detail-v2__high.png",
+        "sha256": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+        "reencode": false,
+        "resize": false,
+        "optimize": false,
+        "alterAlpha": false,
+        "overwriteReviewedPng": false,
+        "executeNow": false
+      },
+      {
+        "action": "COPY_IMMUTABLE_REVIEWED_PNG",
+        "from": "modules/garden-design/assets/plants/batch-2-candidates/visual-state-calibration-batch-2/banana__mature__default__vegetative__v1.png",
+        "to": "design-assets/banana/banana__mature__default__vegetative__v1.png",
+        "sha256": "bf23ace3e6fa6bc03c392cb87aababc8e1af0442b30f118a6e030abfc07a6b3e",
+        "reencode": false,
+        "resize": false,
+        "optimize": false,
+        "alterAlpha": false,
+        "overwriteReviewedPng": false,
+        "executeNow": false
+      },
+      {
+        "action": "COPY_IMMUTABLE_REVIEWED_PNG",
+        "from": "modules/garden-design/assets/plants/quality-family-calibration-final-1/pineapple__mature__default__vegetative__detail-v2__medium.png",
+        "to": "design-assets/pineapple/pineapple__mature__default__vegetative__detail-v2__medium.png",
+        "sha256": "db15e7f592b0e59c37b5dfe34e8e398b2f9a4a67a5cb29b76dadda68c4fcc4fc",
+        "reencode": false,
+        "resize": false,
+        "optimize": false,
+        "alterAlpha": false,
+        "overwriteReviewedPng": false,
+        "executeNow": false
+      }
+    ]
+  },
+  "registryWritePlan": {
+    "executeNow": false,
+    "atomic": true,
+    "writeFile": "modules/garden-design/assets/plants/design-asset-registry-v1.json",
+    "writeSupabase": false,
+    "writeR2": false,
+    "oliveUnchanged": true,
+    "existingApproved": [
+      {
+        "canonicalSlug": "olive",
+        "assetId": "olive-mature-summer-vegetative-v1"
+      }
+    ],
+    "newPromotions": [
+      {
+        "canonicalSlug": "mango",
+        "assetId": "mango__mature__tree__vegetative__detail-v2__high",
+        "identityScope": "species",
+        "growthStage": "mature",
+        "phenologyState": "vegetative"
+      },
+      {
+        "canonicalSlug": "banana",
+        "assetId": "banana__mature__default__vegetative__v1",
+        "identityScope": "genus",
+        "growthStage": "mature",
+        "phenologyState": "vegetative"
+      },
+      {
+        "canonicalSlug": "pineapple",
+        "assetId": "pineapple__mature__default__vegetative__detail-v2__medium",
+        "identityScope": "species",
+        "growthStage": "mature",
+        "phenologyState": "vegetative"
+      }
+    ],
+    "totalApprovedBaselineAssetsAfterWrite": 4,
+    "expectedIfAllThreePass": 4
+  },
+  "coverage": {
+    "ownedGarden": "Mojstrana, Slovenia",
+    "currentOwnedPlants": [
+      {
+        "gardenPlantId": "gp-mango-owned-1",
+        "profileSlug": "mango",
+        "scientific": "Mangifera indica"
+      },
+      {
+        "gardenPlantId": "gp-banana-owned-1",
+        "profileSlug": "banana",
+        "scientific": "Musa spp."
+      },
+      {
+        "gardenPlantId": "gp-pineapple-owned-1",
+        "profileSlug": "pineapple",
+        "scientific": "Ananas comosus"
+      }
+    ],
+    "gardenPlantIdsUnchanged": true,
+    "afterPromotionIfWriteCompletes": {
+      "ownedGardenBaselineCoverage": "3 / 3 owned plants covered",
+      "oliveRemainsApprovedCatalogBaselineSeparately": true
+    }
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "productionRegistryWritten": false,
+    "binariesModified": false,
+    "r2Upload": false,
+    "bucketCreated": false,
+    "massGenerationStarted": false,
+    "assetsAutoApprovedIntoRegistry": 0
+  },
+  "productionRegistrySha256": "908ce5b2fecaf55d9c57b0213733b88e6833e860792cfed80a0e168daaff81b0",
+  "productionRegistryWritten": false,
+  "binariesModified": false
+}
