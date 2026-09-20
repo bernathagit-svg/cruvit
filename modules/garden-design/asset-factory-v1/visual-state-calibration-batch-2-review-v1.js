@@ -212,7 +212,7 @@ ${familySection('A', 'Mango — 3-way', [
     slot({ jobId: 'mango__mature__tree__vegetative__v1', label: '1. TREE MATURE VEGETATIVE', canonicalSlug: 'mango', visualForm: 'tree', architectureMode: 'tree', growthStage: 'mature', phenologyState: 'vegetative' }),
     slot({ jobId: 'mango__young__tree__vegetative__v1', label: '2. TREE YOUNG VEGETATIVE', canonicalSlug: 'mango', visualForm: 'tree', architectureMode: 'tree', growthStage: 'young', phenologyState: 'vegetative' }),
     slot({ jobId: 'mango__mature__tree__fruiting__v1', label: '3. TREE MATURE FRUITING', canonicalSlug: 'mango', visualForm: 'tree', architectureMode: 'tree', growthStage: 'mature', phenologyState: 'fruiting' })
-  ], 'ASSET INSPECTION vs IN-GARDEN are separate questions. Mature vegetative and fruiting share Mango LOW production scale. Young is Estimated young scale.')}
+  ], 'OWNER_VISUAL_QA = NEEDS_IMPROVEMENT. ASSET_DETAIL_SOFT = TRUE. Not production-approved. IDENTITY_CONTINUITY / YOUNG_STATE / FRUITING_STATE / FAMILY_CONSISTENCY remain OWNER_REVIEW_PENDING and are not failed for softness. ASSET INSPECTION vs IN-GARDEN stay separate. Mature vegetative and fruiting share Mango LOW production scale. Young is Estimated young scale.')}
 ${familySection('B', 'Banana — 2-way', [
     slot({ jobId: 'banana__mature__default__vegetative__v1', label: '4. herbaceous-clump MATURE VEGETATIVE', canonicalSlug: 'banana', visualForm: 'herbaceous-clump', architectureMode: 'default', growthStage: 'mature', phenologyState: 'vegetative' }),
     slot({ jobId: 'banana__young__default__vegetative__v1', label: '5. herbaceous-clump YOUNG VEGETATIVE', canonicalSlug: 'banana', visualForm: 'herbaceous-clump', architectureMode: 'default', growthStage: 'young', phenologyState: 'vegetative' })
