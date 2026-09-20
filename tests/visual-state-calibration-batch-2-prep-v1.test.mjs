@@ -1,0 +1,67 @@
+/**
+ * Visual State Calibration Batch 2 prep. Zero spend. No generation.
+ */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { loadCanonicalCatalog } from '../modules/garden-design/asset-factory-v1/catalog-source-v1.js';
+import { FACTORY_GENERATION_RULE, REQUIREMENT_STATE } from '../modules/garden-design/asset-factory-v1/design-asset-visual-state-integrity-gate-v1.js';
+import {
+  BATCH_2_JOBS,
+  BATCH_2_SPEND_GATE,
+  LAVENDER_ANCHOR,
+  EGGPLANT_ANCHOR,
+  VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID,
+  executeVisualStateCalibrationBatch2,
+  writeVisualStateCalibrationBatch2Reports
+} from '../modules/garden-design/asset-factory-v1/visual-state-calibration-batch-2-prep-v1.js';
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REGISTRY = path.join(ROOT, 'modules', 'garden-design', 'assets', 'plants', 'design-asset-registry-v1.json');
+
+test('batch-2 prep locks 11 jobs, denies spend, and does not generate', () => {
+  const catalog = loadCanonicalCatalog(ROOT);
+  const registryBefore = fs.readFileSync(REGISTRY, 'utf8');
+  const written = writeVisualStateCalibrationBatch2Reports(ROOT, catalog.plants);
+  const summary = JSON.parse(fs.readFileSync(written.summaryPath, 'utf8'));
+  const manifest = JSON.parse(fs.readFileSync(written.manifestPath, 'utf8'));
+  const html = fs.readFileSync(written.reviewHtml, 'utf8');
+  const app = fs.readFileSync(path.join(ROOT, 'app.html'), 'utf8');
+
+  assert.equal(written.verdict, 'VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED');
+  assert.equal(BATCH_2_JOBS.length, 11);
+  assert.equal(manifest.jobs.length, 11);
+  assert.equal(VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID, 'design-asset-visual-state-calibration-batch-2');
+  assert.equal(BATCH_2_SPEND_GATE.state, 'DENIED');
+  assert.equal(BATCH_2_SPEND_GATE.maxJobs, 11);
+  assert.equal(BATCH_2_SPEND_GATE.maxCalls, 11);
+  assert.equal(BATCH_2_SPEND_GATE.maxRetries, 0);
+  assert.equal(BATCH_2_SPEND_GATE.previousPaidApprovalExhausted, true);
+  assert.equal(FACTORY_GENERATION_RULE.generateRequired, true);
+  assert.equal(FACTORY_GENERATION_RULE.generateOptional, false);
+  assert.equal(FACTORY_GENERATION_RULE.generateUnknown, false);
+  assert.equal(REQUIREMENT_STATE.REQUIRED, 'REQUIRED');
+  assert.deepEqual(
+    manifest.jobs.map((job) => job.canonicalSlug),
+    ['mango', 'mango', 'mango', 'banana', 'banana', 'apple', 'apple', 'pomegranate', 'pomegranate', 'lavender', 'eggplant']
+  );
+  assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'apple' && job.growthStage === 'young').length, 0);
+  assert.equal(manifest.jobs.filter((job) => job.canonicalSlug === 'pomegranate').length, 2);
+  assert.equal(LAVENDER_ANCHOR.baselineAnchor, 'BASELINE_ANCHOR_NOT_USABLE');
+  assert.equal(EGGPLANT_ANCHOR.baselineAnchor, 'BASELINE_ANCHOR_NOT_USABLE');
+  assert.match(html, /BASELINE_ANCHOR_NOT_USABLE/);
+  assert.match(html, /ASSET NOT GENERATED/);
+  assert.match(html, /Do these clearly look like the same plant identity/);
+  assert.match(app, /#design-asset-visual-state-calibration-batch-2/);
+  const executed = executeVisualStateCalibrationBatch2();
+  assert.equal(executed.executed, false);
+  assert.equal(executed.imageGeneration, 0);
+  assert.equal(executed.openaiCalls, 0);
+  assert.equal(summary.spend.additionalSpendUsd, 0);
+  assert.equal(summary.treePhysicalScaleReopened, false);
+  assert.equal(fs.readFileSync(REGISTRY, 'utf8'), registryBefore);
+  assert.ok(!html.includes('data:image'));
+});

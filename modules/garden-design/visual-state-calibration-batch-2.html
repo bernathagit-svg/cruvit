@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Visual State Calibration Batch 2 — review harness (no assets)</title>
+  <style>
+    :root { font-family: "DM Sans", sans-serif; color: #122; }
+    body { margin: 24px; background: #f4f1ea; padding-top: 56px; }
+    .warn { background: #fde8e8; border: 1px solid #c44; padding: 12px 14px; }
+    .ok { background: #e7f6e8; border: 1px solid #3a7; padding: 12px 14px; }
+    .note { font-size: 13px; color: #444; }
+    .family { background: #fff; border: 1px solid #ddd; margin: 24px 0; padding: 16px; }
+    .slots { display: flex; gap: 12px; flex-wrap: wrap; }
+    .scene { width: 280px; height: 200px; background-size: cover; background-position: center; position: relative; border: 1px solid #ccc; background-color: #2a2a2a; overflow: hidden; }
+    .scene.real { width: 420px; height: 300px; }
+    .ghost { position: absolute; left: 50%; bottom: 12%; transform: translateX(-50%); background: rgba(255,255,255,.55); padding: 6px 8px; font-size: 11px; width: 80%; text-align: center; }
+    .scene.blend-v1-scene img.cutout { filter: brightness(0.93) contrast(0.9) saturate(0.86) blur(0.55px) drop-shadow(0 12px 18px rgba(0,0,0,0.32)); }
+    .cap { font-size: 13px; color: #444; }
+    .questions { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <h1>Visual State Calibration Batch 2 — 11 jobs prepared, 0 generated</h1>
+  <p id="realGardenBanner" class="warn">No assets yet. Signed Garden photo is injected by the host when available. Do not bake scene integration into PNGs. Blend/ground-contact is runtime CSS only.</p>
+  <p class="note">Spend gate DENIED. Production registry unchanged. Family review is side-by-side on the same Garden source. QA later: TECHNICAL_QA, BOTANICAL_IDENTITY_QA, STATE_QA, FAMILY_CONSISTENCY_QA, IN_GARDEN_QA, OWNER_VISUAL_QA.</p>
+<section class="family" data-family="A">
+    <h2>Family A — Mango TREE</h2>
+    <p class="note">Batch-1 mango mature candidate is NOT the family anchor.</p>
+    <div class="slots"><div class="slot" data-job-id="mango__mature__tree__vegetative__v1">
+        <p class="cap">1. TREE MATURE VEGETATIVE (new family anchor)</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="mango__young__tree__vegetative__v1">
+        <p class="cap">2. TREE YOUNG VEGETATIVE</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="mango__mature__tree__fruiting__v1">
+        <p class="cap">3. TREE MATURE FRUITING</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+<section class="family" data-family="B">
+    <h2>Family B — Banana large herbaceous</h2>
+    <p class="note">Batch-1 banana mature candidate is NOT the family anchor.</p>
+    <div class="slots"><div class="slot" data-job-id="banana__mature__default__vegetative__v1">
+        <p class="cap">4. MATURE VEGETATIVE (new family anchor)</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="banana__young__default__vegetative__v1">
+        <p class="cap">5. YOUNG VEGETATIVE</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+<section class="family" data-family="C">
+    <h2>Family C — Apple TREE leafy vs dormant</h2>
+    <p class="note">Young Apple is not in this batch.</p>
+    <div class="slots"><div class="slot" data-job-id="apple__mature__tree__vegetative__v1">
+        <p class="cap">6. TREE MATURE VEGETATIVE</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="apple__mature__tree__dormant__v1">
+        <p class="cap">7. TREE MATURE DORMANT</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+<section class="family" data-family="D">
+    <h2>Family D — Pomegranate TREE vs SHRUB</h2>
+    <p class="note">One canonical identity. Do not create two catalog plants.</p>
+    <div class="slots"><div class="slot" data-job-id="pomegranate__mature__tree__vegetative__v1">
+        <p class="cap">8. TREE MATURE VEGETATIVE</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="pomegranate__mature__shrub__vegetative__v1">
+        <p class="cap">9. SHRUB MATURE VEGETATIVE</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+<section class="family" data-family="E">
+    <h2>Family E — Lavender flowering</h2>
+    <p class="note">Existing lavender candidate is BASELINE_ANCHOR_NOT_USABLE. No extra paid vegetative job.</p>
+    <div class="slots"><div class="slot" data-job-id="lavender__mature__shrub__flowering__v1">
+        <p class="cap">10. SHRUB MATURE FLOWERING</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="lavender-anchor">
+        <p class="cap">Batch-1 mature vegetative comparison</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">BASELINE_ANCHOR_NOT_USABLE</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+<section class="family" data-family="F">
+    <h2>Family F — Eggplant fruiting</h2>
+    <p class="note">Existing eggplant candidate is BASELINE_ANCHOR_NOT_USABLE. No extra paid vegetative job.</p>
+    <div class="slots"><div class="slot" data-job-id="eggplant__mature__shrub__fruiting__v1">
+        <p class="cap">11. SUBSHRUB MATURE FRUITING</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">ASSET NOT GENERATED</div>
+        </div>
+      </div><div class="slot" data-job-id="eggplant-anchor">
+        <p class="cap">Batch-1 mature vegetative comparison</p>
+        <div class="scene real blend-v1-scene" data-role="garden-scene">
+          <div class="ghost blocked">BASELINE_ANCHOR_NOT_USABLE</div>
+        </div>
+      </div></div>
+    <ol class="questions">
+      <li>A. Do these clearly look like the same plant identity?</li><li>B. Is the intended state visibly distinct?</li><li>C. Is the distinction botanically believable?</li><li>D. Would the state add meaningful Garden Design value?</li><li>E. Does the asset still integrate naturally in the Garden scene?</li>
+    </ol>
+  </section>
+  <script>
+    const TYPE = "cruvit:calibration-garden-source";
+    function applySignedUrl(url) {
+      if (!url) return false;
+      document.querySelectorAll('[data-role="garden-scene"]').forEach((el) => {
+        el.style.backgroundImage = "url('" + String(url).replace(/'/g, "\\'") + "')";
+      });
+      const banner = document.getElementById('realGardenBanner');
+      if (banner) {
+        banner.className = 'ok';
+        banner.textContent = 'Real Garden photo loaded. Assets are not generated. Blend V1 CSS will apply when cutouts exist. No bake-in.';
+      }
+      return true;
+    }
+    window.addEventListener('message', (ev) => {
+      const d = ev && ev.data;
+      if (!d || d.type !== TYPE) return;
+      if (d.sourceMediaUrl) applySignedUrl(d.sourceMediaUrl);
+    });
+  </script>
+</body>
+</html>

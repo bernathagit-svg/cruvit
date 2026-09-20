@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="dashboard-layout.css?v=20250630g">
 <link rel="stylesheet" href="entry-screen.css?v=20250701">
 <link rel="stylesheet" href="modules/plant-identifier/plant-identifier.css?v=20260914b">
-<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260919p">
+<link rel="stylesheet" href="modules/garden-design/garden-design.host.css?v=20260919r">
 <link rel="stylesheet" href="modules/plant-doctor/plant-doctor.host.css?v=20260911d">
 <link rel="stylesheet" href="modules/smart-rec/smart-rec.host.css?v=20260915a">
 <link rel="stylesheet" href="modules/personal-domain/garden-dashboard-v1.css?v=20260913h">
@@ -700,6 +700,10 @@
 <div id="garden-design-size-authority-canary-root" aria-hidden="true">
   <button type="button" class="dac-back" onclick="closeGardenDesignSizeAuthorityCanary()"><span aria-hidden="true">←</span><span>Close canary</span></button>
   <p class="dac-status" id="gardenDesignSizeAuthorityCanaryStatus"></p>
+</div>
+<div id="visual-state-calibration-batch-2-root" aria-hidden="true">
+  <button type="button" class="dac-back" onclick="closeVisualStateCalibrationBatch2Review()"><span aria-hidden="true">←</span><span>Close Batch 2</span></button>
+  <p class="dac-status" id="visualStateCalibrationBatch2Status"></p>
 </div>
 <div id="plant-doctor-root" aria-hidden="true">
   <button type="button" class="pd-back" onclick="closePlantDoctor()"><span class="pd-back-arrow" aria-hidden="true">←</span><span>My Garden</span></button>
@@ -8760,6 +8764,16 @@ function closeGardenDesignSizeAuthorityCanary(){
   root.setAttribute('aria-hidden','true');
 }
 
+function closeVisualStateCalibrationBatch2Review(){
+  const root=document.getElementById('visual-state-calibration-batch-2-root');
+  if(!root) return;
+  if(window.__cruvitVisualStateBatch2HostCtrl&&typeof window.__cruvitVisualStateBatch2HostCtrl.close==='function'){
+    window.__cruvitVisualStateBatch2HostCtrl.close();
+  }
+  root.classList.remove('dac-active');
+  root.setAttribute('aria-hidden','true');
+}
+
 function ensureGardenDesignSizeAuthorityCanaryHost(){
   if(window.__cruvitSizeAuthorityCanaryHostCtrl) return window.__cruvitSizeAuthorityCanaryHostCtrl;
   const hostApi=window.CruvitCalibrationReviewHost;
@@ -8864,6 +8878,111 @@ function openGardenDesignSizeAuthorityCanary(){
 }
 
 window.openGardenDesignSizeAuthorityCanary=openGardenDesignSizeAuthorityCanary;
+
+function ensureVisualStateCalibrationBatch2Host(){
+  if(window.__cruvitVisualStateBatch2HostCtrl) return window.__cruvitVisualStateBatch2HostCtrl;
+  const hostApi=window.CruvitCalibrationReviewHost;
+  if(!hostApi||typeof hostApi.createCalibrationReviewHostController!=='function') return null;
+  const origin=(!window.location.origin||window.location.origin==='null')?'*':window.location.origin;
+  const labels=hostApi.CALIBRATION_REVIEW_STATUS_LABEL||{};
+  const ctrl=hostApi.createCalibrationReviewHostController({
+    getReadiness:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getGardenContextReadiness==='function') return pd.getGardenContextReadiness();
+      return { status:'RESTORING', authenticated:false, gardenProfileId:null, gardenCount:0, profilesHydrated:false };
+    },
+    getOwnedGardens:function(){
+      const pd=window.cruvitPersonalDomainV0;
+      if(pd&&typeof pd.getOwnedGardensCache==='function') return pd.getOwnedGardensCache();
+      return [];
+    },
+    getTrustedLocation:function(){
+      if(typeof window.getCruvitTrustedGardenLocation==='function') return window.getCruvitTrustedGardenLocation();
+      return null;
+    },
+    loadSource:async function(readiness){
+      const persist=getGardenDesignHostPersistence();
+      const helper=window.CruvitCalibrationGardenSource;
+      const owned=window.CruvitGardenDesignOwnedGarden;
+      const pd=window.cruvitPersonalDomainV0;
+      if(!persist||!helper||typeof helper.loadCalibrationGardenSourcePhoto!=='function'||!pd){
+        return { ok:false, code:'SOURCE_PHOTO_UNAVAILABLE', paidAiCalls:0, imageGenerationCalls:0 };
+      }
+      const session=pd.getSession?pd.getSession():null;
+      const userId=session&&session.user&&session.user.id?session.user.id:null;
+      const gardenId=(readiness&&readiness.gardenProfileId)||(pd.getActiveGardenId?pd.getActiveGardenId():null);
+      let cachedDesignId=null;
+      if(owned&&typeof owned.createServerDesignRefPersistence==='function'&&userId&&gardenId){
+        const ref=owned.createServerDesignRefPersistence(window.localStorage).load({
+          userId:userId,
+          gardenProfileId:gardenId,
+          areaId:null
+        });
+        cachedDesignId=ref&&ref.designId?ref.designId:null;
+      }
+      return helper.loadCalibrationGardenSourcePhoto(function(payload){
+        return persist.loadDesign(payload);
+      },{
+        gardenAreaId:null,
+        cachedDesignId:cachedDesignId,
+        gardenProfileId:gardenId
+      });
+    },
+    setStatus:function(code, text){
+      const status=document.getElementById('visualStateCalibrationBatch2Status');
+      if(status) status.textContent=text||labels[code]||code||'';
+    },
+    injectResolved:function(resolved, uiStatus){
+      const root=document.getElementById('visual-state-calibration-batch-2-root');
+      const frame=root?root.querySelector('iframe.dac-frame'):null;
+      const helper=window.CruvitCalibrationGardenSource;
+      if(!frame||!helper||typeof helper.buildCalibrationSourceInjectMessage!=='function') return;
+      try{
+        if(frame.contentWindow){
+          frame.contentWindow.postMessage(helper.buildCalibrationSourceInjectMessage(resolved||{}, uiStatus), origin);
+        }
+      }catch(_){}
+    }
+  });
+  window.addEventListener('cruvit:auth-session-changed', function(ev){
+    if(window.__cruvitVisualStateBatch2HostCtrl){
+      window.__cruvitVisualStateBatch2HostCtrl.onAuthSessionChanged(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.addEventListener('cruvit:garden-context-ready', function(ev){
+    if(window.__cruvitVisualStateBatch2HostCtrl){
+      window.__cruvitVisualStateBatch2HostCtrl.onGardenContextReady(ev&&ev.detail?ev.detail:{});
+    }
+  });
+  window.__cruvitVisualStateBatch2HostCtrl=ctrl;
+  return ctrl;
+}
+
+function openVisualStateCalibrationBatch2Review(){
+  const root=document.getElementById('visual-state-calibration-batch-2-root');
+  if(!root) return;
+  const status=document.getElementById('visualStateCalibrationBatch2Status');
+  if(status) status.textContent='Loading Garden context…';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='Visual state calibration batch 2 review';
+    root.appendChild(frame);
+  }
+  const ctrl=ensureVisualStateCalibrationBatch2Host();
+  frame.onload=function(){
+    if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  };
+  const reviewSrc='modules/garden-design/visual-state-calibration-batch-2.html?v=20260919r';
+  if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
+  else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  if(ctrl) ctrl.open();
+}
+
+window.openVisualStateCalibrationBatch2Review=openVisualStateCalibrationBatch2Review;
 
 function ensureDesignAssetCalibrationReviewHost(){
   if(window.__cruvitCalibrationReviewHostCtrl) return window.__cruvitCalibrationReviewHostCtrl;
@@ -8981,14 +9100,17 @@ window.openDesignAssetCalibrationReview=openDesignAssetCalibrationReview;
 window.addEventListener('DOMContentLoaded',function(){
   ensureDesignAssetCalibrationReviewHost();
   ensureGardenDesignSizeAuthorityCanaryHost();
+  ensureVisualStateCalibrationBatch2Host();
 });
 window.addEventListener('load',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
   if(location.hash==='#garden-design-size-authority-canary') openGardenDesignSizeAuthorityCanary();
+  if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
 });
 window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
   if(location.hash==='#garden-design-size-authority-canary') openGardenDesignSizeAuthorityCanary();
+  if(location.hash==='#design-asset-visual-state-calibration-batch-2') openVisualStateCalibrationBatch2Review();
 });
 
 /* ── Plant Doctor (isolated iframe module) ── */

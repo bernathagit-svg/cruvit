@@ -1,0 +1,38 @@
+{
+  "contract": "visual-state-calibration-batch-2-prep-v1",
+  "gate": {
+    "state": "DENIED",
+    "execute": false,
+    "previousApprovalCarryForward": false,
+    "previousPaidApprovalExhausted": true,
+    "retriesAuthorized": 0,
+    "maxJobs": 11,
+    "maxCalls": 11,
+    "maxRetries": 0,
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "provider": "openai-images-api",
+    "note": "Owner must explicitly approve this exact runId before execution. Batch-1 approval does not apply."
+  },
+  "executeResult": {
+    "executed": false,
+    "imageGeneration": 0,
+    "openaiCalls": 0,
+    "retries": 0,
+    "spendGate": "DENIED",
+    "reason": "PREPARATION_ONLY_OWNER_MUST_APPROVE_THIS_EXACT_RUN",
+    "runId": "design-asset-visual-state-calibration-batch-2",
+    "jobsPrepared": 11,
+    "doNotExpandToRequiredCatalog": true
+  },
+  "proposedFutureCommand": [
+    "--run-id=design-asset-visual-state-calibration-batch-2",
+    "--approve-envelope=design-asset-visual-state-calibration-batch-2",
+    "--owner-approve-run=design-asset-visual-state-calibration-batch-2",
+    "--provider=openai-images-api",
+    "--model=gpt-image-2.5-flare-2026-09-08",
+    "--max-jobs=11",
+    "--max-calls=11",
+    "--max-retries=0"
+  ],
+  "authorizedNow": false
+}

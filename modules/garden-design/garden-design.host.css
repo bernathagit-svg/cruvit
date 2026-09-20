@@ -76,7 +76,8 @@ html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
 }
 
 #design-asset-calibration-root,
-#garden-design-size-authority-canary-root {
+#garden-design-size-authority-canary-root,
+#visual-state-calibration-batch-2-root {
   position: fixed;
   inset: 0;
   z-index: 2310;
@@ -87,14 +88,16 @@ html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
 }
 
 #design-asset-calibration-root.dac-active,
-#garden-design-size-authority-canary-root.dac-active {
+#garden-design-size-authority-canary-root.dac-active,
+#visual-state-calibration-batch-2-root.dac-active {
   pointer-events: auto;
   opacity: 1;
   visibility: visible;
 }
 
 #design-asset-calibration-root .dac-frame,
-#garden-design-size-authority-canary-root .dac-frame {
+#garden-design-size-authority-canary-root .dac-frame,
+#visual-state-calibration-batch-2-root .dac-frame {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -107,14 +110,17 @@ html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
 #design-asset-calibration-root .dac-back,
 #design-asset-calibration-root .dac-status,
 #garden-design-size-authority-canary-root .dac-back,
-#garden-design-size-authority-canary-root .dac-status {
+#garden-design-size-authority-canary-root .dac-status,
+#visual-state-calibration-batch-2-root .dac-back,
+#visual-state-calibration-batch-2-root .dac-status {
   position: absolute;
   z-index: 2;
   font: 700 14px/1 Inter, system-ui, sans-serif;
 }
 
 #design-asset-calibration-root .dac-back,
-#garden-design-size-authority-canary-root .dac-back {
+#garden-design-size-authority-canary-root .dac-back,
+#visual-state-calibration-batch-2-root .dac-back {
   top: max(14px, env(safe-area-inset-top));
   inset-inline-start: max(14px, env(safe-area-inset-left));
   height: 44px;
@@ -127,7 +133,8 @@ html[dir="rtl"] #garden-design-root .gd-back .gd-back-arrow {
 }
 
 #design-asset-calibration-root .dac-status,
-#garden-design-size-authority-canary-root .dac-status {
+#garden-design-size-authority-canary-root .dac-status,
+#visual-state-calibration-batch-2-root .dac-status {
   top: max(14px, env(safe-area-inset-top));
   inset-inline-start: 168px;
   inset-inline-end: 16px;

@@ -1,0 +1,82 @@
+{
+  "contract": "visual-state-calibration-batch-2-prep-v1",
+  "verdict": "VISUAL_STATE_CALIBRATION_BATCH_2_PREPARED",
+  "runId": "design-asset-visual-state-calibration-batch-2",
+  "jobsPrepared": 11,
+  "generated": 0,
+  "factoryGenerationRule": {
+    "generateRequired": true,
+    "generateOptional": false,
+    "generateUnknown": false,
+    "generateNotRequired": false,
+    "generateOnRender": false,
+    "note": "Factory job derivation enqueues REQUIRED variants only. OPTIONAL stays out of the minimum queue. UNKNOWN and NOT_REQUIRED must not generate."
+  },
+  "requirementSemantics": [
+    "REQUIRED",
+    "OPTIONAL",
+    "NOT_REQUIRED",
+    "UNKNOWN"
+  ],
+  "familyConsistencyFields": [
+    "IDENTITY_CONTINUITY",
+    "ARCHITECTURE_CONTINUITY",
+    "STATE_DISTINCTION",
+    "CAMERA_CONTINUITY",
+    "GROUND_ANCHOR_COMPATIBILITY",
+    "SCALE_COHERENCE",
+    "BOTANICAL_STATE_PLAUSIBILITY"
+  ],
+  "qaStates": [
+    "TECHNICAL_QA",
+    "BOTANICAL_IDENTITY_QA",
+    "STATE_QA",
+    "FAMILY_CONSISTENCY_QA",
+    "IN_GARDEN_QA",
+    "OWNER_VISUAL_QA"
+  ],
+  "failureClasses": [
+    "IDENTITY_DRIFT",
+    "ARCHITECTURE_DRIFT",
+    "STATE_NOT_VISIBLE",
+    "STATE_OVERSTATED",
+    "BOTANICAL_IMPLAUSIBILITY",
+    "PERSPECTIVE_FAILURE",
+    "IN_GARDEN_INTEGRATION_FAILURE"
+  ],
+  "doNotGenerate273RequiredVariants": true,
+  "unknownStatesStayOutOfDemand": true,
+  "treePhysicalScaleReopened": false,
+  "productionAssetRegistryChanged": false,
+  "spendGate": {
+    "state": "DENIED",
+    "execute": false,
+    "previousApprovalCarryForward": false,
+    "previousPaidApprovalExhausted": true,
+    "retriesAuthorized": 0,
+    "maxJobs": 11,
+    "maxCalls": 11,
+    "maxRetries": 0,
+    "model": "gpt-image-2.5-flare-2026-09-08",
+    "provider": "openai-images-api",
+    "note": "Owner must explicitly approve this exact runId before execution. Batch-1 approval does not apply."
+  },
+  "spend": {
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "additionalSpendUsd": 0
+  },
+  "review": {
+    "htmlPath": "C:\\Users\\berna\\Projects\\cruvit\\modules\\garden-design\\visual-state-calibration-batch-2.html",
+    "liveRel": "modules/garden-design/visual-state-calibration-batch-2.html",
+    "questions": [
+      "A. Do these clearly look like the same plant identity?",
+      "B. Is the intended state visibly distinct?",
+      "C. Is the distinction botanically believable?",
+      "D. Would the state add meaningful Garden Design value?",
+      "E. Does the asset still integrate naturally in the Garden scene?"
+    ],
+    "assetsEmbedded": false,
+    "generateOnRender": false
+  }
+}

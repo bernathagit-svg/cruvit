@@ -38,6 +38,16 @@ export {
   exceptionQueue
 } from './job-model-v1.js';
 export { buildPromptRecord, PROMPT_TEMPLATE_VERSION } from './prompt-factory-v1.js';
+export {
+  VISUAL_STATE_CALIBRATION_BATCH_2_RUN_ID,
+  BATCH_2_JOBS,
+  BATCH_2_SPEND_GATE,
+  writeVisualStateCalibrationBatch2Reports,
+  executeVisualStateCalibrationBatch2,
+  LAVENDER_ANCHOR,
+  EGGPLANT_ANCHOR
+} from './visual-state-calibration-batch-2-prep-v1.js';
+export { buildVisualStateFamilyPromptRecord } from './prompt-factory-visual-state-family-v1.js';
 export { generateAsset, listFactoryProviders } from './provider-adapter-v1.js';
 export {
   parseSpendEnvelope,
