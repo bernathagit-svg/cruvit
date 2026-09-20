@@ -23,7 +23,7 @@ import {
   designPaidAiForAction,
   mapServerPlacementToLayer,
   persistablePlacementGrowthStage
-} from './garden-design-owned-garden-v1.js';
+} from './garden-design-owned-garden-v1.js?v=20260920graph1';
 import { mapPersistFailureClass } from '../runtime-guards/runtime-integrity-gate-v1.js';
 
 export const GARDEN_DESIGN_SERVER_PERSISTENCE_VERSION = '1.0.0';
