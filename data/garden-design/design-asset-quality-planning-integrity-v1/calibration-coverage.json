@@ -1,0 +1,50 @@
+{
+  "contract": "design-asset-quality-planning-integrity-v1",
+  "coverage": [
+    {
+      "family": "WOODY_DENSE_SMALL_LEAF",
+      "status": "CALIBRATED",
+      "note": "Owner A/B V2 medium ACCEPTABLE / high PREFERRED for FOLIAGE_DENSE. Not repeated."
+    },
+    {
+      "family": "WOODY_OPEN_OR_LARGE_LEAF",
+      "status": "UNVALIDATED",
+      "note": "No REQUIRED variant currently classified into this class from existing data"
+    },
+    {
+      "family": "LARGE_LEAF_HERBACEOUS",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Banana medium CRISP_ENOUGH under previous prompt family. Not a Prompt V2 A/B."
+    },
+    {
+      "family": "SHRUB_FINE_FOLIAGE",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Lavender/pomegranate shrub BORDERLINE on old prompt. No V2 quality calibration."
+    },
+    {
+      "family": "ROSETTE",
+      "status": "UNVALIDATED",
+      "note": "Pineapple Batch-1 exists; no native quality calibration under Prompt V2."
+    },
+    {
+      "family": "SUCCULENT",
+      "status": "UNVALIDATED",
+      "note": "Form-known succulents have no quality A/B."
+    },
+    {
+      "family": "BRANCH_STRUCTURE",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Apple dormant BORDERLINE on old prompt. Must not inherit foliage HIGH."
+    },
+    {
+      "family": "FLOWER_FINE_DETAIL",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Lavender flowering BORDERLINE on old prompt. Individual florets not V2-calibrated."
+    },
+    {
+      "family": "FRUIT_VISIBLE_DETAIL",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Mango fruiting existed under old prompt and was SOFT; that is not V2 fruit calibration and must not reuse the woody-foliage A/B."
+    }
+  ]
+}

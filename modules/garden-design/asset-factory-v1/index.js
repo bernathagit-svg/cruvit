@@ -242,4 +242,13 @@ export {
   PROMPT_TEMPLATE_VERSION_VISUAL_STATE_DETAIL_V2,
   buildVisualStateDetailV2PromptRecord
 } from './prompt-factory-visual-state-detail-v2.js';
+export {
+  DESIGN_ASSET_QUALITY_PLANNING_INTEGRITY_VERSION,
+  QUALITY_PLANNING_STATE,
+  VARIANT_DETAIL_DEMAND,
+  planVariantQuality,
+  writeQualityPlanningIntegrityReports,
+  executeQualityPlanningIntegrity,
+  NEXT_QUALITY_CALIBRATION_SET
+} from './design-asset-quality-planning-integrity-v1.js';
 

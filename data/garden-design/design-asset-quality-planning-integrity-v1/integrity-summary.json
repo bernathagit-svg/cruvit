@@ -1,0 +1,275 @@
+{
+  "contract": "design-asset-quality-planning-integrity-v1",
+  "verdict": "DESIGN_ASSET_QUALITY_PLANNING_INTEGRITY_V1_READY",
+  "policyDeploy": {
+    "commit": "50d2b81",
+    "productionGenerationInactive": true,
+    "spendGate": "DENIED",
+    "productionRegistryChanged": false
+  },
+  "currentAuditLimitation": {
+    "requiredVariants": 273,
+    "previousMediumCount": 262,
+    "previousHighCount": 11,
+    "previousUnknownDetailClass": 251,
+    "previousProjectedUsd": 3.936345,
+    "label": "FALLBACK_MEDIUM_PROJECTION_ONLY",
+    "not": "PRODUCTION_BUDGET",
+    "reason": "251/273 variants had UNKNOWN detailClass, so the $3.94 figure cannot be a production spend estimate."
+  },
+  "baseDetailClass": [
+    "WOODY_DENSE_SMALL_LEAF",
+    "WOODY_OPEN_OR_LARGE_LEAF",
+    "LARGE_LEAF_HERBACEOUS",
+    "SHRUB_FINE_FOLIAGE",
+    "ROSETTE",
+    "SUCCULENT",
+    "OTHER_STANDARD_DETAIL",
+    "UNKNOWN"
+  ],
+  "variantDetailDemand": [
+    "FOLIAGE_DENSE",
+    "FOLIAGE_OPEN",
+    "BRANCH_STRUCTURE",
+    "FLOWER_FINE_DETAIL",
+    "FRUIT_VISIBLE_DETAIL",
+    "LARGE_LEAF_STRUCTURE",
+    "COARSE_FORM",
+    "UNKNOWN"
+  ],
+  "qualityPlanningStates": [
+    "MEDIUM_EVIDENCE_SUPPORTED",
+    "HIGH_EVIDENCE_SUPPORTED",
+    "MEDIUM_DEFAULT_UNPROVEN",
+    "QUALITY_CALIBRATION_REQUIRED",
+    "UNKNOWN_BLOCKED"
+  ],
+  "stateSpecificHighPolicy": {
+    "paidExecutionChanged": false,
+    "universalHigh": false,
+    "dormantAutomaticallyInheritsFoliageHigh": false,
+    "rule": "HIGH only when baseDetailClass=WOODY_DENSE_SMALL_LEAF and variantDetailDemand=FOLIAGE_DENSE. DORMANT, young/open architecture, fruiting, and flowering are evaluated by their own detail demand and do not inherit foliage HIGH.",
+    "evidence": "Owner A/B on mango mature vegetative (FOLIAGE_DENSE). Apple dormant is BRANCH_STRUCTURE, not dense foliage."
+  },
+  "audit273": {
+    "requiredVariantsTotal": 273,
+    "unknownBaseDetailClass": 236,
+    "unknownReduction": 15,
+    "forcedClassification": false,
+    "planningStates": {
+      "MEDIUM_EVIDENCE_SUPPORTED": 2,
+      "HIGH_EVIDENCE_SUPPORTED": 3,
+      "MEDIUM_DEFAULT_UNPROVEN": 160,
+      "QUALITY_CALIBRATION_REQUIRED": 82,
+      "UNKNOWN_BLOCKED": 26
+    },
+    "plannedQuality": {
+      "medium": 244,
+      "high": 3,
+      "unplanned": 26
+    }
+  },
+  "calibrationCoverage": [
+    {
+      "family": "WOODY_DENSE_SMALL_LEAF",
+      "status": "CALIBRATED",
+      "note": "Owner A/B V2 medium ACCEPTABLE / high PREFERRED for FOLIAGE_DENSE. Not repeated."
+    },
+    {
+      "family": "WOODY_OPEN_OR_LARGE_LEAF",
+      "status": "UNVALIDATED",
+      "note": "No REQUIRED variant currently classified into this class from existing data"
+    },
+    {
+      "family": "LARGE_LEAF_HERBACEOUS",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Banana medium CRISP_ENOUGH under previous prompt family. Not a Prompt V2 A/B."
+    },
+    {
+      "family": "SHRUB_FINE_FOLIAGE",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Lavender/pomegranate shrub BORDERLINE on old prompt. No V2 quality calibration."
+    },
+    {
+      "family": "ROSETTE",
+      "status": "UNVALIDATED",
+      "note": "Pineapple Batch-1 exists; no native quality calibration under Prompt V2."
+    },
+    {
+      "family": "SUCCULENT",
+      "status": "UNVALIDATED",
+      "note": "Form-known succulents have no quality A/B."
+    },
+    {
+      "family": "BRANCH_STRUCTURE",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Apple dormant BORDERLINE on old prompt. Must not inherit foliage HIGH."
+    },
+    {
+      "family": "FLOWER_FINE_DETAIL",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Lavender flowering BORDERLINE on old prompt. Individual florets not V2-calibrated."
+    },
+    {
+      "family": "FRUIT_VISIBLE_DETAIL",
+      "status": "PARTIALLY_CALIBRATED",
+      "note": "Mango fruiting existed under old prompt and was SOFT; that is not V2 fruit calibration and must not reuse the woody-foliage A/B."
+    }
+  ],
+  "nextCalibrationSet": {
+    "execute": false,
+    "generateNow": false,
+    "spendGate": "DENIED",
+    "doNotRepeatMangoWoodyFoliage": true,
+    "purpose": "Close morphology/detail quality-policy gaps before any 273-variant production",
+    "jobs": [
+      {
+        "rank": 1,
+        "family": "BRANCH_STRUCTURE",
+        "canonicalSlug": "apple",
+        "architectureMode": "tree",
+        "growthStage": "mature",
+        "phenologyState": "dormant",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": "apple__mature__tree__dormant__v1.png",
+        "generateNow": false
+      },
+      {
+        "rank": 2,
+        "family": "FLOWER_FINE_DETAIL",
+        "canonicalSlug": "lavender",
+        "architectureMode": "shrub",
+        "growthStage": "mature",
+        "phenologyState": "flowering",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": "lavender__mature__shrub__flowering__v1.png",
+        "generateNow": false
+      },
+      {
+        "rank": 3,
+        "family": "FRUIT_VISIBLE_DETAIL",
+        "canonicalSlug": "banana",
+        "architectureMode": "default",
+        "growthStage": "mature",
+        "phenologyState": "fruiting",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": "banana__mature__default__vegetative__v1.png",
+        "generateNow": false,
+        "note": "Not a mango woody-foliage redo. Fruiting demand on already CRISP_ENOUGH large-leaf morphology."
+      },
+      {
+        "rank": 4,
+        "family": "SHRUB_FINE_FOLIAGE",
+        "canonicalSlug": "lavender",
+        "architectureMode": "shrub",
+        "growthStage": "mature",
+        "phenologyState": "vegetative",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": "lavender__mature__shrub__vegetative__v1.png",
+        "generateNow": false
+      },
+      {
+        "rank": 5,
+        "family": "ROSETTE",
+        "canonicalSlug": "pineapple",
+        "architectureMode": "default",
+        "growthStage": "mature",
+        "phenologyState": "vegetative",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": "pineapple-mature-rosette-vegetative-v1.png",
+        "generateNow": false
+      },
+      {
+        "rank": 6,
+        "family": "SUCCULENT",
+        "canonicalSlug": "aloe-vera",
+        "architectureMode": "default",
+        "growthStage": "mature",
+        "phenologyState": "vegetative",
+        "prompt": "design-cutout-visual-state-detail-v2",
+        "quality": "medium",
+        "control": null,
+        "generateNow": false
+      }
+    ]
+  },
+  "costs": {
+    "unitEvidenceUsd": {
+      "medium": 0.013175,
+      "high": 0.044045,
+      "ratioGuaranteedForever": false
+    },
+    "knownEvidence": {
+      "label": "KNOWN-EVIDENCE COST",
+      "highEvidenceSupported": 3,
+      "mediumEvidenceSupported": 2,
+      "projectedUsd": 0.158485
+    },
+    "fallbackProjection": {
+      "label": "FALLBACK_MEDIUM_PROJECTION_ONLY",
+      "not": "PRODUCTION_BUDGET",
+      "notAFinalProductionBudget": true,
+      "mediumDefaultUnproven": 160,
+      "highEvidenceSupportedChargedHigh": 3,
+      "remainingPlannableChargedMedium": 244,
+      "unknownBlockedExcluded": 26,
+      "projectedUsd": 3.346835
+    },
+    "calibrationRequired": {
+      "label": "CALIBRATION-REQUIRED COUNT",
+      "qualityCalibrationRequired": 82,
+      "unknownBlocked": 26,
+      "totalNotReadyToCommit": 108
+    }
+  },
+  "massGeneration": {
+    "QUALITY_POLICY_MASS_GENERATION_READY": "NO",
+    "reasons": [
+      "Launch-critical quality families are not fully CALIBRATED",
+      "82 variants are QUALITY_CALIBRATION_REQUIRED",
+      "26 variants are UNKNOWN_BLOCKED",
+      "160 variants are MEDIUM_DEFAULT_UNPROVEN, which is not evidence-supported",
+      "Fallback projection is FALLBACK_MEDIUM_PROJECTION_ONLY, not a production budget",
+      "State-specific HIGH rule is proposed only; paid execution policy is unchanged"
+    ],
+    "incompleteFamilies": [
+      "WOODY_OPEN_OR_LARGE_LEAF",
+      "LARGE_LEAF_HERBACEOUS",
+      "SHRUB_FINE_FOLIAGE",
+      "ROSETTE",
+      "SUCCULENT",
+      "BRANCH_STRUCTURE",
+      "FLOWER_FINE_DETAIL",
+      "FRUIT_VISIBLE_DETAIL"
+    ],
+    "fallbackIsNotProductionBudget": true,
+    "generateNow": false
+  },
+  "spend": {
+    "executed": false,
+    "openaiCalls": 0,
+    "imageGeneration": 0,
+    "newSourcing": 0,
+    "additionalSpendUsd": 0,
+    "spendGate": "DENIED",
+    "massGenerationStarted": false,
+    "productionRegistryChanged": false,
+    "factoryGenerateOnRender": false,
+    "factoryAutonomousGeneration": false
+  },
+  "confirms": {
+    "imageGeneration": 0,
+    "openaiCalls": 0,
+    "massGenerationStarted": "NO",
+    "universalHigh": "NO",
+    "dormantAutomaticallyInheritsFoliageHigh": "NO",
+    "productionRegistryChanged": "NO",
+    "spendGate": "DENIED",
+    "additionalSpendUsd": 0
+  }
+}
