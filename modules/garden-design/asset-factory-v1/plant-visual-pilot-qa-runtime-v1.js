@@ -113,40 +113,43 @@ function reviewScene(row, scale) {
 }
 
 
+const MATURE_MANGO_PRODUCTION_ANCHOR = Object.freeze({
+  baseWidthPx: 480,
+  savedPlacementScale: 1.15,
+  productionEquivalentBaseWidthPx: 552,
+  x: 0.226636859348842,
+  y: 0.948567183907055,
+  referenceSceneWidthPx: 1280,
+  sceneAspectRatio: 4 / 3
+});
+
 function matureMangoFullAspectReview(row) {
-  const bands = ['large', 'xl', 'xxl'];
   return `<div class="card full-aspect-card">
-    <h3>Real Garden — mature tree full-aspect calibration</h3>
-    <p class="small">Wide-canopy trees are reviewed on the original Garden photo aspect ratio. The selected band changes the bounded plant box; the scene itself does not become a narrow thumbnail.</p>
-    <div class="scale-selector" role="group" aria-label="Mature mango QA scale">
-      ${bands.map((band) => `<button type="button" data-full-aspect-band="${band}" data-job-id="${esc(row.jobId)}" aria-pressed="${band === 'xxl' ? 'true' : 'false'}">${band.toUpperCase()}</button>`).join('')}
-    </div>
-    <div class="scene real full-aspect-scene" data-role="garden-scene" data-full-aspect-job="${esc(row.jobId)}" data-active-band="xxl">
-      <div class="review-plant-box xxl full-aspect-plant-box">
+    <h3>Real Garden — saved production scale anchor</h3>
+    <p class="small">This preview reuses the approved mature Mango placement geometry: same mature stage, same tree form, same placement multiplier. Phenology alone does not change scale.</p>
+    <div class="anchor-readout">Saved placement scale <strong>1.15</strong> · base width <strong>480 px</strong> · production-equivalent width <strong>552 px</strong></div>
+    <div class="scene real full-aspect-scene" data-role="garden-scene" data-production-anchor-job="${esc(row.jobId)}">
+      <div class="production-anchor-box">
         <img class="cutout review-cutout"
           src="${esc(IMAGE_URL(row.jobId))}"
-          alt="${esc(rowTitle(row))} — full aspect review">
+          alt="${esc(rowTitle(row))} — saved production scale anchor">
       </div>
       <span class="ground-shadow" aria-hidden="true"></span>
     </div>
   </div>`;
 }
 
-function wireFullAspectSelectors() {
-  document.querySelectorAll('[data-full-aspect-band]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const jobId = btn.getAttribute('data-job-id');
-      const band = btn.getAttribute('data-full-aspect-band');
-      const scene = document.querySelector('[data-full-aspect-job="' + jobId + '"]');
-      const box = scene && scene.querySelector('.full-aspect-plant-box');
-      if (!scene || !box || !['large','xl','xxl'].includes(band)) return;
-      box.classList.remove('large','xl','xxl');
-      box.classList.add(band);
-      scene.setAttribute('data-active-band', band);
-      document.querySelectorAll('[data-full-aspect-band][data-job-id="' + jobId + '"]').forEach((b) => {
-        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
-      });
-    });
+function applyProductionAnchorGeometry() {
+  document.querySelectorAll('[data-production-anchor-job]').forEach((scene) => {
+    const box = scene.querySelector('.production-anchor-box');
+    if (!box) return;
+    const sceneWidth = scene.clientWidth || MATURE_MANGO_PRODUCTION_ANCHOR.referenceSceneWidthPx;
+    const responsiveScale = Math.min(1, sceneWidth / MATURE_MANGO_PRODUCTION_ANCHOR.referenceSceneWidthPx);
+    const widthPx = MATURE_MANGO_PRODUCTION_ANCHOR.productionEquivalentBaseWidthPx * responsiveScale;
+    box.style.width = widthPx + 'px';
+    box.style.aspectRatio = '2 / 3';
+    box.style.left = (MATURE_MANGO_PRODUCTION_ANCHOR.x * 100) + '%';
+    box.style.bottom = ((1 - MATURE_MANGO_PRODUCTION_ANCHOR.y) * 100) + '%';
   });
 }
 
@@ -204,6 +207,7 @@ function applySignedGardenUrl(url) {
     banner.className = 'ok';
     banner.textContent = 'Real saved Garden Design source photo loaded via temporary signed URL. The photo is not copied into the repo or R2.';
   }
+  applyProductionAnchorGeometry();
   return true;
 }
 
@@ -224,7 +228,7 @@ async function boot() {
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
     status.className = data.rows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
-    wireFullAspectSelectors();
+    applyProductionAnchorGeometry();
   } catch (err) {
     status.textContent = 'QA load failed: ' + String(err?.message || err);
     status.className = 'warn';
