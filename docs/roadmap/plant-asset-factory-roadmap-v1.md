@@ -160,6 +160,45 @@ Calibrate rules by visual family rather than by individual slug. Examples:
 
 A family may scale only after its prompt + QA policy has demonstrated reliable performance.
 
+
+
+## Batch-scale QA architecture — locked
+
+Plant Visual QA is batch/manifest driven. It must not require code edits for each plant.
+
+For every batch:
+1. candidate binaries live in candidate R2,
+2. batch evidence is converted to one `plant-visual-qa-manifest-v1`,
+3. the generic candidate reader resolves `manifestId + jobId` to an R2 object,
+4. the QA surface loads the manifest dynamically,
+5. the QA surface delegates in-garden rendering to the production Garden Design renderer in read-only mode,
+6. Size Authority / promotion presentation sizing / compatible saved placement anchors provide renderer inputs,
+7. owner review defaults to exceptions only,
+8. promotion remains a separate explicit gate.
+
+Locked invariants:
+- no per-species allowlist in the QA reader,
+- no per-job renderer code,
+- no independent QA scale renderer,
+- no Small/Medium/Large/XL/XXL vocabulary as production size truth,
+- no species-specific `baseWidthPx` hard-codes in the QA runtime,
+- saved placement anchors are data records and require compatibility checks,
+- size preferences are data records, not `if canonicalSlug === ...` code,
+- every production job carries an explicit `sizeAuthorityPlan`,
+- wave planning automatically loads `botanical-size-authority-v1.json`,
+- non-tree forms use the same Size Authority model when canonical evidence becomes available,
+- owner workload target remains exception-only.
+
+Generic building blocks:
+- `modules/garden-design/asset-factory-v1/plant-visual-qa-manifest-v1.js`
+- `scripts/plant-visual-qa-manifest-v1.mjs`
+- `netlify/functions/plant-visual-qa-candidate.mjs`
+- `modules/garden-design/asset-factory-v1/production-renderer-qa-preview-v1.js`
+- `data/garden-design/garden-design-qa-saved-placement-anchor-registry-v1.json`
+- `data/garden-design/garden-design-size-preference-registry-v1.json`
+
+A batch of 10, 50, 100 or more visual jobs must use the same code path. Scale-up is controlled by data volume and exception rate, not by adding plant-specific branches.
+
 ## Current pilot checkpoint
 
 Validated generation/framing candidates:
