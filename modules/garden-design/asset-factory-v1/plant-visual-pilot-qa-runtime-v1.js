@@ -1,3 +1,5 @@
+import { buildProductionRendererQaPreview } from './production-renderer-qa-preview-v1.js';
+
 const CALIBRATION_SOURCE_MESSAGE_TYPE = 'cruvit:calibration-garden-source';
 
 const SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921b';
@@ -10,44 +12,14 @@ const OWNER_CHOICES = Object.freeze([
   'REJECT_IDENTITY_OR_STATE'
 ]);
 
-// Pilot-only placement inputs. Rendering is performed exclusively by the
-// production Garden Design renderer in index.html?gdQaPreview=1.
-const PILOT_RENDER_INPUT = Object.freeze({
-  'banana__young__default__vegetative__v1': Object.freeze({
-    baseWidthPx: 423,
-    scale: 1,
-    x: 0.72,
-    y: 0.82,
-    authorityUserResized: false
-  }),
-  'mango__young__tree__vegetative__v1': Object.freeze({
-    baseWidthPx: 530,
-    scale: 1,
-    x: 0.56,
-    y: 0.86,
-    authorityUserResized: false
-  }),
-  'pineapple__mature__default__fruiting__v1': Object.freeze({
-    baseWidthPx: 191,
-    scale: 1,
-    x: 0.56,
-    y: 0.86,
-    authorityUserResized: false
-  }),
-  'mango__mature__tree__fruiting__v1': Object.freeze({
-    baseWidthPx: 480,
-    scale: 1.15,
-    x: 0.226636859348842,
-    y: 0.948567183907055,
-    authorityUserResized: true
-  })
-});
+const ANCHOR_URL = '../../data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json?v=20260921renderer2';
 
 let qaRows = [];
 let rowsById = new Map();
 let sourceMediaUrl = '';
 let selectedJobId = '';
 let rendererReady = false;
+let savedAnchorsByJobId = Object.create(null);
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -178,9 +150,21 @@ function updateSelectedUi() {
 function sendRendererPreview() {
   if (!rendererReady || !sourceMediaUrl || !selectedJobId) return false;
   const row = rowsById.get(selectedJobId);
-  const input = PILOT_RENDER_INPUT[selectedJobId];
   const frame = rendererFrame();
-  if (!row || !input || !frame?.contentWindow) return false;
+  if (!row || !frame?.contentWindow) return false;
+
+  const preview = buildProductionRendererQaPreview(row, {
+    savedPlacementAnchor: savedAnchorsByJobId[selectedJobId] || null
+  });
+  if (!preview.ok) {
+    const status = document.getElementById('rendererStatus');
+    if (status) {
+      status.className = 'warn';
+      status.textContent = 'Production renderer preview blocked: ' + preview.code;
+    }
+    return false;
+  }
+
   const imageUrl = new URL(IMAGE_URL(selectedJobId), window.location.origin).href;
   frame.contentWindow.postMessage({
     type: 'cruvit:garden-design-qa-preview',
@@ -188,26 +172,34 @@ function sendRendererPreview() {
     imageUrl,
     jobId: row.jobId,
     label: rowTitle(row),
-    canonicalSlug: row.canonicalSlug,
-    scientific: row.scientific,
-    visualForm:
-      row.canonicalSlug === 'banana' ? 'herbaceous-clump'
-      : row.canonicalSlug === 'pineapple' ? 'rosette'
-      : row.architectureMode === 'tree' ? 'tree'
-      : row.architectureMode,
-    architectureMode: row.architectureMode,
-    growthStage: row.growthStage,
-    targetGrowthStage: row.growthStage,
-    phenology: row.phenology,
-    width: row.technicalMetrics?.width || 1024,
-    height: row.technicalMetrics?.height || 1536,
-    baseWidthPx: input.baseWidthPx,
-    scale: input.scale,
-    x: input.x,
-    y: input.y,
-    rotation: 0,
-    authorityUserResized: input.authorityUserResized
+    canonicalSlug: preview.canonicalSlug,
+    scientific: preview.scientific,
+    visualForm: preview.visualForm,
+    architectureMode: preview.architectureMode,
+    growthStage: preview.growthStage,
+    targetGrowthStage: preview.growthStage,
+    phenology: preview.phenology,
+    width: preview.width,
+    height: preview.height,
+    baseWidthPx: preview.baseWidthPx,
+    scale: preview.scale,
+    x: preview.x,
+    y: preview.y,
+    rotation: preview.rotation,
+    authorityUserResized: preview.authorityUserResized
   }, window.location.origin);
+
+  const status = document.getElementById('rendererStatus');
+  if (status) {
+    status.className = 'ok';
+    status.textContent =
+      'Production Garden Design renderer ready · input source: '
+      + preview.source
+      + ' · baseWidthPx '
+      + preview.baseWidthPx
+      + ' · scale '
+      + preview.scale;
+  }
   return true;
 }
 
@@ -261,9 +253,30 @@ window.addEventListener('message', (ev) => {
 async function boot() {
   const status = document.getElementById('qaLoadStatus');
   try {
-    const res = await fetch(SUMMARY_URL, { cache: 'no-store' });
-    const data = await res.json();
-    if (!res.ok || !data || !Array.isArray(data.rows)) throw new Error(data?.verdict || data?.code || 'QA_SUMMARY_LOAD_FAILED');
+    const [summaryRes, anchorRes] = await Promise.all([
+      fetch(SUMMARY_URL, { cache: 'no-store' }),
+      fetch(ANCHOR_URL, { cache: 'no-store' })
+    ]);
+    const data = await summaryRes.json();
+    if (!summaryRes.ok || !data || !Array.isArray(data.rows)) {
+      throw new Error(data?.verdict || data?.code || 'QA_SUMMARY_LOAD_FAILED');
+    }
+    let anchor = null;
+    try {
+      if (anchorRes.ok) anchor = await anchorRes.json();
+    } catch {
+      anchor = null;
+    }
+    const saved = anchor?.savedPlacementAnchor;
+    if (saved && saved.siblingStateScaleCompatible === true) {
+      savedAnchorsByJobId['mango__mature__tree__fruiting__v1'] = {
+        baseWidthPx: Number(saved.baseWidthPx),
+        scale: Number(saved.savedPlacementScale),
+        x: Number(saved.x),
+        y: Number(saved.y),
+        authorityUserResized: true
+      };
+    }
     qaRows = data.rows;
     rowsById = new Map(qaRows.map((row) => [row.jobId, row]));
     selectedJobId = qaRows[0]?.jobId || '';
