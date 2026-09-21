@@ -1,3 +1,6 @@
+import crypto from 'node:crypto';
+import { inspectTechnicalQa } from '../../modules/garden-design/asset-factory-v1/technical-qa-v1.js';
+import { assessProductionFramingQa } from '../../modules/garden-design/asset-factory-v1/production-framing-qa-v1.js';
 import { getStore } from '@netlify/blobs';
 import { planDesignAssetGeneration } from '../../modules/garden-design/asset-factory-v1/design-asset-quality-policy-v1.js';
 import { actualSpendUsdFromUsage } from '../../modules/garden-design/asset-factory-v1/total-api-cost-v1.js';
@@ -62,6 +65,40 @@ export default async (req) => {
 
   const url = new URL(req.url);
   const runtimeNonce = String(env('CRUVIT_PILOT_NONCE') || '');
+  const store = getStore('cruvit-plant-visual-approved-pilot', { consistency: 'strong' });
+
+  if (url.searchParams.get('status') === '1') {
+    const rows = [];
+    for (const jobId of Object.keys(JOBS)) {
+      const blobKey = '2026-09-21/' + jobId + '.png';
+      const cached = await store.getWithMetadata(blobKey, { type: 'arrayBuffer' });
+      if (!cached || !cached.data) {
+        rows.push({ jobId, exists: false });
+        continue;
+      }
+      const bytes = Buffer.from(cached.data);
+      const technicalQa = inspectTechnicalQa(bytes);
+      const framingQa = assessProductionFramingQa(technicalQa);
+      rows.push({
+        jobId,
+        exists: true,
+        bytes: bytes.length,
+        sha256: crypto.createHash('sha256').update(bytes).digest('hex'),
+        spendUsd: cached.metadata?.spendUsd ?? null,
+        quality: cached.metadata?.quality ?? null,
+        detailClass: cached.metadata?.detailClass ?? null,
+        model: cached.metadata?.model ?? null,
+        technicalQa,
+        framingQa
+      });
+    }
+    const totalSpendUsd = rows.reduce((sum, row) => sum + Number(row.spendUsd || 0), 0);
+    return json(200, {
+      generationGateOpen: Boolean(runtimeNonce),
+      totalSpendUsd: +totalSpendUsd.toFixed(6),
+      rows
+    });
+  }
   if (url.searchParams.get('index') === '1') {
     if (!runtimeNonce) return json(403, { error: 'PILOT_NONCE_NOT_READY' });
     const links = Object.keys(JOBS).map((jobId) => {
@@ -83,7 +120,6 @@ export default async (req) => {
     return json(403, { error: 'PAID_PLANT_IDENTIFIER_GATE_DENIED' });
   }
 
-  const store = getStore('cruvit-plant-visual-approved-pilot', { consistency: 'strong' });
   const blobKey = '2026-09-21/' + jobId + '.png';
   const cached = await store.getWithMetadata(blobKey, { type: 'arrayBuffer' });
   if (cached && cached.data) {
