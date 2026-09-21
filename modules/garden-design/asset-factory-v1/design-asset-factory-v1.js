@@ -6,7 +6,7 @@
  * for that run. This module does not flip live autonomousGeneration.
  */
 
-export const DESIGN_ASSET_FACTORY_VERSION = '1.0.0';
+export const DESIGN_ASSET_FACTORY_VERSION = '1.1.0';
 
 export const DESIGN_ASSET_FACTORY = Object.freeze({
   version: DESIGN_ASSET_FACTORY_VERSION,
@@ -17,7 +17,12 @@ export const DESIGN_ASSET_FACTORY = Object.freeze({
   manualPerPlantWorkflowIsFinal: false,
   autoApprovalImplemented: false,
   liveRegistryWrites: false,
-  paidNetworkDefault: 'DENY'
+  paidNetworkDefault: 'DENY',
+  fullPlantVisualPipelineImplemented: true,
+  genericPaidGenerationExecutorImplemented: true,
+  framingQaImplemented: true,
+  presentationSizingImplemented: true,
+  productionApprovalMetadataImplemented: true
 });
 
 export const FACTORY_PLANNING_PATH_QUALITY_V1 = Object.freeze([
@@ -40,8 +45,12 @@ export const FACTORY_PIPELINE_STEPS = Object.freeze([
   'prompt-factory',
   'capped-provider-generate',
   'technical-qa',
+  'framing-qa',
   'identity-variant-qa',
+  'in-garden-qa',
+  'presentation-sizing',
   'bounded-retry',
+  'promotion-gate',
   'candidate-registry',
   'owner-exceptions-only'
 ]);
