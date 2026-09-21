@@ -26,7 +26,9 @@ const OWNER_CHOICES = Object.freeze([
 ]);
 
 let qaRows = [];
+let reviewRows = [];
 let rowsById = new Map();
+const SHOW_ALL = new URLSearchParams(window.location.search).get('showAll') === '1';
 let sourceMediaUrl = '';
 let selectedJobId = '';
 let rendererReady = false;
@@ -133,7 +135,11 @@ function renderChoiceState() {
   });
   const decisions = Object.values(state.choices).filter(Boolean).length;
   const summary = document.getElementById('ownerDecisionSummary');
-  if (summary) summary.textContent = decisions + ' / ' + qaRows.length + ' owner decisions recorded in this browser session.';
+  if (summary) summary.textContent =
+    decisions + ' / ' + reviewRows.length
+    + ' owner decisions recorded · '
+    + qaRows.length + ' total jobs in manifest'
+    + (SHOW_ALL ? ' · audit view' : ' · exception-only view');
 }
 
 function wireChoices() {
@@ -319,10 +325,15 @@ async function boot() {
       anchorRegistry = { records: [] };
     }
     qaRows = data.rows;
+    reviewRows = SHOW_ALL
+      ? qaRows
+      : qaRows.filter((row) => row.ownerReviewRequired !== false);
     rowsById = new Map(qaRows.map((row) => [row.jobId, row]));
-    selectedJobId = qaRows.find((row) => row.ownerReviewRequired !== false)?.jobId || qaRows[0]?.jobId || '';
+    selectedJobId = reviewRows[0]?.jobId || '';
     const root = document.getElementById('qaRows');
-    root.innerHTML = qaRows.map(sectionHtml).join('');
+    root.innerHTML = reviewRows.length
+      ? reviewRows.map(sectionHtml).join('')
+      : '<section class="plant"><h2>No owner-review exceptions</h2><p class="small">All jobs in this manifest cleared the automated gates configured for this batch.</p></section>';
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
     status.className = qaRows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
