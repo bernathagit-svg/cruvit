@@ -56,6 +56,8 @@ export function buildCurrentPlantVisualPlan() {
   const registry =
     loadJson('modules/garden-design/assets/plants/design-asset-registry-v1.json', { sets: [] }) ||
     { sets: [] };
+  const sizeAuthorityRegistry =
+    loadJson('data/catalog/botanical-size-authority-v1.json', null);
   const owned =
     loadJson('data/garden-os/mojstrana-owned-plants-v1.json', { garden_plants: [] }) ||
     { garden_plants: [] };
@@ -67,12 +69,14 @@ export function buildCurrentPlantVisualPlan() {
     portfolioLaunchSlugs: []
   };
   const plan = buildPlantVisualProductionPlan(catalog.plants, registry, signals, {
-    autoApprovalEnabled: false
+    autoApprovalEnabled: false,
+    botanicalSizeAuthorityRegistry: sizeAuthorityRegistry
   });
   return {
     catalog,
     registry,
     signals,
+    sizeAuthorityRegistry,
     plan,
     ownerWorkloadTarget: 'exceptions-only',
     generationOnLookup: false,
