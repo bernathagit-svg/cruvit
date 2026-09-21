@@ -10,6 +10,7 @@ import { planDesignAssetGeneration } from './design-asset-quality-policy-v1.js';
 import { assessProductionFramingQa } from './production-framing-qa-v1.js';
 import { derivePresentationSizing } from './presentation-sizing-v1.js';
 import { deriveInGardenQaScale } from './in-garden-qa-scale-policy-v1.js';
+import { resolvePlantSizeAuthorityReadiness } from './plant-size-authority-readiness-v1.js';
 
 export const PLANT_VISUAL_PRODUCTION_PIPELINE_VERSION = 'plant-visual-production-pipeline-v1';
 
@@ -65,6 +66,16 @@ export function buildPlantVisualProductionPlan(plants = [], registry = {}, signa
   const jobs = gaps.jobs.map((job) => {
     const generation = planDesignAssetGeneration(job);
     const formStageKey = `${job.visualForm || 'unknown'}::${job.growthStage || 'mature'}`;
+    const sizeAuthorityPlan = resolvePlantSizeAuthorityReadiness(
+      options.botanicalSizeAuthorityRegistry || null,
+      job,
+      {
+        contextResolved:
+          (options.sizeContextResolvedByJobId && options.sizeContextResolvedByJobId[job.jobId])
+          || (options.sizeContextResolvedBySlug && options.sizeContextResolvedBySlug[job.canonicalSlug])
+          || false
+      }
+    );
     const inGardenQaScalePlan = deriveInGardenQaScale(job, {
       ownerCalibration: options.ownerScaleCalibration || null,
       statureHint:
@@ -92,6 +103,7 @@ export function buildPlantVisualProductionPlan(plants = [], registry = {}, signa
       framingQaRequired: true,
       botanicalIdentityQaRequired: true,
       inGardenQaRequired: true,
+      sizeAuthorityPlan,
       inGardenQaScalePlan,
       presentationSizingRequired: true,
       productionApprovedRequired: true,
