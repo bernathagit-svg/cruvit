@@ -6,6 +6,7 @@
  * This adapter never writes registry, placements, or botanical truth.
  */
 import { derivePresentationSizing } from './presentation-sizing-v1.js';
+import { deriveSiblingStateScaleAnchor } from './in-garden-qa-scale-policy-v1.js';
 
 export const PRODUCTION_RENDERER_QA_PREVIEW_VERSION = 'production-renderer-qa-preview-v1';
 
@@ -109,5 +110,49 @@ export const PRODUCTION_RENDERER_QA_PREVIEW_GOVERNANCE = Object.freeze({
   hardcodedSpeciesBaseWidthForbidden: true,
   promotionPresentationSizingReused: true,
   savedProductionPlacementMayOverridePresentationBaseline: true,
+  genericAnchorRegistryRequiredForOverrides: true,
+  perJobAnchorCodeForbidden: true,
   qaPositionIsNotBotanicalTruth: true
 });
+
+
+export function resolveCompatibleSavedPlacementAnchor(row = {}, registry = {}) {
+  const records = Array.isArray(registry?.records) ? registry.records : [];
+  const targetMetrics = row.technicalMetrics || row.metrics || {};
+  const target = {
+    canonicalSlug: row.canonicalSlug,
+    visualForm: visualFormOf(row),
+    architectureMode: row.architectureMode || 'default',
+    growthStage: row.growthStage,
+    phenology: row.phenology || row.phenologyState,
+    alphaBBox: targetMetrics.bbox || row.alphaBBox || null
+  };
+
+  for (const record of records) {
+    if (!record || record.ownerApproved !== true) continue;
+    const inherited = deriveSiblingStateScaleAnchor({
+      canonicalSlug: record.canonicalSlug,
+      visualForm: record.visualForm,
+      architectureMode: record.architectureMode,
+      growthStage: record.growthStage,
+      phenology: record.sourcePhenology,
+      baseWidthPx: record.baseWidthPx,
+      savedPlacementScale: record.savedPlacementScale,
+      alphaBBox: record.alphaBBox
+    }, target, {
+      savedPlacementScale: record.savedPlacementScale
+    });
+    if (!inherited.ok) continue;
+    return Object.freeze({
+      anchorId: record.anchorId || null,
+      baseWidthPx: Number(record.baseWidthPx),
+      scale: Number(record.savedPlacementScale),
+      x: Number(record.x),
+      y: Number(record.y),
+      authorityUserResized: record.authorityUserResized === true,
+      inherited,
+      source: 'generic-saved-placement-anchor-registry'
+    });
+  }
+  return null;
+}
