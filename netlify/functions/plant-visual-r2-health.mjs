@@ -1,3 +1,4 @@
+// CRUVIT plant visual R2 health check - deployment refresh 2026-09-21
 import { S3Client, HeadBucketCommand } from '@aws-sdk/client-s3';
 
 function getEnv(name) {
