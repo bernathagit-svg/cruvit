@@ -61,6 +61,8 @@ export function buildQaManifestFromFiles(argv = process.argv.slice(2)) {
 
   const candidatesDoc = loadJson(candidatesRel);
   const qaDoc = loadJson(qaRel);
+  const anchorRegistry =
+    loadJson('data/garden-design/garden-design-qa-saved-placement-anchor-registry-v1.json');
   return buildPlantVisualQaManifest({
     manifestId,
     batchId: argValue(argv, 'batch-id') || manifestId,
@@ -68,7 +70,8 @@ export function buildQaManifestFromFiles(argv = process.argv.slice(2)) {
     bucket: candidatesDoc.bucket || 'cruvit-plant-visual-candidates',
     candidates: candidateRows(candidatesDoc),
     qaRows: qaRows(qaDoc),
-    paidAiCalls: Number(qaDoc.paidAiCalls || qaDoc.imageGenerationCalls || 0)
+    paidAiCalls: Number(qaDoc.paidAiCalls || qaDoc.imageGenerationCalls || 0),
+    anchorRegistry
   });
 }
 
