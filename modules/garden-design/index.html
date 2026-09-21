@@ -232,6 +232,20 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .gd-plant-layer.gd-authority-scale .gd-plant-sprite-wrap{width:auto;height:auto;overflow:visible}
 .gd-plant-layer.gd-authority-scale .gd-plant-cutout{max-height:none !important;max-width:none !important;width:auto;height:auto;object-fit:contain;object-position:bottom center}
 .gd-plant-layer:active{cursor:grabbing}
+body.gd-qa-preview-mode .header,
+body.gd-qa-preview-mode .steps,
+body.gd-qa-preview-mode .result-title,
+body.gd-qa-preview-mode .result-desc,
+body.gd-qa-preview-mode .pc-plants-section,
+body.gd-qa-preview-mode .gd-layer-toolbar,
+body.gd-qa-preview-mode .gd-placement-note,
+body.gd-qa-preview-mode .result-img-label,
+body.gd-qa-preview-mode .result-before-after > .result-img-wrap:first-child{display:none!important}
+body.gd-qa-preview-mode .main{max-width:960px;padding:10px 12px}
+body.gd-qa-preview-mode .result-before-after{display:block!important}
+body.gd-qa-preview-mode #imgAfterWrap{width:100%}
+body.gd-qa-preview-mode #plantLayersHost{pointer-events:none}
+
 .gd-plant-visual{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;pointer-events:none}
 .gd-plant-sprite-wrap{position:relative;width:104px;height:136px;display:flex;align-items:flex-end;justify-content:center;background:none;border:none;border-radius:0;overflow:visible}
 .gd-plant-tree .gd-plant-sprite-wrap{width:128px;height:168px}
@@ -1247,6 +1261,7 @@ const GD_USE_PLANT_ASSETS = true;
 const GD_USE_REMOTE_PLANT_URLS = false;
 const GD_DEV_PLACEHOLDER_QUERY = /(?:^|[?&])gdSvgPlaceholders=1(?:&|$)/.test(window.location.search);
 const GD_ASSET_DIAG_QUERY = /(?:^|[?&])gdAssetDiag=1(?:&|$)/.test(window.location.search);
+const GD_QA_PREVIEW_QUERY = /(?:^|[?&])gdQaPreview=1(?:&|$)/.test(window.location.search);
 const GD_IS_LOCAL_ASSET_DEV = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const GD_PLACEMENT_NOTE_DEFAULT = '📍 Placement preview on your original photo - drag plants to adjust position and size. This is not an AI-redesigned image.';
 const GD_PLACEMENT_NOTE_MANUAL = 'Manual placement — drag plants to adjust. No AI generation.';
@@ -1935,6 +1950,7 @@ function gdFlushHostPersist() {
 }
 
 function gdPersistAllVisiblePlacements() {
+  if (GD_QA_PREVIEW_QUERY) return;
   if (!plantLayers.length) return;
   gdPlacementWriteHadFailure = false;
   plantLayers.forEach(function(l) {
@@ -1948,6 +1964,7 @@ function gdPersistAllVisiblePlacements() {
 }
 
 function gdScheduleHostPersist(op) {
+  if (GD_QA_PREVIEW_QUERY) return;
   const api = gdOwnedGardenApi();
   const phase = op && op.phase;
   if (api && typeof api.shouldWriteOnPointerPhase === 'function' && phase && !api.shouldWriteOnPointerPhase(phase)) {
@@ -1970,6 +1987,7 @@ function gdScheduleHostPersist(op) {
 }
 
 function gdPersistDesignSnapshot(options) {
+  if (GD_QA_PREVIEW_QUERY) return;
   const opts = options || {};
   const api = gdOwnedGardenApi();
   if (!api || !gdOwnedGardenContext) return;
@@ -2695,11 +2713,81 @@ function gdOnCommitResult(msg) {
   gdPostToHost({ type: 'cruvit:garden-design-refresh-owned-plants' });
 }
 
+
+function gdQaSpriteTypeFromForm(form) {
+  const f = String(form || '').toLowerCase();
+  if (f === 'tree' || f === 'palm') return 'tree';
+  if (f === 'herbaceous-clump' || f === 'herbaceous-upright' || f === 'grass-like') return 'herb';
+  if (f === 'flower') return 'flower';
+  return 'shrub';
+}
+
+function gdApplyQaPreview(msg) {
+  if (!GD_QA_PREVIEW_QUERY || !msg || !msg.sourceMediaUrl || !msg.imageUrl) return false;
+  const photoUrl = String(msg.sourceMediaUrl);
+  const spriteType = gdQaSpriteTypeFromForm(msg.visualForm || msg.architectureMode);
+  photoDataUrl = photoUrl;
+  basePhotoDataUrl = photoUrl;
+  photoB64 = null;
+  basePhotoB64 = null;
+  isPhotoMode = true;
+  gdManualPlacementActive = false;
+
+  show('s-result');
+  const beforeAfter = document.getElementById('beforeAfter');
+  const singleImg = document.getElementById('singleImg');
+  if (beforeAfter) beforeAfter.style.display = 'grid';
+  if (singleImg) singleImg.style.display = 'none';
+  const imgAfter = document.getElementById('imgAfter');
+  if (imgAfter) imgAfter.src = photoUrl;
+
+  plantLayers = [{
+    id: 'qa-preview-layer',
+    name: msg.label || msg.canonicalSlug || 'Plant',
+    species: msg.scientific || '',
+    slug: msg.canonicalSlug || '',
+    canonicalSlug: msg.canonicalSlug || '',
+    kind: 'proposed',
+    gardenPlantId: null,
+    source: 'qa-preview',
+    status: 'qa-preview',
+    growthStage: msg.growthStage || 'unspecified',
+    targetGrowthStage: msg.targetGrowthStage || msg.growthStage || 'mature',
+    season: msg.season || 'unknown',
+    phenology: msg.phenology || 'vegetative',
+    x: Math.min(0.96, Math.max(0.04, Number(msg.x ?? 0.5))),
+    y: Math.min(0.96, Math.max(0.04, Number(msg.y ?? 0.82))),
+    scale: Math.min(2.2, Math.max(0.35, Number(msg.scale ?? 1))),
+    rotation: Number(msg.rotation || 0),
+    zIndex: 1,
+    spriteType,
+    isTree: spriteType === 'tree',
+    architectureMode: msg.architectureMode || null,
+    visualForm: msg.visualForm || null,
+    qaPreviewImageUrl: String(msg.imageUrl),
+    qaBaseWidthPx: Number(msg.baseWidthPx || 0) || null,
+    qaWidth: Number(msg.width || 0) || null,
+    qaHeight: Number(msg.height || 0) || null,
+    authorityUserResized: msg.authorityUserResized === true,
+    metadata: { qaPreview: true }
+  }];
+
+  selectedPlantLayerId = null;
+  setOverlayPlacementUI(true);
+  renderPlantLayers();
+  renderPlantsDrawer();
+  gdUpdatePlacementNote();
+
+  document.body.classList.add('gd-qa-preview-mode');
+  return true;
+}
+
 window.addEventListener('message', function(ev) {
   const accepted = gdAcceptHostMessage(ev);
   if (!accepted.ok) return;
   const d = accepted.payload || ev.data;
   if (d.type === 'cruvit:garden-design-context') gdApplyOwnedGardenContext(d);
+  if (d.type === 'cruvit:garden-design-qa-preview') gdApplyQaPreview(d);
   if (d.type === 'cruvit:garden-design-owned-plants') {
     if (!gdOwnedGardenContext) gdOwnedGardenContext = {};
     gdOwnedGardenContext.ownedPlants = d.ownedPlants || [];
@@ -3293,6 +3381,9 @@ function gdBuildHonestPlaceholderHtml(layer) {
 
 function gdBuildPlantLayerVisualInner(layer, resolved) {
   const spriteType = gdResolveLayerSpriteType(layer);
+  if (GD_QA_PREVIEW_QUERY && layer && layer.qaPreviewImageUrl) {
+    return '<img class="gd-plant-cutout" src="' + gdEscAttr(layer.qaPreviewImageUrl) + '" alt="" data-canonical-slug="' + gdEscAttr(layer.canonicalSlug || '') + '" data-architecture-mode="' + gdEscAttr(layer.architectureMode || '') + '" data-visual-form="' + gdEscAttr(layer.visualForm || '') + '" data-approval-status="qa-candidate"/>';
+  }
   if (GD_USE_PLANT_ASSETS) {
     if (!resolved && gdPlantAssetsManifest) {
       resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
@@ -3360,7 +3451,14 @@ function gdBuildPlantLayerInnerHtml(layer) {
     layer.spriteType = resolved.spriteType;
     layer.isTree = resolved.spriteType === 'tree';
   }
-  if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
+  if (GD_QA_PREVIEW_QUERY && layer.qaPreviewImageUrl && layer.qaBaseWidthPx) {
+    const qaAspect = Number(layer.qaHeight) > 0 && Number(layer.qaWidth) > 0
+      ? Number(layer.qaHeight) / Number(layer.qaWidth)
+      : 1.5;
+    const qaWrapH = Math.round(Number(layer.qaBaseWidthPx) * qaAspect);
+    wrapStyle = ' style="width:' + Number(layer.qaBaseWidthPx) + 'px;height:' + qaWrapH + 'px"';
+    wrapClass += ' gd-plant-sprite-wrap--asset';
+  } else if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
     const entry = resolved.assetKey && gdPlantAssetsManifest && gdPlantAssetsManifest.plants[resolved.assetKey];
     const variant = entry && entry.variants && entry.variants[resolved.variantId];
     const aspect = resolved.width && resolved.height
@@ -3426,7 +3524,7 @@ function renderPlantLayers() {
     el.dataset.layerId = layer.id;
     el.innerHTML = gdBuildPlantLayerInnerHtml(layer);
     applyLayerDomTransform(layer, el);
-    el.addEventListener('pointerdown', e => onPlantLayerPointerDown(e, layer.id));
+    if (!GD_QA_PREVIEW_QUERY) el.addEventListener('pointerdown', e => onPlantLayerPointerDown(e, layer.id));
     host.appendChild(el);
   });
   gdUpdatePlacementNote();
