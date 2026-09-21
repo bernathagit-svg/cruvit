@@ -95,9 +95,11 @@ function reviewScene(row, scale) {
   return `<div class="review-scale">
     <h4>${esc(scale[0].toUpperCase() + scale.slice(1))}</h4>
     <div class="scene real review-${esc(scale)}" data-role="garden-scene" data-review-scale="${esc(scale)}">
-      <img class="cutout review-cutout ${esc(scale)}"
-        src="${esc(IMAGE_URL(row.jobId))}"
-        alt="${esc(rowTitle(row))} — ${esc(scale)} review scale">
+      <div class="review-plant-box ${esc(scale)}">
+        <img class="cutout review-cutout"
+          src="${esc(IMAGE_URL(row.jobId))}"
+          alt="${esc(rowTitle(row))} — ${esc(scale)} review scale">
+      </div>
       <span class="ground-shadow" aria-hidden="true"></span>
     </div>
   </div>`;
