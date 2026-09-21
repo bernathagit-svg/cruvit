@@ -507,10 +507,11 @@ test('pilot owner scale calibration is job-specific and mature mango can exceed 
   assert.match(runtime, /banana__young__default__vegetative__v1': 'large'/);
   assert.match(runtime, /mango__young__tree__vegetative__v1': 'large'/);
   assert.match(runtime, /pineapple__mature__default__fruiting__v1': 'medium'/);
-  assert.match(runtime, /reviewScene\(row, 'xl'\)/);
-  assert.match(runtime, /reviewScene\(row, 'xxl'\)/);
+  assert.match(runtime, /matureMangoFullAspectReview/);
+  assert.match(runtime, /data-full-aspect-band=\"\$\{band\}\"/);
   assert.match(page, /review-plant-box\.xl\{height:88%;width:90%\}/);
   assert.match(page, /review-plant-box\.xxl\{height:94%;width:96%\}/);
+  assert.match(page, /full-aspect-scene/);
   assert.equal(owner.decisions.find((r) => r.jobId === 'mango__mature__tree__fruiting__v1').acceptedCurrentBand, false);
   assert.equal(owner.invariants.includes('No preferred scale may permit clipping.'), true);
 });
