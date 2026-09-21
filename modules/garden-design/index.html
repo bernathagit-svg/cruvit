@@ -3074,16 +3074,16 @@ function gdApplyPlantSizeAuthorityVisual(layer, el) {
   // Unknown stage remains unknown. Do not silently apply mature physical scale.
   if (!growthStage) return false;
 
-  const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
-    ? api.mangoOwnerPreferredRangePosition(slug)
-    : (slug === 'mango' ? 'LOW' : null);
+  const preferredRange = typeof api.ownerPreferredRangePosition === 'function'
+    ? api.ownerPreferredRangePosition(slug, api.preferenceRegistry)
+    : null;
   const userScaleOverride = layer.authorityUserResized ? { kind: 'multiplier', value: layer.scale } : null;
   const authority = api.resolveGardenSizeAuthority(registry, {
     canonicalSlug: slug,
     growthStage,
     visualForm,
     architectureMode: layer.architectureMode || visualForm,
-    ownerPreferredRangePosition: mangoLow,
+    ownerPreferredRangePosition: preferredRange,
     userScaleOverride
   });
   if (!authority || authority.gardenDesignBlocked) return false;
@@ -3093,7 +3093,7 @@ function gdApplyPlantSizeAuthorityVisual(layer, el) {
     visualForm,
     depthId: layer.y >= 0.82 ? 'near' : (layer.y <= 0.62 ? 'far' : 'middle'),
     placementNy: layer.y,
-    rangeBand: mangoLow || 'MID',
+    rangeBand: preferredRange || 'MID',
     sceneWidthPx,
     sceneHeightPx,
     userScaleOverride
@@ -6164,6 +6164,7 @@ The plants array MUST match the exact counts specified above.`}]);
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       getAuthorityRecordBySlug,
+      ownerPreferredRangePosition,
       mangoOwnerPreferredRangePosition,
       productionGardenSizeAuthorityEnabled,
       resolveGardenSizeAuthority,
@@ -6172,16 +6173,25 @@ The plants array MUST match the exact counts specified above.`}]);
     window.CruvitGardenSizeAuthority = {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       getAuthorityRecordBySlug,
+      ownerPreferredRangePosition,
       mangoOwnerPreferredRangePosition,
       productionGardenSizeAuthorityEnabled,
       resolveGardenSizeAuthority,
       scaleFromGardenSizeAuthority,
-      registry: null
+      registry: null,
+      preferenceRegistry: null
     };
     fetch('../../data/catalog/botanical-size-authority-v1.json')
       .then(function(r) { return r.json(); })
       .then(function(registry) {
         if (window.CruvitGardenSizeAuthority) window.CruvitGardenSizeAuthority.registry = registry;
+        if (typeof renderPlantLayers === 'function') renderPlantLayers();
+      })
+      .catch(function() {});
+    fetch('../../data/garden-design/garden-design-size-preference-registry-v1.json')
+      .then(function(r) { return r.json(); })
+      .then(function(registry) {
+        if (window.CruvitGardenSizeAuthority) window.CruvitGardenSizeAuthority.preferenceRegistry = registry;
         if (typeof renderPlantLayers === 'function') renderPlantLayers();
       })
       .catch(function() {});
