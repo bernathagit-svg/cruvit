@@ -1,3 +1,4 @@
+import { getStore } from '@netlify/blobs';
 import { planDesignAssetGeneration } from '../../modules/garden-design/asset-factory-v1/design-asset-quality-policy-v1.js';
 import { actualSpendUsdFromUsage } from '../../modules/garden-design/asset-factory-v1/total-api-cost-v1.js';
 
@@ -70,6 +71,22 @@ export default async (req) => {
     return json(403, { error: 'PAID_PLANT_IDENTIFIER_GATE_DENIED' });
   }
 
+  const store = getStore('cruvit-plant-visual-approved-pilot', { consistency: 'strong' });
+  const blobKey = '2026-09-21/' + jobId + '.png';
+  const cached = await store.getWithMetadata(blobKey, { type: 'arrayBuffer' });
+  if (cached && cached.data) {
+    return new Response(cached.data, {
+      status: 200,
+      headers: {
+        'content-type': 'image/png',
+        'cache-control': 'no-store',
+        'x-cruvit-job-id': jobId,
+        'x-cruvit-cache': 'hit',
+        'x-cruvit-spend-usd': String(cached.metadata?.spendUsd ?? 'unknown')
+      }
+    });
+  }
+
   const apiKey = String(env('OPENAI_KEY') || env('OPENAI_API_KEY') || '').trim();
   if (!apiKey) return json(500, { error: 'OPENAI_KEY_NOT_READY' });
 
@@ -108,6 +125,15 @@ export default async (req) => {
 
   const bytes = Uint8Array.from(Buffer.from(b64, 'base64'));
   const spendUsd = actualSpendUsdFromUsage(data?.usage);
+  await store.set(blobKey, bytes, {
+    metadata: {
+      jobId,
+      spendUsd,
+      quality: generation.quality,
+      detailClass: generation.detailClass,
+      model: 'gpt-image-2'
+    }
+  });
 
   return new Response(bytes, {
     status: 200,
@@ -117,7 +143,8 @@ export default async (req) => {
       'x-cruvit-job-id': jobId,
       'x-cruvit-quality': generation.quality,
       'x-cruvit-detail-class': generation.detailClass,
-      'x-cruvit-spend-usd': spendUsd == null ? 'unknown' : String(spendUsd)
+      'x-cruvit-spend-usd': spendUsd == null ? 'unknown' : String(spendUsd),
+      'x-cruvit-cache': 'miss'
     }
   });
 };
