@@ -112,6 +112,44 @@ function reviewScene(row, scale) {
   </div>`;
 }
 
+
+function matureMangoFullAspectReview(row) {
+  const bands = ['large', 'xl', 'xxl'];
+  return `<div class="card full-aspect-card">
+    <h3>Real Garden — mature tree full-aspect calibration</h3>
+    <p class="small">Wide-canopy trees are reviewed on the original Garden photo aspect ratio. The selected band changes the bounded plant box; the scene itself does not become a narrow thumbnail.</p>
+    <div class="scale-selector" role="group" aria-label="Mature mango QA scale">
+      ${bands.map((band) => `<button type="button" data-full-aspect-band="${band}" data-job-id="${esc(row.jobId)}" aria-pressed="${band === 'xxl' ? 'true' : 'false'}">${band.toUpperCase()}</button>`).join('')}
+    </div>
+    <div class="scene real full-aspect-scene" data-role="garden-scene" data-full-aspect-job="${esc(row.jobId)}" data-active-band="xxl">
+      <div class="review-plant-box xxl full-aspect-plant-box">
+        <img class="cutout review-cutout"
+          src="${esc(IMAGE_URL(row.jobId))}"
+          alt="${esc(rowTitle(row))} — full aspect review">
+      </div>
+      <span class="ground-shadow" aria-hidden="true"></span>
+    </div>
+  </div>`;
+}
+
+function wireFullAspectSelectors() {
+  document.querySelectorAll('[data-full-aspect-band]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const jobId = btn.getAttribute('data-job-id');
+      const band = btn.getAttribute('data-full-aspect-band');
+      const scene = document.querySelector('[data-full-aspect-job="' + jobId + '"]');
+      const box = scene && scene.querySelector('.full-aspect-plant-box');
+      if (!scene || !box || !['large','xl','xxl'].includes(band)) return;
+      box.classList.remove('large','xl','xxl');
+      box.classList.add(band);
+      scene.setAttribute('data-active-band', band);
+      document.querySelectorAll('[data-full-aspect-band][data-job-id="' + jobId + '"]').forEach((b) => {
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+      });
+    });
+  });
+}
+
 function sectionHtml(row, index) {
   const recovered = row.sourceStatus === 'RECOVERED_EVIDENCE_MISMATCH';
   const sourceNote = recovered
@@ -126,16 +164,17 @@ function sectionHtml(row, index) {
         <h3>Native candidate</h3>
         <div class="native checkerboard"><img src="${esc(IMAGE_URL(row.jobId))}" alt="${esc(rowTitle(row))} candidate"></div>
       </div>
-      <div class="card">
-        <h3>Real Garden — bounded visual QA scales</h3>
-        <p class="small">Small / Medium / Large are review scales only. They are not meter-accurate botanical sizes and never permit clipping.</p>
-        <div class="review-scales${row.jobId === 'mango__mature__tree__fruiting__v1' ? ' mature-mango-calibration' : ''}">
-          ${reviewScene(row, 'small')}
-          ${reviewScene(row, 'medium')}
-          ${reviewScene(row, 'large')}
-          ${row.jobId === 'mango__mature__tree__fruiting__v1' ? reviewScene(row, 'xl') + reviewScene(row, 'xxl') : ''}
-        </div>
-      </div>
+      ${row.jobId === 'mango__mature__tree__fruiting__v1'
+        ? matureMangoFullAspectReview(row)
+        : `<div class="card">
+            <h3>Real Garden — bounded visual QA scales</h3>
+            <p class="small">Small / Medium / Large are review scales only. They are not meter-accurate botanical sizes and never permit clipping.</p>
+            <div class="review-scales">
+              ${reviewScene(row, 'small')}
+              ${reviewScene(row, 'medium')}
+              ${reviewScene(row, 'large')}
+            </div>
+          </div>`}
     </div>
     <div class="qa">
       <h3>QA</h3>
@@ -185,6 +224,7 @@ async function boot() {
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
     status.className = data.rows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
+    wireFullAspectSelectors();
   } catch (err) {
     status.textContent = 'QA load failed: ' + String(err?.message || err);
     status.className = 'warn';
