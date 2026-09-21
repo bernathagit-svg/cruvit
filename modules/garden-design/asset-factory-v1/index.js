@@ -332,3 +332,18 @@ export {
   parsePlantVisualProductionApproval,
   executePlantVisualProductionRun
 } from './plant-visual-production-execute-v1.js';
+
+
+export {
+  PLANT_VISUAL_PRODUCTION_WAVE_VERSION,
+  DEFAULT_WAVE_POLICY,
+  rankPlantVisualJobs,
+  partitionPlantVisualWaves,
+  buildPlantVisualProductionWavePlan
+} from './plant-visual-production-wave-v1.js';
+
+export {
+  PLANT_VISUAL_PROMOTION_GUARD_VERSION,
+  validateProductionRegistryVariant,
+  activateProductionRegistryVariant
+} from './plant-visual-promotion-guard-v1.js';
