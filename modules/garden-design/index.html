@@ -2943,24 +2943,24 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   const wrap = document.getElementById('imgAfterWrap');
   const sceneHeightPx = (photo && photo.clientHeight) || (wrap && wrap.clientHeight) || 360;
   const sceneWidthPx = (photo && photo.clientWidth) || (wrap && wrap.clientWidth) || 480;
-  const growthStage = layer.growthStage === 'young' ? 'young' : (layer.growthStage === 'mature' ? 'mature' : null);
-  // Unknown/unspecified owned stage must not be silently promoted to mature.
-  // In that case keep the registry asset's bounded presentation size instead of applying mature size authority.
-  if (!growthStage) return false;
+  const ownedGrowthStage = layer.growthStage === 'young' ? 'young' : (layer.growthStage === 'mature' ? 'mature' : null);
+  // Unknown/unspecified remains unknown in owned data. For rendering only, use the conservative
+  // young presentation band so the cutout gets depth-aware scale/grounding without claiming maturity.
+  const presentationGrowthStage = ownedGrowthStage || 'young';
   const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
     ? api.mangoOwnerPreferredRangePosition(slug)
     : (slug === 'mango' ? 'LOW' : null);
   const userScaleOverride = layer.authorityUserResized ? { kind: 'multiplier', value: layer.scale } : null;
   const authority = api.resolveGardenSizeAuthority(registry, {
     canonicalSlug: slug,
-    growthStage: growthStage,
+    growthStage: presentationGrowthStage,
     architectureMode: 'tree',
     ownerPreferredRangePosition: mangoLow,
     userScaleOverride: userScaleOverride
   });
   if (!authority || authority.gardenDesignBlocked) return false;
   const scaled = api.scaleFromGardenSizeAuthority(authority, {
-    growthStage: growthStage,
+    growthStage: presentationGrowthStage,
     depthId: layer.y >= 0.82 ? 'near' : (layer.y <= 0.62 ? 'far' : 'middle'),
     placementNy: layer.y,
     rangeBand: mangoLow || 'MID',
@@ -5939,7 +5939,7 @@ The plants array MUST match the exact counts specified above.`}]);
   <script>
   (function(){
     window.__gdRegistryBootstrap = 'starting';
-    import('./garden-design-asset-registry-v1.js?v=20260921reg8')
+    import('./garden-design-asset-registry-v1.js?v=20260921reg9')
       .then(function(mod) {
         const api = mod && (mod.default || mod);
         if (!api || typeof api.indexDesignAssetRegistry !== 'function' || typeof api.resolveDesignAsset !== 'function') {
@@ -5948,7 +5948,7 @@ The plants array MUST match the exact counts specified above.`}]);
         window.CruvitGardenDesignAssetRegistry = api;
         window.__gdRegistryBootstrap = 'api-bound';
         if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('registry-api-bound');
-        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg8', { cache: 'no-store' });
+        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg9', { cache: 'no-store' });
       })
       .then(function(r) {
         if (!r.ok) throw new Error('registry-json-http-' + r.status);
