@@ -36,7 +36,6 @@ import {
 import {
   deriveInGardenQaScale,
   qaScaleBandSpec,
-  PILOT_SCALE_CALIBRATION,
   QA_SCALE_POLICY_GOVERNANCE,
   deriveSiblingStateScaleAnchor,
   SIBLING_STATE_SCALE_GOVERNANCE
@@ -579,7 +578,7 @@ test('in-garden QA scale policy derives morphology + stage defaults instead of p
     phenology: 'vegetative'
   });
   const pineapple = deriveInGardenQaScale({
-    jobId: 'pineapple__mature__default__fruiting__v1',
+    jobId: 'fixture__mature__default__fruiting__v1',
     visualForm: 'rosette',
     growthStage: 'mature',
     phenology: 'fruiting'
@@ -621,7 +620,9 @@ test('in-garden QA scale policy keeps phenology separate from size and supports 
     growthStage: 'mature',
     phenology: 'fruiting'
   }, {
-    ownerCalibration: PILOT_SCALE_CALIBRATION
+    ownerCalibration: {
+      'fixture__mature__default__fruiting__v1': { band: 'medium' }
+    }
   });
   assert.equal(owner.recommendedBand, 'medium');
   assert.deepEqual(owner.reviewBands, ['medium']);
