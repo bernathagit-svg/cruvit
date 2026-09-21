@@ -69,7 +69,6 @@ export function isUsableDesignVariant(variant) {
     return false;
   }
   if (variant.productionApproved !== true) return false;
-  if (variant.productionApproved !== true) return false;
   const status = lower(variant.status || variant.approvalStatus);
   const approval = lower(variant.approvalStatus || variant.status);
   if (
