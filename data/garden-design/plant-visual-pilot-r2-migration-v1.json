@@ -1,0 +1,69 @@
+{
+  "contract": "plant-visual-pilot-r2-migration-v1",
+  "generatedAt": "2026-09-21",
+  "runId": "pilot-migration-2026-09-21-v1",
+  "verdict": "PILOT_CANDIDATE_R2_MIGRATION_VERIFIED",
+  "bucket": "cruvit-plant-visual-candidates",
+  "productionBucketWrites": 0,
+  "registryWrites": 0,
+  "paidGenerationCalls": 0,
+  "secretsExposed": false,
+  "candidates": [
+    {
+      "jobId": "banana__young__default__vegetative__v1",
+      "canonicalSlug": "banana",
+      "status": "COPIED_AND_VERIFIED",
+      "objectKey": "candidates/pilot-migration-2026-09-21-v1/banana/banana__young__default__vegetative__v1__ae409cc13ac0badbca5bfac98ecdc04f6f03fd0c52d064874adc0e243ad1dfbf.png",
+      "bytes": 1498667,
+      "sha256": "ae409cc13ac0badbca5bfac98ecdc04f6f03fd0c52d064874adc0e243ad1dfbf",
+      "sourceType": "site-static",
+      "lineage": "visual-state-calibration-batch-2",
+      "productionApproved": false
+    },
+    {
+      "jobId": "mango__young__tree__vegetative__v1",
+      "canonicalSlug": "mango",
+      "status": "COPIED_AND_VERIFIED",
+      "objectKey": "candidates/pilot-migration-2026-09-21-v1/mango/mango__young__tree__vegetative__v1__ea86bfc3c56e79dcf081a9b5cfb45d50be48c3b19d736c0ae31e4786e6816f2a.png",
+      "bytes": 2009221,
+      "sha256": "ea86bfc3c56e79dcf081a9b5cfb45d50be48c3b19d736c0ae31e4786e6816f2a",
+      "sourceType": "netlify-blob",
+      "lineage": "plant-visual-owned-retry-pilot-v2",
+      "productionApproved": false
+    },
+    {
+      "jobId": "pineapple__mature__default__fruiting__v1",
+      "canonicalSlug": "pineapple",
+      "status": "RECOVERED_CANDIDATE_COPIED_AND_VERIFIED",
+      "objectKey": "candidates/pilot-migration-2026-09-21-v1/recovered/pineapple/pineapple__mature__default__fruiting__v1__2feb2d10bf0cfbc6e794430c73d2c84735346d05d61216f3040640f0547c5e75.png",
+      "bytes": 2220701,
+      "sha256": "2feb2d10bf0cfbc6e794430c73d2c84735346d05d61216f3040640f0547c5e75",
+      "sourceType": "netlify-blob",
+      "lineage": "plant-visual-owned-retry-pilot-v2",
+      "evidenceMismatch": true,
+      "expectedEvidenceSha256": "4621a27684d852ef3f28c7fd16505ef28351f260d3bae912802d8809ac17ceef",
+      "productionApproved": false
+    },
+    {
+      "jobId": "mango__mature__tree__fruiting__v1",
+      "canonicalSlug": "mango",
+      "status": "RECOVERED_CANDIDATE_COPIED_AND_VERIFIED",
+      "objectKey": "candidates/pilot-migration-2026-09-21-v1/recovered/mango/mango__mature__tree__fruiting__v1__833f36814f05672466cc125c334936fc60b452b5160daa340be63cc89b40be29.png",
+      "bytes": 2608902,
+      "sha256": "833f36814f05672466cc125c334936fc60b452b5160daa340be63cc89b40be29",
+      "sourceType": "netlify-blob",
+      "lineage": "plant-visual-mango-fruiting-v3",
+      "evidenceMismatch": true,
+      "expectedEvidenceSha256": "85718e325a3f65a8d3701dc66dfef36f2c3ff17ffcf9267e851dcb801384fa12",
+      "productionApproved": false
+    }
+  ],
+  "nextGate": "BOTANICAL_IDENTITY_STATE_IN_GARDEN_QA",
+  "notes": [
+    "Candidate R2 migration is complete.",
+    "Recovered candidates are quarantined from production because their source blob bytes differ from earlier evidence.",
+    "No production bucket writes occurred.",
+    "No registry writes occurred.",
+    "No paid generation occurred during migration."
+  ]
+}
