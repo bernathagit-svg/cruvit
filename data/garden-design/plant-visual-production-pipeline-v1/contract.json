@@ -1,8 +1,7 @@
 {
-  "contract": "plant-visual-production-pipeline-v1",
-  "status": "IMPLEMENTED_FOUNDATION",
-  "generatedAt": "2026-09-21",
-  "purpose": "Scalable end-to-end Garden Design visual production for canonical plants.",
+  "version": "plant-visual-production-pipeline-v1",
+  "implementedAt": "2026-09-21",
+  "goal": "Every canonical plant can progress through a complete visual production path, including image generation, QA, sizing, promotion, and Garden Design activation.",
   "stages": [
     "canonical-identity",
     "required-visual-states",
@@ -20,39 +19,63 @@
     "immutable-publish",
     "registry-activation"
   ],
-  "policy": {
+  "invariants": {
     "generateOnLookup": false,
     "generateOnRender": false,
-    "paidNetworkDefault": "DENY",
-    "autoApprovalDefault": false,
-    "ownerWorkloadTarget": "exceptions-only",
-    "productionApprovedRequiredForNewPipelineAssets": true,
     "sourceResolutionPreserved": true,
-    "silentBinaryReplacementForbidden": true
+    "productionApprovedRequired": true,
+    "silentBinaryReplacementForbidden": true,
+    "ownerWorkloadTarget": "exceptions-only",
+    "autoApprovalDefault": false,
+    "missingOrFailedAsset": "honest-placeholder"
   },
-  "lessonsLocked": {
-    "binaryQualitySeparateFromRenderer": true,
-    "framingSeparateFromSizing": true,
-    "presentationSizingSeparateFromPhysicalScale": true,
-    "thumbnailsAndCanvasMustResolveSameRegistryAsset": true,
-    "manualPerPlantBaseWidthIsCalibrationNotFinalArchitecture": true
+  "qa": {
+    "technical": [
+      "decode",
+      "alpha",
+      "dimensions",
+      "bbox",
+      "crop",
+      "edge-contact",
+      "coverage",
+      "halo"
+    ],
+    "framing": [
+      "top-padding",
+      "side-padding",
+      "bottom-padding",
+      "subject-size-in-canvas"
+    ],
+    "garden": [
+      "perspective",
+      "ground-contact",
+      "sticker-look",
+      "halo",
+      "sharpness-match",
+      "color-tonal-match",
+      "scale-realism",
+      "silhouette"
+    ]
   },
-  "currentCalibrationEvidence": {
-    "mango": {
-      "sourceResolution": "1024x1536",
-      "manualPresentationBaseWidthPx": 480
-    },
-    "banana": {
-      "sourceResolution": "1024x1536",
-      "manualPresentationBaseWidthPx": 406
-    },
-    "pineapple": {
-      "ownerVisualResult": "GOOD_NO_MANUAL_SIZE_CHANGE_REQUIRED"
-    }
+  "sizing": {
+    "authorityOrder": [
+      "trusted-physical-size-authority",
+      "presentation-sizing-v1",
+      "owner-user-scale-adjustment"
+    ],
+    "baselineInputs": [
+      "visualForm",
+      "width",
+      "height",
+      "alphaBBox"
+    ],
+    "canonicalSlugSwitchesForbidden": true
   },
-  "executionNow": {
-    "paidGeneration": false,
-    "registryMassWrite": false,
-    "massGeneration": false
-  }
+  "currentRuntimeAssets": [
+    "olive",
+    "mango",
+    "banana",
+    "pineapple"
+  ],
+  "nextScaleStep": "Run dry-run coverage/gap report over canonical catalog, then approve a bounded paid wave for missing high-priority plants."
 }
