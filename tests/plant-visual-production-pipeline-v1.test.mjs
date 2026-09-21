@@ -967,6 +967,30 @@ test('saved placement anchors are registry data and not per-species renderer cod
   assert.match(gd, /gdApplyPlantSizeAuthorityVisual/);
 });
 
+test('promotion registry variants preserve the baseWidthPx reviewed in production renderer QA', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-qa-manifests/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+  const readiness = evaluateQaManifestPromotionReadiness(manifest);
+  assert.equal(readiness.readyJobs, 4);
+
+  for (const evaluation of readiness.evaluations) {
+    const row = manifest.rows.find((item) => item.jobId === evaluation.jobId);
+    assert.equal(evaluation.registryVariant.baseWidthPx, row.qaRendererInput.baseWidthPx);
+    assert.equal(evaluation.registryVariant.presentationSizing.reviewedInProductionRenderer, true);
+  }
+
+  const mango = readiness.evaluations.find(
+    (row) => row.jobId === 'mango__mature__tree__fruiting__v1'
+  );
+  assert.equal(mango.registryVariant.baseWidthPx, 480);
+  assert.equal(mango.registryVariant.presentationSizing.scale, 1.15);
+});
+
 test('promotion readiness is manifest-driven and accepts exact-byte reconciled provenance', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const manifest = JSON.parse(
