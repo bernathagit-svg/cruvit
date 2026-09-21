@@ -153,3 +153,31 @@ export const RECOVERED_PROVENANCE_GOVERNANCE = Object.freeze({
   productionPromotionAllowedOnlyAfterReconciliation: true,
   perPlantCodeForbidden: true
 });
+
+
+export function applyProvenanceReconciliationToManifest(manifest = {}, reconciliation = {}) {
+  const records = Array.isArray(reconciliation?.records) ? reconciliation.records : [];
+  const byJob = new Map(records.map((record) => [text(record?.jobId), record]));
+  const rows = (Array.isArray(manifest?.rows) ? manifest.rows : []).map((row) => {
+    const record = byJob.get(text(row?.jobId)) || null;
+    if (!record) return { ...row };
+    if (!reconciliationMatchesRow(record, row)) {
+      const err = new Error('PROVENANCE_RECONCILIATION_ROW_MISMATCH');
+      err.code = 'PROVENANCE_RECONCILIATION_ROW_MISMATCH';
+      err.jobId = row?.jobId || null;
+      throw err;
+    }
+    return {
+      ...row,
+      provenanceReconciliation: record,
+      provenanceStatus: 'RECONCILED_CURRENT_BYTES'
+    };
+  });
+
+  return {
+    ...manifest,
+    provenanceReconciliationContract: PLANT_VISUAL_PROVENANCE_RECONCILIATION_VERSION,
+    provenanceReconciledAt: reconciliation?.reconciledAt || null,
+    rows
+  };
+}
