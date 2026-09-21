@@ -492,6 +492,23 @@ test('pilot in-garden QA uses bounded small-medium-large review scales without m
   assert.equal(rootCause.decision.productionGardenDesignScaleChanged, false);
 });
 
+test('pilot owner scale calibration is job-specific and mature mango can exceed Large without clipping', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+  const owner = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-owner-scale-calibration-v1.json'), 'utf8'));
+
+  assert.match(runtime, /banana__young__default__vegetative__v1': 'large'/);
+  assert.match(runtime, /mango__young__tree__vegetative__v1': 'large'/);
+  assert.match(runtime, /pineapple__mature__default__fruiting__v1': 'medium'/);
+  assert.match(runtime, /reviewScene\(row, 'xl'\)/);
+  assert.match(runtime, /reviewScene\(row, 'xxl'\)/);
+  assert.match(page, /review-plant-box\.xl\{height:88%;width:90%\}/);
+  assert.match(page, /review-plant-box\.xxl\{height:94%;width:96%\}/);
+  assert.equal(owner.decisions.find((r) => r.jobId === 'mango__mature__tree__fruiting__v1').acceptedCurrentBand, false);
+  assert.equal(owner.invariants.includes('No preferred scale may permit clipping.'), true);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
