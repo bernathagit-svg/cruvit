@@ -144,10 +144,13 @@ function applyProductionAnchorGeometry() {
     const box = scene.querySelector('.production-anchor-box');
     if (!box) return;
     const sceneWidth = scene.clientWidth || MATURE_MANGO_PRODUCTION_ANCHOR.referenceSceneWidthPx;
+    const sceneHeight = Math.round(sceneWidth / MATURE_MANGO_PRODUCTION_ANCHOR.sceneAspectRatio);
+    scene.style.height = sceneHeight + 'px';
     const responsiveScale = Math.min(1, sceneWidth / MATURE_MANGO_PRODUCTION_ANCHOR.referenceSceneWidthPx);
     const widthPx = MATURE_MANGO_PRODUCTION_ANCHOR.productionEquivalentBaseWidthPx * responsiveScale;
     box.style.width = widthPx + 'px';
-    box.style.aspectRatio = '2 / 3';
+    box.style.height = Math.round(widthPx * 1.5) + 'px';
+    box.style.aspectRatio = 'auto';
     box.style.left = (MATURE_MANGO_PRODUCTION_ANCHOR.x * 100) + '%';
     box.style.bottom = ((1 - MATURE_MANGO_PRODUCTION_ANCHOR.y) * 100) + '%';
   });
@@ -210,6 +213,10 @@ function applySignedGardenUrl(url) {
   applyProductionAnchorGeometry();
   return true;
 }
+
+window.addEventListener('resize', () => {
+  applyProductionAnchorGeometry();
+});
 
 window.addEventListener('message', (ev) => {
   const d = ev && ev.data;
