@@ -1,3 +1,5 @@
+import { attachProductionRendererInputsToManifest } from './production-renderer-qa-preview-v1.js';
+
 /**
  * Plant Visual QA Manifest V1.
  *
@@ -99,7 +101,7 @@ export function buildPlantVisualQaManifest(input = {}) {
     }
   }
 
-  return Object.freeze({
+  const baseManifest = {
     contract: PLANT_VISUAL_QA_MANIFEST_VERSION,
     manifestId,
     generatedAt: input.generatedAt || null,
@@ -113,7 +115,13 @@ export function buildPlantVisualQaManifest(input = {}) {
     productionWrites: 0,
     registryWrites: 0,
     rows
-  });
+  };
+
+  const withRendererInputs = input.anchorRegistry
+    ? attachProductionRendererInputsToManifest(baseManifest, input.anchorRegistry)
+    : baseManifest;
+
+  return Object.freeze(withRendererInputs);
 }
 
 export const QA_MANIFEST_GOVERNANCE = Object.freeze({
