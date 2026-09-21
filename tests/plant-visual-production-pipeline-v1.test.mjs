@@ -197,6 +197,26 @@ test('paid generation executor is default-deny and requires three matching run f
   assert.equal(approved.allowNetwork, true);
 });
 
+test('paid generation approval preserves an exact job-id allowlist', () => {
+  const approved = parsePlantVisualProductionApproval([
+    '--run-id=owned-pilot-v1',
+    '--approve-envelope=owned-pilot-v1',
+    '--owner-approve-run=owned-pilot-v1',
+    '--execute-production-run=owned-pilot-v1',
+    '--job-ids=mango__mature__tree__fruiting__v1,mango__young__tree__vegetative__v1,pineapple__mature__default__fruiting__v1',
+    '--max-jobs=3',
+    '--max-calls=3',
+    '--max-spend-usd=0.5',
+    '--allow-paid-calls=3'
+  ]);
+  assert.deepEqual(approved.jobIds, [
+    'mango__mature__tree__fruiting__v1',
+    'mango__young__tree__vegetative__v1',
+    'pineapple__mature__default__fruiting__v1'
+  ]);
+  assert.equal(approved.ownerApprovedThisRunOnly, true);
+});
+
 
 test('every active registry asset is explicitly productionApproved', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
