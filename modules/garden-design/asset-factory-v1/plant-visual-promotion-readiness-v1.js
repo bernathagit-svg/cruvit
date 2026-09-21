@@ -74,6 +74,19 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
     phenologyStateQa: qaObject(row.phenologyStateQA),
     inGardenQa: qaObject(row.inGardenQA),
     ownerVisualQa: qaObject(row.ownerVisualQA || 'UNKNOWN'),
+    presentationSizing:
+      row.qaRendererInput?.ok === true && Number(row.qaRendererInput.baseWidthPx) > 0
+        ? {
+            status: 'CALIBRATED_BASELINE',
+            baseWidthPx: Number(row.qaRendererInput.baseWidthPx),
+            source: 'production-renderer-qa-input',
+            rendererSource: row.qaRendererInput.source || null,
+            reviewedInProductionRenderer: true,
+            scale: Number(row.qaRendererInput.scale || 1),
+            authorityUserResized: row.qaRendererInput.authorityUserResized === true,
+            physicalScaleAuthorityMayOverride: true
+          }
+        : undefined,
     bytes: row.bytes,
     sha256: row.sha256,
     file: row.objectKey,
