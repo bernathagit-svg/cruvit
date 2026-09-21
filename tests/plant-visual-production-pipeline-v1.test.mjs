@@ -473,6 +473,25 @@ test('pilot QA surface is bounded to four migrated candidates and stays non-prod
   assert.match(app, /openPlantVisualPilotQaReview/);
 });
 
+test('pilot in-garden QA uses bounded small-medium-large review scales without meter claims', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+  const rootCause = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-in-garden-scale-root-cause-v1.json'), 'utf8'));
+
+  assert.match(runtime, /reviewScene\(row, 'small'\)/);
+  assert.match(runtime, /reviewScene\(row, 'medium'\)/);
+  assert.match(runtime, /reviewScene\(row, 'large'\)/);
+  assert.doesNotMatch(runtime, /data-size-scenario="NATURAL_MATURE"/);
+  assert.match(page, /review-cutout\.small\{max-height:34%\}/);
+  assert.match(page, /review-cutout\.medium\{max-height:54%\}/);
+  assert.match(page, /review-cutout\.large\{max-height:78%\}/);
+  assert.match(page, /max-width:80%/);
+  assert.equal(rootCause.decision.clippingAllowed, false);
+  assert.equal(rootCause.decision.meterAccuracyClaimed, false);
+  assert.equal(rootCause.decision.productionGardenDesignScaleChanged, false);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
