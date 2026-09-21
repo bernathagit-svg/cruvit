@@ -869,6 +869,28 @@ test('pilot production renderer handshake is resilient to early READY timing', (
   assert.match(runtime, /\[250, 750, 1500, 3000\]/);
 });
 
+test('reconciled provenance evidence is exact-byte and generic', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const evidence = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-provenance-reconciliation/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+
+  assert.equal(evidence.recordCount, 2);
+  assert.equal(evidence.blockedCount, 0);
+  for (const record of evidence.records) {
+    assert.equal(record.status, 'RECONCILED_CURRENT_BYTES');
+    assert.equal(record.productionPromotionMayProceed, true);
+    assert.equal(record.historicalEvidence.exactCurrentBytesLinkedToHistoricalGeneration, false);
+    assert.equal(record.historicalEvidence.historicalGenerationIdentityClaimed, false);
+    assert.equal(record.generationMetadataKnown, false);
+    assert.equal(record.verification.ownerVisualQA, 'PASS');
+    assert.equal(record.verification.reviewedInProductionRenderer, true);
+  }
+});
+
 test('QA manifest builder scales by data rows without per-plant code', () => {
   const candidates = Array.from({ length: 120 }, (_, i) => ({
     jobId: 'fixture-' + i,
@@ -945,7 +967,7 @@ test('saved placement anchors are registry data and not per-species renderer cod
   assert.match(gd, /gdApplyPlantSizeAuthorityVisual/);
 });
 
-test('promotion readiness is manifest-driven and blocks evidence mismatch without production writes', () => {
+test('promotion readiness is manifest-driven and accepts exact-byte reconciled provenance', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const manifest = JSON.parse(
     fs.readFileSync(
@@ -956,15 +978,28 @@ test('promotion readiness is manifest-driven and blocks evidence mismatch withou
 
   const readiness = evaluateQaManifestPromotionReadiness(manifest);
   assert.equal(readiness.totalJobs, 4);
-  assert.equal(readiness.readyJobs, 2);
-  assert.equal(readiness.blockedJobs, 2);
+  assert.equal(readiness.readyJobs, 4);
+  assert.equal(readiness.blockedJobs, 0);
   assert.equal(readiness.productionWrites, 0);
   assert.equal(readiness.registryWrites, 0);
 
-  const blocked = readiness.evaluations.filter((row) => !row.ready);
-  assert.equal(blocked.every((row) => row.code === 'PROVENANCE_RECONCILIATION_REQUIRED'), true);
+  const reconciled = readiness.evaluations.filter(
+    (row) => row.provenance.code === 'PROVENANCE_RECONCILED_CURRENT_BYTES'
+  );
+  assert.equal(reconciled.length, 2);
   assert.equal(PROMOTION_READINESS_GOVERNANCE.manifestDriven, true);
   assert.equal(PROMOTION_READINESS_GOVERNANCE.perPlantCodeForbidden, true);
+
+  const tampered = structuredClone(manifest);
+  const row = tampered.rows.find((item) => item.evidenceMismatch === true);
+  row.sha256 = '0'.repeat(64);
+  const blocked = evaluateQaManifestPromotionReadiness(tampered);
+  assert.equal(blocked.readyJobs, 3);
+  assert.equal(blocked.blockedJobs, 1);
+  assert.equal(
+    blocked.evaluations.find((item) => item.jobId === row.jobId).code,
+    'PROVENANCE_RECONCILIATION_REQUIRED'
+  );
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
