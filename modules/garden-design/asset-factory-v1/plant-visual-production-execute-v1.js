@@ -25,32 +25,7 @@ export const PLANT_VISUAL_CANDIDATE_DIR = 'modules/garden-design/assets/plants/c
 
 function strFlag(args, name) {
   for (const arg of args || []) {
-    const match = new RegExp(`^--${name}=(.+)/**
- * Generic owner-approved paid executor for Plant Visual Production Pipeline V1.
- *
- * Default deny. It may generate candidate PNGs only when the current run has an
- * explicit matching owner approval envelope. It never writes the live registry.
- */
-import fs from 'node:fs';
-import path from 'node:path';
-import crypto from 'node:crypto';
-import { parseSpendEnvelope } from './spend-envelope-v1.js';
-import { actualSpendUsdFromUsage } from './total-api-cost-v1.js';
-import { postOpenAiImagesJson, OPENAI_IMAGES_GENERATIONS_URL } from './openai-images-http-v1.js';
-import { inspectTechnicalQa } from './technical-qa-v1.js';
-import { assessIdentityQa } from './identity-qa-v1.js';
-import { assessInGardenQa } from './in-garden-qa-v1.js';
-import { assessProductionFramingQa } from './production-framing-qa-v1.js';
-import {
-  buildPlantVisualProductionPlan,
-  evaluatePlantVisualCandidate,
-  summarizePlantVisualPipeline
-} from './plant-visual-production-pipeline-v1.js';
-
-export const PLANT_VISUAL_PRODUCTION_EXECUTOR_VERSION = 'plant-visual-production-execute-v1';
-export const PLANT_VISUAL_CANDIDATE_DIR = 'modules/garden-design/assets/plants/candidates/plant-visual-production-v1';
-
-).exec(String(arg));
+    const match = new RegExp(`^--${name}=(.+)$`).exec(String(arg));
     if (match) return String(match[1]);
   }
   return '';
