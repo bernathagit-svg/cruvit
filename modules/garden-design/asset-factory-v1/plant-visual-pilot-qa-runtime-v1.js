@@ -1,9 +1,4 @@
-import { CALIBRATION_SOURCE_MESSAGE_TYPE } from './calibration-garden-source-host-v1.js';
-import {
-  applyProductionPhysicalScenes,
-  seedMangoGardenDesignPreference
-} from './physical-scale-foundation-v1-runtime.js';
-import { PHOTO_SCALE_STATE } from './physical-scale-foundation-v1.js';
+const CALIBRATION_SOURCE_MESSAGE_TYPE = 'cruvit:calibration-garden-source';
 
 const SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921a';
 const IMAGE_URL = (jobId) =>
@@ -156,18 +151,29 @@ function sectionHtml(row, index) {
 }
 
 async function applyProductionScale() {
-  seedMangoGardenDesignPreference('pilot-qa-real-garden');
-  let registry = null;
   try {
-    const res = await fetch('../../data/catalog/botanical-size-authority-v1.json', { cache: 'no-store' });
-    if (res.ok) registry = await res.json();
-  } catch {
-    registry = null;
+    const [{ applyProductionPhysicalScenes, seedMangoGardenDesignPreference }, { PHOTO_SCALE_STATE }] =
+      await Promise.all([
+        import('./physical-scale-foundation-v1-runtime.js'),
+        import('./physical-scale-foundation-v1.js')
+      ]);
+    seedMangoGardenDesignPreference('pilot-qa-real-garden');
+    let registry = null;
+    try {
+      const res = await fetch('../../data/catalog/botanical-size-authority-v1.json', { cache: 'no-store' });
+      if (res.ok) registry = await res.json();
+    } catch {
+      registry = null;
+    }
+    applyProductionPhysicalScenes(document, {
+      authorityRegistry: registry,
+      photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED
+    });
+    return true;
+  } catch (err) {
+    console.warn('Pilot QA physical-scale enhancement unavailable', err);
+    return false;
   }
-  applyProductionPhysicalScenes(document, {
-    authorityRegistry: registry,
-    photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED
-  });
 }
 
 function applySignedGardenUrl(url) {
