@@ -91,9 +91,16 @@ function reviewFields(row) {
   ];
 }
 
+const OWNER_SCALE_PREF = Object.freeze({
+  'banana__young__default__vegetative__v1': 'large',
+  'mango__young__tree__vegetative__v1': 'large',
+  'pineapple__mature__default__fruiting__v1': 'medium'
+});
+
 function reviewScene(row, scale) {
-  return `<div class="review-scale">
-    <h4>${esc(scale[0].toUpperCase() + scale.slice(1))}</h4>
+  const preferred = OWNER_SCALE_PREF[row.jobId] === scale;
+  return `<div class="review-scale${preferred ? ' owner-preferred' : ''}">
+    <h4>${esc(scale[0].toUpperCase() + scale.slice(1))}${preferred ? ' · Owner preferred' : ''}</h4>
     <div class="scene real review-${esc(scale)}" data-role="garden-scene" data-review-scale="${esc(scale)}">
       <div class="review-plant-box ${esc(scale)}">
         <img class="cutout review-cutout"
@@ -122,10 +129,11 @@ function sectionHtml(row, index) {
       <div class="card">
         <h3>Real Garden — bounded visual QA scales</h3>
         <p class="small">Small / Medium / Large are review scales only. They are not meter-accurate botanical sizes and never permit clipping.</p>
-        <div class="review-scales">
+        <div class="review-scales${row.jobId === 'mango__mature__tree__fruiting__v1' ? ' mature-mango-calibration' : ''}">
           ${reviewScene(row, 'small')}
           ${reviewScene(row, 'medium')}
           ${reviewScene(row, 'large')}
+          ${row.jobId === 'mango__mature__tree__fruiting__v1' ? reviewScene(row, 'xl') + reviewScene(row, 'xxl') : ''}
         </div>
       </div>
     </div>
