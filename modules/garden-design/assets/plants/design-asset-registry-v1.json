@@ -297,12 +297,14 @@
           "ownerVisualQA": "PASS",
           "version": "v1",
           "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE",
-          "baseWidthPx": 220,
+          "baseWidthPx": 406,
           "presentationSizing": {
-            "source": "garden-design-runtime",
-            "reason": "avoid generic shrub fallback 96x124 for full banana clump",
-            "tunedAtPlacementBand": "middle",
-            "imageAspectRatio": "1024x1536"
+            "source": "owner-visual-adjustment",
+            "previousBaseWidthPx": 220,
+            "displayMultiplier": 1.8461538461538463,
+            "preserveSourceResolution": true,
+            "sourcePixelDimensions": "1024x1536",
+            "note": "Owner requested Banana enlarged in the same manner as Mango, without resampling."
           }
         }
       ]
