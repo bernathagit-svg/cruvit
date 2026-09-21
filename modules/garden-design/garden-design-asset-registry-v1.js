@@ -62,15 +62,6 @@ export function isUsableDesignVariant(variant) {
   if (!variant || typeof variant !== 'object') return false;
   if (variant.comingSoon === true) return false;
   if (variant.productionApproved !== true) return false;
-  if (variant.productionApproved === false) return false;
-  const pipeline = String(variant.provenance?.pipeline || '');
-  if (
-    pipeline === 'plant-visual-production-pipeline-v1' &&
-    variant.productionApproved !== true
-  ) {
-    return false;
-  }
-  if (variant.productionApproved === false) return false;
   const status = lower(variant.status || variant.approvalStatus);
   const approval = lower(variant.approvalStatus || variant.status);
   if (
@@ -85,7 +76,7 @@ export function isUsableDesignVariant(variant) {
   if (variant.approvalStatus === DESIGN_ASSET_APPROVAL.APPROVED && variant.transparencyReady === true) {
     return true;
   }
-  return status === 'ready' && (variant.file || variant.url || variant.cdnUrl);
+  return status === 'ready' && variant.transparencyReady === true && (variant.file || variant.url || variant.cdnUrl);
 }
 
 export function assertVariantIdentityConsistency(plant, variant = {}) {
