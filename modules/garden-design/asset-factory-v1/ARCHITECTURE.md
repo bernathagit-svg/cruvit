@@ -31,10 +31,15 @@ catalog canonical plant
 → prompt factory
 → provider adapter `generateAsset` (capped)
 → technical QA (local)
+→ production framing QA (alpha bounds, transparent margin, crop/edge-contact)
 → identity/variant QA (UNKNOWN allowed; paid QA shares envelope)
-→ bounded retry
-→ CANDIDATE (owner review required; auto-approval not implemented)
-→ APPROVED metadata + object-storage binary
+→ state + architecture QA
+→ in-garden QA on the real persisted Garden Design source photo
+→ automatic presentation sizing from visualForm + alpha bounds
+→ bounded retry / regeneration
+→ promotion gate
+→ immutable approved binary + production metadata
+→ registry activation
 → owner exception queue only
 
 Lookup / render never generates. `DESIGN_ASSET_PRODUCTION_PIPELINE.autonomousGeneration` stays **false** until a later owner enablement.
@@ -85,7 +90,7 @@ Local heuristics can FAIL mismatches. They cannot prove species: result may be U
 
 ## Candidate vs approved
 
-Generation success ≠ approval. Mandatory gates → CANDIDATE. Owner review required initially. `AUTO_APPROVAL_ELIGIBLE` criteria exist; **not implemented**.
+Generation success ≠ approval. Mandatory gates include technical QA, production framing QA, botanical/state/architecture QA, in-garden QA, and presentation sizing. Owner review remains required initially. The target state is calibrated exception-only review; automatic approval stays disabled until evidence supports it.
 
 ## Exception queue
 
@@ -288,3 +293,19 @@ canonical catalog identity
 - Exact current-run owner approval + spend envelope is required before provider network calls.
 - Live registry writes remain separate from generation. Candidate generation never silently promotes itself.
 - Auto-approval remains disabled by default; the pipeline supports it only after calibrated evidence and an explicit future enablement.
+
+
+## Production framing + presentation sizing (2026-09-21)
+
+The Mango/Banana/Pineapple production incident established two mandatory rules:
+
+1. Asset quality and runtime presentation are separate concerns. A high-resolution cutout must never be resized/re-encoded merely to make it appear larger in Garden Design.
+2. Every new production candidate must pass framing QA and receive computed presentation metadata before promotion.
+
+`production-framing-qa-v1` derives transparent margins and visible alpha bounds from technical QA and rejects cropped/edge-contact assets before promotion.
+
+`presentation-sizing-v1` derives a neutral `baseWidthPx` from visual form and alpha-bounds occupancy. It contains no canonical plant-name switch. Trusted physical-size authority may later override this baseline at runtime.
+
+New production records built by `plant-visual-production-pipeline-v1` include `productionApproved: true`, source dimensions, alphaBBox, groundAnchor, presentation sizing, QA status, immutable checksum/provenance, and preserve the original source resolution.
+
+The generic paid executor `plant-visual-production-execute-v1` is default-deny and run-scoped. It can create candidates only under an exact owner spend envelope; it never writes the live registry by itself.
