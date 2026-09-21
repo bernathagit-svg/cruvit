@@ -1,0 +1,63 @@
+{
+  "contract": "plant-visual-owned-retry-pilot-v2",
+  "generatedAt": "2026-09-21",
+  "ownerApproval": {
+    "approvedCalls": 3,
+    "maxSpendUsd": 0.3,
+    "retriesApproved": 0,
+    "registryWritesApproved": false,
+    "massGenerationApproved": false
+  },
+  "execution": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "quality": "medium",
+    "size": "1024x1536",
+    "callsSuccessful": 3,
+    "actualSpendUsd": 0.133855,
+    "productionRegistryChanged": false
+  },
+  "candidates": [
+    {
+      "jobId": "mango__mature__tree__fruiting__v1",
+      "bytes": 2739915,
+      "sha256": "0ece47b0f0d92201f639414444e0dbb0116ca86e230387c9d91b44d9e397be9a",
+      "spendUsd": 0.04474,
+      "technicalQA": "PASS",
+      "framingQA": "FAIL",
+      "framingReasons": [
+        "right-padding-too-small"
+      ],
+      "visualObservation": "mango tree with visible fruit; no unrelated object reported",
+      "productionApproved": false
+    },
+    {
+      "jobId": "mango__young__tree__vegetative__v1",
+      "bytes": 2009221,
+      "sha256": "ea86bfc3c56e79dcf081a9b5cfb45d50be48c3b19d736c0ae31e4786e6816f2a",
+      "spendUsd": 0.04483,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "framingReasons": [],
+      "visualObservation": "plant only; full specimen visible; no unrelated objects",
+      "productionApproved": false
+    },
+    {
+      "jobId": "pineapple__mature__default__fruiting__v1",
+      "bytes": 2340288,
+      "sha256": "4621a27684d852ef3f28c7fd16505ef28351f260d3bae912802d8809ac17ceef",
+      "spendUsd": 0.044285,
+      "technicalQA": "PASS",
+      "framingQA": "PASS",
+      "framingReasons": [],
+      "visualObservation": "pineapple plant with fruit; no unrelated cartoon object reported",
+      "productionApproved": false
+    }
+  ],
+  "comparisonToPilotV1": {
+    "mangoYoung": "framing improved from FAIL(top-padding-too-small) to PASS",
+    "pineappleFruiting": "framing improved from FAIL(right-padding-too-small) to PASS; unrelated-object defect not observed",
+    "mangoFruiting": "top-padding defect resolved but right-padding remains below threshold"
+  },
+  "nextAction": "Do not mass-generate. Tighten centering/max-subject-width prompt contract before any further Mango fruiting retry."
+}
