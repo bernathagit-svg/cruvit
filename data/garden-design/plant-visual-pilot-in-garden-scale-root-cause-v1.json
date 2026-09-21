@@ -1,0 +1,47 @@
+{
+  "contract": "plant-visual-pilot-in-garden-scale-root-cause-v1",
+  "generatedAt": "2026-09-21",
+  "observed": {
+    "affectedJobs": [
+      "banana__young__default__vegetative__v1",
+      "mango__young__tree__vegetative__v1",
+      "pineapple__mature__default__fruiting__v1",
+      "mango__mature__tree__fruiting__v1"
+    ],
+    "realGardenPhotoLoaded": true,
+    "symptoms": [
+      "review preview rendered specimens implausibly large",
+      "large portions of canopy/leaves extended outside the review frame",
+      "young variants appeared at mature-like scale",
+      "review could not reliably judge in-garden integration"
+    ]
+  },
+  "rootCause": [
+    "Pilot QA review incorrectly reused production physical-scale runtime for an uncalibrated source photo.",
+    "The production scale path intentionally allows clipping in estimated mode and is designed for interactive Garden Design with manual resize, not bounded QA comparison.",
+    "Pilot QA hard-coded NATURAL_MATURE review scenario even for young assets.",
+    "In-Garden QA contract already requires small/medium/large review scales; the pilot review had drifted from that contract."
+  ],
+  "decision": {
+    "productionGardenDesignScaleChanged": false,
+    "qaReviewOnlyChange": true,
+    "reviewMode": "BOUNDED_SMALL_MEDIUM_LARGE",
+    "scales": {
+      "smallMaxHeightPct": 34,
+      "mediumMaxHeightPct": 54,
+      "largeMaxHeightPct": 78,
+      "maxWidthPct": 80
+    },
+    "clippingAllowed": false,
+    "meterAccuracyClaimed": false,
+    "photoCalibrationRequiredForMeterClaims": true
+  },
+  "invariants": [
+    "In-Garden QA must remain usable when a real saved Garden photo exists but meter calibration does not.",
+    "QA preview scale must not silently become botanical meter truth.",
+    "Young assets must not inherit a mature-only scenario.",
+    "All review scales must remain bounded and fully visible.",
+    "Production Garden Design scale behavior is evaluated separately from QA review presentation."
+  ],
+  "next": "Re-render four pilot candidates on the real Garden photo at bounded small/medium/large scales, then perform owner visual gates."
+}
