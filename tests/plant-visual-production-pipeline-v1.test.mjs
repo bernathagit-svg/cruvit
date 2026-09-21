@@ -506,15 +506,15 @@ test('pilot in-garden QA delegates rendering to production Garden Design instead
   assert.doesNotMatch(page, /review-plant-box/);
   assert.doesNotMatch(page, /full-aspect-scene/);
 });
-test('pilot renderer inputs remain bounded QA inputs while Garden Design owns rendering math', () => {
+test('pilot renderer inputs come from adapter plus evidence while Garden Design owns rendering math', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
 
-  assert.match(runtime, /PILOT_RENDER_INPUT/);
-  assert.match(runtime, /baseWidthPx: 480/);
-  assert.match(runtime, /scale: 1\.15/);
-  assert.match(runtime, /authorityUserResized: true/);
+  assert.match(runtime, /buildProductionRendererQaPreview/);
+  assert.match(runtime, /plant-visual-pilot-mature-mango-production-scale-anchor-v1\.json/);
+  assert.match(runtime, /savedPlacementAnchor: savedAnchorsByJobId\[selectedJobId\]/);
   assert.match(runtime, /frame\.contentWindow\.postMessage/);
+  assert.doesNotMatch(runtime, /PILOT_RENDER_INPUT/);
   assert.doesNotMatch(runtime, /box\.style\.width/);
   assert.doesNotMatch(runtime, /scene\.style\.height/);
 });
