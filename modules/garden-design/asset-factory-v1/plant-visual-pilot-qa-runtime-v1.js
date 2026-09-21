@@ -136,6 +136,41 @@ function rendererFrame() {
   return document.getElementById('productionRendererFrame');
 }
 
+function markRendererReady(source) {
+  rendererReady = true;
+  const status = document.getElementById('rendererStatus');
+  if (status) {
+    status.className = 'ok';
+    status.textContent = 'Production Garden Design renderer ready (read-only QA mode) · ' + source;
+  }
+  sendRendererPreview();
+}
+
+function installRendererHandshake() {
+  const frame = rendererFrame();
+  if (!frame) return;
+
+  frame.addEventListener('load', () => {
+    // A full iframe load means the production document and its scripts are
+    // available. Do not depend solely on an early postMessage READY event.
+    setTimeout(() => markRendererReady('iframe-load'), 0);
+  });
+
+  try {
+    if (frame.contentDocument && frame.contentDocument.readyState === 'complete') {
+      setTimeout(() => markRendererReady('already-loaded'), 0);
+    }
+  } catch (_) {}
+
+  // Bounded retries cover browser/cache timing without any persistence/write.
+  [250, 750, 1500, 3000].forEach((delay) => {
+    setTimeout(() => {
+      if (!rendererReady) return;
+      sendRendererPreview();
+    }, delay);
+  });
+}
+
 function updateSelectedUi() {
   document.querySelectorAll('[data-preview-job]').forEach((btn) => {
     btn.setAttribute('aria-pressed', btn.getAttribute('data-preview-job') === selectedJobId ? 'true' : 'false');
@@ -236,13 +271,7 @@ window.addEventListener('message', (ev) => {
   const frame = rendererFrame();
 
   if (frame && ev.source === frame.contentWindow && d?.type === 'cruvit:garden-design-ready') {
-    rendererReady = true;
-    const status = document.getElementById('rendererStatus');
-    if (status) {
-      status.className = 'ok';
-      status.textContent = 'Production Garden Design renderer ready (read-only QA mode).';
-    }
-    sendRendererPreview();
+    markRendererReady('ready-message');
     return;
   }
 
@@ -286,6 +315,7 @@ async function boot() {
     status.className = qaRows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
     wirePreviewButtons();
+    installRendererHandshake();
   } catch (err) {
     status.textContent = 'QA load failed: ' + String(err?.message || err);
     status.className = 'warn';
