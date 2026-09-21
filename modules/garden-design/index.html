@@ -2944,9 +2944,10 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   const sceneHeightPx = (photo && photo.clientHeight) || (wrap && wrap.clientHeight) || 360;
   const sceneWidthPx = (photo && photo.clientWidth) || (wrap && wrap.clientWidth) || 480;
   const ownedGrowthStage = layer.growthStage === 'young' ? 'young' : (layer.growthStage === 'mature' ? 'mature' : null);
-  // Unknown/unspecified remains unknown in owned data. For rendering only, use the conservative
-  // young presentation band so the cutout gets depth-aware scale/grounding without claiming maturity.
-  const presentationGrowthStage = ownedGrowthStage || 'young';
+  // Unknown/unspecified remains unknown in owned data and must not be promoted into a physical-size band.
+  // Use the approved asset's bounded presentation size until stage or photo calibration is known.
+  if (!ownedGrowthStage) return false;
+  const presentationGrowthStage = ownedGrowthStage;
   const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
     ? api.mangoOwnerPreferredRangePosition(slug)
     : (slug === 'mango' ? 'LOW' : null);
@@ -5939,7 +5940,7 @@ The plants array MUST match the exact counts specified above.`}]);
   <script>
   (function(){
     window.__gdRegistryBootstrap = 'starting';
-    import('./garden-design-asset-registry-v1.js?v=20260921reg9')
+    import('./garden-design-asset-registry-v1.js?v=20260921reg10')
       .then(function(mod) {
         const api = mod && (mod.default || mod);
         if (!api || typeof api.indexDesignAssetRegistry !== 'function' || typeof api.resolveDesignAsset !== 'function') {
@@ -5948,7 +5949,7 @@ The plants array MUST match the exact counts specified above.`}]);
         window.CruvitGardenDesignAssetRegistry = api;
         window.__gdRegistryBootstrap = 'api-bound';
         if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('registry-api-bound');
-        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg9', { cache: 'no-store' });
+        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg10', { cache: 'no-store' });
       })
       .then(function(r) {
         if (!r.ok) throw new Error('registry-json-http-' + r.status);
