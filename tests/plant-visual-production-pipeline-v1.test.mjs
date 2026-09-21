@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   assessProductionFramingQa,
@@ -183,4 +186,36 @@ test('paid generation executor is default-deny and requires three matching run f
   ]);
   assert.equal(approved.ownerApprovedThisRunOnly, true);
   assert.equal(approved.allowNetwork, true);
+});
+
+
+test('every active registry asset is explicitly productionApproved', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const registry = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'modules/garden-design/assets/plants/design-asset-registry-v1.json'),
+      'utf8'
+    )
+  );
+  assert.equal(
+    registry.productionPolicy?.productionApprovedRequiredForReadyAssets,
+    true
+  );
+  const active = (registry.sets || []).flatMap((set) =>
+    (set.variants || [])
+      .filter((variant) =>
+        variant.approvalStatus === 'approved' &&
+        variant.status === 'ready' &&
+        variant.transparencyReady === true
+      )
+      .map((variant) => ({ slug: set.canonicalSlug, variant }))
+  );
+  assert.ok(active.length >= 4);
+  for (const row of active) {
+    assert.equal(
+      row.variant.productionApproved,
+      true,
+      `${row.slug}/${row.variant.assetId} must be productionApproved`
+    );
+  }
 });
