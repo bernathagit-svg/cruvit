@@ -61,11 +61,23 @@ export default async (req) => {
   if (req.method !== 'GET') return json(405, { error: 'METHOD_NOT_ALLOWED' });
 
   const url = new URL(req.url);
+  const runtimeNonce = String(env('CRUVIT_PILOT_NONCE') || '');
+  if (url.searchParams.get('index') === '1') {
+    if (!runtimeNonce) return json(403, { error: 'PILOT_NONCE_NOT_READY' });
+    const links = Object.keys(JOBS).map((jobId) => {
+      const href = '/.netlify/functions/plant-visual-approved-pilot?job=' + encodeURIComponent(jobId) + '&token=' + encodeURIComponent(runtimeNonce);
+      return '<li><a href="' + href + '">' + jobId + '</a></li>';
+    }).join('');
+    return new Response('<!doctype html><html><body><ul>' + links + '</ul></body></html>', {
+      status: 200,
+      headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' }
+    });
+  }
   const jobId = String(url.searchParams.get('job') || '');
   const token = String(url.searchParams.get('token') || '');
   const job = JOBS[jobId];
   if (!job) return json(404, { error: 'JOB_NOT_APPROVED' });
-  const expectedToken = String(env('CRUVIT_PILOT_NONCE') || '');
+  const expectedToken = runtimeNonce;
   if (!expectedToken || token !== expectedToken) return json(403, { error: 'PILOT_TOKEN_DENIED' });
   if (String(env('CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER') || '') !== 'true') {
     return json(403, { error: 'PAID_PLANT_IDENTIFIER_GATE_DENIED' });
