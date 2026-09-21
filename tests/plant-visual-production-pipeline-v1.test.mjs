@@ -479,6 +479,8 @@ test('pilot QA surface is bounded to four migrated candidates and stays non-prod
   assert.doesNotMatch(fn, /PLANT_VISUAL_R2_PRODUCTION_BUCKET/);
   assert.match(fn, /productionApproved: false/);
   assert.match(page, /Four bounded candidates only/);
+  assert.match(page, /index\.html\?gdQaPreview=1/);
+  assert.match(page, /There is no separate QA scale renderer/);
   assert.match(runtime, /CALIBRATION_SOURCE_MESSAGE_TYPE/);
   assert.match(fn, /OWNER_REVIEW_REQUIRED/);
   assert.match(runtime, /PASS_OWNER_VISUAL_GATES/);
@@ -486,48 +488,32 @@ test('pilot QA surface is bounded to four migrated candidates and stays non-prod
   assert.match(app, /openPlantVisualPilotQaReview/);
 });
 
-test('pilot in-garden QA uses bounded small-medium-large review scales without meter claims', () => {
+test('pilot in-garden QA delegates rendering to production Garden Design instead of a parallel scale renderer', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
-  const rootCause = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-in-garden-scale-root-cause-v1.json'), 'utf8'));
 
-  assert.match(runtime, /reviewScene\(row, 'small'\)/);
-  assert.match(runtime, /reviewScene\(row, 'medium'\)/);
-  assert.match(runtime, /reviewScene\(row, 'large'\)/);
-  assert.doesNotMatch(runtime, /data-size-scenario="NATURAL_MATURE"/);
-  assert.match(page, /review-plant-box\.small\{height:34%\}/);
-  assert.match(page, /review-plant-box\.medium\{height:54%\}/);
-  assert.match(page, /review-plant-box\.large\{height:78%\}/);
-  assert.match(page, /review-plant-box\{[^}]*width:80%/);
-  assert.equal(rootCause.decision.clippingAllowed, false);
-  assert.equal(rootCause.decision.meterAccuracyClaimed, false);
-  assert.equal(rootCause.decision.productionGardenDesignScaleChanged, false);
+  assert.match(page, /index\.html\?gdQaPreview=1/);
+  assert.match(page, /Production Garden Design renderer/);
+  assert.match(runtime, /cruvit:garden-design-qa-preview/);
+  assert.match(runtime, /productionRendererFrame/);
+  assert.doesNotMatch(runtime, /reviewScene\(/);
+  assert.doesNotMatch(runtime, /MATURE_MANGO_PRODUCTION_ANCHOR/);
+  assert.doesNotMatch(page, /review-plant-box/);
+  assert.doesNotMatch(page, /full-aspect-scene/);
 });
-
-test('pilot owner scale calibration is job-specific and mature mango uses saved production anchor', () => {
+test('pilot renderer inputs remain bounded QA inputs while Garden Design owns rendering math', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
-  const owner = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-owner-scale-calibration-v1.json'), 'utf8'));
-  const anchor = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json'), 'utf8'));
 
-  assert.match(runtime, /banana__young__default__vegetative__v1': 'large'/);
-  assert.match(runtime, /mango__young__tree__vegetative__v1': 'large'/);
-  assert.match(runtime, /pineapple__mature__default__fruiting__v1': 'medium'/);
-  assert.match(runtime, /MATURE_MANGO_PRODUCTION_ANCHOR/);
-  assert.match(runtime, /productionEquivalentBaseWidthPx: 552/);
-  assert.match(runtime, /savedPlacementScale: 1\.15/);
-  assert.match(page, /full-aspect-card\{grid-column:1 \/ -1\}/);
-  assert.match(page, /aspect-ratio:4\/3/);
-  assert.match(page, /production-anchor-box/);
-  assert.equal(anchor.savedPlacementAnchor.siblingStateScaleCompatible, true);
-  assert.equal(anchor.savedPlacementAnchor.savedPlacementScale, 1.15);
-  assert.equal(anchor.savedPlacementAnchor.productionEquivalentBaseWidthPx, 552);
-  assert.equal(owner.decisions.find((r) => r.jobId === 'mango__mature__tree__fruiting__v1').acceptedCurrentBand, false);
-  assert.equal(owner.invariants.includes('No preferred scale may permit clipping.'), true);
+  assert.match(runtime, /PILOT_RENDER_INPUT/);
+  assert.match(runtime, /baseWidthPx: 480/);
+  assert.match(runtime, /scale: 1\.15/);
+  assert.match(runtime, /authorityUserResized: true/);
+  assert.match(runtime, /frame\.contentWindow\.postMessage/);
+  assert.doesNotMatch(runtime, /box\.style\.width/);
+  assert.doesNotMatch(runtime, /scene\.style\.height/);
 });
-
 test('sibling phenology scale inheritance requires same plant form stage and compatible visible aspect', () => {
   const inherited = deriveSiblingStateScaleAnchor({
     canonicalSlug: 'mango',
@@ -681,22 +667,21 @@ test('every plant visual production job receives an in-garden QA scale plan', ()
   }
 });
 
-test('mature wide-canopy tree QA uses full-aspect garden scene instead of narrow thumbnails', () => {
+test('production Garden Design QA preview mode is read-only and uses the real placement renderer', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
-  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
-  const anchor = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json'), 'utf8'));
+  const gd = fs.readFileSync(path.join(root, 'modules/garden-design/index.html'), 'utf8');
+  const bridge = fs.readFileSync(path.join(root, 'modules/garden-design/garden-design-owned-garden-v1.js'), 'utf8');
 
-  assert.match(runtime, /matureMangoFullAspectReview/);
-  assert.match(runtime, /data-production-anchor-job/);
-  assert.match(runtime, /productionEquivalentBaseWidthPx: 552/);
-  assert.match(page, /full-aspect-scene/);
-  assert.match(page, /aspect-ratio:4\/3/);
-  assert.doesNotMatch(runtime, /mature-mango-calibration/);
-  assert.equal(anchor.observation.currentFiveColumnQaTooSmall, true);
-  assert.equal(anchor.productionGardenDesignScaleChanged, false);
+  assert.match(bridge, /QA_PREVIEW: 'cruvit:garden-design-qa-preview'/);
+  assert.match(gd, /GD_QA_PREVIEW_QUERY/);
+  assert.match(gd, /function gdApplyQaPreview/);
+  assert.match(gd, /qaPreviewImageUrl/);
+  assert.match(gd, /qaBaseWidthPx/);
+  assert.match(gd, /applyLayerDomTransform\(layer, el\)/);
+  assert.match(gd, /function gdPersistDesignSnapshot\(options\) \{\n  if \(GD_QA_PREVIEW_QUERY\) return;/);
+  assert.match(gd, /function gdScheduleHostPersist\(op\) \{\n  if \(GD_QA_PREVIEW_QUERY\) return;/);
+  assert.match(gd, /if \(!GD_QA_PREVIEW_QUERY\) el\.addEventListener\('pointerdown'/);
 });
-
 test('plant size authority is canonical-plant specific and morphology fallback is never botanical truth', () => {
   const registry = {
     slugToBotanicalTaxonId: {
