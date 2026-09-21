@@ -214,3 +214,112 @@ export const QA_SCALE_POLICY_GOVERNANCE = Object.freeze({
   note:
     'Owner pilot choices are calibration evidence. A form/stage baseline becomes trusted only after representative cross-taxon review shows the behavior generalizes without systematic exceptions.'
 });
+
+
+function finitePositive(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function visibleAspectFromBbox(bbox) {
+  if (!bbox || bbox.exists === false) return null;
+  const w = Number(bbox.maxX) - Number(bbox.minX);
+  const h = Number(bbox.maxY) - Number(bbox.minY);
+  if (!(w > 0 && h > 0)) return null;
+  return w / h;
+}
+
+export function deriveSiblingStateScaleAnchor(source = {}, target = {}, options = {}) {
+  const sameIdentity =
+    asText(source.canonicalSlug) &&
+    asText(source.canonicalSlug) === asText(target.canonicalSlug);
+  const sameForm =
+    normalizeForm(source.visualForm) === normalizeForm(target.visualForm);
+  const sameArchitecture =
+    asText(source.architectureMode || 'default') === asText(target.architectureMode || 'default');
+  const sameStage =
+    normalizeStage(source.growthStage) === normalizeStage(target.growthStage);
+
+  if (!sameIdentity || !sameForm || !sameArchitecture || !sameStage) {
+    return Object.freeze({
+      ok: false,
+      code: 'SIBLING_STATE_SCALE_NOT_COMPATIBLE',
+      reasonCodes: [
+        !sameIdentity ? 'IDENTITY_DIFFERS' : null,
+        !sameForm ? 'VISUAL_FORM_DIFFERS' : null,
+        !sameArchitecture ? 'ARCHITECTURE_DIFFERS' : null,
+        !sameStage ? 'GROWTH_STAGE_DIFFERS' : null
+      ].filter(Boolean)
+    });
+  }
+
+  const baseWidthPx = finitePositive(source.baseWidthPx);
+  const placementScale = finitePositive(options.savedPlacementScale ?? source.savedPlacementScale);
+  if (!baseWidthPx || !placementScale) {
+    return Object.freeze({
+      ok: false,
+      code: 'SIBLING_STATE_SCALE_ANCHOR_MISSING',
+      reasonCodes: [
+        !baseWidthPx ? 'BASE_WIDTH_MISSING' : null,
+        !placementScale ? 'PLACEMENT_SCALE_MISSING' : null
+      ].filter(Boolean)
+    });
+  }
+
+  const sourceAspect = visibleAspectFromBbox(source.alphaBBox);
+  const targetAspect = visibleAspectFromBbox(target.alphaBBox);
+  const maxAspectDeltaRatio = finitePositive(options.maxAspectDeltaRatio) || 0.08;
+  const aspectDeltaRatio =
+    sourceAspect && targetAspect
+      ? Math.abs(targetAspect / sourceAspect - 1)
+      : null;
+  const aspectCompatible =
+    aspectDeltaRatio == null ? false : aspectDeltaRatio <= maxAspectDeltaRatio;
+
+  if (!aspectCompatible) {
+    return Object.freeze({
+      ok: false,
+      code: 'SIBLING_STATE_ASPECT_REVIEW_REQUIRED',
+      sourceAspect,
+      targetAspect,
+      aspectDeltaRatio,
+      maxAspectDeltaRatio,
+      reasonCodes: ['VISIBLE_ASPECT_DELTA_TOO_LARGE']
+    });
+  }
+
+  return Object.freeze({
+    ok: true,
+    code: 'SIBLING_STATE_SCALE_INHERITED',
+    canonicalSlug: asText(target.canonicalSlug),
+    visualForm: normalizeForm(target.visualForm),
+    architectureMode: asText(target.architectureMode || 'default'),
+    growthStage: normalizeStage(target.growthStage),
+    sourcePhenology: asText(source.phenology || source.phenologyState || 'unknown'),
+    targetPhenology: asText(target.phenology || target.phenologyState || 'unknown'),
+    phenologyAffectsScale: false,
+    baseWidthPx,
+    placementScale,
+    productionEquivalentBaseWidthPx: baseWidthPx * placementScale,
+    sourceAspect,
+    targetAspect,
+    aspectDeltaRatio,
+    maxAspectDeltaRatio,
+    clippingAllowed: false,
+    meterAccuracyClaimed: false,
+    source: 'SAME_PLANT_SAME_FORM_STAGE_SAVED_PLACEMENT'
+  });
+}
+
+export const SIBLING_STATE_SCALE_GOVERNANCE = Object.freeze({
+  sameCanonicalSlugRequired: true,
+  sameVisualFormRequired: true,
+  sameArchitectureRequired: true,
+  sameGrowthStageRequired: true,
+  phenologyMayDiffer: true,
+  visibleAspectCompatibilityRequired: true,
+  defaultMaxAspectDeltaRatio: 0.08,
+  savedPlacementScalePreferredOverQaBandLabel: true,
+  note:
+    'Reuse a trusted saved placement scale across phenology states only when plant identity, visual form, architecture, growth stage and visible asset aspect remain compatible.'
+});
