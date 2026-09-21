@@ -15,7 +15,7 @@ import {
 } from './garden-design-variant-policy-v1.js';
 
 export const GARDEN_DESIGN_ASSET_REGISTRY_VERSION = '1.0.0';
-export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg11';
+export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg12';
 
 export const DESIGN_ASSET_APPROVAL = Object.freeze({
   APPROVED: 'approved',
@@ -61,7 +61,7 @@ export function resolveManifestKeyToCanonical(manifestKey, map = MANIFEST_KEY_TO
 export function isUsableDesignVariant(variant) {
   if (!variant || typeof variant !== 'object') return false;
   if (variant.comingSoon === true) return false;
-  if (variant.productionApproved === false) return false;
+  if (variant.productionApproved !== true) return false;
   const status = lower(variant.status || variant.approvalStatus);
   const approval = lower(variant.approvalStatus || variant.status);
   if (
