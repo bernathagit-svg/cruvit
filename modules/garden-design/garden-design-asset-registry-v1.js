@@ -15,7 +15,7 @@ import {
 } from './garden-design-variant-policy-v1.js';
 
 export const GARDEN_DESIGN_ASSET_REGISTRY_VERSION = '1.0.0';
-export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg19';
+export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg20';
 
 export const DESIGN_ASSET_APPROVAL = Object.freeze({
   APPROVED: 'approved',
