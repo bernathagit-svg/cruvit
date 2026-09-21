@@ -133,16 +133,38 @@ export default async (req) => {
 
       const sourceSha = sha256(bytes);
       if (item.expectedBytes && bytes.length !== item.expectedBytes) {
+        const recoveredKey = `candidates/${RUN_ID}/recovered/${safe(item.canonicalSlug)}/${safe(item.jobId)}__${sourceSha}.png`;
+        await client.send(new PutObjectCommand({
+          Bucket: bucket,
+          Key: recoveredKey,
+          Body: bytes,
+          ContentType: 'image/png',
+          CacheControl: 'private, no-store',
+          Metadata: {
+            'cruvit-job-id': item.jobId,
+            'cruvit-run-id': RUN_ID,
+            'cruvit-lineage': item.lineage,
+            'cruvit-recovery-status': 'evidence-mismatch',
+            'sha256': sourceSha
+          }
+        }));
+        const remoteBytes = await readR2Bytes(client, bucket, recoveredKey);
+        const remoteSha = sha256(remoteBytes);
+        const verified = remoteBytes.length === bytes.length && remoteSha === sourceSha;
         rows.push({
           jobId: item.jobId,
-          ok: false,
-          code: 'SOURCE_BYTES_MISMATCH',
+          canonicalSlug: item.canonicalSlug,
+          ok: verified,
+          code: verified ? 'RECOVERED_CANDIDATE_COPIED_AND_VERIFIED' : 'RECOVERED_REMOTE_VERIFY_FAILED',
           expectedBytes: item.expectedBytes,
           actualBytes: bytes.length,
           actualSha256: sourceSha,
           expectedSha256: item.expectedSha256 || null,
+          objectKey: recoveredKey,
           sourceType: item.sourceType,
-          lineage: item.lineage
+          lineage: item.lineage,
+          productionApproved: false,
+          evidenceMismatch: true
         });
         continue;
       }
