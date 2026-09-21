@@ -283,8 +283,18 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
   };
 }
 
-export function mangoOwnerPreferredRangePosition(canonicalSlug) {
-  return slugOf(canonicalSlug) === 'mango' ? RANGE_BANDS.LOW : null;
+export function ownerPreferredRangePosition(canonicalSlug, preferenceRegistry = {}) {
+  const slug = slugOf(canonicalSlug);
+  if (!slug) return null;
+  const rows = Array.isArray(preferenceRegistry?.records) ? preferenceRegistry.records : [];
+  const row = rows.find((item) => slugOf(item?.canonicalSlug) === slug) || null;
+  const band = asText(row?.ownerPreferredRangePosition).toUpperCase();
+  return RANGE_BANDS[band] || null;
+}
+
+/** Backward-compatible alias. No species hard-code. */
+export function mangoOwnerPreferredRangePosition(canonicalSlug, preferenceRegistry = {}) {
+  return ownerPreferredRangePosition(canonicalSlug, preferenceRegistry);
 }
 
 export const GLOBAL_ACTIVATION_PROPOSAL = Object.freeze({
