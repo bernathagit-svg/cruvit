@@ -262,7 +262,7 @@ test('Garden Design registry bootstrap uses dynamic import with visible failure 
   const bootStart = gd.indexOf("window.__gdRegistryBootstrap = 'starting'");
   const moduleStart = gd.indexOf("<script type=\"module\">", bootStart);
   const bootstrap = gd.slice(Math.max(0, bootStart - 120), moduleStart);
-  assert.match(bootstrap, /import\('\.\/garden-design-asset-registry-v1\.js\?v=20260921reg20'\)/);
+  assert.match(bootstrap, /import\('\.\/garden-design-asset-registry-v1\.js\?v=20260921reg21'\)/);
   assert.match(bootstrap, /window\.CruvitGardenDesignAssetRegistry = api/);
   assert.match(bootstrap, /registry-module-api-invalid/);
   assert.match(bootstrap, /window\.__gdRegistryBootstrap = 'error:' \+/);
@@ -290,7 +290,7 @@ test('Garden Design iframe self-loads the same authoritative registry without ho
   const bootStart = gd.indexOf("window.__gdRegistryBootstrap = 'starting'");
   const moduleStart = gd.indexOf('<script type="module">', bootStart);
   const bootstrap = gd.slice(Math.max(0, bootStart - 120), moduleStart);
-  assert.match(bootstrap, /fetch\('\.\/assets\/plants\/design-asset-registry-v1\.json\?v=20260921reg20', \{ cache: 'no-store' \}\)/);
+  assert.match(bootstrap, /fetch\('\.\/assets\/plants\/design-asset-registry-v1\.json\?v=20260921reg21', \{ cache: 'no-store' \}\)/);
   assert.match(bootstrap, /gdOwnedGardenContext\.designAssetRegistry = registry/);
   assert.match(bootstrap, /gdIndexDesignAssetRegistry\(registry\)/);
   assert.doesNotMatch(bootstrap, /openai|replicate|stability/i);
@@ -299,14 +299,14 @@ test('Garden Design iframe self-loads the same authoritative registry without ho
 test('production host/iframe load the versioned registry and re-index both arrival paths', () => {
   const app = read('app.html');
   const gd = read('modules/garden-design/index.html');
-  assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260921reg20');
+  assert.equal(GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN, '20260921reg21');
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
-  assert.match(app, /const token='20260921reg20'/);
+  assert.match(app, /const token='20260921reg21'/);
   assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
-  assert.match(app, /index\.html\?v=20260921bananascale2/);
-  assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260921reg20/);
+  assert.match(app, /index\.html\?v=20260921visualfactory1/);
+  assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260921reg21/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
-  assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260921reg20/);
+  assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260921reg21/);
   assert.match(gd, /if \(ctx\.designAssetRegistry\) gdIndexDesignAssetRegistry\(ctx\.designAssetRegistry\)/);
   assert.match(gd, /if \(d\.type === 'cruvit:garden-design-asset-registry'\) gdIndexDesignAssetRegistry\(d\.designAssetRegistry\)/);
   assert.match(gd, /canonicalSlug: p\.canonicalSlug \|\| ident\.canonicalSlug/);
