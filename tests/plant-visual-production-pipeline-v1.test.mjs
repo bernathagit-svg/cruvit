@@ -46,6 +46,10 @@ import {
   SIZE_AUTHORITY_STATE,
   PLANT_SIZE_AUTHORITY_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js';
+import {
+  buildProductionRendererQaPreview,
+  PRODUCTION_RENDERER_QA_PREVIEW_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/production-renderer-qa-preview-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -776,6 +780,78 @@ test('every visual production job carries an explicit size authority state', () 
     assert.equal(job.sizeAuthorityPlan.state, SIZE_AUTHORITY_STATE.NOT_EVALUATED);
     assert.equal(job.sizeAuthorityPlan.morphologyFallbackIsAuthority, false);
   }
+});
+
+test('production renderer QA adapter reuses promotion presentation sizing for non-anchored candidates', () => {
+  const banana = buildProductionRendererQaPreview({
+    jobId: 'banana__young__default__vegetative__v1',
+    canonicalSlug: 'banana',
+    scientific: 'Musa spp.',
+    visualForm: 'herbaceous-clump',
+    architectureMode: 'default',
+    growthStage: 'young',
+    phenology: 'vegetative',
+    technicalMetrics: {
+      width: 1024,
+      height: 1536,
+      bbox: { exists: true, minX: 47, minY: 175, maxX: 975, maxY: 1351 }
+    }
+  });
+  const pineapple = buildProductionRendererQaPreview({
+    jobId: 'pineapple__mature__default__fruiting__v1',
+    canonicalSlug: 'pineapple',
+    scientific: 'Ananas comosus',
+    visualForm: 'rosette',
+    architectureMode: 'default',
+    growthStage: 'mature',
+    phenology: 'fruiting',
+    technicalMetrics: {
+      width: 1024,
+      height: 1536,
+      bbox: { exists: true, minX: 46, minY: 130, maxX: 1007, maxY: 1501 }
+    }
+  });
+
+  assert.equal(banana.ok, true);
+  assert.equal(banana.source, 'promotion-presentation-sizing');
+  assert.equal(banana.baseWidthPx, banana.presentation.baseWidthPx);
+  assert.equal(banana.independentQaScaleMath, false);
+  assert.equal(pineapple.ok, true);
+  assert.equal(pineapple.source, 'promotion-presentation-sizing');
+  assert.equal(pineapple.baseWidthPx, pineapple.presentation.baseWidthPx);
+  assert.equal(PRODUCTION_RENDERER_QA_PREVIEW_GOVERNANCE.hardcodedSpeciesBaseWidthForbidden, true);
+});
+
+test('production renderer QA adapter prefers trusted saved placement anchor for compatible mature mango sibling state', () => {
+  const preview = buildProductionRendererQaPreview({
+    jobId: 'mango__mature__tree__fruiting__v1',
+    canonicalSlug: 'mango',
+    scientific: 'Mangifera indica',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenology: 'fruiting',
+    technicalMetrics: {
+      width: 1024,
+      height: 1536,
+      bbox: { exists: true, minX: 54, minY: 103, maxX: 981, maxY: 1454 }
+    }
+  }, {
+    savedPlacementAnchor: {
+      baseWidthPx: 480,
+      scale: 1.15,
+      x: 0.226636859348842,
+      y: 0.948567183907055,
+      authorityUserResized: true
+    }
+  });
+
+  assert.equal(preview.ok, true);
+  assert.equal(preview.source, 'saved-production-placement');
+  assert.equal(preview.baseWidthPx, 480);
+  assert.equal(preview.scale, 1.15);
+  assert.equal(preview.authorityUserResized, true);
+  assert.equal(preview.independentQaScaleMath, false);
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
