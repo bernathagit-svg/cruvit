@@ -13,6 +13,7 @@ A plant batch is not considered production-ready merely because catalog rows or 
 
 CANONICAL_IDENTITY
 → BOTANICAL_DATA
+→ SIZE_AUTHORITY
 → CLIMATE_TRAITS
 → CLIMATE_OUTCOME_READINESS
 → VISUAL_DEMAND
@@ -41,6 +42,55 @@ Climate suitability must continue to distinguish:
 - vegetative growth
 - flowering
 - fruiting
+
+
+## Plant size authority — locked policy
+
+Absolute plant size must never be derived from visual form alone.
+
+The authority order is:
+
+1. canonical botanical identity,
+2. cultivar / rootstock / maintained-form context when materially relevant,
+3. source-supported botanical height + spread evidence,
+4. growth stage,
+5. architecture / visual form,
+6. scene geometry and photo calibration,
+7. trusted saved placement calibration for the same compatible plant/state family,
+8. user resize override as design state,
+9. morphology/form-stage fallback only when stronger evidence is unavailable.
+
+Examples:
+- Mango and Lemon may both be trees but must not share one universal size.
+- Cypress and Oak may both be trees but differ strongly in height/spread architecture.
+- Lychee may be materially smaller than other mature fruit trees.
+- Banana is herbaceous but may be very large.
+- Pineapple is a low rosette despite being mature and fruiting.
+- Flowers and shrubs must use plant-specific dimensions where available; “flower = small” and “shrub = medium” are forbidden as botanical truth.
+
+Height and spread are separate dimensions. Independent X/Y stretching to fake botanical spread is forbidden.
+
+The existing Small / Medium / Large / XL / XXL QA bands are fallback presentation tools only. They are not Botanical Size Authority and must never become catalog truth.
+
+Every plant/state receives an explicit size-authority state:
+- SIZE_AUTHORITY_READY
+- SIZE_AUTHORITY_PARTIAL
+- SIZE_AUTHORITY_CONTEXT_REQUIRED
+- SIZE_AUTHORITY_CONFLICT_HOLD
+- SIZE_AUTHORITY_EVIDENCE_GAP
+- SIZE_AUTHORITY_ESTIMATED
+- SIZE_AUTHORITY_NOT_EVALUATED
+
+UNKNOWN / HOLD / CONTEXT_REQUIRED are valid outcomes. No silent guessing.
+
+Garden Design may remain usable with an explicitly estimated preview and manual resize when authority is incomplete, but must not present that estimate as meter-accurate truth.
+
+Saved placement calibration may transfer between sibling phenology states only when canonical identity, visual form, architecture, growth stage and visible asset aspect remain compatible. It must never transfer across different canonical plants simply because their morphology matches.
+
+The same size-authority model must expand beyond trees to shrubs, subshrubs, herbaceous plants, rosettes, climbers, palms, grasses, groundcovers and succulents as catalog batches are added.
+
+Machine-readable contract:
+- `data/garden-design/plant-size-authority-policy-v1.json`
 
 ## Visual storage target
 
@@ -86,6 +136,7 @@ Every new plant batch receives a batch manifest and per-plant states:
 INGESTED
 → IDENTITY_RESOLVED
 → BOTANICAL_DATA_READY
+→ SIZE_AUTHORITY_EVALUATED
 → CLIMATE_READY
 → VISUAL_DEMAND_READY
 → VISUALS_READY
@@ -138,12 +189,13 @@ Do not increase batch size merely because generation is cheap or fast.
 
 Scale only when:
 1. identity blockers are controlled,
-2. climate readiness is explicit,
-3. visual demand is biologically derived,
-4. automated Technical + Framing QA are stable,
-5. botanical/state QA has a repeatable path,
-6. real in-garden QA is operational,
-7. owner-review exception rate is low enough to preserve automation-first operation.
+2. size authority is explicit (ready, partial, context-required, hold, gap or estimated),
+3. climate readiness is explicit,
+4. visual demand is biologically derived,
+5. automated Technical + Framing QA are stable,
+6. botanical/state QA has a repeatable path,
+7. real in-garden QA is operational,
+8. owner-review exception rate is low enough to preserve automation-first operation.
 
 ## Immediate next sequence
 
