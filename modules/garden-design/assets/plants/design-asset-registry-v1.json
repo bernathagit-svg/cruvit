@@ -157,7 +157,7 @@
       "botanicalTaxonId": "taxon:mangifera-indica",
       "variants": [
         {
-          "assetId": "mango__mature__tree__vegetative__detail-v2__high",
+          "assetId": "mango__mature__tree__vegetative__v1",
           "canonicalSlug": "mango",
           "botanicalTaxonId": "taxon:mangifera-indica",
           "scientific": "Mangifera indica",
@@ -173,7 +173,7 @@
           "phenologyState": "vegetative",
           "seasonIsIdentity": false,
           "formView": null,
-          "file": "woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+          "file": "batch-2-candidates/visual-state-calibration-batch-2/mango__mature__tree__vegetative__v1.png",
           "width": 1024,
           "height": 1536,
           "approvalStatus": "approved",
@@ -181,13 +181,11 @@
           "transparencyReady": true,
           "comingSoon": false,
           "status": "ready",
-          "checksum": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
-          "sha256": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
-          "bytes": 2877655,
+          "bytes": 2592518,
           "groundAnchor": {
-            "nx": 0.50830078125,
-            "ny": 0.9759114583333334,
-            "source": "alpha-bbox-base-center"
+            "nx": 0.5,
+            "ny": 0.975,
+            "source": "visual-ground-base-center"
           },
           "alphaBBox": {
             "exists": true,
@@ -197,16 +195,17 @@
             "maxY": 1499
           },
           "provenance": {
-            "sourceRunId": "design-asset-woody-foliage-detail-ab-1",
+            "sourceRunId": "design-asset-visual-state-calibration-batch-2",
             "prompt": "Detail V2",
-            "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
-            "quality": "high",
+            "promptTemplateVersion": "design-cutout-visual-state-family-v1",
+            "quality": "medium",
             "arm": "B",
             "aiTransformation": false,
-            "regeneratedForPromotion": false
+            "regeneratedForPromotion": false,
+            "replacementReason": "production-compositing-visual-fix"
           },
-          "promptVersion": "design-cutout-woody-foliage-detail-v2-experiment",
-          "quality": "high",
+          "promptVersion": "design-cutout-visual-state-family-v1",
+          "quality": "medium",
           "technicalQA": "PASS",
           "botanicalIdentityQA": "PASS",
           "architectureQA": "PASS",
@@ -214,7 +213,8 @@
           "phenologyStateQA": "PASS",
           "inGardenQA": "PASS",
           "ownerVisualQA": "PASS",
-          "version": "v1"
+          "version": "v1",
+          "baseWidthPx": 210
         }
       ]
     },
