@@ -5955,7 +5955,7 @@ The plants array MUST match the exact counts specified above.`}]);
   <script>
   (function(){
     window.__gdRegistryBootstrap = 'starting';
-    import('./garden-design-asset-registry-v1.js?v=20260921reg19')
+    import('./garden-design-asset-registry-v1.js?v=20260921reg20')
       .then(function(mod) {
         const api = mod && (mod.default || mod);
         if (!api || typeof api.indexDesignAssetRegistry !== 'function' || typeof api.resolveDesignAsset !== 'function') {
@@ -5964,7 +5964,7 @@ The plants array MUST match the exact counts specified above.`}]);
         window.CruvitGardenDesignAssetRegistry = api;
         window.__gdRegistryBootstrap = 'api-bound';
         if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('registry-api-bound');
-        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg19', { cache: 'no-store' });
+        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg20', { cache: 'no-store' });
       })
       .then(function(r) {
         if (!r.ok) throw new Error('registry-json-http-' + r.status);
