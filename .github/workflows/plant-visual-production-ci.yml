@@ -1,0 +1,46 @@
+name: Plant Visual Production CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'modules/garden-design/asset-factory-v1/**'
+      - 'modules/garden-design/garden-design-asset-registry-v1.js'
+      - 'modules/garden-design/assets/plants/design-asset-registry-v1.json'
+      - 'scripts/plant-visual-production-wave-v1.mjs'
+      - 'tests/plant-visual-production-pipeline-v1.test.mjs'
+      - '.github/workflows/plant-visual-production-ci.yml'
+  pull_request:
+    paths:
+      - 'modules/garden-design/asset-factory-v1/**'
+      - 'modules/garden-design/garden-design-asset-registry-v1.js'
+      - 'modules/garden-design/assets/plants/design-asset-registry-v1.json'
+      - 'scripts/plant-visual-production-wave-v1.mjs'
+      - 'tests/plant-visual-production-pipeline-v1.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plant-visual-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Test plant visual pipeline
+        run: node --test tests/plant-visual-production-pipeline-v1.test.mjs
+
+      - name: Dry-run production wave planner
+        run: node scripts/plant-visual-production-wave-v1.mjs --dry-run --max-jobs-per-wave=24 --max-plants-per-wave=12
+
+      - name: Prove zero paid/network execution
+        run: |
+          node -e "const r=require('fs').readFileSync('data/garden-design/plant-visual-production-wave-v1.json','utf8'); const j=JSON.parse(r); if(j.networkCalls!==0||j.paidCalls!==0||j.registryWrites!==0) process.exit(1); console.log({networkCalls:j.networkCalls,paidCalls:j.paidCalls,registryWrites:j.registryWrites,waveCount:j.waveCount,totalJobs:j.totalJobs});"
