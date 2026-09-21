@@ -40,6 +40,7 @@ export function runPlantVisualWaveDryRun(argv = process.argv.slice(2), options =
     'modules/garden-design/assets/plants/design-asset-registry-v1.json',
     { sets: [] }
   );
+  const sizeAuthorityRegistry = loadJson('data/catalog/botanical-size-authority-v1.json', null);
   const ownedDoc = loadJson('data/garden-os/mojstrana-owned-plants-v1.json', { garden_plants: [] });
   const owned = loadOwnedGardenSignals(ownedDoc);
   const signals = {
@@ -54,6 +55,7 @@ export function runPlantVisualWaveDryRun(argv = process.argv.slice(2), options =
     signals,
     {
       generatedAt: new Date().toISOString(),
+      botanicalSizeAuthorityRegistry: sizeAuthorityRegistry,
       policy: {
         maxJobsPerWave: intFlag(argv, 'max-jobs-per-wave', 24),
         maxPlantsPerWave: intFlag(argv, 'max-plants-per-wave', 12),
