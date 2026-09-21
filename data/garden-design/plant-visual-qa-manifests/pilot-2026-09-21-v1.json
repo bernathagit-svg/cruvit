@@ -171,7 +171,44 @@
       "expectedEvidenceSha256": "4621a27684d852ef3f28c7fd16505ef28351f260d3bae912802d8809ac17ceef",
       "ownerReviewRequired": false,
       "ownerVisualQA": "PASS",
-      "ownerDecision": "PASS_OWNER_VISUAL_GATES"
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "provenanceReconciliation": {
+        "version": "plant-visual-provenance-reconciliation-v1",
+        "status": "RECONCILED_CURRENT_BYTES",
+        "jobId": "pineapple__mature__default__fruiting__v1",
+        "canonicalSlug": "pineapple",
+        "currentCandidate": {
+          "objectKey": "candidates/pilot-migration-2026-09-21-v1/recovered/pineapple/pineapple__mature__default__fruiting__v1__2feb2d10bf0cfbc6e794430c73d2c84735346d05d61216f3040640f0547c5e75.png",
+          "sha256": "2feb2d10bf0cfbc6e794430c73d2c84735346d05d61216f3040640f0547c5e75",
+          "bytes": 2220701
+        },
+        "historicalEvidence": {
+          "expectedSha256": "4621a27684d852ef3f28c7fd16505ef28351f260d3bae912802d8809ac17ceef",
+          "lineageLabel": "plant-visual-owned-retry-pilot-v2",
+          "exactCurrentBytesLinkedToHistoricalGeneration": false,
+          "historicalGenerationIdentityClaimed": false
+        },
+        "verification": {
+          "technicalQA": "PASS",
+          "framingQA": "PASS",
+          "botanicalIdentityQA": "PASS",
+          "architectureQA": "PASS",
+          "growthStageQA": "PASS",
+          "phenologyStateQA": "PASS",
+          "inGardenQA": "PASS",
+          "ownerVisualQA": "PASS",
+          "reviewedInProductionRenderer": true
+        },
+        "reconciliationReason": "The current candidate bytes are fully re-verified and owner-approved, but their exact binary cannot be linked to the earlier generation evidence. Production provenance starts from these verified current bytes without claiming an unproven historical generation identity.",
+        "reconciledAt": "2026-09-21T21:59:00+03:00",
+        "reviewer": "owner-visual-review",
+        "generationProvider": null,
+        "generationModel": null,
+        "generationRunId": null,
+        "generationMetadataKnown": false,
+        "productionPromotionMayProceed": true
+      },
+      "provenanceStatus": "RECONCILED_CURRENT_BYTES"
     },
     {
       "jobId": "mango__mature__tree__fruiting__v1",
@@ -226,11 +263,50 @@
       "expectedEvidenceSha256": "85718e325a3f65a8d3701dc66dfef36f2c3ff17ffcf9267e851dcb801384fa12",
       "ownerReviewRequired": false,
       "ownerVisualQA": "PASS",
-      "ownerDecision": "PASS_OWNER_VISUAL_GATES"
+      "ownerDecision": "PASS_OWNER_VISUAL_GATES",
+      "provenanceReconciliation": {
+        "version": "plant-visual-provenance-reconciliation-v1",
+        "status": "RECONCILED_CURRENT_BYTES",
+        "jobId": "mango__mature__tree__fruiting__v1",
+        "canonicalSlug": "mango",
+        "currentCandidate": {
+          "objectKey": "candidates/pilot-migration-2026-09-21-v1/recovered/mango/mango__mature__tree__fruiting__v1__833f36814f05672466cc125c334936fc60b452b5160daa340be63cc89b40be29.png",
+          "sha256": "833f36814f05672466cc125c334936fc60b452b5160daa340be63cc89b40be29",
+          "bytes": 2608902
+        },
+        "historicalEvidence": {
+          "expectedSha256": "85718e325a3f65a8d3701dc66dfef36f2c3ff17ffcf9267e851dcb801384fa12",
+          "lineageLabel": "plant-visual-mango-fruiting-v3",
+          "exactCurrentBytesLinkedToHistoricalGeneration": false,
+          "historicalGenerationIdentityClaimed": false
+        },
+        "verification": {
+          "technicalQA": "PASS",
+          "framingQA": "PASS",
+          "botanicalIdentityQA": "PASS",
+          "architectureQA": "PASS",
+          "growthStageQA": "PASS",
+          "phenologyStateQA": "PASS",
+          "inGardenQA": "PASS",
+          "ownerVisualQA": "PASS",
+          "reviewedInProductionRenderer": true
+        },
+        "reconciliationReason": "The current candidate bytes are fully re-verified and owner-approved, but their exact binary cannot be linked to the earlier generation evidence. Production provenance starts from these verified current bytes without claiming an unproven historical generation identity.",
+        "reconciledAt": "2026-09-21T21:59:00+03:00",
+        "reviewer": "owner-visual-review",
+        "generationProvider": null,
+        "generationModel": null,
+        "generationRunId": null,
+        "generationMetadataKnown": false,
+        "productionPromotionMayProceed": true
+      },
+      "provenanceStatus": "RECONCILED_CURRENT_BYTES"
     }
   ],
   "ownerReviewJobs": 0,
   "automaticPassJobs": 4,
   "ownerReviewEvidence": "data/garden-design/plant-visual-owner-visual-review-pilot-v1.json",
-  "ownerReviewMergedAt": "2026-09-21"
+  "ownerReviewMergedAt": "2026-09-21",
+  "provenanceReconciliationContract": "plant-visual-provenance-reconciliation-v1",
+  "provenanceReconciledAt": "2026-09-21T21:59:00+03:00"
 }
