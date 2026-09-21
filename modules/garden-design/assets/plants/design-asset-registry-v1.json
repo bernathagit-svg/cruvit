@@ -157,7 +157,7 @@
       "botanicalTaxonId": "taxon:mangifera-indica",
       "variants": [
         {
-          "assetId": "mango-neutral-vegetative-v2",
+          "assetId": "mango-neutral-vegetative-v3",
           "canonicalSlug": "mango",
           "botanicalTaxonId": "taxon:mangifera-indica",
           "scientific": "Mangifera indica",
@@ -174,36 +174,38 @@
           "season": "unknown",
           "seasonIsIdentity": false,
           "formView": null,
-          "file": "production/mango/mango-neutral-vegetative-v2.webp",
-          "width": 401,
-          "height": 420,
-          "baseWidthPx": 190,
+          "file": "production/mango/mango-neutral-vegetative-v3.svg",
+          "width": 384,
+          "height": 384,
+          "baseWidthPx": 150,
           "approvalStatus": "approved",
           "approvalState": "APPROVED",
           "transparencyReady": true,
           "comingSoon": false,
           "status": "ready",
-          "bytes": 71448,
-          "sha256": "4d95d2f3d25631f2f73fe7f43b50b0ca5d64d7aedaa03624ebabdfab8f67b214",
+          "bytes": 61042,
+          "sha256": "31a09f941e6d9d62422b925b03bb5ef0e3c53f649f6e98972b5bec9cfbad7f4d",
           "groundAnchor": {
             "nx": 0.5,
-            "ny": 0.979,
+            "ny": 0.90625,
             "source": "alpha-bbox-base-center"
           },
           "alphaBBox": {
             "exists": true,
-            "minX": 0,
-            "minY": 6,
-            "maxX": 393,
-            "maxY": 410
+            "minX": 43,
+            "minY": 36,
+            "maxX": 343,
+            "maxY": 347
           },
           "provenance": {
             "source": "cruvit-production-regeneration",
             "generationMethod": "transparent-cutout",
             "promptTemplateVersion": "mango-production-cutout-v2",
-            "productionReason": "replace cropped/non-approved calibration candidates",
+            "productionReason": "replace invalid-packaged v2 and cropped/non-approved calibration assets",
             "priorBatch2OwnerVisualQa": "NEEDS_IMPROVEMENT",
-            "priorBatch2ProductionApproved": false
+            "priorBatch2ProductionApproved": false,
+            "sourceAssetFormat": "webp-embedded-svg",
+            "transparentMarginPreserved": true
           },
           "technicalQA": "PASS",
           "botanicalIdentityQA": "PASS",
@@ -211,8 +213,8 @@
           "growthStageQA": "UNSPECIFIED_NEUTRAL_PRESENTATION",
           "phenologyStateQA": "PASS",
           "inGardenQA": "PENDING_OWNER_VISUAL_CHECK",
-          "ownerVisualQA": "PENDING",
-          "version": "v2",
+          "ownerVisualQA": "PENDING_IN_GARDEN",
+          "version": "v3",
           "productionApproved": true
         }
       ]
