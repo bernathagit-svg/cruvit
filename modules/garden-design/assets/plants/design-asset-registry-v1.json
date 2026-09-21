@@ -4,7 +4,7 @@
   "identityAuthority": "canonical-catalog",
   "notASecondCatalog": true,
   "generateOnLookup": false,
-  "notes": "Presentation assets only. Production registry excludes calibration candidates that are not production-approved. Missing variants remain UNKNOWN until an approved production wave.",
+  "notes": "Presentation assets only. Mapped from the existing Garden Design cutout manifest. Do not replace working olive cutouts. Missing variants remain UNKNOWN until an approved production wave.",
   "manifestKeyToCanonical": {
     "olive-tree": "olive",
     "italian-cypress": "cypress",
@@ -40,9 +40,7 @@
             "source": "garden-design-manifest",
             "generationMethod": "prepared-cutout",
             "tier": "tier-1"
-          },
-          "productionApproved": true,
-          "ownerVisualQA": "LEGACY_APPROVED"
+          }
         }
       ]
     },
@@ -159,7 +157,7 @@
       "botanicalTaxonId": "taxon:mangifera-indica",
       "variants": [
         {
-          "assetId": "mango-portrait-v4-webp",
+          "assetId": "mango__mature__tree__vegetative__detail-v2__high",
           "canonicalSlug": "mango",
           "botanicalTaxonId": "taxon:mangifera-indica",
           "scientific": "Mangifera indica",
@@ -170,57 +168,53 @@
           "cultivarSpecific": false,
           "visualForm": "tree",
           "architectureMode": "tree",
-          "growthStage": "unspecified",
+          "growthStage": "mature",
           "phenology": "vegetative",
           "phenologyState": "vegetative",
-          "season": "unknown",
           "seasonIsIdentity": false,
           "formView": null,
-          "file": "production/mango/mango-portrait-v4.webp",
-          "width": 360,
-          "height": 512,
-          "baseWidthPx": 145,
+          "file": "woody-foliage-detail-ab-1/mango__mature__tree__vegetative__detail-v2__high.png",
+          "width": 1024,
+          "height": 1536,
           "approvalStatus": "approved",
           "approvalState": "APPROVED",
           "transparencyReady": true,
           "comingSoon": false,
           "status": "ready",
-          "bytes": 48094,
-          "sha256": "f8cfb5c98a7714876798756428b59742606a1eafcc25d8ee6e704b2e7173c6ab",
+          "checksum": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+          "sha256": "ad5adddb2f31aa090f7f342e1c61e2ab0ed9ae2140e1f86cf384d35d734f5a24",
+          "bytes": 2877655,
           "groundAnchor": {
-            "nx": 0.5,
-            "ny": 0.9316,
+            "nx": 0.50830078125,
+            "ny": 0.9759114583333334,
             "source": "alpha-bbox-base-center"
           },
           "alphaBBox": {
             "exists": true,
-            "minX": 32,
-            "minY": 26,
-            "maxX": 332,
-            "maxY": 476
+            "minX": 35,
+            "minY": 63,
+            "maxX": 1006,
+            "maxY": 1499
           },
           "provenance": {
-            "source": "cruvit-production-regeneration",
-            "generationMethod": "transparent-cutout",
-            "promptTemplateVersion": "mango-production-cutout-v2",
-            "productionReason": "root fix: one direct binary asset for modal thumbnail and canvas",
-            "priorBatch2OwnerVisualQa": "NEEDS_IMPROVEMENT",
-            "priorBatch2ProductionApproved": false,
-            "sourceAssetFormat": "webp",
-            "transparentMarginPreserved": true,
-            "aspectRatioSource": "registry-width-height",
-            "transport": "direct-binary-repository-file",
-            "svgWrapper": false
+            "sourceRunId": "design-asset-woody-foliage-detail-ab-1",
+            "prompt": "Detail V2",
+            "promptTemplateVersion": "design-cutout-woody-foliage-detail-v2-experiment",
+            "quality": "high",
+            "arm": "B",
+            "aiTransformation": false,
+            "regeneratedForPromotion": false
           },
-          "technicalQA": "PASS_DIRECT_BINARY",
+          "promptVersion": "design-cutout-woody-foliage-detail-v2-experiment",
+          "quality": "high",
+          "technicalQA": "PASS",
           "botanicalIdentityQA": "PASS",
           "architectureQA": "PASS",
-          "growthStageQA": "UNSPECIFIED_NEUTRAL_PRESENTATION",
+          "growthStageQA": "PASS",
           "phenologyStateQA": "PASS",
-          "inGardenQA": "PENDING_OWNER_VISUAL_CHECK",
-          "ownerVisualQA": "PENDING_IN_GARDEN",
-          "version": "v4-webp",
-          "productionApproved": true
+          "inGardenQA": "PASS",
+          "ownerVisualQA": "PASS",
+          "version": "v1"
         }
       ]
     },
@@ -253,7 +247,7 @@
           "width": 1024,
           "height": 1536,
           "approvalStatus": "approved",
-          "approvalState": "CALIBRATION_CANDIDATE",
+          "approvalState": "APPROVED",
           "transparencyReady": true,
           "comingSoon": false,
           "status": "ready",
@@ -291,9 +285,7 @@
           "inGardenQA": "PASS",
           "ownerVisualQA": "PASS",
           "version": "v1",
-          "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE",
-          "productionApproved": false,
-          "productionBlockReason": "source calibration report states ASSET_PRODUCTION_APPROVAL:NO"
+          "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE"
         }
       ]
     },
@@ -326,7 +318,7 @@
           "width": 1024,
           "height": 1536,
           "approvalStatus": "approved",
-          "approvalState": "CALIBRATION_CANDIDATE",
+          "approvalState": "APPROVED",
           "transparencyReady": true,
           "comingSoon": false,
           "status": "ready",
@@ -363,9 +355,7 @@
           "phenologyStateQA": "PASS",
           "inGardenQA": "PASS",
           "ownerVisualQA": "PASS",
-          "version": "v1",
-          "productionApproved": false,
-          "productionBlockReason": "source calibration report states ASSET_PRODUCTION_APPROVAL:NO"
+          "version": "v1"
         }
       ]
     }
