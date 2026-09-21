@@ -389,12 +389,13 @@
     }
   ],
   "productionPolicy": {
-    "version": "plant-visual-production-pipeline-v1",
+    "contract": "plant-visual-production-pipeline-v1",
     "productionApprovedRequiredForReadyAssets": true,
-    "generationOnLookup": false,
-    "generationOnRender": false,
+    "generateOnLookup": false,
+    "generateOnRender": false,
     "silentBinaryReplacementForbidden": true,
     "sourceResolutionPreserved": true,
-    "ownerReviewMode": "exceptions-only-target"
+    "ownerReviewMode": "exceptions-only-target",
+    "autoApprovalEnabled": false
   }
 }
