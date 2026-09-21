@@ -102,6 +102,8 @@ test('production planning connects catalog gap detection to quality/prompt plann
   assert.equal(plan.productionRegistryWritten, false);
   assert.equal(plan.jobs[0].imageGenerationRequired, true);
   assert.equal(plan.jobs[0].framingQaRequired, true);
+  assert.equal(plan.jobs[0].architectureMode, 'tree');
+  assert.equal(plan.jobs[0].promptRecord.architectureMode, 'tree');
   assert.ok(plan.jobs[0].promptRecord.prompt);
   assert.ok(['medium', 'high'].includes(plan.jobs[0].qualityPlan.quality));
 });
