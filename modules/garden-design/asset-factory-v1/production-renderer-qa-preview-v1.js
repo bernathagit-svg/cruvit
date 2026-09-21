@@ -25,8 +25,6 @@ function asText(value) {
 function visualFormOf(row = {}) {
   const explicit = asText(row.visualForm);
   if (explicit) return explicit;
-  if (row.canonicalSlug === 'banana') return 'herbaceous-clump';
-  if (row.canonicalSlug === 'pineapple') return 'rosette';
   if (asText(row.architectureMode) === 'tree') return 'tree';
   return asText(row.architectureMode) || 'default';
 }
