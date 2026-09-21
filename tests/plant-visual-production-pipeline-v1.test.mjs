@@ -445,3 +445,43 @@ test('plant visual production storage refuses promotion until every mandatory QA
   assert.ok(blocked.failed.includes('inGardenQA'));
   assert.ok(blocked.failed.includes('productionApproved'));
 });
+
+test('pilot QA surface is bounded to four migrated candidates and stays non-production', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const fn = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-pilot-qa.mjs'), 'utf8');
+  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'app.html'), 'utf8');
+
+  const ids = [
+    'banana__young__default__vegetative__v1',
+    'mango__young__tree__vegetative__v1',
+    'pineapple__mature__default__fruiting__v1',
+    'mango__mature__tree__fruiting__v1'
+  ];
+  for (const id of ids) assert.ok(fn.includes(id));
+
+  assert.match(fn, /PLANT_VISUAL_R2_CANDIDATES_BUCKET/);
+  assert.doesNotMatch(fn, /PutObjectCommand/);
+  assert.doesNotMatch(fn, /PLANT_VISUAL_R2_PRODUCTION_BUCKET/);
+  assert.match(fn, /productionApproved: false/);
+  assert.match(page, /Four bounded candidates only/);
+  assert.match(runtime, /CALIBRATION_SOURCE_MESSAGE_TYPE/);
+  assert.match(runtime, /OWNER_REVIEW_REQUIRED/);
+  assert.match(runtime, /PASS_OWNER_VISUAL_GATES/);
+  assert.match(app, /#plant-visual-pilot-qa-v1/);
+  assert.match(app, /openPlantVisualPilotQaReview/);
+});
+
+test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
+  const recovered = evidence.candidates.filter((row) => row.evidenceMismatch === true);
+  assert.equal(recovered.length, 2);
+  for (const row of recovered) {
+    assert.equal(row.productionApproved, false);
+    assert.match(row.objectKey, /\/recovered\//);
+    assert.ok(row.expectedEvidenceSha256);
+    assert.notEqual(row.sha256, row.expectedEvidenceSha256);
+  }
+});
