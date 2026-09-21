@@ -1,5 +1,22 @@
 # Design Asset Factory V1 — Architecture
 
+## Plant Visual Production Pipeline V1 — implemented 2026-09-21
+
+The reusable production orchestration now exists in code. It connects catalog demand → quality/prompt planning → owner-bounded generation → technical QA → framing QA → botanical/state QA → real-garden QA → automatic presentation sizing → promotion decision → immutable registry record.
+
+New production rules learned from Mango/Banana/Pineapple:
+- a good source binary and a good canvas renderer are separate concerns;
+- source resolution is preserved; presentation size is metadata/runtime responsibility;
+- alpha-bounds framing is a mandatory QA gate (no cropped canopy/leaf edges);
+- presentation sizing derives from visual form + alpha bounds, not per-plant name switches;
+- new live assets must carry `productionApproved:true`;
+- generation never happens during lookup/render;
+- generic paid execution is default-deny and needs an exact owner-approved run envelope;
+- owner workload target is exceptions-only; routine PASS assets can later use calibrated auto-approval.
+
+Auto-approval remains OFF by default until thresholds are validated across a broader sample. The generic executor writes candidates only; it never mutates the live registry automatically.
+
+
 Automation-first production for Garden Design cutouts. Chat/manual generation is calibration only. This document is the owner-reviewable architecture. Live registry writes, image generation, and paid calls are not performed by this task.
 
 ## End-to-end pipeline
