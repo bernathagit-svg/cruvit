@@ -8435,7 +8435,7 @@ function gardenDesignPostToFrame(payload){
 }
 
 function loadGardenDesignAssetRegistry(){
-  const token='20260921reg6';
+  const token='20260921reg7';
   const href='modules/garden-design/assets/plants/design-asset-registry-v1.json?v=' + token;
   if(gardenDesignAssetRegistryCache&&gardenDesignAssetRegistryCacheToken===token){
     return Promise.resolve(gardenDesignAssetRegistryCache);
@@ -8753,7 +8753,7 @@ window.addEventListener('message',function(ev){
 function openGardenDesign(){
   const root=document.getElementById('garden-design-root');
   if(!root) return;
-  const src='modules/garden-design/index.html?v=20260921clean1';
+  const src='modules/garden-design/index.html?v=20260921mango1';
   let frame=root.querySelector('iframe.gd-frame');
   if(!frame){
     frame=document.createElement('iframe');
@@ -8765,7 +8765,7 @@ function openGardenDesign(){
     frame.onload=function(){ loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); }); };
   }else{
     const current=frame.getAttribute('src')||frame.src||'';
-    if(current.indexOf('index.html?v=20260921clean1')===-1){
+    if(current.indexOf('index.html?v=20260921mango1')===-1){
       frame.src=src;
     }else{
       loadGardenDesignAssetRegistry().then(function(){ postGardenDesignContext(); });
@@ -10533,7 +10533,7 @@ window.addEventListener('load',()=>scrollToPageTop('auto'),{once:true});
 <script type="module" src="modules/personal-domain/garden-media-v1-ui.js?v=20260913a"></script>
 <script type="module" src="modules/personal-domain/plant-doctor-care-loop-v1-host.js?v=20260913e"></script>
 <script type="module" src="modules/garden-design/garden-design-variant-policy-v1.js?v=20260917a"></script>
-<script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260921reg6"></script>
+<script type="module" src="modules/garden-design/garden-design-asset-registry-v1.js?v=20260921reg7"></script>
 <script type="module" src="modules/garden-design/garden-design-variant-selection-policy-v1.js?v=20260917a"></script>
 <script type="module" src="modules/garden-design/garden-design-owned-garden-v1.js?v=20260921ownedapi1"></script>
 <script type="module" src="modules/garden-design/garden-design-server-persistence-v1.js?v=20260920id1"></script>
