@@ -17,6 +17,7 @@ on:
       - 'modules/garden-design/assets/plants/design-asset-registry-v1.json'
       - 'scripts/plant-visual-production-wave-v1.mjs'
       - 'tests/plant-visual-production-pipeline-v1.test.mjs'
+      - '.github/workflows/plant-visual-production-ci.yml'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +42,61 @@ jobs:
       - name: Dry-run production wave planner
         run: node scripts/plant-visual-production-wave-v1.mjs --dry-run --max-jobs-per-wave=24 --max-plants-per-wave=12
 
+      - name: Print Wave 1 audit summary
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const plan = JSON.parse(fs.readFileSync('data/garden-design/plant-visual-production-wave-v1.json', 'utf8'));
+          const wave = plan.waves?.[0] || { jobs: [], canonicalSlugs: [] };
+          const blockedReasons = {};
+          for (const row of plan.blocked || []) {
+            const reason = row.reason || 'unknown';
+            blockedReasons[reason] = (blockedReasons[reason] || 0) + 1;
+          }
+          console.log(JSON.stringify({
+            version: plan.version,
+            totals: {
+              totalPlants: plan.totalPlants,
+              totalJobs: plan.totalJobs,
+              waveCount: plan.waveCount,
+              blockedCount: plan.blockedCount
+            },
+            wave1: {
+              waveId: wave.waveId || null,
+              plantCount: wave.plantCount || 0,
+              jobCount: wave.jobCount || 0,
+              canonicalSlugs: wave.canonicalSlugs || [],
+              jobs: (wave.jobs || []).map((job) => ({
+                jobId: job.jobId,
+                canonicalSlug: job.canonicalSlug,
+                visualForm: job.visualForm,
+                architectureMode: job.architectureMode,
+                growthStage: job.growthStage,
+                phenology: job.phenology,
+                priorityBand: job.priorityBand,
+                productionPriorityScore: job.productionPriorityScore,
+                quality: job.qualityPlan?.quality,
+                detailClass: job.qualityPlan?.detailClass
+              }))
+            },
+            blockedReasonCounts: blockedReasons,
+            safety: {
+              planningOnly: plan.planningOnly,
+              networkCalls: plan.networkCalls,
+              paidCalls: plan.paidCalls,
+              registryWrites: plan.registryWrites
+            }
+          }, null, 2));
+          NODE
+
       - name: Prove zero paid/network execution
         run: |
           node -e "const r=require('fs').readFileSync('data/garden-design/plant-visual-production-wave-v1.json','utf8'); const j=JSON.parse(r); if(j.networkCalls!==0||j.paidCalls!==0||j.registryWrites!==0) process.exit(1); console.log({networkCalls:j.networkCalls,paidCalls:j.paidCalls,registryWrites:j.registryWrites,waveCount:j.waveCount,totalJobs:j.totalJobs});"
+
+      - name: Upload dry-run production plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: plant-visual-production-wave-v1
+          path: data/garden-design/plant-visual-production-wave-v1.json
+          if-no-files-found: error
+          retention-days: 14
