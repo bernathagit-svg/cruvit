@@ -9427,22 +9427,31 @@ window.closeOwnedGardenDesignAssetPromotionReview=closeOwnedGardenDesignAssetPro
 function openPlantVisualPilotQaReview(){
   const root=document.getElementById('owned-garden-design-asset-promotion-v1-root');
   if(!root) return;
+  const params=new URLSearchParams(window.location.search);
+  const rawManifest=String(params.get('plantVisualQaManifest')||'').trim().toLowerCase();
+  const manifest=/^[a-z0-9][a-z0-9._-]{0,95}$/.test(rawManifest)
+    ? rawManifest
+    : 'pilot-2026-09-21-v1';
+  const showAll=params.get('plantVisualQaShowAll')==='1';
   const status=document.getElementById('ownedGardenDesignAssetPromotionStatus');
-  if(status) status.textContent='Plant Visual Pilot QA. Four bounded candidates. No generation or production write.';
+  if(status) status.textContent='Plant Visual Batch QA · '+manifest+' · read-only production renderer.';
   root.classList.add('dac-active');
   root.setAttribute('aria-hidden','false');
   let frame=root.querySelector('iframe.dac-frame');
   if(!frame){
     frame=document.createElement('iframe');
     frame.className='dac-frame';
-    frame.title='Plant Visual Pilot QA';
+    frame.title='Plant Visual Batch QA';
     root.appendChild(frame);
   }
   const ctrl=ensureOwnedGardenDesignAssetPromotionHost();
   frame.onload=function(){
     if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   };
-  const reviewSrc='modules/garden-design/plant-visual-pilot-qa-v1.html?v=20260921renderer1';
+  const reviewSrc='modules/garden-design/plant-visual-pilot-qa-v1.html?manifest='
+    +encodeURIComponent(manifest)
+    +(showAll?'&showAll=1':'')
+    +'&v=20260921batchqa2';
   if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
   else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
   if(ctrl) ctrl.open();
