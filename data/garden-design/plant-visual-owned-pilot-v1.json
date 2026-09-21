@@ -1,0 +1,100 @@
+{
+  "contract": "plant-visual-owned-pilot-v1",
+  "generatedAt": "2026-09-21",
+  "ownerApproval": {
+    "approvedCalls": 3,
+    "maxSpendUsd": 0.5,
+    "retriesApproved": 0,
+    "registryWritesApproved": false,
+    "massGenerationApproved": false
+  },
+  "execution": {
+    "provider": "openai-images-api",
+    "model": "gpt-image-2",
+    "quality": "medium",
+    "size": "1024x1536",
+    "callsAttempted": 3,
+    "callsSuccessful": 3,
+    "actualSpendUsd": 0.13201,
+    "generationGateOpenAfterRun": false,
+    "productionRegistryChanged": false
+  },
+  "reuse": [
+    {
+      "jobId": "banana__young__default__vegetative__v1",
+      "source": "visual-state-calibration-batch-2",
+      "regenerated": false,
+      "reason": "Existing candidate is TECHNICAL_QA=PASS and ASSET_DETAIL=CRISP_ENOUGH; avoid duplicate paid generation."
+    }
+  ],
+  "generatedCandidates": [
+    {
+      "jobId": "mango__mature__tree__fruiting__v1",
+      "canonicalSlug": "mango",
+      "architectureMode": "tree",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "quality": "medium",
+      "bytes": 2785218,
+      "sha256": "7fd03daff46eff1454424f98ee50465ca53292c8b9d84584ff64e815ba3423e6",
+      "actualSpendUsd": 0.044125,
+      "technicalQA": "PASS",
+      "framingQA": "FAIL",
+      "framingReasons": [
+        "top-padding-too-small"
+      ],
+      "productionApproved": false,
+      "nextAction": "REGENERATE_AFTER_PROMPT_FRAMING_HARDENING"
+    },
+    {
+      "jobId": "mango__young__tree__vegetative__v1",
+      "canonicalSlug": "mango",
+      "architectureMode": "tree",
+      "growthStage": "young",
+      "phenology": "vegetative",
+      "detailClass": "WOODY_DENSE_SMALL_LEAF",
+      "quality": "medium",
+      "bytes": 2166526,
+      "sha256": "ecd0955844d3632685c97a03f79796dc8214f3fa51a1a46991b951c64ac923f9",
+      "actualSpendUsd": 0.044215,
+      "technicalQA": "PASS",
+      "framingQA": "FAIL",
+      "framingReasons": [
+        "top-padding-too-small"
+      ],
+      "productionApproved": false,
+      "nextAction": "REGENERATE_AFTER_PROMPT_FRAMING_HARDENING"
+    },
+    {
+      "jobId": "pineapple__mature__default__fruiting__v1",
+      "canonicalSlug": "pineapple",
+      "architectureMode": "default",
+      "growthStage": "mature",
+      "phenology": "fruiting",
+      "detailClass": "ROSETTE",
+      "quality": "medium",
+      "bytes": 2409869,
+      "sha256": "5d42d40d38e8016a3e8ab2f61ebeb3ce06899fdf9215cec3a3eb2948570e2412",
+      "actualSpendUsd": 0.04367,
+      "technicalQA": "PASS",
+      "framingQA": "FAIL",
+      "framingReasons": [
+        "right-padding-too-small"
+      ],
+      "visualQA": "FAIL",
+      "visualQAReasons": [
+        "unrelated-cartoon-fish-object"
+      ],
+      "productionApproved": false,
+      "nextAction": "REGENERATE_AFTER_PLANT_ONLY_AND_FRAMING_PROMPT_HARDENING"
+    }
+  ],
+  "lessons": [
+    "Technical PNG validity is not sufficient for production approval.",
+    "All three generated candidates exposed framing drift despite generic 'generous margin' wording.",
+    "Production prompts now require explicit framing safe-zone buffer beyond QA thresholds.",
+    "Production prompts now explicitly forbid people, animals, insects, birds, fish, toys, mascots, tools, signs, decorative props, ornaments, and unrelated objects.",
+    "No candidate from this pilot is promoted automatically."
+  ]
+}
