@@ -391,8 +391,12 @@
   "productionPolicy": {
     "version": "plant-visual-production-pipeline-v1",
     "productionApprovedRequiredForReadyAssets": true,
-    "generateOnLookup": false,
-    "generateOnRender": false,
-    "silentBinaryReplacementForbidden": true
+    "lookupNeverGenerates": true,
+    "renderNeverGenerates": true,
+    "sourceBinaryResolutionPreserved": true,
+    "presentationSizeSeparateFromSourceResolution": true,
+    "silentBinaryReplacementForbidden": true,
+    "ownerReviewMode": "exceptions-only-target",
+    "autoApprovalEnabled": false
   }
 }
