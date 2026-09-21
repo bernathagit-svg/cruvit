@@ -50,6 +50,25 @@ function technicalPass(overrides = {}) {
   };
 }
 
+test('production prompt requires framing safe-zone and plant-only isolation', () => {
+  const plants = [{
+    slug: 'fixture-tree',
+    canonicalSlug: 'fixture-tree',
+    scientific: 'Ficus fixturea',
+    tags: ['tree', 'evergreen'],
+    growth: 'Evergreen landscape tree',
+    identityScope: 'species'
+  }];
+  const plan = buildPlantVisualProductionPlan(plants, { sets: [] }, {
+    ownedCanonicalSlugs: ['fixture-tree']
+  });
+  const prompt = plan.jobs[0].promptRecord.prompt;
+  assert.match(prompt, /FRAMING SAFE ZONE/);
+  assert.match(prompt, /must not touch any image boundary/);
+  assert.match(prompt, /PLANT ONLY/);
+  assert.match(prompt, /no people, animals, insects, birds, fish/);
+});
+
 test('framing QA rejects a top-cropped cutout and accepts transparent breathing room', () => {
   const pass = assessProductionFramingQa(technicalPass());
   assert.equal(pass.result, 'PASS');
