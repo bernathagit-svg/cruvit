@@ -270,10 +270,13 @@ test('Garden Design registry bootstrap uses dynamic import with visible failure 
   assert.doesNotMatch(bootstrap, /garden-design-size-authority-adapter|garden-design-owned-garden-v1/);
 });
 
-test('Garden Design exposes visible asset runtime diagnostics without persistence writes', () => {
+test('Garden Design keeps asset runtime diagnostics behind an explicit debug query without persistence writes', () => {
   const gd = read('modules/garden-design/index.html');
   const diag = gd.slice(gd.indexOf('function gdAssetDiagSnapshot'), gd.indexOf('function gdRerenderPlantLayersAfterRegistryArrival'));
   assert.match(gd, /id="gdAssetDiag"/);
+  assert.match(gd, /GD_ASSET_DIAG_QUERY/);
+  assert.match(diag, /if \(!GD_ASSET_DIAG_QUERY\)/);
+  assert.match(diag, /classList\.add\('is-enabled'\)/);
   assert.match(diag, /registrySets/);
   assert.match(diag, /indexHasMango/);
   assert.match(diag, /resolvedAssetId/);
@@ -300,7 +303,7 @@ test('production host/iframe load the versioned registry and re-index both arriv
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
   assert.match(app, /const token='20260921reg6'/);
   assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
-  assert.match(app, /index\.html\?v=20260921ownedboot1/);
+  assert.match(app, /index\.html\?v=20260921clean1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260921reg6/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260921reg6/);

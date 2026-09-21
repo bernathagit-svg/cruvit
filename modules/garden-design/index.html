@@ -92,7 +92,8 @@ body::before{content:'';position:fixed;inset:0;background:linear-gradient(135deg
 .gd-persist-status.is-visible{display:flex}
 .gd-persist-status.is-error{border-color:rgba(176,70,70,.45);background:rgba(255,244,244,.92);color:#7a2e2e}
 .gd-persist-retry{border:1px solid rgba(176,70,70,.4);background:#fff;color:#7a2e2e;border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
-.gd-asset-diag{display:block;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(180,120,30,.35);border-radius:10px;background:#fff8e8;color:#4b3a1d;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.gd-asset-diag{display:none;margin:0 0 12px;padding:10px 12px;border:1px solid rgba(180,120,30,.35);border-radius:10px;background:#fff8e8;color:#4b3a1d;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.gd-asset-diag.is-enabled{display:block}
 .gd-asset-diag strong{font-family:'DM Sans',sans-serif;font-size:12px;color:#7a4d00}
 
 /* UPLOAD */
@@ -1244,6 +1245,7 @@ const GD_USE_PLANT_ASSETS = true;
 /** Phase 1E: remote CDN cutout URLs from manifest (status ready + cdnUrl). Off until Phase D CDN proof. */
 const GD_USE_REMOTE_PLANT_URLS = false;
 const GD_DEV_PLACEHOLDER_QUERY = /(?:^|[?&])gdSvgPlaceholders=1(?:&|$)/.test(window.location.search);
+const GD_ASSET_DIAG_QUERY = /(?:^|[?&])gdAssetDiag=1(?:&|$)/.test(window.location.search);
 const GD_IS_LOCAL_ASSET_DEV = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const GD_PLACEMENT_NOTE_DEFAULT = '📍 Placement preview on your original photo - drag plants to adjust position and size. This is not an AI-redesigned image.';
 const GD_PLACEMENT_NOTE_MANUAL = 'Manual placement — drag plants to adjust. No AI generation.';
@@ -2349,6 +2351,11 @@ function gdRenderAssetDiag(reason) {
   gdAssetDiagLastReason = reason || gdAssetDiagLastReason;
   const el = document.getElementById('gdAssetDiag');
   if (!el) return;
+  if (!GD_ASSET_DIAG_QUERY) {
+    el.classList.remove('is-enabled');
+    return;
+  }
+  el.classList.add('is-enabled');
   const s = gdAssetDiagSnapshot(gdAssetDiagLastReason);
   el.innerHTML = '<strong>Asset diagnostic</strong>\n' +
     'reason: ' + String(s.reason) + '\n' +
