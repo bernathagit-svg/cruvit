@@ -37,7 +37,9 @@ import {
   deriveInGardenQaScale,
   qaScaleBandSpec,
   PILOT_SCALE_CALIBRATION,
-  QA_SCALE_POLICY_GOVERNANCE
+  QA_SCALE_POLICY_GOVERNANCE,
+  deriveSiblingStateScaleAnchor,
+  SIBLING_STATE_SCALE_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/in-garden-qa-scale-policy-v1.js';
 
 function technicalPass(overrides = {}) {
@@ -498,22 +500,74 @@ test('pilot in-garden QA uses bounded small-medium-large review scales without m
   assert.equal(rootCause.decision.productionGardenDesignScaleChanged, false);
 });
 
-test('pilot owner scale calibration is job-specific and mature mango can exceed Large without clipping', () => {
+test('pilot owner scale calibration is job-specific and mature mango uses saved production anchor', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
   const owner = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-owner-scale-calibration-v1.json'), 'utf8'));
+  const anchor = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json'), 'utf8'));
 
   assert.match(runtime, /banana__young__default__vegetative__v1': 'large'/);
   assert.match(runtime, /mango__young__tree__vegetative__v1': 'large'/);
   assert.match(runtime, /pineapple__mature__default__fruiting__v1': 'medium'/);
-  assert.match(runtime, /matureMangoFullAspectReview/);
-  assert.match(runtime, /data-full-aspect-band=\"\$\{band\}\"/);
-  assert.match(page, /review-plant-box\.xl\{height:88%;width:90%\}/);
-  assert.match(page, /review-plant-box\.xxl\{height:94%;width:96%\}/);
-  assert.match(page, /full-aspect-scene/);
+  assert.match(runtime, /MATURE_MANGO_PRODUCTION_ANCHOR/);
+  assert.match(runtime, /productionEquivalentBaseWidthPx: 552/);
+  assert.match(runtime, /savedPlacementScale: 1\.15/);
+  assert.match(page, /full-aspect-card\{grid-column:1 \/ -1\}/);
+  assert.match(page, /aspect-ratio:4\/3/);
+  assert.match(page, /production-anchor-box/);
+  assert.equal(anchor.savedPlacementAnchor.siblingStateScaleCompatible, true);
+  assert.equal(anchor.savedPlacementAnchor.savedPlacementScale, 1.15);
+  assert.equal(anchor.savedPlacementAnchor.productionEquivalentBaseWidthPx, 552);
   assert.equal(owner.decisions.find((r) => r.jobId === 'mango__mature__tree__fruiting__v1').acceptedCurrentBand, false);
   assert.equal(owner.invariants.includes('No preferred scale may permit clipping.'), true);
+});
+
+test('sibling phenology scale inheritance requires same plant form stage and compatible visible aspect', () => {
+  const inherited = deriveSiblingStateScaleAnchor({
+    canonicalSlug: 'mango',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenology: 'vegetative',
+    baseWidthPx: 480,
+    alphaBBox: { exists: true, minX: 35, minY: 63, maxX: 1006, maxY: 1499 }
+  }, {
+    canonicalSlug: 'mango',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenology: 'fruiting',
+    alphaBBox: { exists: true, minX: 54, minY: 103, maxX: 981, maxY: 1454 }
+  }, {
+    savedPlacementScale: 1.15
+  });
+
+  assert.equal(inherited.ok, true);
+  assert.equal(inherited.code, 'SIBLING_STATE_SCALE_INHERITED');
+  assert.equal(inherited.productionEquivalentBaseWidthPx, 552);
+  assert.equal(inherited.phenologyAffectsScale, false);
+  assert.ok(inherited.aspectDeltaRatio < 0.08);
+
+  const blocked = deriveSiblingStateScaleAnchor({
+    canonicalSlug: 'mango',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    baseWidthPx: 480,
+    alphaBBox: { exists: true, minX: 35, minY: 63, maxX: 1006, maxY: 1499 }
+  }, {
+    canonicalSlug: 'mango',
+    visualForm: 'rosette',
+    architectureMode: 'default',
+    growthStage: 'mature',
+    alphaBBox: { exists: true, minX: 0, minY: 0, maxX: 300, maxY: 300 }
+  }, {
+    savedPlacementScale: 1.15
+  });
+
+  assert.equal(blocked.ok, false);
+  assert.equal(SIBLING_STATE_SCALE_GOVERNANCE.savedPlacementScalePreferredOverQaBandLabel, true);
 });
 
 test('in-garden QA scale policy derives morphology + stage defaults instead of per-species sizes', () => {
