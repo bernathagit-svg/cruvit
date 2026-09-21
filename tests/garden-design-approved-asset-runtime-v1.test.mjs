@@ -284,11 +284,13 @@ test('Garden Design exposes visible asset runtime diagnostics without persistenc
 
 test('Garden Design iframe self-loads the same authoritative registry without host dependency', () => {
   const gd = read('modules/garden-design/index.html');
-  const moduleTail = gd.slice(gd.lastIndexOf('<script type="module">'));
-  assert.match(moduleTail, /fetch\('\.\/assets\/plants\/design-asset-registry-v1\.json\?v=20260921reg6', \{ cache: 'no-store' \}\)/);
-  assert.match(moduleTail, /gdOwnedGardenContext\.designAssetRegistry = registry/);
-  assert.match(moduleTail, /gdIndexDesignAssetRegistry\(registry\)/);
-  assert.doesNotMatch(moduleTail, /openai|replicate|stability/i);
+  const bootStart = gd.indexOf("window.__gdRegistryBootstrap = 'starting'");
+  const moduleStart = gd.indexOf('<script type="module">', bootStart);
+  const bootstrap = gd.slice(Math.max(0, bootStart - 120), moduleStart);
+  assert.match(bootstrap, /fetch\('\.\/assets\/plants\/design-asset-registry-v1\.json\?v=20260921reg6', \{ cache: 'no-store' \}\)/);
+  assert.match(bootstrap, /gdOwnedGardenContext\.designAssetRegistry = registry/);
+  assert.match(bootstrap, /gdIndexDesignAssetRegistry\(registry\)/);
+  assert.doesNotMatch(bootstrap, /openai|replicate|stability/i);
 });
 
 test('production host/iframe load the versioned registry and re-index both arrival paths', () => {
