@@ -683,10 +683,10 @@ test('mature wide-canopy tree QA uses full-aspect garden scene instead of narrow
   const anchor = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json'), 'utf8'));
 
   assert.match(runtime, /matureMangoFullAspectReview/);
-  assert.match(runtime, /data-full-aspect-band/);
-  assert.match(runtime, /data-active-band="xxl"/);
+  assert.match(runtime, /data-production-anchor-job/);
+  assert.match(runtime, /productionEquivalentBaseWidthPx: 552/);
   assert.match(page, /full-aspect-scene/);
-  assert.match(page, /aspect-ratio:1\.42\/1/);
+  assert.match(page, /aspect-ratio:4\/3/);
   assert.doesNotMatch(runtime, /mature-mango-calibration/);
   assert.equal(anchor.observation.currentFiveColumnQaTooSmall, true);
   assert.equal(anchor.productionGardenDesignScaleChanged, false);
