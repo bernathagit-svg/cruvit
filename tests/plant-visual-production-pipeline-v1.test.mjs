@@ -854,6 +854,19 @@ test('production renderer QA adapter prefers trusted saved placement anchor for 
   assert.equal(preview.independentQaScaleMath, false);
 });
 
+test('pilot production renderer handshake is resilient to early READY timing', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+
+  assert.match(runtime, /function installRendererHandshake/);
+  assert.match(runtime, /frame\.addEventListener\('load'/);
+  assert.match(runtime, /frame\.contentDocument\.readyState === 'complete'/);
+  assert.match(runtime, /markRendererReady\('ready-message'\)/);
+  assert.match(runtime, /markRendererReady\('iframe-load'\)/);
+  assert.match(runtime, /markRendererReady\('already-loaded'\)/);
+  assert.match(runtime, /\[250, 750, 1500, 3000\]/);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
