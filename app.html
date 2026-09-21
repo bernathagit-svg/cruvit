@@ -9424,6 +9424,32 @@ function openOwnedGardenDesignAssetPromotionReview(){
 window.openOwnedGardenDesignAssetPromotionReview=openOwnedGardenDesignAssetPromotionReview;
 window.closeOwnedGardenDesignAssetPromotionReview=closeOwnedGardenDesignAssetPromotionReview;
 
+function openPlantVisualPilotQaReview(){
+  const root=document.getElementById('owned-garden-design-asset-promotion-v1-root');
+  if(!root) return;
+  const status=document.getElementById('ownedGardenDesignAssetPromotionStatus');
+  if(status) status.textContent='Plant Visual Pilot QA. Four bounded candidates. No generation or production write.';
+  root.classList.add('dac-active');
+  root.setAttribute('aria-hidden','false');
+  let frame=root.querySelector('iframe.dac-frame');
+  if(!frame){
+    frame=document.createElement('iframe');
+    frame.className='dac-frame';
+    frame.title='Plant Visual Pilot QA';
+    root.appendChild(frame);
+  }
+  const ctrl=ensureOwnedGardenDesignAssetPromotionHost();
+  frame.onload=function(){
+    if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  };
+  const reviewSrc='modules/garden-design/plant-visual-pilot-qa-v1.html?v=20260921a';
+  if(frame.getAttribute('src')!==reviewSrc) frame.src=reviewSrc;
+  else if(ctrl&&typeof ctrl.noteFrameLoaded==='function') ctrl.noteFrameLoaded();
+  if(ctrl) ctrl.open();
+}
+
+window.openPlantVisualPilotQaReview=openPlantVisualPilotQaReview;
+
 function ensureDesignAssetCalibrationReviewHost(){
   if(window.__cruvitCalibrationReviewHostCtrl) return window.__cruvitCalibrationReviewHostCtrl;
   const hostApi=window.CruvitCalibrationReviewHost;
@@ -9554,6 +9580,7 @@ window.addEventListener('load',function(){
   if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
   if(location.hash==='#design-asset-branch-alpha-salvage-1') openBranchAlphaSalvageReview();
   if(location.hash==='#owned-garden-design-asset-promotion-v1') openOwnedGardenDesignAssetPromotionReview();
+  if(location.hash==='#plant-visual-pilot-qa-v1') openPlantVisualPilotQaReview();
 });
 window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-calibration-review') openDesignAssetCalibrationReview();
@@ -9564,6 +9591,7 @@ window.addEventListener('hashchange',function(){
   if(location.hash==='#design-asset-branch-structure-calibration-1') openBranchStructureCalibrationReview();
   if(location.hash==='#design-asset-branch-alpha-salvage-1') openBranchAlphaSalvageReview();
   if(location.hash==='#owned-garden-design-asset-promotion-v1') openOwnedGardenDesignAssetPromotionReview();
+  if(location.hash==='#plant-visual-pilot-qa-v1') openPlantVisualPilotQaReview();
 });
 
 /* ── Plant Doctor (isolated iframe module) ── */
