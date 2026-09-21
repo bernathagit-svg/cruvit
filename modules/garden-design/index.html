@@ -3017,7 +3017,7 @@ function applyLayerDomTransform(layer, el) {
   el.style.left = (layer.x * 100) + '%';
   el.style.top = (layer.y * 100) + '%';
   el.style.zIndex = layer.zIndex;
-  if (gdApplyTreeSizeAuthorityVisual(layer, el)) return;
+  if (gdApplyPlantSizeAuthorityVisual(layer, el)) return;
   el.classList.remove('gd-authority-scale');
   const img = el.querySelector('img.gd-plant-cutout');
   if (img) {
@@ -3031,14 +3031,39 @@ function applyLayerDomTransform(layer, el) {
   el.style.transform = 'translate(-50%, -100%) scale(' + layer.scale + ') rotate(' + layer.rotation + 'deg)';
 }
 
-function gdApplyTreeSizeAuthorityVisual(layer, el) {
+function gdResolvedLayerVisualForm(layer) {
+  if (!layer) return 'unknown';
+  const explicit = String(layer.visualForm || '').trim().toLowerCase();
+  if (explicit) return explicit;
+  const resolved = resolvePlantLayerAsset(layer, gdPlantAssetsManifest);
+  const fromAsset = String((resolved && (resolved.visualForm || resolved.architectureMode)) || '').trim().toLowerCase();
+  if (fromAsset) return fromAsset;
+  const spriteType = gdResolveLayerSpriteType(layer);
+  if (spriteType === 'tree') return 'tree';
+  if (spriteType === 'flower') return 'flower';
+  if (spriteType === 'herb') return 'herbaceous-upright';
+  return 'shrub';
+}
+
+function gdApplyPlantSizeAuthorityVisual(layer, el) {
   const api = window.CruvitGardenSizeAuthority;
   if (!api || typeof api.productionGardenSizeAuthorityEnabled !== 'function' || !api.productionGardenSizeAuthorityEnabled()) return false;
-  if (!layer || gdResolveLayerSpriteType(layer) !== 'tree') return false;
+  if (!layer) return false;
   const registry = api.registry;
   if (!registry || typeof api.resolveGardenSizeAuthority !== 'function' || typeof api.scaleFromGardenSizeAuthority !== 'function') return false;
+
   const slug = String(layer.canonicalSlug || layer.slug || '').toLowerCase();
   if (!slug) return false;
+  const visualForm = gdResolvedLayerVisualForm(layer);
+
+  const record = typeof api.getAuthorityRecordBySlug === 'function'
+    ? api.getAuthorityRecordBySlug(registry, slug)
+    : null;
+
+  // Preserve current production behavior for trees. For non-tree forms,
+  // activate physical authority only after a canonical authority record exists.
+  if (!record && visualForm !== 'tree') return false;
+
   const photo = document.getElementById('imgAfter');
   const wrap = document.getElementById('imgAfterWrap');
   const sceneHeightPx = (photo && photo.clientHeight) || (wrap && wrap.clientHeight) || 360;
@@ -3046,30 +3071,35 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   const growthStage = layer.growthStage === 'young'
     ? 'young'
     : (layer.growthStage === 'mature' ? 'mature' : null);
-  // Unknown owned stage remains unknown. Do not silently apply mature physical scale.
+  // Unknown stage remains unknown. Do not silently apply mature physical scale.
   if (!growthStage) return false;
+
   const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
     ? api.mangoOwnerPreferredRangePosition(slug)
     : (slug === 'mango' ? 'LOW' : null);
   const userScaleOverride = layer.authorityUserResized ? { kind: 'multiplier', value: layer.scale } : null;
   const authority = api.resolveGardenSizeAuthority(registry, {
     canonicalSlug: slug,
-    growthStage: growthStage,
-    architectureMode: 'tree',
+    growthStage,
+    visualForm,
+    architectureMode: layer.architectureMode || visualForm,
     ownerPreferredRangePosition: mangoLow,
-    userScaleOverride: userScaleOverride
+    userScaleOverride
   });
   if (!authority || authority.gardenDesignBlocked) return false;
+
   const scaled = api.scaleFromGardenSizeAuthority(authority, {
-    growthStage: growthStage,
+    growthStage,
+    visualForm,
     depthId: layer.y >= 0.82 ? 'near' : (layer.y <= 0.62 ? 'far' : 'middle'),
     placementNy: layer.y,
     rangeBand: mangoLow || 'MID',
-    sceneWidthPx: sceneWidthPx,
-    sceneHeightPx: sceneHeightPx,
-    userScaleOverride: userScaleOverride
+    sceneWidthPx,
+    sceneHeightPx,
+    userScaleOverride
   });
   if (!scaled || !scaled.ok || !scaled.scale) return false;
+
   el.classList.add('gd-authority-scale');
   const imgPx = scaled.scale.imgHeightPx != null
     ? scaled.scale.imgHeightPx
@@ -3089,6 +3119,11 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   }
   el.style.transform = 'translate(-50%, -100%) rotate(' + (layer.rotation || 0) + 'deg)';
   return true;
+}
+
+// Backward-compatible alias for tests/tools that still refer to the old name.
+function gdApplyTreeSizeAuthorityVisual(layer, el) {
+  return gdApplyPlantSizeAuthorityVisual(layer, el);
 }
 
 function gdEscAttr(s) {
@@ -6128,6 +6163,7 @@ The plants array MUST match the exact counts specified above.`}]);
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
+      getAuthorityRecordBySlug,
       mangoOwnerPreferredRangePosition,
       productionGardenSizeAuthorityEnabled,
       resolveGardenSizeAuthority,
@@ -6135,6 +6171,7 @@ The plants array MUST match the exact counts specified above.`}]);
     } from './asset-factory-v1/garden-design-size-authority-adapter-v1.js?v=20260919q';
     window.CruvitGardenSizeAuthority = {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
+      getAuthorityRecordBySlug,
       mangoOwnerPreferredRangePosition,
       productionGardenSizeAuthorityEnabled,
       resolveGardenSizeAuthority,
