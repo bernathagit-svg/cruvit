@@ -9,6 +9,10 @@ on:
       - 'modules/garden-design/assets/plants/design-asset-registry-v1.json'
       - 'scripts/plant-visual-production-wave-v1.mjs'
       - 'tests/plant-visual-production-pipeline-v1.test.mjs'
+      - 'tests/garden-design-server-persistence-v1.test.mjs'
+      - 'modules/garden-design/index.html'
+      - 'modules/garden-design/garden-design-server-persistence-v1.js'
+      - 'modules/garden-design/garden-design-owned-garden-v1.js'
       - 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'
       - 'app.html'
       - 'modules/garden-design/plant-visual-pilot-qa-v1.html'
@@ -21,6 +25,10 @@ on:
       - 'modules/garden-design/assets/plants/design-asset-registry-v1.json'
       - 'scripts/plant-visual-production-wave-v1.mjs'
       - 'tests/plant-visual-production-pipeline-v1.test.mjs'
+      - 'tests/garden-design-server-persistence-v1.test.mjs'
+      - 'modules/garden-design/index.html'
+      - 'modules/garden-design/garden-design-server-persistence-v1.js'
+      - 'modules/garden-design/garden-design-owned-garden-v1.js'
       - 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'
       - 'app.html'
       - 'modules/garden-design/plant-visual-pilot-qa-v1.html'
@@ -46,6 +54,9 @@ jobs:
 
       - name: Test plant visual pipeline
         run: node --test tests/plant-visual-production-pipeline-v1.test.mjs
+
+      - name: Test Garden Design persistence
+        run: node --test tests/garden-design-server-persistence-v1.test.mjs
 
       - name: Dry-run production wave planner
         run: node scripts/plant-visual-production-wave-v1.mjs --dry-run --max-jobs-per-wave=24 --max-plants-per-wave=12
