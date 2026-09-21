@@ -1,0 +1,60 @@
+{
+  "kind": "cruvit-plant-visual-object-storage-contract-v1",
+  "preferredBackend": "cloudflare-r2",
+  "candidates": {
+    "bucket": "cruvit-plant-visual-candidates",
+    "visibility": "private",
+    "authoritativeForProduction": false,
+    "immutableKeyPattern": "candidates/{runId}/{canonicalSlug}/{assetId}__{sha256}.png",
+    "cacheControl": "private, no-store",
+    "allowedStates": [
+      "generated",
+      "qa-pending",
+      "rejected",
+      "superseded",
+      "owner-review"
+    ]
+  },
+  "production": {
+    "bucket": "cruvit-plant-visual-production",
+    "visibility": "runtime-readable",
+    "authoritativeForProductionBinary": true,
+    "immutableKeyPattern": "production/{canonicalSlug}/{growthStage}__{architectureMode}__{phenology}/{assetId}__{sha256}.png",
+    "cacheControl": "public, max-age=31536000, immutable",
+    "overwriteExistingAssetId": false,
+    "requires": [
+      "technicalQA=PASS",
+      "framingQA=PASS",
+      "botanicalIdentityQA=PASS",
+      "architectureQA=PASS",
+      "growthStageQA=PASS",
+      "phenologyStateQA=PASS",
+      "inGardenQA=PASS",
+      "productionApproved=true"
+    ]
+  },
+  "metadataAuthority": "modules/garden-design/assets/plants/design-asset-registry-v1.json",
+  "evidenceAuthority": "data/garden-design",
+  "requiredEnvironment": [
+    "PLANT_VISUAL_R2_ACCOUNT_ID",
+    "PLANT_VISUAL_R2_ACCESS_KEY_ID",
+    "PLANT_VISUAL_R2_SECRET_ACCESS_KEY",
+    "PLANT_VISUAL_R2_CANDIDATES_BUCKET",
+    "PLANT_VISUAL_R2_PRODUCTION_BUCKET"
+  ],
+  "security": {
+    "reuseClimateBucketCredentials": false,
+    "reason": "Existing climate token is least-privilege and scoped to cruvit-global-climate. Plant visuals require separate least-privilege credentials.",
+    "secretsCommitted": false
+  },
+  "invariants": [
+    "No generation-on-render.",
+    "No generation-on-lookup.",
+    "Candidate storage never makes an asset production-ready.",
+    "Production object keys are immutable and checksum-bearing.",
+    "Registry promotion is a separate explicit operation.",
+    "Rejected candidates remain auditable but non-authoritative.",
+    "No private Garden Design source photo is copied into plant visual storage."
+  ],
+  "currentStatus": "CONTRACT_LOCKED_STORAGE_NOT_YET_CONNECTED"
+}
