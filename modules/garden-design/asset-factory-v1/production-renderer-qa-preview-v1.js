@@ -156,3 +156,43 @@ export function resolveCompatibleSavedPlacementAnchor(row = {}, registry = {}) {
   }
   return null;
 }
+
+
+export function attachProductionRendererInputsToManifest(manifest = {}, anchorRegistry = {}) {
+  const rows = (Array.isArray(manifest?.rows) ? manifest.rows : []).map((row) => {
+    const savedPlacementAnchor = resolveCompatibleSavedPlacementAnchor(row, anchorRegistry);
+    const preview = buildProductionRendererQaPreview(row, { savedPlacementAnchor });
+    if (!preview.ok) {
+      return {
+        ...row,
+        qaRendererInput: {
+          ok: false,
+          code: preview.code,
+          source: null
+        }
+      };
+    }
+    return {
+      ...row,
+      qaRendererInput: {
+        ok: true,
+        code: preview.code,
+        source: preview.source,
+        baseWidthPx: preview.baseWidthPx,
+        scale: preview.scale,
+        x: preview.x,
+        y: preview.y,
+        rotation: preview.rotation,
+        authorityUserResized: preview.authorityUserResized,
+        renderingOwner: preview.renderingOwner,
+        independentQaScaleMath: false
+      }
+    };
+  });
+
+  return {
+    ...manifest,
+    rendererInputContract: PRODUCTION_RENDERER_QA_PREVIEW_VERSION,
+    rows
+  };
+}
