@@ -40,7 +40,8 @@
             "source": "garden-design-manifest",
             "generationMethod": "prepared-cutout",
             "tier": "tier-1"
-          }
+          },
+          "productionApproved": true
         }
       ]
     },
@@ -66,7 +67,8 @@
             "source": "garden-design-manifest",
             "generationMethod": "unproduced",
             "tier": "declared"
-          }
+          },
+          "productionApproved": false
         }
       ]
     },
@@ -92,7 +94,8 @@
             "source": "garden-design-manifest",
             "generationMethod": "unproduced",
             "tier": "declared"
-          }
+          },
+          "productionApproved": false
         }
       ]
     },
@@ -118,7 +121,8 @@
             "source": "garden-design-manifest",
             "generationMethod": "unproduced",
             "tier": "declared"
-          }
+          },
+          "productionApproved": false
         }
       ]
     },
@@ -144,7 +148,8 @@
             "source": "garden-design-manifest",
             "generationMethod": "unproduced",
             "tier": "declared"
-          }
+          },
+          "productionApproved": false
         }
       ]
     },
@@ -225,7 +230,8 @@
             "preserveSourceResolution": true,
             "sourcePixelDimensions": "1024x1536",
             "note": "Owner requested Mango nearly 2x larger while preserving image resolution."
-          }
+          },
+          "productionApproved": true
         }
       ]
     },
@@ -305,7 +311,8 @@
             "preserveSourceResolution": true,
             "sourcePixelDimensions": "1024x1536",
             "note": "Owner requested Banana enlarged in the same manner as Mango, without resampling."
-          }
+          },
+          "productionApproved": true
         }
       ]
     },
@@ -375,9 +382,17 @@
           "phenologyStateQA": "PASS",
           "inGardenQA": "PASS",
           "ownerVisualQA": "PASS",
-          "version": "v1"
+          "version": "v1",
+          "productionApproved": true
         }
       ]
     }
-  ]
+  ],
+  "productionPolicy": {
+    "version": "plant-visual-production-pipeline-v1",
+    "productionApprovedRequiredForReadyAssets": true,
+    "generateOnLookup": false,
+    "generateOnRender": false,
+    "silentBinaryReplacementForbidden": true
+  }
 }
