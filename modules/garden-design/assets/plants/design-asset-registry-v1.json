@@ -391,12 +391,11 @@
   "productionPolicy": {
     "version": "plant-visual-production-pipeline-v1",
     "productionApprovedRequiredForReadyAssets": true,
-    "lookupNeverGenerates": true,
-    "renderNeverGenerates": true,
-    "sourceBinaryResolutionPreserved": true,
-    "presentationSizeSeparateFromSourceResolution": true,
+    "generationOnLookup": false,
+    "generationOnRender": false,
+    "preserveSourceResolution": true,
     "silentBinaryReplacementForbidden": true,
-    "ownerReviewMode": "exceptions-only-target",
-    "autoApprovalEnabled": false
+    "ownerReviewMode": "exceptions-only-after-calibration",
+    "note": "New pipeline assets must pass technical, framing, botanical/state, in-garden and presentation-sizing gates before production activation."
   }
 }
