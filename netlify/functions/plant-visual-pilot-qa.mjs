@@ -6,6 +6,7 @@ const ITEMS = Object.freeze({
   'banana__young__default__vegetative__v1': Object.freeze({
     canonicalSlug: 'banana',
     scientific: 'Musa spp.',
+    visualForm: 'herbaceous-clump',
     growthStage: 'young',
     architectureMode: 'default',
     phenology: 'vegetative',
@@ -16,6 +17,7 @@ const ITEMS = Object.freeze({
   'mango__young__tree__vegetative__v1': Object.freeze({
     canonicalSlug: 'mango',
     scientific: 'Mangifera indica',
+    visualForm: 'tree',
     growthStage: 'young',
     architectureMode: 'tree',
     phenology: 'vegetative',
@@ -26,6 +28,7 @@ const ITEMS = Object.freeze({
   'pineapple__mature__default__fruiting__v1': Object.freeze({
     canonicalSlug: 'pineapple',
     scientific: 'Ananas comosus',
+    visualForm: 'rosette',
     growthStage: 'mature',
     architectureMode: 'default',
     phenology: 'fruiting',
@@ -36,6 +39,7 @@ const ITEMS = Object.freeze({
   'mango__mature__tree__fruiting__v1': Object.freeze({
     canonicalSlug: 'mango',
     scientific: 'Mangifera indica',
+    visualForm: 'tree',
     growthStage: 'mature',
     architectureMode: 'tree',
     phenology: 'fruiting',
@@ -126,6 +130,7 @@ export default async (req) => {
         jobId: id,
         canonicalSlug: item.canonicalSlug,
         scientific: item.scientific,
+        visualForm: item.visualForm,
         growthStage: item.growthStage,
         architectureMode: item.architectureMode,
         phenology: item.phenology,
