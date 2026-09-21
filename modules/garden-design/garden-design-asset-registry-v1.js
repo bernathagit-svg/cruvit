@@ -61,6 +61,14 @@ export function resolveManifestKeyToCanonical(manifestKey, map = MANIFEST_KEY_TO
 export function isUsableDesignVariant(variant) {
   if (!variant || typeof variant !== 'object') return false;
   if (variant.comingSoon === true) return false;
+  const pipeline = String(variant.provenance?.pipeline || '');
+  if (
+    pipeline === 'plant-visual-production-pipeline-v1' &&
+    variant.productionApproved !== true
+  ) {
+    return false;
+  }
+  if (variant.productionApproved === false) return false;
   const status = lower(variant.status || variant.approvalStatus);
   const approval = lower(variant.approvalStatus || variant.status);
   if (
