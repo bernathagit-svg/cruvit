@@ -1026,6 +1026,42 @@ test('promotion readiness is manifest-driven and accepts exact-byte reconciled p
   );
 });
 
+test('manifest promotion endpoint is generic, nonce-gated, and verifies R2 readback', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const promote = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-promote-manifest.mjs'), 'utf8');
+  const reader = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-production-asset.mjs'), 'utf8');
+
+  assert.match(promote, /CRUVIT_PLANT_VISUAL_PROMOTION_NONCE/);
+  assert.match(promote, /MANIFEST_ID_REQUIRED/);
+  assert.match(promote, /PROVENANCE_RECONCILIATION_REQUIRED/);
+  assert.match(promote, /REVIEWED_RENDERER_INPUT_REQUIRED/);
+  assert.match(promote, /PROMOTED_AND_VERIFIED/);
+  assert.match(promote, /PRODUCTION_READBACK_INTEGRITY_MISMATCH/);
+  assert.match(promote, /PutObjectCommand/);
+  assert.doesNotMatch(promote, /banana__young__/);
+  assert.doesNotMatch(promote, /mango__mature__/);
+  assert.doesNotMatch(promote, /pineapple__/);
+
+  assert.match(reader, /startsWith\('production\/'\)/);
+  assert.match(reader, /max-age=31536000, immutable/);
+  assert.doesNotMatch(reader, /PutObjectCommand/);
+});
+
+test('pilot production promotion approval is bounded to the reviewed manifest', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const approval = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-production-promotion-approval-pilot-v1.json'),
+      'utf8'
+    )
+  );
+  assert.equal(approval.manifestId, 'pilot-2026-09-21-v1');
+  assert.equal(approval.scope.candidateJobs.length, 4);
+  assert.equal(approval.scope.paidGenerationAllowed, false);
+  assert.equal(approval.scope.newImageGenerationAllowed, false);
+  assert.equal(approval.scope.unrelatedRegistryChangesAllowed, false);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
