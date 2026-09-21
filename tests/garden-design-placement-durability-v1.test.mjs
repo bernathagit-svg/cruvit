@@ -71,6 +71,18 @@ test('unspecified owned stage is not a persistable DB growth_stage', () => {
   assert.equal(persistablePlacementGrowthStage('mature'), 'mature');
 });
 
+test('clicking an already-local owned plant repairs canonical identity and persists instead of returning local-only', () => {
+  const gd = read('modules/garden-design/index.html');
+  const fn = gd.slice(gd.indexOf('function placeOwnedGardenPlant'), gd.indexOf('function requestCommitProposedLayer'));
+  assert.match(fn, /const target = existing\[0\]/);
+  assert.match(fn, /const authoritativeSlug = p\.canonicalSlug \|\| null/);
+  assert.match(fn, /target\.canonicalSlug = authoritativeSlug/);
+  assert.match(fn, /target\.gardenPlantId = p\.gardenPlantId/);
+  assert.match(fn, /delete target\.designAssetId/);
+  assert.match(fn, /gdPersistDesignSnapshot\(\{[\s\S]*clientInstanceId: target\.id,[\s\S]*hostAction: 'create',[\s\S]*phase: 'create'/);
+  assert.match(gd, /garden-design-owned-garden-v1\.js\?v=20260921reconcile2/);
+});
+
 test('iframe no longer claims Saved on hydrate when local is ahead, and create flushes immediately', () => {
   const gd = read('modules/garden-design/index.html');
   const app = read('app.html');
@@ -94,7 +106,7 @@ test('iframe no longer claims Saved on hydrate when local is ahead, and create f
   assert.match(schedule, /op\.action === 'create'/);
   const persistResult = gd.slice(gd.indexOf('function gdOnPersistResult'), gd.indexOf('function gdRerenderPlantLayersAfterRegistryArrival'));
   assert.match(persistResult, /msg\.noop === true/);
-  assert.match(app, /index\.html\?v=20260920selfreg1/);
+  assert.match(app, /index\.html\?v=20260921ownedrepair1/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /gardenProfileId: \(gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId\)/);
   assert.match(gd, /cachedDesignId: designId/);

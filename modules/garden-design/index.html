@@ -2560,19 +2560,45 @@ function placeOwnedGardenPlant(idx) {
   if (api && typeof api.designPaidAiForAction === 'function') api.designPaidAiForAction('place-owned');
   const existing = plantLayers.filter(function(l) { return l.gardenPlantId && l.gardenPlantId === p.gardenPlantId; });
   if (existing.length) {
-    selectedPlantLayerId = existing[0].id;
+    const target = existing[0];
+    const authoritativeSlug = p.canonicalSlug || null;
+    target.name = p.name || target.name;
+    target.species = p.scientific || target.species || '';
+    target.slug = authoritativeSlug || target.slug || null;
+    target.canonicalSlug = authoritativeSlug || target.canonicalSlug || null;
+    target.kind = 'owned';
+    target.status = 'owned';
+    target.gardenPlantId = p.gardenPlantId;
+    target.gardenProfileId = p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId) || target.gardenProfileId || null;
+    target.areaId = p.areaId || target.areaId || null;
+    target.growthStage = p.growthStage || target.growthStage || 'unspecified';
+    target.phenology = target.phenology || 'vegetative';
+    target.season = target.season || 'unknown';
+    delete target.assetKey;
+    delete target.variantId;
+    delete target.designAssetId;
+    delete target.visualFallback;
+    delete target.architectureMode;
+    delete target.visualForm;
+    delete target.groundAnchor;
+    selectedPlantLayerId = target.id;
     gdUpsertPlacedPlantCard({
       name: p.name,
       latin: p.scientific,
       emoji: '🌿',
       kind: 'owned',
       gardenPlantId: p.gardenPlantId,
-      gardenProfileId: p.gardenProfileId || (gdOwnedGardenContext && gdOwnedGardenContext.gardenProfileId),
-      canonicalSlug: p.canonicalSlug,
-      areaId: p.areaId
+      gardenProfileId: target.gardenProfileId,
+      canonicalSlug: authoritativeSlug,
+      areaId: target.areaId
     });
     renderPlantLayers();
     renderPlantsDrawer();
+    gdPersistDesignSnapshot({
+      clientInstanceId: target.id,
+      hostAction: 'create',
+      phase: 'create'
+    });
     closeAddPlantModal();
     return;
   }
@@ -5898,7 +5924,7 @@ The plants array MUST match the exact counts specified above.`}]);
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
-    import './garden-design-owned-garden-v1.js?v=20260920ins1';
+    import './garden-design-owned-garden-v1.js?v=20260921reconcile2';
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       mangoOwnerPreferredRangePosition,
