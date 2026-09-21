@@ -19,6 +19,7 @@ import {
   collapseAutosaveOps,
   shouldWriteOnPointerPhase,
   mapServerPlacementToLayer,
+  mapLayerToHostPlacementPayload,
   createDesignClientInstanceId,
   persistablePlacementGrowthStage,
   GD_AUTOSAVE_DEBOUNCE_MS,
@@ -250,6 +251,106 @@ test('F/G/H: owned Mango save keeps gardenPlantId, does not create garden_plants
   assert.equal(saved.gardenAreaId, PATIO);
   assert.equal(mem.db.garden_design_placements[0].garden_area_id, PATIO);
   assert.equal(mem.writes.some((w) => w.table === 'garden_plants' && String(w.op).includes('insert')), false);
+});
+
+test('tree user scale override metadata roundtrips through payload, DB row, and hydration', async () => {
+  const layerPayload = mapLayerToHostPlacementPayload({
+    id: 'pl_mango_override',
+    kind: 'owned',
+    gardenPlantId: MANGO,
+    canonicalSlug: 'mango',
+    growthStage: 'mature',
+    targetGrowthStage: 'mature',
+    phenology: 'vegetative',
+    x: 0.23,
+    y: 0.95,
+    scale: 1.15,
+    rotation: 0,
+    zIndex: 1,
+    name: 'Mango',
+    species: 'Mangifera indica',
+    authorityUserResized: true,
+    metadata: { existingKey: 'keep-me' }
+  });
+  assert.equal(layerPayload.metadata.existingKey, 'keep-me');
+  assert.deepEqual(layerPayload.metadata.userScaleOverride, { kind: 'multiplier', value: 1.15 });
+
+  const { mem, host } = makeHost();
+  const saved = await host.savePlacement({
+    designClientInstanceId: 'gd_scale_override',
+    placement: layerPayload
+  });
+  assert.equal(saved.ok, true);
+  assert.deepEqual(mem.db.garden_design_placements[0].metadata.userScaleOverride, {
+    kind: 'multiplier',
+    value: 1.15
+  });
+
+  const mapped = mapServerPlacementToLayer({
+    id: saved.placement.id,
+    client_instance_id: 'pl_mango_override',
+    kind: 'owned',
+    garden_plant_id: MANGO,
+    canonical_slug: 'mango',
+    garden_area_id: PATIO,
+    growth_stage: 'mature',
+    target_growth_stage: 'mature',
+    phenology: 'vegetative',
+    x: 0.23,
+    y: 0.95,
+    scale: 1.15,
+    rotation: 0,
+    z_order: 1,
+    label: 'Mango',
+    scientific: 'Mangifera indica',
+    metadata: {
+      existingKey: 'keep-me',
+      userScaleOverride: { kind: 'multiplier', value: 1.15 }
+    }
+  }, ownedFromSeed(seedPlants()));
+  assert.equal(mapped.ok, true);
+  assert.equal(mapped.layer.authorityUserResized, true);
+  assert.equal(mapped.layer.scale, 1.15);
+  assert.equal(mapped.layer.metadata.existingKey, 'keep-me');
+});
+
+test('placement metadata update merges user scale override without clobbering unrelated metadata', async () => {
+  const { mem, host } = makeHost();
+  const first = await host.savePlacement({
+    designClientInstanceId: 'gd_metadata_merge',
+    placement: {
+      clientInstanceId: 'pl_metadata_merge',
+      kind: 'owned',
+      gardenPlantId: MANGO,
+      x: 0.3,
+      y: 0.8,
+      scale: 1,
+      metadata: { provenance: 'existing' }
+    }
+  });
+  assert.equal(first.ok, true);
+
+  const updated = await host.savePlacement({
+    designClientInstanceId: 'gd_metadata_merge',
+    designId: first.designId,
+    cachedDesignId: first.designId,
+    placement: {
+      clientInstanceId: 'pl_metadata_merge',
+      kind: 'owned',
+      gardenPlantId: MANGO,
+      x: 0.3,
+      y: 0.8,
+      scale: 1.15,
+      metadata: { userScaleOverride: { kind: 'multiplier', value: 1.15 } }
+    }
+  }, 'update');
+  assert.equal(updated.ok, true);
+  assert.equal(mem.db.garden_design_placements.length, 1);
+  assert.equal(mem.db.garden_design_placements[0].metadata.provenance, 'existing');
+  assert.deepEqual(mem.db.garden_design_placements[0].metadata.userScaleOverride, {
+    kind: 'multiplier',
+    value: 1.15
+  });
 });
 
 test('legacy owned client_instance_id resolves exactly to server garden_plants UUID before insert', async () => {
