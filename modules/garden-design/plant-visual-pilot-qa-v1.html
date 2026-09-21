@@ -24,6 +24,9 @@
     .grid{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(520px,1.2fr);gap:14px;margin-top:12px}
     .review-scales{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px}
     .review-scale h4{margin:0 0 6px;font-size:13px;color:#455247}
+    .review-scale.owner-preferred{outline:2px solid #3f7f5b;border-radius:10px;padding:5px}
+    .review-scale.owner-preferred h4{color:#245b3e}
+    .review-scales.mature-mango-calibration{grid-template-columns:repeat(5,minmax(130px,1fr))}
     .card{border:1px solid #dfe3df;border-radius:12px;padding:12px;background:#fafbf9}
     .native{height:460px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
     .scene{height:360px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
@@ -34,6 +37,8 @@
     .review-plant-box.small{height:34%}
     .review-plant-box.medium{height:54%}
     .review-plant-box.large{height:78%}
+    .review-plant-box.xl{height:88%;width:90%}
+    .review-plant-box.xxl{height:94%;width:96%}
     .review-plant-box img.review-cutout{position:static;display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:bottom center;transform:none}
     .ground-shadow{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);width:38%;height:8px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.30),rgba(0,0,0,0) 72%)}
     .qa{margin-top:12px;padding:12px;background:#f6f7f5;border-radius:10px}
@@ -42,7 +47,8 @@
     button{border:1px solid #b7c1b9;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
     button[aria-pressed="true"]{background:#153d2c;color:#fff;border-color:#153d2c}
     .choice-status{font-size:12px;color:#4b584f}
-    @media(max-width:1100px){.grid{grid-template-columns:1fr}.review-scales{grid-template-columns:1fr}.native,.scene{height:380px}}
+    @media(max-width:1400px){.review-scales.mature-mango-calibration{grid-template-columns:repeat(3,minmax(150px,1fr))}}
+    @media(max-width:1100px){.grid{grid-template-columns:1fr}.review-scales,.review-scales.mature-mango-calibration{grid-template-columns:1fr}.native,.scene{height:380px}}
   </style>
 </head>
 <body>
