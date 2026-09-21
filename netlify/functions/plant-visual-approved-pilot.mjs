@@ -43,12 +43,6 @@ const JOBS = Object.freeze({
   })
 });
 
-const TOKEN_ENV = Object.freeze({
-  'mango__mature__tree__fruiting__v1': 'CRUVIT_PILOT_TOKEN_MANGO_FRUITING',
-  'mango__young__tree__vegetative__v1': 'CRUVIT_PILOT_TOKEN_MANGO_YOUNG',
-  'pineapple__mature__default__fruiting__v1': 'CRUVIT_PILOT_TOKEN_PINEAPPLE_FRUITING'
-});
-
 function env(name) {
   return typeof Netlify !== 'undefined' && Netlify.env && typeof Netlify.env.get === 'function'
     ? Netlify.env.get(name)
@@ -69,10 +63,8 @@ export default async (req) => {
   const jobId = String(url.searchParams.get('job') || '');
   const token = String(url.searchParams.get('token') || '');
   const job = JOBS[jobId];
-  const tokenEnv = TOKEN_ENV[jobId];
-
-  if (!job || !tokenEnv) return json(404, { error: 'JOB_NOT_APPROVED' });
-  const expectedToken = String(env(tokenEnv) || '');
+  if (!job) return json(404, { error: 'JOB_NOT_APPROVED' });
+  const expectedToken = String(env('CRUVIT_PILOT_NONCE') || '');
   if (!expectedToken || token !== expectedToken) return json(403, { error: 'PILOT_TOKEN_DENIED' });
   if (String(env('CRUVIT_ALLOW_PAID_PLANT_IDENTIFIER') || '') !== 'true') {
     return json(403, { error: 'PAID_PLANT_IDENTIFIER_GATE_DENIED' });
