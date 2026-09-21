@@ -27,6 +27,12 @@ import {
   validateProductionRegistryVariant,
   activateProductionRegistryVariant
 } from '../modules/garden-design/asset-factory-v1/plant-visual-promotion-guard-v1.js';
+import {
+  getPlantVisualStorageStatus,
+  buildPlantVisualCandidateObjectKey,
+  buildPlantVisualProductionObjectKey,
+  validatePlantVisualPromotionStorageInput
+} from '../modules/garden-design/asset-factory-v1/plant-visual-object-storage-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -373,4 +379,69 @@ test('promotion guard forbids silent binary replacement under an existing asset 
     () => activateProductionRegistryVariant(first.registry, { ...base, sha256: 'checksum-b' }),
     (err) => err && err.code === 'IMMUTABLE_ASSET_ID_CONFLICT'
   );
+});
+
+
+test('plant visual storage contract uses separate candidate/production buckets and immutable checksum keys', () => {
+  const status = getPlantVisualStorageStatus({
+    PLANT_VISUAL_R2_ACCOUNT_ID: 'acct',
+    PLANT_VISUAL_R2_ACCESS_KEY_ID: 'id',
+    PLANT_VISUAL_R2_SECRET_ACCESS_KEY: 'secret',
+    PLANT_VISUAL_R2_CANDIDATES_BUCKET: 'cruvit-plant-visual-candidates',
+    PLANT_VISUAL_R2_PRODUCTION_BUCKET: 'cruvit-plant-visual-production'
+  });
+  assert.equal(status.ready, true);
+
+  const candidateKey = buildPlantVisualCandidateObjectKey({
+    runId: 'wave-001',
+    canonicalSlug: 'Mango',
+    assetId: 'mango__young__tree__vegetative__v1',
+    sha256: 'ABC123'
+  });
+  assert.equal(
+    candidateKey,
+    'candidates/wave-001/mango/mango__young__tree__vegetative__v1__abc123.png'
+  );
+
+  const productionKey = buildPlantVisualProductionObjectKey({
+    canonicalSlug: 'mango',
+    growthStage: 'young',
+    architectureMode: 'tree',
+    phenology: 'vegetative',
+    assetId: 'mango__young__tree__vegetative__v1',
+    sha256: 'abc123'
+  });
+  assert.equal(
+    productionKey,
+    'production/mango/young__tree__vegetative/mango__young__tree__vegetative__v1__abc123.png'
+  );
+});
+
+test('plant visual production storage refuses promotion until every mandatory QA gate passes', () => {
+  const base = {
+    canonicalSlug: 'mango',
+    growthStage: 'young',
+    architectureMode: 'tree',
+    phenology: 'vegetative',
+    assetId: 'mango__young__tree__vegetative__v1',
+    sha256: 'abc123',
+    technicalQA: 'PASS',
+    framingQA: 'PASS',
+    botanicalIdentityQA: 'PASS',
+    architectureQA: 'PASS',
+    growthStageQA: 'PASS',
+    phenologyStateQA: 'PASS',
+    inGardenQA: 'PASS',
+    productionApproved: true
+  };
+  assert.equal(validatePlantVisualPromotionStorageInput(base).ok, true);
+
+  const blocked = validatePlantVisualPromotionStorageInput({
+    ...base,
+    inGardenQA: 'UNKNOWN',
+    productionApproved: false
+  });
+  assert.equal(blocked.ok, false);
+  assert.ok(blocked.failed.includes('inGardenQA'));
+  assert.ok(blocked.failed.includes('productionApproved'));
 });
