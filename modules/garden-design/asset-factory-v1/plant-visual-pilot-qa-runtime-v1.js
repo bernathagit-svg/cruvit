@@ -2,22 +2,23 @@ import { buildProductionRendererQaPreview, resolveCompatibleSavedPlacementAnchor
 
 const CALIBRATION_SOURCE_MESSAGE_TYPE = 'cruvit:calibration-garden-source';
 
-const DEFAULT_SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921c';
+const DEFAULT_MANIFEST_ID = 'pilot-2026-09-21-v1';
 const DEFAULT_ANCHOR_REGISTRY_URL = '../../data/garden-design/garden-design-qa-saved-placement-anchor-registry-v1.json?v=20260921a';
 
-function safeDataUrlParam(name, fallback) {
-  const value = new URLSearchParams(window.location.search).get(name);
-  if (!value) return fallback;
-  const decoded = decodeURIComponent(value);
-  if (!decoded.startsWith('../../data/garden-design/') || !decoded.endsWith('.json')) return fallback;
-  return decoded;
+function safeManifestId(value) {
+  const id = String(value || '').trim().toLowerCase();
+  return /^[a-z0-9][a-z0-9._-]{0,95}$/.test(id) ? id : DEFAULT_MANIFEST_ID;
 }
 
-const SUMMARY_URL = safeDataUrlParam('manifest', DEFAULT_SUMMARY_URL);
-const ANCHOR_REGISTRY_URL = safeDataUrlParam('anchorRegistry', DEFAULT_ANCHOR_REGISTRY_URL);
+const MANIFEST_ID = safeManifestId(new URLSearchParams(window.location.search).get('manifest'));
+const SUMMARY_URL = '../../data/garden-design/plant-visual-qa-manifests/' + MANIFEST_ID + '.json?v=20260921a';
+const ANCHOR_REGISTRY_URL = DEFAULT_ANCHOR_REGISTRY_URL;
 const IMAGE_URL = (jobId) =>
-  '/.netlify/functions/plant-visual-pilot-qa?job=' + encodeURIComponent(jobId);
-const STORAGE_KEY = 'cruvit:plant-visual-qa-review-v1';
+  '/.netlify/functions/plant-visual-qa-candidate?manifest='
+  + encodeURIComponent(MANIFEST_ID)
+  + '&job='
+  + encodeURIComponent(jobId);
+const STORAGE_KEY = 'cruvit:plant-visual-qa-review-v1:' + MANIFEST_ID;
 const OWNER_CHOICES = Object.freeze([
   'PASS_OWNER_VISUAL_GATES',
   'NEEDS_REGENERATION',
