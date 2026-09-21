@@ -20,6 +20,13 @@ import {
 import {
   parsePlantVisualProductionApproval
 } from '../modules/garden-design/asset-factory-v1/plant-visual-production-execute-v1.js';
+import {
+  partitionPlantVisualWaves
+} from '../modules/garden-design/asset-factory-v1/plant-visual-production-wave-v1.js';
+import {
+  validateProductionRegistryVariant,
+  activateProductionRegistryVariant
+} from '../modules/garden-design/asset-factory-v1/plant-visual-promotion-guard-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -218,4 +225,109 @@ test('every active registry asset is explicitly productionApproved', () => {
       `${row.slug}/${row.variant.assetId} must be productionApproved`
     );
   }
+});
+
+
+test('wave planner bounds hundreds of jobs and prioritizes owned plants without network work', () => {
+  const jobs = Array.from({ length: 61 }, (_, i) => ({
+    jobId: `job-${i + 1}`,
+    canonicalSlug: `plant-${String(i + 1).padStart(3, '0')}`,
+    required: true
+  }));
+  jobs[57].canonicalSlug = 'owned-special';
+  const waves = partitionPlantVisualWaves(jobs, {
+    signals: { ownedCanonicalSlugs: ['owned-special'] },
+    policy: { maxJobsPerWave: 20, maxPlantsPerWave: 20 }
+  });
+  assert.equal(waves.length, 4);
+  assert.ok(waves.every((wave) => wave.jobCount <= 20));
+  assert.equal(waves[0].jobs[0].canonicalSlug, 'owned-special');
+  assert.equal(waves[0].paidExecutionApproved, false);
+  assert.equal(waves[0].productionRegistryWritten, false);
+});
+
+test('promotion guard blocks incomplete QA and accepts only complete production records', () => {
+  const incomplete = {
+    assetId: 'fixture-v1',
+    canonicalSlug: 'fixture',
+    productionApproved: true,
+    approvalStatus: 'approved',
+    transparencyReady: true
+  };
+  const blocked = validateProductionRegistryVariant(incomplete);
+  assert.equal(blocked.ok, false);
+  assert.ok(blocked.reasons.includes('checksum-required'));
+  assert.ok(blocked.reasons.includes('pixel-dimensions-required'));
+  assert.ok(blocked.reasons.includes('technicalQA-pass-required'));
+
+  const complete = {
+    assetId: 'fixture-v1',
+    canonicalSlug: 'fixture',
+    scientific: 'Ficus fixturea',
+    identityScope: 'species',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenology: 'vegetative',
+    season: 'unknown',
+    file: 'production/fixture/fixture-v1.png',
+    width: 1024,
+    height: 1536,
+    baseWidthPx: 480,
+    alphaBBox: { exists: true, minX: 40, minY: 60, maxX: 990, maxY: 1490 },
+    groundAnchor: { nx: 0.5, ny: 0.97, source: 'alpha-bbox-base-center' },
+    sha256: 'abc123',
+    productionApproved: true,
+    approvalStatus: 'approved',
+    transparencyReady: true,
+    technicalQA: 'PASS',
+    framingQA: 'PASS',
+    botanicalIdentityQA: 'PASS',
+    architectureQA: 'PASS',
+    growthStageQA: 'PASS',
+    phenologyStateQA: 'PASS',
+    inGardenQA: 'PASS'
+  };
+  assert.equal(validateProductionRegistryVariant(complete).ok, true);
+
+  const activated = activateProductionRegistryVariant({ sets: [] }, complete);
+  assert.equal(activated.changed, true);
+  assert.equal(activated.registry.sets[0].variants[0].activeForRole, true);
+  assert.equal(activated.registry.productionPolicy.immutableAssetIds, true);
+});
+
+test('promotion guard forbids silent binary replacement under an existing asset id', () => {
+  const base = {
+    assetId: 'fixture-v1',
+    canonicalSlug: 'fixture',
+    scientific: 'Ficus fixturea',
+    identityScope: 'species',
+    visualForm: 'tree',
+    architectureMode: 'tree',
+    growthStage: 'mature',
+    phenology: 'vegetative',
+    season: 'unknown',
+    file: 'production/fixture/fixture-v1.png',
+    width: 1024,
+    height: 1536,
+    baseWidthPx: 480,
+    alphaBBox: { exists: true, minX: 40, minY: 60, maxX: 990, maxY: 1490 },
+    groundAnchor: { nx: 0.5, ny: 0.97, source: 'alpha-bbox-base-center' },
+    sha256: 'checksum-a',
+    productionApproved: true,
+    approvalStatus: 'approved',
+    transparencyReady: true,
+    technicalQA: 'PASS',
+    framingQA: 'PASS',
+    botanicalIdentityQA: 'PASS',
+    architectureQA: 'PASS',
+    growthStageQA: 'PASS',
+    phenologyStateQA: 'PASS',
+    inGardenQA: 'PASS'
+  };
+  const first = activateProductionRegistryVariant({ sets: [] }, base);
+  assert.throws(
+    () => activateProductionRegistryVariant(first.registry, { ...base, sha256: 'checksum-b' }),
+    (err) => err && err.code === 'IMMUTABLE_ASSET_ID_CONFLICT'
+  );
 });
