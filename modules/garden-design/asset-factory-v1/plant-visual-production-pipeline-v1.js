@@ -9,6 +9,7 @@ import { detectDesignAssetGaps } from './gap-detector-v1.js';
 import { planDesignAssetGeneration } from './design-asset-quality-policy-v1.js';
 import { assessProductionFramingQa } from './production-framing-qa-v1.js';
 import { derivePresentationSizing } from './presentation-sizing-v1.js';
+import { deriveInGardenQaScale } from './in-garden-qa-scale-policy-v1.js';
 
 export const PLANT_VISUAL_PRODUCTION_PIPELINE_VERSION = 'plant-visual-production-pipeline-v1';
 
@@ -63,6 +64,18 @@ export function buildPlantVisualProductionPlan(plants = [], registry = {}, signa
   const gaps = detectDesignAssetGaps(plants, registry, signals);
   const jobs = gaps.jobs.map((job) => {
     const generation = planDesignAssetGeneration(job);
+    const formStageKey = `${job.visualForm || 'unknown'}::${job.growthStage || 'mature'}`;
+    const inGardenQaScalePlan = deriveInGardenQaScale(job, {
+      ownerCalibration: options.ownerScaleCalibration || null,
+      statureHint:
+        (options.statureHintByJobId && options.statureHintByJobId[job.jobId])
+        || (options.statureHintBySlug && options.statureHintBySlug[job.canonicalSlug])
+        || null,
+      calibrationStatus:
+        (options.qaScaleCalibrationStatusByFormStage
+          && options.qaScaleCalibrationStatusByFormStage[formStageKey])
+        || 'unvalidated'
+    });
     return {
       ...job,
       pipelineVersion: PLANT_VISUAL_PRODUCTION_PIPELINE_VERSION,
@@ -79,6 +92,7 @@ export function buildPlantVisualProductionPlan(plants = [], registry = {}, signa
       framingQaRequired: true,
       botanicalIdentityQaRequired: true,
       inGardenQaRequired: true,
+      inGardenQaScalePlan,
       presentationSizingRequired: true,
       productionApprovedRequired: true,
       autoApprovalEnabled: options.autoApprovalEnabled === true
