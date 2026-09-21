@@ -37,7 +37,7 @@ export {
 const DESIGN_SELECT =
   'id,garden_profile_id,user_id,client_instance_id,garden_area_id,status,title,revision,source_media_id,derived_base_media_id,created_at,updated_at';
 const PLACEMENT_SELECT =
-  'id,garden_design_id,garden_profile_id,user_id,client_instance_id,kind,garden_plant_id,canonical_slug,garden_area_id,design_asset_id,growth_stage,target_growth_stage,season,phenology,x,y,scale,rotation,z_order,label,scientific,created_at,updated_at';
+  'id,garden_design_id,garden_profile_id,user_id,client_instance_id,kind,garden_plant_id,canonical_slug,garden_area_id,design_asset_id,growth_stage,target_growth_stage,season,phenology,x,y,scale,rotation,z_order,label,scientific,metadata,created_at,updated_at';
 const MEDIA_SELECT = 'id,garden_profile_id,storage_path,storage_bucket,purpose,source_module,mime_type,validation_state,metadata';
 const DEFAULT_DESIGN_TITLE = 'Garden Design';
 
@@ -221,7 +221,8 @@ function placementMutablePatch(row) {
     rotation: row.rotation,
     z_order: row.z_order,
     label: row.label,
-    scientific: row.scientific
+    scientific: row.scientific,
+    metadata: row.metadata && typeof row.metadata === 'object' && !Array.isArray(row.metadata) ? row.metadata : {}
   };
   const assetId = persistableDesignAssetId(row.design_asset_id);
   if (assetId) patch.design_asset_id = assetId;
@@ -610,7 +611,8 @@ function mapPlacementRow(row) {
     rotation: Number(row.rotation) || 0,
     zOrder: Number(row.z_order) || 0,
     label: row.label || null,
-    scientific: row.scientific || null
+    scientific: row.scientific || null,
+    metadata: row.metadata && typeof row.metadata === 'object' && !Array.isArray(row.metadata) ? { ...row.metadata } : {}
   };
 }
 
@@ -1183,7 +1185,11 @@ export function createGardenDesignHostPersistence(deps = {}) {
       rotation: Number(placement.rotation) || 0,
       z_order: Number(placement.zOrder != null ? placement.zOrder : 0) || 0,
       label: asNull(placement.label),
-      scientific: asNull(placement.scientific)
+      scientific: asNull(placement.scientific),
+      metadata:
+        placement.metadata && typeof placement.metadata === 'object' && !Array.isArray(placement.metadata)
+          ? { ...placement.metadata }
+          : {}
     };
     const persistableAssetId = persistableDesignAssetId(placement.designAssetId);
     if (persistableAssetId) row.design_asset_id = persistableAssetId;
@@ -1201,6 +1207,14 @@ export function createGardenDesignHostPersistence(deps = {}) {
         .maybeSingle();
       if (existingPlacement) {
         placementOperation = 'update';
+        patch.metadata = {
+          ...(existingPlacement.metadata && typeof existingPlacement.metadata === 'object' && !Array.isArray(existingPlacement.metadata)
+            ? existingPlacement.metadata
+            : {}),
+          ...(patch.metadata && typeof patch.metadata === 'object' && !Array.isArray(patch.metadata)
+            ? patch.metadata
+            : {})
+        };
         const updated = await auth.supabase
           .from('garden_design_placements')
           .update(patch)
