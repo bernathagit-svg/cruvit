@@ -11,6 +11,9 @@ export const DESIGN_ASSET_FACTORY_VERSION = '1.1.0';
 export const DESIGN_ASSET_FACTORY = Object.freeze({
   version: DESIGN_ASSET_FACTORY_VERSION,
   architectureReady: true,
+  catalogScaleOrchestrationImplemented: true,
+  productionFramingQaImplemented: true,
+  automaticPresentationSizingImplemented: true,
   autonomousGeneration: false,
   generateOnLookup: false,
   generateOnRender: false,
