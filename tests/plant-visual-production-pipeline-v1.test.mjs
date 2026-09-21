@@ -49,6 +49,10 @@ import {
   buildProductionRendererQaPreview,
   PRODUCTION_RENDERER_QA_PREVIEW_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/production-renderer-qa-preview-v1.js';
+import {
+  buildPlantVisualQaManifest,
+  QA_MANIFEST_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/plant-visual-qa-manifest-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -866,6 +870,82 @@ test('pilot production renderer handshake is resilient to early READY timing', (
   assert.match(runtime, /markRendererReady\('iframe-load'\)/);
   assert.match(runtime, /markRendererReady\('already-loaded'\)/);
   assert.match(runtime, /\[250, 750, 1500, 3000\]/);
+});
+
+test('QA manifest builder scales by data rows without per-plant code', () => {
+  const candidates = Array.from({ length: 120 }, (_, i) => ({
+    jobId: 'fixture-' + i,
+    canonicalSlug: 'plant-' + i,
+    objectKey: 'candidates/wave-100/plant-' + i + '/fixture-' + i + '.png',
+    sha256: String(i + 1).padStart(64, 'a').slice(0, 64),
+    bytes: 1000 + i
+  }));
+  const qaRows = candidates.map((row, i) => ({
+    jobId: row.jobId,
+    canonicalSlug: row.canonicalSlug,
+    visualForm: i % 2 ? 'shrub' : 'tree',
+    growthStage: 'mature',
+    phenology: 'vegetative',
+    technicalQA: 'PASS',
+    framingQA: 'PASS',
+    botanicalIdentityQA: i < 3 ? 'OWNER_REVIEW_REQUIRED' : 'PASS',
+    architectureQA: 'PASS',
+    growthStageQA: 'PASS',
+    phenologyStateQA: 'PASS',
+    inGardenQA: 'PASS',
+    technicalMetrics: {
+      width: 1024,
+      height: 1536,
+      bbox: { exists: true, minX: 50, minY: 80, maxX: 970, maxY: 1480 }
+    }
+  }));
+
+  const manifest = buildPlantVisualQaManifest({
+    manifestId: 'wave-100',
+    candidates,
+    qaRows
+  });
+
+  assert.equal(manifest.totalJobs, 120);
+  assert.equal(manifest.ownerReviewJobs, 3);
+  assert.equal(manifest.automaticPassJobs, 117);
+  assert.equal(manifest.rows.length, 120);
+  assert.equal(manifest.productionWrites, 0);
+  assert.equal(manifest.registryWrites, 0);
+  assert.equal(QA_MANIFEST_GOVERNANCE.perPlantCodeChangesForbidden, true);
+  assert.equal(QA_MANIFEST_GOVERNANCE.ownerReviewDefault, 'exceptions-only');
+});
+
+test('manifest-driven QA reader contains no canonical plant allowlist', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const reader = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-qa-candidate.mjs'), 'utf8');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'app.html'), 'utf8');
+
+  assert.match(reader, /plant-visual-qa-manifests/);
+  assert.match(reader, /JOB_NOT_IN_QA_MANIFEST/);
+  assert.doesNotMatch(reader, /banana__young__/);
+  assert.doesNotMatch(reader, /mango__mature__/);
+  assert.doesNotMatch(reader, /pineapple__/);
+
+  assert.match(runtime, /MANIFEST_ID/);
+  assert.match(runtime, /exception-only view/);
+  assert.doesNotMatch(runtime, /0 \/ 4 owner decisions/);
+  assert.match(app, /plantVisualQaManifest/);
+});
+
+test('saved placement anchors are registry data and not per-species renderer code', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const adapter = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/production-renderer-qa-preview-v1.js'), 'utf8');
+  const gd = fs.readFileSync(path.join(root, 'modules/garden-design/index.html'), 'utf8');
+  const anchors = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/garden-design-qa-saved-placement-anchor-registry-v1.json'), 'utf8'));
+
+  assert.match(adapter, /resolveCompatibleSavedPlacementAnchor/);
+  assert.match(adapter, /generic-saved-placement-anchor-registry/);
+  assert.equal(anchors.governance.codeChangePerPlantForbidden, true);
+  assert.doesNotMatch(adapter, /canonicalSlug === 'mango'/);
+  assert.doesNotMatch(adapter, /canonicalSlug === 'banana'/);
+  assert.match(gd, /gdApplyPlantSizeAuthorityVisual/);
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
