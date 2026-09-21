@@ -47,7 +47,8 @@ export const GD_HOST_TO_DESIGN = Object.freeze({
   UPDATE_PLACEMENT_RESULT: 'cruvit:garden-design-update-placement-result',
   DELETE_PLACEMENT_RESULT: 'cruvit:garden-design-delete-placement-result',
   SAVE_DESIGN_RESULT: 'cruvit:garden-design-save-design-result',
-  SAVE_SOURCE_MEDIA_RESULT: 'cruvit:garden-design-save-source-media-result'
+  SAVE_SOURCE_MEDIA_RESULT: 'cruvit:garden-design-save-source-media-result',
+  QA_PREVIEW: 'cruvit:garden-design-qa-preview'
 });
 
 export const GD_DESIGN_TO_HOST = Object.freeze({
