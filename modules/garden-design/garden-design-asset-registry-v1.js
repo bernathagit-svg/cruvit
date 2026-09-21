@@ -15,7 +15,7 @@ import {
 } from './garden-design-variant-policy-v1.js';
 
 export const GARDEN_DESIGN_ASSET_REGISTRY_VERSION = '1.0.0';
-export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg15';
+export const GARDEN_DESIGN_ASSET_REGISTRY_CACHE_TOKEN = '20260921reg6';
 
 export const DESIGN_ASSET_APPROVAL = Object.freeze({
   APPROVED: 'approved',
@@ -58,33 +58,9 @@ export function resolveManifestKeyToCanonical(manifestKey, map = MANIFEST_KEY_TO
   return slugify(map[key] || key);
 }
 
-export function productionFramingReady(variant) {
-  if (!variant || typeof variant !== 'object') return false;
-  const width = Number(variant.width);
-  const height = Number(variant.height);
-  const bbox = variant.alphaBBox;
-  if (!bbox || bbox.exists !== true || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
-    return variant.provenance && variant.provenance.generationMethod === 'prepared-cutout';
-  }
-  const minX = Number(bbox.minX);
-  const minY = Number(bbox.minY);
-  const maxX = Number(bbox.maxX);
-  const maxY = Number(bbox.maxY);
-  if (![minX, minY, maxX, maxY].every(Number.isFinite)) return false;
-  const topPad = minY / height;
-  const leftPad = minX / width;
-  const rightPad = (width - 1 - maxX) / width;
-  const bottomPad = (height - 1 - maxY) / height;
-  // Production cutouts need enough transparent breathing room to avoid a visibly chopped silhouette.
-  // Bottom can be tighter because the ground anchor intentionally sits near the canvas base.
-  return topPad >= 0.03 && leftPad >= 0.015 && rightPad >= 0.015 && bottomPad >= 0.005;
-}
-
 export function isUsableDesignVariant(variant) {
   if (!variant || typeof variant !== 'object') return false;
   if (variant.comingSoon === true) return false;
-  if (variant.productionApproved !== true) return false;
-  if (!productionFramingReady(variant)) return false;
   const status = lower(variant.status || variant.approvalStatus);
   const approval = lower(variant.approvalStatus || variant.status);
   if (
