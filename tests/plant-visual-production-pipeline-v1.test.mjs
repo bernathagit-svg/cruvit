@@ -41,6 +41,11 @@ import {
   deriveSiblingStateScaleAnchor,
   SIBLING_STATE_SCALE_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/in-garden-qa-scale-policy-v1.js';
+import {
+  resolvePlantSizeAuthorityReadiness,
+  SIZE_AUTHORITY_STATE,
+  PLANT_SIZE_AUTHORITY_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/plant-size-authority-readiness-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -690,6 +695,102 @@ test('mature wide-canopy tree QA uses full-aspect garden scene instead of narrow
   assert.doesNotMatch(runtime, /mature-mango-calibration/);
   assert.equal(anchor.observation.currentFiveColumnQaTooSmall, true);
   assert.equal(anchor.productionGardenDesignScaleChanged, false);
+});
+
+test('plant size authority is canonical-plant specific and morphology fallback is never botanical truth', () => {
+  const registry = {
+    slugToBotanicalTaxonId: {
+      mango: 'taxon:mango',
+      lemon: 'taxon:lemon'
+    },
+    records: [
+      {
+        botanicalTaxonId: 'taxon:mango',
+        scientificName: 'Mangifera indica',
+        growthStage: 'mature',
+        runtimeAuthority: 'RUNTIME_AUTHORITY_READY',
+        HEIGHT_SCALE_READY: true,
+        SPREAD_SCALE_READY: true,
+        normalizedRange: {
+          heightM: { min: 9, max: 18 },
+          spreadM: { min: 9, max: 15 }
+        }
+      },
+      {
+        botanicalTaxonId: 'taxon:lemon',
+        scientificName: 'Citrus limon',
+        growthStage: 'mature',
+        runtimeAuthority: 'RUNTIME_AUTHORITY_USER_CONTEXT_REQUIRED',
+        HEIGHT_SCALE_READY: true,
+        SPREAD_SCALE_READY: true,
+        normalizedRange: null,
+        sensitivity: {
+          cultivarSensitive: true,
+          rootstockSensitive: true,
+          maintainedForm: true
+        }
+      }
+    ]
+  };
+
+  const mango = resolvePlantSizeAuthorityReadiness(registry, {
+    canonicalSlug: 'mango',
+    visualForm: 'tree',
+    growthStage: 'mature'
+  });
+  const lemon = resolvePlantSizeAuthorityReadiness(registry, {
+    canonicalSlug: 'lemon',
+    visualForm: 'tree',
+    growthStage: 'mature'
+  });
+
+  assert.equal(mango.state, SIZE_AUTHORITY_STATE.READY);
+  assert.equal(mango.meterAccuracyClaimAllowed, true);
+  assert.equal(lemon.state, SIZE_AUTHORITY_STATE.CONTEXT_REQUIRED);
+  assert.equal(lemon.meterAccuracyClaimAllowed, false);
+  assert.notDeepEqual(mango.normalizedRange, lemon.normalizedRange);
+  assert.equal(PLANT_SIZE_AUTHORITY_GOVERNANCE.visualFormDefinesAbsoluteSize, false);
+  assert.equal(PLANT_SIZE_AUTHORITY_GOVERNANCE.crossCanonicalScaleCopyForbidden, true);
+});
+
+test('missing non-tree size evidence stays explicit instead of becoming a form-size guess', () => {
+  const registry = { slugToBotanicalTaxonId: {}, records: [] };
+  const banana = resolvePlantSizeAuthorityReadiness(registry, {
+    canonicalSlug: 'banana',
+    visualForm: 'herbaceous-clump',
+    growthStage: 'mature'
+  });
+  const hydrangea = resolvePlantSizeAuthorityReadiness(registry, {
+    canonicalSlug: 'hydrangea',
+    visualForm: 'shrub',
+    growthStage: 'mature'
+  });
+
+  assert.equal(banana.state, SIZE_AUTHORITY_STATE.EVIDENCE_GAP);
+  assert.equal(hydrangea.state, SIZE_AUTHORITY_STATE.EVIDENCE_GAP);
+  assert.equal(banana.morphologyFallbackIsAuthority, false);
+  assert.equal(hydrangea.morphologyFallbackIsAuthority, false);
+  assert.equal(PLANT_SIZE_AUTHORITY_GOVERNANCE.nonTreeFormsMustUseSameAuthorityModel, true);
+});
+
+test('every visual production job carries an explicit size authority state', () => {
+  const plan = buildPlantVisualProductionPlan([{
+    slug: 'fixture-tree',
+    canonicalSlug: 'fixture-tree',
+    scientific: 'Ficus fixturea',
+    tags: ['tree', 'evergreen'],
+    growth: 'Evergreen landscape tree',
+    identityScope: 'species'
+  }], { sets: [] }, {
+    ownedCanonicalSlugs: ['fixture-tree']
+  });
+
+  assert.ok(plan.jobs.length > 0);
+  for (const job of plan.jobs) {
+    assert.ok(job.sizeAuthorityPlan);
+    assert.equal(job.sizeAuthorityPlan.state, SIZE_AUTHORITY_STATE.NOT_EVALUATED);
+    assert.equal(job.sizeAuthorityPlan.morphologyFallbackIsAuthority, false);
+  }
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
