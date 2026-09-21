@@ -1,7 +1,7 @@
 /**
  * Proposed approved-asset metadata. Does not write the live Design Asset Registry.
  */
-export const REGISTRY_RECORD_VERSION = 'design-asset-factory-record-v1';
+export const REGISTRY_RECORD_VERSION = 'design-asset-factory-record-v1.1';
 export const STORAGE_PLAN = Object.freeze({
   binaries: 'object-storage-cdn',
   bucket: 'catalog-design-assets',
@@ -27,8 +27,11 @@ export function buildProposedRegistryRecord(job = {}, extras = {}) {
     rights: extras.rights || 'cruvit-owned',
     dimensions: extras.dimensions || null,
     alphaMetrics: extras.alphaMetrics || null,
+    framingQa: extras.framingQa || null,
+    presentationSizing: extras.presentationSizing || null,
     qaResult: extras.qaResult || null,
     approvalStatus: extras.approvalStatus || 'candidate',
+    productionApproved: extras.productionApproved === true,
     filePath: extras.filePath || null,
     storagePath: extras.storagePath || null,
     createdAt: extras.createdAt || new Date().toISOString(),
