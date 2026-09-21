@@ -300,7 +300,7 @@ test('production host/iframe load the versioned registry and re-index both arriv
   assert.match(app, /design-asset-registry-v1\.json\?v=' \+ token/);
   assert.match(app, /const token='20260921reg6'/);
   assert.match(app, /fetch\(href,\{cache:'no-store'\}\)/);
-  assert.match(app, /index\.html\?v=20260921ownedrepair1/);
+  assert.match(app, /index\.html\?v=20260921ownedboot1/);
   assert.match(app, /garden-design-asset-registry-v1\.js\?v=20260921reg6/);
   assert.match(app, /garden-design-server-persistence-v1\.js\?v=20260920id1/);
   assert.match(gd, /garden-design-asset-registry-v1\.js\?v=20260921reg6/);

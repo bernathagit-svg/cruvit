@@ -2339,7 +2339,9 @@ function gdAssetDiagSnapshot(reason) {
     lastImageError: gdAssetDiagLastError,
     registryApiPresent: !!window.CruvitGardenDesignAssetRegistry,
     indexFnType: window.CruvitGardenDesignAssetRegistry ? typeof window.CruvitGardenDesignAssetRegistry.indexDesignAssetRegistry : 'missing',
-    registryBootstrap: window.__gdRegistryBootstrap || 'not-started'
+    registryBootstrap: window.__gdRegistryBootstrap || 'not-started',
+    ownedApiPresent: !!window.CruvitGardenDesignOwnedGarden,
+    ownedBootstrap: window.__gdOwnedGardenBootstrap || 'not-started'
   };
 }
 
@@ -2353,6 +2355,7 @@ function gdRenderAssetDiag(reason) {
     'registrySets: ' + String(s.registrySets) + ' · indexHasMango: ' + String(s.indexHasMango) + '\n' +
     'registryApiPresent: ' + String(s.registryApiPresent) + ' · indexFnType: ' + String(s.indexFnType) + '\n' +
     'registryBootstrap: ' + String(s.registryBootstrap) + '\n' +
+    'ownedApiPresent: ' + String(s.ownedApiPresent) + ' · ownedBootstrap: ' + String(s.ownedBootstrap) + '\n' +
     'ownedSlug: ' + String(s.ownedCanonicalSlug) + '\n' +
     'ownedId: ' + String(s.ownedGardenPlantId) + '\n' +
     'layerSlug: ' + String(s.layerCanonicalSlug) + '\n' +
@@ -3342,6 +3345,44 @@ function gdBuildPlantLayerInnerHtml(layer) {
   return '<div class="gd-plant-visual ' + sizeClass + '"><div class="' + wrapClass + '"' + wrapStyle + '>' + gdBuildPlantLayerVisualInner(layer, resolved) + '</div><div class="gd-plant-shadow"></div></div>';
 }
 
+function gdRepairOwnedLayerIdentityFromContext(layer) {
+  if (!layer || !layer.gardenPlantId) return false;
+  const owned = gdOwnedPlantsFromContext();
+  const match = owned.find(function(p) {
+    return p && p.gardenPlantId && String(p.gardenPlantId) === String(layer.gardenPlantId);
+  });
+  if (!match) return false;
+  let changed = false;
+  const authoritativeSlug = match.canonicalSlug || match.profileSlug || null;
+  if (authoritativeSlug && layer.canonicalSlug !== authoritativeSlug) {
+    layer.canonicalSlug = authoritativeSlug;
+    layer.slug = authoritativeSlug;
+    changed = true;
+  }
+  if (match.scientific && layer.species !== match.scientific) {
+    layer.species = match.scientific;
+    changed = true;
+  }
+  if (match.areaId && layer.areaId !== match.areaId) {
+    layer.areaId = match.areaId;
+    changed = true;
+  }
+  if (match.gardenProfileId && layer.gardenProfileId !== match.gardenProfileId) {
+    layer.gardenProfileId = match.gardenProfileId;
+    changed = true;
+  }
+  if (changed) {
+    delete layer.assetKey;
+    delete layer.variantId;
+    delete layer.designAssetId;
+    delete layer.visualFallback;
+    delete layer.architectureMode;
+    delete layer.visualForm;
+    delete layer.groundAnchor;
+  }
+  return changed;
+}
+
 function renderPlantLayers() {
   const host = document.getElementById('plantLayersHost');
   if (!host || !overlayPlacementActive) return;
@@ -3351,6 +3392,7 @@ function renderPlantLayers() {
     if (selected && !gdLayerShowsVisualPreview(selected)) selectedPlantLayerId = null;
   }
   plantLayers.slice().sort((a, b) => a.zIndex - b.zIndex).forEach(layer => {
+    gdRepairOwnedLayerIdentityFromContext(layer);
     const el = document.createElement('div');
     el.className = 'gd-plant-layer' + (layer.id === selectedPlantLayerId ? ' selected' : '');
     el.dataset.layerId = layer.id;
@@ -5921,10 +5963,33 @@ The plants array MUST match the exact counts specified above.`}]);
       });
   })();
   </script>
+  <script>
+  (function(){
+    window.__gdOwnedGardenBootstrap = 'starting';
+    import('./garden-design-owned-garden-v1.js?v=20260921ownedapi1')
+      .then(function(mod) {
+        const api = mod && (mod.default || mod);
+        if (!api || typeof api.mapLayerToHostPlacementPayload !== 'function' || typeof api.collapseAutosaveOps !== 'function') {
+          throw new Error('owned-garden-module-api-invalid');
+        }
+        window.CruvitGardenDesignOwnedGarden = api;
+        window.__gdOwnedGardenBootstrap = 'api-bound';
+        if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('owned-api-bound');
+        if (Array.isArray(plantLayers) && plantLayers.length && gdOwnedGardenContext) {
+          plantLayers.forEach(function(layer){ gdRepairOwnedLayerIdentityFromContext(layer); });
+          renderPlantLayers();
+          gdPersistAllVisiblePlacements();
+        }
+      })
+      .catch(function(err) {
+        window.__gdOwnedGardenBootstrap = 'error:' + String(err && err.message ? err.message : err);
+        if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('owned-dynamic-import-error');
+      });
+  })();
+  </script>
   <script type="module">
     import './garden-design-variant-policy-v1.js?v=20260917a';
     import './garden-design-variant-selection-policy-v1.js?v=20260917a';
-    import './garden-design-owned-garden-v1.js?v=20260921reconcile2';
     import {
       GARDEN_SIZE_AUTHORITY_ACTIVATION,
       mangoOwnerPreferredRangePosition,
