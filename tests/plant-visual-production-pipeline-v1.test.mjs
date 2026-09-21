@@ -483,10 +483,10 @@ test('pilot in-garden QA uses bounded small-medium-large review scales without m
   assert.match(runtime, /reviewScene\(row, 'medium'\)/);
   assert.match(runtime, /reviewScene\(row, 'large'\)/);
   assert.doesNotMatch(runtime, /data-size-scenario="NATURAL_MATURE"/);
-  assert.match(page, /review-cutout\.small\{max-height:34%\}/);
-  assert.match(page, /review-cutout\.medium\{max-height:54%\}/);
-  assert.match(page, /review-cutout\.large\{max-height:78%\}/);
-  assert.match(page, /max-width:80%/);
+  assert.match(page, /review-plant-box\.small\{height:34%\}/);
+  assert.match(page, /review-plant-box\.medium\{height:54%\}/);
+  assert.match(page, /review-plant-box\.large\{height:78%\}/);
+  assert.match(page, /review-plant-box\{[^}]*width:80%/);
   assert.equal(rootCause.decision.clippingAllowed, false);
   assert.equal(rootCause.decision.meterAccuracyClaimed, false);
   assert.equal(rootCause.decision.productionGardenDesignScaleChanged, false);
