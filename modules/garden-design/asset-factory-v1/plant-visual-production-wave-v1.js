@@ -85,7 +85,12 @@ export function partitionPlantVisualWaves(jobs = [], options = {}) {
 
 export function buildPlantVisualProductionWavePlan(plants = [], registry = {}, signals = {}, options = {}) {
   const productionPlan = buildPlantVisualProductionPlan(plants, registry, signals, {
-    autoApprovalEnabled: false
+    autoApprovalEnabled: false,
+    botanicalSizeAuthorityRegistry: options.botanicalSizeAuthorityRegistry || null,
+    ownerScaleCalibration: options.ownerScaleCalibration || null,
+    sizeContextResolvedByJobId: options.sizeContextResolvedByJobId || null,
+    sizeContextResolvedBySlug: options.sizeContextResolvedBySlug || null,
+    qaScaleCalibrationStatusByFormStage: options.qaScaleCalibrationStatusByFormStage || null
   });
   const waves = partitionPlantVisualWaves(productionPlan.jobs, {
     signals,
