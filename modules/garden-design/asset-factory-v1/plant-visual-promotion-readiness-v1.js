@@ -54,7 +54,9 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
   const provenance = provenanceReady(row);
 
   const candidate = {
-    assetId: row.assetId || row.jobId,
+    assetId:
+      row.assetId
+      || (row.jobId + '__' + String(row.sha256 || '').slice(0, 12)),
     job: {
       jobId: row.jobId,
       canonicalSlug: row.canonicalSlug,
@@ -136,7 +138,9 @@ export function evaluateManifestRowPromotionReadiness(row = {}) {
     growthStage: row.growthStage,
     architectureMode: row.architectureMode || row.visualForm || 'default',
     phenology: row.phenology,
-    assetId: row.assetId || row.jobId,
+    assetId:
+      row.assetId
+      || (row.jobId + '__' + String(row.sha256 || '').slice(0, 12)),
     sha256: row.sha256
   });
 
