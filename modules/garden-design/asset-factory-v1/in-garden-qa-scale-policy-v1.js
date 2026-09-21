@@ -198,15 +198,10 @@ export function qaScaleBandSpec(band) {
   return QA_SCALE_BANDS[id] || QA_SCALE_BANDS.MEDIUM;
 }
 
-export const PILOT_SCALE_CALIBRATION = Object.freeze({
-  'banana__young__default__vegetative__v1': Object.freeze({ band: 'large' }),
-  'mango__young__tree__vegetative__v1': Object.freeze({ band: 'large' }),
-  'pineapple__mature__default__fruiting__v1': Object.freeze({ band: 'medium' })
-});
-
 export const QA_SCALE_POLICY_GOVERNANCE = Object.freeze({
   perSpeciesHardcodingForbidden: true,
   exactJobOwnerOverridesAllowed: true,
+  exactJobOwnerOverridesMustComeFromData: true,
   promotePilotLearningToFormStageRuleOnlyAfterCrossTaxonValidation: true,
   arbitraryUniversalThresholdForbidden: true,
   phenologyAloneMayNotChooseScale: true,
