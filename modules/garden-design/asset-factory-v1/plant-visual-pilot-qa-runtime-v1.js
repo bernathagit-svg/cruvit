@@ -91,16 +91,16 @@ function reviewFields(row) {
   ];
 }
 
-function bboxAttr(row) {
-  const m = row.technicalMetrics || {};
-  const b = m.bbox || {};
-  const width = Number(m.width) || 1024;
-  const height = Number(m.height) || 1536;
-  if (!b.exists) return '';
-  return [
-    'data-canvas="' + width + ',' + height + '"',
-    'data-bbox="' + [b.minX,b.minY,b.maxX,b.maxY].join(',') + '"'
-  ].join(' ');
+function reviewScene(row, scale) {
+  return `<div class="review-scale">
+    <h4>${esc(scale[0].toUpperCase() + scale.slice(1))}</h4>
+    <div class="scene real review-${esc(scale)}" data-role="garden-scene" data-review-scale="${esc(scale)}">
+      <img class="cutout review-cutout ${esc(scale)}"
+        src="${esc(IMAGE_URL(row.jobId))}"
+        alt="${esc(rowTitle(row))} — ${esc(scale)} review scale">
+      <span class="ground-shadow" aria-hidden="true"></span>
+    </div>
+  </div>`;
 }
 
 function sectionHtml(row, index) {
@@ -112,34 +112,25 @@ function sectionHtml(row, index) {
     <h2>${index + 1}. ${esc(rowTitle(row))}</h2>
     <p class="meta">${esc(row.scientific)} · ${esc(row.architectureMode)} · ${esc(row.growthStage)} · ${esc(row.phenology)}</p>
     ${sourceNote}
-    <div class="grid">
+    <div class="grid native-grid">
       <div class="card">
         <h3>Native candidate</h3>
         <div class="native checkerboard"><img src="${esc(IMAGE_URL(row.jobId))}" alt="${esc(rowTitle(row))} candidate"></div>
       </div>
       <div class="card">
-        <h3>Real Garden preview</h3>
-        <div class="scene real physical-v1-scene" data-role="garden-scene"
-          data-canonical-slug="${esc(row.canonicalSlug)}"
-          data-visual-form="${esc(row.canonicalSlug === 'pineapple' ? 'rosette' : row.canonicalSlug === 'banana' ? 'herbaceous-clump' : 'tree')}"
-          data-architecture-mode="${esc(row.architectureMode)}"
-          data-growth-stage="${esc(row.growthStage)}"
-          data-phenology="${esc(row.phenology)}"
-          data-size-scenario="NATURAL_MATURE"
-          data-lock-scale-mode="ESTIMATED"
-          data-lock-depth="middle"
-          ${bboxAttr(row)}>
-          <div class="placement" data-role="placement">
-            <img class="cutout" src="${esc(IMAGE_URL(row.jobId))}" alt="${esc(rowTitle(row))} in garden">
-            <span class="ground-shadow" aria-hidden="true"></span>
-          </div>
+        <h3>Real Garden — bounded visual QA scales</h3>
+        <p class="small">Small / Medium / Large are review scales only. They are not meter-accurate botanical sizes and never permit clipping.</p>
+        <div class="review-scales">
+          ${reviewScene(row, 'small')}
+          ${reviewScene(row, 'medium')}
+          ${reviewScene(row, 'large')}
         </div>
       </div>
     </div>
     <div class="qa">
       <h3>QA</h3>
       <ul>${reviewFields(row).map(([k,v]) => '<li><strong>'+esc(k)+'</strong>: '+esc(v)+'</li>').join('')}</ul>
-      <p class="small">PASS here means you visually confirm the generated plant matches the intended botanical identity, architecture, growth stage and phenology, and looks natural in the real saved Garden photo. It does not write production.</p>
+      <p class="small">Review all three garden scales for perspective, ground contact, sticker look, halo, sharpness match, color/tonal match and silhouette. PASS does not assert meter-accurate size and does not write production.</p>
     </div>
     <div class="choices">
       <button data-owner-choice="PASS_OWNER_VISUAL_GATES" data-job-id="${esc(row.jobId)}">PASS visual gates</button>
@@ -151,29 +142,7 @@ function sectionHtml(row, index) {
 }
 
 async function applyProductionScale() {
-  try {
-    const [{ applyProductionPhysicalScenes, seedMangoGardenDesignPreference }, { PHOTO_SCALE_STATE }] =
-      await Promise.all([
-        import('./physical-scale-foundation-v1-runtime.js'),
-        import('./physical-scale-foundation-v1.js')
-      ]);
-    seedMangoGardenDesignPreference('pilot-qa-real-garden');
-    let registry = null;
-    try {
-      const res = await fetch('../../data/catalog/botanical-size-authority-v1.json', { cache: 'no-store' });
-      if (res.ok) registry = await res.json();
-    } catch {
-      registry = null;
-    }
-    applyProductionPhysicalScenes(document, {
-      authorityRegistry: registry,
-      photoScaleState: PHOTO_SCALE_STATE.NOT_CALIBRATED
-    });
-    return true;
-  } catch (err) {
-    console.warn('Pilot QA physical-scale enhancement unavailable', err);
-    return false;
-  }
+  return false;
 }
 
 function applySignedGardenUrl(url) {
@@ -186,7 +155,6 @@ function applySignedGardenUrl(url) {
     banner.className = 'ok';
     banner.textContent = 'Real saved Garden Design source photo loaded via temporary signed URL. The photo is not copied into the repo or R2.';
   }
-  applyProductionScale();
   return true;
 }
 
@@ -207,7 +175,6 @@ async function boot() {
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
     status.className = data.rows.every((r) => r.technicalQA === 'PASS' && r.framingQA === 'PASS') ? 'ok' : 'warn';
     wireChoices();
-    await applyProductionScale();
   } catch (err) {
     status.textContent = 'QA load failed: ' + String(err?.message || err);
     status.className = 'warn';
