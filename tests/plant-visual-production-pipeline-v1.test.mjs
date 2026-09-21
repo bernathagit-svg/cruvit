@@ -600,6 +600,27 @@ test('in-garden QA scale policy is bounded, non-meter and cautious for unknown m
   assert.equal(QA_SCALE_POLICY_GOVERNANCE.productionPhysicalScaleSeparate, true);
 });
 
+test('every plant visual production job receives an in-garden QA scale plan', () => {
+  const plants = [{
+    slug: 'fixture-tree',
+    canonicalSlug: 'fixture-tree',
+    scientific: 'Ficus fixturea',
+    tags: ['tree', 'evergreen'],
+    growth: 'Evergreen landscape tree',
+    identityScope: 'species'
+  }];
+  const plan = buildPlantVisualProductionPlan(plants, { sets: [] }, {
+    ownedCanonicalSlugs: ['fixture-tree']
+  });
+  assert.ok(plan.jobs.length > 0);
+  for (const job of plan.jobs) {
+    assert.ok(job.inGardenQaScalePlan);
+    assert.ok(job.inGardenQaScalePlan.recommendedBand);
+    assert.equal(job.inGardenQaScalePlan.clippingAllowed, false);
+    assert.equal(job.inGardenQaScalePlan.meterAccuracyClaimed, false);
+  }
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
