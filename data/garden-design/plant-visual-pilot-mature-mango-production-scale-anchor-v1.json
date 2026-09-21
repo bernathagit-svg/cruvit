@@ -1,0 +1,20 @@
+{
+  "contract": "plant-visual-pilot-mature-mango-production-scale-anchor-v1",
+  "generatedAt": "2026-09-21",
+  "jobId": "mango__mature__tree__fruiting__v1",
+  "ownerVerdict": "REFERENCE_SCALE_ACCEPTED",
+  "reference": "existing Garden Design placement shown by owner on the real saved Garden photo",
+  "observation": {
+    "currentFiveColumnQaTooSmall": true,
+    "rootCause": "Wide-canopy tree is width-constrained by narrow QA cards before the intended height band is reached.",
+    "preferredPresentation": "Review on the original Garden photo aspect ratio / full-width scene, not five narrow columns."
+  },
+  "policyLearning": [
+    "QA scale must be evaluated against the original photo aspect ratio.",
+    "For wide-canopy forms, width and height constraints must be evaluated together using the visible alpha bbox aspect ratio.",
+    "A nominal height band is invalid if a narrow review card causes width to become the active limiter.",
+    "Mature tree review should use a full-aspect scene with selectable scale, not multi-column thumbnails."
+  ],
+  "productionGardenDesignScaleChanged": false,
+  "botanicalMeterTruthChanged": false
+}
