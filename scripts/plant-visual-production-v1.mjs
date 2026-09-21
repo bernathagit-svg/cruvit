@@ -1,27 +1,29 @@
 /**
- * CRUVIT Plant Visual Production Pipeline V1 CLI.
+ * Plant Visual Production Pipeline V1 CLI.
  *
- * Default behavior is planning-only and zero network.
- * Paid generation requires a matching owner run approval:
+ * Default:
+ *   node scripts/plant-visual-production-v1.mjs --dry-run
+ *
+ * Paid candidate generation requires all of:
  *   --run-id=<id>
- *   --approve-envelope=<id>
- *   --owner-approve-run=<id>
- *   --execute-production-run=<id>
- * plus explicit max-jobs/max-calls/max-spend/allow-paid-calls.
+ *   --approve-envelope=<same id>
+ *   --owner-approve-run=<same id>
+ *   --execute-production-run=<same id>
+ *   --max-jobs=N --max-calls=N --max-spend-usd=X --allow-paid-calls=N
  *
- * This CLI never writes the live production registry.
+ * This script never writes the live production registry.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 import {
   loadCanonicalCatalog,
   loadOwnedGardenSignals,
   designSurfacedSlugs
 } from '../modules/garden-design/asset-factory-v1/catalog-source-v1.js';
 import {
-  buildPlantVisualProductionPlan
+  buildPlantVisualProductionPlan,
+  summarizePlantVisualPipeline
 } from '../modules/garden-design/asset-factory-v1/plant-visual-production-pipeline-v1.js';
 import {
   executePlantVisualProductionRun,
@@ -30,9 +32,9 @@ import {
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
-const OUT_DIR = path.join(ROOT, 'data', 'garden-design', 'plant-visual-production-pipeline-v1');
+const REPORT_DIR = path.join(ROOT, 'data', 'garden-design', 'plant-visual-production-v1');
 
-function readJson(rel, fallback) {
+function loadJson(rel, fallback = null) {
   const full = path.join(ROOT, rel);
   if (!fs.existsSync(full)) return fallback;
   return JSON.parse(fs.readFileSync(full, 'utf8').replace(/^\uFEFF/, ''));
@@ -42,81 +44,104 @@ function readKeyRaw() {
   return String(process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '').trim();
 }
 
-function buildInputs() {
+function writeJson(name, value) {
+  fs.mkdirSync(REPORT_DIR, { recursive: true });
+  const abs = path.join(REPORT_DIR, name);
+  fs.writeFileSync(abs, JSON.stringify(value, null, 2) + '\n');
+  return path.relative(ROOT, abs).replace(/\\/g, '/');
+}
+
+export function buildCurrentPlantVisualPlan() {
   const catalog = loadCanonicalCatalog(ROOT);
-  const registry = readJson(
-    path.join('modules', 'garden-design', 'assets', 'plants', 'design-asset-registry-v1.json'),
-    { sets: [] }
-  );
-  const ownedDoc = readJson(path.join('data', 'garden-os', 'mojstrana-owned-plants-v1.json'), {
-    garden_plants: []
-  });
-  const owned = loadOwnedGardenSignals(ownedDoc);
+  const registry =
+    loadJson('modules/garden-design/assets/plants/design-asset-registry-v1.json', { sets: [] }) ||
+    { sets: [] };
+  const owned =
+    loadJson('data/garden-os/mojstrana-owned-plants-v1.json', { garden_plants: [] }) ||
+    { garden_plants: [] };
+  const ownedSignals = loadOwnedGardenSignals(owned);
   const signals = {
-    ownedCanonicalSlugs: owned.ownedCanonicalSlugs,
+    ownedCanonicalSlugs: ownedSignals.ownedCanonicalSlugs,
     highFrequencyRecommendedSlugs: [],
     gardenDesignSurfacedSlugs: designSurfacedSlugs(registry),
     portfolioLaunchSlugs: []
   };
-  return { catalog, registry, owned, signals };
+  const plan = buildPlantVisualProductionPlan(catalog.plants, registry, signals, {
+    autoApprovalEnabled: false
+  });
+  return {
+    catalog,
+    registry,
+    signals,
+    plan,
+    ownerWorkloadTarget: 'exceptions-only',
+    generationOnLookup: false,
+    generationOnRender: false
+  };
 }
 
-export async function runPlantVisualPipeline(argv = process.argv.slice(2), options = {}) {
-  const { catalog, registry, owned, signals } = buildInputs();
-  const plan = buildPlantVisualProductionPlan(catalog.plants, registry, signals);
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(
-    path.join(OUT_DIR, 'latest-plan.json'),
-    `${JSON.stringify({
-      generatedAt: new Date().toISOString(),
-      catalogCount: catalog.plants.length,
-      ownedGarden: owned.gardenLabel,
-      ...plan
-    }, null, 2)}\n`
-  );
-
+export async function main(argv = process.argv.slice(2)) {
+  const current = buildCurrentPlantVisualPlan();
   const approval = parsePlantVisualProductionApproval(argv);
+
   if (!approval.ownerApprovedThisRunOnly) {
-    return {
-      mode: 'PLAN_ONLY',
-      networkRequests: 0,
+    const report = {
+      generatedAt: new Date().toISOString(),
+      mode: 'DRY_RUN_DEFAULT_DENY',
+      plan: current.plan,
+      summary: summarizePlantVisualPipeline(current.plan, []),
+      signals: current.signals,
       imagesGenerated: 0,
-      productionRegistryWritten: false,
-      planPath: 'data/garden-design/plant-visual-production-pipeline-v1/latest-plan.json',
-      plan
+      attemptedCalls: 0,
+      actualSpendUsd: 0,
+      productionRegistryChanged: false,
+      note:
+        'Planning only. To generate candidates, supply a fresh exact owner-approved spend envelope for this run.'
     };
+    const reportPath = writeJson('latest-plan.json', report);
+    console.log(JSON.stringify({
+      blocked: true,
+      reason: 'PAID_SPEND_DENIED',
+      reportPath,
+      requiredGapCount: current.plan.requiredGapCount,
+      blockedBeforeSpend: current.plan.blockedCount,
+      imagesGenerated: 0,
+      productionRegistryChanged: false
+    }, null, 2));
+    return 0;
   }
 
   const result = await executePlantVisualProductionRun(argv, {
-    root: options.root || ROOT,
-    plants: catalog.plants,
-    registry,
-    signals,
-    apiKeyRaw: options.apiKeyRaw ?? readKeyRaw(),
-    writeFiles: options.writeFiles !== false,
-    realSavedGardenPhotoReady: options.realSavedGardenPhotoReady === true,
-    inGardenQaByJobId: options.inGardenQaByJobId || {}
+    root: ROOT,
+    plants: current.catalog.plants,
+    registry: current.registry,
+    signals: current.signals,
+    apiKeyRaw: readKeyRaw(),
+    realSavedGardenPhotoReady: false,
+    writeFiles: true
   });
-  fs.writeFileSync(
-    path.join(OUT_DIR, 'latest-run.json'),
-    `${JSON.stringify(result, null, 2)}\n`
-  );
-  return {
-    mode: 'OWNER_APPROVED_GENERATION_RUN',
-    planPath: 'data/garden-design/plant-visual-production-pipeline-v1/latest-plan.json',
-    runPath: 'data/garden-design/plant-visual-production-pipeline-v1/latest-run.json',
+  const reportPath = writeJson('latest-execution.json', {
+    generatedAt: new Date().toISOString(),
     ...result
-  };
+  });
+  console.log(JSON.stringify({
+    blocked: result.blocked,
+    reason: result.reason,
+    reportPath,
+    attemptedCalls: result.attemptedCalls,
+    imagesGenerated: result.imagesGenerated,
+    actualSpendUsd: result.actualSpendUsd,
+    productionRegistryChanged: result.productionRegistryChanged
+  }, null, 2));
+  return result.blocked ? 1 : 0;
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
-  runPlantVisualPipeline()
-    .then((result) => {
-      console.log(JSON.stringify(result, null, 2));
-    })
-    .catch((err) => {
-      console.error(err && err.stack ? err.stack : String(err));
-      process.exitCode = 1;
-    });
+  main().then((code) => {
+    process.exitCode = code;
+  }).catch((err) => {
+    console.error(err && err.stack ? err.stack : err);
+    process.exitCode = 1;
+  });
 }
