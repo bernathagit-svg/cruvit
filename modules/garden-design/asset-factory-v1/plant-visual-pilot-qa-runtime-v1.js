@@ -5,7 +5,7 @@ import {
 } from './physical-scale-foundation-v1-runtime.js';
 import { PHOTO_SCALE_STATE } from './physical-scale-foundation-v1.js';
 
-const SUMMARY_URL = '/.netlify/functions/plant-visual-pilot-qa?action=summary';
+const SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921a';
 const IMAGE_URL = (jobId) =>
   '/.netlify/functions/plant-visual-pilot-qa?job=' + encodeURIComponent(jobId);
 const STORAGE_KEY = 'cruvit:plant-visual-pilot-qa-v1';
@@ -195,7 +195,7 @@ async function boot() {
   try {
     const res = await fetch(SUMMARY_URL, { cache: 'no-store' });
     const data = await res.json();
-    if (!res.ok || !data || !Array.isArray(data.rows)) throw new Error(data?.code || 'QA_SUMMARY_LOAD_FAILED');
+    if (!res.ok || !data || !Array.isArray(data.rows)) throw new Error(data?.verdict || data?.code || 'QA_SUMMARY_LOAD_FAILED');
     const root = document.getElementById('qaRows');
     root.innerHTML = data.rows.map(sectionHtml).join('');
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
