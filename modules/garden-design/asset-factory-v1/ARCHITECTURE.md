@@ -97,3 +97,43 @@ Olive/Mango paid-pilot-2 calibrates prompt, model, native-alpha, QA thresholds, 
 ## DB changes
 
 None applied. Proposed later: `catalog_design_asset_jobs` (not created). Optional column expansion of `catalog_design_assets` at APPROVED publish time.
+
+
+## Plant Visual Production Pipeline V1 — production path
+
+The scalable production path is now implemented as orchestration over the existing factory components:
+
+`canonical catalog → required visual states → gap detection → quality/prompt plan → explicit spend envelope → image generation → technical QA → framing QA → botanical/state QA → in-garden QA → presentation sizing → promotion gate → immutable publish → registry activation`.
+
+### New invariants learned from the Mango/Banana production incident
+
+1. **Asset quality and renderer sizing are separate concerns.** Never regenerate a good source image to solve a runtime-size problem.
+2. **Source resolution is preserved.** Presentation size is metadata; production binaries are not resampled merely to look larger in Garden Design.
+3. **Framing is a mandatory production gate.** Alpha bounds must preserve transparent breathing room above and beside the specimen. A cutout that visually touches/crosses the canvas edge is rejected/regenerated before promotion.
+4. **Presentation size is derived, not handwritten per species.** `presentation-sizing-v1` uses `visualForm + alphaBBox + source dimensions`. It contains no canonical-slug switch. Trusted physical-size authority may override it at runtime.
+5. **One canonical Design Asset powers picker + canvas.** The same resolved asset identity is used by thumbnails, placement canvas, save/reload, and future variants.
+6. **Generation never happens on lookup/render.** Paid generation exists only in the owner-approved production executor and remains default-deny.
+7. **New production records carry `productionApproved:true`.** Candidate generation success is never equivalent to production approval.
+8. **Owner workload target is exceptions-only.** Routine passes are intended to auto-flow after the auto-approval calibration gate is explicitly enabled; ambiguous identity, QA conflict, repeated failure, or unusual cost remains Owner Review.
+
+### Generic paid generation executor
+
+`plant-visual-production-execute-v1.js` is the reusable generation path for future waves. It only allows network when the same run id is present in all three explicit run controls:
+
+- `--run-id=<id>`
+- `--approve-envelope=<id>`
+- `--owner-approve-run=<id>`
+- `--execute-production-run=<id>`
+
+and the ordinary max-jobs / max-calls / max-spend / paid-call limits are also present.
+
+Generated files are **candidates only** under `assets/plants/candidates/plant-visual-production-v1/<runId>/`. The executor never writes the live production registry.
+
+### Presentation sizing calibration
+
+`presentation-sizing-v1` uses normalized alpha bounds so transparent padding does not make a plant look artificially small. The current profile calibration reproduces the owner-approved Mango/Banana visual sizing from the production incident without plant-name rules:
+
+- Mango-like tree alpha bounds → ~480 px baseline at the 1200 px reference scene.
+- Banana-like herbaceous clump alpha bounds → ~405 px baseline at the same reference scene.
+
+These are neutral presentation baselines, not botanical meter claims. Physical-size authority remains the higher-level source when trusted evidence exists.
