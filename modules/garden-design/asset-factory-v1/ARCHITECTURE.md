@@ -137,3 +137,41 @@ Generated files are **candidates only** under `assets/plants/candidates/plant-vi
 - Banana-like herbaceous clump alpha bounds → ~405 px baseline at the same reference scene.
 
 These are neutral presentation baselines, not botanical meter claims. Physical-size authority remains the higher-level source when trusted evidence exists.
+
+
+## Plant Visual Production Pipeline V1 (implemented orchestration)
+
+The factory now has a single orchestration contract for future catalog-scale visual production:
+
+canonical identity
+→ required visual states
+→ coverage gap detector
+→ morphology-aware quality/prompt plan
+→ explicit owner spend envelope
+→ transparent PNG generation
+→ technical QA
+→ **production framing QA**
+→ botanical / state / architecture QA
+→ real-garden QA
+→ **automatic presentation-size calibration**
+→ promotion decision
+→ immutable publish
+→ registry activation.
+
+Two rules are locked from the Mango/Banana production incident:
+
+1. **Asset quality and rendering size are separate authorities.** Approved source binaries are never resized/re-encoded merely to change their Garden Design display size.
+2. **No generic tiny wrapper fallback for production assets.** Presentation sizing is derived from alpha bounds + visual form; trusted physical-size authority may later override it.
+
+New mandatory gates:
+- `production-framing-qa-v1`: rejects top/side crop, insufficient transparent margin, and subjects that are too small in their generation canvas.
+- `presentation-sizing-v1`: derives `baseWidthPx` from the visible alpha bounds and visual-form profile instead of hand-entering a number for every future plant.
+- `plant-visual-production-pipeline-v1`: combines gap detection, quality planning, QA, promotion, and immutable registry record construction.
+- `plant-visual-production-execute-v1`: generic default-deny paid executor. It creates **candidates only** and never writes the live registry.
+
+### Scale target
+
+Hundreds of plants must use exception-only owner review. Routine jobs should eventually flow:
+`AUTO_PASS` / `OWNER_REVIEW` / `REGENERATE` / `REJECT` / `BLOCKED`.
+
+Auto-approval remains disabled until enough calibrated evidence exists. Paid generation remains explicit-envelope-only; lookup/render never generates.
