@@ -25,10 +25,41 @@ export const PLANT_VISUAL_CANDIDATE_DIR = 'modules/garden-design/assets/plants/c
 
 function strFlag(args, name) {
   for (const arg of args || []) {
-    const match = new RegExp(`^--${name}=(.+)$`).exec(String(arg));
+    const match = new RegExp(`^--${name}=(.+)/**
+ * Generic owner-approved paid executor for Plant Visual Production Pipeline V1.
+ *
+ * Default deny. It may generate candidate PNGs only when the current run has an
+ * explicit matching owner approval envelope. It never writes the live registry.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { parseSpendEnvelope } from './spend-envelope-v1.js';
+import { actualSpendUsdFromUsage } from './total-api-cost-v1.js';
+import { postOpenAiImagesJson, OPENAI_IMAGES_GENERATIONS_URL } from './openai-images-http-v1.js';
+import { inspectTechnicalQa } from './technical-qa-v1.js';
+import { assessIdentityQa } from './identity-qa-v1.js';
+import { assessInGardenQa } from './in-garden-qa-v1.js';
+import { assessProductionFramingQa } from './production-framing-qa-v1.js';
+import {
+  buildPlantVisualProductionPlan,
+  evaluatePlantVisualCandidate,
+  summarizePlantVisualPipeline
+} from './plant-visual-production-pipeline-v1.js';
+
+export const PLANT_VISUAL_PRODUCTION_EXECUTOR_VERSION = 'plant-visual-production-execute-v1';
+export const PLANT_VISUAL_CANDIDATE_DIR = 'modules/garden-design/assets/plants/candidates/plant-visual-production-v1';
+
+).exec(String(arg));
     if (match) return String(match[1]);
   }
   return '';
+}
+
+function listFlag(args, name) {
+  const raw = strFlag(args, name);
+  if (!raw) return [];
+  return [...new Set(raw.split(',').map((value) => value.trim()).filter(Boolean))];
 }
 
 function safeSegment(value) {
@@ -43,6 +74,7 @@ export function parsePlantVisualProductionApproval(argv = []) {
   const ownerApproveRun = strFlag(argv, 'owner-approve-run');
   const approveEnvelope = strFlag(argv, 'approve-envelope');
   const executeProductionRun = strFlag(argv, 'execute-production-run');
+  const jobIds = listFlag(argv, 'job-ids');
   const matched =
     envelope.defaultDeny === false &&
     envelope.dryRun !== true &&
@@ -55,6 +87,7 @@ export function parsePlantVisualProductionApproval(argv = []) {
     ownerApproveRun,
     approveEnvelope,
     executeProductionRun,
+    jobIds,
     ownerApprovedThisRunOnly: matched,
     allowNetwork: matched,
     carryForward: false,
@@ -115,7 +148,24 @@ export async function executePlantVisualProductionRun(argv = [], options = {}) {
   const apiKeyRaw = String(options.apiKeyRaw || '').trim();
   if (!apiKeyRaw) return blockedResult(command, plan, 'PAID_SPEND_KEY_NOT_READY');
 
-  const jobs = plan.jobs.slice(0, command.maxJobs);
+  const selectedJobIds = Array.isArray(command.jobIds) ? command.jobIds : [];
+  const requested = new Set(selectedJobIds);
+  const selectedJobs = selectedJobIds.length
+    ? plan.jobs.filter((job) => requested.has(job.jobId))
+    : plan.jobs;
+  if (selectedJobIds.length) {
+    const found = new Set(selectedJobs.map((job) => job.jobId));
+    const missingJobIds = selectedJobIds.filter((jobId) => !found.has(jobId));
+    if (missingJobIds.length) {
+      return blockedResult(command, plan, 'REQUESTED_JOB_NOT_IN_PLAN', { missingJobIds });
+    }
+    if (selectedJobs.length > command.maxJobs) {
+      return blockedResult(command, plan, 'REQUESTED_JOB_COUNT_OVER_MAX_JOBS', {
+        requestedJobCount: selectedJobs.length
+      });
+    }
+  }
+  const jobs = selectedJobs.slice(0, command.maxJobs);
   const projected = jobs.reduce(
     (sum, job) => sum + projectedCallUsd(command, job.qualityPlan?.quality || 'medium'),
     0
