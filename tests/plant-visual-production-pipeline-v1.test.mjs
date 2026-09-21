@@ -466,32 +466,24 @@ test('plant visual production storage refuses promotion until every mandatory QA
   assert.ok(blocked.failed.includes('productionApproved'));
 });
 
-test('pilot QA surface is bounded to four migrated candidates and stays non-production', () => {
+test('batch QA surface is manifest-driven, read-only, and non-production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-  const fn = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-pilot-qa.mjs'), 'utf8');
+  const fn = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-qa-candidate.mjs'), 'utf8');
   const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
   const app = fs.readFileSync(path.join(root, 'app.html'), 'utf8');
 
-  const ids = [
-    'banana__young__default__vegetative__v1',
-    'mango__young__tree__vegetative__v1',
-    'pineapple__mature__default__fruiting__v1',
-    'mango__mature__tree__fruiting__v1'
-  ];
-  for (const id of ids) assert.ok(fn.includes(id));
-
   assert.match(fn, /PLANT_VISUAL_R2_CANDIDATES_BUCKET/);
+  assert.match(fn, /plant-visual-qa-manifests/);
   assert.doesNotMatch(fn, /PutObjectCommand/);
   assert.doesNotMatch(fn, /PLANT_VISUAL_R2_PRODUCTION_BUCKET/);
-  assert.match(fn, /productionApproved: false/);
-  assert.match(page, /Four bounded candidates only/);
+  assert.match(page, /Manifest-driven bounded review queue/);
   assert.match(page, /index\.html\?gdQaPreview=1/);
   assert.match(page, /There is no separate QA scale renderer/);
   assert.match(runtime, /CALIBRATION_SOURCE_MESSAGE_TYPE/);
-  assert.match(fn, /OWNER_REVIEW_REQUIRED/);
+  assert.match(runtime, /MANIFEST_ID/);
   assert.match(runtime, /PASS_OWNER_VISUAL_GATES/);
-  assert.match(app, /#plant-visual-pilot-qa-v1/);
+  assert.match(app, /plantVisualQaManifest/);
   assert.match(app, /openPlantVisualPilotQaReview/);
 });
 
@@ -509,13 +501,14 @@ test('pilot in-garden QA delegates rendering to production Garden Design instead
   assert.doesNotMatch(page, /review-plant-box/);
   assert.doesNotMatch(page, /full-aspect-scene/);
 });
-test('pilot renderer inputs come from adapter plus evidence while Garden Design owns rendering math', () => {
+test('renderer inputs come from generic adapter plus anchor registry while Garden Design owns rendering math', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
 
   assert.match(runtime, /buildProductionRendererQaPreview/);
-  assert.match(runtime, /plant-visual-pilot-mature-mango-production-scale-anchor-v1\.json/);
-  assert.match(runtime, /savedPlacementAnchor: savedAnchorsByJobId\[selectedJobId\]/);
+  assert.match(runtime, /resolveCompatibleSavedPlacementAnchor/);
+  assert.match(runtime, /garden-design-qa-saved-placement-anchor-registry-v1\.json/);
+  assert.match(runtime, /savedPlacementAnchor: compatibleAnchor/);
   assert.match(runtime, /frame\.contentWindow\.postMessage/);
   assert.doesNotMatch(runtime, /PILOT_RENDER_INPUT/);
   assert.doesNotMatch(runtime, /box\.style\.width/);
@@ -619,7 +612,7 @@ test('in-garden QA scale policy keeps phenology separate from size and supports 
   assert.equal(vegetative.recommendedBand, 'xxl');
 
   const owner = deriveInGardenQaScale({
-    jobId: 'pineapple__mature__default__fruiting__v1',
+    jobId: 'fixture__mature__default__fruiting__v1',
     visualForm: 'rosette',
     growthStage: 'mature',
     phenology: 'fruiting'
