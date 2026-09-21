@@ -288,7 +288,14 @@
           "inGardenQA": "PASS",
           "ownerVisualQA": "PASS",
           "version": "v1",
-          "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE"
+          "representationPolicy": "GENUS_VISUALLY_REPRESENTABLE",
+          "baseWidthPx": 220,
+          "presentationSizing": {
+            "source": "garden-design-runtime",
+            "reason": "avoid generic shrub fallback 96x124 for full banana clump",
+            "tunedAtPlacementBand": "middle",
+            "imageAspectRatio": "1024x1536"
+          }
         }
       ]
     },
