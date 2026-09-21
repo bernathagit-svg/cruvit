@@ -1,0 +1,104 @@
+{
+  "contract": "plant-size-authority-policy-v1",
+  "status": "LOCKED",
+  "effectiveDate": "2026-09-21",
+  "purpose": "Define the authoritative precedence for physical plant size in CRUVIT Garden Design and plant-visual QA at catalog scale.",
+  "corePrinciple": "Visual form describes architecture; it does not define absolute plant size.",
+  "authorityPrecedence": [
+    {
+      "rank": 1,
+      "authority": "CANONICAL_BOTANICAL_IDENTITY",
+      "rule": "Resolve the plant at the most specific supported taxonomic scope before assigning size."
+    },
+    {
+      "rank": 2,
+      "authority": "CULTIVAR_ROOTSTOCK_MAINTAINED_CONTEXT",
+      "rule": "Where cultivar, rootstock, training or maintained form materially changes size, context must be represented explicitly. Do not collapse these into a universal species size."
+    },
+    {
+      "rank": 3,
+      "authority": "BOTANICAL_DIMENSION_EVIDENCE",
+      "rule": "Use source-supported height and spread ranges for the resolved taxon/context when available."
+    },
+    {
+      "rank": 4,
+      "authority": "GROWTH_STAGE",
+      "rule": "Young, intermediate and mature states refine size. A mature range must not silently be applied to a young state."
+    },
+    {
+      "rank": 5,
+      "authority": "ARCHITECTURE_AND_VISUAL_FORM",
+      "rule": "Tree, shrub, herbaceous-clump, rosette, palm, climber and other forms constrain shape and presentation, not absolute size."
+    },
+    {
+      "rank": 6,
+      "authority": "SCENE_GEOMETRY",
+      "rule": "Photo calibration, placement depth, perspective and scene dimensions determine how botanical dimensions map into pixels."
+    },
+    {
+      "rank": 7,
+      "authority": "TRUSTED_SAVED_PLACEMENT_CALIBRATION",
+      "rule": "A user-approved saved placement may calibrate the same canonical plant/form/architecture/growth stage and compatible sibling phenology states. It must never be copied across different plants merely because their morphology matches."
+    },
+    {
+      "rank": 8,
+      "authority": "USER_RESIZE_OVERRIDE",
+      "rule": "A user may resize a placement. This is design state, not botanical truth, and must not mutate canonical size evidence."
+    },
+    {
+      "rank": 9,
+      "authority": "MORPHOLOGY_FALLBACK",
+      "rule": "Form/stage bands such as Small/Medium/Large are fallback-only when stronger evidence is unavailable. They must be marked estimated and must never become species truth."
+    }
+  ],
+  "readinessStates": {
+    "SIZE_AUTHORITY_READY": "Source-supported dimensions are sufficient for direct size authority for the relevant state/context.",
+    "SIZE_AUTHORITY_PARTIAL": "Some dimensions are source-supported and the rest are estimated explicitly.",
+    "SIZE_AUTHORITY_CONTEXT_REQUIRED": "Cultivar/rootstock/maintained context materially affects final size.",
+    "SIZE_AUTHORITY_CONFLICT_HOLD": "Evidence conflicts; do not average or silently select a source.",
+    "SIZE_AUTHORITY_EVIDENCE_GAP": "No sufficient dimension evidence exists.",
+    "SIZE_AUTHORITY_ESTIMATED": "Garden Design may show an explicitly estimated preview with manual resize; this is not meter-accurate truth.",
+    "SIZE_AUTHORITY_NOT_EVALUATED": "Size authority has not yet been evaluated for this plant/state."
+  },
+  "invariants": [
+    "Same visualForm never implies same absolute size.",
+    "Mango dimensions must never be copied to Lemon, Lychee, Cypress, Oak or any other canonical plant.",
+    "Phenology alone does not change scale.",
+    "Height and spread are separate dimensions and both matter.",
+    "Independent X/Y stretching to fake botanical spread is forbidden.",
+    "Unknown is allowed; silent guessing is forbidden.",
+    "Saved placement scale is design calibration, not botanical catalog truth.",
+    "A sibling-state scale inheritance requires same canonical plant, same visual form, same architecture, same growth stage and compatible visible asset aspect.",
+    "Morphology fallback is not SIZE_AUTHORITY_READY.",
+    "Garden Design may remain usable with estimated size when authority is incomplete, but the estimate must be explicit."
+  ],
+  "nonTreeExpansion": {
+    "required": true,
+    "forms": [
+      "shrub",
+      "subshrub",
+      "herbaceous-upright",
+      "herbaceous-clump",
+      "rosette",
+      "climber",
+      "palm",
+      "grass-like",
+      "groundcover",
+      "succulent-form"
+    ],
+    "rule": "The same plant-specific height/spread authority model must expand to non-tree forms as catalog batches are added. Do not replace missing non-tree evidence with one universal form size."
+  },
+  "qaRelationship": {
+    "inGardenQaBandsAreFallbackOnly": true,
+    "productionSizeAuthorityIsSeparate": true,
+    "savedProductionAnchorPreferredWhenCompatible": true,
+    "qaMustNotClaimMeterAccuracyWithoutSceneCalibration": true
+  },
+  "batchRequirement": {
+    "stageName": "SIZE_AUTHORITY",
+    "placementInPipeline": "after BOTANICAL_DATA and before VISUAL_DEMAND / Garden Design readiness",
+    "perPlantStateRequired": true,
+    "explicitReasonCodeRequiredWhenNotReady": true,
+    "capabilitySpecific": true
+  }
+}
