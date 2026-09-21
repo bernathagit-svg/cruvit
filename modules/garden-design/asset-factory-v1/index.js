@@ -299,3 +299,36 @@ export {
   executeBranchStructureAlphaCleanupV1
 } from './branch-structure-alpha-cleanup-v1.js';
 
+
+
+export {
+  PRODUCTION_FRAMING_QA_VERSION,
+  FRAMING_QA_DEFAULTS,
+  framingMetricsFromTechnicalQa,
+  assessProductionFramingQa
+} from './production-framing-qa-v1.js';
+
+export {
+  PRESENTATION_SIZING_VERSION,
+  PRESENTATION_REFERENCE_SCENE_WIDTH_PX,
+  PRESENTATION_SIZE_PROFILES,
+  derivePresentationSizing
+} from './presentation-sizing-v1.js';
+
+export {
+  PLANT_VISUAL_PRODUCTION_PIPELINE_VERSION,
+  PLANT_VISUAL_PIPELINE_STAGES,
+  PLANT_VISUAL_DECISION,
+  PLANT_VISUAL_AUTOMATION_POLICY,
+  buildPlantVisualProductionPlan,
+  evaluatePlantVisualCandidate,
+  buildApprovedRegistryVariant,
+  summarizePlantVisualPipeline
+} from './plant-visual-production-pipeline-v1.js';
+
+export {
+  PLANT_VISUAL_PRODUCTION_EXECUTOR_VERSION,
+  PLANT_VISUAL_CANDIDATE_DIR,
+  parsePlantVisualProductionApproval,
+  executePlantVisualProductionRun
+} from './plant-visual-production-execute-v1.js';
