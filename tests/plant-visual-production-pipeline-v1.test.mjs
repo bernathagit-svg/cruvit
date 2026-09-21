@@ -53,6 +53,10 @@ import {
   buildPlantVisualQaManifest,
   QA_MANIFEST_GOVERNANCE
 } from '../modules/garden-design/asset-factory-v1/plant-visual-qa-manifest-v1.js';
+import {
+  evaluateQaManifestPromotionReadiness,
+  PROMOTION_READINESS_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/plant-visual-promotion-readiness-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -939,6 +943,28 @@ test('saved placement anchors are registry data and not per-species renderer cod
   assert.doesNotMatch(adapter, /canonicalSlug === 'mango'/);
   assert.doesNotMatch(adapter, /canonicalSlug === 'banana'/);
   assert.match(gd, /gdApplyPlantSizeAuthorityVisual/);
+});
+
+test('promotion readiness is manifest-driven and blocks evidence mismatch without production writes', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-qa-manifests/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+
+  const readiness = evaluateQaManifestPromotionReadiness(manifest);
+  assert.equal(readiness.totalJobs, 4);
+  assert.equal(readiness.readyJobs, 2);
+  assert.equal(readiness.blockedJobs, 2);
+  assert.equal(readiness.productionWrites, 0);
+  assert.equal(readiness.registryWrites, 0);
+
+  const blocked = readiness.evaluations.filter((row) => !row.ready);
+  assert.equal(blocked.every((row) => row.code === 'PROVENANCE_RECONCILIATION_REQUIRED'), true);
+  assert.equal(PROMOTION_READINESS_GOVERNANCE.manifestDriven, true);
+  assert.equal(PROMOTION_READINESS_GOVERNANCE.perPlantCodeForbidden, true);
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
