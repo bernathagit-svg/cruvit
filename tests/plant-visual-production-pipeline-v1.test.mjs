@@ -33,6 +33,12 @@ import {
   buildPlantVisualProductionObjectKey,
   validatePlantVisualPromotionStorageInput
 } from '../modules/garden-design/asset-factory-v1/plant-visual-object-storage-v1.js';
+import {
+  deriveInGardenQaScale,
+  qaScaleBandSpec,
+  PILOT_SCALE_CALIBRATION,
+  QA_SCALE_POLICY_GOVERNANCE
+} from '../modules/garden-design/asset-factory-v1/in-garden-qa-scale-policy-v1.js';
 
 function technicalPass(overrides = {}) {
   return {
@@ -507,6 +513,91 @@ test('pilot owner scale calibration is job-specific and mature mango can exceed 
   assert.match(page, /review-plant-box\.xxl\{height:94%;width:96%\}/);
   assert.equal(owner.decisions.find((r) => r.jobId === 'mango__mature__tree__fruiting__v1').acceptedCurrentBand, false);
   assert.equal(owner.invariants.includes('No preferred scale may permit clipping.'), true);
+});
+
+test('in-garden QA scale policy derives morphology + stage defaults instead of per-species sizes', () => {
+  const banana = deriveInGardenQaScale({
+    jobId: 'banana__young__default__vegetative__v1',
+    visualForm: 'herbaceous-clump',
+    growthStage: 'young',
+    phenology: 'vegetative'
+  });
+  const mangoYoung = deriveInGardenQaScale({
+    jobId: 'mango__young__tree__vegetative__v1',
+    visualForm: 'tree',
+    growthStage: 'young',
+    phenology: 'vegetative'
+  });
+  const pineapple = deriveInGardenQaScale({
+    jobId: 'pineapple__mature__default__fruiting__v1',
+    visualForm: 'rosette',
+    growthStage: 'mature',
+    phenology: 'fruiting'
+  });
+  const mangoMature = deriveInGardenQaScale({
+    jobId: 'mango__mature__tree__fruiting__v1',
+    visualForm: 'tree',
+    growthStage: 'mature',
+    phenology: 'fruiting'
+  });
+
+  assert.equal(banana.recommendedBand, 'large');
+  assert.equal(mangoYoung.recommendedBand, 'large');
+  assert.equal(pineapple.recommendedBand, 'medium');
+  assert.equal(mangoMature.recommendedBand, 'xxl');
+  assert.deepEqual(mangoMature.reviewBands, ['xl', 'xxl']);
+  assert.equal(mangoMature.phenologyAffectsScale, false);
+});
+
+test('in-garden QA scale policy keeps phenology separate from size and supports exact owner calibration', () => {
+  const vegetative = deriveInGardenQaScale({
+    jobId: 'fixture__mature__tree__vegetative__v1',
+    visualForm: 'tree',
+    growthStage: 'mature',
+    phenology: 'vegetative'
+  });
+  const fruiting = deriveInGardenQaScale({
+    jobId: 'fixture__mature__tree__fruiting__v1',
+    visualForm: 'tree',
+    growthStage: 'mature',
+    phenology: 'fruiting'
+  });
+  assert.equal(vegetative.recommendedBand, fruiting.recommendedBand);
+  assert.equal(vegetative.recommendedBand, 'xxl');
+
+  const owner = deriveInGardenQaScale({
+    jobId: 'pineapple__mature__default__fruiting__v1',
+    visualForm: 'rosette',
+    growthStage: 'mature',
+    phenology: 'fruiting'
+  }, {
+    ownerCalibration: PILOT_SCALE_CALIBRATION
+  });
+  assert.equal(owner.recommendedBand, 'medium');
+  assert.deepEqual(owner.reviewBands, ['medium']);
+  assert.equal(owner.source, 'OWNER_EXACT_JOB_CALIBRATION');
+});
+
+test('in-garden QA scale policy is bounded, non-meter and cautious for unknown morphology', () => {
+  const unknown = deriveInGardenQaScale({
+    jobId: 'unknown__mature__default__vegetative__v1',
+    visualForm: 'unknown',
+    growthStage: 'mature'
+  });
+  assert.equal(unknown.recommendedBand, 'medium');
+  assert.equal(unknown.ownerReviewRequired, true);
+  assert.equal(unknown.meterAccuracyClaimed, false);
+  assert.equal(unknown.clippingAllowed, false);
+
+  for (const band of ['small', 'medium', 'large', 'xl', 'xxl']) {
+    const spec = qaScaleBandSpec(band);
+    assert.ok(spec.maxHeightPct > 0 && spec.maxHeightPct <= 94);
+    assert.ok(spec.maxWidthPct > 0 && spec.maxWidthPct <= 96);
+  }
+
+  assert.equal(QA_SCALE_POLICY_GOVERNANCE.perSpeciesHardcodingForbidden, true);
+  assert.equal(QA_SCALE_POLICY_GOVERNANCE.phenologyAloneMayNotChooseScale, true);
+  assert.equal(QA_SCALE_POLICY_GOVERNANCE.productionPhysicalScaleSeparate, true);
 });
 
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
