@@ -33,7 +33,8 @@ function qaPosition(form) {
   return QA_PREVIEW_POSITION_BY_FORM[form] || QA_PREVIEW_POSITION_BY_FORM.default;
 }
 
-function validAnchor(anchor = {}) {
+function validAnchor(anchor) {
+  if (!anchor || typeof anchor !== 'object') return false;
   return Boolean(
     Number(anchor.baseWidthPx) > 0
     && Number(anchor.scale) > 0
