@@ -88,6 +88,7 @@ export function detectDesignAssetGaps(plants = [], registry = {}, signals = {}) 
       jobs.push({
         canonicalSlug: demand.canonicalSlug,
         visualForm: demand.visualForm,
+        architectureMode: role.architectureMode || null,
         growthStage: role.growthStage,
         phenology: role.phenology,
         season: role.season,
