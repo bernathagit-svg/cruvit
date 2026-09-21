@@ -65,6 +65,8 @@ test('production prompt requires framing safe-zone and plant-only isolation', ()
   const prompt = plan.jobs[0].promptRecord.prompt;
   assert.match(prompt, /FRAMING SAFE ZONE/);
   assert.match(prompt, /must not touch any image boundary/);
+  assert.match(prompt, /Center the specimen horizontally/);
+  assert.match(prompt, /no more than about 90% of the canvas/);
   assert.match(prompt, /PLANT ONLY/);
   assert.match(prompt, /no people, animals, insects, birds, fish/);
 });
