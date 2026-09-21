@@ -159,7 +159,7 @@
       "botanicalTaxonId": "taxon:mangifera-indica",
       "variants": [
         {
-          "assetId": "mango-portrait-v4",
+          "assetId": "mango-portrait-v4-webp",
           "canonicalSlug": "mango",
           "botanicalTaxonId": "taxon:mangifera-indica",
           "scientific": "Mangifera indica",
@@ -176,10 +176,10 @@
           "season": "unknown",
           "seasonIsIdentity": false,
           "formView": null,
-          "file": "production/mango/mango-portrait-v4.svg",
+          "file": "production/mango/mango-portrait-v4.webp",
           "width": 360,
           "height": 512,
-          "baseWidthPx": 195,
+          "baseWidthPx": 145,
           "approvalStatus": "approved",
           "approvalState": "APPROVED",
           "transparencyReady": true,
@@ -188,36 +188,38 @@
           "bytes": 48094,
           "sha256": "f8cfb5c98a7714876798756428b59742606a1eafcc25d8ee6e704b2e7173c6ab",
           "groundAnchor": {
-            "nx": 0.506,
-            "ny": 0.926,
+            "nx": 0.5,
+            "ny": 0.9316,
             "source": "alpha-bbox-base-center"
           },
           "alphaBBox": {
             "exists": true,
-            "minX": 34,
-            "minY": 27,
-            "maxX": 330,
-            "maxY": 474
+            "minX": 32,
+            "minY": 26,
+            "maxX": 332,
+            "maxY": 476
           },
           "provenance": {
             "source": "cruvit-production-regeneration",
             "generationMethod": "transparent-cutout",
             "promptTemplateVersion": "mango-production-cutout-v2",
-            "productionReason": "portrait replacement for squat/cropped-looking v3",
+            "productionReason": "root fix: one direct binary asset for modal thumbnail and canvas",
             "priorBatch2OwnerVisualQa": "NEEDS_IMPROVEMENT",
             "priorBatch2ProductionApproved": false,
-            "sourceAssetFormat": "webp-embedded-svg",
+            "sourceAssetFormat": "webp",
             "transparentMarginPreserved": true,
-            "aspectRatioSource": "registry-width-height"
+            "aspectRatioSource": "registry-width-height",
+            "transport": "direct-binary-repository-file",
+            "svgWrapper": false
           },
-          "technicalQA": "PASS",
+          "technicalQA": "PASS_DIRECT_BINARY",
           "botanicalIdentityQA": "PASS",
           "architectureQA": "PASS",
           "growthStageQA": "UNSPECIFIED_NEUTRAL_PRESENTATION",
           "phenologyStateQA": "PASS",
           "inGardenQA": "PENDING_OWNER_VISUAL_CHECK",
           "ownerVisualQA": "PENDING_IN_GARDEN",
-          "version": "v4",
+          "version": "v4-webp",
           "productionApproved": true
         }
       ]
