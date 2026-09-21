@@ -15,6 +15,9 @@ import {
 import {
   validateProductionRegistryVariant
 } from './plant-visual-promotion-guard-v1.js';
+import {
+  reconciliationMatchesRow
+} from './plant-visual-provenance-reconciliation-v1.js';
 
 export const PLANT_VISUAL_PROMOTION_READINESS_VERSION = 'plant-visual-promotion-readiness-v1';
 
@@ -28,6 +31,15 @@ function qaObject(result, metrics = null) {
 
 function provenanceReady(row = {}) {
   if (row.evidenceMismatch === true) {
+    if (reconciliationMatchesRow(row.provenanceReconciliation, row)) {
+      return {
+        ok: true,
+        code: 'PROVENANCE_RECONCILED_CURRENT_BYTES',
+        reconciliationVersion: row.provenanceReconciliation.version,
+        reason:
+          'Historical generation evidence is not asserted for the current binary. Promotion relies on the reconciled exact current objectKey, SHA, byte count and fresh QA evidence.'
+      };
+    }
     return {
       ok: false,
       code: 'PROVENANCE_RECONCILIATION_REQUIRED',
