@@ -138,7 +138,11 @@ export default async (req) => {
           ok: false,
           code: 'SOURCE_BYTES_MISMATCH',
           expectedBytes: item.expectedBytes,
-          actualBytes: bytes.length
+          actualBytes: bytes.length,
+          actualSha256: sourceSha,
+          expectedSha256: item.expectedSha256 || null,
+          sourceType: item.sourceType,
+          lineage: item.lineage
         });
         continue;
       }
