@@ -621,6 +621,22 @@ test('every plant visual production job receives an in-garden QA scale plan', ()
   }
 });
 
+test('mature wide-canopy tree QA uses full-aspect garden scene instead of narrow thumbnails', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const page = fs.readFileSync(path.join(root, 'modules/garden-design/plant-visual-pilot-qa-v1.html'), 'utf8');
+  const runtime = fs.readFileSync(path.join(root, 'modules/garden-design/asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js'), 'utf8');
+  const anchor = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json'), 'utf8'));
+
+  assert.match(runtime, /matureMangoFullAspectReview/);
+  assert.match(runtime, /data-full-aspect-band/);
+  assert.match(runtime, /data-active-band="xxl"/);
+  assert.match(page, /full-aspect-scene/);
+  assert.match(page, /aspect-ratio:1\.42\/1/);
+  assert.doesNotMatch(runtime, /mature-mango-calibration/);
+  assert.equal(anchor.observation.currentFiveColumnQaTooSmall, true);
+  assert.equal(anchor.productionGardenDesignScaleChanged, false);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
