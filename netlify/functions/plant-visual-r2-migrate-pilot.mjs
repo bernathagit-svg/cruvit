@@ -96,7 +96,7 @@ async function readR2Bytes(client, bucket, key) {
 }
 
 export default async (req) => {
-  if (req.method !== 'POST') return json(405, { ok: false, code: 'METHOD_NOT_ALLOWED' });
+  if (req.method !== 'POST' && req.method !== 'GET') return json(405, { ok: false, code: 'METHOD_NOT_ALLOWED' });
 
   const url = new URL(req.url);
   const nonce = env('CRUVIT_R2_BOOTSTRAP_NONCE');
