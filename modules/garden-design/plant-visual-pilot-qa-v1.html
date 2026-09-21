@@ -19,42 +19,28 @@
     .ok-mini,.warn-mini{padding:7px 9px;border-radius:8px;font-size:12px}
     .ok-mini{background:#edf8ef}
     .warn-mini{background:#fff0e5}
+    .renderer-panel{background:#fff;border:1px solid #cdd8cf;border-radius:16px;padding:14px;margin:18px 0 22px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
+    .renderer-panel iframe{display:block;width:100%;height:760px;border:1px solid #d7dfd9;border-radius:12px;background:#eef5ef}
+    .renderer-note{padding:9px 11px;border-radius:9px;background:#eef7f0;color:#2f4f3a;font-size:12px;margin:8px 0}
     #qaRows{display:grid;gap:20px}
     .plant{background:#fff;border:1px solid #d9ddd9;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
-    .grid{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(520px,1.2fr);gap:14px;margin-top:12px}
-    .review-scales{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px}
-    .review-scale h4{margin:0 0 6px;font-size:13px;color:#455247}
-    .review-scale.owner-preferred{outline:2px solid #3f7f5b;border-radius:10px;padding:5px}
-    .review-scale.owner-preferred h4{color:#245b3e}
-    .full-aspect-card{grid-column:1 / -1}
-    .scale-selector{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 10px}
-    .scale-selector button[aria-pressed="true"]{background:#153d2c;color:#fff;border-color:#153d2c}
-    .full-aspect-scene{width:100%;max-width:1280px;aspect-ratio:4/3;height:auto;min-height:0;max-height:none;margin:0 auto}
-    .production-anchor-box{position:absolute;transform:translateX(-50%);display:flex;align-items:flex-end;justify-content:center;overflow:visible}
-    .production-anchor-box img.review-cutout{display:block;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;object-position:bottom center}
-    .anchor-readout{font-size:12px;color:#355443;background:#eef7f0;border:1px solid #cfe3d4;border-radius:8px;padding:7px 9px;margin:8px 0 10px}
+    .candidate-grid{display:grid;grid-template-columns:minmax(320px,1fr) minmax(320px,1fr);gap:14px;margin-top:12px}
     .card{border:1px solid #dfe3df;border-radius:12px;padding:12px;background:#fafbf9}
-    .native{height:460px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
-    .scene{height:360px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
+    .native{height:420px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
     .checkerboard{background:repeating-conic-gradient(#d7d7d7 0% 25%,#f7f7f7 0% 50%) 50%/18px 18px}
     .native img{max-width:100%;max-height:100%;object-fit:contain}
-    .scene{position:relative;background-size:cover;background-position:center;background-color:#dde5dc}
-    .review-plant-box{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;width:80%}
-    .review-plant-box.small{height:34%}
-    .review-plant-box.medium{height:54%}
-    .review-plant-box.large{height:78%}
-    .review-plant-box.xl{height:88%;width:90%}
-    .review-plant-box.xxl{height:94%;width:96%}
-    .review-plant-box img.review-cutout{position:static;display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:bottom center;transform:none}
-    .ground-shadow{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);width:38%;height:8px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.30),rgba(0,0,0,0) 72%)}
-    .qa{margin-top:12px;padding:12px;background:#f6f7f5;border-radius:10px}
-    .qa ul{margin:6px 0 0;padding-left:18px}
+    .qa-card ul{margin:8px 0 14px;padding-left:18px}
+    .preview-btn{font-weight:600}
+    .preview-btn[aria-pressed="true"]{background:#153d2c;color:#fff;border-color:#153d2c}
     .choices{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
     button{border:1px solid #b7c1b9;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
     button[aria-pressed="true"]{background:#153d2c;color:#fff;border-color:#153d2c}
     .choice-status{font-size:12px;color:#4b584f}
-    @media(max-width:1400px){.full-aspect-scene{max-width:100%}}
-    @media(max-width:1100px){.grid{grid-template-columns:1fr}.review-scales,.review-scales.mature-mango-calibration{grid-template-columns:1fr}.native,.scene{height:380px}}
+    @media(max-width:900px){
+      .candidate-grid{grid-template-columns:1fr}
+      .renderer-panel iframe{height:620px}
+      .native{height:340px}
+    }
   </style>
 </head>
 <body>
@@ -62,8 +48,22 @@
   <p class="lead">Four bounded candidates only. No generation, no production writes, no registry writes.</p>
   <p id="qaLoadStatus" class="warn">Loading R2 candidates and automated QA…</p>
   <p id="gardenBanner" class="warn">Waiting for the real saved Garden Design source photo from the authenticated host.</p>
+
+  <section id="rendererPanel" class="renderer-panel">
+    <h2>Production Garden Design renderer</h2>
+    <p class="renderer-note">This is the real Garden Design renderer in read-only QA mode. There is no separate QA scale renderer.</p>
+    <p id="rendererStatus" class="warn">Loading production renderer…</p>
+    <p id="rendererSelection" class="small">Choose a candidate below.</p>
+    <iframe
+      id="productionRendererFrame"
+      title="Production Garden Design renderer — QA preview"
+      src="./index.html?gdQaPreview=1&v=20260921renderer1"
+      loading="eager"></iframe>
+  </section>
+
   <p id="ownerDecisionSummary" class="small">0 / 4 owner decisions recorded in this browser session.</p>
   <div id="qaRows"></div>
-  <script type="module" src="./asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js?v=20260921a"></script>
+
+  <script type="module" src="./asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js?v=20260921renderer1"></script>
 </body>
 </html>
