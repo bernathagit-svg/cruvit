@@ -3139,6 +3139,8 @@ function resolvePlantLayerAsset(layer, manifest) {
     urlCandidates: [],
     anchor: anchor,
     baseWidthPx: null,
+    width: null,
+    height: null,
     visualReady: false,
     status: null,
     thumbUrl: null,
@@ -3178,6 +3180,8 @@ function resolvePlantLayerAsset(layer, manifest) {
           anchor: variant.groundAnchor || anchor,
           groundAnchor: variant.groundAnchor || null,
           baseWidthPx: variant.baseWidthPx || null,
+          width: variant.width || null,
+          height: variant.height || null,
           visualReady: true,
           status: resolved.approvalStatus,
           thumbUrl: null,
@@ -3348,7 +3352,9 @@ function gdBuildPlantLayerInnerHtml(layer) {
   if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
     const entry = resolved.assetKey && gdPlantAssetsManifest && gdPlantAssetsManifest.plants[resolved.assetKey];
     const variant = entry && entry.variants && entry.variants[resolved.variantId];
-    const aspect = variant && variant.width && variant.height ? variant.height / variant.width : 1.5;
+    const aspect = resolved.width && resolved.height
+      ? resolved.height / resolved.width
+      : (variant && variant.width && variant.height ? variant.height / variant.width : 1.5);
     const wrapH = Math.round(resolved.baseWidthPx * aspect);
     wrapStyle = ' style="width:' + resolved.baseWidthPx + 'px;height:' + wrapH + 'px"';
     wrapClass += ' gd-plant-sprite-wrap--asset';
