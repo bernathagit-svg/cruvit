@@ -1,7 +1,7 @@
 /**
  * Scalable Design Asset publish contract. Do not create buckets or migrate now.
  */
-export const STORAGE_PUBLISH_CONTRACT_VERSION = '1.0.0';
+export const STORAGE_PUBLISH_CONTRACT_VERSION = '1.1.0';
 
 export const STORAGE_PUBLISH_CONTRACT = Object.freeze({
   approvedBinaries: {
@@ -41,6 +41,9 @@ export const STORAGE_PUBLISH_CONTRACT = Object.freeze({
       'width',
       'height',
       'alpha_metrics',
+      'framing_qa',
+      'presentation_sizing',
+      'production_approved',
       'created_at'
     ])
   },
