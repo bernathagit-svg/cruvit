@@ -244,3 +244,47 @@ The target is exception-only owner work:
 
 Auto-approval remains OFF by default until enough reviewed production evidence exists.
 Paid generation remains run-scoped, capped, and default-deny.
+
+
+## Plant Visual Production Pipeline V1 — locked production path
+
+The scalable production path is now:
+
+canonical catalog identity
+→ required visual states
+→ registry gap detection
+→ morphology-aware quality + prompt planning
+→ explicit owner spend envelope
+→ image generation
+→ local technical QA
+→ production framing QA
+→ botanical identity / architecture / state QA
+→ real-garden QA
+→ automatic presentation sizing from visualForm + alpha bounds
+→ promotion gate
+→ immutable publish
+→ production registry activation
+
+### Lessons locked from Mango / Banana / Pineapple
+
+1. Asset quality and runtime presentation are separate concerns. Never regenerate an asset merely to fix a renderer sizing defect.
+2. The picker and canvas resolve through the same Design Asset Registry. No separate thumbnail species image is allowed to become the canvas asset.
+3. Source resolution is preserved. Presentation size is metadata/runtime behavior; do not resize or re-encode a reviewed binary merely to make it appear larger.
+4. New production assets require crop/framing safety: transparent margins, a complete visible specimen, valid alpha bbox, and no top/side clipping.
+5. No generic 96x124 / 128x168 fallback may silently define production asset size when alpha/dimension metadata exists.
+6. Unknown owned growth stage stays unknown. Presentation fallback must never mutate the biological state.
+7. Manual per-plant `baseWidthPx` tuning is calibration evidence, not the long-term production model. New factory records derive a baseline automatically from visual form + alpha bounds; trusted physical-size authority may override at runtime.
+8. Generation success is never production approval. A candidate remains non-production until every mandatory gate passes.
+9. Regeneration creates a new immutable asset version. Silent binary replacement is forbidden.
+10. Owner workload target is exceptions-only. Routine passes should not require per-plant manual review once auto-approval thresholds are calibrated and explicitly enabled.
+
+### Production automation status
+
+- Orchestrator: `plant-visual-production-pipeline-v1.js`
+- Paid executor: `plant-visual-production-execute-v1.js`
+- Framing gate: `production-framing-qa-v1.js`
+- Presentation sizing: `presentation-sizing-v1.js`
+- Paid generation remains DEFAULT DENY.
+- Exact current-run owner approval + spend envelope is required before provider network calls.
+- Live registry writes remain separate from generation. Candidate generation never silently promotes itself.
+- Auto-approval remains disabled by default; the pipeline supports it only after calibrated evidence and an explicit future enablement.
