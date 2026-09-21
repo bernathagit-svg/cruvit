@@ -1,0 +1,38 @@
+{
+  "contract": "plant-visual-pilot-owner-scale-calibration-v1",
+  "generatedAt": "2026-09-21",
+  "source": "owner visual review on real saved Garden photo",
+  "decisions": [
+    {
+      "jobId": "banana__young__default__vegetative__v1",
+      "ownerPreferredQaScale": "large",
+      "acceptedCurrentBand": true,
+      "note": "Owner selected Large from bounded Small/Medium/Large review."
+    },
+    {
+      "jobId": "mango__young__tree__vegetative__v1",
+      "ownerPreferredQaScale": "large",
+      "acceptedCurrentBand": true,
+      "note": "Owner selected Large from bounded Small/Medium/Large review."
+    },
+    {
+      "jobId": "pineapple__mature__default__fruiting__v1",
+      "ownerPreferredQaScale": "medium",
+      "acceptedCurrentBand": true,
+      "note": "Owner selected Medium from bounded Small/Medium/Large review."
+    },
+    {
+      "jobId": "mango__mature__tree__fruiting__v1",
+      "ownerPreferredQaScale": null,
+      "acceptedCurrentBand": false,
+      "calibrationRequired": "ABOVE_LARGE",
+      "note": "Owner judged the tree too small at Small, Medium, and Large. Add larger bounded calibration choices; do not infer botanical meter truth."
+    }
+  ],
+  "invariants": [
+    "Owner preferred QA scale is presentation calibration, not botanical meter truth.",
+    "Scale preference is job/state specific and must not become a universal plant-size constant.",
+    "No preferred scale may permit clipping.",
+    "Production Garden Design physical scale engine remains unchanged by this calibration."
+  ]
+}
