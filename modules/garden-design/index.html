@@ -1848,6 +1848,8 @@ function gdLayerSnapshotList() {
       x: l.x,
       y: l.y,
       scale: l.scale,
+      authorityUserResized: l.authorityUserResized === true,
+      metadata: l.metadata && typeof l.metadata === 'object' && !Array.isArray(l.metadata) ? { ...l.metadata } : {},
       rotation: l.rotation,
       zIndex: l.zIndex,
       name: l.name,
@@ -3545,12 +3547,22 @@ function updateLayerToolbar() {
   if (slider) slider.value = layer.scale;
 }
 
+function gdMarkAuthorityUserScaleOverride(layer) {
+  if (!layer) return;
+  layer.authorityUserResized = true;
+  const metadata = layer.metadata && typeof layer.metadata === 'object' && !Array.isArray(layer.metadata)
+    ? { ...layer.metadata }
+    : {};
+  metadata.userScaleOverride = { kind: 'multiplier', value: Number(layer.scale) };
+  layer.metadata = metadata;
+}
+
 function gdPreviewPlantLayerScale(scale) {
   const layer = getSelectedPlantLayer();
   if (!layer) return;
   layer.scale = Math.min(2.2, Math.max(0.35, scale));
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
-    layer.authorityUserResized = true;
+    gdMarkAuthorityUserScaleOverride(layer);
   }
   const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
   if (el) applyLayerDomTransform(layer, el);
@@ -3561,7 +3573,7 @@ function adjustPlantLayerScale(delta) {
   if (!layer) return;
   layer.scale = Math.min(2.2, Math.max(0.35, layer.scale + delta));
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
-    layer.authorityUserResized = true;
+    gdMarkAuthorityUserScaleOverride(layer);
   }
   renderPlantLayers();
   gdPersistDesignSnapshot({ clientInstanceId: layer.id, hostAction: 'update', phase: 'change' });
@@ -3572,7 +3584,7 @@ function setPlantLayerScale(scale) {
   if (!layer) return;
   layer.scale = Math.min(2.2, Math.max(0.35, scale));
   if (window.CruvitGardenSizeAuthority && typeof window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled === 'function' && window.CruvitGardenSizeAuthority.productionGardenSizeAuthorityEnabled()) {
-    layer.authorityUserResized = true;
+    gdMarkAuthorityUserScaleOverride(layer);
   }
   const el = document.querySelector('.gd-plant-layer[data-layer-id="' + layer.id + '"]');
   if (el) applyLayerDomTransform(layer, el);
