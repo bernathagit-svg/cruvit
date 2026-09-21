@@ -973,7 +973,16 @@ export function mapLayerToHostPlacementPayload(layer = {}) {
     rotation: Number(layer.rotation) || 0,
     zOrder: Number(layer.zOrder != null ? layer.zOrder : layer.zIndex) || 0,
     label: asText(layer.name || layer.label) || null,
-    scientific: asText(layer.species || layer.scientific) || null
+    scientific: asText(layer.species || layer.scientific) || null,
+    metadata: (() => {
+      const base = layer.metadata && typeof layer.metadata === 'object' && !Array.isArray(layer.metadata)
+        ? { ...layer.metadata }
+        : {};
+      if (layer.authorityUserResized === true && Number.isFinite(Number(layer.scale)) && Number(layer.scale) > 0) {
+        base.userScaleOverride = { kind: 'multiplier', value: Number(layer.scale) };
+      }
+      return base;
+    })()
   };
 }
 
@@ -1001,6 +1010,16 @@ export function mapServerPlacementToLayer(placement = {}, ownedPlants = []) {
           ?.canonicalSlug || placement.canonicalSlug || placement.canonical_slug
       )
     : asText(placement.canonicalSlug || placement.canonical_slug);
+  const placementMetadata =
+    placement.metadata && typeof placement.metadata === 'object' && !Array.isArray(placement.metadata)
+      ? { ...placement.metadata }
+      : {};
+  const override = placementMetadata.userScaleOverride;
+  const overrideValue =
+    override && override.kind === 'multiplier' && Number.isFinite(Number(override.value)) && Number(override.value) > 0
+      ? Number(override.value)
+      : null;
+
   return {
     ok: true,
     layer: {
@@ -1023,7 +1042,9 @@ export function mapServerPlacementToLayer(placement = {}, ownedPlants = []) {
       designAssetId: asText(placement.designAssetId || placement.design_asset_id) || null,
       x: Number(placement.x),
       y: Number(placement.y),
-      scale: Number(placement.scale),
+      scale: overrideValue || Number(placement.scale),
+      authorityUserResized: overrideValue != null,
+      metadata: placementMetadata,
       rotation: Number(placement.rotation) || 0,
       zIndex: Number(placement.zOrder != null ? placement.zOrder : placement.z_order) || 1,
       emoji: '🌿',
