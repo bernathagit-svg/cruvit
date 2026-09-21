@@ -89,8 +89,10 @@ function finiteRange(range) {
 export function resolveGardenSizeAuthority(registry, input = {}) {
   const slug = slugOf(input.canonicalSlug);
   const growthStage = asText(input.growthStage) || 'mature';
+  const requestedVisualForm = asText(input.visualForm || input.architectureMode || 'unknown').toLowerCase();
   const base = {
     canonicalSlug: slug,
+    visualForm: requestedVisualForm || 'unknown',
     botanicalTaxonId: null,
     runtimeAuthorityState: null,
     previewScenario: null,
@@ -135,7 +137,7 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
       selectedRuntimeBehavior: RUNTIME_SCALE_BEHAVIOR.ESTIMATED_HEURISTIC,
       fallbackReason: 'AUTHORITY_RECORD_MISSING',
       applied: true,
-      note: 'No authority record. Estimated size + tree heuristic + manual resize.'
+      note: 'No authority record. Estimated size + visual-form heuristic + manual resize.'
     });
   }
 
@@ -210,12 +212,19 @@ export function resolveGardenSizeAuthority(registry, input = {}) {
     manualOverrideCompatibility: 'ALWAYS',
     rawResearchImportedByRuntime: false,
     scientificName: record.scientificName || null,
-    architectureMode: record.architectureMode || 'tree'
+    visualForm: asText(input.visualForm || record.visualForm || record.architectureMode || requestedVisualForm || 'unknown').toLowerCase(),
+    architectureMode: record.architectureMode || input.architectureMode || requestedVisualForm || 'unknown'
   });
 }
 
 export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
   const slug = slugOf(authorityResult?.canonicalSlug || sceneInput.canonicalSlug);
+  const visualForm = asText(
+    sceneInput.visualForm
+    || authorityResult?.visualForm
+    || authorityResult?.architectureMode
+    || 'unknown'
+  ).toLowerCase();
   const useMeters = Boolean(authorityResult?.usedAuthoritativeMeters && authorityResult.heightRangeM);
   const spreadOk = authorityResult?.runtimeAuthorityState === 'RUNTIME_AUTHORITY_READY' && authorityResult.spreadRangeM;
   const rangeBand = asText(sceneInput.rangeBand || authorityResult?.designState?.ownerPreferredRangePosition || RANGE_BANDS.MID).toUpperCase();
@@ -223,7 +232,7 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
     ? {
       evidenceClass: DIMENSION_EVIDENCE.SOURCE_SUPPORTED_RANGE,
       growthStage: sceneInput.growthStage || 'mature',
-      visualForm: 'tree',
+      visualForm,
       heightM: authorityResult.heightRangeM,
       spreadM: spreadOk ? authorityResult.spreadRangeM : null,
       mayDrivePhysicalMeterPreview: true,
@@ -232,7 +241,7 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
     : {
       evidenceClass: DIMENSION_EVIDENCE.UNKNOWN,
       growthStage: sceneInput.growthStage || 'mature',
-      visualForm: 'tree',
+      visualForm,
       heightM: null,
       spreadM: null,
       mayDrivePhysicalMeterPreview: false
@@ -253,7 +262,7 @@ export function scaleFromGardenSizeAuthority(authorityResult, sceneInput = {}) {
   const scale = computePhysicalSceneScale({
     ...sceneInput,
     canonicalSlug: slug,
-    visualForm: 'tree',
+    visualForm,
     resolvedEvidence,
     rangeBand,
     sizeScenario: authorityResult?.previewScenario || sceneInput.sizeScenario || null,
