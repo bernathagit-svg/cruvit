@@ -1,0 +1,32 @@
+{
+  "contract": "garden-design-owner-approved-render-baseline-v1",
+  "approvedAt": "2026-09-21",
+  "ownerVerdict": "APPROVED_RENDERING_BASELINE",
+  "productionEntry": "https://friendly-taiyaki-64aacb.netlify.app/app.html",
+  "scope": [
+    "Garden Design plant placement rendering",
+    "plant visual scale presentation",
+    "baseWidthPx + saved placement scale behavior",
+    "real saved Garden photo composition"
+  ],
+  "lockedDecision": {
+    "gardenDesignRendererIsSourceOfTruth": true,
+    "separateQaScaleRendererForbidden": true,
+    "qaMustReuseProductionRendererMath": true,
+    "qaMayNotMaintainIndependentSmallMediumLargeTruth": true,
+    "morphologyBandsFallbackOnly": true,
+    "botanicalSizeAuthorityStillRequired": true,
+    "userSavedPlacementCalibrationPreserved": true
+  },
+  "approvedObservedState": {
+    "mangoMature": "visually natural scale and clarity in Garden Design",
+    "bananaMature": "visually natural scale and clarity in Garden Design"
+  },
+  "implementationRule": "Future in-garden QA must call or mirror the exact production Garden Design renderer/size-authority path. If QA output disagrees with the live renderer, the QA harness is considered wrong unless the production renderer itself is separately proven defective.",
+  "regressionProtection": [
+    "Do not alter Garden Design renderer merely to make QA screenshots match.",
+    "Do not introduce a parallel scale vocabulary as production truth.",
+    "Do not overwrite owner-approved placement scale calibration with generic morphology bands.",
+    "Any future size-authority work must preserve this approved rendering behavior unless the owner explicitly approves a change."
+  ]
+}
