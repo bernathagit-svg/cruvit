@@ -192,3 +192,55 @@ Hundreds of plants must use exception-only owner review. Routine jobs should eve
 `AUTO_PASS` / `OWNER_REVIEW` / `REGENERATE` / `REJECT` / `BLOCKED`.
 
 Auto-approval remains disabled until enough calibrated evidence exists. Paid generation remains explicit-envelope-only; lookup/render never generates.
+
+
+## Plant Visual Production Pipeline V1 — operational layer
+
+The scalable production path is implemented by:
+- `plant-visual-production-pipeline-v1.js` — deterministic orchestration and promotion decisions.
+- `plant-visual-production-execute-v1.js` — generic owner-approved paid candidate generation; default deny and never writes the live registry.
+- `production-framing-qa-v1.js` — rejects cropped / edge-contact / badly framed specimens before promotion.
+- `presentation-sizing-v1.js` — derives neutral `baseWidthPx` from visual form + alpha bounds so new plants do not require owner hand-tuning one-by-one.
+
+Production flow:
+
+canonical catalog identity
+→ required visual states
+→ registry gap detection
+→ quality/detail-class planning
+→ owner spend envelope
+→ transparent PNG generation
+→ technical QA
+→ framing QA
+→ botanical/state/architecture QA
+→ in-garden QA
+→ presentation sizing
+→ promotion decision
+→ immutable publish
+→ registry activation.
+
+### Mandatory separation learned from Mango / Banana / Pineapple
+
+Asset quality and runtime presentation are separate authorities:
+- Generation owns pixels, transparency, botanical morphology, full-specimen framing, and source resolution.
+- Presentation sizing owns the neutral first-display size in Garden Design.
+- Physical Size Authority may override neutral presentation sizing only when trusted botanical/photo-scale evidence exists.
+- Runtime must not resize or re-encode the source binary.
+- Picker thumbnails and canvas placements resolve through the same Design Asset Registry identity.
+
+### Production approval contract
+
+Every usable production variant must carry `productionApproved:true`.
+New records emitted by `plant-visual-production-pipeline-v1` receive that field only after the promotion decision passes.
+Silent binary replacement is forbidden; regeneration creates a new asset/version.
+
+### Owner workload target
+
+The target is exception-only owner work:
+- routine PASS assets can later progress automatically once auto-approval is separately calibrated and enabled;
+- technical/framing failures route to REGENERATE;
+- identity failures route to REJECT;
+- uncertainty, conflicts, or non-calibrated visual judgments route to OWNER_REVIEW.
+
+Auto-approval remains OFF by default until enough reviewed production evidence exists.
+Paid generation remains run-scoped, capped, and default-deny.
