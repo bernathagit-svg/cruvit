@@ -1,25 +1,35 @@
-import { buildProductionRendererQaPreview } from './production-renderer-qa-preview-v1.js';
+import { buildProductionRendererQaPreview, resolveCompatibleSavedPlacementAnchor } from './production-renderer-qa-preview-v1.js';
 
 const CALIBRATION_SOURCE_MESSAGE_TYPE = 'cruvit:calibration-garden-source';
 
-const SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921b';
+const DEFAULT_SUMMARY_URL = '../../data/garden-design/plant-visual-pilot-r2-qa-v1.json?v=20260921c';
+const DEFAULT_ANCHOR_REGISTRY_URL = '../../data/garden-design/garden-design-qa-saved-placement-anchor-registry-v1.json?v=20260921a';
+
+function safeDataUrlParam(name, fallback) {
+  const value = new URLSearchParams(window.location.search).get(name);
+  if (!value) return fallback;
+  const decoded = decodeURIComponent(value);
+  if (!decoded.startsWith('../../data/garden-design/') || !decoded.endsWith('.json')) return fallback;
+  return decoded;
+}
+
+const SUMMARY_URL = safeDataUrlParam('manifest', DEFAULT_SUMMARY_URL);
+const ANCHOR_REGISTRY_URL = safeDataUrlParam('anchorRegistry', DEFAULT_ANCHOR_REGISTRY_URL);
 const IMAGE_URL = (jobId) =>
   '/.netlify/functions/plant-visual-pilot-qa?job=' + encodeURIComponent(jobId);
-const STORAGE_KEY = 'cruvit:plant-visual-pilot-qa-v1';
+const STORAGE_KEY = 'cruvit:plant-visual-qa-review-v1';
 const OWNER_CHOICES = Object.freeze([
   'PASS_OWNER_VISUAL_GATES',
   'NEEDS_REGENERATION',
   'REJECT_IDENTITY_OR_STATE'
 ]);
 
-const ANCHOR_URL = '../../data/garden-design/plant-visual-pilot-mature-mango-production-scale-anchor-v1.json?v=20260921renderer2';
-
 let qaRows = [];
 let rowsById = new Map();
 let sourceMediaUrl = '';
 let selectedJobId = '';
 let rendererReady = false;
-let savedAnchorsByJobId = Object.create(null);
+let anchorRegistry = { records: [] };
 
 function esc(value) {
   return String(value == null ? '' : value)
@@ -50,12 +60,20 @@ function choiceLabel(choice) {
   return 'No owner decision';
 }
 
+function titleCaseSlug(value) {
+  return String(value || '')
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+}
+
 function rowTitle(row) {
-  if (row.canonicalSlug === 'banana') return 'Banana — young vegetative';
-  if (row.canonicalSlug === 'pineapple') return 'Pineapple — mature fruiting';
-  if (row.canonicalSlug === 'mango' && row.growthStage === 'young') return 'Mango — young vegetative';
-  if (row.canonicalSlug === 'mango' && row.phenology === 'fruiting') return 'Mango — mature fruiting';
-  return row.jobId;
+  const name = row.displayName || row.commonName || titleCaseSlug(row.canonicalSlug) || row.jobId || 'Plant';
+  const stage = row.growthStage && row.growthStage !== 'unspecified' ? row.growthStage : '';
+  const phenology = row.phenology || row.phenologyState || '';
+  const suffix = [stage, phenology].filter(Boolean).join(' ');
+  return suffix ? name + ' — ' + suffix : name;
 }
 
 function reviewFields(row) {
@@ -114,7 +132,7 @@ function renderChoiceState() {
   });
   const decisions = Object.values(state.choices).filter(Boolean).length;
   const summary = document.getElementById('ownerDecisionSummary');
-  if (summary) summary.textContent = decisions + ' / 4 owner decisions recorded in this browser session.';
+  if (summary) summary.textContent = decisions + ' / ' + qaRows.length + ' owner decisions recorded in this browser session.';
 }
 
 function wireChoices() {
@@ -188,8 +206,9 @@ function sendRendererPreview() {
   const frame = rendererFrame();
   if (!row || !frame?.contentWindow) return false;
 
+  const compatibleAnchor = resolveCompatibleSavedPlacementAnchor(row, anchorRegistry);
   const preview = buildProductionRendererQaPreview(row, {
-    savedPlacementAnchor: savedAnchorsByJobId[selectedJobId] || null
+    savedPlacementAnchor: compatibleAnchor
   });
   if (!preview.ok) {
     const status = document.getElementById('rendererStatus');
@@ -284,31 +303,23 @@ async function boot() {
   try {
     const [summaryRes, anchorRes] = await Promise.all([
       fetch(SUMMARY_URL, { cache: 'no-store' }),
-      fetch(ANCHOR_URL, { cache: 'no-store' })
+      fetch(ANCHOR_REGISTRY_URL, { cache: 'no-store' })
     ]);
     const data = await summaryRes.json();
     if (!summaryRes.ok || !data || !Array.isArray(data.rows)) {
       throw new Error(data?.verdict || data?.code || 'QA_SUMMARY_LOAD_FAILED');
     }
-    let anchor = null;
     try {
-      if (anchorRes.ok) anchor = await anchorRes.json();
+      if (anchorRes.ok) {
+        const parsedAnchors = await anchorRes.json();
+        if (parsedAnchors && Array.isArray(parsedAnchors.records)) anchorRegistry = parsedAnchors;
+      }
     } catch {
-      anchor = null;
-    }
-    const saved = anchor?.savedPlacementAnchor;
-    if (saved && saved.siblingStateScaleCompatible === true) {
-      savedAnchorsByJobId['mango__mature__tree__fruiting__v1'] = {
-        baseWidthPx: Number(saved.baseWidthPx),
-        scale: Number(saved.savedPlacementScale),
-        x: Number(saved.x),
-        y: Number(saved.y),
-        authorityUserResized: true
-      };
+      anchorRegistry = { records: [] };
     }
     qaRows = data.rows;
     rowsById = new Map(qaRows.map((row) => [row.jobId, row]));
-    selectedJobId = qaRows[0]?.jobId || '';
+    selectedJobId = qaRows.find((row) => row.ownerReviewRequired !== false)?.jobId || qaRows[0]?.jobId || '';
     const root = document.getElementById('qaRows');
     root.innerHTML = qaRows.map(sectionHtml).join('');
     status.textContent = 'R2 candidates loaded. Automated Technical/Framing QA completed with zero paid AI calls.';
