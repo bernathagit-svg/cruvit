@@ -467,7 +467,7 @@ test('pilot QA surface is bounded to four migrated candidates and stays non-prod
   assert.match(fn, /productionApproved: false/);
   assert.match(page, /Four bounded candidates only/);
   assert.match(runtime, /CALIBRATION_SOURCE_MESSAGE_TYPE/);
-  assert.match(runtime, /OWNER_REVIEW_REQUIRED/);
+  assert.match(fn, /OWNER_REVIEW_REQUIRED/);
   assert.match(runtime, /PASS_OWNER_VISUAL_GATES/);
   assert.match(app, /#plant-visual-pilot-qa-v1/);
   assert.match(app, /openPlantVisualPilotQaReview/);
