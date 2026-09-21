@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CRUVIT Plant Visual Pilot QA</title>
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#18241d;background:#f4f1ea}
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px;background:#f4f1ea}
+    h1{margin:0 0 8px;font-size:28px}
+    h2{margin:0 0 6px;font-size:21px}
+    h3{margin:0 0 8px;font-size:15px}
+    .lead,.meta,.small{color:#4a554e}
+    .small{font-size:12px;line-height:1.45}
+    .ok,.warn{padding:10px 12px;border-radius:10px;margin:10px 0}
+    .ok{background:#e7f5ea;border:1px solid #7ab38a}
+    .warn{background:#fff0e5;border:1px solid #d49a68}
+    .ok-mini,.warn-mini{padding:7px 9px;border-radius:8px;font-size:12px}
+    .ok-mini{background:#edf8ef}
+    .warn-mini{background:#fff0e5}
+    #qaRows{display:grid;gap:20px}
+    .plant{background:#fff;border:1px solid #d9ddd9;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(23,42,30,.06)}
+    .grid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(300px,1fr);gap:14px;margin-top:12px}
+    .card{border:1px solid #dfe3df;border-radius:12px;padding:12px;background:#fafbf9}
+    .native,.scene{height:460px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border-radius:10px}
+    .checkerboard{background:repeating-conic-gradient(#d7d7d7 0% 25%,#f7f7f7 0% 50%) 50%/18px 18px}
+    .native img{max-width:100%;max-height:100%;object-fit:contain}
+    .scene{position:relative;background-size:cover;background-position:center;background-color:#dde5dc}
+    .scene .placement{position:absolute;left:50%;bottom:18%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+    .scene img.cutout{max-width:none;max-height:none;width:auto;height:auto}
+    .ground-shadow{width:55%;height:8px;margin-top:-4px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.30),rgba(0,0,0,0) 72%)}
+    .qa{margin-top:12px;padding:12px;background:#f6f7f5;border-radius:10px}
+    .qa ul{margin:6px 0 0;padding-left:18px}
+    .choices{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+    button{border:1px solid #b7c1b9;background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+    button[aria-pressed="true"]{background:#153d2c;color:#fff;border-color:#153d2c}
+    .choice-status{font-size:12px;color:#4b584f}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}.native,.scene{height:380px}}
+  </style>
+</head>
+<body>
+  <h1>Plant Visual Pilot QA</h1>
+  <p class="lead">Four bounded candidates only. No generation, no production writes, no registry writes.</p>
+  <p id="qaLoadStatus" class="warn">Loading R2 candidates and automated QA…</p>
+  <p id="gardenBanner" class="warn">Waiting for the real saved Garden Design source photo from the authenticated host.</p>
+  <p id="ownerDecisionSummary" class="small">0 / 4 owner decisions recorded in this browser session.</p>
+  <div id="qaRows"></div>
+  <script type="module" src="./asset-factory-v1/plant-visual-pilot-qa-runtime-v1.js?v=20260921a"></script>
+</body>
+</html>
