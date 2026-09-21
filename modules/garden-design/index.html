@@ -2470,7 +2470,7 @@ function gdApmRegistryThumbHtml(plant, hostId) {
     name: name,
     species: scientific,
     canonicalSlug: canonicalSlug,
-    growthStage: p.growthStage || 'unspecified',
+    growthStage: p.growthStage && p.growthStage !== 'unspecified' ? p.growthStage : 'mature',
     season: p.season || 'unknown',
     phenology: p.phenology || 'vegetative'
   }, gdPlantAssetsManifest);
@@ -2943,25 +2943,21 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   const wrap = document.getElementById('imgAfterWrap');
   const sceneHeightPx = (photo && photo.clientHeight) || (wrap && wrap.clientHeight) || 360;
   const sceneWidthPx = (photo && photo.clientWidth) || (wrap && wrap.clientWidth) || 480;
-  const ownedGrowthStage = layer.growthStage === 'young' ? 'young' : (layer.growthStage === 'mature' ? 'mature' : null);
-  // Unknown/unspecified remains unknown in owned data and must not be promoted into a physical-size band.
-  // Use the approved asset's bounded presentation size until stage or photo calibration is known.
-  if (!ownedGrowthStage) return false;
-  const presentationGrowthStage = ownedGrowthStage;
+  const growthStage = layer.growthStage === 'young' ? 'young' : 'mature';
   const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
     ? api.mangoOwnerPreferredRangePosition(slug)
     : (slug === 'mango' ? 'LOW' : null);
   const userScaleOverride = layer.authorityUserResized ? { kind: 'multiplier', value: layer.scale } : null;
   const authority = api.resolveGardenSizeAuthority(registry, {
     canonicalSlug: slug,
-    growthStage: presentationGrowthStage,
+    growthStage: growthStage,
     architectureMode: 'tree',
     ownerPreferredRangePosition: mangoLow,
     userScaleOverride: userScaleOverride
   });
   if (!authority || authority.gardenDesignBlocked) return false;
   const scaled = api.scaleFromGardenSizeAuthority(authority, {
-    growthStage: presentationGrowthStage,
+    growthStage: growthStage,
     depthId: layer.y >= 0.82 ? 'near' : (layer.y <= 0.62 ? 'far' : 'middle'),
     placementNy: layer.y,
     rangeBand: mangoLow || 'MID',
@@ -3139,8 +3135,6 @@ function resolvePlantLayerAsset(layer, manifest) {
     urlCandidates: [],
     anchor: anchor,
     baseWidthPx: null,
-    width: null,
-    height: null,
     visualReady: false,
     status: null,
     thumbUrl: null,
@@ -3180,8 +3174,6 @@ function resolvePlantLayerAsset(layer, manifest) {
           anchor: variant.groundAnchor || anchor,
           groundAnchor: variant.groundAnchor || null,
           baseWidthPx: variant.baseWidthPx || null,
-          width: variant.width || null,
-          height: variant.height || null,
           visualReady: true,
           status: resolved.approvalStatus,
           thumbUrl: null,
@@ -3352,9 +3344,7 @@ function gdBuildPlantLayerInnerHtml(layer) {
   if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
     const entry = resolved.assetKey && gdPlantAssetsManifest && gdPlantAssetsManifest.plants[resolved.assetKey];
     const variant = entry && entry.variants && entry.variants[resolved.variantId];
-    const aspect = resolved.width && resolved.height
-      ? resolved.height / resolved.width
-      : (variant && variant.width && variant.height ? variant.height / variant.width : 1.5);
+    const aspect = variant && variant.width && variant.height ? variant.height / variant.width : 1.5;
     const wrapH = Math.round(resolved.baseWidthPx * aspect);
     wrapStyle = ' style="width:' + resolved.baseWidthPx + 'px;height:' + wrapH + 'px"';
     wrapClass += ' gd-plant-sprite-wrap--asset';
@@ -5946,7 +5936,7 @@ The plants array MUST match the exact counts specified above.`}]);
   <script>
   (function(){
     window.__gdRegistryBootstrap = 'starting';
-    import('./garden-design-asset-registry-v1.js?v=20260921reg15')
+    import('./garden-design-asset-registry-v1.js?v=20260921reg6')
       .then(function(mod) {
         const api = mod && (mod.default || mod);
         if (!api || typeof api.indexDesignAssetRegistry !== 'function' || typeof api.resolveDesignAsset !== 'function') {
@@ -5955,7 +5945,7 @@ The plants array MUST match the exact counts specified above.`}]);
         window.CruvitGardenDesignAssetRegistry = api;
         window.__gdRegistryBootstrap = 'api-bound';
         if (typeof gdRenderAssetDiag === 'function') gdRenderAssetDiag('registry-api-bound');
-        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg15', { cache: 'no-store' });
+        return fetch('./assets/plants/design-asset-registry-v1.json?v=20260921reg6', { cache: 'no-store' });
       })
       .then(function(r) {
         if (!r.ok) throw new Error('registry-json-http-' + r.status);
