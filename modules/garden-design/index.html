@@ -2470,7 +2470,7 @@ function gdApmRegistryThumbHtml(plant, hostId) {
     name: name,
     species: scientific,
     canonicalSlug: canonicalSlug,
-    growthStage: p.growthStage && p.growthStage !== 'unspecified' ? p.growthStage : 'mature',
+    growthStage: p.growthStage || 'unspecified',
     season: p.season || 'unknown',
     phenology: p.phenology || 'vegetative'
   }, gdPlantAssetsManifest);
@@ -2943,7 +2943,11 @@ function gdApplyTreeSizeAuthorityVisual(layer, el) {
   const wrap = document.getElementById('imgAfterWrap');
   const sceneHeightPx = (photo && photo.clientHeight) || (wrap && wrap.clientHeight) || 360;
   const sceneWidthPx = (photo && photo.clientWidth) || (wrap && wrap.clientWidth) || 480;
-  const growthStage = layer.growthStage === 'young' ? 'young' : 'mature';
+  const growthStage = layer.growthStage === 'young'
+    ? 'young'
+    : (layer.growthStage === 'mature' ? 'mature' : null);
+  // Unknown owned stage remains unknown. Do not silently apply mature physical scale.
+  if (!growthStage) return false;
   const mangoLow = typeof api.mangoOwnerPreferredRangePosition === 'function'
     ? api.mangoOwnerPreferredRangePosition(slug)
     : (slug === 'mango' ? 'LOW' : null);
@@ -3174,6 +3178,9 @@ function resolvePlantLayerAsset(layer, manifest) {
           anchor: variant.groundAnchor || anchor,
           groundAnchor: variant.groundAnchor || null,
           baseWidthPx: variant.baseWidthPx || null,
+          width: variant.width || null,
+          height: variant.height || null,
+          alphaBBox: variant.alphaBBox || null,
           visualReady: true,
           status: resolved.approvalStatus,
           thumbUrl: null,
@@ -3344,7 +3351,9 @@ function gdBuildPlantLayerInnerHtml(layer) {
   if (resolved && resolved.baseWidthPx && resolved.urlCandidates && resolved.urlCandidates.length && resolved.visualReady) {
     const entry = resolved.assetKey && gdPlantAssetsManifest && gdPlantAssetsManifest.plants[resolved.assetKey];
     const variant = entry && entry.variants && entry.variants[resolved.variantId];
-    const aspect = variant && variant.width && variant.height ? variant.height / variant.width : 1.5;
+    const aspect = resolved.width && resolved.height
+      ? resolved.height / resolved.width
+      : (variant && variant.width && variant.height ? variant.height / variant.width : 1.5);
     const wrapH = Math.round(resolved.baseWidthPx * aspect);
     wrapStyle = ' style="width:' + resolved.baseWidthPx + 'px;height:' + wrapH + 'px"';
     wrapClass += ' gd-plant-sprite-wrap--asset';
