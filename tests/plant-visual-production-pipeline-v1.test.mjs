@@ -1062,6 +1062,33 @@ test('pilot production promotion approval is bounded to the reviewed manifest', 
   assert.equal(approval.scope.unrelatedRegistryChangesAllowed, false);
 });
 
+test('promotion endpoint requires exact manifest-scoped owner approval artifact', () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+  const fn = fs.readFileSync(path.join(root, 'netlify/functions/plant-visual-promote-manifest.mjs'), 'utf8');
+  const approval = JSON.parse(
+    fs.readFileSync(
+      path.join(root, 'data/garden-design/plant-visual-production-promotion-approvals/pilot-2026-09-21-v1.json'),
+      'utf8'
+    )
+  );
+  const control = fs.readFileSync(
+    path.join(root, 'modules/garden-design/plant-visual-approved-promotion-v1.html'),
+    'utf8'
+  );
+
+  assert.match(fn, /loadApproval/);
+  assert.match(fn, /approvalAuthorizesManifest/);
+  assert.match(fn, /PROMOTION_OWNER_APPROVAL_REQUIRED/);
+  assert.match(fn, /OWNER_APPROVAL_ARTIFACT/);
+  assert.equal(approval.contract, 'plant-visual-production-promotion-approval-v1');
+  assert.equal(approval.manifestId, 'pilot-2026-09-21-v1');
+  assert.equal(approval.scope.candidateJobs.length, 4);
+  assert.equal(approval.scope.paidGenerationAllowed, false);
+  assert.equal(approval.scope.newImageGenerationAllowed, false);
+  assert.match(control, /Execute approved promotion/);
+  assert.match(control, /plant-visual-promote-manifest/);
+});
+
 test('pilot QA recovered candidates remain explicitly quarantined from production', () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
   const evidence = JSON.parse(fs.readFileSync(path.join(root, 'data/garden-design/plant-visual-pilot-r2-migration-v1.json'), 'utf8'));
