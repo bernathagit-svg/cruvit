@@ -1,0 +1,171 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CRUVIT Wave 1 Vision QA Executor</title>
+<pre id="out">starting…</pre>
+<script>
+(async () => {
+  const out = document.getElementById('out');
+  const runId = 'plant-visual-wave-001-model-qa-2026-09-22-v1';
+  const render = (state) => { out.textContent = JSON.stringify(state, null, 2); };
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const state = {
+    runId,
+    executorVersion: 'vision-qa-v1-zero-retry',
+    started: true,
+    attemptedHttp: 0,
+    reviewedAtStart: 0,
+    completedThisSession: 0,
+    skippedExisting: 0,
+    skippedUncertain: 0,
+    stopped: false,
+    results: []
+  };
+  render(state);
+
+  async function getStatus() {
+    const res = await fetch(
+      '/.netlify/functions/plant-visual-model-qa-status?runId=' + encodeURIComponent(runId) + '&t=' + Date.now(),
+      { cache: 'no-store' }
+    );
+    const text = await res.text();
+    let data = null;
+    try { data = JSON.parse(text); } catch {}
+    return { res, text, data };
+  }
+
+  function rowById(status, jobId) {
+    return status?.rows?.find((row) => row.jobId === jobId) || null;
+  }
+
+  try {
+    const planRes = await fetch(
+      '/data/garden-design/plant-visual-model-qa-plans/' + runId + '.json?t=' + Date.now(),
+      { cache: 'no-store' }
+    );
+    if (!planRes.ok) throw new Error('plan-load-' + planRes.status);
+    const plan = await planRes.json();
+
+    const initial = await getStatus();
+    if (!initial.data?.ok) throw new Error('status-load-failed');
+    state.reviewedAtStart = initial.data.reviewed || 0;
+    state.status = initial.data;
+    render(state);
+
+    for (const job of plan.jobs || []) {
+      const before = rowById(state.status, job.jobId);
+      if (before && before.status !== 'PENDING') {
+        state.skippedExisting += 1;
+        state.results.push({
+          jobId: job.jobId,
+          action: 'SKIP_EXISTING_EVIDENCE',
+          status: before.status,
+          overall: before.overall || null
+        });
+        render(state);
+        continue;
+      }
+
+      state.attemptedHttp += 1;
+      state.currentJobId = job.jobId;
+      render(state);
+
+      let res = null;
+      let responseText = '';
+      let data = null;
+      try {
+        res = await fetch('/.netlify/functions/plant-visual-model-qa-job', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ runId, jobId: job.jobId })
+        });
+        responseText = await res.text();
+        try { data = JSON.parse(responseText); } catch {}
+      } catch (err) {
+        responseText = String(err && err.message || err);
+      }
+
+      await sleep(1000);
+      let after = await getStatus();
+      if (!after.data?.ok) {
+        await sleep(1600);
+        after = await getStatus();
+      }
+      state.status = after.data || state.status;
+      const row = rowById(state.status, job.jobId);
+
+      if (row && row.status !== 'PENDING') {
+        state.completedThisSession += 1;
+        state.results.push({
+          jobId: job.jobId,
+          action: 'STATUS_RECONCILED',
+          httpStatus: res?.status ?? null,
+          responseWasJson: Boolean(data),
+          status: row.status,
+          overall: row.overall || null,
+          autoPassEligible: row.autoPassEligible === true,
+          actualSpendUsd: row.actualSpendUsd ?? null
+        });
+        render(state);
+        continue;
+      }
+
+      if (data?.code === 'MODEL_QA_SPEND_CAP_REACHED') {
+        state.stopped = true;
+        state.stopReason = 'MODEL_QA_SPEND_CAP_REACHED';
+        state.results.push({
+          jobId: job.jobId,
+          action: 'STOP_SPEND_CAP',
+          httpStatus: res?.status ?? null,
+          code: data.code,
+          recordedSpendUsd: data.recordedSpendUsd,
+          maxSpendUsd: data.maxSpendUsd
+        });
+        render(state);
+        break;
+      }
+
+      if (
+        data?.code === 'MODEL_QA_JOB_ALREADY_CLAIMED'
+        || res?.status === 409
+        || !data
+      ) {
+        state.skippedUncertain += 1;
+        state.results.push({
+          jobId: job.jobId,
+          action: 'SKIP_UNCERTAIN_NO_RETRY',
+          httpStatus: res?.status ?? null,
+          responseWasJson: Boolean(data),
+          code: data?.code || null,
+          responsePreview: responseText.slice(0, 180),
+          noRetryPolicyPreserved: true
+        });
+        render(state);
+        await sleep(900);
+        continue;
+      }
+
+      state.results.push({
+        jobId: job.jobId,
+        action: 'CONTINUE_AFTER_NONFATAL_RESPONSE',
+        httpStatus: res?.status ?? null,
+        code: data?.code || null,
+        noRetryPolicyPreserved: true
+      });
+      render(state);
+      await sleep(900);
+    }
+
+    delete state.currentJobId;
+    const finalStatus = await getStatus();
+    state.status = finalStatus.data || state.status;
+    state.finished = true;
+    render(state);
+  } catch (err) {
+    state.stopped = true;
+    state.stopReason = 'EXECUTOR_EXCEPTION';
+    state.error = String(err && err.message || err);
+    state.finished = true;
+    render(state);
+  }
+})();
+</script>
