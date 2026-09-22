@@ -368,13 +368,21 @@ function formatBlendReadout(blend) {
   const sh = blend?.shadow || {};
   const fmt = (v, d = 2) => Number.isFinite(Number(v)) ? Number(v).toFixed(d) : '—';
   if (!blend || blend.enabled !== true) return 'RAW candidate · no runtime matching applied.';
-  return (blend.version === 'garden-design-auto-blend-v2' ? 'V2 plant↔scene matched' : (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active'))
+  const dl = blend.directionalLighting || {};
+  const gs = blend.groundSpill || {};
+  return (blend.version === 'garden-design-auto-blend-v3'
+      ? 'V3 directional plant↔scene matched'
+      : (blend.version === 'garden-design-auto-blend-v2'
+          ? 'V2 plant↔scene matched'
+          : (blend.source === 'local-scene-sample' ? 'Scene matched' : 'Blend active')))
     + ' · brightness ' + fmt(a.brightness)
     + ' · contrast ' + fmt(a.contrast)
     + ' · saturation ' + fmt(a.saturate)
     + ' · blur ' + fmt(a.blurPx) + 'px'
     + ' · temp ' + fmt(a.hueRotateDeg, 1) + '°'
     + ' · edge ' + fmt(a.edgeTintAlpha)
+    + ' · light ' + fmt(dl.angleDeg, 0) + '°'
+    + ' · ground ' + fmt(gs.colorAlpha)
     + ' · shadow ' + fmt(sh.opacity);
 }
 
